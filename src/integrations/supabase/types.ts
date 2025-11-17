@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_sessions: {
+        Row: {
+          activity_type: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          qr_code_url: string
+          workshop_session_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          qr_code_url: string
+          workshop_session_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          qr_code_url?: string
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_sessions_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       adoption_momentum: {
         Row: {
           company_identifier_hash: string
@@ -306,6 +344,60 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_workshop_sessions: {
+        Row: {
+          bootcamp_plan_id: string | null
+          cognitive_baseline_data: Json | null
+          completed_at: string | null
+          created_at: string | null
+          current_segment: number | null
+          facilitator_email: string | null
+          facilitator_name: string | null
+          id: string | null
+          intake_id: string | null
+          participant_count: number | null
+          segment_timers: Json | null
+          status: string | null
+          updated_at: string | null
+          workshop_date: string | null
+          workshop_metadata: Json | null
+        }
+        Insert: {
+          bootcamp_plan_id?: string | null
+          cognitive_baseline_data?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_segment?: number | null
+          facilitator_email?: string | null
+          facilitator_name?: string | null
+          id?: string | null
+          intake_id?: string | null
+          participant_count?: number | null
+          segment_timers?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          workshop_date?: string | null
+          workshop_metadata?: Json | null
+        }
+        Update: {
+          bootcamp_plan_id?: string | null
+          cognitive_baseline_data?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_segment?: number | null
+          facilitator_email?: string | null
+          facilitator_name?: string | null
+          id?: string | null
+          intake_id?: string | null
+          participant_count?: number | null
+          segment_timers?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          workshop_date?: string | null
+          workshop_metadata?: Json | null
+        }
+        Relationships: []
+      }
       booking_requests: {
         Row: {
           company_name: string | null
@@ -383,48 +475,69 @@ export type Database = {
       bootcamp_plans: {
         Row: {
           agenda_config: Json | null
+          ai_experience_level: string | null
+          ai_myths_concerns: Json | null
           booked_at: string | null
           calendly_booking_url: string | null
           cognitive_baseline: Json | null
+          competitive_landscape: string | null
           created_at: string
+          current_bottlenecks: Json | null
           id: string
           intake_id: string | null
+          pilot_expectations: Json | null
           required_prework: Json | null
-          simulation_1_id: string
+          risk_tolerance: number | null
+          simulation_1_id: string | null
           simulation_1_snapshot: Json | null
-          simulation_2_id: string
+          simulation_2_id: string | null
           simulation_2_snapshot: Json | null
           status: string
+          strategic_goals_2026: Json | null
         }
         Insert: {
           agenda_config?: Json | null
+          ai_experience_level?: string | null
+          ai_myths_concerns?: Json | null
           booked_at?: string | null
           calendly_booking_url?: string | null
           cognitive_baseline?: Json | null
+          competitive_landscape?: string | null
           created_at?: string
+          current_bottlenecks?: Json | null
           id?: string
           intake_id?: string | null
+          pilot_expectations?: Json | null
           required_prework?: Json | null
-          simulation_1_id: string
+          risk_tolerance?: number | null
+          simulation_1_id?: string | null
           simulation_1_snapshot?: Json | null
-          simulation_2_id: string
+          simulation_2_id?: string | null
           simulation_2_snapshot?: Json | null
           status?: string
+          strategic_goals_2026?: Json | null
         }
         Update: {
           agenda_config?: Json | null
+          ai_experience_level?: string | null
+          ai_myths_concerns?: Json | null
           booked_at?: string | null
           calendly_booking_url?: string | null
           cognitive_baseline?: Json | null
+          competitive_landscape?: string | null
           created_at?: string
+          current_bottlenecks?: Json | null
           id?: string
           intake_id?: string | null
+          pilot_expectations?: Json | null
           required_prework?: Json | null
-          simulation_1_id?: string
+          risk_tolerance?: number | null
+          simulation_1_id?: string | null
           simulation_1_snapshot?: Json | null
-          simulation_2_id?: string
+          simulation_2_id?: string | null
           simulation_2_snapshot?: Json | null
           status?: string
+          strategic_goals_2026?: Json | null
         }
         Relationships: [
           {
@@ -432,6 +545,60 @@ export type Database = {
             columns: ["intake_id"]
             isOneToOne: false
             referencedRelation: "exec_intakes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bottleneck_submissions: {
+        Row: {
+          activity_session_id: string | null
+          bottleneck_text: string
+          cluster_id: string | null
+          cluster_name: string | null
+          created_at: string | null
+          id: string
+          participant_name: string
+          position_x: number | null
+          position_y: number | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          activity_session_id?: string | null
+          bottleneck_text: string
+          cluster_id?: string | null
+          cluster_name?: string | null
+          created_at?: string | null
+          id?: string
+          participant_name: string
+          position_x?: number | null
+          position_y?: number | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          activity_session_id?: string | null
+          bottleneck_text?: string
+          cluster_id?: string | null
+          cluster_name?: string | null
+          created_at?: string | null
+          id?: string
+          participant_name?: string
+          position_x?: number | null
+          position_y?: number | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bottleneck_submissions_activity_session_id_fkey"
+            columns: ["activity_session_id"]
+            isOneToOne: false
+            referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bottleneck_submissions_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -645,6 +812,63 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "conversation_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      effortless_map_items: {
+        Row: {
+          activity_session_id: string | null
+          constraint_inverted: boolean | null
+          created_at: string | null
+          id: string
+          item_text: string
+          lane: string
+          participant_name: string
+          priority_rank: number | null
+          sponsor_name: string | null
+          vote_count: number | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          activity_session_id?: string | null
+          constraint_inverted?: boolean | null
+          created_at?: string | null
+          id?: string
+          item_text: string
+          lane: string
+          participant_name: string
+          priority_rank?: number | null
+          sponsor_name?: string | null
+          vote_count?: number | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          activity_session_id?: string | null
+          constraint_inverted?: boolean | null
+          created_at?: string | null
+          id?: string
+          item_text?: string
+          lane?: string
+          participant_name?: string
+          priority_rank?: number | null
+          sponsor_name?: string | null
+          vote_count?: number | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "effortless_map_items_activity_session_id_fkey"
+            columns: ["activity_session_id"]
+            isOneToOne: false
+            referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "effortless_map_items_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -1054,6 +1278,284 @@ export type Database = {
           },
         ]
       }
+      partner_intakes: {
+        Row: {
+          consent: boolean
+          created_at: string | null
+          engagement_model: string | null
+          firm_name: string
+          id: string
+          objectives_json: Json
+          partner_type: string | null
+          pipeline_count: number
+          pipeline_names: string
+          region: string | null
+          resources_enablement_bandwidth: string | null
+          role: string | null
+          sectors_json: Json | null
+          updated_at: string | null
+          urgency_window: string
+        }
+        Insert: {
+          consent?: boolean
+          created_at?: string | null
+          engagement_model?: string | null
+          firm_name: string
+          id?: string
+          objectives_json?: Json
+          partner_type?: string | null
+          pipeline_count: number
+          pipeline_names: string
+          region?: string | null
+          resources_enablement_bandwidth?: string | null
+          role?: string | null
+          sectors_json?: Json | null
+          updated_at?: string | null
+          urgency_window: string
+        }
+        Update: {
+          consent?: boolean
+          created_at?: string | null
+          engagement_model?: string | null
+          firm_name?: string
+          id?: string
+          objectives_json?: Json
+          partner_type?: string | null
+          pipeline_count?: number
+          pipeline_names?: string
+          region?: string | null
+          resources_enablement_bandwidth?: string | null
+          role?: string | null
+          sectors_json?: Json | null
+          updated_at?: string | null
+          urgency_window?: string
+        }
+        Relationships: []
+      }
+      partner_plans: {
+        Row: {
+          created_at: string | null
+          diagnostic_count: number
+          exec_bootcamp_count: number
+          firm_name: string
+          id: string
+          intake_id: string
+          literacy_sprint_count: number
+          objectives_json: Json
+          pipeline_count: number
+          share_slug: string
+          total_companies: number
+          updated_at: string | null
+          urgency_window: string
+        }
+        Insert: {
+          created_at?: string | null
+          diagnostic_count?: number
+          exec_bootcamp_count?: number
+          firm_name: string
+          id?: string
+          intake_id: string
+          literacy_sprint_count?: number
+          objectives_json?: Json
+          pipeline_count: number
+          share_slug: string
+          total_companies?: number
+          updated_at?: string | null
+          urgency_window: string
+        }
+        Update: {
+          created_at?: string | null
+          diagnostic_count?: number
+          exec_bootcamp_count?: number
+          firm_name?: string
+          id?: string
+          intake_id?: string
+          literacy_sprint_count?: number
+          objectives_json?: Json
+          pipeline_count?: number
+          share_slug?: string
+          total_companies?: number
+          updated_at?: string | null
+          urgency_window?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_plans_intake_id_fkey"
+            columns: ["intake_id"]
+            isOneToOne: false
+            referencedRelation: "partner_intakes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partner_portfolio_items: {
+        Row: {
+          ai_posture: string
+          created_at: string | null
+          data_posture: string
+          decision_cadence: string
+          fit_score: number
+          id: string
+          intake_id: string
+          name: string
+          recommendation: string
+          risk_flags_json: Json | null
+          sector: string | null
+          sponsor_strength: string
+          stage: string | null
+          updated_at: string | null
+          value_pressure: string
+          willingness_60d: string
+        }
+        Insert: {
+          ai_posture: string
+          created_at?: string | null
+          data_posture: string
+          decision_cadence: string
+          fit_score: number
+          id?: string
+          intake_id: string
+          name: string
+          recommendation: string
+          risk_flags_json?: Json | null
+          sector?: string | null
+          sponsor_strength: string
+          stage?: string | null
+          updated_at?: string | null
+          value_pressure: string
+          willingness_60d: string
+        }
+        Update: {
+          ai_posture?: string
+          created_at?: string | null
+          data_posture?: string
+          decision_cadence?: string
+          fit_score?: number
+          id?: string
+          intake_id?: string
+          name?: string
+          recommendation?: string
+          risk_flags_json?: Json | null
+          sector?: string | null
+          sponsor_strength?: string
+          stage?: string | null
+          updated_at?: string | null
+          value_pressure?: string
+          willingness_60d?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_portfolio_items_intake_id_fkey"
+            columns: ["intake_id"]
+            isOneToOne: false
+            referencedRelation: "partner_intakes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilot_charter: {
+        Row: {
+          calendar_events: Json | null
+          created_at: string | null
+          executive_sponsor: string
+          extend_criteria: string | null
+          id: string
+          kill_criteria: string | null
+          meeting_cadence: string
+          milestone_d10: string | null
+          milestone_d30: string | null
+          milestone_d60: string | null
+          milestone_d90: string | null
+          pilot_budget: number | null
+          pilot_owner: string
+          scale_criteria: string | null
+          updated_at: string | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          calendar_events?: Json | null
+          created_at?: string | null
+          executive_sponsor: string
+          extend_criteria?: string | null
+          id?: string
+          kill_criteria?: string | null
+          meeting_cadence: string
+          milestone_d10?: string | null
+          milestone_d30?: string | null
+          milestone_d60?: string | null
+          milestone_d90?: string | null
+          pilot_budget?: number | null
+          pilot_owner: string
+          scale_criteria?: string | null
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          calendar_events?: Json | null
+          created_at?: string | null
+          executive_sponsor?: string
+          extend_criteria?: string | null
+          id?: string
+          kill_criteria?: string | null
+          meeting_cadence?: string
+          milestone_d10?: string | null
+          milestone_d30?: string | null
+          milestone_d60?: string | null
+          milestone_d90?: string | null
+          pilot_budget?: number | null
+          pilot_owner?: string
+          scale_criteria?: string | null
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pilot_charter_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pre_workshop_inputs: {
+        Row: {
+          created_at: string | null
+          id: string
+          intake_id: string | null
+          participant_email: string
+          participant_name: string
+          pre_work_responses: Json | null
+          submitted_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          intake_id?: string | null
+          participant_email: string
+          participant_name: string
+          pre_work_responses?: Json | null
+          submitted_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          intake_id?: string | null
+          participant_email?: string
+          participant_name?: string
+          pre_work_responses?: Json | null
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pre_workshop_inputs_intake_id_fkey"
+            columns: ["intake_id"]
+            isOneToOne: false
+            referencedRelation: "exec_intakes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -1312,6 +1814,160 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      simulation_results: {
+        Row: {
+          after_snapshot: Json
+          ai_outputs: Json | null
+          before_snapshot: Json
+          cost_savings_usd: number | null
+          created_at: string | null
+          error_rate_after_pct: number | null
+          error_rate_before_pct: number | null
+          guardrails: Json | null
+          id: string
+          is_selected: boolean | null
+          org_changes_checklist: Json | null
+          org_changes_required: Json | null
+          output_quality_ratings: Json | null
+          people_involved_after: number | null
+          people_involved_before: number | null
+          prompts_used: Json | null
+          qualitative_changes: string | null
+          quality_improvement_pct: number | null
+          risks_introduced: string | null
+          satisfaction_after: number | null
+          satisfaction_before: number | null
+          scenario_context: Json | null
+          simulation_id: string
+          simulation_name: string
+          task_breakdown: Json | null
+          time_savings_pct: number | null
+          vote_count: number | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          after_snapshot?: Json
+          ai_outputs?: Json | null
+          before_snapshot?: Json
+          cost_savings_usd?: number | null
+          created_at?: string | null
+          error_rate_after_pct?: number | null
+          error_rate_before_pct?: number | null
+          guardrails?: Json | null
+          id?: string
+          is_selected?: boolean | null
+          org_changes_checklist?: Json | null
+          org_changes_required?: Json | null
+          output_quality_ratings?: Json | null
+          people_involved_after?: number | null
+          people_involved_before?: number | null
+          prompts_used?: Json | null
+          qualitative_changes?: string | null
+          quality_improvement_pct?: number | null
+          risks_introduced?: string | null
+          satisfaction_after?: number | null
+          satisfaction_before?: number | null
+          scenario_context?: Json | null
+          simulation_id: string
+          simulation_name: string
+          task_breakdown?: Json | null
+          time_savings_pct?: number | null
+          vote_count?: number | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          after_snapshot?: Json
+          ai_outputs?: Json | null
+          before_snapshot?: Json
+          cost_savings_usd?: number | null
+          created_at?: string | null
+          error_rate_after_pct?: number | null
+          error_rate_before_pct?: number | null
+          guardrails?: Json | null
+          id?: string
+          is_selected?: boolean | null
+          org_changes_checklist?: Json | null
+          org_changes_required?: Json | null
+          output_quality_ratings?: Json | null
+          people_involved_after?: number | null
+          people_involved_before?: number | null
+          prompts_used?: Json | null
+          qualitative_changes?: string | null
+          quality_improvement_pct?: number | null
+          risks_introduced?: string | null
+          satisfaction_after?: number | null
+          satisfaction_before?: number | null
+          scenario_context?: Json | null
+          simulation_id?: string
+          simulation_name?: string
+          task_breakdown?: Json | null
+          time_savings_pct?: number | null
+          vote_count?: number | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simulation_results_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      strategy_addendum: {
+        Row: {
+          ai_leverage_points: Json | null
+          ceo_approved: boolean | null
+          created_at: string | null
+          data_governance_changes: string | null
+          id: string
+          org_process_changes: Json | null
+          pilot_kpis: string | null
+          policy_risk_checklist: Json | null
+          targets_at_risk: string | null
+          updated_at: string | null
+          working_group_inputs: Json | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          ai_leverage_points?: Json | null
+          ceo_approved?: boolean | null
+          created_at?: string | null
+          data_governance_changes?: string | null
+          id?: string
+          org_process_changes?: Json | null
+          pilot_kpis?: string | null
+          policy_risk_checklist?: Json | null
+          targets_at_risk?: string | null
+          updated_at?: string | null
+          working_group_inputs?: Json | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          ai_leverage_points?: Json | null
+          ceo_approved?: boolean | null
+          created_at?: string | null
+          data_governance_changes?: string | null
+          id?: string
+          org_process_changes?: Json | null
+          pilot_kpis?: string | null
+          policy_risk_checklist?: Json | null
+          targets_at_risk?: string | null
+          updated_at?: string | null
+          working_group_inputs?: Json | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "strategy_addendum_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_business_context: {
         Row: {
@@ -1612,6 +2268,171 @@ export type Database = {
           },
         ]
       }
+      voting_results: {
+        Row: {
+          activity_session_id: string | null
+          created_at: string | null
+          dots_allocated: number | null
+          id: string
+          item_id: string
+          item_type: string
+          participant_name: string
+          workshop_session_id: string | null
+        }
+        Insert: {
+          activity_session_id?: string | null
+          created_at?: string | null
+          dots_allocated?: number | null
+          id?: string
+          item_id: string
+          item_type: string
+          participant_name: string
+          workshop_session_id?: string | null
+        }
+        Update: {
+          activity_session_id?: string | null
+          created_at?: string | null
+          dots_allocated?: number | null
+          id?: string
+          item_id?: string
+          item_type?: string
+          participant_name?: string
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voting_results_activity_session_id_fkey"
+            columns: ["activity_session_id"]
+            isOneToOne: false
+            referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voting_results_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      working_group_inputs: {
+        Row: {
+          activity_session_id: string | null
+          created_at: string | null
+          id: string
+          input_category: string
+          input_text: string
+          participant_name: string
+          table_number: number
+          workshop_session_id: string | null
+        }
+        Insert: {
+          activity_session_id?: string | null
+          created_at?: string | null
+          id?: string
+          input_category: string
+          input_text: string
+          participant_name: string
+          table_number: number
+          workshop_session_id?: string | null
+        }
+        Update: {
+          activity_session_id?: string | null
+          created_at?: string | null
+          id?: string
+          input_category?: string
+          input_text?: string
+          participant_name?: string
+          table_number?: number
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "working_group_inputs_activity_session_id_fkey"
+            columns: ["activity_session_id"]
+            isOneToOne: false
+            referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "working_group_inputs_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workshop_sessions: {
+        Row: {
+          bootcamp_plan_id: string | null
+          cognitive_baseline_data: Json | null
+          completed_at: string | null
+          created_at: string | null
+          current_segment: number | null
+          facilitator_email: string
+          facilitator_name: string
+          id: string
+          intake_id: string | null
+          participant_count: number | null
+          segment_timers: Json | null
+          status: string
+          updated_at: string | null
+          workshop_date: string
+          workshop_metadata: Json | null
+        }
+        Insert: {
+          bootcamp_plan_id?: string | null
+          cognitive_baseline_data?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_segment?: number | null
+          facilitator_email?: string
+          facilitator_name: string
+          id?: string
+          intake_id?: string | null
+          participant_count?: number | null
+          segment_timers?: Json | null
+          status?: string
+          updated_at?: string | null
+          workshop_date: string
+          workshop_metadata?: Json | null
+        }
+        Update: {
+          bootcamp_plan_id?: string | null
+          cognitive_baseline_data?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_segment?: number | null
+          facilitator_email?: string
+          facilitator_name?: string
+          id?: string
+          intake_id?: string | null
+          participant_count?: number | null
+          segment_timers?: Json | null
+          status?: string
+          updated_at?: string | null
+          workshop_date?: string
+          workshop_metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_sessions_bootcamp_plan_id_fkey"
+            columns: ["bootcamp_plan_id"]
+            isOneToOne: false
+            referencedRelation: "bootcamp_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workshop_sessions_intake_id_fkey"
+            columns: ["intake_id"]
+            isOneToOne: false
+            referencedRelation: "exec_intakes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       public_index_snapshots: {
@@ -1714,6 +2535,16 @@ export type Database = {
           total_sessions: number
         }[]
       }
+      get_intake_for_registration: {
+        Args: { intake_uuid: string }
+        Returns: {
+          company_name: string
+          created_at: string
+          id: string
+          industry: string
+          organizer_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1757,7 +2588,7 @@ export type Database = {
     }
     Enums: {
       action_signal_level: "low" | "mid" | "high"
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "facilitator"
       consent_purpose:
         | "index_publication"
         | "sales_outreach"
@@ -1909,7 +2740,7 @@ export const Constants = {
   public: {
     Enums: {
       action_signal_level: ["low", "mid", "high"],
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "facilitator"],
       consent_purpose: [
         "index_publication",
         "sales_outreach",
