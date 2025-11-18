@@ -3,14 +3,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { User, Building, Mail, ArrowRight } from 'lucide-react';
-import { validateEmail, validateRequired, isDisqualifiedRole } from '@/utils/formValidation';
+import { validateEmail, validateRequired } from '@/utils/formValidation';
+import { DEPARTMENTS } from '@/constants/departments';
 
 export interface ContactData {
   fullName: string;
   companyName: string;
   email: string;
-  roleTitle: string;
+  department: string;
   companySize: string;
   primaryFocus: string;
   timeline: string;
@@ -27,7 +35,7 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
     fullName: '',
     companyName: '',
     email: '',
-    roleTitle: '',
+    department: '',
     companySize: '',
     primaryFocus: '',
     timeline: '',
@@ -53,8 +61,8 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
     const emailError = validateEmail(contactData.email);
     if (emailError) newErrors.email = emailError;
 
-    const roleTitleError = validateRequired(contactData.roleTitle, 'Role/title');
-    if (roleTitleError) newErrors.roleTitle = roleTitleError;
+    const departmentError = validateRequired(contactData.department, 'Department');
+    if (departmentError) newErrors.department = departmentError;
 
     const companySizeError = validateRequired(contactData.companySize, 'Company size');
     if (companySizeError) newErrors.companySize = companySizeError;
@@ -76,10 +84,6 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      if (isDisqualifiedRole(contactData.roleTitle)) {
-        setShowDisqualifiedMessage(true);
-        return;
-      }
       onSubmit(contactData);
     }
   };
@@ -213,24 +217,33 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
                 )}
               </div>
 
-              {/* Role/Title */}
+              {/* Department */}
               <div className="space-y-2">
-                <Label htmlFor="roleTitle" className="text-foreground font-medium text-sm">
-                  <User className="h-4 w-4 inline mr-2" />
-                  Your Role/Title <span className="text-destructive">*</span>
+                <Label htmlFor="department" className="text-foreground font-medium text-sm">
+                  <Building className="h-4 w-4 inline mr-2" />
+                  Department <span className="text-destructive">*</span>
                 </Label>
-                <Input
-                  id="roleTitle"
-                  type="text"
-                  value={contactData.roleTitle}
-                  onChange={(e) => handleInputChange('roleTitle', e.target.value)}
-                  className="rounded-xl"
-                  placeholder="e.g., CEO, CTO, VP of Operations"
-                  autoComplete="organization-title"
-                  aria-describedby={errors.roleTitle ? "roleTitle-error" : undefined}
-                />
-                {errors.roleTitle && (
-                  <p id="roleTitle-error" className="text-destructive text-sm" role="alert">{errors.roleTitle}</p>
+                <Select
+                  value={contactData.department}
+                  onValueChange={(value) => handleInputChange('department', value)}
+                >
+                  <SelectTrigger 
+                    id="department" 
+                    className="rounded-xl bg-background"
+                    aria-describedby={errors.department ? "department-error" : undefined}
+                  >
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover z-50">
+                    {DEPARTMENTS.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.department && (
+                  <p id="department-error" className="text-destructive text-sm" role="alert">{errors.department}</p>
                 )}
               </div>
 

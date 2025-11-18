@@ -285,8 +285,8 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           email: data.email,
           company: data.companyName,
           companyName: data.companyName,
-          title: data.roleTitle,
-          roleTitle: data.roleTitle,
+          title: data.department,
+          roleTitle: data.department,
           companySize: data.companySize,
           primaryFocus: data.primaryFocus,
           timeline: data.timeline,
@@ -345,7 +345,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           firstName: contactData?.fullName.split(' ')[0],
           lastName: contactData?.fullName.split(' ').slice(1).join(' '),
           company: contactData?.companyName,
-          title: contactData?.roleTitle,
+          title: contactData?.department,
           
           // Assessment responses
           industry_impact: assessmentData.industry_impact,
