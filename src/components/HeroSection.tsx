@@ -98,7 +98,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             Take a few minutes to discover your AI literacy score and unlock personalized insights for executive growth. Talk to me like your chief of staff.
           </p>
 
-          <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-start">
+          <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-start items-start">
             <Button 
               onClick={onStartQuiz}
               className="btn-hero-cta group justify-start"
@@ -107,22 +107,33 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               <span className="text-sm">📝 Quiz</span>
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button 
-              onClick={onStartVoice}
-              variant="outline"
-              size="lg"
-              className="justify-start group relative"
-            >
-              <span className="text-sm">🎙️ Voice</span>
-              <Badge variant="secondary" className="ml-2 text-xs">Beta</Badge>
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </div>
-          
-          <div className="text-xs text-muted-foreground space-y-1 mt-4">
-            <p>⚡ Faster than typing</p>
-            <p>💬 Natural conversation</p>
-            <p>🎯 Personalized instantly</p>
+            
+            <div className="flex flex-col gap-2">
+              <Button 
+                onClick={onStartVoice}
+                variant="outline"
+                size="lg"
+                className="justify-start group relative"
+              >
+                <span className="text-sm">🎙️ Voice</span>
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                
+                {/* Beta badge - only visible on hover, positioned over button */}
+                <Badge 
+                  variant="secondary" 
+                  className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                >
+                  Beta
+                </Badge>
+              </Button>
+              
+              {/* Feature text under Voice button only */}
+              <div className="text-xs text-muted-foreground space-y-1 pl-1">
+                <p>⚡ Faster than typing</p>
+                <p>💬 Natural conversation</p>
+                <p>🎯 Personalized instantly</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
