@@ -60,7 +60,7 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
           .select('*')
           .order('published_at', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         setBenchmark(data);
@@ -91,17 +91,17 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
   const isAboveAverage = benchmark ? userScore > benchmark.avg_readiness_score : true;
 
   const getIndustryBenchmark = () => {
-    if (!industry || !benchmark.industry_benchmarks) return null;
+    if (!industry || !benchmark || !benchmark.industry_benchmarks) return null;
     return benchmark.industry_benchmarks[industry];
   };
 
   const getCompanySizeBenchmark = () => {
-    if (!companySize || !benchmark.company_size_benchmarks) return null;
+    if (!companySize || !benchmark || !benchmark.company_size_benchmarks) return null;
     return benchmark.company_size_benchmarks[companySize];
   };
 
   const getRoleBenchmark = () => {
-    if (!role || !benchmark.role_benchmarks) return null;
+    if (!role || !benchmark || !benchmark.role_benchmarks) return null;
     return benchmark.role_benchmarks[role];
   };
 
