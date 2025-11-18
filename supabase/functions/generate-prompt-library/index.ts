@@ -111,22 +111,39 @@ Return ONLY valid JSON, no markdown formatting.`;
     }
 
     console.log('Calling OpenAI for synthesis...');
-    const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
-        max_completion_tokens: 12000,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: 'system', content: 'You are an expert AI implementation strategist. Generate detailed, personalized AI prompt libraries in valid JSON format.' },
-          { role: 'user', content: synthesisPro }
-        ]
-      }),
-    });
+    
+    // Add 60-second timeout to prevent silent hangs
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+    
+    let aiResponse;
+    try {
+      aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-5-2025-08-07',
+          max_completion_tokens: 6000,
+          response_format: { type: "json_object" },
+          messages: [
+            { role: 'system', content: 'You are an expert AI implementation strategist. Generate detailed, personalized AI prompt libraries in valid JSON format.' },
+            { role: 'user', content: synthesisPro }
+          ]
+        }),
+      });
+      clearTimeout(timeoutId);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        console.error('❌ OpenAI API call timed out after 60 seconds');
+        throw new Error('AI generation timed out. Please try again.');
+      }
+      throw error;
+    }
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();

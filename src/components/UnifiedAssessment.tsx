@@ -375,6 +375,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         if (prev < 35) return prev + 5;
         if (prev < 65) return prev + 3;
         if (prev < 85) return prev + 2;
+        if (prev < 95) return prev + 1; // Allow slow progress to 95%
         return prev;
       });
     }, 800);
@@ -393,13 +394,23 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     try {
       const assessmentData = getAssessmentData();
       
-      const { data, error } = await invokeEdgeFunction('generate-prompt-library', {
+      // Add 90-second frontend timeout
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out after 90 seconds')), 90000);
+      });
+      
+      const generatePromise = invokeEdgeFunction('generate-prompt-library', {
         sessionId: sessionId,
         userId: null,
         contactData: contactData,
         assessmentData: assessmentData,
         profileData: profileData
       }, { logPrefix: '✨' });
+      
+      const { data, error } = await Promise.race([
+        generatePromise,
+        timeoutPromise
+      ]) as any;
 
       if (error) throw error;
 
@@ -418,12 +429,18 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         title: "AI Command Center Ready!",
         description: "Your personalized prompt library has been generated",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating prompt library:', error);
       clearInterval(progressInterval);
+      
+      // Show more specific error message
+      const errorMessage = error?.message?.includes('timed out') 
+        ? 'Generation took too long. Please try again.'
+        : 'Failed to generate prompt library. Showing assessment results instead.';
+      
       toast({
         title: "Generation Error",
-        description: "Failed to generate prompt library. Showing assessment results instead.",
+        description: errorMessage,
         variant: "destructive",
       });
       startInsightGeneration();
