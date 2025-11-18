@@ -361,13 +361,14 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       console.error('❌ Error sending deep profile notification:', error);
     }
 
-    // Start progress animation
+    // Start progress animation - keeps moving to 98%
     const progressInterval = setInterval(() => {
       setLibraryProgress(prev => {
         if (prev < 35) return prev + 5;
         if (prev < 65) return prev + 3;
         if (prev < 85) return prev + 2;
-        if (prev < 95) return prev + 1; // Allow slow progress to 95%
+        if (prev < 95) return prev + 1;
+        if (prev < 98) return prev + 0.3; // Slow crawl to 98%
         return prev;
       });
     }, 800);
@@ -386,9 +387,9 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     try {
       const assessmentData = getAssessmentData();
       
-      // Add 90-second frontend timeout
+      // Add 30-second frontend timeout (aggressive)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timed out after 90 seconds')), 90000);
+        setTimeout(() => reject(new Error('Request timed out after 30 seconds')), 30000);
       });
       
       const generatePromise = invokeEdgeFunction('generate-prompt-library', {
