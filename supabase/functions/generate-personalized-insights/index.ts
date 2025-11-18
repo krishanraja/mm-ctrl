@@ -25,9 +25,9 @@ serve(async (req) => {
 
     // ============= 3-TIER FALLBACK SYSTEM =============
     
-    const maxRetries = 3;
-    const retryDelays = [2000, 4000, 8000];
-    const timeoutMs = 60000;
+    const maxRetries = 2;
+    const retryDelays = [2000, 3000];
+    const timeoutMs = 20000;
     
     let personalizedInsights = null;
     let openaiSucceeded = false;
@@ -49,8 +49,8 @@ serve(async (req) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'gpt-5-2025-08-07',
-            max_completion_tokens: 8000,
+            model: 'gpt-5-mini-2025-08-07',
+            max_completion_tokens: 3000,
             messages: [
               { 
                 role: 'system', 
@@ -179,7 +179,7 @@ serve(async (req) => {
         
         const errorText = await response.text();
         console.error(`❌ OpenAI error ${response.status}: ${errorText}`);
-        throw new Error(`OpenAI error ${response.status}`);
+        break; // Continue to fallback instead of throwing
         
       } catch (error) {
         clearTimeout(timeoutId);
@@ -188,12 +188,18 @@ serve(async (req) => {
           if (attempt < maxRetries) {
             await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
             continue;
+          } else {
+            console.log('⚠️ All OpenAI attempts exhausted, continuing to fallback...');
+            break;
           }
         } else {
           console.error(`❌ OpenAI exception on attempt ${attempt}:`, error);
           if (attempt < maxRetries) {
             await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
             continue;
+          } else {
+            console.log('⚠️ All OpenAI attempts exhausted, continuing to fallback...');
+            break;
           }
         }
       }
