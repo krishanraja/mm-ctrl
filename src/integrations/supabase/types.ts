@@ -483,9 +483,11 @@ export type Database = {
           competitive_landscape: string | null
           created_at: string
           current_bottlenecks: Json | null
+          data_governance_notes: string | null
           id: string
           intake_id: string | null
           pilot_expectations: Json | null
+          pilot_metrics_notes: string | null
           required_prework: Json | null
           risk_tolerance: number | null
           simulation_1_id: string | null
@@ -505,9 +507,11 @@ export type Database = {
           competitive_landscape?: string | null
           created_at?: string
           current_bottlenecks?: Json | null
+          data_governance_notes?: string | null
           id?: string
           intake_id?: string | null
           pilot_expectations?: Json | null
+          pilot_metrics_notes?: string | null
           required_prework?: Json | null
           risk_tolerance?: number | null
           simulation_1_id?: string | null
@@ -527,9 +531,11 @@ export type Database = {
           competitive_landscape?: string | null
           created_at?: string
           current_bottlenecks?: Json | null
+          data_governance_notes?: string | null
           id?: string
           intake_id?: string | null
           pilot_expectations?: Json | null
+          pilot_metrics_notes?: string | null
           required_prework?: Json | null
           risk_tolerance?: number | null
           simulation_1_id?: string | null

@@ -99,8 +99,8 @@ Return ONLY valid JSON, no markdown formatting.`;
     let generationModel = 'gpt-5-mini-2025-08-07';
     
     // PLAN A: OpenAI with Retry Logic
-    const maxRetries = 3;
-    const retryDelays = [2000, 4000, 8000];
+    const maxRetries = 2;
+    const retryDelays = [2000, 3000];
     let openaiSucceeded = false;
     
     console.log('🔄 Starting OpenAI API call with retry logic...');
@@ -109,7 +109,7 @@ Return ONLY valid JSON, no markdown formatting.`;
       console.log(`Attempt ${attempt}/${maxRetries} - Calling OpenAI...`);
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000);
+      const timeoutId = setTimeout(() => controller.abort(), 25000);
       
       try {
         const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -157,8 +157,8 @@ Return ONLY valid JSON, no markdown formatting.`;
             await new Promise(r => setTimeout(r, delay));
             continue;
           } else {
-            console.error('❌ OpenAI retries exhausted');
-            throw new Error('OPENAI_RETRIES_EXHAUSTED');
+            console.log('⚠️ OpenAI retries exhausted, continuing to fallback...');
+            break;
           }
         }
         
@@ -172,13 +172,15 @@ Return ONLY valid JSON, no markdown formatting.`;
         if (error.name === 'AbortError') {
           console.error('❌ OpenAI timeout on attempt', attempt);
           if (attempt >= maxRetries) {
-            throw new Error('OPENAI_TIMEOUT');
+            console.log('⚠️ All OpenAI attempts exhausted, continuing to fallback...');
+            break;
           }
           await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
           continue;
         }
         
-        throw error;
+        console.error('❌ OpenAI error:', error);
+        break; // Continue to fallback instead of throwing
       }
     }
     
