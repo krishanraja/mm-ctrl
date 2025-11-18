@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowRight, LogIn, LogOut, User } from "lucide-react";
 import mindmakerLogo from "@/assets/mindmaker-logo.png";
 import { useState, useEffect } from "react";
@@ -99,20 +100,21 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
 
           <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-start">
             <Button 
-              onClick={onStartVoice}
+              onClick={onStartQuiz}
               className="btn-hero-cta group justify-start"
               size="lg"
             >
-              <span className="text-sm">🎙️ Voice</span>
+              <span className="text-sm">📝 Quiz</span>
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button 
-              onClick={onStartQuiz}
+              onClick={onStartVoice}
               variant="outline"
               size="lg"
-              className="justify-start group"
+              className="justify-start group relative"
             >
-              <span className="text-sm">📝 Quiz</span>
+              <span className="text-sm">🎙️ Voice</span>
+              <Badge variant="secondary" className="ml-2 text-xs">Beta</Badge>
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>

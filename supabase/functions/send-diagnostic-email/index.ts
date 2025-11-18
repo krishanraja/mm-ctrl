@@ -476,7 +476,7 @@ const handler = async (req: Request): Promise<Response> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: "AI Leadership Growth Benchmark <no-reply@fractionl.ai>",
+        from: "AI Leadership Growth Benchmark <no-reply@themindmaker.ai>",
         to: ["krish@themindmaker.ai"],
         subject: `🎯 ${tier.name} Executive Lead: ${data.firstName || ''} ${data.lastName || ''} (${data.company || 'Company'}) - ${total}/30 Score ${data.hasDeepProfile ? '+ Deep Profile ✅' : ''}`,
       html: `

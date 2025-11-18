@@ -119,7 +119,7 @@ Return ONLY valid JSON, no markdown formatting.`;
       },
       body: JSON.stringify({
         model: 'gpt-5-2025-08-07',
-        max_completion_tokens: 4000,
+        max_completion_tokens: 12000,
         response_format: { type: "json_object" },
         messages: [
           { role: 'system', content: 'You are an expert AI implementation strategist. Generate detailed, personalized AI prompt libraries in valid JSON format.' },

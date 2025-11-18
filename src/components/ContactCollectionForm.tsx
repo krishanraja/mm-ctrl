@@ -107,7 +107,7 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
               Based on your current situation, we recommend exploring our free educational resources to build your AI knowledge foundation. These resources are designed to help you get started with AI leadership concepts.
             </p>
             <div className="space-y-4">
-              <Button variant="cta" className="w-full rounded-xl" onClick={() => window.open('https://fractionl.ai/resources', '_blank')}>
+              <Button variant="cta" className="w-full rounded-xl" onClick={() => window.open('https://themindmaker.ai/resources', '_blank')}>
                 Access Free AI Resources
               </Button>
               {onBack && (
