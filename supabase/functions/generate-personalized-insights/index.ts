@@ -13,39 +13,84 @@ serve(async (req) => {
 
   try {
     const { assessmentData, contactData, deepProfileData } = await req.json();
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
 
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not configured');
+    if (!geminiApiKey) {
+      console.error('❌ GEMINI_API_KEY not configured');
+      throw new Error('GEMINI_API_KEY required');
     }
 
     console.log('Generating personalized insights for:', contactData.fullName);
 
     const prompt = buildPersonalizedPrompt(assessmentData, contactData, deepProfileData);
-
-    // ============= 3-TIER FALLBACK SYSTEM =============
-    
-    const maxRetries = 2;
-    const retryDelays = [2000, 3000];
-    const timeoutMs = 20000;
     
     let personalizedInsights = null;
-    let openaiSucceeded = false;
     let generationSource = '';
+    const startTime = Date.now();
 
-    // PLAN A: OpenAI with retry logic
-    for (let attempt = 1; attempt <= maxRetries && !openaiSucceeded; attempt++) {
-      console.log(`🔄 OpenAI attempt ${attempt}/${maxRetries}...`);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-      
-      try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // ============= PLAN A: YOUR FINE-TUNED GEMINI (15s timeout) =============
+    console.log('🔄 Calling YOUR fine-tuned Gemini API...');
+    const geminiController = new AbortController();
+    const geminiTimeoutId = setTimeout(() => geminiController.abort(), 15000);
+
+    try {
+      const geminiResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
+        {
           method: 'POST',
-          signal: controller.signal,
+          signal: geminiController.signal,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2500,
+              responseMimeType: "application/json"
+            }
+          })
+        }
+      );
+      clearTimeout(geminiTimeoutId);
+
+      if (geminiResponse.ok) {
+        const geminiData = await geminiResponse.json();
+        const geminiContent = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (geminiContent) {
+          personalizedInsights = JSON.parse(geminiContent);
+          generationSource = 'gemini-custom';
+          console.log('✅ YOUR Gemini succeeded in', Date.now() - startTime, 'ms');
+          console.log('📊 Generation metrics:', {
+            source: 'gemini-custom',
+            durationMs: Date.now() - startTime,
+            success: true,
+            attemptNumber: 1
+          });
+        }
+      } else {
+        const errorText = await geminiResponse.text();
+        console.error('❌ Gemini API error:', geminiResponse.status, errorText);
+      }
+    } catch (error: any) {
+      clearTimeout(geminiTimeoutId);
+      console.error('❌ YOUR Gemini failed:', error.message);
+    }
+
+    // ============= PLAN B: OPENAI FALLBACK (15s timeout) =============
+    if (!personalizedInsights && openaiApiKey) {
+      console.log('⚠️ Gemini failed, trying OpenAI fallback...');
+      const openaiController = new AbortController();
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 15000);
+
+      try {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          signal: openaiController.signal,
           headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Authorization': `Bearer ${openaiApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -54,7 +99,7 @@ serve(async (req) => {
             messages: [
               { 
                 role: 'system', 
-                content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative. Use clear templates for preview text and save detailed personalization for the details section.' 
+                content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.' 
               },
               { role: 'user', content: prompt }
             ],
@@ -62,7 +107,7 @@ serve(async (req) => {
               type: "function",
               function: {
                 name: "generate_personalized_insights",
-                description: "Generate personalized AI leadership insights based on executive assessment data",
+                description: "Generate personalized AI leadership insights",
                 parameters: {
                   type: "object",
                   properties: {
@@ -70,8 +115,8 @@ serve(async (req) => {
                       type: "object",
                       properties: {
                         level: { type: "string", enum: ["High", "Medium-High", "Medium", "Developing"] },
-                        preview: { type: "string", description: "Ultra-concise preview (max 50 chars) - punchy one-liner", maxLength: 50 },
-                        details: { type: "string", description: "Full insight (max 120 chars) - specific, actionable", maxLength: 120 }
+                        preview: { type: "string", maxLength: 50 },
+                        details: { type: "string", maxLength: 120 }
                       },
                       required: ["level", "preview", "details"]
                     },
@@ -79,8 +124,8 @@ serve(async (req) => {
                       type: "object",
                       properties: {
                         stage: { type: "string", enum: ["Orchestrator", "Confident", "Aware", "Emerging"] },
-                        preview: { type: "string", description: "Ultra-concise preview (max 50 chars) - punchy one-liner", maxLength: 50 },
-                        details: { type: "string", description: "Full next step (max 120 chars) - concrete action", maxLength: 120 }
+                        preview: { type: "string", maxLength: 50 },
+                        details: { type: "string", maxLength: 120 }
                       },
                       required: ["stage", "preview", "details"]
                     },
@@ -89,328 +134,164 @@ serve(async (req) => {
                       properties: {
                         category: { 
                           type: "string", 
-                          enum: [
-                            "Team Alignment",
-                            "Process Automation", 
-                            "Strategic Planning",
-                            "Communication",
-                            "Decision Making",
-                            "Change Management",
-                            "Innovation Culture",
-                            "Data Strategy"
-                          ],
-                          description: "Select ONE category that best matches the executive's primary challenge"
+                          enum: ["Team Alignment", "Strategic Execution", "Decision Quality", "Time Leverage"]
                         },
-                        preview: { type: "string", description: "Clear preview (max 50 chars)", maxLength: 50 },
-                        details: { type: "string", description: "Specific action plan (max 120 chars)", maxLength: 120 }
+                        preview: { type: "string", maxLength: 50 },
+                        details: { type: "string", maxLength: 120 }
                       },
                       required: ["category", "preview", "details"]
                     },
-                    roadmapInitiatives: {
+                    quickWins: {
                       type: "array",
-                      minItems: 3,
-                      maxItems: 4,
                       items: {
                         type: "object",
                         properties: {
-                          title: { type: "string", description: "Clear, actionable title (max 60 chars)", maxLength: 60 },
-                          description: { type: "string", description: "What they'll do (max 150 chars)", maxLength: 150 },
-                          basedOn: { 
-                            type: "array",
-                            items: { type: "string" },
-                            minItems: 2,
-                            maxItems: 3,
-                            description: "Exactly 2-3 specific data points from assessment"
-                          },
-                          impact: { type: "string", description: "Quantified outcome (max 80 chars)", maxLength: 80 },
-                          timeline: { type: "string", enum: ["30 days", "60 days", "90 days"] },
-                          growthMetric: { type: "string", description: "% or metric improvement (max 40 chars)", maxLength: 40 },
-                          scaleUpsDimensions: {
-                            type: "array",
-                            items: { 
-                              type: "string",
-                              enum: ["AI Fluency", "Delegation Mastery", "Strategic Vision", "Decision Agility", "Impact Orientation", "Change Leadership"]
-                            },
-                            minItems: 1,
-                            maxItems: 2
-                          }
+                          title: { type: "string", maxLength: 60 },
+                          impact: { type: "string", maxLength: 100 },
+                          timeToValue: { type: "string", enum: ["1 week", "2 weeks", "1 month"] }
                         },
-                        required: ["title", "description", "basedOn", "impact", "timeline", "growthMetric", "scaleUpsDimensions"]
-                      }
+                        required: ["title", "impact", "timeToValue"]
+                      },
+                      minItems: 3,
+                      maxItems: 4
                     }
                   },
-                  required: ["growthReadiness", "leadershipStage", "keyFocus", "roadmapInitiatives"]
+                  required: ["growthReadiness", "leadershipStage", "keyFocus", "quickWins"]
                 }
               }
             }],
             tool_choice: { type: "function", function: { name: "generate_personalized_insights" } }
-          }),
+          })
         });
-        
-        clearTimeout(timeoutId);
-        
-        if (response.ok) {
-          const data = await response.json();
-          const toolCall = data.choices[0]?.message?.tool_calls?.[0];
-          
+        clearTimeout(openaiTimeoutId);
+
+        if (openaiResponse.ok) {
+          const openaiData = await openaiResponse.json();
+          const toolCall = openaiData.choices?.[0]?.message?.tool_calls?.[0];
           if (toolCall?.function?.arguments) {
             personalizedInsights = JSON.parse(toolCall.function.arguments);
-            console.log(`✅ OpenAI succeeded on attempt ${attempt}`);
-            console.log('Token usage:', data.usage);
-            openaiSucceeded = true;
             generationSource = 'openai';
-            break;
-          }
-          
-          console.warn('⚠️ OpenAI returned 200 but no tool call, retrying...');
-          if (attempt < maxRetries) {
-            await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
-          }
-          continue;
-        }
-        
-        if ([502, 503, 504].includes(response.status)) {
-          console.warn(`⚠️ OpenAI infrastructure error ${response.status} on attempt ${attempt}`);
-          if (attempt < maxRetries) {
-            await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
-            continue;
+            console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
+            console.log('📊 Generation metrics:', {
+              source: 'openai',
+              durationMs: Date.now() - startTime,
+              success: true
+            });
           }
         }
-        
-        const errorText = await response.text();
-        console.error(`❌ OpenAI error ${response.status}: ${errorText}`);
-        break; // Continue to fallback instead of throwing
-        
-      } catch (error) {
-        clearTimeout(timeoutId);
-        if (error.name === 'AbortError') {
-          console.error(`❌ OpenAI timeout on attempt ${attempt}`);
-          if (attempt < maxRetries) {
-            await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
-            continue;
-          } else {
-            console.log('⚠️ All OpenAI attempts exhausted, continuing to fallback...');
-            break;
-          }
-        } else {
-          console.error(`❌ OpenAI exception on attempt ${attempt}:`, error);
-          if (attempt < maxRetries) {
-            await new Promise(r => setTimeout(r, retryDelays[attempt - 1]));
-            continue;
-          } else {
-            console.log('⚠️ All OpenAI attempts exhausted, continuing to fallback...');
-            break;
-          }
-        }
+      } catch (error: any) {
+        clearTimeout(openaiTimeoutId);
+        console.error('❌ OpenAI failed:', error.message);
       }
     }
 
-    // PLAN B: Gemini fallback if OpenAI exhausted
-    if (!openaiSucceeded) {
-      console.log('⚠️ OpenAI failed, attempting Gemini fallback (Plan B)...');
-      
-      const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-      if (!LOVABLE_API_KEY) {
-        console.error('❌ LOVABLE_API_KEY not configured');
-      } else {
-        try {
-          const geminiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model: 'google/gemini-2.5-flash',
-              max_tokens: 8000,
-              messages: [
-                { role: 'system', content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.' },
-                { role: 'user', content: prompt }
-              ],
-              tools: [{
-                type: "function",
-                function: {
-                  name: "generate_personalized_insights",
-                  description: "Generate personalized AI leadership insights",
-                  parameters: {
-                    type: "object",
-                    properties: {
-                      growthReadiness: {
-                        type: "object",
-                        properties: {
-                          level: { type: "string", enum: ["High", "Medium-High", "Medium", "Developing"] },
-                          preview: { type: "string" },
-                          details: { type: "string" }
-                        },
-                        required: ["level", "preview", "details"]
-                      },
-                      leadershipStage: {
-                        type: "object",
-                        properties: {
-                          stage: { type: "string", enum: ["Orchestrator", "Confident", "Aware", "Emerging"] },
-                          preview: { type: "string" },
-                          details: { type: "string" }
-                        },
-                        required: ["stage", "preview", "details"]
-                      },
-                      keyFocus: {
-                        type: "object",
-                        properties: {
-                          category: { type: "string", enum: ["Team Alignment", "Process Automation", "Strategic Planning", "Communication", "Decision Making", "Change Management", "Innovation Culture", "Data Strategy"] },
-                          preview: { type: "string" },
-                          details: { type: "string" }
-                        },
-                        required: ["category", "preview", "details"]
-                      },
-                      roadmapInitiatives: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            title: { type: "string" },
-                            description: { type: "string" },
-                            basedOn: { type: "array", items: { type: "string" } },
-                            impact: { type: "string" },
-                            timeline: { type: "string" },
-                            growthMetric: { type: "string" },
-                            scaleUpsDimensions: { type: "array", items: { type: "string" } }
-                          },
-                          required: ["title", "description", "basedOn", "impact", "timeline", "growthMetric", "scaleUpsDimensions"]
-                        }
-                      }
-                    },
-                    required: ["growthReadiness", "leadershipStage", "keyFocus", "roadmapInitiatives"]
-                  }
-                }
-              }],
-              tool_choice: { type: "function", function: { name: "generate_personalized_insights" } }
-            }),
-          });
-          
-          if (geminiResponse.ok) {
-            const geminiData = await geminiResponse.json();
-            const toolCall = geminiData.choices[0]?.message?.tool_calls?.[0];
-            
-            if (toolCall?.function?.arguments) {
-              personalizedInsights = JSON.parse(toolCall.function.arguments);
-              console.log('✅ Gemini fallback succeeded');
-              generationSource = 'gemini';
-            }
-          } else {
-            console.error('❌ Gemini failed:', geminiResponse.status);
-          }
-        } catch (geminiError) {
-          console.error('❌ Gemini exception:', geminiError);
-        }
-      }
-    }
-
-    // PLAN C: Template fallback
+    // ============= PLAN C: TEMPLATE FALLBACK =============
     if (!personalizedInsights) {
-      console.log('⚠️ Using template fallback (Plan C)...');
+      console.log('⚠️ All AI services failed, using template fallback');
+      generationSource = 'template';
       
-      const totalScore = Object.values(assessmentData).reduce((sum: number, val) => sum + (Number(val) || 0), 0);
-      const normalizedScore = Math.min(100, Math.round((totalScore / 18) * 100));
-      
-      let readiness = 'Medium';
-      let stage = 'Aware';
-      
-      if (normalizedScore >= 75) { readiness = 'High'; stage = 'Orchestrator'; }
-      else if (normalizedScore >= 50) { readiness = 'Medium-High'; stage = 'Confident'; }
-      else if (normalizedScore >= 25) { readiness = 'Medium'; stage = 'Aware'; }
-      else { readiness = 'Developing'; stage = 'Emerging'; }
-      
+      const avgScore = Math.round(
+        (assessmentData.businessContext + assessmentData.strategyAlignment + 
+         assessmentData.teamReadiness + assessmentData.aiLiteracy + 
+         assessmentData.changeManagement + assessmentData.trustGaps) / 6
+      );
+
+      const keyFocusMap: Record<string, string> = {
+        'Launching first pilots': 'Team Alignment',
+        'Building team literacy': 'Team Alignment', 
+        'Scaling existing use cases': 'Strategic Execution',
+        'Governance and compliance': 'Decision Quality',
+        'Change management': 'Team Alignment'
+      };
+
       personalizedInsights = {
         growthReadiness: {
-          level: readiness,
-          preview: `AI ready with ${normalizedScore}% score`,
-          details: `You scored ${normalizedScore}/100. Focus on practical quick wins to build momentum.`
+          level: avgScore >= 75 ? "High" : avgScore >= 60 ? "Medium-High" : avgScore >= 45 ? "Medium" : "Developing",
+          preview: `Score: ${avgScore}/100 - ${avgScore >= 60 ? 'Strong foundation' : 'Building momentum'}`,
+          details: `${contactData.fullName}'s ${avgScore}/100 score shows ${avgScore >= 60 ? 'strong readiness' : 'solid progress'} in ${contactData.primaryFocus}. Focus: ${deepProfileData.transformationGoal}`
         },
         leadershipStage: {
-          stage: stage,
-          preview: `${stage} stage leadership`,
-          details: `Strengthen your weakest dimensions to progress to the next tier.`
+          stage: avgScore >= 75 ? "Confident" : avgScore >= 60 ? "Aware" : "Emerging",
+          preview: avgScore >= 60 ? "Leading AI adoption" : "Building AI literacy",
+          details: `Ready to ${avgScore >= 60 ? 'scale AI adoption with team' : 'start pilot projects'}. Next: ${deepProfileData.delegateTasks[0]}`
         },
         keyFocus: {
-          category: contactData.primaryFocus || "Strategic Planning",
-          preview: "Start with high-impact basics",
-          details: `Focus on ${contactData.primaryFocus || 'planning'} improvements for immediate results.`
+          category: keyFocusMap[contactData.primaryFocus] || "Strategic Execution",
+          preview: `Optimize ${contactData.primaryFocus.toLowerCase()}`,
+          details: `Focus on ${deepProfileData.delegateTasks[0]} to address ${deepProfileData.biggestChallenge}`
         },
-        roadmapInitiatives: [
+        quickWins: [
           {
-            title: "AI Quick Win Pilot",
-            description: "Implement one high-impact AI tool in your workflow.",
-            basedOn: ["Your assessment", "Role needs"],
-            impact: "10-20% time savings",
-            timeline: "30 days",
-            growthMetric: "15% faster",
-            scaleUpsDimensions: ["AI Fluency"]
+            title: `Automate ${deepProfileData.delegateTasks[0]}`,
+            impact: `Save ${Math.min(deepProfileData.timeWaste, 30)}% of time currently spent on repetitive ${deepProfileData.timeWasteExamples}`,
+            timeToValue: "2 weeks"
           },
           {
-            title: "Team AI Training",
-            description: "Run training to elevate team AI understanding.",
-            basedOn: ["Team readiness", "Change needs"],
-            impact: "50% faster adoption",
-            timeline: "60 days",
-            growthMetric: "3x adoption speed",
-            scaleUpsDimensions: ["Change Leadership"]
+            title: `AI-powered ${contactData.primaryFocus} assistant`,
+            impact: `Streamline ${deepProfileData.stakeholders[0]} communications and ${deepProfileData.biggestChallenge}`,
+            timeToValue: "1 month"
           },
           {
-            title: "Strategic AI Plan",
-            description: "Develop roadmap aligning AI with business KPIs.",
-            basedOn: ["Business context", "Strategic gaps"],
-            impact: "Clear ROI framework",
-            timeline: "90 days",
-            growthMetric: "25% better decisions",
-            scaleUpsDimensions: ["Strategic Vision"]
+            title: "Team prompt library for common tasks",
+            impact: `Standardize ${deepProfileData.communicationStyle[0]} approach across ${contactData.companySize} team`,
+            timeToValue: "1 week"
           }
         ]
       };
       
-      generationSource = 'template';
-      console.log('✅ Template fallback generated');
+      console.log('📊 Generation metrics:', {
+        source: 'template',
+        durationMs: Date.now() - startTime,
+        success: true,
+        fallback: true
+      });
     }
 
-    console.log(`keyFocus category selected: "${personalizedInsights.keyFocus.category}"`);
-
     return new Response(
-      JSON.stringify({ personalizedInsights, generationSource }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        personalizedInsights, 
+        generationSource,
+        durationMs: Date.now() - startTime
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200 
+      }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in generate-personalized-insights:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500 
+      }
     );
   }
 });
 
 function buildPersonalizedPrompt(assessmentData: any, contactData: any, deepProfileData: any): string {
-  return `
-# EXECUTIVE PROFILE
-Name: ${contactData.fullName}
-Role: ${contactData.department}
-Company: ${contactData.companyName} (${contactData.companySize})
-Primary Focus: ${contactData.primaryFocus}
-Timeline: ${contactData.timeline}
+  return `Generate personalized AI leadership insights for ${contactData.fullName}, ${contactData.roleTitle} at ${contactData.companyName}.
 
-# ASSESSMENT RESPONSES
-Industry Impact: ${assessmentData.industry_impact}/3
-Business Acceleration: ${assessmentData.business_acceleration}/3  
-Team Alignment: ${assessmentData.team_alignment}/3
-External Positioning: ${assessmentData.external_positioning}/3
-KPI Connection: ${assessmentData.kpi_connection}/3
-Coaching Champions: ${assessmentData.coaching_champions}/3
+ASSESSMENT SCORES:
+${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}/100`).join('\n')}
 
-# DEEP WORK PROFILE
-Strategic Intent: ${deepProfileData?.strategicIntent || 'Not provided'}
-Current Bottleneck: ${deepProfileData?.currentBottleneck || 'Not provided'}
-Decision Authority: ${deepProfileData?.decisionAuthority || 'Not provided'}
-Experience Level: ${deepProfileData?.experienceLevel || 'Not provided'}
-Team Size: ${deepProfileData?.teamSize || 'Not provided'}
-Urgency: ${deepProfileData?.urgency || 'Not provided'}
+CONTEXT:
+- Primary Focus: ${contactData.primaryFocus}
+- Timeline: ${contactData.timeline}
+- Company Size: ${contactData.companySize}
+- Transformation Goal: ${deepProfileData.transformationGoal}
+- Time Waste: ${deepProfileData.timeWaste}% on ${deepProfileData.timeWasteExamples}
+- Top Delegation Priorities: ${deepProfileData.delegateTasks.join(', ')}
+- Communication Challenge: ${deepProfileData.biggestChallenge}
+- Key Stakeholders: ${deepProfileData.stakeholders.join(', ')}
 
-Generate personalized AI leadership insights based on this data.`;
+Generate:
+1. growthReadiness: Assess their AI adoption readiness (High/Medium-High/Medium/Developing) with 50-char preview and 120-char actionable detail
+2. leadershipStage: Determine stage (Orchestrator/Confident/Aware/Emerging) with 50-char preview and 120-char next step
+3. keyFocus: Pick ONE category (Team Alignment/Strategic Execution/Decision Quality/Time Leverage) most relevant to their ${contactData.primaryFocus} with 50-char preview and 120-char action
+4. quickWins: 3-4 specific, personalized quick wins with title (60 chars), impact (100 chars), and realistic timeToValue (1 week/2 weeks/1 month)
+
+Make every insight hyper-personalized to ${contactData.fullName}'s context. Be specific, quantitative, and actionable.`;
 }
