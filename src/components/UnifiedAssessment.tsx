@@ -272,46 +272,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       // Don't block user flow if this fails
     }
     
-    // Send email notification immediately with all assessment data
-    try {
-      console.log('📧 Sending contact notification email to krish@themindmaker.ai...');
-      
-      await invokeEdgeFunction('send-diagnostic-email', {
-        data: {
-          // Contact form data - map to expected fields
-          firstName: data.fullName.split(' ')[0],
-          lastName: data.fullName.split(' ').slice(1).join(' ') || data.fullName,
-          fullName: data.fullName,
-          email: data.email,
-          company: data.companyName,
-          companyName: data.companyName,
-          title: data.department,
-          roleTitle: data.department,
-          companySize: data.companySize,
-          primaryFocus: data.primaryFocus,
-          timeline: data.timeline,
-          consentToInsights: data.consentToInsights,
-          
-          // Assessment responses
-          industry_impact: assessmentData.industry_impact,
-          business_acceleration: assessmentData.business_acceleration,
-          team_alignment: assessmentData.team_alignment,
-          external_positioning: assessmentData.external_positioning,
-          kpi_connection: assessmentData.kpi_connection,
-          coaching_champions: assessmentData.coaching_champions,
-          
-          companyHash: companyHash
-        },
-        scores: { total: progressData.completedAnswers * 5 },
-        contactType: 'contact_form_submission',
-        sessionId: sessionId
-      }, { logPrefix: '📧' });
-      
-      console.log('✅ Contact notification email sent successfully');
-    } catch (error) {
-      console.error('❌ Error sending contact notification:', error);
-      // Don't block the user flow if email fails
-    }
+    // Email will be sent after deep profile completion with all data
     
     setCurrentScreen('deep-profile-optin');
   }, [setContactData, getAssessmentData, getProgressData, sessionId, setCompanyHash]);

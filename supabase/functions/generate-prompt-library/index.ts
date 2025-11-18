@@ -142,6 +142,9 @@ Return ONLY valid JSON, no markdown formatting.`;
             openaiSucceeded = true;
             break;
           }
+          // Empty content but 200 OK - continue to next attempt
+          console.warn('⚠️ OpenAI returned 200 but empty content, retrying...');
+          continue;
         }
         
         if ([502, 503, 504].includes(aiResponse.status)) {
