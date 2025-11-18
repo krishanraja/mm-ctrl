@@ -119,7 +119,8 @@ Return ONLY valid JSON, no markdown formatting.`;
       },
       body: JSON.stringify({
         model: 'gpt-5-2025-08-07',
-        max_completion_tokens: 2500,
+        max_completion_tokens: 4000,
+        response_format: { type: "json_object" },
         messages: [
           { role: 'system', content: 'You are an expert AI implementation strategist. Generate detailed, personalized AI prompt libraries in valid JSON format.' },
           { role: 'user', content: synthesisPro }
@@ -134,7 +135,27 @@ Return ONLY valid JSON, no markdown formatting.`;
     }
 
     const aiData = await aiResponse.json();
+    
+    // DIAGNOSTIC LOGGING: Inspect full API response structure
+    console.log('OpenAI API Response Structure:', {
+      model: aiData.model,
+      choices_count: aiData.choices?.length,
+      has_choices: !!aiData.choices,
+      first_choice_exists: !!aiData.choices?.[0],
+      has_message: !!aiData.choices?.[0]?.message,
+      has_content: !!aiData.choices?.[0]?.message?.content,
+      content_length: aiData.choices?.[0]?.message?.content?.length,
+      finish_reason: aiData.choices?.[0]?.finish_reason,
+      usage: aiData.usage
+    });
+    
     const generatedContent = aiData.choices[0]?.message?.content;
+    
+    if (!generatedContent) {
+      console.error('Full AI Response (no content):', JSON.stringify(aiData, null, 2));
+    } else {
+      console.log('Generated content length:', generatedContent.length);
+    }
 
     if (!generatedContent) {
       throw new Error('No content generated from AI');
