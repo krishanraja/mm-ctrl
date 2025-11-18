@@ -1104,6 +1104,7 @@ export type Database = {
       }
       index_participant_data: {
         Row: {
+          ai_learning_style: string | null
           assessment_type: string | null
           company_identifier_hash: string | null
           company_size: string | null
@@ -1112,6 +1113,7 @@ export type Database = {
           consent_flags: Json | null
           consent_updated_at: string | null
           created_at: string | null
+          deep_profile_data: Json | null
           dimension_scores: Json | null
           effective_sample_contribution: number | null
           id: string
@@ -1123,6 +1125,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          ai_learning_style?: string | null
           assessment_type?: string | null
           company_identifier_hash?: string | null
           company_size?: string | null
@@ -1131,6 +1134,7 @@ export type Database = {
           consent_flags?: Json | null
           consent_updated_at?: string | null
           created_at?: string | null
+          deep_profile_data?: Json | null
           dimension_scores?: Json | null
           effective_sample_contribution?: number | null
           id?: string
@@ -1142,6 +1146,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          ai_learning_style?: string | null
           assessment_type?: string | null
           company_identifier_hash?: string | null
           company_size?: string | null
@@ -1150,6 +1155,7 @@ export type Database = {
           consent_flags?: Json | null
           consent_updated_at?: string | null
           created_at?: string | null
+          deep_profile_data?: Json | null
           dimension_scores?: Json | null
           effective_sample_contribution?: number | null
           id?: string

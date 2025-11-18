@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Sparkles, Shield, TrendingUp } from 'lucide-react';
+import { Award, Sparkles, Shield, TrendingUp, Brain } from 'lucide-react';
 import AILeadershipBenchmark from './AILeadershipBenchmark';
 import { PromptLibraryResults } from './PromptLibraryResults';
 import { ConsentManager } from './ConsentManager';
@@ -10,6 +10,8 @@ import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
 import { calculateLeadershipScore, getLeadershipTier } from '@/utils/scoreCalculations';
 import { deriveLeadershipComparison } from '@/utils/scaleUpsMapping';
+import { determineAILearningStyle, getLearningStyleProfile, AILearningStyle } from '@/utils/aiLearningStyle';
+import { Badge } from '@/components/ui/badge';
 
 interface UnifiedResultsProps {
   assessmentData: any;
@@ -30,6 +32,7 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<string>("benchmark");
   const [leadershipComparison, setLeadershipComparison] = useState<any>(null);
+  const [learningStyle, setLearningStyle] = useState<AILearningStyle | null>(null);
 
   // Calculate score and tier from assessment data
   const userScore = useMemo(() => calculateLeadershipScore(assessmentData), [assessmentData]);
@@ -38,6 +41,15 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     return tier.name.toLowerCase().replace(/[^a-z]/g, '');
   }, [userScore]);
 
+  // Calculate learning style from deep profile
+  useEffect(() => {
+    if (deepProfileData) {
+      const style = determineAILearningStyle(deepProfileData);
+      setLearningStyle(style);
+      console.log('🎯 Learning style set in UnifiedResults:', style);
+    }
+  }, [deepProfileData]);
+
   // Calculate leadership comparison independently of tab state
   useEffect(() => {
     const comparison = deriveLeadershipComparison(assessmentData, deepProfileData);
@@ -45,9 +57,33 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     setLeadershipComparison(comparison);
   }, [assessmentData, deepProfileData]);
 
+  const showCohortFeature = deepProfileData !== null && learningStyle !== null;
+  const learningStyleProfile = learningStyle ? getLearningStyleProfile(learningStyle) : null;
+
   return (
     <div className="bg-background min-h-screen py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Learning Style Badge */}
+        {showCohortFeature && learningStyleProfile && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20">
+              <span className="text-3xl">{learningStyleProfile.icon}</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Brain className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-muted-foreground">Your AI Learning Style</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <h3 className="text-lg font-bold">{learningStyleProfile.label}</h3>
+                  <Badge variant="secondary" className="text-xs">
+                    {learningStyleProfile.strengths[0]}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-4 mb-12 gap-2 h-auto p-1.5 bg-white/80 dark:bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl shadow-primary/5 border border-primary/10">
             <TabsTrigger 
@@ -107,6 +143,8 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
                 companySize={contactData?.companySize}
                 role={contactData?.department}
                 leadershipComparison={leadershipComparison}
+                learningStyle={learningStyle}
+                showCohortToggle={showCohortFeature}
               />
               {contactData?.companyName && (
                 <MomentumDashboard companyHash={contactData.companyName} />

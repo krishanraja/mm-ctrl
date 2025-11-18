@@ -17,7 +17,9 @@ serve(async (req) => {
       userId, 
       assessmentData, 
       contactData,
-      consentFlags = {}
+      consentFlags = {},
+      deepProfileData = null,
+      learningStyle = null
     } = await req.json();
 
     console.log('📊 Populating index participant data for session:', sessionId);
@@ -95,7 +97,9 @@ serve(async (req) => {
         company_size: contactData.companySize || null,
         role_title: contactData.roleTitle || null,
         tier: tier,
-        assessment_type: 'ai_leadership_benchmark'
+        assessment_type: 'ai_leadership_benchmark',
+        ai_learning_style: learningStyle,
+        deep_profile_data: deepProfileData
       })
       .select()
       .single();
@@ -111,9 +115,10 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         participantId: participantData.id,
-        readinessScore,
+        readiness_score: readinessScore,
         tier,
-        companyHash
+        company_hash: companyHash,
+        ai_learning_style: learningStyle
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

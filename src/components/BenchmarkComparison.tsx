@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { TrendingUp, Target, Award } from 'lucide-react';
 import { PeerBubbleChart } from './PeerBubbleChart';
 import { LeadershipComparison } from '@/utils/scaleUpsMapping';
+import { CohortSelector } from './CohortSelector';
+import { AILearningStyle } from '@/utils/aiLearningStyle';
 
 interface BenchmarkData {
   avg_readiness_score: number;
@@ -26,6 +28,8 @@ interface BenchmarkComparisonProps {
   companySize?: string;
   role?: string;
   leadershipComparison?: LeadershipComparison | null;
+  learningStyle?: AILearningStyle | null;
+  showCohortToggle?: boolean;
 }
 
 export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
@@ -35,9 +39,12 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
   companySize,
   role,
   leadershipComparison,
+  learningStyle = null,
+  showCohortToggle = false,
 }) => {
   const [benchmark, setBenchmark] = useState<BenchmarkData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'cohort' | 'all'>('cohort');
 
   // Diagnostic logging
   useEffect(() => {
@@ -111,6 +118,15 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Cohort Selector */}
+      {showCohortToggle && learningStyle && (
+        <CohortSelector
+          currentView={viewMode}
+          learningStyle={learningStyle}
+          onToggle={setViewMode}
+        />
+      )}
+
       {/* Bubble Chart - Primary Feature */}
       {leadershipComparison && leadershipComparison.dimensions && leadershipComparison.dimensions.length > 0 ? (
         <PeerBubbleChart 
@@ -119,6 +135,8 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
             score: d.score,
             percentile: d.percentile || 50
           }))}
+          learningStyle={viewMode === 'cohort' ? learningStyle : null}
+          viewMode={viewMode}
         />
       ) : (
         <Card>
