@@ -381,7 +381,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: "AI Leadership Growth Benchmark <no-reply@fractionl.ai>",
+        from: "AI Leadership Growth Benchmark <no-reply@themindmaker.ai>",
         to: ["krish@themindmaker.ai"],
         subject: emailSubject,
       html: `

@@ -32,7 +32,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'gpt-5-2025-08-07',
-        max_completion_tokens: 2000,
+        max_completion_tokens: 8000,
         messages: [
           { 
             role: 'system', 
