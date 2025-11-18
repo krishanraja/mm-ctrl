@@ -1058,6 +1058,44 @@ export type Database = {
         }
         Relationships: []
       }
+      huddle_synthesis: {
+        Row: {
+          created_at: string | null
+          id: string
+          key_themes: Json | null
+          priority_actions: Json | null
+          synthesis_text: string
+          updated_at: string | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key_themes?: Json | null
+          priority_actions?: Json | null
+          synthesis_text: string
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key_themes?: Json | null
+          priority_actions?: Json | null
+          synthesis_text?: string
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "huddle_synthesis_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       index_participant_data: {
         Row: {
           assessment_type: string | null
