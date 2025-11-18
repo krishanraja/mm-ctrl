@@ -104,21 +104,22 @@ CRITICAL REQUIREMENTS:
 
 Return ONLY valid JSON, no markdown formatting.`;
 
-    // Call Lovable AI Gateway
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!lovableApiKey) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    // Call OpenAI API
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openaiApiKey) {
+      throw new Error('OPENAI_API_KEY not configured');
     }
 
-    console.log('Calling Lovable AI for synthesis...');
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    console.log('Calling OpenAI for synthesis...');
+    const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${lovableApiKey}`,
+        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'gpt-5-2025-08-07',
+        max_completion_tokens: 2500,
         messages: [
           { role: 'system', content: 'You are an expert AI implementation strategist. Generate detailed, personalized AI prompt libraries in valid JSON format.' },
           { role: 'user', content: synthesisPro }
@@ -182,7 +183,7 @@ Return ONLY valid JSON, no markdown formatting.`;
         recommended_projects: parsedLibrary.recommendedProjects || [],
         prompt_templates: parsedLibrary.promptTemplates || [],
         implementation_roadmap: parsedLibrary.implementationRoadmap || {},
-        generation_model: 'google/gemini-2.5-pro'
+        generation_model: 'gpt-5-2025-08-07'
       })
       .select()
       .single();
