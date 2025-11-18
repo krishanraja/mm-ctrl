@@ -289,6 +289,37 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
 
   const handleDeepProfileComplete = useCallback(async (profileData: DeepProfileData) => {
     setDeepProfileData(profileData);
+    
+    // Calculate AI Learning Style
+    const { determineAILearningStyle } = await import('@/utils/aiLearningStyle');
+    const learningStyle = determineAILearningStyle(profileData);
+    console.log('🎯 Determined learning style:', learningStyle);
+    
+    // Update index participant data with learning style and deep profile
+    try {
+      const assessmentData = getAssessmentData();
+      console.log('📊 Updating index with learning style...');
+      await invokeEdgeFunction('populate-index-participant', {
+        sessionId: sessionId,
+        userId: null,
+        assessmentData: assessmentData,
+        contactData: contactData,
+        deepProfileData: profileData,
+        learningStyle: learningStyle,
+        consentFlags: {
+          index_publication: contactData?.consentToInsights,
+          product_improvements: true,
+          case_study: false,
+          research_partnerships: false,
+          sales_outreach: false
+        }
+      }, { logPrefix: '📊' });
+      console.log('✅ Index updated with learning style');
+    } catch (error) {
+      console.error('❌ Error updating index with learning style:', error);
+      // Don't block user flow
+    }
+    
     setCurrentScreen('generating-library');
     setLibraryPhase('analyzing');
     setLibraryProgress(10);

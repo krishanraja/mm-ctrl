@@ -3,6 +3,8 @@ import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Users } from 'lucide-react';
+import { AILearningStyle } from '@/utils/aiLearningStyle';
+import { generateCohortPeers, CohortPeerData } from '@/utils/generateCohortPeers';
 
 interface PeerData {
   x: number; // Primary dimension score
@@ -19,6 +21,8 @@ interface PeerBubbleChartProps {
     score: number;
     percentile: number;
   }[];
+  learningStyle?: AILearningStyle | null;
+  viewMode?: 'cohort' | 'all';
 }
 
 // Generate realistic peer distribution ensuring 10% are ahead of user
@@ -98,7 +102,11 @@ const generatePeerData = (
   return peers;
 };
 
-export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({ userDimensions }) => {
+export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({ 
+  userDimensions, 
+  learningStyle = null,
+  viewMode = 'all' 
+}) => {
   const chartData = useMemo(() => {
     // Get top 3 dimensions by score
     const topDimensions = [...userDimensions]
@@ -109,13 +117,21 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({ userDimensions
 
     const [primary, secondary, tertiary] = topDimensions;
     
-    // Generate peer data
-    const peers = generatePeerData(
-      primary.score,
-      secondary.score,
-      tertiary.score,
-      500
-    );
+    // Generate peer data - use cohort-specific if in cohort view
+    const peers = (viewMode === 'cohort' && learningStyle)
+      ? generateCohortPeers(
+          primary.score,
+          secondary.score,
+          tertiary.score,
+          learningStyle,
+          500
+        )
+      : generatePeerData(
+          primary.score,
+          secondary.score,
+          tertiary.score,
+          500
+        );
 
     // Add user data point
     const userData: PeerData = {
