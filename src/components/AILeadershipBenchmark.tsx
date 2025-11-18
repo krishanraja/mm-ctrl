@@ -486,7 +486,19 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Save Profile Button - Fixed Top Right */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button 
+          onClick={() => setIsSaveProfileOpen(true)}
+          size="sm"
+          variant="outline"
+          className="gap-2 shadow-lg bg-background/95 backdrop-blur-sm hover:bg-background"
+        >
+          💾 Save Profile
+        </Button>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Header */}
         <div className="text-center mb-16 sm:mb-20 pt-5 sm:pt-7">
@@ -512,7 +524,7 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
           </p>
           
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+          <div className="flex justify-center gap-4 mt-6">
             <Button 
               onClick={handleExecutivePrimerBooking}
               size="lg"
@@ -520,14 +532,6 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
             >
               <Calendar className="h-4 w-4" />
               Book a Call
-            </Button>
-            <Button 
-              onClick={() => setIsSaveProfileOpen(true)}
-              size="lg"
-              variant="outline"
-              className="gap-2"
-            >
-              💾 Save Profile
             </Button>
           </div>
         </div>
