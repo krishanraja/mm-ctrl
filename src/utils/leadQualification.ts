@@ -15,13 +15,15 @@ export const calculateLeadPriority = (
 ): LeadPriority => {
   let score = 0;
 
-  // Role/Title scoring (0-30 points)
-  const roleTitle = contactData.roleTitle.toLowerCase();
-  if (roleTitle.includes('ceo') || roleTitle.includes('founder') || roleTitle.includes('chief')) {
-    score += 30;
-  } else if (roleTitle.includes('vp') || roleTitle.includes('director') || roleTitle.includes('head of')) {
+  // Department scoring - simplified since we use standardized values
+  const department = contactData.department.toLowerCase();
+  if (department.includes('revenue') || department.includes('operations')) {
+    score += 25;
+  } else if (department.includes('technology') || department.includes('product')) {
     score += 20;
-  } else if (roleTitle.includes('manager') || roleTitle.includes('lead')) {
+  } else if (department.includes('finance') || department.includes('marketing')) {
+    score += 15;
+  } else {
     score += 10;
   }
 
@@ -129,7 +131,7 @@ export const formatQualificationContext = (
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
         <div style="background: #f8fafc; padding: 12px; border-radius: 6px;">
           <p style="margin: 0; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase;">Seniority</p>
-          <p style="margin: 5px 0 0; color: #374151; font-weight: bold;">${contactData.roleTitle}</p>
+          <p style="margin: 5px 0 0; color: #374151; font-weight: bold;">${contactData.department}</p>
         </div>
         <div style="background: #f8fafc; padding: 12px; border-radius: 6px;">
           <p style="margin: 0; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase;">Company Scale</p>

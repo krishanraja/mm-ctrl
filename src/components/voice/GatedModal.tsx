@@ -19,6 +19,7 @@ import {
 import { CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { DEPARTMENTS } from '@/constants/departments';
 
 interface GatedModalProps {
   open: boolean;
@@ -148,15 +149,19 @@ export const GatedModal: React.FC<GatedModalProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="role">Role / Title</Label>
-            <Input
-              id="role"
-              type="text"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              placeholder="e.g., CEO, VP of Product"
-              required
-            />
+            <Label htmlFor="department">Department</Label>
+            <Select value={role} onValueChange={setRole} required>
+              <SelectTrigger id="department" className="bg-background">
+                <SelectValue placeholder="Select department" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover z-50">
+                {DEPARTMENTS.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

@@ -36,7 +36,7 @@ interface PromptLibraryResultsProps {
   };
   contactData: {
     fullName: string;
-    roleTitle: string;
+    department: string;
     companyName: string;
   };
 }

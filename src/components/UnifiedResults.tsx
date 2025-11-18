@@ -105,7 +105,7 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
                 userScore={userScore}
                 userTier={userTier}
                 companySize={contactData?.companySize}
-                role={contactData?.roleTitle}
+                role={contactData?.department}
                 leadershipComparison={leadershipComparison}
               />
               {contactData?.companyName && (

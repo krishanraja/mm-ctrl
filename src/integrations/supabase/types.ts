@@ -1648,6 +1648,41 @@ export type Database = {
           },
         ]
       }
+      provocation_reports: {
+        Row: {
+          ai_synthesis: string | null
+          created_at: string | null
+          id: string
+          report_data: Json
+          updated_at: string | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          ai_synthesis?: string | null
+          created_at?: string | null
+          id?: string
+          report_data: Json
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          ai_synthesis?: string | null
+          created_at?: string | null
+          id?: string
+          report_data?: Json
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provocation_reports_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referrals: {
         Row: {
           created_at: string | null
