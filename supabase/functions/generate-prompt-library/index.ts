@@ -126,8 +126,8 @@ Return ONLY valid JSON, no markdown formatting.`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-5-2025-08-07',
-          max_completion_tokens: 6000,
+          model: 'gpt-5-mini-2025-08-07',
+          max_completion_tokens: 4000,
           response_format: { type: "json_object" },
           messages: [
             { role: 'system', content: 'You are an expert AI implementation strategist. Generate detailed, personalized AI prompt libraries in valid JSON format.' },
@@ -221,7 +221,7 @@ Return ONLY valid JSON, no markdown formatting.`;
         recommended_projects: parsedLibrary.recommendedProjects || [],
         prompt_templates: parsedLibrary.promptTemplates || [],
         implementation_roadmap: parsedLibrary.implementationRoadmap || {},
-        generation_model: 'gpt-5-2025-08-07'
+        generation_model: 'gpt-5-mini-2025-08-07'
       })
       .select()
       .single();
