@@ -1874,6 +1874,7 @@ export type Database = {
           satisfaction_after: number | null
           satisfaction_before: number | null
           scenario_context: Json | null
+          selected_discussion_options: Json | null
           simulation_id: string
           simulation_name: string
           task_breakdown: Json | null
@@ -1904,6 +1905,7 @@ export type Database = {
           satisfaction_after?: number | null
           satisfaction_before?: number | null
           scenario_context?: Json | null
+          selected_discussion_options?: Json | null
           simulation_id: string
           simulation_name: string
           task_breakdown?: Json | null
@@ -1934,6 +1936,7 @@ export type Database = {
           satisfaction_after?: number | null
           satisfaction_before?: number | null
           scenario_context?: Json | null
+          selected_discussion_options?: Json | null
           simulation_id?: string
           simulation_name?: string
           task_breakdown?: Json | null
