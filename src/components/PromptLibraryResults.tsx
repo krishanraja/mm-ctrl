@@ -14,6 +14,7 @@ interface PromptLibraryResultsProps {
     executiveProfile: {
       summary: string;
       transformationOpportunity: string;
+      uniqueStrengths?: string[];
     };
     recommendedProjects: Array<{
       name: string;
@@ -74,47 +75,18 @@ export const PromptLibraryResults: React.FC<PromptLibraryResultsProps> = ({ libr
     }
   };
 
-  // Extract 2 concrete strengths with measurable outcomes
-  const synthesizeWorkingStyle = (summary: string): string[] => {
-    const traits: string[] = [];
-    const text = summary.toLowerCase();
-    
-    // Extract concrete measurable outcomes
-    if (text.includes('data') || text.includes('historical') || text.includes('analysis')) {
-      traits.push('Turns complex data into executive decisions in 1/3 the time');
+  // Get evidence-based strengths from AI-generated profile
+  const getUniqueStrengths = (): string[] => {
+    // Use AI-generated strengths if available
+    if (library.executiveProfile?.uniqueStrengths && Array.isArray(library.executiveProfile.uniqueStrengths)) {
+      return library.executiveProfile.uniqueStrengths.slice(0, 3);
     }
     
-    if (text.includes('communication') || text.includes('stakeholder') || text.includes('narrative')) {
-      traits.push('Translates technical requirements across 5+ departments');
-    }
-    
-    if (text.includes('strategy') || text.includes('planning') || text.includes('vision')) {
-      traits.push('Built 3-year roadmap adopted by C-suite in 2 weeks');
-    }
-    
-    if (text.includes('efficiency') || text.includes('streamline') || text.includes('automate')) {
-      traits.push('Cut reporting time from 8 hours to 45 minutes');
-    }
-    
-    if (text.includes('innovation') || text.includes('transform') || text.includes('creative')) {
-      traits.push('Launched pilot that saved $200K in first quarter');
-    }
-
-    if (text.includes('team') || text.includes('leadership') || text.includes('collaboration')) {
-      traits.push('Aligned 12-person team on new workflow in 2 sprints');
-    }
-    
-    // Fallback concrete examples
-    const fallbacks = [
-      'Reduced meeting prep time from 4 hours to 30 minutes',
-      'Delivered board presentation in 2 days vs typical 2 weeks'
+    // Graceful fallback if not available yet
+    return [
+      'Evidence-based strengths being generated from your profile data',
+      'Specific achievements derived from your transformation goals'
     ];
-    
-    while (traits.length < 2) {
-      traits.push(fallbacks.shift() || 'Accelerates decision-making cycles');
-    }
-    
-    return traits.slice(0, 2);
   };
 
   // Extract biggest opportunity - tight format
@@ -188,7 +160,7 @@ export const PromptLibraryResults: React.FC<PromptLibraryResultsProps> = ({ libr
     return points.slice(0, 2);
   };
 
-  const workingStyle = synthesizeWorkingStyle(library.executiveProfile.summary);
+  const workingStyle = getUniqueStrengths();
   const priorityProject = synthesizePriorityProject(library.recommendedProjects[0]);
   const differentiation = synthesizeDifferentiation(library.executiveProfile.transformationOpportunity);
   
