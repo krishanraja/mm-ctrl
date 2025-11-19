@@ -263,15 +263,15 @@ Return ONLY valid JSON, no markdown formatting.`;
 
         if (openaiResponse.ok) {
           const openaiData = await openaiResponse.json();
-        generatedContent = openaiData.choices[0].message.content;
-        generationModel = 'openai-gpt4.1';
-        console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
-        console.log('📊 Generation metrics:', {
-          source: 'openai-gpt4.1',
-          durationMs: Date.now() - startTime,
-          success: true
-        });
-      }
+          generatedContent = openaiData.choices[0].message.content;
+          generationModel = 'openai-gpt4.1';
+          console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
+          console.log('📊 Generation metrics:', {
+            source: 'openai-gpt4.1',
+            durationMs: Date.now() - startTime,
+            success: true
+          });
+        }
     } catch (error: any) {
       clearTimeout(openaiTimeoutId);
       console.error('❌ OpenAI failed:', error.message);
