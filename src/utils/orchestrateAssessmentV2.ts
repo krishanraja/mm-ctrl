@@ -92,6 +92,8 @@ export async function orchestrateAssessmentV2(
     const promptPromise = invokeEdgeFunction(
       'generate-prompt-library',
       {
+        assessmentId, // Pass assessmentId
+        sessionId, // Keep sessionId for backward compatibility
         assessmentData,
         contactData,
         profileData: deepProfileData, // Fixed parameter name
