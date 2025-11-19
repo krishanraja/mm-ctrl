@@ -32,10 +32,26 @@ export const MomentumDashboard: React.FC<MomentumDashboardProps> = ({ companyHas
           .from('adoption_momentum')
           .select('*')
           .eq('company_identifier_hash', companyHash)
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
-        setMomentum(data);
+        
+        // Handle no data gracefully
+        if (!data) {
+          setMomentum({
+            momentum_score: 0,
+            momentum_tier: 'experimenting',
+            total_assessments: 0,
+            total_unique_users: 0,
+            days_between_first_last: 0,
+            repeat_rate_capped: 0,
+            team_growth_sqrt: 0,
+            referral_quality_score: 0,
+            recency_decay: 0,
+          });
+        } else {
+          setMomentum(data);
+        }
       } catch (error) {
         console.error('Error fetching momentum:', error);
       } finally {
