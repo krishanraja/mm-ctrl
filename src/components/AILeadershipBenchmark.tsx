@@ -159,13 +159,15 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
   const score = calculateLeadershipScore(assessmentData);
   const leadershipProfile = getLeadershipTier(score);
 
-  // Load or generate personalized insights
+  // Load or generate personalized insights (with proper dependency management)
   useEffect(() => {
+    let isMounted = true;
+    
     const loadOrGenerateInsights = async () => {
       const effectiveSessionId = sessionId || contextSessionId;
       if (!effectiveSessionId) {
         console.error('No session ID available');
-        setIsLoadingInsights(false);
+        if (isMounted) setIsLoadingInsights(false);
         return;
       }
 
@@ -179,8 +181,10 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
 
         if (existingProfile?.implementation_roadmap) {
           const insights = existingProfile.implementation_roadmap as unknown as PersonalizedInsights;
-          setPersonalizedInsights(insights);
-          setIsLoadingInsights(false);
+          if (isMounted) {
+            setPersonalizedInsights(insights);
+            setIsLoadingInsights(false);
+          }
           return;
         }
 
@@ -195,43 +199,49 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
         });
 
         if (error) throw error;
-        if (data?.insights) {
+        if (data?.insights && isMounted) {
           setPersonalizedInsights(data.insights);
         }
       } catch (error) {
         console.error('Error loading insights:', error);
-        toast({
-          title: "Using fallback insights",
-          description: "Generated insights based on your responses",
-          variant: "default"
-        });
-        
-        // Fallback insights
-        setPersonalizedInsights({
-          growthReadiness: {
-            level: score >= 25 ? 'High' : score >= 19 ? 'Medium-High' : score >= 13 ? 'Medium' : 'Developing',
-            preview: 'Strong foundation for AI adoption',
-            details: 'Your organization shows readiness for strategic AI implementation.'
-          },
-          leadershipStage: {
-            stage: leadershipProfile.tier,
-            preview: leadershipProfile.tagline,
-            details: leadershipProfile.description
-          },
-          keyFocus: {
-            category: 'Strategic Implementation',
-            preview: 'Focus on structured AI adoption',
-            details: 'Prioritize pilot programs and team capability building.'
-          },
-          roadmapInitiatives: []
-        });
+        if (isMounted) {
+          toast({
+            title: "Using fallback insights",
+            description: "Generated insights based on your responses",
+            variant: "default"
+          });
+          
+          // Fallback insights
+          setPersonalizedInsights({
+            growthReadiness: {
+              level: score >= 25 ? 'High' : score >= 19 ? 'Medium-High' : score >= 13 ? 'Medium' : 'Developing',
+              preview: 'Strong foundation for AI adoption',
+              details: 'Your organization shows readiness for strategic AI implementation.'
+            },
+            leadershipStage: {
+              stage: leadershipProfile.tier,
+              preview: leadershipProfile.tagline,
+              details: leadershipProfile.description
+            },
+            keyFocus: {
+              category: 'Strategic Implementation',
+              preview: 'Focus on structured AI adoption',
+              details: 'Prioritize pilot programs and team capability building.'
+            },
+            roadmapInitiatives: []
+          });
+        }
       } finally {
-        setIsLoadingInsights(false);
+        if (isMounted) setIsLoadingInsights(false);
       }
     };
 
     loadOrGenerateInsights();
-  }, [sessionId, contextSessionId, assessmentData, contactData, deepProfileData, score, leadershipProfile, toast]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [sessionId, contextSessionId]); // Only depend on session IDs to prevent infinite loops
 
   // Derive leadership comparison
   useEffect(() => {

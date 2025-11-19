@@ -246,7 +246,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     setTimeout(() => {
       setInsightProgress(100);
       clearInterval(progressInterval);
-      setCurrentScreen('results');
+      setCurrentScreen('unified-results');
     }, 8000);
   }, [contactData, deepProfileData, sessionId, getAssessmentData]);
 
@@ -414,7 +414,30 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     try {
       const assessmentData = getAssessmentData();
       
-      // Add 30-second frontend timeout (aggressive)
+      // CRITICAL: Orchestrate v2 assessment BEFORE generating library
+      try {
+        const { orchestrateAssessmentV2 } = await import('@/utils/orchestrateAssessmentV2');
+        
+        const result = await orchestrateAssessmentV2(
+          contactData!,
+          assessmentData,
+          profileData,
+          sessionId!,
+          'quiz'
+        );
+
+        if (result.success && result.assessmentId) {
+          console.log('✅ V2 assessment orchestrated successfully:', result.assessmentId);
+          sessionStorage.setItem('v2_assessment_id', result.assessmentId);
+        } else {
+          console.error('❌ V2 orchestration failed:', result.error);
+        }
+      } catch (orchestrationError) {
+        console.error('❌ V2 orchestration error:', orchestrationError);
+        // Don't block library generation
+      }
+      
+      // NOW generate prompt library
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Request timed out after 30 seconds')), 30000);
       });
@@ -602,14 +625,22 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   }
 
   if (currentScreen === 'results' && contactData) {
-    const assessmentData = getAssessmentData();
+    // Check if v2 assessment exists, redirect to unified-results
+    const v2Id = sessionStorage.getItem('v2_assessment_id');
+    if (v2Id) {
+      console.log('🔄 Redirecting to unified-results with v2 ID:', v2Id);
+      setCurrentScreen('unified-results');
+      return null;
+    }
     
+    // Legacy fallback (should rarely happen)
+    const assessmentData = getAssessmentData();
     return (
       <AILeadershipBenchmark
         assessmentData={assessmentData}
         sessionId={sessionId}
         contactData={contactData}
-        deepProfileData={null} // Will be passed when deep profile is completed
+        deepProfileData={null}
         onBack={onBack}
       />
     );
