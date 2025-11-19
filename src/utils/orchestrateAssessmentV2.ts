@@ -127,20 +127,12 @@ export async function orchestrateAssessmentV2(
       { logPrefix: '📚', silent: false }
     );
     
-    const promptResult = await Promise.race([
-      promptPromise,
-      new Promise<any>((_, reject) => 
-        setTimeout(() => reject(new Error('Prompt library timeout after 20s')), 20000)
-      )
-    ]).catch(err => {
+    // Note: Prompt library stores directly to leader_prompt_sets table
+    // No need to wait for HTTP response - let it run in background
+    promptPromise.catch(err => {
       console.error('⚠️ Prompt library generation failed:', err);
-      return { data: null, error: err };
     });
-
-    if (!promptResult.error && promptResult.data?.promptSets) {
-      console.log('✅ Prompt library generated');
-      await storePromptSets(assessmentId, promptResult.data.promptSets);
-    }
+    console.log('📚 Prompt library generation started (running in background)');
 
     // 5c-5e: Run non-critical computations in parallel with timeout protection
     console.log('⚙️ Running parallel computations (risk signals, tensions, org scenarios)...');
@@ -280,25 +272,6 @@ async function storeFirstMoves(assessmentId: string, firstMoves: any) {
           content: move.content,
         });
     }
-  }
-}
-
-async function storePromptSets(assessmentId: string, promptSets: any[]) {
-  for (let i = 0; i < promptSets.length; i++) {
-    const set = promptSets[i];
-    await supabase
-      .from('leader_prompt_sets')
-      .insert({
-        assessment_id: assessmentId,
-        category_key: set.category_key || `category_${i}`,
-        title: set.title,
-        description: set.description,
-        what_its_for: set.what_its_for,
-        when_to_use: set.when_to_use,
-        how_to_use: set.how_to_use,
-        prompts_json: set.prompts || [],
-        priority_rank: i + 1,
-      });
   }
 }
 
