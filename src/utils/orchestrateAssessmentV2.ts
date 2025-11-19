@@ -256,14 +256,33 @@ async function storeDimensionScores(assessmentId: string, assessmentData: any) {
 }
 
 async function storeFirstMoves(assessmentId: string, firstMoves: any) {
-  const moves = [
-    { move_number: 1, content: firstMoves.move1 },
-    { move_number: 2, content: firstMoves.move2 },
-    { move_number: 3, content: firstMoves.move3 },
-  ];
+  console.log('📝 Storing first moves for assessment:', assessmentId);
+  console.log('📊 First moves data:', firstMoves);
+  
+  // Handle both possible structures: { move1, move2, move3 } or array format
+  let moves;
+  
+  if (Array.isArray(firstMoves)) {
+    // Array format
+    moves = firstMoves.map((content, index) => ({
+      move_number: index + 1,
+      content: content
+    }));
+  } else if (firstMoves && typeof firstMoves === 'object') {
+    // Object format { move1, move2, move3 }
+    moves = [
+      { move_number: 1, content: firstMoves.move1 },
+      { move_number: 2, content: firstMoves.move2 },
+      { move_number: 3, content: firstMoves.move3 },
+    ];
+  } else {
+    console.error('❌ Invalid first moves format:', firstMoves);
+    return;
+  }
 
   for (const move of moves) {
-    if (move.content) {
+    if (move.content && typeof move.content === 'string' && move.content.trim()) {
+      console.log(`✅ Inserting move ${move.move_number}:`, move.content.substring(0, 50) + '...');
       await supabase
         .from('leader_first_moves')
         .insert({
@@ -271,8 +290,12 @@ async function storeFirstMoves(assessmentId: string, firstMoves: any) {
           move_number: move.move_number,
           content: move.content,
         });
+    } else {
+      console.warn(`⚠️ Skipping empty move ${move.move_number}`);
     }
   }
+  
+  console.log('✅ First moves stored successfully');
 }
 
 function convertToDimensionScores(assessmentData: any): any {
