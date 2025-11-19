@@ -237,7 +237,10 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
 
       {/* First 3 Moves */}
       <FirstMovesCard 
-        moves={results.firstMoves}
+        moves={results.firstMoves.map(m => ({
+          moveNumber: m.move_number,
+          content: m.content,
+        }))}
         showAll={results.hasFullDiagnostic}
       />
 
