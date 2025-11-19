@@ -12,7 +12,7 @@ interface InviteColleaguesCardProps {
 
 export const InviteColleaguesCard = React.memo<InviteColleaguesCardProps>(({ 
   companyName,
-  assessmentUrl = window.location.origin
+  assessmentUrl = 'https://teams.themindmaker.ai'
 }) => {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();

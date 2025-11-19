@@ -462,10 +462,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           console.log('✅ V2 assessment orchestrated successfully:', result.assessmentId);
           sessionStorage.setItem('v2_assessment_id', result.assessmentId);
           
-          // Poll for background prompt generation to complete (up to 45 seconds)
+          // Poll for background prompt generation to complete (up to 15 seconds)
           let promptsLoaded = false;
           let pollAttempts = 0;
-          const maxPollAttempts = 22; // 22 * 2s = 44s
+          const maxPollAttempts = 7; // 7 * 2s = 14s
           
           while (!promptsLoaded && pollAttempts < maxPollAttempts) {
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -500,7 +500,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           }
           
           if (!promptsLoaded) {
-            console.warn('⚠️ Prompts not ready after 45s, showing results anyway');
+            console.warn('⚠️ Prompts not ready after 15s, showing results anyway');
           }
           
           clearInterval(progressInterval);

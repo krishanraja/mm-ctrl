@@ -218,7 +218,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
               Peer Comparison Matrix
             </CardTitle>
             <CardDescription>
-              Your position among {stats?.totalPeers.toLocaleString()} AI leaders
+              Your position among {Math.round(stats?.totalPeers).toLocaleString()} AI leaders
             </CardDescription>
           </div>
           {stats && (

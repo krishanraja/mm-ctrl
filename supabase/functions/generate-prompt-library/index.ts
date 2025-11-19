@@ -168,10 +168,10 @@ Return ONLY valid JSON, no markdown formatting.`;
     let generatedContent;
     let generationModel = '';
 
-    // ============= PLAN A: OPENAI GPT-4O-MINI (10s timeout) =============
+    // ============= PLAN A: OPENAI GPT-4O-MINI (5s timeout) =============
     console.log('🔄 Plan A: Calling OpenAI gpt-4o-mini...');
     const openaiController = new AbortController();
-    const openaiTimeoutId = setTimeout(() => openaiController.abort(), 10000);
+    const openaiTimeoutId = setTimeout(() => openaiController.abort(), 5000);
 
     try {
       const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -209,11 +209,11 @@ Return ONLY valid JSON, no markdown formatting.`;
       console.error('❌ OpenAI failed:', error.message);
     }
 
-    // ============= PLAN B: LOVABLE AI GEMINI FALLBACK (12s timeout) =============
+    // ============= PLAN B: LOVABLE AI GEMINI FALLBACK (6s timeout) =============
     if (!generatedContent && lovableApiKey) {
       console.log('⚠️ OpenAI failed, trying Lovable AI Gemini...');
       const lovableController = new AbortController();
-      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 12000);
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 6000);
 
       try {
         const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
