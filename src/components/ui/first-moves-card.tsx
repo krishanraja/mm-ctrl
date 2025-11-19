@@ -17,8 +17,10 @@ export const FirstMovesCard = React.memo<FirstMovesCardProps>(({
   moves, 
   showAll = false,
 }) => {
-  const displayMoves = showAll ? moves : moves.slice(0, 1);
-  const lockedMoves = showAll ? [] : moves.slice(1);
+  // Handle empty moves with fallback
+  const hasMoves = moves && moves.length > 0;
+  const displayMoves = hasMoves ? (showAll ? moves : moves.slice(0, 1)) : [];
+  const lockedMoves = hasMoves ? (showAll ? [] : moves.slice(1)) : [];
 
   return (
     <Card>
@@ -33,6 +35,13 @@ export const FirstMovesCard = React.memo<FirstMovesCardProps>(({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!hasMoves && (
+          <div className="text-center py-4 text-muted-foreground">
+            <p className="text-sm">Your personalized action plan is being generated...</p>
+            <p className="text-xs mt-2">This usually takes a few moments. Refresh the page if this persists.</p>
+          </div>
+        )}
+        
         {displayMoves.map((move) => (
           <div key={move.moveNumber} className="flex gap-4">
             <div className="flex-shrink-0">

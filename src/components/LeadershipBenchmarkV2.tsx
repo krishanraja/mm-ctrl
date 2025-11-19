@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { RiskSignalCard } from '@/components/ui/risk-signal-card';
 import { OrgScenarioCard } from '@/components/ui/org-scenario-card';
 import { FirstMovesCard } from '@/components/ui/first-moves-card';
+import { QuickWinsCard } from '@/components/ui/quick-wins-card';
 import { AILiteracyRealities } from '@/components/ui/ai-literacy-realities';
 import { TensionBadge } from '@/components/ui/tension-badge';
 import { UpgradeModal } from '@/components/ui/upgrade-modal';
@@ -262,6 +263,11 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
         </CardContent>
       </Card>
 
+      {/* Quick Wins Section - Free Tier Value */}
+      {generateQuickWins(results).length > 0 && (
+        <QuickWinsCard wins={generateQuickWins(results)} />
+      )}
+
       {/* Risk Signals & Execution Gaps */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Risk Signals & Execution Gaps</h3>
@@ -383,3 +389,95 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
     </div>
   );
 };
+
+// Generate quick wins from available data
+function generateQuickWins(results: AggregatedLeaderResults): Array<{ title: string; impact: string; timeToValue: string }> {
+  const wins: Array<{ title: string; impact: string; timeToValue: string }> = [];
+
+  // Win 1: From first move if available
+  if (results.firstMoves.length > 0) {
+    const firstMove = results.firstMoves[0];
+    wins.push({
+      title: `Priority Action: ${firstMove.content.split('.')[0]}`,
+      impact: firstMove.content,
+      timeToValue: '1-2 weeks'
+    });
+  }
+
+  // Win 2: From lowest dimension score
+  const sortedDimensions = [...results.dimensionScores].sort((a, b) => a.score_numeric - b.score_numeric);
+  if (sortedDimensions.length > 0) {
+    const lowestDim = sortedDimensions[0];
+    const dimLabel = dimensionLabels[lowestDim.dimension_key] || lowestDim.dimension_key;
+    
+    const improvementMap: Record<string, { title: string; impact: string }> = {
+      ai_fluency: {
+        title: 'Launch Weekly AI Tool Training',
+        impact: `Your ${dimLabel} score (${lowestDim.score_numeric}/100) suggests starting with hands-on practice. Dedicate 30 minutes weekly to experiment with AI tools in your actual workflow.`
+      },
+      decision_velocity: {
+        title: 'Create AI-Assisted Decision Framework',
+        impact: `With ${dimLabel} at ${lowestDim.score_numeric}/100, use AI to pre-analyze options and surface key tradeoffs before meetings, cutting decision time by 40%.`
+      },
+      experimentation_cadence: {
+        title: 'Start a Small AI Pilot This Month',
+        impact: `Your ${dimLabel} score (${lowestDim.score_numeric}/100) shows opportunity. Pick one repetitive process, test an AI solution for 2 weeks, and measure time saved.`
+      },
+      delegation_augmentation: {
+        title: 'Automate Your Top Repetitive Task',
+        impact: `${dimLabel} at ${lowestDim.score_numeric}/100 indicates delegation gaps. Identify your most time-consuming repetitive task and explore AI automation to reclaim 5-8 hours weekly.`
+      },
+      alignment_communication: {
+        title: 'Build Stakeholder Communication Templates',
+        impact: `With ${dimLabel} at ${lowestDim.score_numeric}/100, create AI-powered templates for common stakeholder updates to ensure consistent, clear messaging.`
+      },
+      risk_governance: {
+        title: 'Draft AI Usage Guidelines',
+        impact: `Your ${dimLabel} score (${lowestDim.score_numeric}/100) suggests establishing basic AI usage principles now, before risks emerge. Start with a one-page policy.`
+      }
+    };
+
+    const improvement = improvementMap[lowestDim.dimension_key];
+    if (improvement) {
+      wins.push({
+        title: improvement.title,
+        impact: improvement.impact,
+        timeToValue: '2-3 weeks'
+      });
+    }
+  }
+
+  // Win 3: From risk signal if available
+  if (results.riskSignals.length > 0) {
+    const topRisk = results.riskSignals[0];
+    const riskWinMap: Record<string, { title: string; impact: string }> = {
+      skills_gap: {
+        title: 'Invest in Targeted AI Upskilling',
+        impact: 'Address immediate capability gaps with focused training on the tools most relevant to your role and industry.'
+      },
+      shadow_ai: {
+        title: 'Establish Team AI Tool Inventory',
+        impact: 'Uncover what tools your team is already using informally, then standardize on secure, approved solutions.'
+      },
+      roi_leakage: {
+        title: 'Track AI Time Savings Weekly',
+        impact: 'Start measuring time saved on AI-assisted tasks to build your ROI case and identify high-value use cases.'
+      },
+      decision_friction: {
+        title: 'Map Decision Bottlenecks',
+        impact: 'Document where decisions stall in your workflow, then test AI tools to accelerate analysis and consensus-building.'
+      }
+    };
+
+    const riskWin = riskWinMap[topRisk.risk_key as keyof typeof riskWinMap];
+    if (riskWin && wins.length < 3) {
+      wins.push({
+        title: riskWin.title,
+        impact: riskWin.impact,
+        timeToValue: '1 month'
+      });
+    }
+  }
+
+  return wins.slice(0, 3); // Max 3 quick wins
+}
