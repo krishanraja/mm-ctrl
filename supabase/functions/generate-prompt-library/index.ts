@@ -318,6 +318,7 @@ Return ONLY valid JSON, no markdown formatting.`;
           },
           body: JSON.stringify({
             contents: [{
+              role: 'user',
               parts: [{
                 text: synthesisPro
               }]
