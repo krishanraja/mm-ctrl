@@ -461,64 +461,69 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         if (result.success && result.assessmentId) {
           console.log('✅ V2 assessment orchestrated successfully:', result.assessmentId);
           sessionStorage.setItem('v2_assessment_id', result.assessmentId);
+          
+          // Wait for background prompt generation to complete
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          
+          // Fetch prompts from database (same pattern as startInsightGeneration)
+          const { data: promptSets, error: promptError } = await supabase
+            .from('leader_prompt_sets')
+            .select('*')
+            .eq('assessment_id', result.assessmentId)
+            .order('priority_rank', { ascending: true });
+          
+          if (!promptError && promptSets && promptSets.length > 0) {
+            const library = {
+              promptSets: promptSets.map(set => ({
+                category: set.category_key,
+                title: set.title,
+                description: set.description || '',
+                whatItsFor: set.what_its_for || '',
+                whenToUse: set.when_to_use || '',
+                howToUse: set.how_to_use || '',
+                prompts: set.prompts_json || []
+              }))
+            };
+            setPromptLibrary(library);
+            console.log('✅ Prompts loaded from database:', promptSets.length);
+          } else {
+            console.warn('⚠️ No prompts found yet for assessment:', result.assessmentId);
+          }
+          
+          clearInterval(progressInterval);
+          setLibraryProgress(100);
+          
+          setTimeout(() => {
+            setCurrentScreen('unified-results');
+            toast({
+              title: "AI Command Center Ready!",
+              description: "Your personalized assessment is complete",
+            });
+          }, 500);
         } else {
           console.error('❌ V2 orchestration failed:', result.error);
+          throw new Error('Orchestration failed');
         }
       } catch (orchestrationError) {
         console.error('❌ V2 orchestration error:', orchestrationError);
-        // Don't block library generation
+        clearInterval(progressInterval);
+        
+        toast({
+          title: "Generation Error",
+          description: "Failed to complete assessment. Showing basic results instead.",
+          variant: "destructive",
+        });
+        startInsightGeneration();
       }
-      
-      // NOW generate prompt library
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Request timed out after 30 seconds')), 30000);
-      });
-      
-      const generatePromise = invokeEdgeFunction('generate-prompt-library', {
-        sessionId: sessionId,
-        userId: null,
-        contactData: contactData,
-        assessmentData: v2FormattedData,
-        profileData: profileData
-      }, { logPrefix: '✨' });
-      
-      const { data, error } = await Promise.race([
-        generatePromise,
-        timeoutPromise
-      ]) as any;
-
-      if (error) throw error;
-
-      clearInterval(progressInterval);
-      setLibraryProgress(100);
-      
-      // Wait for animation to complete
-      setTimeout(() => {
-        if (data) {
-          setPromptLibrary(data.library);
-        }
-        setCurrentScreen('unified-results');
-      }, 500);
-      
-      toast({
-        title: "AI Command Center Ready!",
-        description: "Your personalized prompt library has been generated",
-      });
     } catch (error: any) {
-      console.error('Error generating prompt library:', error);
+      console.error('Error in handleDeepProfileComplete:', error);
       clearInterval(progressInterval);
       
-      // Show more specific error message
-      const errorMessage = error?.message?.includes('timed out') 
-        ? 'Generation took too long. Please try again.'
-        : 'Failed to generate prompt library. Showing assessment results instead.';
-      
       toast({
-        title: "Generation Error",
-        description: errorMessage,
+        title: "Unexpected Error",
+        description: "Something went wrong. Please try again.",
         variant: "destructive",
       });
-      startInsightGeneration();
     }
   }, [setDeepProfileData, getAssessmentData, getProgressData, contactData, sessionId, setPromptLibrary, toast, startInsightGeneration]);
 
