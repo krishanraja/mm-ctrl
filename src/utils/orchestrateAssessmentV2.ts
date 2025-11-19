@@ -1,5 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import { invokeEdgeFunction } from './edgeFunctionClient';
+import { 
+  applyBehavioralAdjustments, 
+  calculateExecutionGaps 
+} from './behavioralScoring';
 
 export interface AssessmentOrchestrationResult {
   success: boolean;
@@ -31,9 +35,26 @@ export async function orchestrateAssessmentV2(
     console.log('📊 Assessment data received:', assessmentData);
     console.log('📊 Data types:', Object.entries(assessmentData).map(([k,v]) => `${k}: ${typeof v}`));
 
-    // Step 1: Calculate benchmark score and tier
-    const benchmarkScore = calculateBenchmarkScore(assessmentData);
-    console.log('📊 Calculated benchmark score:', benchmarkScore);
+    // Step 1: Calculate benchmark score and tier with behavioral adjustments
+    const baseScores = {
+      aiFluencyScore: assessmentData.aiFluencyScore || 0,
+      decisionVelocityScore: assessmentData.decisionVelocityScore || 0,
+      experimentationScore: assessmentData.experimentationScore || 0,
+      delegationScore: assessmentData.delegationScore || 0,
+      alignmentScore: assessmentData.alignmentScore || 0,
+      riskGovernanceScore: assessmentData.riskGovernanceScore || 0,
+    };
+    
+    const adjustedScores = applyBehavioralAdjustments(baseScores, deepProfileData);
+    const executionGaps = calculateExecutionGaps(baseScores, adjustedScores, deepProfileData);
+    
+    // Use adjusted scores for final assessment
+    const enhancedAssessmentData = { ...assessmentData, ...adjustedScores };
+    
+    const benchmarkScore = calculateBenchmarkScore(enhancedAssessmentData);
+    console.log('📊 Base score:', calculateBenchmarkScore(assessmentData));
+    console.log('📊 Adjusted score:', benchmarkScore);
+    console.log('📊 Execution gaps:', executionGaps);
     const benchmarkTier = calculateBenchmarkTier(benchmarkScore);
 
     // Step 3: Create leader_assessment via edge function (bypasses RLS)
@@ -60,8 +81,13 @@ export async function orchestrateAssessmentV2(
     const leaderId = assessmentResult.leaderId;
     console.log('✅ Assessment record created via edge function:', assessmentId);
 
-    // Step 4: Store dimension scores
-    await storeDimensionScores(assessmentId, assessmentData);
+    // Step 4: Store dimension scores (with adjusted values)
+    await storeDimensionScores(assessmentId, enhancedAssessmentData);
+    
+    // Step 4b: Store execution gaps as insights
+    if (executionGaps.length > 0) {
+      await storeExecutionGaps(assessmentId, executionGaps);
+    }
 
     // Step 5: Call edge functions sequentially
     console.log('🔄 Calling edge functions...');
@@ -285,4 +311,18 @@ function convertToDimensionScores(assessmentData: any): any {
     alignment_communication: assessmentData.alignmentScore || 0,
     risk_governance: assessmentData.riskGovernanceScore || 0,
   };
+}
+
+async function storeExecutionGaps(assessmentId: string, gaps: any[]) {
+  for (const gap of gaps) {
+    await supabase
+      .from('leader_risk_signals')
+      .insert({
+        assessment_id: assessmentId,
+        risk_key: `execution_gap_${gap.dimension.toLowerCase().replace(/\s+/g, '_')}`,
+        level: Math.abs(gap.gapSize) > 15 ? 'high' : 'medium',
+        description: `${gap.insight}\n\n${gap.recommendation}`,
+        priority_rank: Math.abs(gap.gapSize),
+      });
+  }
 }

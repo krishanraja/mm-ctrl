@@ -68,6 +68,17 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     {user.email}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      const historySection = document.getElementById('assessment-history');
+                      if (historySection) {
+                        historySection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    My Assessments
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={onSignOut} className="text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out

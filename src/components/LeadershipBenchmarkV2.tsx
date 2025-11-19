@@ -262,19 +262,32 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
         </CardContent>
       </Card>
 
-      {/* Risk Signals */}
+      {/* Risk Signals & Execution Gaps */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Risk Signals</h3>
+        <h3 className="text-lg font-semibold">Risk Signals & Execution Gaps</h3>
         <div className="grid gap-4">
-          {results.riskSignals.map((risk, index) => (
-            <RiskSignalCard
-              key={risk.risk_key}
-              riskKey={risk.risk_key}
-              level={risk.level}
-              description={risk.description}
-              isLocked={isContentLocked(results.hasFullDiagnostic, 'risk', index)}
-            />
-          ))}
+          {results.riskSignals
+            .sort((a, b) => {
+              // Show execution gaps first
+              const aIsGap = a.risk_key.startsWith('execution_gap_');
+              const bIsGap = b.risk_key.startsWith('execution_gap_');
+              if (aIsGap && !bIsGap) return -1;
+              if (!aIsGap && bIsGap) return 1;
+              return (b.priority_rank || 0) - (a.priority_rank || 0);
+            })
+            .map((risk, index) => (
+              <RiskSignalCard
+                key={risk.risk_key}
+                riskKey={risk.risk_key}
+                level={risk.level}
+                description={
+                  risk.risk_key.startsWith('execution_gap_')
+                    ? `🎯 **Execution Gap Detected**\n\n${risk.description}`
+                    : risk.description
+                }
+                isLocked={isContentLocked(results.hasFullDiagnostic, 'risk', index)}
+              />
+            ))}
           {!results.hasFullDiagnostic && results.riskSignals.length < 4 && (
             Array.from({ length: 3 - results.riskSignals.length }).map((_, i) => (
               <RiskSignalCard
