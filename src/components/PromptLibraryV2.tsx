@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { EnhancedPromptCard } from '@/components/ui/enhanced-prompt-card';
+import { ExecutiveSummaryCard } from '@/components/ui/executive-summary-card';
 import { aggregateLeaderResults, isContentLocked } from '@/utils/aggregateLeaderResults';
-import { Loader2, Copy, CheckCircle } from 'lucide-react';
+import { Loader2, Copy, CheckCircle, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ContactData } from './ContactCollectionForm';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PromptLibraryV2Props {
   assessmentId: string;
@@ -17,6 +20,7 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
   contactData,
 }) => {
   const [results, setResults] = useState<any>(null);
+  const [enrichedData, setEnrichedData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [copyingAll, setCopyingAll] = useState(false);
   const { toast } = useToast();
@@ -29,6 +33,18 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
     setIsLoading(true);
     const data = await aggregateLeaderResults(assessmentId, true);
     setResults(data);
+    
+    const { data: profileData } = await supabase
+      .from('prompt_library_profiles')
+      .select('*')
+      .eq('session_id', assessmentId)
+      .single();
+    
+    if (profileData?.executive_profile) {
+      setEnrichedData({
+        personalizedInsights: profileData.executive_profile
+      });
+    }
     setIsLoading(false);
   };
 
@@ -64,7 +80,10 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+          <p className="text-sm text-muted-foreground">Crafting your executive AI command center...</p>
+        </div>
       </div>
     );
   }
@@ -73,16 +92,30 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
     return (
       <Card>
         <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">No prompts available yet</p>
+          <Sparkles className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-muted-foreground">Your prompts are still being generated...</p>
+          <p className="text-sm text-muted-foreground mt-2">This usually takes 30-45 seconds. Please refresh in a moment.</p>
         </CardContent>
       </Card>
     );
   }
 
+  const hasEnrichedData = enrichedData?.personalizedInsights;
+
   return (
-    <div className="space-y-6">
-      {/* Executive Summary */}
-      <Card>
+    <ScrollArea className="h-[calc(100vh-12rem)]">
+      <div className="space-y-6 pr-4">
+        {/* Executive Leadership Edge */}
+        {hasEnrichedData && enrichedData.personalizedInsights.yourEdge && (
+          <ExecutiveSummaryCard
+            edge={enrichedData.personalizedInsights.yourEdge}
+            risk={enrichedData.personalizedInsights.yourRisk}
+            nextMove={enrichedData.personalizedInsights.yourNextMove}
+          />
+        )}
+
+        {/* AI Command Center */}
+        <Card>
         <CardHeader>
           <CardTitle>Your AI Command Center</CardTitle>
         </CardHeader>
@@ -147,6 +180,7 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </ScrollArea>
   );
 };

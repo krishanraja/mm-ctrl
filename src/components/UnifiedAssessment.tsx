@@ -462,32 +462,45 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           console.log('✅ V2 assessment orchestrated successfully:', result.assessmentId);
           sessionStorage.setItem('v2_assessment_id', result.assessmentId);
           
-          // Wait for background prompt generation to complete
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          // Poll for background prompt generation to complete (up to 45 seconds)
+          let promptsLoaded = false;
+          let pollAttempts = 0;
+          const maxPollAttempts = 22; // 22 * 2s = 44s
           
-          // Fetch prompts from database (same pattern as startInsightGeneration)
-          const { data: promptSets, error: promptError } = await supabase
-            .from('leader_prompt_sets')
-            .select('*')
-            .eq('assessment_id', result.assessmentId)
-            .order('priority_rank', { ascending: true });
+          while (!promptsLoaded && pollAttempts < maxPollAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            pollAttempts++;
+            
+            const { data: promptSets, error: promptError } = await supabase
+              .from('leader_prompt_sets')
+              .select('*')
+              .eq('assessment_id', result.assessmentId)
+              .order('priority_rank', { ascending: true });
+            
+            if (!promptError && promptSets && promptSets.length > 0) {
+              const library = {
+                promptSets: promptSets.map(set => ({
+                  category: set.category_key,
+                  title: set.title,
+                  description: set.description || '',
+                  whatItsFor: set.what_its_for || '',
+                  whenToUse: set.when_to_use || '',
+                  howToUse: set.how_to_use || '',
+                  prompts: set.prompts_json || []
+                }))
+              };
+              setPromptLibrary(library);
+              promptsLoaded = true;
+              console.log('✅ Prompts loaded from database:', promptSets.length);
+            } else {
+              // Update progress bar during polling
+              setLibraryProgress(Math.min(95, 50 + (pollAttempts * 2)));
+              console.log(`⏳ Poll attempt ${pollAttempts}/${maxPollAttempts} - waiting for prompts...`);
+            }
+          }
           
-          if (!promptError && promptSets && promptSets.length > 0) {
-            const library = {
-              promptSets: promptSets.map(set => ({
-                category: set.category_key,
-                title: set.title,
-                description: set.description || '',
-                whatItsFor: set.what_its_for || '',
-                whenToUse: set.when_to_use || '',
-                howToUse: set.how_to_use || '',
-                prompts: set.prompts_json || []
-              }))
-            };
-            setPromptLibrary(library);
-            console.log('✅ Prompts loaded from database:', promptSets.length);
-          } else {
-            console.warn('⚠️ No prompts found yet for assessment:', result.assessmentId);
+          if (!promptsLoaded) {
+            console.warn('⚠️ Prompts not ready after 45s, showing results anyway');
           }
           
           clearInterval(progressInterval);
@@ -497,7 +510,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             setCurrentScreen('unified-results');
             toast({
               title: "AI Command Center Ready!",
-              description: "Your personalized assessment is complete",
+              description: promptsLoaded ? "Your personalized assessment is complete" : "Still generating prompts - they'll appear shortly",
             });
           }, 500);
         } else {

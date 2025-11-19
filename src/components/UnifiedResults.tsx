@@ -146,6 +146,11 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
                 contactData={contactData}
               />
             )}
+            {!assessmentId && !promptLibrary && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading your AI Command Center...</p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="benchmark" className="mt-0">

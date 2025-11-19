@@ -59,9 +59,9 @@ CONTEXT:
 - Timeline: ${contactData.timeline || 'Near-term'}`;
     }
 
-    const synthesisPro = `You are an expert AI implementation strategist creating a personalized "AI Command Center" for an executive.
+    const synthesisPro = `You are an elite executive strategist creating an "AI Command Center" that delivers immediate, transformational value.
 
-IMPORTANT: Use ONLY gender-neutral language throughout (they/their/them). Never assume the executive's gender.
+IMPORTANT: Use ONLY gender-neutral language throughout (they/their/them).
 
 EXECUTIVE PROFILE:
 - Name: ${contactData.fullName || 'the leader'}
@@ -74,49 +74,94 @@ ASSESSMENT SCORES:
 ${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}`).join('\n')}${profileSection}
 
 YOUR TASK:
-Generate a comprehensive "Master Prompt Library Package" in JSON format:
+Generate a comprehensive Executive AI Command Center in JSON format that makes their job 5% easier within minutes:
 
 {
-  "executiveProfile": {
-    "summary": "150-word summary of their thinking style, communication preferences, and work patterns",
-    "transformationOpportunity": "The single biggest way AI can create value for them (CRITICAL: MAX 300 characters - be concise, complete, and impactful)",
-    "uniqueStrengths": [
-      "2-3 evidence-based strengths derived from their actual profile data. Use concrete examples from their transformation goal ('${profileData.transformationGoal}'), work breakdown, and time management patterns. Be specific and measurable, not generic. Example: 'Streamlined board reporting from 8 hours to 2 hours using data synthesis' rather than 'Good at analysis'."
+  "personalizedInsights": {
+    "yourEdge": "Based on [specific strength from their profile], they should focus on [specific opportunity]. Be specific about what gives them competitive advantage. 120-180 characters.",
+    "yourRisk": "Their [specific weakness from profile] could cause [specific failure mode]. Be direct and actionable. 120-180 characters.",
+    "yourNextMove": "In the next 7 days, prioritize [specific action] because [specific reason tied to their context]. 120-180 characters."
+  },
+  "immediateActions": {
+    "next3Conversations": [
+      {
+        "stakeholder": "Name/role from their stakeholders list",
+        "topic": "Specific conversation topic tied to their challenges",
+        "talkingPoints": ["Point 1 with context", "Point 2 with expected outcome", "Point 3 with follow-up"],
+        "successLooksLike": "Concrete outcome they can measure"
+      }
+    ],
+    "delegationOpportunities": [
+      {
+        "task": "Specific task from their time-wasters or delegation priorities",
+        "delegateTo": "Suggested role/person type",
+        "promptToGiveThem": "Exact words to say when delegating - make it copy-paste ready",
+        "successCriteria": ["Criterion 1", "Criterion 2"]
+      }
+    ],
+    "quickDecisions": [
+      {
+        "decision": "Specific decision they need to make",
+        "whyNow": "Why this can't wait",
+        "options": [
+          {
+            "name": "Option name",
+            "pros": ["Pro 1", "Pro 2"],
+            "cons": ["Con 1", "Con 2"]
+          }
+        ],
+        "recommendation": "AI-suggested best path with reasoning"
+      }
     ]
   },
-  "recommendedProjects": [
+  "masterPromptLibrary": {
+    "strategicPrompts": [
+      {
+        "name": "Prompt set name",
+        "purpose": "Specific value",
+        "whenToUse": "Scenarios",
+        "masterInstructions": "300-400 word tailored prompt",
+        "examplePrompts": ["Prompt 1", "Prompt 2", "Prompt 3"],
+        "successMetrics": ["Metric 1", "Metric 2"]
+      }
+    ],
+    "operationalPrompts": [
+      {
+        "name": "Role-specific operational prompt",
+        "purpose": "Daily/weekly value",
+        "whenToUse": "Operational scenarios",
+        "masterInstructions": "Tailored operational prompt",
+        "examplePrompts": ["Prompt 1", "Prompt 2"],
+        "successMetrics": ["Metric 1"]
+      }
+    ]
+  },
+  "executivePlaybooks": [
     {
-      "name": "Project name (e.g., Strategic Brief Generator)",
-      "purpose": "One sentence on specific value",
-      "whenToUse": "Specific use case scenarios",
-      "masterInstructions": "300-400 word custom prompt incorporating their style, role, and context. Include: who they are, how they think, what they need, and constraints.",
-      "examplePrompts": ["Starter prompt 1", "Starter prompt 2", "Starter prompt 3"],
-      "successMetrics": ["Metric 1", "Metric 2"]
+      "title": "30-Day AI Adoption Sprint",
+      "whenToUse": "Starting AI transformation in their specific context",
+      "steps": [
+        {
+          "week": "Week 1",
+          "focus": "Focus area",
+          "actions": ["Action 1", "Action 2", "Action 3"]
+        }
+      ],
+      "successMetrics": ["Metric 1", "Metric 2", "Metric 3"],
+      "riskMitigation": ["Risk 1 mitigation", "Risk 2 mitigation"]
     }
-  ],
-  "promptTemplates": [
-    {
-      "name": "Template name",
-      "category": "Category (e.g., Decision-Making, Stakeholder Communication)",
-      "prompt": "The actual prompt template with placeholders"
-    }
-  ],
-  "implementationRoadmap": {
-    "week1": "Start with these 2 projects (specify which ones and why)",
-    "week2to4": "Expand to these additional use cases",
-    "month2plus": "Advanced techniques to try"
-  }
+  ]
 }
 
 CRITICAL REQUIREMENTS:
-- Generate 3-5 projects (MVP scope)
-- Every prompt must reflect THEIR specific communication style
-- Address THEIR specific bottlenecks from the profile
-- Match THEIR stakeholder context
-- Use THEIR language and terminology
-- Focus on THEIR transformation goal
-- **UNIQUE STRENGTHS MUST BE EVIDENCE-BASED** - Extract from actual transformation goals, work patterns, and specific examples they provided
-- **TRANSFORMATION OPPORTUNITY MUST BE MAX 300 CHARACTERS** - Be concise yet complete. Focus on the single most impactful value proposition.
+- Conversations: 3 specific conversations with people from THEIR stakeholder list
+- Delegations: 3 tasks from THEIR time-wasters/delegation priorities with exact delegation scripts
+- Decisions: 2 urgent decisions relevant to THEIR challenges with pros/cons analysis
+- Prompts: 4-6 prompt sets split between strategic and operational, deeply personalized
+- Playbooks: 1-2 playbooks with week-by-week steps relevant to THEIR timeline and context
+- Every element must be immediately actionable - they should be able to use it in the next 15 minutes
+- Use THEIR actual stakeholders, challenges, communication style, and terminology
+- Be radically specific - no generic advice
 
 Return ONLY valid JSON, no markdown formatting.`;
 
