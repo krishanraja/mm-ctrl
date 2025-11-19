@@ -146,6 +146,7 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             contents: [{
+              role: 'user',
               parts: [{
                 text: `You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.
 
