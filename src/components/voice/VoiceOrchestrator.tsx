@@ -60,6 +60,7 @@ export const VoiceOrchestrator: React.FC<VoiceOrchestratorProps> = ({ sessionId,
           compassResults={compassResults}
           roiEstimate={roiEstimate}
           onUnlock={() => setShowGateModal(true)}
+          sessionId={sessionId}
         />
       )}
 
