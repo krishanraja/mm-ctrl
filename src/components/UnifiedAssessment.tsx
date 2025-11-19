@@ -216,12 +216,34 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       setInsightProgress(80);
     }, 6000);
 
+    try {
+      // Call v2 orchestration
+      const { orchestrateAssessmentV2 } = await import('@/utils/orchestrateAssessmentV2');
+      const assessmentData = getAssessmentData();
+      
+      const result = await orchestrateAssessmentV2(
+        contactData!,
+        assessmentData,
+        deepProfileData,
+        sessionId!,
+        'quiz'
+      );
+
+      if (result.success && result.assessmentId) {
+        console.log('✅ V2 assessment orchestrated successfully');
+        // Store assessment ID for results display
+        sessionStorage.setItem('current_assessment_id', result.assessmentId);
+      }
+    } catch (error) {
+      console.error('❌ V2 orchestration error:', error);
+    }
+
     setTimeout(() => {
       setInsightProgress(100);
       clearInterval(progressInterval);
       setCurrentScreen('results');
     }, 8000);
-  }, []);
+  }, [contactData, deepProfileData, sessionId, getAssessmentData]);
 
   const handleContactSubmit = useCallback(async (data: ContactData) => {
     setContactData(data);

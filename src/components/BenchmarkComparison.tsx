@@ -92,10 +92,27 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
   }
 
   // Show PeerBubbleChart even if benchmark data is unavailable
-  const percentile = benchmark 
-    ? ((userScore - benchmark.avg_readiness_score) / benchmark.avg_readiness_score) * 100
-    : 50; // default to 50th percentile if no benchmark data
-  const isAboveAverage = benchmark ? userScore > benchmark.avg_readiness_score : true;
+  const getComparisonText = () => {
+    if (!benchmark) return 'Your score is being calculated';
+    
+    const diff = userScore - benchmark.avg_readiness_score;
+    const percentDiff = Math.abs(Math.round((diff / benchmark.avg_readiness_score) * 100));
+    
+    if (diff > 5) return `above average (${percentDiff}% higher)`;
+    if (diff < -5) return `below average (${percentDiff}% lower)`;
+    return 'at the average';
+  };
+
+  const getDimensionComparison = (dimensionScore: number) => {
+    if (!benchmark) return 'calculating...';
+    
+    const avgScore = benchmark.avg_readiness_score || 60;
+    const diff = dimensionScore - avgScore;
+    
+    if (diff > 8) return 'above your tier';
+    if (diff < -8) return 'below your tier';
+    return 'at your tier median';
+  };
 
   const getIndustryBenchmark = () => {
     if (!industry || !benchmark || !benchmark.industry_benchmarks) return null;
@@ -158,34 +175,34 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
           <CardDescription>Your score vs. industry benchmarks</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="p-6 rounded-lg bg-primary/5 border-2 border-primary/20">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <div className="text-sm text-muted-foreground">Your Score</div>
-                <div className="text-4xl font-bold">{userScore}</div>
+            <div className="p-6 rounded-lg bg-primary/5 border-2 border-primary/20">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="text-sm text-muted-foreground">Your Score</div>
+                  <div className="text-4xl font-bold">{userScore}</div>
+                </div>
+                <Badge variant="default" className="text-base px-4 py-1">
+                  {getComparisonText()}
+                </Badge>
               </div>
-              <Badge variant={isAboveAverage ? 'default' : 'secondary'} className="text-lg px-4 py-1">
-                {isAboveAverage ? '↑' : '↓'} {Math.round(Math.abs(percentile))}%
-              </Badge>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Global Average</span>
+                  <span className="font-medium">{Math.round(benchmark.avg_readiness_score)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Your Position</span>
+                  <span className="font-medium capitalize">{getComparisonText()}</span>
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Global Average</span>
-                <span className="font-medium">{Math.round(benchmark.avg_readiness_score)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Global Median</span>
-                <span className="font-medium">{Math.round(benchmark.median_readiness_score)}</span>
-              </div>
-            </div>
-          </div>
 
-          <div>
-            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-              <Award className="h-4 w-4" />
-              Distribution by Tier
-            </h4>
-            <div className="space-y-3">
+            <div>
+              <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                <Award className="h-4 w-4" />
+                Distribution by Tier
+              </h4>
+              <div className="space-y-3">
               {[
                 { label: 'Leading', pct: benchmark.tier_leading_pct, color: 'bg-green-500' },
                 { label: 'Advancing', pct: benchmark.tier_advancing_pct, color: 'bg-blue-500' },
@@ -206,16 +223,16 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
                     <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {(industryBench || sizeBench || roleBench) && (
-            <div className="pt-4 border-t">
-              <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Segment Comparisons
-              </h4>
+            {(industryBench || sizeBench || roleBench) && (
+              <div className="pt-4 border-t">
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Segment Comparisons
+                </h4>
               <div className="space-y-2">
                 {industryBench && (
                   <div className="flex items-center justify-between text-sm">
@@ -234,12 +251,12 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
                     <span className="text-muted-foreground">{role}s</span>
                     <span className="font-medium">{Math.round(roleBench.avg_score)}</span>
                   </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
