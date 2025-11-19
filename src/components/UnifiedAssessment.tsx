@@ -416,7 +416,9 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     }, 5000);
 
     try {
-      const assessmentData = getAssessmentData();
+      const rawQuizData = getAssessmentData();
+      const { convertQuizToV2Format } = await import('@/utils/convertQuizToV2Format');
+      const v2FormattedData = convertQuizToV2Format(rawQuizData);
       
       // CRITICAL: Orchestrate v2 assessment BEFORE generating library
       try {
@@ -424,7 +426,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         
         const result = await orchestrateAssessmentV2(
           contactData!,
-          assessmentData,
+          v2FormattedData,
           profileData,
           sessionId!,
           'quiz'
@@ -450,7 +452,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         sessionId: sessionId,
         userId: null,
         contactData: contactData,
-        assessmentData: assessmentData,
+        assessmentData: v2FormattedData,
         profileData: profileData
       }, { logPrefix: '✨' });
       
