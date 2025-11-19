@@ -7,7 +7,8 @@ import AILeadershipBenchmark from './AILeadershipBenchmark';
 import { PromptLibraryResults } from './PromptLibraryResults';
 import { ConsentManager } from './ConsentManager';
 import { BenchmarkComparison } from './BenchmarkComparison';
-import { MomentumDashboard } from './MomentumDashboard';
+import { InviteColleaguesCard } from './ui/invite-colleagues-card';
+import { TeamsCrossSellCard } from './ui/teams-cross-sell-card';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
 import { calculateLeadershipScore, getLeadershipTier } from '@/utils/scoreCalculations';
@@ -177,9 +178,17 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
                 learningStyle={learningStyle}
                 showCohortToggle={showCohortFeature}
               />
+              
+              {/* Invite colleagues to unlock team momentum */}
               {contactData?.companyName && (
-                <MomentumDashboard companyHash={contactData.companyName} />
+                <InviteColleaguesCard 
+                  companyName={contactData.companyName}
+                  assessmentUrl={window.location.origin}
+                />
               )}
+
+              {/* Cross-sell to Teams product */}
+              <TeamsCrossSellCard companyName={contactData?.companyName} />
             </div>
           </TabsContent>
 
