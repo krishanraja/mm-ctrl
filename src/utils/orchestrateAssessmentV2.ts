@@ -28,9 +28,12 @@ export async function orchestrateAssessmentV2(
 ): Promise<AssessmentOrchestrationResult> {
   try {
     console.log('🚀 Starting v2 assessment orchestration for:', contactData.email);
+    console.log('📊 Assessment data received:', assessmentData);
+    console.log('📊 Data types:', Object.entries(assessmentData).map(([k,v]) => `${k}: ${typeof v}`));
 
     // Step 1: Calculate benchmark score and tier
     const benchmarkScore = calculateBenchmarkScore(assessmentData);
+    console.log('📊 Calculated benchmark score:', benchmarkScore);
     const benchmarkTier = calculateBenchmarkTier(benchmarkScore);
 
     // Step 3: Create leader_assessment via edge function (bypasses RLS)
