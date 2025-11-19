@@ -276,6 +276,7 @@ Return ONLY valid JSON, no markdown formatting.`;
       clearTimeout(openaiTimeoutId);
       console.error('❌ OpenAI failed:', error.message);
     }
+  }
 
     // ============= PLAN C: LOVABLE AI GEMINI FALLBACK (6s timeout) =============
     if (!generatedContent && lovableApiKey) {
