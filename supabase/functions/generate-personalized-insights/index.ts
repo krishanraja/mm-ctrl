@@ -243,5 +243,16 @@ Generate:
    - realistic timeToValue (1 week/2 weeks/1 month)
    - implementation steps (2-3 specific actions)
 
+5. firstMoves: Your 3-move action plan - THREE numbered moves based on their tier, dimensions, and context:
+   - move1: IMMEDIATE action (1-2 weeks), max 2 sentences, concrete and specific. Reference their actual scores, risks, and context.
+   - move2: BUILD MOMENTUM (1 month), max 2 sentences, builds on move 1. Ties to their ${contactData.timeline} timeline.
+   - move3: INSTITUTIONALIZE (3 months), max 2 sentences, creates lasting change. Connects to their transformation goal.
+   
+   Each move must be:
+   - Tied to specific data points (their scores, time waste, delegation priorities, stakeholder needs)
+   - Concrete enough to put on a calendar
+   - Progressive (each builds on the previous)
+   - Realistic for a ${contactData.roleTitle} with ${contactData.timeline} timeline
+
 CRITICAL: Make every insight hyper-personalized to ${contactData.fullName}'s actual context. Be specific, quantitative, and actionable. Use their actual data points, not generic advice. Reference their specific time wasters, transformation goals, and work patterns throughout.`;
 }

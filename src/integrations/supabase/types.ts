@@ -1328,6 +1328,320 @@ export type Database = {
           },
         ]
       }
+      leader_assessments: {
+        Row: {
+          benchmark_score: number | null
+          benchmark_tier: string | null
+          created_at: string | null
+          has_deep_profile: boolean | null
+          has_full_diagnostic: boolean | null
+          id: string
+          leader_id: string
+          learning_style: string | null
+          session_id: string | null
+          source: string
+          updated_at: string | null
+        }
+        Insert: {
+          benchmark_score?: number | null
+          benchmark_tier?: string | null
+          created_at?: string | null
+          has_deep_profile?: boolean | null
+          has_full_diagnostic?: boolean | null
+          id?: string
+          leader_id: string
+          learning_style?: string | null
+          session_id?: string | null
+          source: string
+          updated_at?: string | null
+        }
+        Update: {
+          benchmark_score?: number | null
+          benchmark_tier?: string | null
+          created_at?: string | null
+          has_deep_profile?: boolean | null
+          has_full_diagnostic?: boolean | null
+          id?: string
+          leader_id?: string
+          learning_style?: string | null
+          session_id?: string | null
+          source?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_assessments_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "leaders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_dimension_scores: {
+        Row: {
+          assessment_id: string
+          created_at: string | null
+          dimension_key: string
+          dimension_tier: string | null
+          explanation: string | null
+          id: string
+          score_numeric: number | null
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string | null
+          dimension_key: string
+          dimension_tier?: string | null
+          explanation?: string | null
+          id?: string
+          score_numeric?: number | null
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string | null
+          dimension_key?: string
+          dimension_tier?: string | null
+          explanation?: string | null
+          id?: string
+          score_numeric?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_dimension_scores_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_first_moves: {
+        Row: {
+          assessment_id: string
+          content: string
+          created_at: string | null
+          id: string
+          move_number: number
+        }
+        Insert: {
+          assessment_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          move_number: number
+        }
+        Update: {
+          assessment_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          move_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_first_moves_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_org_scenarios: {
+        Row: {
+          assessment_id: string
+          created_at: string | null
+          id: string
+          priority_rank: number | null
+          scenario_key: string
+          summary: string
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string | null
+          id?: string
+          priority_rank?: number | null
+          scenario_key: string
+          summary: string
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string | null
+          id?: string
+          priority_rank?: number | null
+          scenario_key?: string
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_org_scenarios_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_prompt_sets: {
+        Row: {
+          assessment_id: string
+          category_key: string
+          created_at: string | null
+          description: string | null
+          how_to_use: string | null
+          id: string
+          priority_rank: number | null
+          prompts_json: Json | null
+          title: string
+          what_its_for: string | null
+          when_to_use: string | null
+        }
+        Insert: {
+          assessment_id: string
+          category_key: string
+          created_at?: string | null
+          description?: string | null
+          how_to_use?: string | null
+          id?: string
+          priority_rank?: number | null
+          prompts_json?: Json | null
+          title: string
+          what_its_for?: string | null
+          when_to_use?: string | null
+        }
+        Update: {
+          assessment_id?: string
+          category_key?: string
+          created_at?: string | null
+          description?: string | null
+          how_to_use?: string | null
+          id?: string
+          priority_rank?: number | null
+          prompts_json?: Json | null
+          title?: string
+          what_its_for?: string | null
+          when_to_use?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_prompt_sets_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_risk_signals: {
+        Row: {
+          assessment_id: string
+          created_at: string | null
+          description: string
+          id: string
+          level: string
+          priority_rank: number | null
+          risk_key: string
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string | null
+          description: string
+          id?: string
+          level: string
+          priority_rank?: number | null
+          risk_key: string
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          level?: string
+          priority_rank?: number | null
+          risk_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_risk_signals_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_tensions: {
+        Row: {
+          assessment_id: string
+          created_at: string | null
+          dimension_key: string
+          id: string
+          priority_rank: number | null
+          summary_line: string
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string | null
+          dimension_key: string
+          id?: string
+          priority_rank?: number | null
+          summary_line: string
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string | null
+          dimension_key?: string
+          id?: string
+          priority_rank?: number | null
+          summary_line?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_tensions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leaders: {
+        Row: {
+          company: string | null
+          company_size_band: string | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string | null
+          primary_focus: string | null
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          company_size_band?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name?: string | null
+          primary_focus?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          company_size_band?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string | null
+          primary_focus?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       partner_intakes: {
         Row: {
           consent: boolean
