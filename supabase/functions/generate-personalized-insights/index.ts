@@ -44,9 +44,8 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          max_tokens: 2500,
-          temperature: 0.7,
+          model: 'gpt-4.1-2025-04-14',
+          max_completion_tokens: 4000,
           messages: [
             { 
               role: 'system', 
@@ -223,10 +222,26 @@ CONTEXT:
 - Key Stakeholders: ${deepProfileData.stakeholders.join(', ')}
 
 Generate:
-1. growthReadiness: Assess their AI adoption readiness (High/Medium-High/Medium/Developing) with 50-char preview and 120-char actionable detail
-2. leadershipStage: Determine stage (Orchestrator/Confident/Aware/Emerging) with 50-char preview and 120-char next step
-3. keyFocus: Pick ONE category (Team Alignment/Strategic Execution/Decision Quality/Time Leverage) most relevant to their ${contactData.primaryFocus} with 50-char preview and 120-char action
-4. quickWins: 3-4 specific, personalized quick wins with title (60 chars), impact (100 chars), and realistic timeToValue (1 week/2 weeks/1 month)
+1. growthReadiness: 
+   - level: (High/Medium-High/Medium/Developing) 
+   - preview: 2-3 sentence summary of their current state
+   - details: 3-5 detailed paragraphs with specific, actionable recommendations tied to their transformation goal ("${deepProfileData.transformationGoal}"), work breakdown patterns, and time management data. Include specific examples, quantitative targets, and clear next steps. Reference their ${deepProfileData.timeWaste}% time waste on "${deepProfileData.timeWasteExamples}" and how AI can address this.
 
-Make every insight hyper-personalized to ${contactData.fullName}'s context. Be specific, quantitative, and actionable.`;
+2. leadershipStage: 
+   - stage: (Orchestrator/Confident/Aware/Emerging)
+   - preview: 2-3 sentence assessment
+   - details: 3-5 detailed paragraphs explaining why they're at this stage, what specific capabilities they have, what gaps exist, and concrete steps to advance. Include specific actions tied to their delegation priorities (${deepProfileData.delegateTasks.join(', ')}) and stakeholder context (${deepProfileData.stakeholders.join(', ')}).
+
+3. keyFocus: 
+   - category: ONE category (Team Alignment/Strategic Execution/Decision Quality/Time Leverage) most relevant to ${contactData.primaryFocus}
+   - preview: 2-3 sentence rationale
+   - details: 3-5 detailed paragraphs on why this is their top priority, specific strategies they can implement immediately, expected outcomes with metrics, and how this addresses their biggest challenge ("${deepProfileData.biggestChallenge}"). Include timeline-specific milestones matching their ${contactData.timeline} window.
+
+4. quickWins: 3-4 specific, personalized quick wins with:
+   - title (descriptive, no char limit)
+   - impact (detailed explanation with quantitative projections)
+   - realistic timeToValue (1 week/2 weeks/1 month)
+   - implementation steps (2-3 specific actions)
+
+CRITICAL: Make every insight hyper-personalized to ${contactData.fullName}'s actual context. Be specific, quantitative, and actionable. Use their actual data points, not generic advice. Reference their specific time wasters, transformation goals, and work patterns throughout.`;
 }

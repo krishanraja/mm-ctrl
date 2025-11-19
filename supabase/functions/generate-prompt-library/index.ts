@@ -59,7 +59,10 @@ Generate a comprehensive "Master Prompt Library Package" in JSON format:
 {
   "executiveProfile": {
     "summary": "150-word summary of their thinking style, communication preferences, and work patterns",
-    "transformationOpportunity": "The single biggest way AI can create value for them (CRITICAL: MAX 300 characters - be concise, complete, and impactful)"
+    "transformationOpportunity": "The single biggest way AI can create value for them (CRITICAL: MAX 300 characters - be concise, complete, and impactful)",
+    "uniqueStrengths": [
+      "2-3 evidence-based strengths derived from their actual profile data. Use concrete examples from their transformation goal ('${profileData.transformationGoal}'), work breakdown, and time management patterns. Be specific and measurable, not generic. Example: 'Streamlined board reporting from 8 hours to 2 hours using data synthesis' rather than 'Good at analysis'."
+    ]
   },
   "recommendedProjects": [
     {
@@ -92,6 +95,7 @@ CRITICAL REQUIREMENTS:
 - Match THEIR stakeholder context
 - Use THEIR language and terminology
 - Focus on THEIR transformation goal
+- **UNIQUE STRENGTHS MUST BE EVIDENCE-BASED** - Extract from actual transformation goals, work patterns, and specific examples they provided
 - **TRANSFORMATION OPPORTUNITY MUST BE MAX 300 CHARACTERS** - Be concise yet complete. Focus on the single most impactful value proposition.
 
 Return ONLY valid JSON, no markdown formatting.`;
@@ -114,9 +118,8 @@ Return ONLY valid JSON, no markdown formatting.`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          max_tokens: 3000,
-          temperature: 0.7,
+          model: 'gpt-4.1-2025-04-14',
+          max_completion_tokens: 4000,
           messages: [
             { role: 'system', content: 'You are an expert AI strategist generating personalized prompt libraries. Return valid JSON only.' },
             { role: 'user', content: synthesisPro }
@@ -244,12 +247,12 @@ Return ONLY valid JSON, no markdown formatting.`;
           {
             name: "Strategic Synthesis",
             category: "Decision-Making",
-            prompt: `Analyze [SITUATION] from a ${contactData.roleTitle} perspective. Focus on ${contactData.primaryFocus}. Provide: 1) Core Issue, 2) Strategic Options, 3) Stakeholder Impact, 4) Recommended Action with timeline.`
+            prompt: `Analyze [SITUATION] from a ${contactData?.roleTitle || 'Executive'} perspective focusing on ${contactData.primaryFocus}. Consider ${contactData.fullName}'s transformation goal: "${profileData.transformationGoal}". Provide: 1) Core Issue, 2) Strategic Options aligned with ${contactData.timeline} timeline, 3) Stakeholder Impact (${profileData.stakeholders.join(', ')}), 4) Recommended Action addressing ${profileData.biggestChallenge}.`
           },
           {
             name: "Stakeholder Update",
             category: "Communication",
-            prompt: `Create an update for [STAKEHOLDER] about [TOPIC]. Use ${profileData.communicationStyle[0]} tone. Structure: Progress Summary, Key Wins, Blockers (if any), Next Steps, Support Needed.`
+            prompt: `Create an update for [STAKEHOLDER] about [TOPIC]. Use ${profileData.communicationStyle[0]} tone matching ${contactData.fullName}'s style. Consider stakeholder: ${profileData.stakeholders[0]}. Structure: Progress Summary tied to ${profileData.transformationGoal}, Key Wins, Blockers (if any), Next Steps aligned with ${contactData.timeline}, Support Needed.`
           },
           {
             name: "Team Delegation",
