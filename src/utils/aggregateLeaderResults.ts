@@ -107,8 +107,18 @@ export async function aggregateLeaderResults(
       .order('priority_rank');
 
     const riskSignals = shouldApplyGating
-      ? (allRiskSignals || []).slice(0, 1)
-      : (allRiskSignals || []);
+      ? (allRiskSignals || []).slice(0, 1).map(r => ({
+          risk_key: r.risk_key as LeaderRiskSignal['risk_key'],
+          level: r.level as LeaderRiskSignal['level'],
+          description: r.description,
+          priority_rank: r.priority_rank,
+        }))
+      : (allRiskSignals || []).map(r => ({
+          risk_key: r.risk_key as LeaderRiskSignal['risk_key'],
+          level: r.level as LeaderRiskSignal['level'],
+          description: r.description,
+          priority_rank: r.priority_rank,
+        }));
 
     // Fetch org scenarios (apply gating: free users see only top 1)
     const { data: allOrgScenarios } = await supabase
@@ -118,8 +128,16 @@ export async function aggregateLeaderResults(
       .order('priority_rank');
 
     const orgScenarios = shouldApplyGating
-      ? (allOrgScenarios || []).slice(0, 1)
-      : (allOrgScenarios || []);
+      ? (allOrgScenarios || []).slice(0, 1).map(s => ({
+          scenario_key: s.scenario_key as LeaderOrgScenario['scenario_key'],
+          summary: s.summary,
+          priority_rank: s.priority_rank,
+        }))
+      : (allOrgScenarios || []).map(s => ({
+          scenario_key: s.scenario_key as LeaderOrgScenario['scenario_key'],
+          summary: s.summary,
+          priority_rank: s.priority_rank,
+        }));
 
     // Fetch first moves (apply gating: free users see only move 1)
     const { data: allFirstMoves } = await supabase
