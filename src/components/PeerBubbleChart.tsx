@@ -58,9 +58,9 @@ const generatePeerData = (
     const z = Math.min(95, userZ + zOffset + Math.random() * 3);
     
     peers.push({
-      x: parseFloat(x.toFixed(1)),
-      y: parseFloat(y.toFixed(1)),
-      z: parseFloat(z.toFixed(1)),
+      x: Math.round(x),
+      y: Math.round(y),
+      z: Math.round(z),
       isUser: false,
       tier: getTier((x + y + z) / 3),
       id: `peer-ahead-${i}`
@@ -74,9 +74,9 @@ const generatePeerData = (
     const z = userZ + (Math.random() - 0.5) * 15;
     
     peers.push({
-      x: parseFloat(Math.max(5, Math.min(95, x)).toFixed(1)),
-      y: parseFloat(Math.max(5, Math.min(95, y)).toFixed(1)),
-      z: parseFloat(Math.max(5, Math.min(90, z)).toFixed(1)),
+      x: Math.round(Math.max(5, Math.min(95, x))),
+      y: Math.round(Math.max(5, Math.min(95, y))),
+      z: Math.round(Math.max(5, Math.min(90, z))),
       isUser: false,
       tier: getTier((x + y + z) / 3),
       id: `peer-near-${i}`
@@ -90,9 +90,9 @@ const generatePeerData = (
     const z = Math.random() * userZ * 0.85;
     
     peers.push({
-      x: parseFloat(Math.max(2, x).toFixed(1)),
-      y: parseFloat(Math.max(2, y).toFixed(1)),
-      z: parseFloat(Math.max(2, z).toFixed(1)),
+      x: Math.round(Math.max(2, x)),
+      y: Math.round(Math.max(2, y)),
+      z: Math.round(Math.max(2, z)),
       isUser: false,
       tier: getTier((x + y + z) / 3),
       id: `peer-behind-${i}`
@@ -194,13 +194,13 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
             {point.isUser ? '🎯 You' : point.tier}
           </p>
           <p className="text-xs text-muted-foreground">
-            {primary.dimension}: {point.x.toFixed(0)}
+            {primary.dimension}: {Math.round(point.x)}
           </p>
           <p className="text-xs text-muted-foreground">
-            {secondary.dimension}: {point.y.toFixed(0)}
+            {secondary.dimension}: {Math.round(point.y)}
           </p>
           <p className="text-xs text-muted-foreground">
-            {tertiary.dimension}: {point.z.toFixed(0)}
+            {tertiary.dimension}: {Math.round(point.z)}
           </p>
         </div>
       );
@@ -329,7 +329,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 {stats.tierDistribution.pioneer}
               </div>
               <div className="text-xs text-muted-foreground">
-                {((stats.tierDistribution.pioneer / stats.totalPeers) * 100).toFixed(0)}%
+                {Math.round((stats.tierDistribution.pioneer / stats.totalPeers) * 100)}%
               </div>
             </div>
             <div className="text-center p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -338,7 +338,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 {stats.tierDistribution.confident}
               </div>
               <div className="text-xs text-muted-foreground">
-                {((stats.tierDistribution.confident / stats.totalPeers) * 100).toFixed(0)}%
+                {Math.round((stats.tierDistribution.confident / stats.totalPeers) * 100)}%
               </div>
             </div>
             <div className="text-center p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
@@ -347,7 +347,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 {stats.tierDistribution.explorer}
               </div>
               <div className="text-xs text-muted-foreground">
-                {((stats.tierDistribution.explorer / stats.totalPeers) * 100).toFixed(0)}%
+                {Math.round((stats.tierDistribution.explorer / stats.totalPeers) * 100)}%
               </div>
             </div>
             <div className="text-center p-3 bg-gray-50 dark:bg-gray-950/20 rounded-lg border border-gray-200 dark:border-gray-800">
@@ -356,7 +356,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 {stats.tierDistribution.building}
               </div>
               <div className="text-xs text-muted-foreground">
-                {((stats.tierDistribution.building / stats.totalPeers) * 100).toFixed(0)}%
+                {Math.round((stats.tierDistribution.building / stats.totalPeers) * 100)}%
               </div>
             </div>
           </div>
@@ -365,7 +365,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
         {stats && stats.peersAhead > 0 && (
           <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">{stats.peersAhead}</span> leaders ({((stats.peersAhead / stats.totalPeers) * 100).toFixed(1)}%) 
+              <span className="font-semibold text-foreground">{stats.peersAhead}</span> leaders ({Math.round((stats.peersAhead / stats.totalPeers) * 100)}%) 
               are currently ahead—giving you clear targets to learn from and chase.
             </p>
           </div>
