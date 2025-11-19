@@ -206,11 +206,13 @@ serve(async (req) => {
 });
 
 function buildPersonalizedPrompt(assessmentData: any, contactData: any, deepProfileData: any): string {
-  // Safely extract values with fallbacks for null deepProfileData
+  // Safely extract ALL values with fallbacks for null deepProfileData
   const transformationGoal = deepProfileData?.transformationGoal || contactData?.primaryFocus || 'AI adoption';
   const timeWaste = deepProfileData?.timeWaste || 30;
   const timeWasteExamples = deepProfileData?.timeWasteExamples || 'repetitive tasks, status updates';
   const delegateTasks = deepProfileData?.delegateTasks?.join(', ') || 'routine analysis, reporting';
+  const biggestChallenge = deepProfileData?.biggestChallenge || 'aligning stakeholders and driving adoption';
+  const stakeholders = deepProfileData?.stakeholders?.join(', ') || 'executive team, direct reports';
   
   return `Generate personalized AI leadership insights for ${contactData.fullName}, ${contactData.roleTitle} at ${contactData.companyName}.
 
@@ -224,24 +226,24 @@ CONTEXT:
 - Transformation Goal: ${transformationGoal}
 - Time Waste: ${timeWaste}% on ${timeWasteExamples}
 - Top Delegation Priorities: ${delegateTasks}
-- Communication Challenge: ${deepProfileData.biggestChallenge}
-- Key Stakeholders: ${deepProfileData.stakeholders.join(', ')}
+- Communication Challenge: ${biggestChallenge}
+- Key Stakeholders: ${stakeholders}
 
 Generate:
 1. growthReadiness: 
    - level: (High/Medium-High/Medium/Developing) 
    - preview: 2-3 sentence summary of their current state
-   - details: 3-5 detailed paragraphs with specific, actionable recommendations tied to their transformation goal ("${deepProfileData.transformationGoal}"), work breakdown patterns, and time management data. Include specific examples, quantitative targets, and clear next steps. Reference their ${deepProfileData.timeWaste}% time waste on "${deepProfileData.timeWasteExamples}" and how AI can address this.
+   - details: 3-5 detailed paragraphs with specific, actionable recommendations tied to their transformation goal ("${transformationGoal}"), work breakdown patterns, and time management data. Include specific examples, quantitative targets, and clear next steps. Reference their ${timeWaste}% time waste on "${timeWasteExamples}" and how AI can address this.
 
 2. leadershipStage: 
    - stage: (Orchestrator/Confident/Aware/Emerging)
    - preview: 2-3 sentence assessment
-   - details: 3-5 detailed paragraphs explaining why they're at this stage, what specific capabilities they have, what gaps exist, and concrete steps to advance. Include specific actions tied to their delegation priorities (${deepProfileData.delegateTasks.join(', ')}) and stakeholder context (${deepProfileData.stakeholders.join(', ')}).
+   - details: 3-5 detailed paragraphs explaining why they're at this stage, what specific capabilities they have, what gaps exist, and concrete steps to advance. Include specific actions tied to their delegation priorities (${delegateTasks}) and stakeholder context (${stakeholders}).
 
 3. keyFocus: 
    - category: ONE category (Team Alignment/Strategic Execution/Decision Quality/Time Leverage) most relevant to ${contactData.primaryFocus}
    - preview: 2-3 sentence rationale
-   - details: 3-5 detailed paragraphs on why this is their top priority, specific strategies they can implement immediately, expected outcomes with metrics, and how this addresses their biggest challenge ("${deepProfileData.biggestChallenge}"). Include timeline-specific milestones matching their ${contactData.timeline} window.
+   - details: 3-5 detailed paragraphs on why this is their top priority, specific strategies they can implement immediately, expected outcomes with metrics, and how this addresses their biggest challenge ("${biggestChallenge}"). Include timeline-specific milestones matching their ${contactData.timeline} window.
 
 4. quickWins: 3-4 specific, personalized quick wins with:
    - title (descriptive, no char limit)

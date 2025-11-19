@@ -143,25 +143,35 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
     scores.analytical_optimizer += 10;
   }
 
-  // Adaptive Explorer scoring (baseline + balance bonus)
-  scores.adaptive_explorer = 40; // Baseline score
+  // Adaptive Explorer scoring (earned points only - no baseline advantage)
+  scores.adaptive_explorer = 0;
   
   // Bonus for balanced work breakdown (no single area dominates)
   const workValues = Object.values(deepProfile.workBreakdown);
   const maxWork = Math.max(...workValues);
-  if (maxWork < 35) scores.adaptive_explorer += 20; // Very balanced
-  else if (maxWork < 40) scores.adaptive_explorer += 10; // Somewhat balanced
+  const minWork = Math.min(...workValues);
+  const workRange = maxWork - minWork;
+  
+  // Reward true balance (smaller range = more balanced)
+  if (workRange < 15) scores.adaptive_explorer += 30; // Very balanced
+  else if (workRange < 25) scores.adaptive_explorer += 20; // Balanced
+  else if (workRange < 35) scores.adaptive_explorer += 10; // Somewhat balanced
   
   // Bonus for diverse communication styles
   if (deepProfile.communicationStyle.length >= 3) scores.adaptive_explorer += 15;
+  else if (deepProfile.communicationStyle.length >= 2) scores.adaptive_explorer += 8;
   
   // Bonus for diverse information needs
-  if (deepProfile.informationNeeds.length >= 4) scores.adaptive_explorer += 10;
+  if (deepProfile.informationNeeds.length >= 5) scores.adaptive_explorer += 15;
+  else if (deepProfile.informationNeeds.length >= 4) scores.adaptive_explorer += 10;
+  else if (deepProfile.informationNeeds.length >= 3) scores.adaptive_explorer += 5;
   
-  // Bonus for learning/experimentation mentions
-  if (thinkingLower.includes('learn') || thinkingLower.includes('experiment') || thinkingLower.includes('adapt')) {
-    scores.adaptive_explorer += 15;
-  }
+  // Bonus for learning/experimentation/flexibility mentions
+  const adaptiveKeywords = ['learn', 'experiment', 'adapt', 'flexible', 'versatile', 'explore'];
+  const matchingAdaptive = adaptiveKeywords.filter(kw => 
+    thinkingLower.includes(kw) || transformationLower.includes(kw) || challengeLower.includes(kw)
+  );
+  scores.adaptive_explorer += matchingAdaptive.length * 8;
 
   // Return cohort with highest score
   const entries = Object.entries(scores) as [AILearningStyle, number][];
@@ -169,6 +179,13 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
   
   console.log('🎯 AI Learning Style Scores:', scores);
   console.log('🏆 Winner:', winner[0], 'with', winner[1], 'points');
+  console.log('📊 Score breakdown:', {
+    strategic_visionary: scores.strategic_visionary,
+    pragmatic_executor: scores.pragmatic_executor,
+    collaborative_builder: scores.collaborative_builder,
+    analytical_optimizer: scores.analytical_optimizer,
+    adaptive_explorer: scores.adaptive_explorer
+  });
   
   return winner[0];
 }
