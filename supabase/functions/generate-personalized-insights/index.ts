@@ -14,12 +14,13 @@ serve(async (req) => {
   try {
     const { assessmentData, contactData, deepProfileData } = await req.json();
     
+    const geminiApiKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 
-    if (!openaiApiKey) {
-      console.error('❌ OPENAI_API_KEY not configured');
-      throw new Error('OPENAI_API_KEY required');
+    if (!geminiApiKey && !openaiApiKey && !lovableApiKey) {
+      console.error('❌ No API keys configured');
+      throw new Error('At least one API key required (GEMINI_SERVICE_ACCOUNT_KEY, OPENAI, or LOVABLE)');
     }
 
     console.log('Generating personalized insights for:', contactData.fullName);
@@ -30,53 +31,108 @@ serve(async (req) => {
     let generationSource = '';
     const startTime = Date.now();
 
-    // ============= PLAN A: OPENAI GPT-4O-MINI (5s timeout) =============
-    console.log('🔄 Plan A: Calling OpenAI gpt-4o-mini...');
-    const openaiController = new AbortController();
-    const openaiTimeoutId = setTimeout(() => openaiController.abort(), 5000);
+    // ============= PLAN A: GEMINI 2.5 FLASH (5s timeout) =============
+    if (geminiApiKey) {
+      console.log('🔄 Plan A: Calling Gemini 2.5 Flash...');
+      const geminiController = new AbortController();
+      const geminiTimeoutId = setTimeout(() => geminiController.abort(), 5000);
 
-    try {
-      const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        signal: openaiController.signal,
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4.1-2025-04-14',
-          max_completion_tokens: 4000,
-          messages: [
-            { 
-              role: 'system', 
-              content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.' 
-            },
-            { role: 'user', content: prompt }
-          ],
-          response_format: { type: "json_object" }
-        })
-      });
-      clearTimeout(openaiTimeoutId);
+      try {
+        const geminiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+          method: 'POST',
+          signal: geminiController.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': geminiApiKey,
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.
 
-      if (openaiResponse.ok) {
-        const openaiData = await openaiResponse.json();
-        personalizedInsights = JSON.parse(openaiData.choices[0].message.content);
-        generationSource = 'openai-gpt4omini';
-        console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
-        console.log('📊 Generation metrics:', {
-          source: 'openai-gpt4omini',
-          durationMs: Date.now() - startTime,
-          success: true
+${prompt}
+
+Return ONLY valid JSON matching the required structure.`
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 4000,
+              responseMimeType: "application/json"
+            }
+          })
         });
+        clearTimeout(geminiTimeoutId);
+
+        if (geminiResponse.ok) {
+          const geminiData = await geminiResponse.json();
+          const content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (content) {
+            personalizedInsights = JSON.parse(content);
+            generationSource = 'gemini-2.5-flash';
+            console.log('✅ Gemini succeeded in', Date.now() - startTime, 'ms');
+            console.log('📊 Generation metrics:', {
+              source: 'gemini-2.5-flash',
+              durationMs: Date.now() - startTime,
+              success: true
+            });
+          }
+        }
+      } catch (error: any) {
+        clearTimeout(geminiTimeoutId);
+        console.error('❌ Gemini failed:', error.message);
       }
-    } catch (error: any) {
-      clearTimeout(openaiTimeoutId);
-      console.error('❌ OpenAI failed:', error.message);
     }
 
-    // ============= PLAN B: LOVABLE AI GEMINI FALLBACK (6s timeout) =============
+    // ============= PLAN B: OPENAI GPT-4.1 FALLBACK (5s timeout) =============
+    if (!personalizedInsights && openaiApiKey) {
+      console.log('⚠️ Gemini failed, trying OpenAI GPT-4.1...');
+      const openaiController = new AbortController();
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 5000);
+
+      try {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          signal: openaiController.signal,
+          headers: {
+            'Authorization': `Bearer ${openaiApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4.1-2025-04-14',
+            max_completion_tokens: 4000,
+            messages: [
+              { 
+                role: 'system', 
+                content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.' 
+              },
+              { role: 'user', content: prompt }
+            ],
+            response_format: { type: "json_object" }
+          })
+        });
+        clearTimeout(openaiTimeoutId);
+
+        if (openaiResponse.ok) {
+          const openaiData = await openaiResponse.json();
+          personalizedInsights = JSON.parse(openaiData.choices[0].message.content);
+          generationSource = 'openai-gpt4.1';
+          console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
+          console.log('📊 Generation metrics:', {
+            source: 'openai-gpt4.1',
+            durationMs: Date.now() - startTime,
+            success: true
+          });
+        }
+      } catch (error: any) {
+        clearTimeout(openaiTimeoutId);
+        console.error('❌ OpenAI failed:', error.message);
+      }
+    }
+
+    // ============= PLAN C: LOVABLE AI GEMINI FALLBACK (6s timeout) =============
     if (!personalizedInsights && lovableApiKey) {
-      console.log('⚠️ OpenAI failed, trying Lovable AI Gemini...');
+      console.log('⚠️ Gemini and OpenAI failed, trying Lovable AI as last resort...');
       const lovableController = new AbortController();
       const lovableTimeoutId = setTimeout(() => lovableController.abort(), 6000);
 
