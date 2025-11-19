@@ -418,28 +418,27 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       console.error('❌ Error sending deep profile notification:', error);
     }
 
-    // Start progress animation - keeps moving to 98%
+    // Start phase-locked progress animation - only moves forward
     const progressInterval = setInterval(() => {
       setLibraryProgress(prev => {
-        if (prev < 35) return prev + 5;
-        if (prev < 65) return prev + 3;
-        if (prev < 85) return prev + 2;
-        if (prev < 95) return prev + 1;
-        if (prev < 98) return prev + 1; // Slow crawl to 98%
+        // Phase 1: Analyzing (0-35%)
+        if (prev < 35) {
+          if (prev === 0) setLibraryPhase('analyzing');
+          return Math.min(35, prev + 5);
+        }
+        // Phase 2: Generating (35-70%)
+        if (prev < 70) {
+          if (prev === 35) setLibraryPhase('generating');
+          return Math.min(70, prev + 3);
+        }
+        // Phase 3: Finalizing (70-98%)
+        if (prev < 98) {
+          if (prev === 70) setLibraryPhase('finalizing');
+          return Math.min(98, prev + 1);
+        }
         return prev;
       });
     }, 800);
-
-    // Update phases
-    setTimeout(() => {
-      setLibraryPhase('generating');
-      setLibraryProgress(40);
-    }, 2500);
-
-    setTimeout(() => {
-      setLibraryPhase('finalizing');
-      setLibraryProgress(70);
-    }, 5000);
 
     try {
       const rawQuizData = getAssessmentData();

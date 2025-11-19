@@ -17,7 +17,7 @@ import { usePayment } from '@/hooks/usePayment';
 import { checkPaymentCallback, handlePaymentSuccess } from '@/utils/handlePaymentSuccess';
 import { exportDiagnosticPDF, ExportData } from '@/utils/exportPDF';
 import { useToast } from '@/hooks/use-toast';
-import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2, Download, LogIn, LogOut } from 'lucide-react';
+import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2, Download, LogIn, LogOut, ArrowRight } from 'lucide-react';
 import { ContactData } from './ContactCollectionForm';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -308,9 +308,127 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
         </CardContent>
       </Card>
 
+      {/* Executive Summary Section */}
+      <Card className="border-l-4 border-l-primary bg-gradient-to-br from-primary/5 to-background">
+        <CardHeader>
+          <CardTitle>What Your {results.benchmarkScore}/100 Score Means</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm leading-relaxed">
+            <span className="font-semibold">You're {results.benchmarkTier === 'AI-Leading' ? 'in the top 15%' : results.benchmarkTier === 'AI-Advancing' ? 'in the upper-middle 25%' : results.benchmarkTier === 'AI-Aware' ? 'in the middle 40%' : 'building your foundation'} of leaders.</span>{' '}
+            {results.benchmarkScore >= 70 ? 'You have strong AI adoption muscle and are positioned to scale.' : results.benchmarkScore >= 50 ? 'Solid foundation, but missing the AI leverage that top 20% executives have mastered.' : 'You understand AI\'s potential but haven\'t built systematic adoption muscle yet.'}
+          </p>
+          {(() => {
+            const sortedDims = [...results.dimensionScores].sort((a, b) => a.score_numeric - b.score_numeric);
+            const lowestDim = sortedDims[0];
+            const highestDim = sortedDims[sortedDims.length - 1];
+            const dimLabels = {
+              ai_fluency: 'AI Fluency',
+              decision_velocity: 'Decision Velocity',
+              experimentation_cadence: 'Experimentation',
+              delegation_augmentation: 'Delegation',
+              alignment_communication: 'Alignment',
+              risk_governance: 'Risk Management'
+            };
+            const lowestLabel = dimLabels[lowestDim.dimension_key as keyof typeof dimLabels];
+            const highestLabel = dimLabels[highestDim.dimension_key as keyof typeof dimLabels];
+            const gap = Math.round(highestDim.score_numeric - lowestDim.score_numeric);
+            
+            return (
+              <>
+                <p className="text-sm leading-relaxed">
+                  <span className="font-semibold">The Gap:</span> Your scores show strong {highestLabel} ({Math.round(highestDim.score_numeric)}/100) but weaker {lowestLabel} ({Math.round(lowestDim.score_numeric)}/100). 
+                  This {gap}-point gap is typical of leaders who understand AI but haven't systematized execution.
+                </p>
+                <p className="text-sm leading-relaxed">
+                  <span className="font-semibold">Path Forward:</span> Focus on {lowestLabel} first. Improving from {Math.round(lowestDim.score_numeric)} to {Math.min(100, Math.round(lowestDim.score_numeric) + 15)} will lift your overall score by 8-12 points and unlock compound benefits in other areas.
+                </p>
+              </>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
+      {/* Your Biggest Lever Analysis */}
+      {(() => {
+        const sortedDims = [...results.dimensionScores].sort((a, b) => a.score_numeric - b.score_numeric);
+        const lowestDim = sortedDims[0];
+        const dimLabels = {
+          ai_fluency: 'AI Fluency',
+          decision_velocity: 'Decision Velocity',
+          experimentation_cadence: 'Experimentation',
+          delegation_augmentation: 'Delegation',
+          alignment_communication: 'Alignment',
+          risk_governance: 'Risk Management'
+        };
+        const label = dimLabels[lowestDim.dimension_key as keyof typeof dimLabels];
+        const current = Math.round(lowestDim.score_numeric);
+        const target = Math.min(100, current + 20);
+        const impact = Math.round((target - current) * 0.6);
+        
+        const leverInsights = {
+          ai_fluency: {
+            why: 'AI Fluency is your foundation. Without hands-on tool mastery, strategic decisions lack grounding and team adoption stalls.',
+            action: 'Commit to 30 minutes daily practicing AI tools in your actual workflow. Start with meeting prep automation.',
+            outcome: `Within 2 weeks, you'll reclaim 3-5 hours weekly and have credibility to drive team adoption.`
+          },
+          decision_velocity: {
+            why: 'Slow decisions compound. Every delayed choice costs momentum and gives competitors time to move.',
+            action: 'Use AI to pre-analyze options before meetings. Generate tradeoff matrices and stakeholder impact assessments.',
+            outcome: 'Cut decision time by 40% and make higher-quality calls with quantified risks.'
+          },
+          experimentation_cadence: {
+            why: 'Without regular pilots, you\'re theorizing instead of learning. Competitors are building real AI muscle.',
+            action: 'Launch a 2-week pilot on one repetitive process this month. Measure time saved and iterate.',
+            outcome: 'Build confidence through proof points and establish a systematic testing rhythm.'
+          },
+          delegation_augmentation: {
+            why: 'Every hour you spend on automatable work is an hour not spent on strategy. This gap scales linearly with time.',
+            action: 'Identify your top 3 time-wasters and automate the most repetitive one using AI tools.',
+            outcome: 'Reclaim 5-8 hours weekly and model effective AI delegation for your team.'
+          },
+          alignment_communication: {
+            why: 'Misaligned stakeholders create friction that slows every initiative. Clear communication is your force multiplier.',
+            action: 'Build AI-powered templates for stakeholder updates that address their specific priorities.',
+            outcome: 'Reduce alignment meetings by 30% and accelerate initiative approvals.'
+          },
+          risk_governance: {
+            why: 'Unmanaged AI risk creates future crises. Early guardrails cost hours now but prevent months of cleanup later.',
+            action: 'Draft a one-page AI usage policy covering data sensitivity, approval workflows, and tool standards.',
+            outcome: 'Prevent shadow AI proliferation and build foundation for scaled adoption.'
+          }
+        };
+        
+        const insight = leverInsights[lowestDim.dimension_key as keyof typeof leverInsights];
+        
+        return (
+          <Card className="border-2 border-primary bg-gradient-to-br from-primary/10 to-background">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                <CardTitle>Your Single Biggest Lever: {label}</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-baseline gap-3">
+                <span className="text-4xl font-bold text-foreground">{current}</span>
+                <ArrowRight className="h-6 w-6 text-muted-foreground" />
+                <span className="text-4xl font-bold text-primary">{target}</span>
+                <span className="text-sm text-muted-foreground">= +{impact} overall points</span>
+              </div>
+              <div className="space-y-2 text-sm">
+                <p><span className="font-semibold">Why this matters:</span> {insight.why}</p>
+                <p><span className="font-semibold">Your specific action:</span> {insight.action}</p>
+                <p><span className="font-semibold">Expected outcome:</span> {insight.outcome}</p>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
       {/* Quick Wins Section - Free Tier Value */}
-      {generateQuickWins(results).length > 0 && (
-        <QuickWinsCard wins={generateQuickWins(results)} />
+      {generateQuickWins(results, contactData).length > 0 && (
+        <QuickWinsCard wins={generateQuickWins(results, contactData)} />
       )}
 
       {/* Risk Signals & Execution Gaps */}
@@ -355,7 +473,32 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
 
       {/* Leadership Dimensions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Leadership Dimensions</h3>
+        <div>
+          <h3 className="text-lg font-semibold">Leadership Dimensions</h3>
+          {(() => {
+            const sorted = [...results.dimensionScores].sort((a, b) => b.score_numeric - a.score_numeric);
+            const strongest = sorted[0];
+            const weakest = sorted[sorted.length - 1];
+            const dimLabels = {
+              ai_fluency: 'AI Fluency',
+              decision_velocity: 'Decision Velocity',
+              experimentation_cadence: 'Experimentation',
+              delegation_augmentation: 'Delegation',
+              alignment_communication: 'Alignment',
+              risk_governance: 'Risk Management'
+            };
+            const strongLabel = dimLabels[strongest.dimension_key as keyof typeof dimLabels];
+            const weakLabel = dimLabels[weakest.dimension_key as keyof typeof dimLabels];
+            
+            return (
+              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                Your pattern: Strong {strongLabel} ({Math.round(strongest.score_numeric)}/100) but weaker {weakLabel} ({Math.round(weakest.score_numeric)}/100). 
+                This gap creates tension—{strongest.score_numeric > 70 ? 'you envision possibilities but struggle to execute systematically' : 'you have foundation but lack strategic integration'}. 
+                Strengthening {weakLabel} will amplify your existing strength in {strongLabel}.
+              </p>
+            );
+          })()}
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
           {results.dimensionScores.map((dim, index) => {
             const tension = results.tensions.find(t => t.dimension_key === dim.dimension_key);
@@ -435,50 +578,60 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
   );
 };
 
-// Generate quick wins from available data
-function generateQuickWins(results: AggregatedLeaderResults): Array<{ title: string; impact: string; timeToValue: string }> {
+// Generate quick wins from available data with personalization
+function generateQuickWins(
+  results: AggregatedLeaderResults, 
+  contactData?: { roleTitle?: string; companyName?: string; companySize?: string; industry?: string }
+): Array<{ title: string; impact: string; timeToValue: string }> {
   const wins: Array<{ title: string; impact: string; timeToValue: string }> = [];
+  
+  const role = contactData?.roleTitle || 'leader';
+  const company = contactData?.companyName || 'your organization';
+  const size = contactData?.companySize || 'similar-sized';
+  const industry = contactData?.industry || 'your industry';
 
-  // Win 1: From first move if available
+  // Win 1: From first move if available - make it personal and urgent
   if (results.firstMoves.length > 0) {
     const firstMove = results.firstMoves[0];
+    const actionPhrase = firstMove.content.split('.')[0];
     wins.push({
-      title: `Priority Action: ${firstMove.content.split('.')[0]}`,
-      impact: firstMove.content,
+      title: `Your Priority: ${actionPhrase}`,
+      impact: `As ${role}, ${firstMove.content} This is your highest-leverage move right now.`,
       timeToValue: '1-2 weeks'
     });
   }
 
-  // Win 2: From lowest dimension score
+  // Win 2: From lowest dimension score - contextualize to their role
   const sortedDimensions = [...results.dimensionScores].sort((a, b) => a.score_numeric - b.score_numeric);
   if (sortedDimensions.length > 0) {
     const lowestDim = sortedDimensions[0];
     const dimLabel = dimensionLabels[lowestDim.dimension_key] || lowestDim.dimension_key;
+    const score = Math.round(lowestDim.score_numeric);
     
     const improvementMap: Record<string, { title: string; impact: string }> = {
       ai_fluency: {
-        title: 'Launch Weekly AI Tool Training',
-        impact: `Your ${dimLabel} score (${Math.round(lowestDim.score_numeric)}/100) suggests starting with hands-on practice. Dedicate 30 minutes weekly to experiment with AI tools in your actual workflow.`
+        title: `Your ${dimLabel} Gap Is Costing You 8+ Hours/Week`,
+        impact: `As ${role} at ${company}, your ${score}/100 ${dimLabel} score means you're manually doing work that 73% of ${industry} leaders have automated. Commit to 30 minutes daily practicing AI tools in your actual workflow. Within 2 weeks: reclaim 5-8 hours weekly.`
       },
       decision_velocity: {
-        title: 'Create AI-Assisted Decision Framework',
-        impact: `With ${dimLabel} at ${Math.round(lowestDim.score_numeric)}/100, use AI to pre-analyze options and surface key tradeoffs before meetings, cutting decision time by 40%.`
+        title: `Accelerate Decisions: Cut ${dimLabel} Time by 40%`,
+        impact: `With ${dimLabel} at ${score}/100, you're spending 2-3x longer on decisions than peers. Use AI to pre-analyze options before meetings—generate tradeoff matrices and stakeholder impact assessments. For ${role}s at ${size} companies, this typically saves 6-10 hours weekly.`
       },
       experimentation_cadence: {
-        title: 'Start a Small AI Pilot This Month',
-        impact: `Your ${dimLabel} score (${lowestDim.score_numeric}/100) shows opportunity. Pick one repetitive process, test an AI solution for 2 weeks, and measure time saved.`
+        title: `Launch Your First AI Pilot This Month`,
+        impact: `Your ${dimLabel} score (${score}/100) shows you're theorizing instead of learning. Pick one repetitive process at ${company}, test an AI solution for 2 weeks, measure time saved. 68% of ${industry} leaders who started small pilots saw 40%+ time savings within 30 days.`
       },
       delegation_augmentation: {
-        title: 'Automate Your Top Repetitive Task',
-        impact: `${dimLabel} at ${lowestDim.score_numeric}/100 indicates delegation gaps. Identify your most time-consuming repetitive task and explore AI automation to reclaim 5-8 hours weekly.`
+        title: `Automate Your Biggest Time-Waster Now`,
+        impact: `${dimLabel} at ${score}/100 indicates serious delegation gaps. As ${role}, identify your most time-consuming repetitive task and automate it using AI. Most ${industry} executives reclaim 5-8 hours weekly within 2-3 weeks of focused automation.`
       },
       alignment_communication: {
-        title: 'Build Stakeholder Communication Templates',
-        impact: `With ${dimLabel} at ${lowestDim.score_numeric}/100, create AI-powered templates for common stakeholder updates to ensure consistent, clear messaging.`
+        title: `Fix Stakeholder Misalignment in 1 Week`,
+        impact: `With ${dimLabel} at ${score}/100, you're losing momentum to communication friction. Build AI-powered templates for stakeholder updates at ${company}—address their specific priorities using their language. Reduce alignment meetings by 30% and accelerate approvals.`
       },
       risk_governance: {
-        title: 'Draft AI Usage Guidelines',
-        impact: `Your ${dimLabel} score (${lowestDim.score_numeric}/100) suggests establishing basic AI usage principles now, before risks emerge. Start with a one-page policy.`
+        title: `Prevent Future AI Crises: Draft Policy Today`,
+        impact: `Your ${dimLabel} score (${score}/100) means unmanaged risk is accumulating. At ${company}, draft a one-page AI usage policy covering data sensitivity and tool standards. This takes 2 hours now but prevents months of cleanup later when shadow AI creates problems.`
       }
     };
 
@@ -492,34 +645,34 @@ function generateQuickWins(results: AggregatedLeaderResults): Array<{ title: str
     }
   }
 
-  // Win 3: From risk signal if available
-  if (results.riskSignals.length > 0) {
+  // Win 3: From risk signal if available - make it concrete and urgent
+  if (results.riskSignals.length > 0 && wins.length < 3) {
     const topRisk = results.riskSignals[0];
     const riskWinMap: Record<string, { title: string; impact: string }> = {
       skills_gap: {
-        title: 'Invest in Targeted AI Upskilling',
-        impact: 'Address immediate capability gaps with focused training on the tools most relevant to your role and industry.'
+        title: 'Close Your Team\'s AI Skills Gap Fast',
+        impact: `As ${role}, your team's capability gaps are slowing adoption. Focus training on the 3 tools most relevant to ${industry}—most teams see 50%+ proficiency within 3 weeks of targeted upskilling.`
       },
       shadow_ai: {
-        title: 'Establish Team AI Tool Inventory',
-        impact: 'Uncover what tools your team is already using informally, then standardize on secure, approved solutions.'
+        title: 'Discover & Secure Hidden AI Tools',
+        impact: `Shadow AI is proliferating at ${company}. Conduct a 1-hour team inventory of current AI tools, then standardize on secure, approved solutions. This prevents future security incidents and improves ROI tracking.`
       },
       roi_leakage: {
-        title: 'Track AI Time Savings Weekly',
-        impact: 'Start measuring time saved on AI-assisted tasks to build your ROI case and identify high-value use cases.'
+        title: 'Start Tracking AI ROI This Week',
+        impact: `You're generating AI value but not capturing it. As ${role}, implement a simple weekly tracker for time saved on AI-assisted tasks. Within 2 weeks you'll have concrete ROI data to justify scaled investment.`
       },
       decision_friction: {
-        title: 'Map Decision Bottlenecks',
-        impact: 'Document where decisions stall in your workflow, then test AI tools to accelerate analysis and consensus-building.'
+        title: 'Map & Eliminate Decision Bottlenecks',
+        impact: `At ${company}, slow decisions compound cost. Document where decisions stall, then test AI tools to accelerate analysis and consensus-building. Most ${industry} teams reduce decision time by 35-50%.`
       }
     };
 
     const riskWin = riskWinMap[topRisk.risk_key as keyof typeof riskWinMap];
-    if (riskWin && wins.length < 3) {
+    if (riskWin) {
       wins.push({
         title: riskWin.title,
         impact: riskWin.impact,
-        timeToValue: '1 month'
+        timeToValue: '3-4 weeks'
       });
     }
   }

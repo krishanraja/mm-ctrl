@@ -60,8 +60,11 @@ CONTEXT:
 - Timeline: ${contactData.timeline || 'Near-term'}`;
     }
 
-    const synthesisPro = `CRITICAL: Generate RADICALLY PERSONALIZED AI command center for this executive.
-NO GENERIC PROMPTS ALLOWED - Each must be impossible to generate without their specific data.
+    const synthesisPro = `CRITICAL: You are creating THE DEFINITIVE AI COMMAND CENTER for this executive.
+This is NOT a suggestion library - these are MASTER COMMAND PROMPTS they will copy-paste verbatim into any AI assistant.
+
+POSITIONING: Ultra-confident. This IS their personalized AI brain. No hedging, no "you could try", no "example". 
+Every prompt must convey: "THIS IS YOUR LAST MASTER PROMPT. COPY IT. USE IT EVERYWHERE."
 
 IMPORTANT: Use ONLY gender-neutral language throughout (they/their/them).
 
@@ -75,25 +78,34 @@ EXECUTIVE PROFILE:
 ASSESSMENT SCORES:
 ${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}`).join('\n')}${profileSection}
 
-ANTI-PATTERNS TO AVOID (These are REJECTED as too generic):
+LANGUAGE RULES (CRITICAL):
+✅ "Your AI Command Prompt" (not "example prompt")
+✅ "Copy-paste this exact prompt" (not "here's an example")  
+✅ "Use as-is, no modifications needed" (not "customize as needed")
+✅ "This is personalized for YOU" (not "this could work for...")
+✅ Frame as DEFINITIVE authority, not suggestive
+
+ANTI-PATTERNS TO REJECT:
 ❌ "Analyze this research and information synthesis decision..."
 ❌ "Evaluate trade-offs between these three strategic options..."  
 ❌ "Create a stakeholder impact assessment for..."
 ❌ Any prompt that could work for ANY executive in ANY industry
 ❌ Generic frameworks without specific names, metrics, or context
+❌ Suggestive language: "you might", "consider", "could try"
 
-QUALITY EXAMPLES (This is what "good" looks like):
+QUALITY STANDARD (300-400 words per master prompt):
 ✅ "As ${contactData.roleTitle || 'leader'} at ${contactData.companyName || 'the organization'}, draft a 3-minute update for [specific stakeholder from profile] that addresses [specific challenge from profile] using data from recent initiatives, focusing on how AI automation has impacted [specific metric or area]."
 ✅ "You're presenting to [specific stakeholder from profile] about [specific initiative]. They care about [their priority]. Generate 3 talking points that connect AI ROI to their KPIs, using examples from ${contactData.companySize || 'similar-sized'} companies."
 ✅ "I spend hours weekly on [specific time-waster from profile]. Design an AI workflow that reduces this by 70% by automating [specific subtask], then draft the delegation instructions for [specific role]."
 
 VALIDATION CHECKLIST (AI must verify before returning):
-- [ ] Every conversation mentions actual stakeholders from their profile (or inferred from role/industry)
-- [ ] Every delegation addresses actual time-wasters from their profile
-- [ ] Every prompt includes role-specific and industry-specific terminology
-- [ ] Every playbook step references their specific challenges and timeline
+- [ ] Every prompt is 300-400 words, fully personalized, copy-paste ready
+- [ ] Mentions actual stakeholders, time-wasters, or challenges from their profile
+- [ ] Includes role-specific and industry-specific terminology
+- [ ] References their specific context (company size, timeline, focus area)
 - [ ] Zero generic placeholders or "[insert X]" text
-- [ ] A different executive in a different industry could NOT use these exact prompts
+- [ ] Uses authoritative language: "Use this", "This is your", "Copy-paste"
+- [ ] A different executive in different industry could NOT use these exact prompts
 
 YOUR TASK:
 Generate a comprehensive Executive AI Command Center in JSON format with radical specificity:
