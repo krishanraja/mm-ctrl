@@ -178,12 +178,12 @@ export async function orchestrateAssessmentV2(
 }
 
 function calculateBenchmarkScore(assessmentData: any): number {
-  // Calculate aggregate score from assessment responses
+  // V2 scores are already normalized to 0-100, so just average them
   const responses = Object.values(assessmentData).filter(v => typeof v === 'number');
   if (responses.length === 0) return 0;
   
   const sum = responses.reduce((acc: number, val: any) => acc + val, 0);
-  return Math.round((sum / (responses.length * 5)) * 100);
+  return Math.round(sum / responses.length);
 }
 
 function calculateBenchmarkTier(score: number): string {
