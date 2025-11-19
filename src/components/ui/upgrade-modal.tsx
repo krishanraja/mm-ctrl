@@ -42,7 +42,7 @@ export const UpgradeModal = React.memo<UpgradeModalProps>(({
             </DialogTitle>
           </div>
           <DialogDescription className="text-base pt-2">
-            Get complete insights and actionable recommendations for just <span className="font-bold text-foreground">$99</span>
+            Get complete insights and actionable recommendations
           </DialogDescription>
         </DialogHeader>
 
@@ -63,7 +63,7 @@ export const UpgradeModal = React.memo<UpgradeModalProps>(({
               size="lg"
             >
               <Lock className="h-4 w-4" />
-              Unlock Full Diagnostic - $99
+              Unlock Full Diagnostic
             </Button>
             <Button 
               onClick={onClose} 

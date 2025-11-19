@@ -17,8 +17,10 @@ import { usePayment } from '@/hooks/usePayment';
 import { checkPaymentCallback, handlePaymentSuccess } from '@/utils/handlePaymentSuccess';
 import { exportDiagnosticPDF, ExportData } from '@/utils/exportPDF';
 import { useToast } from '@/hooks/use-toast';
-import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2, Download } from 'lucide-react';
+import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2, Download, LogIn, LogOut } from 'lucide-react';
 import { ContactData } from './ContactCollectionForm';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
 interface LeadershipBenchmarkV2Props {
   assessmentId: string;
@@ -66,8 +68,31 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
   const [results, setResults] = useState<AggregatedLeaderResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const { createPaymentSession } = usePayment();
   const { toast } = useToast();
+
+  // Handle authentication state
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleAuth = async () => {
+    if (user) {
+      await supabase.auth.signOut();
+      toast({ title: 'Signed out successfully' });
+    } else {
+      window.location.href = '/';
+    }
+  };
 
   useEffect(() => {
     loadResults();
@@ -216,9 +241,29 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
                 <p className="text-sm text-muted-foreground">Get all insights, risks, and actionable recommendations</p>
               </div>
             </div>
-            <Button onClick={handleUpgradeClick} size="sm">
-              Upgrade - $99
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={handleUpgradeClick} size="sm">
+                Upgrade
+              </Button>
+              <Button 
+                onClick={handleAuth} 
+                variant="outline" 
+                size="sm"
+                className="gap-2"
+              >
+                {user ? (
+                  <>
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="h-4 w-4" />
+                    Sign In
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
