@@ -237,6 +237,32 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         console.log('✅ V2 assessment orchestrated successfully');
         console.log('📊 Using v2 assessment ID:', result.assessmentId);
         sessionStorage.setItem('v2_assessment_id', result.assessmentId);
+        
+        // Fetch prompts from database
+        const { data: promptSets, error: promptError } = await supabase
+          .from('leader_prompt_sets')
+          .select('*')
+          .eq('assessment_id', result.assessmentId)
+          .order('priority_rank', { ascending: true });
+        
+        if (!promptError && promptSets && promptSets.length > 0) {
+          // Transform to expected format
+          const library = {
+            promptSets: promptSets.map(set => ({
+              category: set.category_key,
+              title: set.title,
+              description: set.description || '',
+              whatItsFor: set.what_its_for || '',
+              whenToUse: set.when_to_use || '',
+              howToUse: set.how_to_use || '',
+              prompts: set.prompts_json || []
+            }))
+          };
+          setPromptLibrary(library);
+          console.log('✅ Prompts loaded from database:', promptSets.length);
+        } else {
+          console.warn('⚠️ No prompts found for assessment:', result.assessmentId);
+        }
       }
     } catch (error) {
       console.error('❌ V2 orchestration error:', error);
@@ -606,7 +632,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     );
   }
 
-  if (currentScreen === 'unified-results' && promptLibrary && contactData) {
+  if (currentScreen === 'unified-results' && contactData) {
     const assessmentData = getAssessmentData();
     
     return (

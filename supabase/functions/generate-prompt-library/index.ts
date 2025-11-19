@@ -122,7 +122,6 @@ Return ONLY valid JSON, no markdown formatting.`;
 
     let generatedContent;
     let generationModel = '';
-    const startTime = Date.now();
 
     // ============= PLAN A: OPENAI GPT-4O-MINI (10s timeout) =============
     console.log('🔄 Plan A: Calling OpenAI gpt-4o-mini...');
