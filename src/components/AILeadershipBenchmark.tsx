@@ -10,8 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import mindmakerLogo from '@/assets/mindmaker-logo-dark.png';
 import { SaveProfileDialog } from '@/components/auth/SaveProfileDialog';
 import { useAssessment } from '@/contexts/AssessmentContext';
-import { StandardCarousel, StandardCarouselCard } from '@/components/ui/standard-carousel';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
 import { deriveLeadershipComparison, type LeadershipComparison } from '@/utils/scaleUpsMapping';

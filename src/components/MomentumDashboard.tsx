@@ -148,7 +148,7 @@ export const MomentumDashboard: React.FC<MomentumDashboardProps> = ({ companyHas
               <Award className="h-5 w-5 text-primary mt-0.5" />
               <div>
                 <div className="text-sm text-muted-foreground">Repeat Rate</div>
-                <div className="text-xl font-bold">{momentum.repeat_rate_capped.toFixed(1)}</div>
+                <div className="text-xl font-bold">{Math.round(momentum.repeat_rate_capped)}</div>
                 <div className="text-xs text-muted-foreground">assessments/month</div>
               </div>
             </div>
@@ -159,19 +159,19 @@ export const MomentumDashboard: React.FC<MomentumDashboardProps> = ({ companyHas
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Repeat Rate (40%)</span>
-                <span className="font-medium">{(momentum.repeat_rate_capped * 4).toFixed(0)} pts</span>
+                <span className="font-medium">{Math.round(momentum.repeat_rate_capped * 4)} pts</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Team Growth (30%)</span>
-                <span className="font-medium">{(momentum.team_growth_sqrt * 6).toFixed(0)} pts</span>
+                <span className="font-medium">{Math.round(momentum.team_growth_sqrt * 6)} pts</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Referral Quality (20%)</span>
-                <span className="font-medium">{(momentum.referral_quality_score * 20).toFixed(0)} pts</span>
+                <span className="font-medium">{Math.round(momentum.referral_quality_score * 20)} pts</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Recency (10%)</span>
-                <span className="font-medium">{(momentum.recency_decay * 10).toFixed(0)} pts</span>
+                <span className="font-medium">{Math.round(momentum.recency_decay * 10)} pts</span>
               </div>
             </div>
           </div>

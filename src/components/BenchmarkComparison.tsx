@@ -165,17 +165,17 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
                 <div className="text-4xl font-bold">{userScore}</div>
               </div>
               <Badge variant={isAboveAverage ? 'default' : 'secondary'} className="text-lg px-4 py-1">
-                {isAboveAverage ? '↑' : '↓'} {Math.abs(percentile).toFixed(0)}%
+                {isAboveAverage ? '↑' : '↓'} {Math.round(Math.abs(percentile))}%
               </Badge>
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Global Average</span>
-                <span className="font-medium">{benchmark.avg_readiness_score.toFixed(0)}</span>
+                <span className="font-medium">{Math.round(benchmark.avg_readiness_score)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Global Median</span>
-                <span className="font-medium">{benchmark.median_readiness_score.toFixed(0)}</span>
+                <span className="font-medium">{Math.round(benchmark.median_readiness_score)}</span>
               </div>
             </div>
           </div>
@@ -200,7 +200,7 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
                         <Badge variant="outline" className="text-xs">You</Badge>
                       )}
                     </span>
-                    <span className="text-sm text-muted-foreground">{pct?.toFixed(1)}%</span>
+                    <span className="text-sm text-muted-foreground">{Math.round(pct)}%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
@@ -220,19 +220,19 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
                 {industryBench && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{industry} Average</span>
-                    <span className="font-medium">{industryBench.avg_score?.toFixed(0)}</span>
+                    <span className="font-medium">{Math.round(industryBench.avg_score)}</span>
                   </div>
                 )}
                 {sizeBench && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{companySize} Companies</span>
-                    <span className="font-medium">{sizeBench.avg_score?.toFixed(0)}</span>
+                    <span className="font-medium">{Math.round(sizeBench.avg_score)}</span>
                   </div>
                 )}
                 {roleBench && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{role}s</span>
-                    <span className="font-medium">{roleBench.avg_score?.toFixed(0)}</span>
+                    <span className="font-medium">{Math.round(roleBench.avg_score)}</span>
                   </div>
                 )}
               </div>
