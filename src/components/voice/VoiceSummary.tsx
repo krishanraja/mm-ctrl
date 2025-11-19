@@ -75,7 +75,7 @@ export const VoiceSummary: React.FC<VoiceSummaryProps> = ({
           timeline: 'Now',
           consentToInsights: true
         },
-        assessmentData.responses,
+        assessmentData,
         deepProfile,
         sessionId,
         'voice'
