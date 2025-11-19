@@ -1096,7 +1096,7 @@ export type Database = {
           {
             foreignKeyName: "huddle_synthesis_workshop_session_id_fkey"
             columns: ["workshop_session_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "workshop_sessions"
             referencedColumns: ["id"]
           },
@@ -1562,7 +1562,7 @@ export type Database = {
           {
             foreignKeyName: "pilot_charter_workshop_session_id_fkey"
             columns: ["workshop_session_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "workshop_sessions"
             referencedColumns: ["id"]
           },
@@ -1727,7 +1727,7 @@ export type Database = {
           {
             foreignKeyName: "provocation_reports_workshop_session_id_fkey"
             columns: ["workshop_session_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "workshop_sessions"
             referencedColumns: ["id"]
           },
@@ -2051,7 +2051,7 @@ export type Database = {
           {
             foreignKeyName: "strategy_addendum_workshop_session_id_fkey"
             columns: ["workshop_session_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "workshop_sessions"
             referencedColumns: ["id"]
           },

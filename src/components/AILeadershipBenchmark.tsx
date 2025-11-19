@@ -357,10 +357,10 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
                       <div className="flex-1">
                         <div className="text-xs font-semibold text-muted-foreground uppercase mb-1">Growth Readiness</div>
                         <div className="text-base font-bold text-foreground mb-1">
-                          {personalizedInsights?.growthReadiness.level || 'Medium'}
+                          {personalizedInsights?.growthReadiness?.level || 'Medium'}
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-2">
-                          {personalizedInsights?.growthReadiness.preview || 'Strong foundation for AI adoption'}
+                          {personalizedInsights?.growthReadiness?.preview || 'Strong foundation for AI adoption'}
                         </p>
                       </div>
                     </div>
@@ -377,10 +377,10 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
                       <div className="flex-1">
                         <div className="text-xs font-semibold text-muted-foreground uppercase mb-1">Leadership Stage</div>
                         <div className="text-base font-bold text-foreground mb-1">
-                          {personalizedInsights?.leadershipStage.stage || leadershipProfile.tier}
+                          {personalizedInsights?.leadershipStage?.stage || leadershipProfile.tier}
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-2">
-                          {personalizedInsights?.leadershipStage.preview || leadershipProfile.tagline}
+                          {personalizedInsights?.leadershipStage?.preview || leadershipProfile.tagline}
                         </p>
                       </div>
                     </div>
@@ -397,10 +397,10 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
                       <div className="flex-1">
                         <div className="text-xs font-semibold text-muted-foreground uppercase mb-1">Key Focus</div>
                         <div className="text-base font-bold text-foreground mb-1">
-                          {personalizedInsights?.keyFocus.category || 'Strategic Implementation'}
+                          {personalizedInsights?.keyFocus?.category || 'Strategic Implementation'}
                         </div>
                         <p className="text-xs text-muted-foreground line-clamp-2">
-                          {personalizedInsights?.keyFocus.preview || 'Prioritize pilot programs'}
+                          {personalizedInsights?.keyFocus?.preview || 'Prioritize pilot programs'}
                         </p>
                       </div>
                     </div>
