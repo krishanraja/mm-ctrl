@@ -329,9 +329,7 @@ Return ONLY valid JSON, no markdown formatting.`;
               responseMimeType: "application/json"
             },
             tools: [{
-              googleSearchRetrieval: {
-                disableAttribution: false
-              }
+              google_search: {}
             }]
           })
         });
@@ -400,6 +398,9 @@ Return ONLY valid JSON, no markdown formatting.`;
             durationMs: Date.now() - startTime,
             success: true
           });
+        } else {
+          const errorText = await openaiResponse.text();
+          console.error('❌ OpenAI error:', openaiResponse.status, errorText);
         }
     } catch (error: any) {
       clearTimeout(openaiTimeoutId);

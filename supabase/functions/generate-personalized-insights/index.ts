@@ -161,9 +161,7 @@ Return ONLY valid JSON matching the required structure.`
               responseMimeType: "application/json"
             },
             tools: [{
-              googleSearchRetrieval: {
-                disableAttribution: false
-              }
+              google_search: {}
             }]
           })
         });
@@ -240,6 +238,9 @@ Return ONLY valid JSON matching the required structure.`
             durationMs: Date.now() - startTime,
             success: true
           });
+        } else {
+          const errorText = await openaiResponse.text();
+          console.error('❌ OpenAI error:', openaiResponse.status, errorText);
         }
       } catch (error: any) {
         clearTimeout(openaiTimeoutId);
@@ -315,32 +316,32 @@ Return ONLY valid JSON matching the required structure.`
         growthReadiness: {
           level: avgScore >= 75 ? "High" : avgScore >= 60 ? "Medium-High" : avgScore >= 45 ? "Medium" : "Developing",
           preview: `Score: ${avgScore}/100 - ${avgScore >= 60 ? 'Strong foundation' : 'Building momentum'}`,
-          details: `${contactData.fullName}'s ${avgScore}/100 score shows ${avgScore >= 60 ? 'strong readiness' : 'solid progress'} in ${contactData.primaryFocus}. Focus: ${deepProfileData.transformationGoal}`
+          details: `${contactData.fullName}'s ${avgScore}/100 score shows ${avgScore >= 60 ? 'strong readiness' : 'solid progress'} in ${contactData.primaryFocus}.${deepProfileData?.transformationGoal ? ` Focus: ${deepProfileData.transformationGoal}` : ''}`
         },
         leadershipStage: {
           stage: avgScore >= 75 ? "Confident" : avgScore >= 60 ? "Aware" : "Emerging",
           preview: avgScore >= 60 ? "Leading AI adoption" : "Building AI literacy",
-          details: `Ready to ${avgScore >= 60 ? 'scale AI adoption with team' : 'start pilot projects'}. Next: ${deepProfileData.delegateTasks[0]}`
+          details: `Ready to ${avgScore >= 60 ? 'scale AI adoption with team' : 'start pilot projects'}.${deepProfileData?.delegateTasks?.[0] ? ` Next: ${deepProfileData.delegateTasks[0]}` : ''}`
         },
         keyFocus: {
           category: keyFocusMap[contactData.primaryFocus] || "Strategic Execution",
           preview: `Optimize ${contactData.primaryFocus.toLowerCase()}`,
-          details: `Focus on ${deepProfileData.delegateTasks[0]} to address ${deepProfileData.biggestChallenge}`
+          details: `Focus on ${deepProfileData?.delegateTasks?.[0] || 'priority tasks'} to address ${deepProfileData?.biggestChallenge || 'key challenges'}`
         },
         quickWins: [
           {
-            title: `Automate ${deepProfileData.delegateTasks[0]}`,
-            impact: `Save ${Math.min(deepProfileData.timeWaste, 30)}% of time currently spent on repetitive ${deepProfileData.timeWasteExamples}`,
+            title: `Automate ${deepProfileData?.delegateTasks?.[0] || 'repetitive tasks'}`,
+            impact: `Save ${Math.min(deepProfileData?.timeWaste || 20, 30)}% of time currently spent on repetitive ${deepProfileData?.timeWasteExamples || 'manual processes'}`,
             timeToValue: "2 weeks"
           },
           {
             title: `AI-powered ${contactData.primaryFocus} assistant`,
-            impact: `Streamline ${deepProfileData.stakeholders[0]} communications and ${deepProfileData.biggestChallenge}`,
+            impact: `Streamline ${deepProfileData?.stakeholders?.[0] || 'team'} communications and ${deepProfileData?.biggestChallenge || 'workflow challenges'}`,
             timeToValue: "1 month"
           },
           {
             title: "Team prompt library for common tasks",
-            impact: `Standardize ${deepProfileData.communicationStyle[0]} approach across ${contactData.companySize} team`,
+            impact: `Standardize ${deepProfileData?.communicationStyle?.[0] || 'collaborative'} approach across ${contactData.companySize} team`,
             timeToValue: "1 week"
           }
         ]
