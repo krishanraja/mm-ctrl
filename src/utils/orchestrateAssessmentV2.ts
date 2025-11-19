@@ -87,79 +87,96 @@ export async function orchestrateAssessmentV2(
       }
     }
 
-    // 5b: Generate prompt library
-    const { data: promptData, error: promptError } = await invokeEdgeFunction(
+    // 5b: Generate prompt library with timeout protection
+    console.log('📚 Generating prompt library...');
+    const promptPromise = invokeEdgeFunction(
       'generate-prompt-library',
       {
         assessmentData,
         contactData,
-        deepProfileData,
+        profileData: deepProfileData, // Fixed parameter name
       },
       { logPrefix: '📚', silent: false }
     );
+    
+    const promptResult = await Promise.race([
+      promptPromise,
+      new Promise<any>((_, reject) => 
+        setTimeout(() => reject(new Error('Prompt library timeout after 20s')), 20000)
+      )
+    ]).catch(err => {
+      console.error('⚠️ Prompt library generation failed:', err);
+      return { data: null, error: err };
+    });
 
-    if (promptError) {
-      console.error('⚠️ Prompt library generation failed:', promptError);
-    } else {
+    if (!promptResult.error && promptResult.data?.promptSets) {
       console.log('✅ Prompt library generated');
-      // Store prompt sets if returned
-      if (promptData?.promptSets) {
-        await storePromptSets(assessmentId, promptData.promptSets);
-      }
+      await storePromptSets(assessmentId, promptResult.data.promptSets);
     }
 
-    // 5c: Compute risk signals
-    const { data: riskData, error: riskError } = await invokeEdgeFunction(
-      'compute-risk-signals',
-      {
-        assessment_id: assessmentId,
-        assessment_data: assessmentData,
-        profile_data: deepProfileData,
-      },
-      { logPrefix: '⚠️', silent: false }
-    );
+    // 5c-5e: Run non-critical computations in parallel with timeout protection
+    console.log('⚙️ Running parallel computations (risk signals, tensions, org scenarios)...');
+    
+    const withTimeout = <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+      return Promise.race([
+        promise,
+        new Promise<T>((_, reject) => 
+          setTimeout(() => reject(new Error(`${label} timeout after ${ms}ms`)), ms)
+        )
+      ]);
+    };
 
-    if (riskError) {
-      console.error('⚠️ Risk signals computation failed:', riskError);
+    const dimensionScores = convertToDimensionScores(assessmentData);
+
+    const [riskResult, tensionResult, scenarioResult] = await Promise.allSettled([
+      withTimeout(
+        invokeEdgeFunction('compute-risk-signals', {
+          assessment_id: assessmentId,
+          assessment_data: assessmentData,
+          profile_data: deepProfileData,
+        }, { logPrefix: '⚠️', silent: false }),
+        15000,
+        'Risk signals'
+      ),
+      withTimeout(
+        invokeEdgeFunction('compute-tensions', {
+          assessment_id: assessmentId,
+          dimension_scores: dimensionScores,
+          assessment_data: assessmentData,
+          profile_data: deepProfileData,
+        }, { logPrefix: '⚡', silent: false }),
+        15000,
+        'Tensions'
+      ),
+      withTimeout(
+        invokeEdgeFunction('derive-org-scenarios', {
+          assessment_id: assessmentId,
+          dimension_scores: dimensionScores,
+          risk_signals: [],
+          tensions: [],
+        }, { logPrefix: '🎯', silent: false }),
+        15000,
+        'Org scenarios'
+      )
+    ]);
+
+    // Log results with graceful degradation
+    if (riskResult.status === 'fulfilled' && riskResult.value.data) {
+      console.log(`✅ Risk signals computed: ${riskResult.value.data?.count || 0}`);
     } else {
-      console.log('✅ Risk signals computed:', riskData?.count || 0);
+      console.warn('⚠️ Risk signals failed:', riskResult.status === 'rejected' ? riskResult.reason : riskResult.value.error);
     }
 
-    // 5d: Compute tensions
-    const dimensionScoresForTensions = convertToDimensionScores(assessmentData);
-    const { data: tensionData, error: tensionError } = await invokeEdgeFunction(
-      'compute-tensions',
-      {
-        assessment_id: assessmentId,
-        dimension_scores: dimensionScoresForTensions,
-        assessment_data: assessmentData,
-        profile_data: deepProfileData,
-      },
-      { logPrefix: '⚡', silent: false }
-    );
-
-    if (tensionError) {
-      console.error('⚠️ Tensions computation failed:', tensionError);
+    if (tensionResult.status === 'fulfilled' && tensionResult.value.data) {
+      console.log(`✅ Tensions computed: ${tensionResult.value.data?.count || 0}`);
     } else {
-      console.log('✅ Tensions computed:', tensionData?.count || 0);
+      console.warn('⚠️ Tensions failed:', tensionResult.status === 'rejected' ? tensionResult.reason : tensionResult.value.error);
     }
 
-    // 5e: Derive org scenarios
-    const { data: scenarioData, error: scenarioError } = await invokeEdgeFunction(
-      'derive-org-scenarios',
-      {
-        assessment_id: assessmentId,
-        dimension_scores: dimensionScoresForTensions,
-        risk_signals: riskData?.risks || [],
-        tensions: tensionData?.tensions || [],
-      },
-      { logPrefix: '🎯', silent: false }
-    );
-
-    if (scenarioError) {
-      console.error('⚠️ Org scenarios derivation failed:', scenarioError);
+    if (scenarioResult.status === 'fulfilled' && scenarioResult.value.data) {
+      console.log(`✅ Org scenarios derived: ${scenarioResult.value.data?.count || 0}`);
     } else {
-      console.log('✅ Org scenarios derived:', scenarioData?.count || 0);
+      console.warn('⚠️ Org scenarios failed:', scenarioResult.status === 'rejected' ? scenarioResult.reason : scenarioResult.value.error);
     }
 
     console.log('🎉 V2 assessment orchestration complete!');

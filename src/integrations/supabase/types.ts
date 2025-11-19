@@ -1882,6 +1882,47 @@ export type Database = {
           },
         ]
       }
+      post_session_reviews: {
+        Row: {
+          ai_leadership_confidence: number
+          created_at: string | null
+          id: string
+          optional_feedback: string | null
+          participant_email: string | null
+          participant_name: string
+          session_enjoyment: number
+          workshop_session_id: string | null
+        }
+        Insert: {
+          ai_leadership_confidence: number
+          created_at?: string | null
+          id?: string
+          optional_feedback?: string | null
+          participant_email?: string | null
+          participant_name: string
+          session_enjoyment: number
+          workshop_session_id?: string | null
+        }
+        Update: {
+          ai_leadership_confidence?: number
+          created_at?: string | null
+          id?: string
+          optional_feedback?: string | null
+          participant_email?: string | null
+          participant_name?: string
+          session_enjoyment?: number
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_session_reviews_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pre_workshop_inputs: {
         Row: {
           created_at: string | null
