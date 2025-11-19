@@ -6,6 +6,89 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper: Convert PEM to ArrayBuffer for crypto operations
+function pemToArrayBuffer(pem: string): ArrayBuffer {
+  const b64 = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/, '')
+    .replace(/-----END PRIVATE KEY-----/, '')
+    .replace(/\s/g, '');
+  const binaryString = atob(b64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
+// Helper: Generate JWT signed with service account private key
+async function generateServiceAccountJWT(serviceAccount: any): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  
+  const header = { alg: 'RS256', typ: 'JWT' };
+  const claim = {
+    iss: serviceAccount.client_email,
+    scope: 'https://www.googleapis.com/auth/cloud-platform',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now
+  };
+  
+  const encoder = new TextEncoder();
+  const headerB64 = btoa(JSON.stringify(header)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const claimB64 = btoa(JSON.stringify(claim)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const unsignedToken = `${headerB64}.${claimB64}`;
+  
+  // Import private key for signing
+  const privateKey = await crypto.subtle.importKey(
+    'pkcs8',
+    pemToArrayBuffer(serviceAccount.private_key),
+    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  // Sign the token
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    privateKey,
+    encoder.encode(unsignedToken)
+  );
+  
+  const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
+    .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  
+  return `${unsignedToken}.${signatureB64}`;
+}
+
+// Helper: Exchange JWT for OAuth2 access token
+async function getVertexAIAccessToken(serviceAccountJson: string): Promise<string | null> {
+  try {
+    const serviceAccount = JSON.parse(serviceAccountJson);
+    const jwt = await generateServiceAccountJWT(serviceAccount);
+    
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: jwt
+      })
+    });
+    
+    if (tokenResponse.ok) {
+      const tokenData = await tokenResponse.json();
+      return tokenData.access_token;
+    } else {
+      const errorText = await tokenResponse.text();
+      console.error('❌ OAuth2 token exchange failed:', tokenResponse.status, errorText);
+      return null;
+    }
+  } catch (error: any) {
+    console.error('❌ Failed to get access token:', error.message);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -31,19 +114,35 @@ serve(async (req) => {
     let generationSource = '';
     const startTime = Date.now();
 
-    // ============= PLAN A: GEMINI 2.5 FLASH (5s timeout) =============
+    // ============= PLAN A: VERTEX AI GEMINI 2.5 FLASH + RAG (10s timeout) =============
     if (geminiApiKey) {
-      console.log('🔄 Plan A: Calling Gemini 2.5 Flash...');
-      const geminiController = new AbortController();
-      const geminiTimeoutId = setTimeout(() => geminiController.abort(), 5000);
-
+      console.log('🔄 Plan A: Calling Vertex AI Gemini 2.5 Flash with RAG...');
+      
       try {
-        const geminiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+        // Parse service account and get OAuth token
+        const serviceAccount = JSON.parse(geminiApiKey);
+        const projectId = serviceAccount.project_id;
+        const location = 'us-central1';
+        
+        console.log(`📍 Using Vertex AI project: ${projectId}, region: ${location}`);
+        
+        const accessToken = await getVertexAIAccessToken(geminiApiKey);
+        
+        if (!accessToken) {
+          throw new Error('Failed to obtain OAuth2 access token');
+        }
+        
+        const geminiController = new AbortController();
+        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 10000);
+
+        const vertexEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
+        
+        const geminiResponse = await fetch(vertexEndpoint, {
           method: 'POST',
           signal: geminiController.signal,
           headers: {
             'Content-Type': 'application/json',
-            'x-goog-api-key': geminiApiKey,
+            'Authorization': `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             contents: [{
@@ -59,28 +158,45 @@ Return ONLY valid JSON matching the required structure.`
               temperature: 0.7,
               maxOutputTokens: 4000,
               responseMimeType: "application/json"
-            }
+            },
+            tools: [{
+              googleSearchRetrieval: {
+                disableAttribution: false
+              }
+            }]
           })
         });
+        
         clearTimeout(geminiTimeoutId);
 
         if (geminiResponse.ok) {
           const geminiData = await geminiResponse.json();
           const content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+          const groundingMetadata = geminiData.candidates?.[0]?.groundingMetadata;
+          
+          if (groundingMetadata) {
+            console.log('📚 RAG grounding used:', {
+              webSearchQueries: groundingMetadata.webSearchQueries,
+              retrievalQueries: groundingMetadata.retrievalQueries
+            });
+          }
+          
           if (content) {
             personalizedInsights = JSON.parse(content);
-            generationSource = 'gemini-2.5-flash';
-            console.log('✅ Gemini succeeded in', Date.now() - startTime, 'ms');
+            generationSource = 'vertex-gemini-2.5-flash-rag';
+            console.log('✅ Vertex AI + RAG succeeded in', Date.now() - startTime, 'ms');
             console.log('📊 Generation metrics:', {
-              source: 'gemini-2.5-flash',
+              source: 'vertex-gemini-2.5-flash-rag',
               durationMs: Date.now() - startTime,
               success: true
             });
           }
+        } else {
+          const errorText = await geminiResponse.text();
+          console.error('❌ Vertex AI error:', geminiResponse.status, errorText);
         }
       } catch (error: any) {
-        clearTimeout(geminiTimeoutId);
-        console.error('❌ Gemini failed:', error.message);
+        console.error('❌ Vertex AI + RAG failed:', error.message);
       }
     }
 

@@ -15,6 +15,7 @@ import {
   diagnoseOpenAIIssues,
   testAdvisorySprintNotification
 } from "./utils/testOpenAIIntegration";
+import { testGeminiRAG } from "./utils/testGeminiIntegration";
 
 // Temporarily expose test functions to global scope for debugging
 (window as any).testGoogleSheetsSync = testGoogleSheetsSync;
@@ -26,6 +27,7 @@ import {
 (window as any).testCompleteOpenAIIntegration = testCompleteOpenAIIntegration;
 (window as any).diagnoseOpenAIIssues = diagnoseOpenAIIssues;
 (window as any).testAdvisorySprintNotification = testAdvisorySprintNotification;
+(window as any).testGeminiRAG = testGeminiRAG;
 
 const queryClient = new QueryClient();
 
