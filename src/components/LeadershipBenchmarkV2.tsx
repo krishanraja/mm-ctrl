@@ -12,6 +12,9 @@ import { UpgradeModal } from '@/components/ui/upgrade-modal';
 import { DimensionCard } from '@/components/ui/dimension-card';
 import { InsightCard } from '@/components/ui/insight-card';
 import { aggregateLeaderResults, isContentLocked, type AggregatedLeaderResults } from '@/utils/aggregateLeaderResults';
+import { usePayment } from '@/hooks/usePayment';
+import { checkPaymentCallback, handlePaymentSuccess } from '@/utils/handlePaymentSuccess';
+import { useToast } from '@/hooks/use-toast';
 import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2 } from 'lucide-react';
 import { ContactData } from './ContactCollectionForm';
 
@@ -61,9 +64,32 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
   const [results, setResults] = useState<AggregatedLeaderResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const { createPaymentSession } = usePayment();
+  const { toast } = useToast();
 
   useEffect(() => {
     loadResults();
+    
+    // Check for payment callback
+    const paymentCallback = checkPaymentCallback();
+    if (paymentCallback.success && paymentCallback.assessmentId === assessmentId) {
+      // Verify and unlock
+      if (paymentCallback.sessionId) {
+        handlePaymentSuccess(assessmentId, paymentCallback.sessionId).then(verified => {
+          if (verified) {
+            // Reload results to show unlocked content
+            loadResults();
+            toast({
+              title: 'Diagnostic Unlocked!',
+              description: 'Your Full Leadership Diagnostic is now available.',
+            });
+          }
+        });
+      }
+      
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, [assessmentId]);
 
   const loadResults = async () => {
@@ -78,10 +104,14 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
   };
 
   const handleUpgrade = async () => {
-    // This will be connected to Stripe
-    if (onUpgrade) {
-      onUpgrade();
+    // Create Stripe checkout session
+    const checkoutUrl = await createPaymentSession(assessmentId);
+    
+    if (checkoutUrl) {
+      // Open Stripe checkout in new tab
+      window.open(checkoutUrl, '_blank');
     }
+    
     setUpgradeModalOpen(false);
   };
 

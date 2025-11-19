@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Award, Sparkles, Shield, TrendingUp, Brain } from 'lucide-react';
+import { LeadershipBenchmarkV2 } from './LeadershipBenchmarkV2';
+import { PromptLibraryV2 } from './PromptLibraryV2';
 import AILeadershipBenchmark from './AILeadershipBenchmark';
 import { PromptLibraryResults } from './PromptLibraryResults';
 import { ConsentManager } from './ConsentManager';
@@ -33,6 +35,16 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const [activeTab, setActiveTab] = useState<string>("benchmark");
   const [leadershipComparison, setLeadershipComparison] = useState<any>(null);
   const [learningStyle, setLearningStyle] = useState<AILearningStyle | null>(null);
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
+
+  // Check for v2 assessment ID
+  useEffect(() => {
+    const storedAssessmentId = sessionStorage.getItem('current_assessment_id');
+    if (storedAssessmentId) {
+      setAssessmentId(storedAssessmentId);
+      console.log('📊 Using v2 assessment ID:', storedAssessmentId);
+    }
+  }, []);
 
   // Calculate score and tier from assessment data
   const userScore = useMemo(() => calculateLeadershipScore(assessmentData), [assessmentData]);
@@ -96,22 +108,37 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           </TabsList>
 
           <TabsContent value="library" className="mt-0">
-            <PromptLibraryResults
-              library={promptLibrary}
-              contactData={contactData}
-            />
+            {assessmentId && (
+              <PromptLibraryV2
+                assessmentId={assessmentId}
+                contactData={contactData}
+              />
+            )}
+            {!assessmentId && promptLibrary && (
+              <PromptLibraryResults
+                library={promptLibrary}
+                contactData={contactData}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="benchmark" className="mt-0">
-            <AILeadershipBenchmark
-              assessmentData={assessmentData}
-              sessionId={sessionId}
-              contactData={contactData}
-              deepProfileData={deepProfileData}
-              onBack={onBack}
-              onViewToolkit={() => setActiveTab("library")}
-              onLeadershipComparisonReady={setLeadershipComparison}
-            />
+            {assessmentId ? (
+              <LeadershipBenchmarkV2
+                assessmentId={assessmentId}
+                contactData={contactData}
+              />
+            ) : (
+              <AILeadershipBenchmark
+                assessmentData={assessmentData}
+                sessionId={sessionId}
+                contactData={contactData}
+                deepProfileData={deepProfileData}
+                onBack={onBack}
+                onViewToolkit={() => setActiveTab("library")}
+                onLeadershipComparisonReady={setLeadershipComparison}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="benchmarks" className="mt-0">

@@ -140,7 +140,7 @@ function analyzeROILeakage(assessmentData: any, profileData: any): RiskSignal | 
 
   if (experimentationScore > 60 && kpiConnection === 'none') {
     level = 'high';
-    description = 'Running AI experiments without clear success metrics. You're spending time and budget without capturing value.';
+    description = 'Running AI experiments without clear success metrics. Spending time and budget without capturing value.';
   } else if (experimentationScore > 40 && kpiConnection === 'loose') {
     level = 'medium';
     description = 'AI activity is happening but ROI tracking is weak. Connect pilots to business metrics to justify investment.';

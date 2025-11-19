@@ -9,6 +9,12 @@ verify_jwt = false
 [functions.derive-org-scenarios]
 verify_jwt = false
 
+[functions.create-diagnostic-payment]
+verify_jwt = false
+
+[functions.verify-diagnostic-payment]
+verify_jwt = false
+
 [functions.send-diagnostic-email]
 verify_jwt = false
 
@@ -40,4 +46,19 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-confirmation-email]
+verify_jwt = false
+
+[functions.ai-assessment-chat]
+verify_jwt = false
+
+[functions.batch-process-pending-syncs]
+verify_jwt = false
+
+[functions.generate-quarterly-index]
+verify_jwt = false
+
+[functions.send-booking-notification]
+verify_jwt = false
+
+[functions.sync-to-google-sheets]
 verify_jwt = false
