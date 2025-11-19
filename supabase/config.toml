@@ -1,5 +1,14 @@
 project_id = "bkyuxvschuwngtcdhsyg"
 
+[functions.compute-risk-signals]
+verify_jwt = false
+
+[functions.compute-tensions]
+verify_jwt = false
+
+[functions.derive-org-scenarios]
+verify_jwt = false
+
 [functions.send-diagnostic-email]
 verify_jwt = false
 
