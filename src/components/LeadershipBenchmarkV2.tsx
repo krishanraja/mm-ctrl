@@ -374,10 +374,10 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
                     )}
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold">{dim.score_numeric}</span>
+                    <span className="text-2xl font-bold">{Math.round(dim.score_numeric)}</span>
                     <span className="text-sm text-muted-foreground">/ 100</span>
                   </div>
-                  <Progress value={dim.score_numeric} className="h-2" />
+                  <Progress value={Math.round(dim.score_numeric)} className="h-2" />
                   <Badge variant="outline" className="text-xs">
                     {dim.dimension_tier}
                   </Badge>
@@ -458,11 +458,11 @@ function generateQuickWins(results: AggregatedLeaderResults): Array<{ title: str
     const improvementMap: Record<string, { title: string; impact: string }> = {
       ai_fluency: {
         title: 'Launch Weekly AI Tool Training',
-        impact: `Your ${dimLabel} score (${lowestDim.score_numeric}/100) suggests starting with hands-on practice. Dedicate 30 minutes weekly to experiment with AI tools in your actual workflow.`
+        impact: `Your ${dimLabel} score (${Math.round(lowestDim.score_numeric)}/100) suggests starting with hands-on practice. Dedicate 30 minutes weekly to experiment with AI tools in your actual workflow.`
       },
       decision_velocity: {
         title: 'Create AI-Assisted Decision Framework',
-        impact: `With ${dimLabel} at ${lowestDim.score_numeric}/100, use AI to pre-analyze options and surface key tradeoffs before meetings, cutting decision time by 40%.`
+        impact: `With ${dimLabel} at ${Math.round(lowestDim.score_numeric)}/100, use AI to pre-analyze options and surface key tradeoffs before meetings, cutting decision time by 40%.`
       },
       experimentation_cadence: {
         title: 'Start a Small AI Pilot This Month',
