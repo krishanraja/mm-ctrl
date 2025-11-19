@@ -29,79 +29,33 @@ export async function orchestrateAssessmentV2(
   try {
     console.log('🚀 Starting v2 assessment orchestration for:', contactData.email);
 
-    // Step 1: Create or get leader record
-    const { data: existingLeader } = await supabase
-      .from('leaders')
-      .select('*')
-      .eq('email', contactData.email)
-      .single();
-
-    let leaderId: string;
-
-    if (existingLeader) {
-      leaderId = existingLeader.id;
-      
-      // Update leader details
-      await supabase
-        .from('leaders')
-        .update({
-          name: contactData.fullName,
-          role: contactData.roleTitle,
-          company: contactData.companyName,
-          company_size_band: contactData.companySize,
-          primary_focus: contactData.primaryFocus,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', leaderId);
-    } else {
-      const { data: newLeader, error: leaderError } = await supabase
-        .from('leaders')
-        .insert({
-          email: contactData.email,
-          name: contactData.fullName,
-          role: contactData.roleTitle,
-          company: contactData.companyName,
-          company_size_band: contactData.companySize,
-          primary_focus: contactData.primaryFocus,
-        })
-        .select()
-        .single();
-
-      if (leaderError || !newLeader) {
-        throw new Error('Failed to create leader record: ' + leaderError?.message);
-      }
-
-      leaderId = newLeader.id;
-    }
-
-    console.log('✅ Leader record ready:', leaderId);
-
-    // Step 2: Calculate benchmark score and tier
+    // Step 1: Calculate benchmark score and tier
     const benchmarkScore = calculateBenchmarkScore(assessmentData);
     const benchmarkTier = calculateBenchmarkTier(benchmarkScore);
 
-    // Step 3: Create leader_assessment record
-    const { data: assessment, error: assessmentError } = await supabase
-      .from('leader_assessments')
-      .insert({
-        leader_id: leaderId,
+    // Step 3: Create leader_assessment via edge function (bypasses RLS)
+    console.log('🔐 Calling create-leader-assessment edge function...');
+    const { data: assessmentResult, error: assessmentError } = await invokeEdgeFunction(
+      'create-leader-assessment',
+      {
+        contactData,
+        assessmentData,
+        deepProfileData,
+        sessionId,
         source,
-        benchmark_score: benchmarkScore,
-        benchmark_tier: benchmarkTier,
-        learning_style: assessmentData.learningStyle || null,
-        has_deep_profile: !!deepProfileData,
-        has_full_diagnostic: false, // Start as free
-        session_id: sessionId,
-      })
-      .select()
-      .single();
+        benchmarkScore,
+        benchmarkTier,
+      },
+      { logPrefix: '🔐', silent: false }
+    );
 
-    if (assessmentError || !assessment) {
-      throw new Error('Failed to create assessment: ' + assessmentError?.message);
+    if (assessmentError || !assessmentResult?.success || !assessmentResult?.assessmentId) {
+      throw new Error('Failed to create assessment: ' + (assessmentError?.message || 'Unknown error'));
     }
 
-    const assessmentId = assessment.id;
-    console.log('✅ Assessment record created:', assessmentId);
+    const assessmentId = assessmentResult.assessmentId;
+    const leaderId = assessmentResult.leaderId;
+    console.log('✅ Assessment record created via edge function:', assessmentId);
 
     // Step 4: Store dimension scores
     await storeDimensionScores(assessmentId, assessmentData);

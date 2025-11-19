@@ -1,5 +1,8 @@
 project_id = "bkyuxvschuwngtcdhsyg"
 
+[functions.create-leader-assessment]
+verify_jwt = false
+
 [functions.compute-risk-signals]
 verify_jwt = false
 
