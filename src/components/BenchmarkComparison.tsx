@@ -44,7 +44,7 @@ export const BenchmarkComparison: React.FC<BenchmarkComparisonProps> = ({
 }) => {
   const [benchmark, setBenchmark] = useState<BenchmarkData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'cohort' | 'all'>('cohort');
+  const [viewMode, setViewMode] = useState<'cohort' | 'all'>('all');
 
   // Diagnostic logging
   useEffect(() => {

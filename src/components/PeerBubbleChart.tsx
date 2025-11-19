@@ -3,7 +3,7 @@ import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, ResponsiveContaine
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Users } from 'lucide-react';
-import { AILearningStyle } from '@/utils/aiLearningStyle';
+import { AILearningStyle, getLearningStyleProfile } from '@/utils/aiLearningStyle';
 import { generateCohortPeers, CohortPeerData } from '@/utils/generateCohortPeers';
 
 interface PeerData {
@@ -219,6 +219,11 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
             </CardTitle>
             <CardDescription>
               Your position among {Math.round(stats?.totalPeers).toLocaleString()} AI leaders
+              {viewMode === 'cohort' && learningStyle && (
+                <span className="block mt-1 text-xs">
+                  Showing peers from <span className="font-semibold">{getLearningStyleProfile(learningStyle).label}</span> cohort
+                </span>
+              )}
             </CardDescription>
           </div>
           {stats && (
@@ -322,7 +327,18 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
 
         {/* Legend and stats */}
         {stats && (
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="mt-8">
+            {viewMode === 'cohort' && learningStyle && (
+              <h4 className="text-sm font-semibold mb-2">
+                {getLearningStyleProfile(learningStyle).label} Cohort Distribution
+              </h4>
+            )}
+            {viewMode === 'all' && (
+              <h4 className="text-sm font-semibold mb-2">
+                All Users Distribution
+              </h4>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
               <div className="text-xs font-medium text-muted-foreground mb-1">AI Pioneer</div>
               <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
@@ -359,6 +375,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 {Math.round((stats.tierDistribution.building / stats.totalPeers) * 100)}%
               </div>
             </div>
+          </div>
           </div>
         )}
 

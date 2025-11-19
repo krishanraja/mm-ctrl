@@ -59,7 +59,8 @@ CONTEXT:
 - Timeline: ${contactData.timeline || 'Near-term'}`;
     }
 
-    const synthesisPro = `You are an elite executive strategist creating an "AI Command Center" that delivers immediate, transformational value.
+    const synthesisPro = `CRITICAL: Generate RADICALLY PERSONALIZED AI command center for this executive.
+NO GENERIC PROMPTS ALLOWED - Each must be impossible to generate without their specific data.
 
 IMPORTANT: Use ONLY gender-neutral language throughout (they/their/them).
 
@@ -73,8 +74,28 @@ EXECUTIVE PROFILE:
 ASSESSMENT SCORES:
 ${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}`).join('\n')}${profileSection}
 
+ANTI-PATTERNS TO AVOID (These are REJECTED as too generic):
+❌ "Analyze this research and information synthesis decision..."
+❌ "Evaluate trade-offs between these three strategic options..."  
+❌ "Create a stakeholder impact assessment for..."
+❌ Any prompt that could work for ANY executive in ANY industry
+❌ Generic frameworks without specific names, metrics, or context
+
+QUALITY EXAMPLES (This is what "good" looks like):
+✅ "As ${contactData.roleTitle || 'leader'} at ${contactData.companyName || 'the organization'}, draft a 3-minute update for [specific stakeholder from profile] that addresses [specific challenge from profile] using data from recent initiatives, focusing on how AI automation has impacted [specific metric or area]."
+✅ "You're presenting to [specific stakeholder from profile] about [specific initiative]. They care about [their priority]. Generate 3 talking points that connect AI ROI to their KPIs, using examples from ${contactData.companySize || 'similar-sized'} companies."
+✅ "I spend hours weekly on [specific time-waster from profile]. Design an AI workflow that reduces this by 70% by automating [specific subtask], then draft the delegation instructions for [specific role]."
+
+VALIDATION CHECKLIST (AI must verify before returning):
+- [ ] Every conversation mentions actual stakeholders from their profile (or inferred from role/industry)
+- [ ] Every delegation addresses actual time-wasters from their profile
+- [ ] Every prompt includes role-specific and industry-specific terminology
+- [ ] Every playbook step references their specific challenges and timeline
+- [ ] Zero generic placeholders or "[insert X]" text
+- [ ] A different executive in a different industry could NOT use these exact prompts
+
 YOUR TASK:
-Generate a comprehensive Executive AI Command Center in JSON format that makes their job 5% easier within minutes:
+Generate a comprehensive Executive AI Command Center in JSON format with radical specificity:
 
 {
   "personalizedInsights": {
@@ -154,14 +175,15 @@ Generate a comprehensive Executive AI Command Center in JSON format that makes t
 }
 
 CRITICAL REQUIREMENTS:
-- Conversations: 3 specific conversations with people from THEIR stakeholder list
-- Delegations: 3 tasks from THEIR time-wasters/delegation priorities with exact delegation scripts
-- Decisions: 2 urgent decisions relevant to THEIR challenges with pros/cons analysis
-- Prompts: 4-6 prompt sets split between strategic and operational, deeply personalized
-- Playbooks: 1-2 playbooks with week-by-week steps relevant to THEIR timeline and context
-- Every element must be immediately actionable - they should be able to use it in the next 15 minutes
-- Use THEIR actual stakeholders, challenges, communication style, and terminology
-- Be radically specific - no generic advice
+- Conversations: 3 specific conversations with actual people/roles from THEIR context (use stakeholders from profile if available, otherwise infer from their role/industry)
+- Delegations: 3 tasks from THEIR time-wasters/delegation priorities with exact delegation scripts (copy-paste ready)
+- Decisions: 2 urgent decisions tied to THEIR specific challenges with pros/cons that reference THEIR constraints
+- Strategic Prompts: 3-4 prompt sets for planning, board prep, stakeholder management - each must use their actual company size, industry, and specific initiatives
+- Operational Prompts: 2-3 prompt sets for daily/weekly tasks - each must automate a specific time-waster they mentioned
+- Playbooks: 1-2 playbooks with week-by-week steps that reference THEIR timeline, THEIR team structure, and THEIR transformation goals
+- Every prompt must include: specific stakeholder names/roles, specific metrics/KPIs, specific tools/processes from their context
+- Tone: Match THEIR communication style (${profileData?.communicationStyle?.join(', ') || contactData.primaryFocus || 'direct, action-oriented'})
+- NO PLACEHOLDERS: Replace every [thing] with actual specifics from their data
 
 Return ONLY valid JSON, no markdown formatting.`;
 

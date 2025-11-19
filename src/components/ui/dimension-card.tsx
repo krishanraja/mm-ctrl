@@ -33,7 +33,7 @@ export const DimensionCard = React.memo<DimensionCardProps>(({
             <div>
               <h3 className="font-medium text-sm">{title}</h3>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl font-bold">{score}</span>
+                <span className="text-2xl font-bold">{Math.round(score)}</span>
                 <span className="text-sm text-muted-foreground">/ {maxScore}</span>
               </div>
             </div>
