@@ -206,6 +206,12 @@ serve(async (req) => {
 });
 
 function buildPersonalizedPrompt(assessmentData: any, contactData: any, deepProfileData: any): string {
+  // Safely extract values with fallbacks for null deepProfileData
+  const transformationGoal = deepProfileData?.transformationGoal || contactData?.primaryFocus || 'AI adoption';
+  const timeWaste = deepProfileData?.timeWaste || 30;
+  const timeWasteExamples = deepProfileData?.timeWasteExamples || 'repetitive tasks, status updates';
+  const delegateTasks = deepProfileData?.delegateTasks?.join(', ') || 'routine analysis, reporting';
+  
   return `Generate personalized AI leadership insights for ${contactData.fullName}, ${contactData.roleTitle} at ${contactData.companyName}.
 
 ASSESSMENT SCORES:
@@ -215,9 +221,9 @@ CONTEXT:
 - Primary Focus: ${contactData.primaryFocus}
 - Timeline: ${contactData.timeline}
 - Company Size: ${contactData.companySize}
-- Transformation Goal: ${deepProfileData.transformationGoal}
-- Time Waste: ${deepProfileData.timeWaste}% on ${deepProfileData.timeWasteExamples}
-- Top Delegation Priorities: ${deepProfileData.delegateTasks.join(', ')}
+- Transformation Goal: ${transformationGoal}
+- Time Waste: ${timeWaste}% on ${timeWasteExamples}
+- Top Delegation Priorities: ${delegateTasks}
 - Communication Challenge: ${deepProfileData.biggestChallenge}
 - Key Stakeholders: ${deepProfileData.stakeholders.join(', ')}
 

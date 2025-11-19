@@ -12,8 +12,15 @@ serve(async (req) => {
   }
 
   try {
+    const startTime = Date.now();
     const { assessmentId, sessionId, userId, contactData, assessmentData, profileData } = await req.json();
     console.log('Generating prompt library for assessment:', assessmentId);
+
+    // Validate required parameters
+    if (!assessmentId) {
+      console.error('❌ assessmentId is required');
+      throw new Error('assessmentId is required');
+    }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -27,31 +34,44 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY required');
     }
 
+    // Build prompt with safe null handling for profileData
+    let profileSection = '';
+    if (profileData && Object.keys(profileData).length > 0) {
+      profileSection = `
+
+DEEP PROFILE:
+- Thinking Process: ${profileData.thinkingProcess || 'structured'}
+- Communication Style: ${profileData.communicationStyle?.join(', ') || 'direct, data-driven'}
+- Work Breakdown: ${profileData.workBreakdown ? Object.entries(profileData.workBreakdown).map(([k, v]) => `${k}: ${v}%`).join(', ') : 'strategic planning, team management, operations'}
+- Information Needs: ${profileData.informationNeeds?.join(', ') || 'data insights, team updates, strategic guidance'}
+- Transformation Goal: ${profileData.transformationGoal || contactData.primaryFocus || 'AI adoption'}
+- Time on Non-Critical Work: ${profileData.timeWaste || 30}%
+- Specific Time Wasters: ${profileData.timeWasteExamples || 'repetitive tasks, status meetings'}
+- Top Delegation Priorities: ${profileData.delegateTasks?.join(', ') || 'routine analysis, reporting, scheduling'}
+- Biggest Communication Challenge: ${profileData.biggestChallenge || 'keeping stakeholders aligned'}
+- Key Stakeholders: ${profileData.stakeholders?.join(', ') || 'executive team, board members, key clients'}`;
+    } else {
+      profileSection = `
+
+CONTEXT:
+- Primary Focus: ${contactData.primaryFocus || 'General AI adoption'}
+- Department: ${contactData.department || 'Leadership'}
+- Timeline: ${contactData.timeline || 'Near-term'}`;
+    }
+
     const synthesisPro = `You are an expert AI implementation strategist creating a personalized "AI Command Center" for an executive.
 
 IMPORTANT: Use ONLY gender-neutral language throughout (they/their/them). Never assume the executive's gender.
 
 EXECUTIVE PROFILE:
-- Name: ${contactData.fullName}
-- Role: ${contactData.roleTitle}
-- Company: ${contactData.companyName} (${contactData.companySize})
-- Primary Focus: ${contactData.primaryFocus}
-- Timeline: ${contactData.timeline}
+- Name: ${contactData.fullName || 'the leader'}
+- Role: ${contactData.roleTitle || contactData.department || 'Leader'}
+- Company: ${contactData.companyName || 'their organization'} (${contactData.companySize || 'mid-size'})
+- Primary Focus: ${contactData.primaryFocus || 'AI adoption'}
+- Timeline: ${contactData.timeline || 'near-term'}
 
 ASSESSMENT SCORES:
-${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}`).join('\n')}
-
-DEEP PROFILE:
-- Thinking Process: ${profileData.thinkingProcess}
-- Communication Style: ${profileData.communicationStyle.join(', ')}
-- Work Breakdown: ${Object.entries(profileData.workBreakdown).map(([k, v]) => `${k}: ${v}%`).join(', ')}
-- Information Needs: ${profileData.informationNeeds.join(', ')}
-- Transformation Goal: ${profileData.transformationGoal}
-- Time on Non-Critical Work: ${profileData.timeWaste}%
-- Specific Time Wasters: ${profileData.timeWasteExamples}
-- Top Delegation Priorities: ${profileData.delegateTasks.join(', ')}
-- Biggest Communication Challenge: ${profileData.biggestChallenge}
-- Key Stakeholders: ${profileData.stakeholders.join(', ')}
+${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}`).join('\n')}${profileSection}
 
 YOUR TASK:
 Generate a comprehensive "Master Prompt Library Package" in JSON format:
