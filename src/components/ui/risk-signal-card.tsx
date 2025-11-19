@@ -63,27 +63,27 @@ export const RiskSignalCard = React.memo<RiskSignalCardProps>(({
       {isLocked && (
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg z-10 flex items-center justify-center">
           <div className="text-center space-y-2">
-            <Lock className="h-8 w-8 mx-auto text-muted-foreground" />
-            <p className="text-sm text-muted-foreground font-medium">
+            <Lock className="h-6 w-6 sm:h-8 sm:w-8 mx-auto text-muted-foreground" />
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium px-4">
               Unlock Full Diagnostic
             </p>
           </div>
         </div>
       )}
       
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <div className={`p-3 rounded-lg bg-primary/10 ${config.color}`}>
-            <Icon className="h-6 w-6" />
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+          <div className={`p-2 sm:p-3 rounded-lg bg-primary/10 ${config.color} flex-shrink-0`}>
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="font-semibold text-lg">{config.label}</h3>
-              <Badge variant={levelInfo.badge as any}>
+          <div className="flex-1 space-y-2 min-w-0 w-full">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <h3 className="font-semibold text-base sm:text-lg break-words">{config.label}</h3>
+              <Badge variant={levelInfo.badge as any} className="self-start sm:self-auto whitespace-nowrap">
                 {levelInfo.label}
               </Badge>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed break-words">
               {description}
             </p>
           </div>

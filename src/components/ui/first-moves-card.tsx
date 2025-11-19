@@ -24,8 +24,12 @@ export const FirstMovesCard = React.memo<FirstMovesCardProps>(({
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Target className="h-5 w-5 text-primary" />
-          <CardTitle>Your First 3 Moves</CardTitle>
+          <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
+            <Target className="h-5 w-5 text-primary" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <CardTitle className="text-base sm:text-lg">Your First 3 Moves</CardTitle>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

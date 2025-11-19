@@ -14,8 +14,9 @@ import { InsightCard } from '@/components/ui/insight-card';
 import { aggregateLeaderResults, isContentLocked, type AggregatedLeaderResults } from '@/utils/aggregateLeaderResults';
 import { usePayment } from '@/hooks/usePayment';
 import { checkPaymentCallback, handlePaymentSuccess } from '@/utils/handlePaymentSuccess';
+import { exportDiagnosticPDF, ExportData } from '@/utils/exportPDF';
 import { useToast } from '@/hooks/use-toast';
-import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2 } from 'lucide-react';
+import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2, Download } from 'lucide-react';
 import { ContactData } from './ContactCollectionForm';
 
 interface LeadershipBenchmarkV2Props {
@@ -115,6 +116,51 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
     setUpgradeModalOpen(false);
   };
 
+  const handleExportPDF = async () => {
+    if (!results || !results.hasFullDiagnostic) return;
+
+    const exportData: ExportData = {
+      leaderName: contactData.fullName,
+      companyName: contactData.companyName,
+      benchmarkScore: results.benchmarkScore,
+      benchmarkTier: results.benchmarkTier,
+      dimensionScores: results.dimensionScores.map(d => ({
+        dimension: dimensionLabels[d.dimension_key] || d.dimension_key,
+        score: d.score_numeric || 0,
+        tier: d.dimension_tier || 'Emerging',
+      })),
+      firstMoves: results.firstMoves.map(m => m.content),
+      riskSignals: results.riskSignals.map(r => ({
+        risk_key: r.risk_key,
+        level: r.level,
+        description: r.description,
+      })),
+      tensions: results.tensions.map(t => ({
+        dimension_key: t.dimension_key,
+        summary_line: t.summary_line,
+      })),
+      scenarios: results.orgScenarios.map(s => ({
+        scenario_key: s.scenario_key,
+        summary: s.summary,
+      })),
+    };
+
+    try {
+      await exportDiagnosticPDF(exportData);
+      toast({
+        title: 'PDF Exported',
+        description: 'Your diagnostic report has been downloaded.',
+      });
+    } catch (error) {
+      console.error('PDF export error:', error);
+      toast({
+        title: 'Export Failed',
+        description: 'Unable to generate PDF. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -156,23 +202,39 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
 
       {/* Benchmark Score Card */}
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-6">
-            <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${config.gradient} p-1`}>
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br ${config.gradient} p-1 flex-shrink-0`}>
               <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-primary">{results.benchmarkScore}</div>
+                  <div className="text-2xl sm:text-3xl font-bold text-primary">{results.benchmarkScore}</div>
                   <div className="text-xs text-muted-foreground">/100</div>
                 </div>
               </div>
             </div>
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-2">
-                {contactData.fullName.split(' ')[0]}'s AI Leadership Benchmark
-              </h2>
-              <Badge className={config.badgeStyle}>
-                {results.benchmarkTier}
-              </Badge>
+            <div className="flex-1 text-center sm:text-left">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-3 sm:gap-0">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold mb-2">
+                    {contactData.fullName.split(' ')[0]}'s AI Leadership Benchmark
+                  </h2>
+                  <Badge className={config.badgeStyle}>
+                    {results.benchmarkTier}
+                  </Badge>
+                </div>
+                {results.hasFullDiagnostic && (
+                  <Button
+                    onClick={handleExportPDF}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 whitespace-nowrap"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span className="hidden sm:inline">Export PDF</span>
+                    <span className="sm:hidden">PDF</span>
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
