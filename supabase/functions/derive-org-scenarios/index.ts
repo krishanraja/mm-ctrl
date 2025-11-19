@@ -92,7 +92,7 @@ function detectStagnationLoop(dimensionScores: any): OrgScenario | null {
   if (experimentationScore < 35 && decisionScore < 40) {
     return {
       scenario_key: 'stagnation_loop',
-      summary: 'Analysis paralysis has set in. Your team is waiting for perfect clarity that won't come. Launch a small, safe pilot to generate real learning and momentum.',
+      summary: "Analysis paralysis has set in. Your team is waiting for perfect clarity that will not come. Launch a small, safe pilot to generate real learning and momentum.",
       priority_rank: 2,
     };
   }
@@ -110,7 +110,7 @@ function detectShadowAIInstability(dimensionScores: any, riskSignals: any[]): Or
   if (experimentationScore > 60 && governanceScore < 50) {
     return {
       scenario_key: 'shadow_ai_instability',
-      summary: 'Your team is moving fast with AI tools, but without shared frameworks or oversight. This creates short-term productivity but risks quality issues, data leaks, and scattered learning. You're one bad output away from losing executive confidence.',
+      summary: "Your team is moving fast with AI tools, but without shared frameworks or oversight. This creates short-term productivity but risks quality issues, data leaks, and scattered learning. You are one bad output away from losing executive confidence.",
       priority_rank: 1,
     };
   }
@@ -137,7 +137,7 @@ function detectHighVelocityPath(dimensionScores: any, tensions: any[]): OrgScena
   if (avgScore > 65 && experimentationScore > 60 && alignmentScore > 60 && fewTensions) {
     return {
       scenario_key: 'high_velocity_path',
-      summary: 'You're on a strong trajectory. Teams are experimenting, learning is shared, and governance is proportionate. Your next challenge is scaling what works without losing speed. Focus on institutionalizing successful patterns.',
+      summary: "You are on a strong trajectory. Teams are experimenting, learning is shared, and governance is proportionate. Your next challenge is scaling what works without losing speed. Focus on institutionalizing successful patterns.",
       priority_rank: 1,
     };
   }
@@ -145,7 +145,7 @@ function detectHighVelocityPath(dimensionScores: any, tensions: any[]): OrgScena
   if (experimentationScore > 70 && alignmentScore > 65) {
     return {
       scenario_key: 'high_velocity_path',
-      summary: 'Momentum is building. Experimentation is happening and teams are aligned. Capture learnings systematically and double down on what's working.',
+      summary: "Momentum is building. Experimentation is happening and teams are aligned. Capture learnings systematically and double down on what is working.",
       priority_rank: 2,
     };
   }
@@ -164,7 +164,7 @@ function detectCultureCapabilityMismatch(dimensionScores: any, tensions: any[]):
   if (experimentationScore > 60 && fluencyScore < 45) {
     return {
       scenario_key: 'culture_capability_mismatch',
-      summary: 'You're pushing for AI adoption faster than your team can absorb it. People want to help but lack the skills and confidence. Slow down to speed up: invest in hands-on training and celebrate small wins to build capability.',
+      summary: "You are pushing for AI adoption faster than your team can absorb it. People want to help but lack the skills and confidence. Slow down to speed up: invest in hands-on training and celebrate small wins to build capability.",
       priority_rank: 1,
     };
   }

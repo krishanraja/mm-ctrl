@@ -2214,6 +2214,50 @@ export type Database = {
         }
         Relationships: []
       }
+      segment_summaries: {
+        Row: {
+          created_at: string | null
+          headline: string
+          id: string
+          key_points: string[]
+          primary_metric: number | null
+          primary_metric_label: string | null
+          segment_data: Json | null
+          segment_key: string
+          workshop_session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          headline: string
+          id?: string
+          key_points: string[]
+          primary_metric?: number | null
+          primary_metric_label?: string | null
+          segment_data?: Json | null
+          segment_key: string
+          workshop_session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          headline?: string
+          id?: string
+          key_points?: string[]
+          primary_metric?: number | null
+          primary_metric_label?: string | null
+          segment_data?: Json | null
+          segment_key?: string
+          workshop_session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "segment_summaries_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       simulation_results: {
         Row: {
           after_snapshot: Json
@@ -2778,7 +2822,9 @@ export type Database = {
           id: string
           intake_id: string | null
           participant_count: number | null
+          planned_duration_hours: number | null
           segment_timers: Json | null
+          segments_completed: string[] | null
           status: string
           updated_at: string | null
           workshop_date: string
@@ -2795,7 +2841,9 @@ export type Database = {
           id?: string
           intake_id?: string | null
           participant_count?: number | null
+          planned_duration_hours?: number | null
           segment_timers?: Json | null
+          segments_completed?: string[] | null
           status?: string
           updated_at?: string | null
           workshop_date: string
@@ -2812,7 +2860,9 @@ export type Database = {
           id?: string
           intake_id?: string | null
           participant_count?: number | null
+          planned_duration_hours?: number | null
           segment_timers?: Json | null
+          segments_completed?: string[] | null
           status?: string
           updated_at?: string | null
           workshop_date?: string

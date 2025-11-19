@@ -39,10 +39,12 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
 
   // Check for v2 assessment ID
   useEffect(() => {
-    const storedAssessmentId = sessionStorage.getItem('current_assessment_id');
+    const storedAssessmentId = sessionStorage.getItem('v2_assessment_id');
     if (storedAssessmentId) {
       setAssessmentId(storedAssessmentId);
       console.log('📊 Using v2 assessment ID:', storedAssessmentId);
+    } else {
+      console.log('⚠️ No v2 assessment ID found, using legacy display');
     }
   }, []);
 

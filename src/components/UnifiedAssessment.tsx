@@ -231,11 +231,16 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
 
       if (result.success && result.assessmentId) {
         console.log('✅ V2 assessment orchestrated successfully');
-        // Store assessment ID for results display
-        sessionStorage.setItem('current_assessment_id', result.assessmentId);
+        console.log('📊 Using v2 assessment ID:', result.assessmentId);
+        sessionStorage.setItem('v2_assessment_id', result.assessmentId);
       }
     } catch (error) {
       console.error('❌ V2 orchestration error:', error);
+      toast({
+        title: "Assessment Processing Failed",
+        description: error instanceof Error ? error.message : "Unable to generate your complete assessment. Please try again.",
+        variant: "destructive",
+      });
     }
 
     setTimeout(() => {
