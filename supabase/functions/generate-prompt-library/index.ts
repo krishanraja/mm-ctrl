@@ -319,15 +319,31 @@ Return ONLY valid JSON, no markdown formatting.`;
       what_its_for: project.purpose,
       when_to_use: project.whenToUse,
       how_to_use: project.masterInstructions,
-      prompts: project.examplePrompts || [],
-      priority_rank: index + 1
+      prompts_json: project.examplePrompts || [],
+      priority_rank: index + 1,
+      assessment_id: assessmentId
     }));
+
+    // Store prompts directly in leader_prompt_sets table
+    console.log(`Storing ${promptSets.length} prompt sets to leader_prompt_sets for assessment ${assessmentId}`);
+    const { error: promptSetsError } = await supabase
+      .from('leader_prompt_sets')
+      .insert(promptSets);
+    
+    if (promptSetsError) {
+      console.error('Error storing prompt sets:', promptSetsError);
+      throw promptSetsError;
+    }
+    
+    console.log(`✅ Stored ${promptSets.length} prompt sets to leader_prompt_sets`);
 
     return new Response(
       JSON.stringify({ 
+        success: true,
         profileId: storedProfile.id,
         library: parsedLibrary,
-        promptSets: promptSets, // Add transformed promptSets array
+        promptSets: promptSets,
+        promptSetsStored: promptSets.length,
         generationModel: generationModel,
         durationMs: Date.now() - startTime
       }),
