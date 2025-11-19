@@ -368,7 +368,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         if (prev < 65) return prev + 3;
         if (prev < 85) return prev + 2;
         if (prev < 95) return prev + 1;
-        if (prev < 98) return prev + 0.3; // Slow crawl to 98%
+        if (prev < 98) return prev + 1; // Slow crawl to 98%
         return prev;
       });
     }, 800);

@@ -72,7 +72,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
           <div className="space-y-3">
             <Progress value={progress} className="h-2" />
             <p className="text-sm text-muted-foreground">
-              {progress}% Complete
+              {Math.round(progress)}% Complete
             </p>
           </div>
           
