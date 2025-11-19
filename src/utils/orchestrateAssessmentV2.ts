@@ -212,11 +212,11 @@ export async function orchestrateAssessmentV2(
       assessmentId,
     };
   } catch (error: any) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('❌ Assessment orchestration failed:', error);
-    return {
-      success: false,
-      error: error.message,
-    };
+    
+    // Throw error to surface to UI instead of silent failure
+    throw new Error(`Assessment orchestration failed: ${errorMessage}. Please try again or contact support.`);
   }
 }
 

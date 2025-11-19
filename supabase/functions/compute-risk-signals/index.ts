@@ -86,7 +86,7 @@ function analyzeShadowAI(assessmentData: any, profileData: any): RiskSignal | nu
 
   if (personalAIUse === 'daily' && teamAlignment === 'low' && governanceScore < 40) {
     level = 'high';
-    description = 'Your team is experimenting with AI tools without centralized oversight, creating security and quality risks. One bad output could erode executive confidence.';
+    description = "Your team is experimenting with AI tools without centralized oversight, creating security and quality risks. One bad output could erode executive confidence.";
   } else if (personalAIUse !== 'none' && governanceScore < 60) {
     level = 'medium';
     description = 'AI usage is growing without clear frameworks. Establish lightweight governance now before risks compound.';

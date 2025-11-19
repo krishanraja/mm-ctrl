@@ -83,7 +83,7 @@ function detectVisionExecutionGap(dimensionScores: any, assessmentData: any): Te
   if (fluencyScore > 65 && experimentationScore < 45) {
     return {
       dimension_key: 'experimentation_cadence',
-      summary_line: 'You see AI as critical but haven't launched pilots. This gap will widen—move from planning to testing.',
+      summary_line: "You see AI as critical but have not launched pilots. This gap will widen—move from planning to testing.",
       priority_rank: 1,
     };
   }
@@ -91,7 +91,7 @@ function detectVisionExecutionGap(dimensionScores: any, assessmentData: any): Te
   if (businessImpact === 'transformative' && experimentationScore < 50) {
     return {
       dimension_key: 'experimentation_cadence',
-      summary_line: 'Transformative ambition meets incremental execution. Start small pilots now to build momentum.',
+      summary_line: "Transformative ambition meets incremental execution. Start small pilots now to build momentum.",
       priority_rank: 2,
     };
   }
@@ -108,7 +108,7 @@ function detectLeadershipTeamDisconnect(dimensionScores: any, assessmentData: an
   if (personalAIUse === 'daily' && alignmentScore < 50) {
     return {
       dimension_key: 'alignment_communication',
-      summary_line: 'Using AI daily yourself but team reports low clarity. They need your vision translated into action.',
+      summary_line: "Using AI daily yourself but team reports low clarity. They need your vision translated into action.",
       priority_rank: 1,
     };
   }
@@ -116,7 +116,7 @@ function detectLeadershipTeamDisconnect(dimensionScores: any, assessmentData: an
   if (personalAIUse !== 'none' && teamAlignment === 'low') {
     return {
       dimension_key: 'alignment_communication',
-      summary_line: 'You're exploring AI but your team isn't following. Share learnings and set clear expectations.',
+      summary_line: "You are exploring AI but your team is not following. Share learnings and set clear expectations.",
       priority_rank: 2,
     };
   }
@@ -136,7 +136,7 @@ function detectPriorityActionMismatch(assessmentData: any, profileData: any): Te
     if (aiTimePercent < 10) {
       return {
         dimension_key: 'decision_velocity',
-        summary_line: 'AI is urgent but you're allocating <10% of your time. Calendars don't lie—priorities need time.',
+        summary_line: "AI is urgent but you are allocating less than 10% of your time. Calendars do not lie—priorities need time.",
         priority_rank: 1,
       };
     }
@@ -145,7 +145,7 @@ function detectPriorityActionMismatch(assessmentData: any, profileData: any): Te
   if (timing === '0-3' && !assessmentData?.sponsorshipBehavior) {
     return {
       dimension_key: 'decision_velocity',
-      summary_line: 'Aggressive timeline but no clear ownership. Appoint pilots and remove blockers now.',
+      summary_line: "Aggressive timeline but no clear ownership. Appoint pilots and remove blockers now.",
       priority_rank: 2,
     };
   }
@@ -161,7 +161,7 @@ function detectDelegationControlParadox(dimensionScores: any, assessmentData: an
   if (delegationScore < 40 && governanceScore > 75) {
     return {
       dimension_key: 'delegation_augmentation',
-      summary_line: 'High control needs are limiting AI delegation. Define clear quality thresholds to unlock value.',
+      summary_line: "High control needs are limiting AI delegation. Define clear quality thresholds to unlock value.",
       priority_rank: 2,
     };
   }
@@ -170,7 +170,7 @@ function detectDelegationControlParadox(dimensionScores: any, assessmentData: an
   if (painPoints.includes('time') && delegationScore < 50) {
     return {
       dimension_key: 'delegation_augmentation',
-      summary_line: 'Time is your constraint but you're not delegating to AI. Start with low-risk tasks to build trust.',
+      summary_line: "Time is your constraint but you are not delegating to AI. Start with low-risk tasks to build trust.",
       priority_rank: 1,
     };
   }
