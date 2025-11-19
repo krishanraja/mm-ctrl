@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Save, TrendingUp, Target, Brain, Lightbulb, BarChart3, Users, Calendar, Zap, CheckCircle, ArrowRight, Crown, Rocket, Sparkles, Award, Compass, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import mindmakerLogo from '@/assets/mindmaker-logo-dark.png';
 import { SaveProfileDialog } from '@/components/auth/SaveProfileDialog';
 import { useAssessment } from '@/contexts/AssessmentContext';
@@ -59,6 +60,19 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
   const [isSaveProfileOpen, setIsSaveProfileOpen] = useState(false);
 
   // Utility function to clean and validate "Based on" text
+  // Toggle card expansion
+  const toggleCard = (cardKey: string) => {
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardKey)) {
+        newSet.delete(cardKey);
+      } else {
+        newSet.add(cardKey);
+      }
+      return newSet;
+    });
+  };
+
   const cleanBasedOnText = (items: string[]): string[] => {
     const labelMap: Record<string, string> = {
       'Kpi_connection': 'KPI tracking',
@@ -76,7 +90,7 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
       .map(item => {
         if (labelMap[item]) return labelMap[item];
         if (item.includes('_')) {
-          return item.split('_').map(word => 
+          return item.split('_').map(word =>
             word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
           ).join(' ');
         }
@@ -348,64 +362,118 @@ const AILeadershipBenchmark: React.FC<AILeadershipBenchmarkProps> = ({
             ) : (
               <>
                 {/* Growth Readiness */}
-                <Card className="border border-border/50 hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 mt-1">
-                        <BarChart3 className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase mb-1">Growth Readiness</div>
-                        <div className="text-base font-bold text-foreground mb-1">
-                          {personalizedInsights?.growthReadiness?.level || 'Medium'}
+                <Collapsible open={expandedCards.has('growth')}>
+                  <Card className="border border-border/50 hover:shadow-md transition-all cursor-pointer">
+                    <CardContent className="p-4">
+                      <CollapsibleTrigger asChild onClick={() => toggleCard('growth')}>
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 mt-1">
+                            <BarChart3 className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="text-xs font-semibold text-muted-foreground uppercase">Growth Readiness</div>
+                              {expandedCards.has('growth') ? (
+                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="text-base font-bold text-foreground mb-1">
+                              {personalizedInsights?.growthReadiness?.level || 'Medium'}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {personalizedInsights?.growthReadiness?.preview || 'Strong foundation for AI adoption'}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {personalizedInsights?.growthReadiness?.preview || 'Strong foundation for AI adoption'}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="mt-3 pt-3 border-t border-border/50">
+                          <p className="text-sm text-foreground leading-relaxed">
+                            {personalizedInsights?.growthReadiness?.details || 'Your organization demonstrates strong foundational capabilities for AI adoption with clear processes and strategic alignment.'}
+                          </p>
+                        </div>
+                      </CollapsibleContent>
+                    </CardContent>
+                  </Card>
+                </Collapsible>
 
                 {/* Leadership Stage */}
-                <Card className="border border-border/50 hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 mt-1">
-                        <Crown className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase mb-1">Leadership Stage</div>
-                        <div className="text-base font-bold text-foreground mb-1">
-                          {personalizedInsights?.leadershipStage?.stage || leadershipProfile.tier}
+                <Collapsible open={expandedCards.has('stage')}>
+                  <Card className="border border-border/50 hover:shadow-md transition-all cursor-pointer">
+                    <CardContent className="p-4">
+                      <CollapsibleTrigger asChild onClick={() => toggleCard('stage')}>
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 mt-1">
+                            <Crown className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="text-xs font-semibold text-muted-foreground uppercase">Leadership Stage</div>
+                              {expandedCards.has('stage') ? (
+                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="text-base font-bold text-foreground mb-1">
+                              {personalizedInsights?.leadershipStage?.stage || leadershipProfile.tier}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {personalizedInsights?.leadershipStage?.preview || leadershipProfile.tagline}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {personalizedInsights?.leadershipStage?.preview || leadershipProfile.tagline}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="mt-3 pt-3 border-t border-border/50">
+                          <p className="text-sm text-foreground leading-relaxed">
+                            {personalizedInsights?.leadershipStage?.details || leadershipProfile.tagline}
+                          </p>
+                        </div>
+                      </CollapsibleContent>
+                    </CardContent>
+                  </Card>
+                </Collapsible>
 
                 {/* Key Focus */}
-                <Card className="border border-border/50 hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 mt-1">
-                        <Target className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-xs font-semibold text-muted-foreground uppercase mb-1">Key Focus</div>
-                        <div className="text-base font-bold text-foreground mb-1">
-                          {personalizedInsights?.keyFocus?.category || 'Strategic Implementation'}
+                <Collapsible open={expandedCards.has('focus')}>
+                  <Card className="border border-border/50 hover:shadow-md transition-all cursor-pointer">
+                    <CardContent className="p-4">
+                      <CollapsibleTrigger asChild onClick={() => toggleCard('focus')}>
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 mt-1">
+                            <Target className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="text-xs font-semibold text-muted-foreground uppercase">Key Focus</div>
+                              {expandedCards.has('focus') ? (
+                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="text-base font-bold text-foreground mb-1">
+                              {personalizedInsights?.keyFocus?.category || 'Strategic Implementation'}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {personalizedInsights?.keyFocus?.preview || 'Prioritize pilot programs'}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {personalizedInsights?.keyFocus?.preview || 'Prioritize pilot programs'}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="mt-3 pt-3 border-t border-border/50">
+                          <p className="text-sm text-foreground leading-relaxed">
+                            {personalizedInsights?.keyFocus?.details || 'Focus on implementing pilot programs to validate AI value and build organizational momentum.'}
+                          </p>
+                        </div>
+                      </CollapsibleContent>
+                    </CardContent>
+                  </Card>
+                </Collapsible>
               </>
             )}
           </div>
