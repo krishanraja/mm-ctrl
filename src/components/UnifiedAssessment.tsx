@@ -16,6 +16,7 @@ import { UnifiedResults } from './UnifiedResults';
 import AILeadershipBenchmark from './AILeadershipBenchmark';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
+import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
 
 
 interface Message {
@@ -219,11 +220,14 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     try {
       // Call v2 orchestration
       const { orchestrateAssessmentV2 } = await import('@/utils/orchestrateAssessmentV2');
-      const assessmentData = getAssessmentData();
+      const rawQuizData = getAssessmentData();
+      
+      // Convert quiz data to v2 format with numeric dimension scores
+      const v2FormattedData = convertQuizToV2Format(rawQuizData);
       
       const result = await orchestrateAssessmentV2(
         contactData!,
-        assessmentData,
+        v2FormattedData,
         deepProfileData,
         sessionId!,
         'quiz'

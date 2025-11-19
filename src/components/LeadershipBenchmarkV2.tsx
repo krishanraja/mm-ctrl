@@ -95,8 +95,30 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
 
   const loadResults = async () => {
     setIsLoading(true);
-    const data = await aggregateLeaderResults(assessmentId, true);
-    setResults(data);
+    try {
+      const data = await aggregateLeaderResults(assessmentId, true);
+      
+      // Defensive check: if all dimension scores are zero, show error
+      if (data && data.dimensionScores.every(d => (d.score_numeric || 0) === 0)) {
+        console.error('❌ All dimension scores are zero - data structure mismatch detected');
+        setResults(null);
+        toast({
+          title: 'Assessment Data Error',
+          description: 'Unable to load valid assessment scores. Please retake the assessment.',
+          variant: 'destructive',
+        });
+      } else {
+        setResults(data);
+      }
+    } catch (error) {
+      console.error('❌ Error loading results:', error);
+      setResults(null);
+      toast({
+        title: 'Loading Error',
+        description: 'Unable to load assessment results. Please refresh the page.',
+        variant: 'destructive',
+      });
+    }
     setIsLoading(false);
   };
 
