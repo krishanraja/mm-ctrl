@@ -14,12 +14,12 @@ serve(async (req) => {
   try {
     const { assessmentData, contactData, deepProfileData } = await req.json();
     
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 
-    if (!geminiApiKey) {
-      console.error('❌ GEMINI_API_KEY not configured');
-      throw new Error('GEMINI_API_KEY required');
+    if (!openaiApiKey) {
+      console.error('❌ OPENAI_API_KEY not configured');
+      throw new Error('OPENAI_API_KEY required');
     }
 
     console.log('Generating personalized insights for:', contactData.fullName);
@@ -30,72 +30,67 @@ serve(async (req) => {
     let generationSource = '';
     const startTime = Date.now();
 
-    // ============= PLAN A: YOUR FINE-TUNED GEMINI (15s timeout) =============
-    console.log('🔄 Calling YOUR fine-tuned Gemini API...');
-    const geminiController = new AbortController();
-    const geminiTimeoutId = setTimeout(() => geminiController.abort(), 15000);
+    // ============= PLAN A: OPENAI GPT-4O-MINI (10s timeout) =============
+    console.log('🔄 Plan A: Calling OpenAI gpt-4o-mini...');
+    const openaiController = new AbortController();
+    const openaiTimeoutId = setTimeout(() => openaiController.abort(), 10000);
 
     try {
-      const geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          signal: geminiController.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{ text: prompt }]
-            }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 2500,
-              responseMimeType: "application/json"
-            }
-          })
-        }
-      );
-      clearTimeout(geminiTimeoutId);
+      const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        signal: openaiController.signal,
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          max_tokens: 2500,
+          temperature: 0.7,
+          messages: [
+            { 
+              role: 'system', 
+              content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.' 
+            },
+            { role: 'user', content: prompt }
+          ],
+          response_format: { type: "json_object" }
+        })
+      });
+      clearTimeout(openaiTimeoutId);
 
-      if (geminiResponse.ok) {
-        const geminiData = await geminiResponse.json();
-        const geminiContent = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (geminiContent) {
-          personalizedInsights = JSON.parse(geminiContent);
-          generationSource = 'gemini-custom';
-          console.log('✅ YOUR Gemini succeeded in', Date.now() - startTime, 'ms');
-          console.log('📊 Generation metrics:', {
-            source: 'gemini-custom',
-            durationMs: Date.now() - startTime,
-            success: true,
-            attemptNumber: 1
-          });
-        }
-      } else {
-        const errorText = await geminiResponse.text();
-        console.error('❌ Gemini API error:', geminiResponse.status, errorText);
+      if (openaiResponse.ok) {
+        const openaiData = await openaiResponse.json();
+        personalizedInsights = JSON.parse(openaiData.choices[0].message.content);
+        generationSource = 'openai-gpt4omini';
+        console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
+        console.log('📊 Generation metrics:', {
+          source: 'openai-gpt4omini',
+          durationMs: Date.now() - startTime,
+          success: true
+        });
       }
     } catch (error: any) {
-      clearTimeout(geminiTimeoutId);
-      console.error('❌ YOUR Gemini failed:', error.message);
+      clearTimeout(openaiTimeoutId);
+      console.error('❌ OpenAI failed:', error.message);
     }
 
-    // ============= PLAN B: OPENAI FALLBACK (15s timeout) =============
-    if (!personalizedInsights && openaiApiKey) {
-      console.log('⚠️ Gemini failed, trying OpenAI fallback...');
-      const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 15000);
+    // ============= PLAN B: LOVABLE AI GEMINI FALLBACK (12s timeout) =============
+    if (!personalizedInsights && lovableApiKey) {
+      console.log('⚠️ OpenAI failed, trying Lovable AI Gemini...');
+      const lovableController = new AbortController();
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 12000);
 
       try {
-        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
           method: 'POST',
-          signal: openaiController.signal,
+          signal: lovableController.signal,
           headers: {
-            'Authorization': `Bearer ${openaiApiKey}`,
+            'Authorization': `Bearer ${lovableApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'gpt-5-mini-2025-08-07',
-            max_completion_tokens: 3000,
+            model: 'google/gemini-2.5-flash',
             messages: [
               { 
                 role: 'system', 
@@ -103,85 +98,25 @@ serve(async (req) => {
               },
               { role: 'user', content: prompt }
             ],
-            tools: [{
-              type: "function",
-              function: {
-                name: "generate_personalized_insights",
-                description: "Generate personalized AI leadership insights",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    growthReadiness: {
-                      type: "object",
-                      properties: {
-                        level: { type: "string", enum: ["High", "Medium-High", "Medium", "Developing"] },
-                        preview: { type: "string", maxLength: 50 },
-                        details: { type: "string", maxLength: 120 }
-                      },
-                      required: ["level", "preview", "details"]
-                    },
-                    leadershipStage: {
-                      type: "object",
-                      properties: {
-                        stage: { type: "string", enum: ["Orchestrator", "Confident", "Aware", "Emerging"] },
-                        preview: { type: "string", maxLength: 50 },
-                        details: { type: "string", maxLength: 120 }
-                      },
-                      required: ["stage", "preview", "details"]
-                    },
-                    keyFocus: {
-                      type: "object",
-                      properties: {
-                        category: { 
-                          type: "string", 
-                          enum: ["Team Alignment", "Strategic Execution", "Decision Quality", "Time Leverage"]
-                        },
-                        preview: { type: "string", maxLength: 50 },
-                        details: { type: "string", maxLength: 120 }
-                      },
-                      required: ["category", "preview", "details"]
-                    },
-                    quickWins: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          title: { type: "string", maxLength: 60 },
-                          impact: { type: "string", maxLength: 100 },
-                          timeToValue: { type: "string", enum: ["1 week", "2 weeks", "1 month"] }
-                        },
-                        required: ["title", "impact", "timeToValue"]
-                      },
-                      minItems: 3,
-                      maxItems: 4
-                    }
-                  },
-                  required: ["growthReadiness", "leadershipStage", "keyFocus", "quickWins"]
-                }
-              }
-            }],
-            tool_choice: { type: "function", function: { name: "generate_personalized_insights" } }
+            response_format: { type: "json_object" }
           })
         });
-        clearTimeout(openaiTimeoutId);
+        clearTimeout(lovableTimeoutId);
 
-        if (openaiResponse.ok) {
-          const openaiData = await openaiResponse.json();
-          const toolCall = openaiData.choices?.[0]?.message?.tool_calls?.[0];
-          if (toolCall?.function?.arguments) {
-            personalizedInsights = JSON.parse(toolCall.function.arguments);
-            generationSource = 'openai';
-            console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
-            console.log('📊 Generation metrics:', {
-              source: 'openai',
-              durationMs: Date.now() - startTime,
-              success: true
-            });
-          }
+        if (lovableResponse.ok) {
+          const lovableData = await lovableResponse.json();
+          personalizedInsights = JSON.parse(lovableData.choices[0].message.content);
+          generationSource = 'lovable-gemini';
+          console.log('✅ Lovable AI Gemini succeeded in', Date.now() - startTime, 'ms');
+          console.log('📊 Generation metrics:', {
+            source: 'lovable-gemini',
+            durationMs: Date.now() - startTime,
+            success: true
+          });
         }
       } catch (error: any) {
-        clearTimeout(openaiTimeoutId);
-        console.error('❌ OpenAI failed:', error.message);
+        clearTimeout(lovableTimeoutId);
+        console.error('❌ Lovable AI failed:', error.message);
       }
     }
 

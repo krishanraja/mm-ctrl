@@ -19,12 +19,12 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     
-    if (!geminiApiKey) {
-      console.error('❌ GEMINI_API_KEY not configured');
-      throw new Error('GEMINI_API_KEY required');
+    if (!openaiApiKey) {
+      console.error('❌ OPENAI_API_KEY not configured');
+      throw new Error('OPENAI_API_KEY required');
     }
 
     const synthesisPro = `You are an expert AI implementation strategist creating a personalized "AI Command Center" for an executive.
@@ -100,94 +100,87 @@ Return ONLY valid JSON, no markdown formatting.`;
     let generationModel = '';
     const startTime = Date.now();
 
-    // ============= PLAN A: YOUR FINE-TUNED GEMINI (15s timeout) =============
-    console.log('🔄 Calling YOUR fine-tuned Gemini API...');
-    const geminiController = new AbortController();
-    const geminiTimeoutId = setTimeout(() => geminiController.abort(), 15000);
+    // ============= PLAN A: OPENAI GPT-4O-MINI (10s timeout) =============
+    console.log('🔄 Plan A: Calling OpenAI gpt-4o-mini...');
+    const openaiController = new AbortController();
+    const openaiTimeoutId = setTimeout(() => openaiController.abort(), 10000);
 
     try {
-      const geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-        {
-          method: 'POST',
-          signal: geminiController.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{ text: synthesisPro }]
-            }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 3000,
-            }
-          })
-        }
-      );
-      clearTimeout(geminiTimeoutId);
+      const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        signal: openaiController.signal,
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          max_tokens: 3000,
+          temperature: 0.7,
+          messages: [
+            { role: 'system', content: 'You are an expert AI strategist generating personalized prompt libraries. Return valid JSON only.' },
+            { role: 'user', content: synthesisPro }
+          ],
+          response_format: { type: "json_object" }
+        })
+      });
+      clearTimeout(openaiTimeoutId);
 
-      if (geminiResponse.ok) {
-        const geminiData = await geminiResponse.json();
-        generatedContent = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (generatedContent) {
-          generationModel = 'gemini-custom';
-          console.log('✅ YOUR Gemini succeeded in', Date.now() - startTime, 'ms');
-          console.log('📊 Generation metrics:', {
-            source: 'gemini-custom',
-            durationMs: Date.now() - startTime,
-            success: true,
-            attemptNumber: 1
-          });
-        }
-      } else {
-        const errorText = await geminiResponse.text();
-        console.error('❌ Gemini API error:', geminiResponse.status, errorText);
+      if (openaiResponse.ok) {
+        const openaiData = await openaiResponse.json();
+        generatedContent = openaiData.choices[0].message.content;
+        generationModel = 'openai-gpt4omini';
+        console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
+        console.log('📊 Generation metrics:', {
+          source: 'openai-gpt4omini',
+          durationMs: Date.now() - startTime,
+          success: true
+        });
       }
     } catch (error: any) {
-      clearTimeout(geminiTimeoutId);
-      console.error('❌ YOUR Gemini failed:', error.message);
+      clearTimeout(openaiTimeoutId);
+      console.error('❌ OpenAI failed:', error.message);
     }
 
-    // ============= PLAN B: OPENAI FALLBACK (15s timeout) =============
-    if (!generatedContent && openaiApiKey) {
-      console.log('⚠️ Gemini failed, trying OpenAI fallback...');
-      const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 15000);
+    // ============= PLAN B: LOVABLE AI GEMINI FALLBACK (12s timeout) =============
+    if (!generatedContent && lovableApiKey) {
+      console.log('⚠️ OpenAI failed, trying Lovable AI Gemini...');
+      const lovableController = new AbortController();
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 12000);
 
       try {
-        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
           method: 'POST',
-          signal: openaiController.signal,
+          signal: lovableController.signal,
           headers: {
-            'Authorization': `Bearer ${openaiApiKey}`,
+            'Authorization': `Bearer ${lovableApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'gpt-5-mini-2025-08-07',
-            max_completion_tokens: 3000,
+            model: 'google/gemini-2.5-flash',
             messages: [
-              { role: 'system', content: 'You are an executive AI strategist. Return valid JSON only.' },
+              { role: 'system', content: 'You are an expert AI strategist generating personalized prompt libraries. Return valid JSON only.' },
               { role: 'user', content: synthesisPro }
-            ]
+            ],
+            response_format: { type: "json_object" }
           })
         });
-        clearTimeout(openaiTimeoutId);
+        clearTimeout(lovableTimeoutId);
 
-        if (openaiResponse.ok) {
-          const openaiData = await openaiResponse.json();
-          generatedContent = openaiData.choices?.[0]?.message?.content;
-          if (generatedContent) {
-            generationModel = 'openai';
-            console.log('✅ OpenAI succeeded in', Date.now() - startTime, 'ms');
-            console.log('📊 Generation metrics:', {
-              source: 'openai',
-              durationMs: Date.now() - startTime,
-              success: true
-            });
-          }
+        if (lovableResponse.ok) {
+          const lovableData = await lovableResponse.json();
+          generatedContent = lovableData.choices[0].message.content;
+          generationModel = 'lovable-gemini';
+          console.log('✅ Lovable AI Gemini succeeded in', Date.now() - startTime, 'ms');
+          console.log('📊 Generation metrics:', {
+            source: 'lovable-gemini',
+            durationMs: Date.now() - startTime,
+            success: true
+          });
         }
       } catch (error: any) {
-        clearTimeout(openaiTimeoutId);
-        console.error('❌ OpenAI failed:', error.message);
+        clearTimeout(lovableTimeoutId);
+        console.error('❌ Lovable AI failed:', error.message);
       }
     }
 
@@ -317,7 +310,8 @@ Return ONLY valid JSON, no markdown formatting.`;
 
     return new Response(
       JSON.stringify({ 
-        profileId: storedProfile.id, 
+        profileId: storedProfile.id,
+        library: parsedLibrary,
         generationModel: generationModel,
         durationMs: Date.now() - startTime
       }),
