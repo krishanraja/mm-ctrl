@@ -12,8 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    const { sessionId, userId, contactData, assessmentData, profileData } = await req.json();
-    console.log('Generating prompt library for session:', sessionId);
+    const { assessmentId, sessionId, userId, contactData, assessmentData, profileData } = await req.json();
+    console.log('Generating prompt library for assessment:', assessmentId);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -311,10 +311,23 @@ Return ONLY valid JSON, no markdown formatting.`;
 
     console.log('Prompt library stored successfully:', storedProfile.id);
 
+    // Transform recommendedProjects into promptSets format for leader_prompt_sets table
+    const promptSets = parsedLibrary.recommendedProjects.map((project: any, index: number) => ({
+      category_key: project.name.toLowerCase().replace(/\s+/g, '_'),
+      title: project.name,
+      description: project.purpose,
+      what_its_for: project.purpose,
+      when_to_use: project.whenToUse,
+      how_to_use: project.masterInstructions,
+      prompts: project.examplePrompts || [],
+      priority_rank: index + 1
+    }));
+
     return new Response(
       JSON.stringify({ 
         profileId: storedProfile.id,
         library: parsedLibrary,
+        promptSets: promptSets, // Add transformed promptSets array
         generationModel: generationModel,
         durationMs: Date.now() - startTime
       }),
