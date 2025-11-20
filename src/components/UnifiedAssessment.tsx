@@ -13,7 +13,6 @@ import LLMInsightEngine from './ai-chat/LLMInsightEngine';
 import { ContactCollectionForm, ContactData } from './ContactCollectionForm';
 import { DeepProfileQuestionnaire, DeepProfileData } from './DeepProfileQuestionnaire';
 import { UnifiedResults } from './UnifiedResults';
-import AILeadershipBenchmark from './AILeadershipBenchmark';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
@@ -718,17 +717,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       return null;
     }
     
-    // Legacy fallback (should rarely happen)
-    const assessmentData = getAssessmentData();
-    return (
-      <AILeadershipBenchmark
-        assessmentData={assessmentData}
-        sessionId={sessionId}
-        contactData={contactData}
-        deepProfileData={null}
-        onBack={onBack}
-      />
-    );
+    // Redirect to unified-results (no legacy fallback)
+    console.log('🔄 No v2 assessment found, redirecting to unified-results');
+    setCurrentScreen('unified-results');
+    return null;
   }
 
   const progressData = getProgressData();

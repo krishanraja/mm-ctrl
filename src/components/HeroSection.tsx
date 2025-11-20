@@ -24,7 +24,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignOut }: HeroSectionProps) {
   const [displayedText, setDisplayedText] = useState("");
-  const fullText = "Benchmark Your AI Leadership";
+  const fullText = "Know Where You Stand on AI";
   
   useEffect(() => {
     let currentIndex = 0;
@@ -113,7 +113,9 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
           </div>
           
           <p className="text-sm text-muted-foreground leading-relaxed text-left mb-6">
-            Take a few minutes to discover your AI literacy score and unlock personalized insights for executive growth. Talk to me like your chief of staff.
+            Spend 10 minutes mapping how AI fits your role, team, and company. Get a clear view 
+            of the gaps that matter, practical next steps, and the questions you'll need when 
+            vendors, boards, or staff bring AI to your door.
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-start items-start">
@@ -122,36 +124,9 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               className="btn-hero-cta group justify-start"
               size="lg"
             >
-              <span className="text-sm">📝 Quiz</span>
+              <span className="text-sm">Start diagnostic</span>
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
-            
-            <div className="flex flex-col gap-2">
-              <Button 
-                onClick={onStartVoice}
-                variant="outline"
-                size="lg"
-                className="justify-start group relative"
-              >
-                <span className="text-sm">🎙️ Voice</span>
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                
-                {/* Beta badge - only visible on hover, positioned over button */}
-                <Badge 
-                  variant="secondary" 
-                  className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
-                >
-                  Beta
-                </Badge>
-              </Button>
-              
-              {/* Feature text under Voice button only */}
-              <div className="text-xs text-muted-foreground space-y-1 pl-1">
-                <p>⚡ Faster than typing</p>
-                <p>💬 Natural conversation</p>
-                <p>🎯 Personalized instantly</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

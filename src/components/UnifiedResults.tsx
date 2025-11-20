@@ -1,20 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Award, Sparkles, Shield, TrendingUp, Brain } from 'lucide-react';
+import { Shield, TrendingUp, Brain, Sparkles } from 'lucide-react';
 import { LeadershipBenchmarkV2 } from './LeadershipBenchmarkV2';
 import { PromptLibraryV2 } from './PromptLibraryV2';
-import AILeadershipBenchmark from './AILeadershipBenchmark';
-import { PromptLibraryResults } from './PromptLibraryResults';
+import { TensionsView } from './TensionsView';
 import { ConsentManager } from './ConsentManager';
-import { BenchmarkComparison } from './BenchmarkComparison';
-import { InviteColleaguesCard } from './ui/invite-colleagues-card';
-import { TeamsCrossSellCard } from './ui/teams-cross-sell-card';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
-import { calculateLeadershipScore, getLeadershipTier } from '@/utils/scoreCalculations';
-import { deriveLeadershipComparison } from '@/utils/scaleUpsMapping';
-import { determineAILearningStyle, getLearningStyleProfile, AILearningStyle } from '@/utils/aiLearningStyle';
-import { Badge } from '@/components/ui/badge';
 
 interface UnifiedResultsProps {
   assessmentData: any;
@@ -33,12 +25,10 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   sessionId,
   onBack
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("benchmark");
-  const [leadershipComparison, setLeadershipComparison] = useState<any>(null);
-  const [learningStyle, setLearningStyle] = useState<AILearningStyle | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
-  // PHASE 1: Multi-layer assessment ID persistence
+  // Restore assessment ID from persistence
   useEffect(() => {
     const checkForAssessmentId = async () => {
       const { getPersistedAssessmentId } = await import('@/utils/assessmentPersistence');
@@ -55,131 +45,78 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     checkForAssessmentId();
   }, []);
 
-  // Calculate score and tier from assessment data
-  const userScore = useMemo(() => calculateLeadershipScore(assessmentData), [assessmentData]);
-  const userTier = useMemo(() => {
-    const tier = getLeadershipTier(userScore);
-    return tier.name.toLowerCase().replace(/[^a-z]/g, '');
-  }, [userScore]);
-
-  // Calculate learning style from deep profile
-  useEffect(() => {
-    if (deepProfileData) {
-      const style = determineAILearningStyle(deepProfileData);
-      setLearningStyle(style);
-      console.log('🎯 Learning style set in UnifiedResults:', style);
-    }
-  }, [deepProfileData]);
-
-  // Calculate leadership comparison independently of tab state
-  useEffect(() => {
-    const comparison = deriveLeadershipComparison(assessmentData, deepProfileData);
-    console.log('🎯 Leadership Comparison calculated:', comparison);
-    setLeadershipComparison(comparison);
-  }, [assessmentData, deepProfileData]);
-
-  const showCohortFeature = deepProfileData !== null && learningStyle !== null;
-  const learningStyleProfile = learningStyle ? getLearningStyleProfile(learningStyle) : null;
-
   return (
     <div className="bg-background min-h-screen py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-4 mb-12 gap-2 h-auto p-1.5 bg-white/80 dark:bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl shadow-primary/5 border border-primary/10">
+          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-4 mb-12 bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger 
-              value="benchmark"
-              className="relative inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-medium text-center tracking-tight transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 data-[state=inactive]:bg-white/60 data-[state=inactive]:dark:bg-white/5 data-[state=inactive]:backdrop-blur-sm data-[state=inactive]:text-muted-foreground data-[state=inactive]:border data-[state=inactive]:border-primary/10 data-[state=inactive]:hover:bg-white/80 data-[state=inactive]:dark:hover:bg-white/10 data-[state=inactive]:hover:border-primary/20 data-[state=inactive]:hover:scale-[1.02] data-[state=inactive]:active:scale-[0.98]"
+              value="overview" 
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
             >
-              <Award className="h-4 w-4 flex-shrink-0" />
-              <span className="text-center hidden sm:inline">Score</span>
+              <Brain className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="library"
-              className="relative inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-medium text-center tracking-tight transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 data-[state=inactive]:bg-white/60 data-[state=inactive]:dark:bg-white/5 data-[state=inactive]:backdrop-blur-sm data-[state=inactive]:text-muted-foreground data-[state=inactive]:border data-[state=inactive]:border-primary/10 data-[state=inactive]:hover:bg-white/80 data-[state=inactive]:dark:hover:bg-white/10 data-[state=inactive]:hover:border-primary/20 data-[state=inactive]:hover:scale-[1.02] data-[state=inactive]:active:scale-[0.98]"
-            >
-              <Sparkles className="h-4 w-4 flex-shrink-0" />
-              <span className="text-center hidden sm:inline">Prompts</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="benchmarks"
-              className="relative inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-medium text-center tracking-tight transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 data-[state=inactive]:bg-white/60 data-[state=inactive]:dark:bg-white/5 data-[state=inactive]:backdrop-blur-sm data-[state=inactive]:text-muted-foreground data-[state=inactive]:border data-[state=inactive]:border-primary/10 data-[state=inactive]:hover:bg-white/80 data-[state=inactive]:dark:hover:bg-white/10 data-[state=inactive]:hover:border-primary/20 data-[state=inactive]:hover:scale-[1.02] data-[state=inactive]:active:scale-[0.98]"
+              value="tensions" 
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
             >
               <TrendingUp className="h-4 w-4 flex-shrink-0" />
-              <span className="text-center hidden sm:inline">Compare</span>
+              <span className="hidden sm:inline">Tensions</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="privacy"
-              className="relative inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-sm font-medium text-center tracking-tight transition-all duration-300 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/90 data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 data-[state=inactive]:bg-white/60 data-[state=inactive]:dark:bg-white/5 data-[state=inactive]:backdrop-blur-sm data-[state=inactive]:text-muted-foreground data-[state=inactive]:border data-[state=inactive]:border-primary/10 data-[state=inactive]:hover:bg-white/80 data-[state=inactive]:dark:hover:bg-white/10 data-[state=inactive]:hover:border-primary/20 data-[state=inactive]:hover:scale-[1.02] data-[state=inactive]:active:scale-[0.98]"
+              value="tools" 
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
+            >
+              <Sparkles className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Tools</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="privacy" 
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
             >
               <Shield className="h-4 w-4 flex-shrink-0" />
-              <span className="text-center hidden sm:inline">Privacy</span>
+              <span className="hidden sm:inline">Privacy</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="library" className="mt-0">
-            {assessmentId && (
-              <PromptLibraryV2
-                assessmentId={assessmentId}
-                contactData={contactData}
-              />
-            )}
-            {!assessmentId && promptLibrary && (
-              <PromptLibraryResults
-                library={promptLibrary}
-                contactData={contactData}
-              />
-            )}
-            {!assessmentId && !promptLibrary && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Loading your AI Command Center...</p>
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="benchmark" className="mt-0">
+          <TabsContent value="overview" className="mt-0">
             {assessmentId ? (
-              <LeadershipBenchmarkV2
+              <LeadershipBenchmarkV2 
                 assessmentId={assessmentId}
                 contactData={contactData}
               />
             ) : (
-              <AILeadershipBenchmark
-                assessmentData={assessmentData}
-                sessionId={sessionId}
-                contactData={contactData}
-                deepProfileData={deepProfileData}
-                onBack={onBack}
-                onViewToolkit={() => setActiveTab("library")}
-                onLeadershipComparisonReady={setLeadershipComparison}
-              />
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading diagnostic data...</p>
+              </div>
             )}
           </TabsContent>
 
-          <TabsContent value="benchmarks" className="mt-0">
-            <div className="space-y-6">
-              <BenchmarkComparison
-                userScore={userScore}
-                userTier={userTier}
-                companySize={contactData?.companySize}
-                role={contactData?.department}
-                leadershipComparison={leadershipComparison}
-                learningStyle={learningStyle}
-                showCohortToggle={showCohortFeature}
+          <TabsContent value="tensions" className="mt-0">
+            {assessmentId ? (
+              <TensionsView 
+                assessmentId={assessmentId}
+                contactData={contactData}
               />
-              
-              {/* Invite colleagues to unlock team momentum */}
-              {contactData?.companyName && (
-                <InviteColleaguesCard 
-                  companyName={contactData.companyName}
-                  assessmentId={assessmentId || ''}
-                  userEmail={contactData.email}
-                  userName={contactData.fullName}
-                />
-              )}
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading diagnostic data...</p>
+              </div>
+            )}
+          </TabsContent>
 
-              {/* Cross-sell to Teams product */}
-              <TeamsCrossSellCard companyName={contactData?.companyName} />
-            </div>
+          <TabsContent value="tools" className="mt-0">
+            {assessmentId ? (
+              <PromptLibraryV2 
+                assessmentId={assessmentId}
+                contactData={contactData}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading thinking tools...</p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="privacy" className="mt-0">

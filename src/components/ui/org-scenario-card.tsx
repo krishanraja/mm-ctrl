@@ -1,72 +1,45 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlertTriangle, Zap, TrendingUp, Users, Lock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Target } from 'lucide-react';
 
 interface OrgScenarioCardProps {
-  scenarioKey: 'stagnation_loop' | 'shadow_ai_instability' | 'high_velocity_path' | 'culture_capability_mismatch';
-  summary: string;
-  isLocked?: boolean;
+  scenario: {
+    scenario_key: string;
+    summary: string;
+    priority_rank: number;
+  };
 }
 
-const scenarioConfig = {
-  stagnation_loop: {
-    icon: AlertTriangle,
-    label: 'Stagnation Loop',
-    color: 'text-destructive',
-  },
-  shadow_ai_instability: {
-    icon: Zap,
-    label: 'Shadow AI Instability',
-    color: 'text-warning',
-  },
-  high_velocity_path: {
-    icon: TrendingUp,
-    label: 'High Velocity Path',
-    color: 'text-primary',
-  },
-  culture_capability_mismatch: {
-    icon: Users,
-    label: 'Culture-Capability Gap',
-    color: 'text-secondary',
-  },
+const scenarioLabels: Record<string, string> = {
+  stagnation_loop: 'Stagnation Loop',
+  shadow_ai_instability: 'Shadow AI Risk',
+  high_velocity_path: 'High Velocity Path',
+  culture_capability_mismatch: 'Culture-Capability Gap',
 };
 
-export const OrgScenarioCard = React.memo<OrgScenarioCardProps>(({ 
-  scenarioKey, 
-  summary,
-  isLocked = false,
-}) => {
-  const config = scenarioConfig[scenarioKey];
-  const Icon = config.icon;
-
+export const OrgScenarioCard: React.FC<OrgScenarioCardProps> = ({ scenario }) => {
+  const label = scenarioLabels[scenario.scenario_key] || scenario.scenario_key;
+  
   return (
-    <Card className="hover:shadow-md transition-shadow relative">
-      {isLocked && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg z-10 flex items-center justify-center">
-          <div className="text-center space-y-2">
-            <Lock className="h-8 w-8 mx-auto text-muted-foreground" />
-            <p className="text-sm text-muted-foreground font-medium">
-              Unlock Full Diagnostic
-            </p>
-          </div>
-        </div>
-      )}
-      
+    <Card className="border-l-4 border-l-blue-500/50">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
-          <div className={`p-3 rounded-lg bg-primary/10 ${config.color}`}>
-            <Icon className="h-6 w-6" />
+          <div className="flex-shrink-0 mt-1">
+            <Target className="h-5 w-5 text-blue-500" />
           </div>
-          <div className="flex-1 space-y-2">
-            <h3 className="font-semibold text-lg">{config.label}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-              {summary}
+          <div className="flex-1">
+            <div className="mb-2">
+              <Badge variant="secondary" className="text-xs">
+                {label}
+              </Badge>
+            </div>
+            <p className="text-sm text-foreground leading-relaxed">
+              {scenario.summary}
             </p>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-});
-
-OrgScenarioCard.displayName = 'OrgScenarioCard';
+};
