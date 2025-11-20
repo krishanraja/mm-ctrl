@@ -64,11 +64,18 @@ Deno.serve(async (req) => {
 
     console.log('✅ Computed and stored', risks.length, 'risk signals');
 
-    // Update generation status AFTER all DB writes complete
+    // Update generation status AFTER all DB writes complete - MERGE with existing flags
+    const { data: currentStatus } = await supabase
+      .from('leader_assessments')
+      .select('generation_status')
+      .eq('id', assessment_id)
+      .single();
+
     const { error: statusError } = await supabase
       .from('leader_assessments')
       .update({
         generation_status: {
+          ...(currentStatus?.generation_status || {}),
           risks_computed: true,
           last_updated: new Date().toISOString(),
         },
