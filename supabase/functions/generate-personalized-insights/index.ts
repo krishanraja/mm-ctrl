@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -278,14 +279,15 @@ Return ONLY valid JSON matching the required structure.`
               ragUsed: !!groundingMetadata
             });
             
-            // CP3: Update generation_status
+            // CP4: Update generation_status with source tracking
             if (assessmentId) {
-              console.log('✅ CP3: Updating generation_status.insights_generated = true');
+              console.log('✅ CP4: Updating generation_status.insights_generated = true (Vertex AI)');
               await supabase
                 .from('leader_assessments')
                 .update({
                   generation_status: {
                     insights_generated: true,
+                    insights_source: 'vertex-ai',
                     prompts_generated: false,
                     risks_computed: false,
                     tensions_computed: false,
@@ -346,14 +348,15 @@ Return ONLY valid JSON matching the required structure.`
             success: true
           });
           
-          // CP3: Update generation_status
+          // CP4: Update generation_status with source tracking (OpenAI)
           if (assessmentId) {
-            console.log('✅ CP3: Updating generation_status.insights_generated = true');
+            console.log('✅ CP4: Updating generation_status.insights_generated = true (OpenAI)');
             await supabase
               .from('leader_assessments')
               .update({
                 generation_status: {
                   insights_generated: true,
+                  insights_source: 'openai',
                   prompts_generated: false,
                   risks_computed: false,
                   tensions_computed: false,
@@ -413,14 +416,15 @@ Return ONLY valid JSON matching the required structure.`
             success: true
           });
           
-          // CP3: Update generation_status
+          // CP4: Update generation_status with source tracking (Lovable AI)
           if (assessmentId) {
-            console.log('✅ CP3: Updating generation_status.insights_generated = true');
+            console.log('✅ CP4: Updating generation_status.insights_generated = true (Lovable AI)');
             await supabase
               .from('leader_assessments')
               .update({
                 generation_status: {
                   insights_generated: true,
+                  insights_source: 'lovable-ai',
                   prompts_generated: false,
                   risks_computed: false,
                   tensions_computed: false,

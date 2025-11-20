@@ -60,29 +60,48 @@ async function generateServiceAccountJWT(serviceAccount: any): Promise<string> {
   return `${unsignedToken}.${signatureB64}`;
 }
 
-// Helper: Exchange JWT for OAuth2 access token
+// Helper: Exchange JWT for OAuth2 access token (CP2: with retry logic)
 async function getVertexAIAccessToken(serviceAccountJson: string): Promise<string | null> {
   try {
     const serviceAccount = JSON.parse(serviceAccountJson);
     const jwt = await generateServiceAccountJWT(serviceAccount);
     
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-        assertion: jwt
-      })
-    });
-    
-    if (tokenResponse.ok) {
-      const tokenData = await tokenResponse.json();
-      return tokenData.access_token;
-    } else {
-      const errorText = await tokenResponse.text();
-      console.error('❌ OAuth2 token exchange failed:', tokenResponse.status, errorText);
-      return null;
+    // CP2: Try OAuth twice with 15s timeout per attempt
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      const tokenController = new AbortController();
+      const tokenTimeout = setTimeout(() => tokenController.abort(), 15000);
+      
+      try {
+        const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          signal: tokenController.signal,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            assertion: jwt
+          })
+        });
+        
+        clearTimeout(tokenTimeout);
+        
+        if (tokenResponse.ok) {
+          const tokenData = await tokenResponse.json();
+          console.log(`✅ CP2: OAuth token obtained (attempt ${attempt})`);
+          return tokenData.access_token;
+        } else {
+          const errorText = await tokenResponse.text();
+          console.error(`❌ OAuth attempt ${attempt} failed:`, tokenResponse.status, errorText);
+          if (attempt === 2) return null;
+          await new Promise(resolve => setTimeout(resolve, 1000)); // 1s backoff
+        }
+      } catch (fetchError: any) {
+        clearTimeout(tokenTimeout);
+        console.error(`❌ OAuth attempt ${attempt} exception:`, fetchError.message);
+        if (attempt === 2) return null;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
     }
+    return null;
   } catch (error: any) {
     console.error('❌ Failed to get access token:', error.message);
     return null;
@@ -330,8 +349,8 @@ Return ONLY valid JSON, no markdown formatting.`;
         }
         
         const geminiController = new AbortController();
-        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 30000); // CP2: Increased to 30s
-        console.log('✅ CP2: Vertex AI timeout set to 30s (includes OAuth time)');
+        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 60000); // CP2: Increased to 60s for OAuth + API
+        console.log('✅ CP2: Vertex AI timeout set to 60s (includes OAuth retry time)');
 
         const vertexEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
         
@@ -419,9 +438,9 @@ Return ONLY valid JSON, no markdown formatting.`;
             generationModel = 'vertex-gemini-2.5-flash-rag';
             console.log('✅ Vertex AI + RAG succeeded in', Date.now() - startTime, 'ms');
             
-            // CP3: Update generation_status
+            // CP4: Update generation_status for Vertex AI
             if (assessmentId) {
-              console.log('✅ CP3: Updating generation_status.prompts_generated = true');
+              console.log('✅ CP4: Updating generation_status.prompts_generated = true (Vertex AI)');
               const { data: currentStatus } = await supabase
                 .from('leader_assessments')
                 .select('generation_status')
@@ -434,6 +453,7 @@ Return ONLY valid JSON, no markdown formatting.`;
                   generation_status: {
                     ...(currentStatus?.generation_status || {}),
                     prompts_generated: true,
+                    prompts_source: 'vertex-ai',
                     last_updated: new Date().toISOString()
                   }
                 })
@@ -486,9 +506,9 @@ Return ONLY valid JSON, no markdown formatting.`;
             success: true
           });
           
-          // CP3: Update generation_status
+          // CP4: Update generation_status for OpenAI
           if (assessmentId) {
-            console.log('✅ CP3: Updating generation_status.prompts_generated = true');
+            console.log('✅ CP4: Updating generation_status.prompts_generated = true (OpenAI)');
             const { data: currentStatus } = await supabase
               .from('leader_assessments')
               .select('generation_status')
@@ -501,6 +521,7 @@ Return ONLY valid JSON, no markdown formatting.`;
                 generation_status: {
                   ...(currentStatus?.generation_status || {}),
                   prompts_generated: true,
+                  prompts_source: 'openai',
                   last_updated: new Date().toISOString()
                 }
               })
@@ -552,9 +573,9 @@ Return ONLY valid JSON, no markdown formatting.`;
             success: true
           });
           
-          // CP3: Update generation_status
+          // CP4: Update generation_status for Lovable AI
           if (assessmentId) {
-            console.log('✅ CP3: Updating generation_status.prompts_generated = true');
+            console.log('✅ CP4: Updating generation_status.prompts_generated = true (Lovable AI)');
             const { data: currentStatus } = await supabase
               .from('leader_assessments')
               .select('generation_status')
@@ -567,6 +588,7 @@ Return ONLY valid JSON, no markdown formatting.`;
                 generation_status: {
                   ...(currentStatus?.generation_status || {}),
                   prompts_generated: true,
+                  prompts_source: 'lovable-ai',
                   last_updated: new Date().toISOString()
                 }
               })
@@ -678,12 +700,13 @@ Return ONLY valid JSON, no markdown formatting.`;
     
     const parsedLibrary = JSON.parse(cleanContent);
 
-    // Store in database
+    // CP3: Store in database with leader_id support for anonymous users
     const { data: storedProfile, error: dbError } = await supabase
       .from('prompt_library_profiles')
       .insert({
         session_id: sessionId,
         user_id: userId || null,
+        leader_id: leaderId || null, // CP3: Support anonymous assessments
         executive_profile: parsedLibrary.executiveProfile,
         recommended_projects: parsedLibrary.recommendedProjects,
         prompt_templates: parsedLibrary.promptTemplates,
