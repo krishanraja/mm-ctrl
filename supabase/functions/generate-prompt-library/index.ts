@@ -357,12 +357,47 @@ Return ONLY valid JSON, no markdown formatting.`;
           }
           
           if (content) {
-            // Clean markdown code blocks if present
-            if (content.includes('```')) {
-              content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            // Clean markdown code blocks and other formatting issues
+            let cleanContent = content.trim();
+
+            // Remove markdown code blocks (various formats)
+            if (cleanContent.includes('```')) {
+              cleanContent = cleanContent
+                .replace(/```json\s*/g, '')
+                .replace(/```javascript\s*/g, '')
+                .replace(/```\s*/g, '')
+                .trim();
             }
-            
-            generatedContent = content;
+
+            // Remove leading/trailing whitespace and newlines
+            cleanContent = cleanContent.trim();
+
+            // If response starts with non-JSON text, try to extract JSON
+            if (!cleanContent.startsWith('{') && !cleanContent.startsWith('[')) {
+              const jsonMatch = cleanContent.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+              if (jsonMatch) {
+                cleanContent = jsonMatch[0];
+              }
+            }
+
+            // Validate it's not empty
+            if (!cleanContent || cleanContent.length < 10) {
+              throw new Error('Gemini returned empty or invalid response');
+            }
+
+            try {
+              JSON.parse(cleanContent); // Validate it's parseable
+              console.log('✅ Vertex AI JSON parsed successfully');
+              generatedContent = cleanContent;
+            } catch (parseError) {
+              console.error('❌ Vertex AI JSON parse failed');
+              console.error('Raw response length:', content.length);
+              console.error('Cleaned response length:', cleanContent.length);
+              console.error('First 200 chars:', cleanContent.substring(0, 200));
+              console.error('Last 200 chars:', cleanContent.substring(cleanContent.length - 200));
+              console.error('Parse error:', parseError);
+              throw parseError;
+            }
             generationModel = 'vertex-gemini-2.5-flash-rag';
             console.log('✅ Vertex AI + RAG succeeded in', Date.now() - startTime, 'ms');
           }
