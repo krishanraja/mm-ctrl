@@ -57,10 +57,26 @@ Deno.serve(async (req) => {
 
       if (error) {
         console.error('Error storing scenario:', error);
+        throw new Error(`Failed to store scenario: ${error.message}`);
       }
     }
 
     console.log('✅ Derived and stored', topScenarios.length, 'org scenarios');
+
+    // Update generation status AFTER all DB writes complete
+    const { error: statusError } = await supabase
+      .from('leader_assessments')
+      .update({
+        generation_status: {
+          scenarios_generated: true,
+          last_updated: new Date().toISOString(),
+        },
+      })
+      .eq('id', assessment_id);
+
+    if (statusError) {
+      console.error('Failed to update generation status:', statusError);
+    }
 
     return new Response(
       JSON.stringify({ scenarios: topScenarios, count: topScenarios.length }),

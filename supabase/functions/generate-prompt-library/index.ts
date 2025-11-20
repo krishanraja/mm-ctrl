@@ -460,28 +460,6 @@ Return ONLY valid JSON, no markdown formatting.`;
             }
             generationModel = 'vertex-gemini-2.5-flash-rag';
             console.log('✅ Vertex AI + RAG succeeded in', Date.now() - startTime, 'ms');
-            
-            // CP4: Update generation_status for Vertex AI
-            if (assessmentId) {
-              console.log('✅ CP4: Updating generation_status.prompts_generated = true (Vertex AI)');
-              const { data: currentStatus } = await supabase
-                .from('leader_assessments')
-                .select('generation_status')
-                .eq('id', assessmentId)
-                .single();
-              
-              await supabase
-                .from('leader_assessments')
-                .update({
-                  generation_status: {
-                    ...(currentStatus?.generation_status || {}),
-                    prompts_generated: true,
-                    prompts_source: 'vertex-ai',
-                    last_updated: new Date().toISOString()
-                  }
-                })
-                .eq('id', assessmentId);
-            }
           }
         } else {
           const errorText = await geminiResponse.text();
@@ -775,10 +753,35 @@ Return ONLY valid JSON, no markdown formatting.`;
     
     if (promptSetsError) {
       console.error('Error storing prompt sets:', promptSetsError);
-      throw promptSetsError;
+      throw new Error(`Failed to store prompt sets: ${promptSetsError.message}`);
     }
     
     console.log(`✅ Stored ${promptSets.length} prompt sets to leader_prompt_sets`);
+
+    // Update generation status AFTER all DB writes complete
+    if (assessmentId) {
+      console.log('✅ Updating generation_status.prompts_generated = true (after DB write)');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const { error: statusError } = await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...(currentStatus?.generation_status || {}),
+            prompts_generated: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
+        
+      if (statusError) {
+        console.error('Failed to update generation status:', statusError);
+      }
+    }
 
     return new Response(
       JSON.stringify({ 

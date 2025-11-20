@@ -356,25 +356,7 @@ Return ONLY valid JSON matching the required structure.`
               ragUsed: !!groundingMetadata
             });
             
-            // CP4: Update generation_status with source tracking
-            if (assessmentId) {
-              console.log('✅ CP4: Updating generation_status.insights_generated = true (Vertex AI)');
-              await supabase
-                .from('leader_assessments')
-                .update({
-                  generation_status: {
-                    insights_generated: true,
-                    insights_source: 'vertex-ai',
-                    prompts_generated: false,
-                    risks_computed: false,
-                    tensions_computed: false,
-                    scenarios_generated: false,
-                    first_moves_generated: false,
-                    last_updated: new Date().toISOString()
-                  }
-                })
-                .eq('id', assessmentId);
-            }
+            // Status will be updated after all DB writes complete
           }
         } else {
           const errorText = await geminiResponse.text();
@@ -425,25 +407,7 @@ Return ONLY valid JSON matching the required structure.`
             success: true
           });
           
-          // CP4: Update generation_status with source tracking (OpenAI)
-          if (assessmentId) {
-            console.log('✅ CP4: Updating generation_status.insights_generated = true (OpenAI)');
-            await supabase
-              .from('leader_assessments')
-              .update({
-                generation_status: {
-                  insights_generated: true,
-                  insights_source: 'openai',
-                  prompts_generated: false,
-                  risks_computed: false,
-                  tensions_computed: false,
-                  scenarios_generated: false,
-                  first_moves_generated: false,
-                  last_updated: new Date().toISOString()
-                }
-              })
-              .eq('id', assessmentId);
-          }
+          // Status will be updated after all DB writes complete
         } else {
           const errorText = await openaiResponse.text();
           console.error('❌ OpenAI error:', openaiResponse.status, errorText);
@@ -493,25 +457,7 @@ Return ONLY valid JSON matching the required structure.`
             success: true
           });
           
-          // CP4: Update generation_status with source tracking (Lovable AI)
-          if (assessmentId) {
-            console.log('✅ CP4: Updating generation_status.insights_generated = true (Lovable AI)');
-            await supabase
-              .from('leader_assessments')
-              .update({
-                generation_status: {
-                  insights_generated: true,
-                  insights_source: 'lovable-ai',
-                  prompts_generated: false,
-                  risks_computed: false,
-                  tensions_computed: false,
-                  scenarios_generated: false,
-                  first_moves_generated: false,
-                  last_updated: new Date().toISOString()
-                }
-              })
-              .eq('id', assessmentId);
-          }
+          // Status will be updated after all DB writes complete
         }
       } catch (error: any) {
         clearTimeout(lovableTimeoutId);

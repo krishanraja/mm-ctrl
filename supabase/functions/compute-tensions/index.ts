@@ -56,10 +56,26 @@ Deno.serve(async (req) => {
 
       if (error) {
         console.error('Error storing tension:', error);
+        throw new Error(`Failed to store tension: ${error.message}`);
       }
     }
 
     console.log('✅ Computed and stored', tensions.length, 'tensions');
+
+    // Update generation status AFTER all DB writes complete
+    const { error: statusError } = await supabase
+      .from('leader_assessments')
+      .update({
+        generation_status: {
+          tensions_computed: true,
+          last_updated: new Date().toISOString(),
+        },
+      })
+      .eq('id', assessment_id);
+
+    if (statusError) {
+      console.error('Failed to update generation status:', statusError);
+    }
 
     return new Response(
       JSON.stringify({ tensions, count: tensions.length }),

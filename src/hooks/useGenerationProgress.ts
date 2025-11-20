@@ -34,12 +34,15 @@ const PHASES: Array<{ name: string; key: keyof GenerationStatus }> = [
   { name: 'Creating first moves', key: 'first_moves_generated' },
 ];
 
+const TIMEOUT_MS = 120000; // 2 minutes per phase
+
 export function useGenerationProgress(assessmentId: string) {
   const [phases, setPhases] = useState<GenerationPhase[]>(
     PHASES.map(p => ({ ...p, status: 'pending' as const }))
   );
   const [isComplete, setIsComplete] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
+  const [phaseStartTimes, setPhaseStartTimes] = useState<Record<string, number>>({});
 
   const checkProgress = useCallback(async () => {
     if (!assessmentId) return;
@@ -57,8 +60,9 @@ export function useGenerationProgress(assessmentId: string) {
       }
 
       const status = (data.generation_status || {}) as any;
+      const now = Date.now();
       
-      // Update phases based on DB status
+      // Update phases based on DB status with timeout detection
       setPhases(prevPhases => 
         prevPhases.map(phase => {
           const isComplete = status[phase.key] === true;
@@ -66,12 +70,39 @@ export function useGenerationProgress(assessmentId: string) {
             (e: any) => e.phase === phase.key
           );
 
+          // Track when phase started
+          if (!isComplete && !hasError) {
+            setPhaseStartTimes(prev => {
+              if (!prev[phase.key]) {
+                return { ...prev, [phase.key]: now };
+              }
+              return prev;
+            });
+          }
+
+          // Check for timeout (phase stuck "in-progress" for >2 minutes)
+          const phaseStartTime = phaseStartTimes[phase.key];
+          const isTimedOut = phaseStartTime && (now - phaseStartTime) > TIMEOUT_MS;
+
+          let phaseStatus: 'pending' | 'in-progress' | 'complete' | 'failed' = 'pending';
+          let phaseError: string | undefined;
+
+          if (hasError) {
+            phaseStatus = 'failed';
+            phaseError = status.error_log.find((e: any) => e.phase === phase.key)?.error;
+          } else if (isTimedOut) {
+            phaseStatus = 'failed';
+            phaseError = 'Generation timed out after 2 minutes';
+          } else if (isComplete) {
+            phaseStatus = 'complete';
+          } else if (status.last_updated) {
+            phaseStatus = 'in-progress';
+          }
+
           return {
             ...phase,
-            status: hasError ? 'failed' : isComplete ? 'complete' : 'in-progress',
-            error: hasError 
-              ? status.error_log.find((e: any) => e.phase === phase.key)?.error 
-              : undefined
+            status: phaseStatus,
+            error: phaseError
           };
         })
       );
