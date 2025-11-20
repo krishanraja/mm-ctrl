@@ -61,14 +61,16 @@ async function generateServiceAccountJWT(serviceAccount: any): Promise<string> {
   return `${unsignedToken}.${signatureB64}`;
 }
 
-// Helper: Exchange JWT for OAuth2 access token
-async function getVertexAIAccessToken(serviceAccountJson: string): Promise<string | null> {
+// Helper: Exchange JWT for OAuth2 access token (CP3: with dedicated timeout)
+async function getVertexAIAccessToken(serviceAccountJson: string, signal?: AbortSignal): Promise<string | null> {
   try {
+    const oauthStart = Date.now();
     const serviceAccount = JSON.parse(serviceAccountJson);
     const jwt = await generateServiceAccountJWT(serviceAccount);
     
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
+      signal,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
@@ -78,14 +80,15 @@ async function getVertexAIAccessToken(serviceAccountJson: string): Promise<strin
     
     if (tokenResponse.ok) {
       const tokenData = await tokenResponse.json();
+      console.log('✅ CP3: OAuth completed in', Date.now() - oauthStart, 'ms');
       return tokenData.access_token;
     } else {
       const errorText = await tokenResponse.text();
-      console.error('❌ OAuth2 token exchange failed:', tokenResponse.status, errorText);
+      console.error('❌ CP3: OAuth2 token exchange failed:', tokenResponse.status, errorText);
       return null;
     }
   } catch (error: any) {
-    console.error('❌ Failed to get access token:', error.message);
+    console.error('❌ CP3: OAuth failed:', error.message);
     return null;
   }
 }
@@ -98,11 +101,43 @@ serve(async (req) => {
   try {
     const { assessmentData, contactData, deepProfileData, assessmentId, leaderId } = await req.json();
     
-    // CP1: Initialize Supabase client BEFORE using it
+    // CP1: Verify Environment Variables Actually Exist
+    console.log('🔑 CP1: API Keys check:', {
+      gemini: !!Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY') && Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY')!.length > 50,
+      openai: !!Deno.env.get('OPENAI_API_KEY') && Deno.env.get('OPENAI_API_KEY')!.startsWith('sk-'),
+      lovable: !!Deno.env.get('LOVABLE_API_KEY') && Deno.env.get('LOVABLE_API_KEY')!.length > 20,
+    });
+
+    if (Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY')) {
+      try {
+        const sa = JSON.parse(Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY')!);
+        console.log('📍 CP1: Vertex AI config:', {
+          projectId: sa.project_id,
+          clientEmail: sa.client_email?.substring(0, 30) + '...',
+          hasPrivateKey: !!sa.private_key
+        });
+      } catch (e) {
+        console.error('❌ CP1: GEMINI_SERVICE_ACCOUNT_KEY is not valid JSON!');
+      }
+    }
+
+    // CP2: Test Basic Network Connectivity
+    console.log('🌐 CP2: Testing network connectivity...');
+    try {
+      const testController = new AbortController();
+      setTimeout(() => testController.abort(), 5000);
+      const testResponse = await fetch('https://www.googleapis.com', { signal: testController.signal });
+      console.log('✅ CP2: googleapis.com reachable:', testResponse.status);
+    } catch (netError: any) {
+      console.error('❌ CP2: googleapis.com UNREACHABLE:', netError.message);
+      console.error('⚠️ CP2: This will cause ALL LLM calls to fail');
+    }
+    
+    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
-    console.log('✅ CP1: Supabase client initialized');
+    console.log('✅ Supabase client initialized');
     
     // Phase 2: Build comprehensive context before generating insights
     let fullContext = null;
@@ -158,15 +193,27 @@ serve(async (req) => {
         
         console.log(`📍 Using Vertex AI project: ${projectId}, region: ${location}`);
         
-        const accessToken = await getVertexAIAccessToken(geminiApiKey);
+        // CP3: Add timeout to OAuth call itself
+        const oauthController = new AbortController();
+        const oauthTimeoutId = setTimeout(() => oauthController.abort(), 15000);
         
-        if (!accessToken) {
-          throw new Error('Failed to obtain OAuth2 access token');
+        let accessToken;
+        try {
+          accessToken = await getVertexAIAccessToken(geminiApiKey, oauthController.signal);
+          clearTimeout(oauthTimeoutId);
+          
+          if (!accessToken) {
+            throw new Error('OAuth returned null token');
+          }
+        } catch (oauthError: any) {
+          clearTimeout(oauthTimeoutId);
+          console.error('❌ CP3: OAuth failed:', oauthError.message);
+          throw oauthError;
         }
         
         const geminiController = new AbortController();
-        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 30000); // CP2: Increased to 30s
-        console.log('✅ CP2: Vertex AI timeout set to 30s (includes OAuth time)');
+        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 60000);
+        console.log('✅ CP3: Vertex AI API timeout set to 60s (OAuth already complete)');
 
         const vertexEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
         
@@ -203,6 +250,22 @@ Return ONLY valid JSON matching the required structure.`
 
         if (geminiResponse.ok) {
           const geminiData = await geminiResponse.json();
+          
+          // CP5: Comprehensive response logging
+          console.log('📦 CP5: Full Gemini response structure:', JSON.stringify({
+            ok: geminiResponse.ok,
+            status: geminiResponse.status,
+            headers: Object.fromEntries(geminiResponse.headers.entries()),
+            candidatesCount: geminiData.candidates?.length,
+            firstCandidate: geminiData.candidates?.[0] ? {
+              finishReason: geminiData.candidates[0].finishReason,
+              safetyRatings: geminiData.candidates[0].safetyRatings,
+              contentPartsCount: geminiData.candidates[0].content?.parts?.length,
+              firstPartTextLength: geminiData.candidates[0].content?.parts?.[0]?.text?.length,
+              firstPartTextPreview: geminiData.candidates[0].content?.parts?.[0]?.text?.substring(0, 100)
+            } : null
+          }, null, 2));
+          
           let content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
           const groundingMetadata = geminiData.candidates?.[0]?.groundingMetadata;
           
