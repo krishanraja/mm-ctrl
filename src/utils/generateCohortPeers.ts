@@ -77,6 +77,13 @@ const FAKE_COHORT_STATS: Record<AILearningStyle, {
   }
 };
 
+// Jitter configuration for natural cohort peer distribution
+const COHORT_JITTER_CONFIG = {
+  ahead: { x: 8, y: 10, z: 6 },
+  near: { x: 12, y: 15, z: 10 },
+  behind: { x: 10, y: 12, z: 8 }
+};
+
 const getTier = (score: number): string => {
   if (score >= 85) return 'AI Pioneer';
   if (score >= 65) return 'Confident Practitioner';
@@ -112,9 +119,14 @@ export function generateCohortPeers(
     const baseScore = cohortStats.meanScore + Math.random() * cohortStats.stdDev * 1.5;
     const variation = Math.random() * 10 - 5; // ±5 variation
     
-    const x = Math.min(98, Math.max(userX + 5, baseScore + variation));
-    const y = Math.min(98, Math.max(userY + 5, baseScore + variation * 0.8));
-    const z = Math.min(95, Math.max(userZ + 3, baseScore + variation * 0.6));
+    // Add natural jitter to prevent vertical stacking
+    const jitterX = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.ahead.x;
+    const jitterY = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.ahead.y;
+    const jitterZ = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.ahead.z;
+    
+    const x = Math.min(98, Math.max(userX + 5, baseScore + variation + jitterX));
+    const y = Math.min(98, Math.max(userY + 5, baseScore + variation * 0.8 + jitterY));
+    const z = Math.min(95, Math.max(userZ + 3, baseScore + variation * 0.6 + jitterZ));
 
     peers.push({
       x: parseFloat(x.toFixed(1)),
@@ -129,9 +141,14 @@ export function generateCohortPeers(
 
   // Generate peers near user (similar scores ±10 points)
   for (let i = 0; i < peersNear; i++) {
-    const x = userX + (Math.random() - 0.5) * 20;
-    const y = userY + (Math.random() - 0.5) * 20;
-    const z = userZ + (Math.random() - 0.5) * 15;
+    const baseSpread = 20;
+    const jitterX = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.near.x;
+    const jitterY = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.near.y;
+    const jitterZ = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.near.z;
+    
+    const x = userX + (Math.random() - 0.5) * baseSpread + jitterX;
+    const y = userY + (Math.random() - 0.5) * baseSpread + jitterY;
+    const z = userZ + (Math.random() - 0.5) * 15 + jitterZ;
 
     peers.push({
       x: parseFloat(Math.max(5, Math.min(95, x)).toFixed(1)),
@@ -149,9 +166,14 @@ export function generateCohortPeers(
     const baseScore = cohortStats.meanScore - Math.random() * cohortStats.stdDev;
     const variation = Math.random() * 8 - 4;
     
-    const x = Math.max(2, Math.min(userX - 5, baseScore + variation));
-    const y = Math.max(2, Math.min(userY - 5, baseScore + variation * 0.8));
-    const z = Math.max(2, Math.min(userZ - 3, baseScore + variation * 0.7));
+    // Add natural jitter to prevent vertical stacking
+    const jitterX = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.behind.x;
+    const jitterY = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.behind.y;
+    const jitterZ = (Math.random() - 0.5) * COHORT_JITTER_CONFIG.behind.z;
+    
+    const x = Math.max(2, Math.min(userX - 5, baseScore + variation + jitterX));
+    const y = Math.max(2, Math.min(userY - 5, baseScore + variation * 0.8 + jitterY));
+    const z = Math.max(2, Math.min(userZ - 3, baseScore + variation * 0.7 + jitterZ));
 
     peers.push({
       x: parseFloat(x.toFixed(1)),

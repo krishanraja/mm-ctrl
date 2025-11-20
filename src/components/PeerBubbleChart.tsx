@@ -25,6 +25,13 @@ interface PeerBubbleChartProps {
   viewMode?: 'cohort' | 'all';
 }
 
+// Jitter configuration for natural peer distribution
+const JITTER_CONFIG = {
+  ahead: { x: 8, y: 10, z: 6 },
+  near: { x: 12, y: 15, z: 10 },
+  behind: { x: 10, y: 12, z: 8 }
+};
+
 // Generate realistic peer distribution ensuring 10% are ahead of user
 const generatePeerData = (
   userX: number,
@@ -53,9 +60,14 @@ const generatePeerData = (
     const yOffset = Math.random() * (100 - userY) * 0.8 + (100 - userY) * 0.15;
     const zOffset = Math.random() * (100 - userZ) * 0.7 + (100 - userZ) * 0.2;
     
-    const x = Math.min(98, userX + xOffset + Math.random() * 5);
-    const y = Math.min(98, userY + yOffset + Math.random() * 5);
-    const z = Math.min(95, userZ + zOffset + Math.random() * 3);
+    // Add natural jitter to prevent vertical stacking
+    const jitterX = (Math.random() - 0.5) * JITTER_CONFIG.ahead.x;
+    const jitterY = (Math.random() - 0.5) * JITTER_CONFIG.ahead.y;
+    const jitterZ = (Math.random() - 0.5) * JITTER_CONFIG.ahead.z;
+    
+    const x = Math.min(98, userX + xOffset + jitterX);
+    const y = Math.min(98, userY + yOffset + jitterY);
+    const z = Math.min(95, userZ + zOffset + jitterZ);
     
     peers.push({
       x: Math.round(x),
@@ -69,9 +81,14 @@ const generatePeerData = (
 
   // Generate peers near user (similar scores ±10 points)
   for (let i = 0; i < peersNear; i++) {
-    const x = userX + (Math.random() - 0.5) * 20;
-    const y = userY + (Math.random() - 0.5) * 20;
-    const z = userZ + (Math.random() - 0.5) * 15;
+    const baseSpread = 20;
+    const jitterX = (Math.random() - 0.5) * JITTER_CONFIG.near.x;
+    const jitterY = (Math.random() - 0.5) * JITTER_CONFIG.near.y;
+    const jitterZ = (Math.random() - 0.5) * JITTER_CONFIG.near.z;
+    
+    const x = userX + (Math.random() - 0.5) * baseSpread + jitterX;
+    const y = userY + (Math.random() - 0.5) * baseSpread + jitterY;
+    const z = userZ + (Math.random() - 0.5) * 15 + jitterZ;
     
     peers.push({
       x: Math.round(Math.max(5, Math.min(95, x))),
@@ -85,9 +102,13 @@ const generatePeerData = (
 
   // Generate peers behind user (lower scores)
   for (let i = 0; i < peersBehind; i++) {
-    const x = Math.random() * userX * 0.9;
-    const y = Math.random() * userY * 0.9;
-    const z = Math.random() * userZ * 0.85;
+    const jitterX = (Math.random() - 0.5) * JITTER_CONFIG.behind.x;
+    const jitterY = (Math.random() - 0.5) * JITTER_CONFIG.behind.y;
+    const jitterZ = (Math.random() - 0.5) * JITTER_CONFIG.behind.z;
+    
+    const x = Math.random() * userX * 0.9 + jitterX;
+    const y = Math.random() * userY * 0.9 + jitterY;
+    const z = Math.random() * userZ * 0.85 + jitterZ;
     
     peers.push({
       x: Math.round(Math.max(2, x)),

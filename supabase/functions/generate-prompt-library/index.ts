@@ -346,7 +346,7 @@ Return ONLY valid JSON, no markdown formatting.`;
 
         if (geminiResponse.ok) {
           const geminiData = await geminiResponse.json();
-          const content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+          let content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
           const groundingMetadata = geminiData.candidates?.[0]?.groundingMetadata;
           
           if (groundingMetadata) {
@@ -357,6 +357,11 @@ Return ONLY valid JSON, no markdown formatting.`;
           }
           
           if (content) {
+            // Clean markdown code blocks if present
+            if (content.includes('```')) {
+              content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            }
+            
             generatedContent = content;
             generationModel = 'vertex-gemini-2.5-flash-rag';
             console.log('✅ Vertex AI + RAG succeeded in', Date.now() - startTime, 'ms');
