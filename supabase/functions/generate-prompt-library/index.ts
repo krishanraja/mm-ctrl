@@ -98,6 +98,14 @@ serve(async (req) => {
     const startTime = Date.now();
     const { assessmentId, sessionId, userId, contactData, assessmentData, profileData } = await req.json();
     console.log('Generating prompt library for assessment:', assessmentId);
+    console.log('📦 Received body:', JSON.stringify({ 
+      hasAssessmentId: !!assessmentId, 
+      assessmentId, 
+      assessmentIdType: typeof assessmentId,
+      hasSessionId: !!sessionId,
+      hasAssessmentData: !!assessmentData,
+      hasContactData: !!contactData 
+    }));
 
     // Validate required parameters
     if (!assessmentId) {
@@ -305,7 +313,7 @@ Return ONLY valid JSON, no markdown formatting.`;
         }
         
         const geminiController = new AbortController();
-        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 10000);
+        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 15000);
 
         const vertexEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
         
@@ -349,7 +357,7 @@ Return ONLY valid JSON, no markdown formatting.`;
           }
           
           if (content) {
-            generatedContent = JSON.parse(content);
+            generatedContent = content;
             generationModel = 'vertex-gemini-2.5-flash-rag';
             console.log('✅ Vertex AI + RAG succeeded in', Date.now() - startTime, 'ms');
           }
@@ -366,7 +374,7 @@ Return ONLY valid JSON, no markdown formatting.`;
     if (!generatedContent && openaiApiKey) {
       console.log('⚠️ Gemini failed, trying OpenAI GPT-4.1...');
       const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 5000);
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 8000);
 
       try {
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -380,7 +388,7 @@ Return ONLY valid JSON, no markdown formatting.`;
             model: 'gpt-4.1-2025-04-14',
             max_completion_tokens: 4000,
             messages: [
-              { role: 'system', content: 'You are an expert AI strategist generating personalized prompt libraries. Return valid JSON only.' },
+              { role: 'system', content: 'You are an expert AI strategist generating personalized prompt libraries. Return valid JSON format only.' },
               { role: 'user', content: synthesisPro }
             ],
             response_format: { type: "json_object" }
