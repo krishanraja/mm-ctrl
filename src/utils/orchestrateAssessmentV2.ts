@@ -118,6 +118,9 @@ export async function orchestrateAssessmentV2(
 
     if (insightsError) {
       console.error('⚠️ Insights generation failed:', insightsError);
+      // CP4: Store fallback insights so results page always shows something
+      await storeFallbackInsights(assessmentId, contactData, assessmentData, benchmarkScore, benchmarkTier);
+      
       // CP3: Log error to generation_status
       await supabase
         .from('leader_assessments')
@@ -129,6 +132,7 @@ export async function orchestrateAssessmentV2(
             tensions_computed: false,
             scenarios_generated: false,
             first_moves_generated: false,
+            has_fallback_content: true,
             last_updated: new Date().toISOString(),
             error_log: [{ phase: 'insights_generated', error: insightsError.message, timestamp: new Date().toISOString() }]
           }
@@ -179,6 +183,9 @@ export async function orchestrateAssessmentV2(
     );
     if (libraryError) {
       console.error('⚠️ Prompt library generation failed:', libraryError);
+      // CP4: Store fallback prompts so results page always shows something
+      await storeFallbackPrompts(assessmentId, contactData, assessmentData, deepProfileData);
+      
       // CP3: Log error to generation_status
       const { data: currentStatus } = await supabase
         .from('leader_assessments')
@@ -194,6 +201,7 @@ export async function orchestrateAssessmentV2(
           generation_status: {
             ...existingStatus,
             prompts_generated: false,
+            has_fallback_content: true,
             last_updated: new Date().toISOString(),
             error_log: [...errorLog, 
               { phase: 'prompts_generated', error: libraryError.message, timestamp: new Date().toISOString() }]
@@ -490,4 +498,120 @@ async function storeExecutionGaps(assessmentId: string, gaps: any[]) {
         priority_rank: Math.abs(gap.gapSize),
       });
   }
+}
+
+// CP4: Fallback content generators
+async function storeFallbackInsights(
+  assessmentId: string,
+  contactData: any,
+  assessmentData: any,
+  benchmarkScore: number,
+  benchmarkTier: string
+) {
+  console.log('📦 CP4: Generating fallback insights (LLM unavailable)');
+  
+  const tierMessages = {
+    'AI-Orchestrator': {
+      edge: 'Strong AI fluency and strategic alignment position you to drive organization-wide transformation.',
+      risk: 'High capability brings visibility—ensure governance frameworks scale with adoption.',
+      nextMove: 'Focus on knowledge transfer: document your AI decision frameworks to enable team autonomy.'
+    },
+    'AI-Confident': {
+      edge: 'Solid AI fundamentals and growing team confidence create momentum for expansion.',
+      risk: 'Mid-tier adoption can create silos—prioritize cross-functional alignment.',
+      nextMove: 'Identify your highest-impact AI use case and run a 30-day sprint with measurable KPIs.'
+    },
+    'AI-Aware': {
+      edge: 'Early awareness and willingness to experiment provide a foundation for growth.',
+      risk: 'Limited experience may lead to missed opportunities—invest in structured learning.',
+      nextMove: 'Start with daily AI tools (ChatGPT, Claude) for 1-2 specific tasks to build confidence.'
+    },
+    'AI-Emerging': {
+      edge: 'Recognition of AI importance is the first step—early adopters gain competitive advantage.',
+      risk: 'Low literacy increases risk of poor tool selection or abandoned pilots.',
+      nextMove: 'Complete a 2-week AI fundamentals course to understand capabilities before implementation.'
+    }
+  };
+  
+  const tierAdvice = tierMessages[benchmarkTier as keyof typeof tierMessages] || tierMessages['AI-Aware'];
+  
+  const fallbackFirstMoves = [
+    `Schedule 3 conversations with key stakeholders (${contactData.department || 'team leads'}) to align on AI priorities and concerns.`,
+    `Identify 2-3 repetitive tasks consuming ${contactData.timeWaste || 20}% of your team's time for AI automation evaluation.`,
+    `Create a shared AI experimentation sandbox where team members can safely test tools without compliance risks.`
+  ];
+  
+  // Store first moves
+  for (let i = 0; i < fallbackFirstMoves.length; i++) {
+    await supabase.from('leader_first_moves').insert({
+      assessment_id: assessmentId,
+      move_number: i + 1,
+      content: fallbackFirstMoves[i]
+    });
+  }
+  
+  console.log('✅ CP4: Fallback insights stored successfully');
+}
+
+async function storeFallbackPrompts(
+  assessmentId: string,
+  contactData: any,
+  assessmentData: any,
+  deepProfileData: any
+) {
+  console.log('📦 CP4: Generating fallback prompts (LLM unavailable)');
+  
+  const role = contactData.roleTitle || contactData.department || 'Leader';
+  const focus = contactData.primaryFocus || 'operational efficiency';
+  
+  const fallbackPrompts = [
+    {
+      category_key: 'strategic_planning',
+      title: 'Strategic AI Opportunity Scanner',
+      description: 'Identify high-impact AI use cases across your organization',
+      what_its_for: 'Finding AI opportunities that align with business objectives',
+      when_to_use: 'Quarterly planning, budget allocation, or when initiating AI transformation',
+      how_to_use: 'Run this prompt monthly to identify emerging opportunities',
+      prompts_json: [
+        `I'm a ${role} focused on ${focus}. Analyze my department's workflows and identify the top 3 AI automation opportunities that would save the most time or improve quality. For each: (1) Estimate time savings, (2) Identify required tools, (3) List implementation risks.`,
+        `As a ${role}, help me prioritize AI investments. Compare: (1) AI-powered analytics for decision-making, (2) Process automation for repetitive tasks, (3) AI assistants for knowledge work. Rank by ROI potential for my team size and industry.`
+      ],
+      priority_rank: 1
+    },
+    {
+      category_key: 'delegation_automation',
+      title: 'Task Delegation & AI Augmentation',
+      description: 'Identify tasks to delegate to AI vs humans',
+      what_its_for: 'Optimizing how you allocate human and AI capacity',
+      when_to_use: 'Weekly planning, when feeling overwhelmed, or scaling team',
+      how_to_use: 'Use this prompt every Monday to optimize your week',
+      prompts_json: [
+        `Review my calendar for this week. For each meeting/task: (1) Can AI prepare materials? (2) Can AI automate follow-up? (3) Should I delegate to a human instead? Prioritize by time saved.`,
+        `I spend ${deepProfileData?.timeWaste || 30}% of time on non-critical work. List these tasks: ${deepProfileData?.timeWasteExamples || 'status reports, meeting prep, data analysis'}. For each, provide: (1) Specific AI tool to use, (2) Exact prompt template, (3) Quality check process.`
+      ],
+      priority_rank: 2
+    },
+    {
+      category_key: 'stakeholder_communication',
+      title: 'Executive Communication Templates',
+      description: 'AI-powered messaging for key stakeholders',
+      what_its_for: 'Crafting clear, persuasive communication efficiently',
+      when_to_use: 'Board updates, investor communications, all-hands meetings',
+      how_to_use: 'Adapt these templates for your specific situation',
+      prompts_json: [
+        `Draft a ${contactData.timeline || '90-day'} AI transformation update for ${deepProfileData?.stakeholders?.join(', ') || 'executive team'}. Include: (1) Progress metrics, (2) Early wins, (3) Challenges faced, (4) Resource needs. Tone: confident but realistic.`,
+        `Create talking points for discussing AI adoption risks with ${deepProfileData?.stakeholders?.[0] || 'the board'}. Address: (1) Data security, (2) Job displacement concerns, (3) Cost overruns, (4) Change resistance. Provide mitigation strategies for each.`
+      ],
+      priority_rank: 3
+    }
+  ];
+  
+  for (const prompt of fallbackPrompts) {
+    await supabase.from('leader_prompt_sets').insert({
+      assessment_id: assessmentId,
+      ...prompt
+    });
+  }
+  
+  console.log('✅ CP4: Fallback prompts stored successfully');
 }

@@ -394,8 +394,23 @@ Return ONLY valid JSON, no markdown formatting.`;
             } : null
           }, null, 2));
           
-          let content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
-          const groundingMetadata = geminiData.candidates?.[0]?.groundingMetadata;
+          // CP1: Defensive parsing for multiple Gemini response formats
+          let content;
+          const candidate = geminiData.candidates?.[0];
+          if (candidate?.content?.parts?.[0]?.text) {
+            content = candidate.content.parts[0].text;
+            console.log('✅ CP1: Found content in parts[0].text format');
+          } else if (candidate?.content?.text) {
+            content = candidate.content.text;
+            console.log('✅ CP1: Found content in direct text format');
+          } else if (typeof candidate?.content === 'string') {
+            content = candidate.content;
+            console.log('✅ CP1: Found content as direct string');
+          } else {
+            console.error('❌ CP1: No content found in any expected format');
+            console.error('❌ CP1: Full candidate structure:', JSON.stringify(candidate, null, 2));
+          }
+          const groundingMetadata = candidate?.groundingMetadata;
           
           if (groundingMetadata) {
             console.log('📚 RAG grounding used:', {
@@ -484,7 +499,7 @@ Return ONLY valid JSON, no markdown formatting.`;
     if (!generatedContent && openaiApiKey) {
       console.log('⚠️ Gemini failed, trying OpenAI GPT-4.1...');
       const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 25000); // PHASE 4: Increased from 8s to 25s
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 15000); // CP3: Reduced from 25s to 15s
 
       try {
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -552,7 +567,7 @@ Return ONLY valid JSON, no markdown formatting.`;
     if (!generatedContent && lovableApiKey) {
       console.log('⚠️ Gemini and OpenAI failed, trying Lovable AI as last resort...');
       const lovableController = new AbortController();
-      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 35000); // PHASE 4: Increased from 6s to 35s
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 20000); // CP3: Reduced from 35s to 20s
 
       try {
         const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

@@ -274,11 +274,26 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       }
     } catch (error) {
       console.error('❌ V2 orchestration error:', error);
-      toast({
-        title: "Assessment Processing Failed",
-        description: error instanceof Error ? error.message : "Unable to generate your complete assessment. Please try again.",
-        variant: "destructive",
-      });
+      
+      // CP2: Show user-friendly message for timeout vs other errors
+      if (error instanceof Error && error.message.includes('timed out')) {
+        toast({
+          title: "Generation Taking Longer Than Expected",
+          description: "Your results are still being processed. We'll show what's ready now.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Assessment Processing Failed",
+          description: error instanceof Error ? error.message : "Unable to generate your complete assessment. Please try again.",
+          variant: "destructive",
+        });
+      }
+      
+      // CP4: Continue to results even if generation fails - fallback content will be shown
+      clearInterval(progressInterval);
+      setInsightProgress(100);
+      setCurrentScreen('unified-results');
     }
 
     setTimeout(() => {
@@ -457,12 +472,25 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       try {
         const { orchestrateAssessmentV2 } = await import('@/utils/orchestrateAssessmentV2');
         
-        const result = await orchestrateAssessmentV2(
-          contactData!,
-          v2FormattedData,
-          profileData,
-          sessionId!,
-          'quiz'
+        // CP2: Add 90-second timeout to prevent infinite UI hangs
+        const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> => {
+          return Promise.race([
+            promise,
+            new Promise<T>((_, reject) => 
+              setTimeout(() => reject(new Error(`Operation timed out after ${ms}ms`)), ms)
+            )
+          ]);
+        };
+        
+        const result = await withTimeout(
+          orchestrateAssessmentV2(
+            contactData!,
+            v2FormattedData,
+            profileData,
+            sessionId!,
+            'quiz'
+          ),
+          90000 // CP2: 90-second timeout
         );
 
         if (result.success && result.assessmentId) {
