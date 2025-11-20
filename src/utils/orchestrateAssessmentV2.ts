@@ -163,12 +163,13 @@ export async function orchestrateAssessmentV2(
     }
 
     // 5b: Generate prompt library
+    // CP4: Fix foreign key constraint - pass userId as null, not leaderId
     const { data: libraryData, error: libraryError } = await invokeEdgeFunction(
       'generate-prompt-library',
       {
         assessmentId,
         sessionId,
-        userId: leaderId,
+        userId: null,  // CP4: Don't pass leaderId as userId - causes FK violation
         contactData,
         assessmentData,
         profileData: deepProfileData,
