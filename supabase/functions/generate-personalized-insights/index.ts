@@ -237,8 +237,7 @@ Return ONLY valid JSON matching the required structure.`
             }],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 4000,
-              responseMimeType: "application/json"
+              maxOutputTokens: 4000
             },
             tools: [{
               google_search: {}
@@ -251,8 +250,8 @@ Return ONLY valid JSON matching the required structure.`
         if (geminiResponse.ok) {
           const geminiData = await geminiResponse.json();
           
-          // CP5: Comprehensive response logging
-          console.log('📦 CP5: Full Gemini response structure:', JSON.stringify({
+          // PHASE 1: Enhanced diagnostic logging with safety ratings
+          console.log('📦 PHASE 1: Full Gemini response structure:', JSON.stringify({
             ok: geminiResponse.ok,
             status: geminiResponse.status,
             headers: Object.fromEntries(geminiResponse.headers.entries()),
@@ -265,6 +264,9 @@ Return ONLY valid JSON matching the required structure.`
               firstPartTextPreview: geminiData.candidates[0].content?.parts?.[0]?.text?.substring(0, 100)
             } : null
           }, null, 2));
+          
+          // PHASE 1: Dump full geminiData for one test run
+          console.log('🔍 PHASE 1: Complete geminiData dump:', JSON.stringify(geminiData, null, 2));
           
           let content = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
           const groundingMetadata = geminiData.candidates?.[0]?.groundingMetadata;
@@ -375,7 +377,7 @@ Return ONLY valid JSON matching the required structure.`
     if (!personalizedInsights && openaiApiKey) {
       console.log('⚠️ Gemini failed, trying OpenAI GPT-4.1...');
       const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 8000);
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 25000); // PHASE 4: Increased from 8s to 25s
 
       try {
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -444,7 +446,7 @@ Return ONLY valid JSON matching the required structure.`
     if (!personalizedInsights && lovableApiKey) {
       console.log('⚠️ Gemini and OpenAI failed, trying Lovable AI as last resort...');
       const lovableController = new AbortController();
-      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 10000);
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 35000); // PHASE 4: Increased from 10s to 35s
 
       try {
         const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
