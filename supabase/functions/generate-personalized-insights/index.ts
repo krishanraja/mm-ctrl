@@ -527,6 +527,27 @@ Return ONLY valid JSON matching the required structure.`
       });
     }
 
+    // Update generation_status AFTER successful data return
+    if (assessmentId) {
+      console.log('✅ Updating generation_status.insights_generated = true');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...(currentStatus?.generation_status || {}),
+            insights_generated: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
+    }
+
     return new Response(
       JSON.stringify({ 
         personalizedInsights, 

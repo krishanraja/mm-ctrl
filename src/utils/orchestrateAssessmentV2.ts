@@ -216,7 +216,7 @@ export async function orchestrateAssessmentV2(
           assessment_data: assessmentData,
           profile_data: deepProfileData,
         }, { logPrefix: '⚠️', silent: false }),
-        15000,
+        60000,  // Increased from 15s to 60s
         'Risk signals'
       ),
       withTimeout(
@@ -226,7 +226,7 @@ export async function orchestrateAssessmentV2(
           assessment_data: assessmentData,
           profile_data: deepProfileData,
         }, { logPrefix: '⚡', silent: false }),
-        15000,
+        60000,  // Increased from 15s to 60s
         'Tensions'
       ),
       withTimeout(
@@ -236,31 +236,91 @@ export async function orchestrateAssessmentV2(
           risk_signals: [],
           tensions: [],
         }, { logPrefix: '🎯', silent: false }),
-        15000,
+        60000,  // Increased from 15s to 60s
         'Org scenarios'
       )
     ]);
 
-    // Log results with graceful degradation + CP3 status tracking
+    // Log results with graceful degradation + explicit error logging to generation_status
     if (riskResult.status === 'fulfilled' && riskResult.value.data) {
       console.log(`✅ Risk signals computed: ${riskResult.value.data?.count || 0}`);
-      // Status flag now set by edge function after DB writes
     } else {
-      console.warn('⚠️ Risk signals failed:', riskResult.status === 'rejected' ? riskResult.reason : riskResult.value.error);
+      const errorMsg = riskResult.status === 'rejected' ? riskResult.reason?.message : riskResult.value.error?.message;
+      console.warn('⚠️ Risk signals failed:', errorMsg);
+      
+      // Log error to generation_status
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      const errorLog = existingStatus.error_log || [];
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            risks_computed: false,
+            error_log: [...errorLog, { phase: 'risks_computed', error: errorMsg, timestamp: new Date().toISOString() }]
+          }
+        })
+        .eq('id', assessmentId);
     }
 
     if (tensionResult.status === 'fulfilled' && tensionResult.value.data) {
       console.log(`✅ Tensions computed: ${tensionResult.value.data?.count || 0}`);
-      // Status flag now set by edge function after DB writes
     } else {
-      console.warn('⚠️ Tensions failed:', tensionResult.status === 'rejected' ? tensionResult.reason : tensionResult.value.error);
+      const errorMsg = tensionResult.status === 'rejected' ? tensionResult.reason?.message : tensionResult.value.error?.message;
+      console.warn('⚠️ Tensions failed:', errorMsg);
+      
+      // Log error to generation_status
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      const errorLog = existingStatus.error_log || [];
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            tensions_computed: false,
+            error_log: [...errorLog, { phase: 'tensions_computed', error: errorMsg, timestamp: new Date().toISOString() }]
+          }
+        })
+        .eq('id', assessmentId);
     }
 
     if (scenarioResult.status === 'fulfilled' && scenarioResult.value.data) {
       console.log(`✅ Org scenarios derived: ${scenarioResult.value.data?.count || 0}`);
-      // Status flag now set by edge function after DB writes
     } else {
-      console.warn('⚠️ Org scenarios failed:', scenarioResult.status === 'rejected' ? scenarioResult.reason : scenarioResult.value.error);
+      const errorMsg = scenarioResult.status === 'rejected' ? scenarioResult.reason?.message : scenarioResult.value.error?.message;
+      console.warn('⚠️ Org scenarios failed:', errorMsg);
+      
+      // Log error to generation_status
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      const errorLog = existingStatus.error_log || [];
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            scenarios_generated: false,
+            error_log: [...errorLog, { phase: 'scenarios_generated', error: errorMsg, timestamp: new Date().toISOString() }]
+          }
+        })
+        .eq('id', assessmentId);
     }
 
     // Phase 3: Store index participant data with structured fields
