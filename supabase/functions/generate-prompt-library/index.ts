@@ -749,14 +749,19 @@ Return ONLY valid JSON, no markdown formatting.`;
 
     console.log('Prompt library stored successfully:', storedProfile.id);
 
-    // Transform recommendedProjects into promptSets format for leader_prompt_sets table
-    const promptSets = parsedLibrary.recommendedProjects.map((project: any, index: number) => ({
-      category_key: project.name.toLowerCase().replace(/\s+/g, '_'),
-      title: project.name,
-      description: project.purpose,
-      what_its_for: project.purpose,
-      when_to_use: project.whenToUse,
-      how_to_use: project.masterInstructions,
+    // Combine strategic and operational prompts from actual Gemini schema
+    const allPrompts = [
+      ...(parsedLibrary.masterPromptLibrary?.strategicPrompts || []),
+      ...(parsedLibrary.masterPromptLibrary?.operationalPrompts || [])
+    ];
+
+    const promptSets = allPrompts.map((project: any, index: number) => ({
+      category_key: project.name?.toLowerCase().replace(/\s+/g, '_') || `prompt_${index}`,
+      title: project.name || 'Untitled Prompt',
+      description: project.purpose || '',
+      what_its_for: project.purpose || '',
+      when_to_use: project.whenToUse || '',
+      how_to_use: project.masterInstructions || '',
       prompts_json: project.examplePrompts || [],
       priority_rank: index + 1,
       assessment_id: assessmentId
