@@ -38,38 +38,21 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const [learningStyle, setLearningStyle] = useState<AILearningStyle | null>(null);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
-  // Check for v2 assessment ID with retry logic
+  // PHASE 1: Multi-layer assessment ID persistence
   useEffect(() => {
-    let attempts = 0;
-    const maxAttempts = 3;
-    
-    const checkForAssessmentId = () => {
-      const storedAssessmentId = sessionStorage.getItem('v2_assessment_id');
-      if (storedAssessmentId) {
-        setAssessmentId(storedAssessmentId);
-        console.log('📊 Using v2 assessment ID:', storedAssessmentId);
+    const checkForAssessmentId = async () => {
+      const { getPersistedAssessmentId } = await import('@/utils/assessmentPersistence');
+      const { assessmentId: storedId, source } = getPersistedAssessmentId();
+      
+      if (storedId && storedId !== assessmentId) {
+        console.log('📊 Assessment ID restored from:', source, storedId);
+        setAssessmentId(storedId);
         return true;
       }
       return false;
     };
     
-    // Initial check
-    if (checkForAssessmentId()) return;
-    
-    // Retry with exponential backoff if not found
-    const retryInterval = setInterval(() => {
-      attempts++;
-      console.log(`🔄 Retry ${attempts}/${maxAttempts} for v2 assessment ID...`);
-      
-      if (checkForAssessmentId() || attempts >= maxAttempts) {
-        clearInterval(retryInterval);
-        if (attempts >= maxAttempts && !assessmentId) {
-          console.warn('⚠️ No v2 assessment ID found after retries, using legacy display');
-        }
-      }
-    }, 1000);
-    
-    return () => clearInterval(retryInterval);
+    checkForAssessmentId();
   }, []);
 
   // Calculate score and tier from assessment data
@@ -188,7 +171,9 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
               {contactData?.companyName && (
                 <InviteColleaguesCard 
                   companyName={contactData.companyName}
-                  assessmentUrl={window.location.origin}
+                  assessmentId={assessmentId || ''}
+                  userEmail={contactData.email}
+                  userName={contactData.fullName}
                 />
               )}
 

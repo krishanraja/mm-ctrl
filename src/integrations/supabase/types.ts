@@ -512,6 +512,66 @@ export type Database = {
         }
         Relationships: []
       }
+      assessment_referrals: {
+        Row: {
+          converted: boolean | null
+          converted_at: string | null
+          created_at: string | null
+          id: string
+          referee_assessment_id: string | null
+          referee_email: string | null
+          referee_name: string | null
+          referral_code: string
+          referred_at: string | null
+          referrer_assessment_id: string | null
+          referrer_email: string
+          referrer_name: string | null
+        }
+        Insert: {
+          converted?: boolean | null
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referee_assessment_id?: string | null
+          referee_email?: string | null
+          referee_name?: string | null
+          referral_code: string
+          referred_at?: string | null
+          referrer_assessment_id?: string | null
+          referrer_email: string
+          referrer_name?: string | null
+        }
+        Update: {
+          converted?: boolean | null
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referee_assessment_id?: string | null
+          referee_email?: string | null
+          referee_name?: string | null
+          referral_code?: string
+          referred_at?: string | null
+          referrer_assessment_id?: string | null
+          referrer_email?: string
+          referrer_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_referrals_referee_assessment_id_fkey"
+            columns: ["referee_assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_referrals_referrer_assessment_id_fkey"
+            columns: ["referrer_assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       backup_workshop_sessions: {
         Row: {
           bootcamp_plan_id: string | null
@@ -1589,6 +1649,7 @@ export type Database = {
           benchmark_score: number | null
           benchmark_tier: string | null
           created_at: string | null
+          generation_status: Json | null
           has_deep_profile: boolean | null
           has_full_diagnostic: boolean | null
           id: string
@@ -1602,6 +1663,7 @@ export type Database = {
           benchmark_score?: number | null
           benchmark_tier?: string | null
           created_at?: string | null
+          generation_status?: Json | null
           has_deep_profile?: boolean | null
           has_full_diagnostic?: boolean | null
           id?: string
@@ -1615,6 +1677,7 @@ export type Database = {
           benchmark_score?: number | null
           benchmark_tier?: string | null
           created_at?: string | null
+          generation_status?: Json | null
           has_deep_profile?: boolean | null
           has_full_diagnostic?: boolean | null
           id?: string
@@ -3547,6 +3610,10 @@ export type Database = {
           total_sessions: number
         }[]
       }
+      generate_referral_code: {
+        Args: { p_assessment_id: string; p_email: string }
+        Returns: string
+      }
       get_intake_for_registration: {
         Args: { intake_uuid: string }
         Returns: {
@@ -3598,6 +3665,15 @@ export type Database = {
           sync_type_param?: string
         }
         Returns: string
+      }
+      track_referral_conversion: {
+        Args: {
+          p_referee_assessment_id: string
+          p_referee_email: string
+          p_referee_name?: string
+          p_referral_code: string
+        }
+        Returns: boolean
       }
       trigger_google_sheets_sync: {
         Args: { sync_type_param?: string }
