@@ -95,23 +95,29 @@ serve(async (req) => {
   }
 
   try {
-const { assessmentData, contactData, deepProfileData, assessmentId, leaderId } = await req.json();
-  
-  // Phase 2: Build comprehensive context before generating insights
-  let fullContext = null;
-  let contextFormatted = '';
-  
-  if (assessmentId && leaderId) {
-    console.log('🔍 Building comprehensive assessment context...');
-    try {
-      const { buildAssessmentContext, formatContextForPrompt } = await import('../_shared/context-builder.ts');
-      fullContext = await buildAssessmentContext(supabase, leaderId, assessmentId);
-      contextFormatted = formatContextForPrompt(fullContext);
-      console.log('✅ Context built with', fullContext.contextMetadata.dataCompleteness, '% completeness');
-    } catch (contextError) {
-      console.warn('⚠️ Context building failed, proceeding with basic data:', contextError);
+    const { assessmentData, contactData, deepProfileData, assessmentId, leaderId } = await req.json();
+    
+    // CP1: Initialize Supabase client BEFORE using it
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ CP1: Supabase client initialized');
+    
+    // Phase 2: Build comprehensive context before generating insights
+    let fullContext = null;
+    let contextFormatted = '';
+    
+    if (assessmentId && leaderId) {
+      console.log('🔍 Building comprehensive assessment context...');
+      try {
+        const { buildAssessmentContext, formatContextForPrompt } = await import('../_shared/context-builder.ts');
+        fullContext = await buildAssessmentContext(supabase, leaderId, assessmentId);
+        contextFormatted = formatContextForPrompt(fullContext);
+        console.log('✅ Context built with', fullContext.contextMetadata.dataCompleteness, '% completeness');
+      } catch (contextError) {
+        console.warn('⚠️ Context building failed, proceeding with basic data:', contextError);
+      }
     }
-  }
     
     const geminiApiKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
@@ -158,7 +164,8 @@ const { assessmentData, contactData, deepProfileData, assessmentId, leaderId } =
         }
         
         const geminiController = new AbortController();
-        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 15000);
+        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 30000); // CP2: Increased to 30s
+        console.log('✅ CP2: Vertex AI timeout set to 30s (includes OAuth time)');
 
         const vertexEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
         
@@ -270,6 +277,25 @@ Return ONLY valid JSON matching the required structure.`
               success: true,
               ragUsed: !!groundingMetadata
             });
+            
+            // CP3: Update generation_status
+            if (assessmentId) {
+              console.log('✅ CP3: Updating generation_status.insights_generated = true');
+              await supabase
+                .from('leader_assessments')
+                .update({
+                  generation_status: {
+                    insights_generated: true,
+                    prompts_generated: false,
+                    risks_computed: false,
+                    tensions_computed: false,
+                    scenarios_generated: false,
+                    first_moves_generated: false,
+                    last_updated: new Date().toISOString()
+                  }
+                })
+                .eq('id', assessmentId);
+            }
           }
         } else {
           const errorText = await geminiResponse.text();
@@ -319,6 +345,25 @@ Return ONLY valid JSON matching the required structure.`
             durationMs: Date.now() - startTime,
             success: true
           });
+          
+          // CP3: Update generation_status
+          if (assessmentId) {
+            console.log('✅ CP3: Updating generation_status.insights_generated = true');
+            await supabase
+              .from('leader_assessments')
+              .update({
+                generation_status: {
+                  insights_generated: true,
+                  prompts_generated: false,
+                  risks_computed: false,
+                  tensions_computed: false,
+                  scenarios_generated: false,
+                  first_moves_generated: false,
+                  last_updated: new Date().toISOString()
+                }
+              })
+              .eq('id', assessmentId);
+          }
         } else {
           const errorText = await openaiResponse.text();
           console.error('❌ OpenAI error:', openaiResponse.status, errorText);
@@ -367,6 +412,25 @@ Return ONLY valid JSON matching the required structure.`
             durationMs: Date.now() - startTime,
             success: true
           });
+          
+          // CP3: Update generation_status
+          if (assessmentId) {
+            console.log('✅ CP3: Updating generation_status.insights_generated = true');
+            await supabase
+              .from('leader_assessments')
+              .update({
+                generation_status: {
+                  insights_generated: true,
+                  prompts_generated: false,
+                  risks_computed: false,
+                  tensions_computed: false,
+                  scenarios_generated: false,
+                  first_moves_generated: false,
+                  last_updated: new Date().toISOString()
+                }
+              })
+              .eq('id', assessmentId);
+          }
         }
       } catch (error: any) {
         clearTimeout(lovableTimeoutId);
