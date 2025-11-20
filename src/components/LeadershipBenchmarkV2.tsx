@@ -144,10 +144,19 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
     }
   }, [assessmentId]);
 
-  const loadResults = async () => {
+  const loadResults = async (retryCount = 0) => {
     setIsLoading(true);
     try {
       const data = await aggregateLeaderResults(assessmentId, true);
+      
+      // If data is null or incomplete, retry up to 3 times with 2s delay
+      if (!data || data.dimensionScores.length === 0) {
+        if (retryCount < 3) {
+          console.log(`⏳ Data not ready, retrying in 2s (attempt ${retryCount + 1}/3)`);
+          setTimeout(() => loadResults(retryCount + 1), 2000);
+          return;
+        }
+      }
       
       // Defensive check: if all dimension scores are zero, show error
       if (data && data.dimensionScores.every(d => (d.score_numeric || 0) === 0)) {
@@ -163,6 +172,14 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
       }
     } catch (error) {
       console.error('❌ Error loading results:', error);
+      
+      // Retry on error as well
+      if (retryCount < 3) {
+        console.log(`⏳ Error occurred, retrying in 2s (attempt ${retryCount + 1}/3)`);
+        setTimeout(() => loadResults(retryCount + 1), 2000);
+        return;
+      }
+      
       setResults(null);
       toast({
         title: 'Loading Error',
