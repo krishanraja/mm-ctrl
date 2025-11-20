@@ -734,6 +734,7 @@ export type Database = {
           participant_name: string
           position_x: number | null
           position_y: number | null
+          profile_id: string | null
           workshop_session_id: string | null
         }
         Insert: {
@@ -746,6 +747,7 @@ export type Database = {
           participant_name: string
           position_x?: number | null
           position_y?: number | null
+          profile_id?: string | null
           workshop_session_id?: string | null
         }
         Update: {
@@ -758,6 +760,7 @@ export type Database = {
           participant_name?: string
           position_x?: number | null
           position_y?: number | null
+          profile_id?: string | null
           workshop_session_id?: string | null
         }
         Relationships: [
@@ -766,6 +769,13 @@ export type Database = {
             columns: ["activity_session_id"]
             isOneToOne: false
             referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bottleneck_submissions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1013,6 +1023,7 @@ export type Database = {
           lane: string
           participant_name: string
           priority_rank: number | null
+          profile_id: string | null
           sponsor_name: string | null
           vote_count: number | null
           workshop_session_id: string | null
@@ -1026,6 +1037,7 @@ export type Database = {
           lane: string
           participant_name: string
           priority_rank?: number | null
+          profile_id?: string | null
           sponsor_name?: string | null
           vote_count?: number | null
           workshop_session_id?: string | null
@@ -1039,6 +1051,7 @@ export type Database = {
           lane?: string
           participant_name?: string
           priority_rank?: number | null
+          profile_id?: string | null
           sponsor_name?: string | null
           vote_count?: number | null
           workshop_session_id?: string | null
@@ -1049,6 +1062,13 @@ export type Database = {
             columns: ["activity_session_id"]
             isOneToOne: false
             referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "effortless_map_items_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1159,6 +1179,7 @@ export type Database = {
           participant_email: string
           participant_name: string
           participant_role: string
+          profile_id: string | null
           pulse_responses: Json | null
           trust_score: number | null
         }
@@ -1173,6 +1194,7 @@ export type Database = {
           participant_email: string
           participant_name: string
           participant_role: string
+          profile_id?: string | null
           pulse_responses?: Json | null
           trust_score?: number | null
         }
@@ -1187,6 +1209,7 @@ export type Database = {
           participant_email?: string
           participant_name?: string
           participant_role?: string
+          profile_id?: string | null
           pulse_responses?: Json | null
           trust_score?: number | null
         }
@@ -1196,6 +1219,13 @@ export type Database = {
             columns: ["intake_id"]
             isOneToOne: false
             referencedRelation: "exec_intakes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exec_pulses_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1423,6 +1453,36 @@ export type Database = {
           percentile_rounding?: number | null
           published_at?: string | null
           version?: string
+        }
+        Relationships: []
+      }
+      insight_dimensions: {
+        Row: {
+          applicable_tools: string[] | null
+          created_at: string | null
+          description: string | null
+          key: string
+          name: string
+          scale_labels: Json | null
+          scale_type: string
+        }
+        Insert: {
+          applicable_tools?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          key: string
+          name: string
+          scale_labels?: Json | null
+          scale_type: string
+        }
+        Update: {
+          applicable_tools?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          key?: string
+          name?: string
+          scale_labels?: Json | null
+          scale_type?: string
         }
         Relationships: []
       }
@@ -2127,6 +2187,7 @@ export type Database = {
           participant_email: string
           participant_name: string
           pre_work_responses: Json | null
+          profile_id: string | null
           submitted_at: string | null
         }
         Insert: {
@@ -2136,6 +2197,7 @@ export type Database = {
           participant_email: string
           participant_name: string
           pre_work_responses?: Json | null
+          profile_id?: string | null
           submitted_at?: string | null
         }
         Update: {
@@ -2145,6 +2207,7 @@ export type Database = {
           participant_email?: string
           participant_name?: string
           pre_work_responses?: Json | null
+          profile_id?: string | null
           submitted_at?: string | null
         }
         Relationships: [
@@ -2153,6 +2216,91 @@ export type Database = {
             columns: ["intake_id"]
             isOneToOne: false
             referencedRelation: "exec_intakes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pre_workshop_inputs_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_insights: {
+        Row: {
+          confidence: number | null
+          context_snapshot: Json | null
+          contradiction_flag: boolean | null
+          created_at: string | null
+          dimension_key: string
+          evidence: string[] | null
+          expires_at: string | null
+          flow_name: string | null
+          generated_at: string | null
+          generated_by: string
+          id: string
+          label: string | null
+          llm_summary: string | null
+          profile_id: string
+          score: number | null
+          source_event_ids: string[] | null
+          surprise_factor: string | null
+          tool_name: string
+        }
+        Insert: {
+          confidence?: number | null
+          context_snapshot?: Json | null
+          contradiction_flag?: boolean | null
+          created_at?: string | null
+          dimension_key: string
+          evidence?: string[] | null
+          expires_at?: string | null
+          flow_name?: string | null
+          generated_at?: string | null
+          generated_by: string
+          id?: string
+          label?: string | null
+          llm_summary?: string | null
+          profile_id: string
+          score?: number | null
+          source_event_ids?: string[] | null
+          surprise_factor?: string | null
+          tool_name: string
+        }
+        Update: {
+          confidence?: number | null
+          context_snapshot?: Json | null
+          contradiction_flag?: boolean | null
+          created_at?: string | null
+          dimension_key?: string
+          evidence?: string[] | null
+          expires_at?: string | null
+          flow_name?: string | null
+          generated_at?: string | null
+          generated_by?: string
+          id?: string
+          label?: string | null
+          llm_summary?: string | null
+          profile_id?: string
+          score?: number | null
+          source_event_ids?: string[] | null
+          surprise_factor?: string | null
+          tool_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_insights_dimension_key_fkey"
+            columns: ["dimension_key"]
+            isOneToOne: false
+            referencedRelation: "insight_dimensions"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "profile_insights_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2652,6 +2800,57 @@ export type Database = {
           },
         ]
       }
+      unified_profiles: {
+        Row: {
+          company: string | null
+          company_identifier_hash: string | null
+          created_at: string | null
+          email: string
+          first_seen_at: string | null
+          id: string
+          last_active_at: string | null
+          latest_assessment_tier: string | null
+          latest_readiness_score: number | null
+          name: string | null
+          role: string | null
+          source_tool: string
+          total_interactions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          company_identifier_hash?: string | null
+          created_at?: string | null
+          email: string
+          first_seen_at?: string | null
+          id?: string
+          last_active_at?: string | null
+          latest_assessment_tier?: string | null
+          latest_readiness_score?: number | null
+          name?: string | null
+          role?: string | null
+          source_tool?: string
+          total_interactions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          company_identifier_hash?: string | null
+          created_at?: string | null
+          email?: string
+          first_seen_at?: string | null
+          id?: string
+          last_active_at?: string | null
+          latest_assessment_tier?: string | null
+          latest_readiness_score?: number | null
+          name?: string | null
+          role?: string | null
+          source_tool?: string
+          total_interactions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_business_context: {
         Row: {
           ai_readiness_score: number | null
@@ -3007,6 +3206,7 @@ export type Database = {
           input_category: string
           input_text: string
           participant_name: string
+          profile_id: string | null
           table_number: number
           workshop_session_id: string | null
         }
@@ -3017,6 +3217,7 @@ export type Database = {
           input_category: string
           input_text: string
           participant_name: string
+          profile_id?: string | null
           table_number: number
           workshop_session_id?: string | null
         }
@@ -3027,6 +3228,7 @@ export type Database = {
           input_category?: string
           input_text?: string
           participant_name?: string
+          profile_id?: string | null
           table_number?: number
           workshop_session_id?: string | null
         }
@@ -3039,6 +3241,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "working_group_inputs_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "working_group_inputs_workshop_session_id_fkey"
             columns: ["workshop_session_id"]
             isOneToOne: false
@@ -3046,6 +3255,120 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      workshop_events: {
+        Row: {
+          context_snapshot: Json | null
+          created_at: string | null
+          dimension_key: string | null
+          event_type: string
+          flow_name: string | null
+          id: string
+          profile_id: string | null
+          question_id: string
+          question_text: string
+          raw_input: string
+          response_duration_seconds: number | null
+          session_id: string | null
+          structured_values: Json | null
+          tool_name: string
+          workshop_session_id: string | null
+        }
+        Insert: {
+          context_snapshot?: Json | null
+          created_at?: string | null
+          dimension_key?: string | null
+          event_type: string
+          flow_name?: string | null
+          id?: string
+          profile_id?: string | null
+          question_id: string
+          question_text: string
+          raw_input: string
+          response_duration_seconds?: number | null
+          session_id?: string | null
+          structured_values?: Json | null
+          tool_name: string
+          workshop_session_id?: string | null
+        }
+        Update: {
+          context_snapshot?: Json | null
+          created_at?: string | null
+          dimension_key?: string | null
+          event_type?: string
+          flow_name?: string | null
+          id?: string
+          profile_id?: string | null
+          question_id?: string
+          question_text?: string
+          raw_input?: string
+          response_duration_seconds?: number | null
+          session_id?: string | null
+          structured_values?: Json | null
+          tool_name?: string
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "unified_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workshop_events_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workshop_questions: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          dimension_key: string | null
+          display_order: number | null
+          flow_name: string
+          id: string
+          options: Json | null
+          question_text: string
+          question_type: string
+          tool_name: string
+          updated_at: string | null
+          weight: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          dimension_key?: string | null
+          display_order?: number | null
+          flow_name: string
+          id: string
+          options?: Json | null
+          question_text: string
+          question_type: string
+          tool_name: string
+          updated_at?: string | null
+          weight?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          dimension_key?: string | null
+          display_order?: number | null
+          flow_name?: string
+          id?: string
+          options?: Json | null
+          question_text?: string
+          question_type?: string
+          tool_name?: string
+          updated_at?: string | null
+          weight?: number | null
+        }
+        Relationships: []
       }
       workshop_sessions: {
         Row: {
@@ -3233,6 +3556,16 @@ export type Database = {
           industry: string
           organizer_name: string
         }[]
+      }
+      get_or_create_profile: {
+        Args: {
+          p_company?: string
+          p_email: string
+          p_name?: string
+          p_role?: string
+          p_source_tool?: string
+        }
+        Returns: string
       }
       has_role: {
         Args: {
