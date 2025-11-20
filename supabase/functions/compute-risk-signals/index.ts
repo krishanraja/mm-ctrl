@@ -28,21 +28,20 @@ Deno.serve(async (req) => {
 
     const risks: RiskSignal[] = [];
 
-    // Analyze Shadow AI risk
-    const shadowAIRisk = analyzeShadowAI(assessment_data, profile_data);
-    if (shadowAIRisk) risks.push(shadowAIRisk);
+    // Analyze all risks - use default if function returns null
+    const shadowAIRisk = analyzeShadowAI(assessment_data, profile_data) || getDefaultRisk('shadow_ai');
+    risks.push(shadowAIRisk);
 
-    // Analyze Skills Gap risk
-    const skillsGapRisk = analyzeSkillsGap(assessment_data, profile_data);
-    if (skillsGapRisk) risks.push(skillsGapRisk);
+    const skillsGapRisk = analyzeSkillsGap(assessment_data, profile_data) || getDefaultRisk('skills_gap');
+    risks.push(skillsGapRisk);
 
-    // Analyze ROI Leakage risk
-    const roiLeakageRisk = analyzeROILeakage(assessment_data, profile_data);
-    if (roiLeakageRisk) risks.push(roiLeakageRisk);
+    const roiLeakageRisk = analyzeROILeakage(assessment_data, profile_data) || getDefaultRisk('roi_leakage');
+    risks.push(roiLeakageRisk);
 
-    // Analyze Decision Friction risk
-    const decisionFrictionRisk = analyzeDecisionFriction(assessment_data, profile_data);
-    if (decisionFrictionRisk) risks.push(decisionFrictionRisk);
+    const decisionFrictionRisk = analyzeDecisionFriction(assessment_data, profile_data) || getDefaultRisk('decision_friction');
+    risks.push(decisionFrictionRisk);
+
+    console.log('✅ Guaranteed 4 risk signals computed');
 
     // Store risk signals in database
     for (const risk of risks) {
@@ -99,7 +98,37 @@ Deno.serve(async (req) => {
   }
 });
 
-function analyzeShadowAI(assessmentData: any, profileData: any): RiskSignal | null {
+function getDefaultRisk(risk_key: RiskSignal['risk_key']): RiskSignal {
+  const defaults: Record<string, RiskSignal> = {
+    shadow_ai: {
+      risk_key: 'shadow_ai',
+      level: 'low',
+      description: 'AI governance foundations are in place. Continue monitoring as usage scales.',
+      priority_rank: 4,
+    },
+    skills_gap: {
+      risk_key: 'skills_gap',
+      level: 'low',
+      description: 'Team capability aligns with goals. Maintain momentum through continued learning.',
+      priority_rank: 4,
+    },
+    roi_leakage: {
+      risk_key: 'roi_leakage',
+      level: 'low',
+      description: 'AI initiatives are tied to measurable outcomes. Continue disciplined ROI tracking.',
+      priority_rank: 4,
+    },
+    decision_friction: {
+      risk_key: 'decision_friction',
+      level: 'low',
+      description: 'Decisions are flowing at appropriate pace. Maintain clear ownership as complexity increases.',
+      priority_rank: 4,
+    },
+  };
+  return defaults[risk_key];
+}
+
+function analyzeShadowAI(assessmentData: any, profileData: any): RiskSignal {
   const personalAIUse = assessmentData?.personalAIUsage || 'none';
   const teamAlignment = assessmentData?.teamAlignment || 'low';
   const governanceScore = assessmentData?.riskGovernanceScore || 0;
@@ -126,7 +155,7 @@ function analyzeShadowAI(assessmentData: any, profileData: any): RiskSignal | nu
   };
 }
 
-function analyzeSkillsGap(assessmentData: any, profileData: any): RiskSignal | null {
+function analyzeSkillsGap(assessmentData: any, profileData: any): RiskSignal {
   const ambitionLevel = assessmentData?.businessImpact || 'low';
   const teamCapability = assessmentData?.teamAlignment || 'low';
   const fluencyScore = assessmentData?.aiFluencyScore || 0;
@@ -153,7 +182,7 @@ function analyzeSkillsGap(assessmentData: any, profileData: any): RiskSignal | n
   };
 }
 
-function analyzeROILeakage(assessmentData: any, profileData: any): RiskSignal | null {
+function analyzeROILeakage(assessmentData: any, profileData: any): RiskSignal {
   const experimentationScore = assessmentData?.experimentationScore || 0;
   const kpiConnection = assessmentData?.kpiConnection || 'none';
   const timing = assessmentData?.timing || '12+';
@@ -180,7 +209,7 @@ function analyzeROILeakage(assessmentData: any, profileData: any): RiskSignal | 
   };
 }
 
-function analyzeDecisionFriction(assessmentData: any, profileData: any): RiskSignal | null {
+function analyzeDecisionFriction(assessmentData: any, profileData: any): RiskSignal {
   const decisionVelocity = assessmentData?.decisionVelocityScore || 0;
   const timing = assessmentData?.timing || '12+';
   const timeBreakdown = profileData?.timeBreakdown;

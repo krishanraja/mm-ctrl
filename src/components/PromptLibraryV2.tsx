@@ -49,7 +49,14 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
   };
 
   const handleCopyAll = async () => {
-    if (!results?.promptSets) return;
+    if (!results || !results.promptSets || results.promptSets.length === 0) {
+      toast({
+        title: 'No prompts available',
+        description: 'Please wait for prompts to generate',
+        variant: 'destructive',
+      });
+      return;
+    }
     
     setCopyingAll(true);
     
@@ -88,7 +95,7 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
     );
   }
 
-  if (!results?.promptSets || results.promptSets.length === 0) {
+  if (!results || !results.promptSets || results.promptSets.length === 0) {
     return (
       <Card>
         <CardContent className="p-6 text-center">
@@ -147,15 +154,15 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
 
       {/* Prompt Cards */}
       <div className="space-y-4">
-        {results.promptSets.map((set: any, index: number) => (
+        {(results?.promptSets || []).map((set: any, index: number) => (
           <EnhancedPromptCard
             key={set.id}
-            title={set.title}
+            title={set.title || 'Untitled Prompt Set'}
             whatItsFor={set.what_its_for || 'Tailored for your role and context'}
             whenToUse={set.when_to_use || 'Use when you need targeted AI support'}
             howToUse={set.how_to_use || 'Copy and adapt to your specific needs'}
             prompts={Array.isArray(set.prompts_json) ? set.prompts_json : []}
-            isLocked={isContentLocked(results.hasFullDiagnostic, 'prompt', index)}
+            isLocked={isContentLocked(results?.hasFullDiagnostic || false, 'prompt', index)}
           />
         ))}
       </div>

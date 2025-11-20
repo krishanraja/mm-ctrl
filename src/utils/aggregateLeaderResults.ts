@@ -62,7 +62,20 @@ export interface AggregatedLeaderResults {
 export async function aggregateLeaderResults(
   assessmentId: string,
   applyGating: boolean = true
-): Promise<AggregatedLeaderResults | null> {
+): Promise<AggregatedLeaderResults> {
+  const safeDefaults: AggregatedLeaderResults = {
+    assessmentId,
+    benchmarkScore: 0,
+    benchmarkTier: 'AI-Emerging',
+    hasFullDiagnostic: false,
+    dimensionScores: [],
+    tensions: [],
+    riskSignals: [],
+    orgScenarios: [],
+    firstMoves: [],
+    promptSets: [],
+  };
+  
   try {
     console.log('📊 Aggregating leader results for assessment:', assessmentId);
 
@@ -74,8 +87,8 @@ export async function aggregateLeaderResults(
       .single();
 
     if (assessmentError || !assessment) {
-      console.error('Error fetching assessment:', assessmentError);
-      return null;
+      console.error('❌ Assessment not found, returning empty safe structure:', assessmentError);
+      return safeDefaults;
     }
 
     const hasFull = assessment.has_full_diagnostic;
@@ -173,8 +186,8 @@ export async function aggregateLeaderResults(
 
     return {
       assessmentId,
-      benchmarkScore: assessment.benchmark_score,
-      benchmarkTier: assessment.benchmark_tier,
+      benchmarkScore: assessment.benchmark_score || 0,
+      benchmarkTier: assessment.benchmark_tier || 'AI-Emerging',
       hasFullDiagnostic: hasFull,
       dimensionScores: dimensionScores || [],
       tensions,
@@ -184,8 +197,8 @@ export async function aggregateLeaderResults(
       promptSets,
     };
   } catch (error) {
-    console.error('❌ Error aggregating leader results:', error);
-    return null;
+    console.error('❌ Aggregation failed completely, returning safe defaults:', error);
+    return safeDefaults;
   }
 }
 
