@@ -4,6 +4,8 @@ import {
   applyBehavioralAdjustments, 
   calculateExecutionGaps 
 } from './behavioralScoring';
+import { storeAssessmentEvents, storeBehavioralAdjustments } from './storeAssessmentEvents';
+import { calculateAILearningStyle } from './aiLearningStyle';
 
 export interface AssessmentOrchestrationResult {
   success: boolean;
@@ -92,6 +94,15 @@ export async function orchestrateAssessmentV2(
     // Step 5: Call edge functions sequentially
     console.log('🔄 Calling edge functions...');
 
+    // Phase 1: Store assessment events before generating insights
+    console.log('💾 Storing assessment events for full traceability...');
+    await storeAssessmentEvents(assessmentId, leaderId, sessionId, assessmentData, deepProfileData, source);
+    
+    // Phase 3: Store behavioral adjustments for transparency
+    if (deepProfileData) {
+      await storeBehavioralAdjustments(assessmentId, deepProfileData, adjustedScores, baseScores);
+    }
+    
     // 5a: Generate personalized insights (includes first moves now)
     const { data: insightsData, error: insightsError } = await invokeEdgeFunction(
       'generate-personalized-insights',
@@ -99,6 +110,8 @@ export async function orchestrateAssessmentV2(
         assessmentData,
         contactData,
         deepProfileData,
+        assessmentId,
+        leaderId,
       },
       { logPrefix: '🧠', silent: false }
     );
@@ -113,27 +126,25 @@ export async function orchestrateAssessmentV2(
       }
     }
 
-    // 5b: Generate prompt library with timeout protection
-    console.log('📚 Generating prompt library...');
-    console.log('📚 assessmentId being passed:', assessmentId, 'type:', typeof assessmentId);
-    const promptPromise = invokeEdgeFunction(
+    // 5b: Generate prompt library
+    const { data: libraryData, error: libraryError } = await invokeEdgeFunction(
       'generate-prompt-library',
       {
-        assessmentId, // Pass assessmentId
-        sessionId, // Keep sessionId for backward compatibility
-        assessmentData,
+        assessmentId,
+        sessionId,
+        userId: leaderId,
         contactData,
-        profileData: deepProfileData, // Fixed parameter name
+        assessmentData,
+        profileData: deepProfileData,
+        leaderId,
       },
       { logPrefix: '📚', silent: false }
     );
-    
-    // Note: Prompt library stores directly to leader_prompt_sets table
-    // No need to wait for HTTP response - let it run in background
-    promptPromise.catch(err => {
-      console.error('⚠️ Prompt library generation failed:', err);
-    });
-    console.log('📚 Prompt library generation started (running in background)');
+    if (libraryError) {
+      console.error('⚠️ Prompt library generation failed:', libraryError);
+    } else {
+      console.log('✅ Prompt library generated');
+    }
 
     // 5c-5e: Run non-critical computations in parallel with timeout protection
     console.log('⚙️ Running parallel computations (risk signals, tensions, org scenarios)...');
@@ -200,7 +211,30 @@ export async function orchestrateAssessmentV2(
       console.warn('⚠️ Org scenarios failed:', scenarioResult.status === 'rejected' ? scenarioResult.reason : scenarioResult.value.error);
     }
 
-    console.log('🎉 V2 assessment orchestration complete!');
+    // Phase 3: Store index participant data with structured fields
+    const learningStyle = calculateAILearningStyle(assessmentData);
+    try {
+      await supabase.from('index_participant_data').insert({
+        session_id: sessionId,
+        readiness_score: benchmarkScore,
+        tier: benchmarkTier,
+        dimension_scores: assessmentData,
+        deep_profile_data: deepProfileData,
+        completed_at: new Date().toISOString(),
+        industry: contactData.industry,
+        company_size: contactData.companySize,
+        role_title: contactData.role,
+        ai_learning_style: learningStyle,
+        time_waste_pct: deepProfileData?.timeWaste || null,
+        delegation_tasks_count: deepProfileData?.delegationTasks || null,
+        stakeholder_count: deepProfileData?.stakeholderNeeds || null,
+        urgency_level: deepProfileData?.urgency || null,
+        primary_bottleneck: deepProfileData?.primaryBottleneck || null
+      });
+      console.log('✅ Index participant data stored with structured behavioral fields');
+    } catch (indexError) {
+      console.error('⚠️ Failed to store index data:', indexError);
+    }
 
     return {
       success: true,

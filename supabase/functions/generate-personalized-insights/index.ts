@@ -95,7 +95,23 @@ serve(async (req) => {
   }
 
   try {
-    const { assessmentData, contactData, deepProfileData } = await req.json();
+const { assessmentData, contactData, deepProfileData, assessmentId, leaderId } = await req.json();
+  
+  // Phase 2: Build comprehensive context before generating insights
+  let fullContext = null;
+  let contextFormatted = '';
+  
+  if (assessmentId && leaderId) {
+    console.log('🔍 Building comprehensive assessment context...');
+    try {
+      const { buildAssessmentContext, formatContextForPrompt } = await import('../_shared/context-builder.ts');
+      fullContext = await buildAssessmentContext(supabase, leaderId, assessmentId);
+      contextFormatted = formatContextForPrompt(fullContext);
+      console.log('✅ Context built with', fullContext.contextMetadata.dataCompleteness, '% completeness');
+    } catch (contextError) {
+      console.warn('⚠️ Context building failed, proceeding with basic data:', contextError);
+    }
+  }
     
     const geminiApiKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
@@ -108,7 +124,16 @@ serve(async (req) => {
 
     console.log('Generating personalized insights for:', contactData.fullName);
 
-    const prompt = buildPersonalizedPrompt(assessmentData, contactData, deepProfileData);
+    // Phase 2: Use prompt templates with quality guardrails
+    let prompt = buildPersonalizedPrompt(assessmentData, contactData, deepProfileData);
+    try {
+      const { buildPrompt } = await import('../_shared/prompt-templates.ts');
+      const contextData = contextFormatted || prompt;
+      prompt = buildPrompt('assessment_analyzer', contextData);
+      console.log('✅ Using enhanced prompt template with quality guardrails');
+    } catch (importError) {
+      console.warn('⚠️ Could not import prompt templates, using basic prompt');
+    }
     
     let personalizedInsights = null;
     let generationSource = '';
@@ -211,6 +236,22 @@ Return ONLY valid JSON matching the required structure.`
 
             try {
               personalizedInsights = JSON.parse(cleanContent);
+              
+              // Phase 2: Validate against schema
+              try {
+                const { PersonalizedInsightsSchema } = await import('../_shared/schemas.ts');
+                const { validateQualityGates } = await import('../_shared/quality-guardrails.ts');
+                const validated = PersonalizedInsightsSchema.parse(personalizedInsights);
+                const qualityCheck = validateQualityGates(validated);
+                if (!qualityCheck.passed) {
+                  console.warn('⚠️ Quality gates failed:', qualityCheck.failedGates);
+                } else {
+                  console.log('✅ All quality gates passed');
+                }
+              } catch (validationError: any) {
+                console.warn('⚠️ Schema validation warning:', validationError.message);
+              }
+              
               console.log('✅ Vertex AI JSON parsed successfully');
             } catch (parseError) {
               console.error('❌ Vertex AI JSON parse failed');

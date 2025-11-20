@@ -96,8 +96,23 @@ serve(async (req) => {
 
   try {
     const startTime = Date.now();
-    const { assessmentId, sessionId, userId, contactData, assessmentData, profileData } = await req.json();
+    const { assessmentId, sessionId, userId, contactData, assessmentData, profileData, leaderId } = await req.json();
     console.log('Generating prompt library for assessment:', assessmentId);
+    
+    // Phase 2: Build comprehensive context
+    let fullContext = null;
+    let contextFormatted = '';
+    if (assessmentId && leaderId) {
+      console.log('🔍 Building context for prompt library...');
+      try {
+        const { buildAssessmentContext, formatContextForPrompt } = await import('../_shared/context-builder.ts');
+        fullContext = await buildAssessmentContext(supabaseClient, leaderId, assessmentId);
+        contextFormatted = formatContextForPrompt(fullContext);
+        console.log('✅ Context built:', fullContext.contextMetadata.dataCompleteness, '% complete');
+      } catch (contextError) {
+        console.warn('⚠️ Context building failed:', contextError);
+      }
+    }
     console.log('📦 Received body:', JSON.stringify({ 
       hasAssessmentId: !!assessmentId, 
       assessmentId, 
