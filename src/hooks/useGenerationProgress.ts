@@ -34,7 +34,7 @@ const PHASES: Array<{ name: string; key: keyof GenerationStatus }> = [
   { name: 'Creating first moves', key: 'first_moves_generated' },
 ];
 
-const TIMEOUT_MS = 120000; // 2 minutes per phase
+const TIMEOUT_MS = 180000; // 3 minutes per phase (increased to accommodate 116s Gemini responses)
 
 export function useGenerationProgress(assessmentId: string) {
   const [phases, setPhases] = useState<GenerationPhase[]>(
@@ -80,7 +80,7 @@ export function useGenerationProgress(assessmentId: string) {
             });
           }
 
-          // Check for timeout (phase stuck "in-progress" for >2 minutes)
+          // Check for timeout (phase stuck "in-progress" for >3 minutes)
           const phaseStartTime = phaseStartTimes[phase.key];
           const isTimedOut = phaseStartTime && (now - phaseStartTime) > TIMEOUT_MS;
 
@@ -92,7 +92,7 @@ export function useGenerationProgress(assessmentId: string) {
             phaseError = status.error_log.find((e: any) => e.phase === phase.key)?.error;
           } else if (isTimedOut) {
             phaseStatus = 'failed';
-            phaseError = 'Generation timed out after 2 minutes';
+            phaseError = 'Generation timed out after 3 minutes';
           } else if (isComplete) {
             phaseStatus = 'complete';
           } else if (status.last_updated) {
@@ -118,7 +118,7 @@ export function useGenerationProgress(assessmentId: string) {
     } catch (error) {
       console.error('❌ Error checking progress:', error);
     }
-  }, [assessmentId]);
+  }, [assessmentId, phaseStartTimes]);
 
   // Poll every 2 seconds
   useEffect(() => {
