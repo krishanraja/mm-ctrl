@@ -1073,6 +1073,53 @@ export type Database = {
           },
         ]
       }
+      decision_frameworks: {
+        Row: {
+          created_at: string | null
+          decision_criteria: Json | null
+          decision_process: string | null
+          id: string
+          key_concepts: Json | null
+          next_steps: string[] | null
+          sample_artifacts: Json | null
+          tension_map: Json | null
+          updated_at: string | null
+          workshop_session_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          decision_criteria?: Json | null
+          decision_process?: string | null
+          id?: string
+          key_concepts?: Json | null
+          next_steps?: string[] | null
+          sample_artifacts?: Json | null
+          tension_map?: Json | null
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          decision_criteria?: Json | null
+          decision_process?: string | null
+          id?: string
+          key_concepts?: Json | null
+          next_steps?: string[] | null
+          sample_artifacts?: Json | null
+          tension_map?: Json | null
+          updated_at?: string | null
+          workshop_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decision_frameworks_workshop_session_id_fkey"
+            columns: ["workshop_session_id"]
+            isOneToOne: false
+            referencedRelation: "workshop_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       effortless_map_items: {
         Row: {
           activity_session_id: string | null
@@ -1185,8 +1232,11 @@ export type Database = {
       exec_intakes: {
         Row: {
           anticipated_bottlenecks: Json | null
+          board_pack_url: string | null
           company_name: string
           created_at: string
+          current_ai_initiatives: string | null
+          decision_type: string | null
           id: string
           industry: string | null
           organizer_email: string
@@ -1194,13 +1244,19 @@ export type Database = {
           participants: Json | null
           preferred_dates: Json | null
           scheduling_notes: string | null
+          strategic_context_complete: boolean | null
           strategic_objectives_2026: string | null
+          target_2026: string | null
           updated_at: string
+          workflow_bottlenecks: string | null
         }
         Insert: {
           anticipated_bottlenecks?: Json | null
+          board_pack_url?: string | null
           company_name: string
           created_at?: string
+          current_ai_initiatives?: string | null
+          decision_type?: string | null
           id?: string
           industry?: string | null
           organizer_email: string
@@ -1208,13 +1264,19 @@ export type Database = {
           participants?: Json | null
           preferred_dates?: Json | null
           scheduling_notes?: string | null
+          strategic_context_complete?: boolean | null
           strategic_objectives_2026?: string | null
+          target_2026?: string | null
           updated_at?: string
+          workflow_bottlenecks?: string | null
         }
         Update: {
           anticipated_bottlenecks?: Json | null
+          board_pack_url?: string | null
           company_name?: string
           created_at?: string
+          current_ai_initiatives?: string | null
+          decision_type?: string | null
           id?: string
           industry?: string | null
           organizer_email?: string
@@ -1222,8 +1284,11 @@ export type Database = {
           participants?: Json | null
           preferred_dates?: Json | null
           scheduling_notes?: string | null
+          strategic_context_complete?: boolean | null
           strategic_objectives_2026?: string | null
+          target_2026?: string | null
           updated_at?: string
+          workflow_bottlenecks?: string | null
         }
         Relationships: []
       }
@@ -3445,58 +3510,70 @@ export type Database = {
       }
       workshop_sessions: {
         Row: {
+          alignment_score: number | null
           bootcamp_plan_id: string | null
           cognitive_baseline_data: Json | null
           completed_at: string | null
           created_at: string | null
           current_segment: number | null
+          decision_framework_generated: boolean | null
           facilitator_email: string
           facilitator_name: string
           id: string
           intake_id: string | null
+          key_concepts_delivered: Json | null
           participant_count: number | null
           planned_duration_hours: number | null
           segment_timers: Json | null
           segments_completed: string[] | null
           status: string
+          tension_map: Json | null
           updated_at: string | null
           workshop_date: string
           workshop_metadata: Json | null
         }
         Insert: {
+          alignment_score?: number | null
           bootcamp_plan_id?: string | null
           cognitive_baseline_data?: Json | null
           completed_at?: string | null
           created_at?: string | null
           current_segment?: number | null
+          decision_framework_generated?: boolean | null
           facilitator_email?: string
           facilitator_name: string
           id?: string
           intake_id?: string | null
+          key_concepts_delivered?: Json | null
           participant_count?: number | null
           planned_duration_hours?: number | null
           segment_timers?: Json | null
           segments_completed?: string[] | null
           status?: string
+          tension_map?: Json | null
           updated_at?: string | null
           workshop_date: string
           workshop_metadata?: Json | null
         }
         Update: {
+          alignment_score?: number | null
           bootcamp_plan_id?: string | null
           cognitive_baseline_data?: Json | null
           completed_at?: string | null
           created_at?: string | null
           current_segment?: number | null
+          decision_framework_generated?: boolean | null
           facilitator_email?: string
           facilitator_name?: string
           id?: string
           intake_id?: string | null
+          key_concepts_delivered?: Json | null
           participant_count?: number | null
           planned_duration_hours?: number | null
           segment_timers?: Json | null
           segments_completed?: string[] | null
           status?: string
+          tension_map?: Json | null
           updated_at?: string | null
           workshop_date?: string
           workshop_metadata?: Json | null

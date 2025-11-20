@@ -237,11 +237,8 @@ Return ONLY valid JSON matching the required structure.`
             }],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 4000
-            },
-            tools: [{
-              google_search: {}
-            }]
+              maxOutputTokens: 10000
+            }
           })
         });
         
