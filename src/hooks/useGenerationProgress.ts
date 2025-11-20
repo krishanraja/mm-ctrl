@@ -44,6 +44,61 @@ export function useGenerationProgress(assessmentId: string) {
   const [hasErrors, setHasErrors] = useState(false);
   const [phaseStartTimes, setPhaseStartTimes] = useState<Record<string, number>>({});
 
+  // Helper to verify actual data exists in DB
+  const verifyPhaseData = async (phaseKey: keyof GenerationStatus): Promise<boolean> => {
+    try {
+      switch(phaseKey) {
+        case 'insights_generated': {
+          const { count } = await supabase
+            .from('leader_dimension_scores')
+            .select('*', { count: 'exact', head: true })
+            .eq('assessment_id', assessmentId);
+          return (count || 0) > 0;
+        }
+        case 'prompts_generated': {
+          const { count } = await supabase
+            .from('leader_prompt_sets')
+            .select('*', { count: 'exact', head: true })
+            .eq('assessment_id', assessmentId);
+          return (count || 0) > 0;
+        }
+        case 'risks_computed': {
+          const { count } = await supabase
+            .from('leader_risk_signals')
+            .select('*', { count: 'exact', head: true })
+            .eq('assessment_id', assessmentId);
+          return (count || 0) > 0;
+        }
+        case 'tensions_computed': {
+          const { count } = await supabase
+            .from('leader_tensions')
+            .select('*', { count: 'exact', head: true })
+            .eq('assessment_id', assessmentId);
+          return (count || 0) > 0;
+        }
+        case 'scenarios_generated': {
+          const { count } = await supabase
+            .from('leader_org_scenarios')
+            .select('*', { count: 'exact', head: true })
+            .eq('assessment_id', assessmentId);
+          return (count || 0) > 0;
+        }
+        case 'first_moves_generated': {
+          const { count } = await supabase
+            .from('leader_first_moves')
+            .select('*', { count: 'exact', head: true })
+            .eq('assessment_id', assessmentId);
+          return (count || 0) > 0;
+        }
+        default:
+          return false;
+      }
+    } catch (error) {
+      console.error(`❌ Error verifying ${phaseKey} data:`, error);
+      return false;
+    }
+  };
+
   const checkProgress = useCallback(async () => {
     if (!assessmentId) return;
 
@@ -62,9 +117,9 @@ export function useGenerationProgress(assessmentId: string) {
       const status = (data.generation_status || {}) as any;
       const now = Date.now();
       
-      // Update phases based on DB status with timeout detection
-      setPhases(prevPhases => 
-        prevPhases.map(phase => {
+      // Update phases based on DB status with data verification
+      const updatedPhases = await Promise.all(
+        PHASES.map(async (phase) => {
           const isComplete = status[phase.key] === true;
           const hasError = status.error_log?.some(
             (e: any) => e.phase === phase.key
@@ -94,7 +149,14 @@ export function useGenerationProgress(assessmentId: string) {
             phaseStatus = 'failed';
             phaseError = 'Generation timed out after 3 minutes';
           } else if (isComplete) {
-            phaseStatus = 'complete';
+            // Flag is set - now verify data exists
+            const dataExists = await verifyPhaseData(phase.key);
+            if (dataExists) {
+              phaseStatus = 'complete';
+            } else {
+              console.warn(`⚠️ Flag set but no data for ${phase.key} - keeping in-progress`);
+              phaseStatus = 'in-progress'; // Keep polling until data appears
+            }
           } else if (status.last_updated) {
             phaseStatus = 'in-progress';
           }
@@ -106,9 +168,11 @@ export function useGenerationProgress(assessmentId: string) {
           };
         })
       );
+      
+      setPhases(updatedPhases);
 
-      // Check if all complete
-      const allComplete = PHASES.every(p => status[p.key] === true);
+      // Check if all complete (flag + data verified)
+      const allComplete = updatedPhases.every(p => p.status === 'complete');
       setIsComplete(allComplete);
 
       // Check for errors

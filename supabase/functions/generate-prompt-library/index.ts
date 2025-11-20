@@ -745,42 +745,46 @@ Return ONLY valid JSON, no markdown formatting.`;
       assessment_id: assessmentId
     }));
 
-    // Store prompts directly in leader_prompt_sets table
-    console.log(`Storing ${promptSets.length} prompt sets to leader_prompt_sets for assessment ${assessmentId}`);
-    const { error: promptSetsError } = await supabase
-      .from('leader_prompt_sets')
-      .insert(promptSets);
-    
-    if (promptSetsError) {
-      console.error('Error storing prompt sets:', promptSetsError);
-      throw new Error(`Failed to store prompt sets: ${promptSetsError.message}`);
-    }
-    
-    console.log(`✅ Stored ${promptSets.length} prompt sets to leader_prompt_sets`);
-
-    // Update generation status AFTER all DB writes complete
-    if (assessmentId) {
-      console.log('✅ Updating generation_status.prompts_generated = true (after DB write)');
-      const { data: currentStatus } = await supabase
-        .from('leader_assessments')
-        .select('generation_status')
-        .eq('id', assessmentId)
-        .single();
+    // Store prompts directly in leader_prompt_sets table ONLY if we have data
+    if (promptSets.length > 0) {
+      console.log(`Storing ${promptSets.length} prompt sets to leader_prompt_sets for assessment ${assessmentId}`);
+      const { error: promptSetsError } = await supabase
+        .from('leader_prompt_sets')
+        .insert(promptSets);
       
-      const { error: statusError } = await supabase
-        .from('leader_assessments')
-        .update({
-          generation_status: {
-            ...(currentStatus?.generation_status || {}),
-            prompts_generated: true,
-            last_updated: new Date().toISOString()
-          }
-        })
-        .eq('id', assessmentId);
-        
-      if (statusError) {
-        console.error('Failed to update generation status:', statusError);
+      if (promptSetsError) {
+        console.error('Error storing prompt sets:', promptSetsError);
+        throw new Error(`Failed to store prompt sets: ${promptSetsError.message}`);
       }
+      
+      console.log(`✅ Stored ${promptSets.length} prompt sets to leader_prompt_sets`);
+
+      // Update generation status ONLY AFTER successful DB writes
+      if (assessmentId) {
+        console.log('✅ Updating generation_status.prompts_generated = true (after DB write)');
+        const { data: currentStatus } = await supabase
+          .from('leader_assessments')
+          .select('generation_status')
+          .eq('id', assessmentId)
+          .single();
+        
+        const { error: statusError } = await supabase
+          .from('leader_assessments')
+          .update({
+            generation_status: {
+              ...(currentStatus?.generation_status || {}),
+              prompts_generated: true,
+              last_updated: new Date().toISOString()
+            }
+          })
+          .eq('id', assessmentId);
+          
+        if (statusError) {
+          console.error('Failed to update generation status:', statusError);
+        }
+      }
+    } else {
+      console.warn('⚠️ No prompt sets to store - skipping flag update');
     }
 
     return new Response(
