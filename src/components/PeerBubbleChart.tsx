@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, ResponsiveContainer, Cell, ReferenceDot, Label } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, ReferenceDot, Label } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Users } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TrendingUp, Users, HelpCircle } from 'lucide-react';
 import { AILearningStyle, getLearningStyleProfile } from '@/utils/aiLearningStyle';
 import { generateCohortPeers, CohortPeerData } from '@/utils/generateCohortPeers';
 
@@ -25,6 +26,14 @@ interface PeerBubbleChartProps {
   viewMode?: 'cohort' | 'all';
 }
 
+// Calculate dynamic peer count starting from 102 on Nov 20, 2025
+const getDynamicPeerCount = (): number => {
+  const launchDate = new Date('2025-11-20');
+  const today = new Date();
+  const daysSinceLaunch = Math.floor((today.getTime() - launchDate.getTime()) / (1000 * 60 * 60 * 24));
+  return 102 + Math.max(0, daysSinceLaunch);
+};
+
 // Jitter configuration for natural peer distribution
 const JITTER_CONFIG = {
   ahead: { x: 8, y: 10, z: 6 },
@@ -37,7 +46,7 @@ const generatePeerData = (
   userX: number,
   userY: number,
   userZ: number,
-  count: number = 500
+  count: number = 102
 ): PeerData[] => {
   const peers: PeerData[] = [];
   
@@ -230,41 +239,66 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2 mb-2">
-              <Users className="h-5 w-5 text-primary" />
-              Peer Comparison Matrix
-            </CardTitle>
-            <CardDescription>
-              Your position among {Math.round(stats?.totalPeers).toLocaleString()} AI leaders
-              {viewMode === 'cohort' && learningStyle && (
-                <span className="block mt-1 text-xs">
-                  Showing peers from <span className="font-semibold">{getLearningStyleProfile(learningStyle).label}</span> cohort
-                </span>
-              )}
-            </CardDescription>
+    <TooltipProvider>
+      <Card>
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 mb-2">
+                <Users className="h-5 w-5 text-primary" />
+                Peer Comparison Matrix
+              </CardTitle>
+              <CardDescription>
+                Your position among {stats?.totalPeers.toLocaleString()} AI leaders
+                {viewMode === 'cohort' && learningStyle && (
+                  <span className="block mt-1 text-xs">
+                    Showing peers from <span className="font-semibold">{getLearningStyleProfile(learningStyle).label}</span> cohort
+                  </span>
+                )}
+              </CardDescription>
+            </div>
+            {stats && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="default" className="text-base px-4 py-1.5 cursor-help">
+                    <TrendingUp className="h-4 w-4 mr-1" />
+                    Top {Math.round(100 - stats.percentileRank)}%
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    You're performing better than {Math.round(stats.percentileRank)}% of all AI leaders in the platform. 
+                    This percentile is calculated across all dimensions.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
-          {stats && (
-            <Badge variant="default" className="text-base px-4 py-1.5">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              Top {100 - stats.percentileRank}%
-            </Badge>
-          )}
-        </div>
-      </CardHeader>
+        </CardHeader>
       <CardContent>
         {/* Dimension labels */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           {dimensions.map((dim, idx) => (
             <div key={dim.dimension} className="text-center">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                {idx === 0 ? 'X-Axis' : idx === 1 ? 'Y-Axis' : 'Bubble Size'}
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  {idx === 0 ? 'X-Axis' : idx === 1 ? 'Y-Axis' : 'Bubble Size'}
+                </div>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p className="text-sm">
+                      {idx === 0 && `Horizontal axis: Your score in ${dim.dimension}. Higher scores appear further right.`}
+                      {idx === 1 && `Vertical axis: Your score in ${dim.dimension}. Higher scores appear higher up.`}
+                      {idx === 2 && `Bubble size: Your score in ${dim.dimension}. Higher scores create larger bubbles.`}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <div className="text-sm font-semibold">{dim.dimension}</div>
-              <div className="text-xs text-primary font-medium">You: {dim.score}/100</div>
+              <div className="text-xs text-primary font-medium">You: {Math.round(dim.score)}/100</div>
             </div>
           ))}
         </div>
@@ -308,7 +342,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
               domain={[0, 100]}
               range={[20, 400]}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
+            <RechartsTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
             
             {/* Peer data */}
             <Scatter data={data.filter(d => !d.isUser)} fillOpacity={0.3}>
@@ -360,43 +394,83 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
               </h4>
             )}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
-              <div className="text-xs font-medium text-muted-foreground mb-1">AI Pioneer</div>
-              <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
-                {stats.tierDistribution.pioneer}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {Math.round((stats.tierDistribution.pioneer / stats.totalPeers) * 100)}%
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-center p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800 cursor-help">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">AI Pioneer</div>
+                    <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                      {stats.tierDistribution.pioneer}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {Math.round((stats.tierDistribution.pioneer / stats.totalPeers) * 100)}%
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    <strong>AI Pioneer (85-100):</strong> Cutting-edge practitioners who are leading AI adoption 
+                    in their organizations with advanced implementations and strategic vision.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-center p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800 cursor-help">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Confident</div>
+                    <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                      {stats.tierDistribution.confident}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {Math.round((stats.tierDistribution.confident / stats.totalPeers) * 100)}%
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    <strong>AI Confident (70-84):</strong> Experienced users who have solid AI foundations 
+                    and are actively expanding their capabilities across multiple use cases.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-center p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800 cursor-help">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Explorer</div>
+                    <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                      {stats.tierDistribution.explorer}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {Math.round((stats.tierDistribution.explorer / stats.totalPeers) * 100)}%
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    <strong>AI Explorer (55-69):</strong> Active learners who are experimenting with AI tools 
+                    and building practical experience in specific domains.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-center p-3 bg-gray-50 dark:bg-gray-950/20 rounded-lg border border-gray-200 dark:border-gray-800 cursor-help">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">Building</div>
+                    <div className="text-lg font-bold text-gray-600 dark:text-gray-400">
+                      {stats.tierDistribution.building}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {Math.round((stats.tierDistribution.building / stats.totalPeers) * 100)}%
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-sm">
+                    <strong>AI Building (0-54):</strong> Early-stage learners who are beginning their AI journey 
+                    and establishing foundational knowledge and skills.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <div className="text-center p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="text-xs font-medium text-muted-foreground mb-1">Confident</div>
-              <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                {stats.tierDistribution.confident}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {Math.round((stats.tierDistribution.confident / stats.totalPeers) * 100)}%
-              </div>
-            </div>
-            <div className="text-center p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="text-xs font-medium text-muted-foreground mb-1">Explorer</div>
-              <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                {stats.tierDistribution.explorer}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {Math.round((stats.tierDistribution.explorer / stats.totalPeers) * 100)}%
-              </div>
-            </div>
-            <div className="text-center p-3 bg-gray-50 dark:bg-gray-950/20 rounded-lg border border-gray-200 dark:border-gray-800">
-              <div className="text-xs font-medium text-muted-foreground mb-1">Building</div>
-              <div className="text-lg font-bold text-gray-600 dark:text-gray-400">
-                {stats.tierDistribution.building}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {Math.round((stats.tierDistribution.building / stats.totalPeers) * 100)}%
-              </div>
-            </div>
-          </div>
           </div>
         )}
 
@@ -410,5 +484,6 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
         )}
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 };

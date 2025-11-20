@@ -198,32 +198,32 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     setInsightPhase('analyzing');
     setInsightProgress(15);
 
-    const progressInterval = setInterval(() => {
-      setInsightProgress(prev => {
-        // Phase 1: Analyzing (0-35%)
-        if (prev < 35) {
-          if (prev >= 10 && insightPhase === 'analyzing') {
-            setInsightPhase('generating');
+      const progressInterval = setInterval(() => {
+        setInsightProgress(prev => {
+          // Phase 1: Analyzing (0-30%) in ~10s
+          if (prev < 30) {
+            if (prev >= 10 && insightPhase === 'analyzing') {
+              setInsightPhase('generating');
+            }
+            return prev + 3;
           }
-          return prev + 6;
-        }
-        // Phase 2: Generating (35-70%)
-        if (prev < 70) {
-          if (prev >= 35 && insightPhase === 'analyzing') {
-            setInsightPhase('generating');
+          // Phase 2: Generating (30-60%) in ~15s
+          if (prev < 60) {
+            if (prev >= 30 && insightPhase === 'analyzing') {
+              setInsightPhase('generating');
+            }
+            return prev + 2;
           }
-          return prev + 4;
-        }
-        // Phase 3: Finalizing (70-95%)
-        if (prev < 95) {
-          if (prev >= 70 && insightPhase !== 'finalizing') {
-            setInsightPhase('finalizing');
+          // Phase 3: Finalizing (60-90%) in ~15s
+          if (prev < 90) {
+            if (prev >= 60 && insightPhase !== 'finalizing') {
+              setInsightPhase('finalizing');
+            }
+            return prev + 2;
           }
-          return prev + 2;
-        }
-        return prev;
-      });
-    }, 1000);
+          return prev;
+        });
+      }, 1000);
 
     try {
       // Call v2 orchestration
