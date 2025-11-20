@@ -202,7 +202,7 @@ const formatDeepProfile = (deepProfile: any): string => {
   const sections: string[] = [];
   
   // Thinking Process
-  if (deepProfile.thinkingProcess) {
+  if (deepProfile?.thinkingProcess) {
     sections.push(`
       <div style="margin-bottom: 18px; padding: 15px; background: #f8fafc; border-radius: 6px;">
         <p style="margin: 0 0 8px; font-weight: bold; color: #1e293b;">🧠 Problem-Solving Approach</p>
@@ -222,7 +222,7 @@ const formatDeepProfile = (deepProfile: any): string => {
   }
   
   // Work Time Breakdown
-  if (deepProfile.workBreakdown) {
+  if (deepProfile?.workBreakdown) {
     const breakdown = deepProfile.workBreakdown;
     sections.push(`
       <div style="margin-bottom: 18px; padding: 15px; background: #f8fafc; border-radius: 6px;">
@@ -259,7 +259,7 @@ const formatDeepProfile = (deepProfile: any): string => {
   }
   
   // Time Waste
-  if (deepProfile.timeWaste !== undefined) {
+  if (deepProfile?.timeWaste !== undefined) {
     sections.push(`
       <div style="margin-bottom: 18px; padding: 15px; background: #fee2e2; border-radius: 6px; border-left: 4px solid #dc2626;">
         <p style="margin: 0 0 8px; font-weight: bold; color: #1e293b;">⚠️ Non-Critical Work Time</p>
