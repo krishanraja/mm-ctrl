@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { SampleResultsDialog } from "@/components/SampleResultsDialog";
 
 interface HeroSectionProps {
   onStartVoice: () => void;
@@ -146,6 +147,12 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               </div>
             </div>
           </div>
+
+          {/* Sample Results Dialog */}
+          <SampleResultsDialog 
+            onStartQuiz={onStartQuiz}
+            onStartVoice={onStartVoice}
+          />
         </div>
       </div>
     </div>
