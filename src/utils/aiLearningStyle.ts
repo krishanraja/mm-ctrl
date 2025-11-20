@@ -1,4 +1,5 @@
 import { DeepProfileData } from '@/components/DeepProfileQuestionnaire';
+import { validateProfileData, SafeProfileData } from './validateProfileData';
 
 export type AILearningStyle = 
   | 'strategic_visionary' 
@@ -61,8 +62,12 @@ export const LEARNING_STYLE_PROFILES: Record<AILearningStyle, LearningStyleProfi
 
 /**
  * Determines AI Learning Style cohort based on deep profile questionnaire responses
+ * CRASH-PROOF: Always validates input and returns a valid learning style
  */
-export function determineAILearningStyle(deepProfile: DeepProfileData): AILearningStyle {
+export function determineAILearningStyle(deepProfile: DeepProfileData | any): AILearningStyle {
+  // CRITICAL: Validate and normalize profile data at entry
+  const safeProfile: SafeProfileData = validateProfileData(deepProfile);
+  
   const scores = {
     strategic_visionary: 0,
     pragmatic_executor: 0,
@@ -72,49 +77,49 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
   };
 
   // Strategic Visionary scoring (max 100 points)
-  scores.strategic_visionary += (deepProfile.workBreakdown.planning / 100) * 30;
+  scores.strategic_visionary += (safeProfile.workBreakdown.planning / 100) * 30;
   
   const strategyKeywords = ['innovation', 'market', 'strategy', 'vision', 'future', 'competitive', 'positioning'];
-  const transformationLower = deepProfile.transformationGoal.toLowerCase();
+  const transformationLower = safeProfile.transformationGoal.toLowerCase();
   const matchingKeywords = strategyKeywords.filter(kw => transformationLower.includes(kw));
   scores.strategic_visionary += matchingKeywords.length * 8;
   
-  if (deepProfile.informationNeeds.includes('Market trends')) scores.strategic_visionary += 15;
-  if (deepProfile.informationNeeds.includes('Competitive intelligence')) scores.strategic_visionary += 10;
+  if (safeProfile.informationNeeds.includes('Market trends')) scores.strategic_visionary += 15;
+  if (safeProfile.informationNeeds.includes('Competitive intelligence')) scores.strategic_visionary += 10;
   
-  const thinkingLower = deepProfile.thinkingProcess.toLowerCase();
+  const thinkingLower = safeProfile.thinkingProcess.toLowerCase();
   if (thinkingLower.includes('big picture') || thinkingLower.includes('vision') || thinkingLower.includes('strategic')) {
     scores.strategic_visionary += 15;
   }
 
   // Pragmatic Executor scoring (max 100 points)
-  scores.pragmatic_executor += (deepProfile.workBreakdown.decisions / 100) * 30;
+  scores.pragmatic_executor += (safeProfile.workBreakdown.decisions / 100) * 30;
   
-  const concise = deepProfile.communicationStyle.includes('Concise & data-driven');
-  const directive = deepProfile.communicationStyle.includes('Directive & action-oriented');
+  const concise = safeProfile.communicationStyle.includes('Concise & data-driven');
+  const directive = safeProfile.communicationStyle.includes('Directive & action-oriented');
   if (concise || directive) scores.pragmatic_executor += 20;
   
-  if (deepProfile.delegateTasks.length > 3) scores.pragmatic_executor += 15;
+  if (safeProfile.delegationTasks.length > 3) scores.pragmatic_executor += 15;
   
-  const wasteExamplesLower = deepProfile.timeWasteExamples.toLowerCase();
+  const wasteExamplesLower = safeProfile.timeWasteExamples.toLowerCase();
   if (wasteExamplesLower.includes('meeting') || wasteExamplesLower.includes('admin') || wasteExamplesLower.includes('bureaucracy')) {
     scores.pragmatic_executor += 15;
   }
   
-  if (deepProfile.timeWaste > 30) scores.pragmatic_executor += 10;
+  if (safeProfile.timeWaste > 30) scores.pragmatic_executor += 10;
   
-  if (deepProfile.informationNeeds.includes('Performance metrics')) scores.pragmatic_executor += 10;
+  if (safeProfile.informationNeeds.includes('Performance metrics')) scores.pragmatic_executor += 10;
 
   // Collaborative Builder scoring (max 100 points)
-  scores.collaborative_builder += (deepProfile.workBreakdown.coaching / 100) * 30;
+  scores.collaborative_builder += (safeProfile.workBreakdown.coaching / 100) * 30;
   
-  const storytelling = deepProfile.communicationStyle.includes('Storytelling & narrative');
-  const empathetic = deepProfile.communicationStyle.includes('Empathetic & relationship-focused');
+  const storytelling = safeProfile.communicationStyle.includes('Storytelling & narrative');
+  const empathetic = safeProfile.communicationStyle.includes('Empathetic & relationship-focused');
   if (storytelling || empathetic) scores.collaborative_builder += 20;
   
-  if (deepProfile.stakeholders.length > 4) scores.collaborative_builder += 15;
+  if (safeProfile.stakeholders.length > 4) scores.collaborative_builder += 15;
   
-  const challengeLower = deepProfile.biggestChallenge.toLowerCase();
+  const challengeLower = safeProfile.biggestChallenge.toLowerCase();
   if (challengeLower.includes('team') || challengeLower.includes('alignment') || challengeLower.includes('culture') || challengeLower.includes('people')) {
     scores.collaborative_builder += 15;
   }
@@ -122,10 +127,10 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
   const transformationTeam = transformationLower.includes('team') || transformationLower.includes('culture') || transformationLower.includes('people');
   if (transformationTeam) scores.collaborative_builder += 10;
   
-  if (deepProfile.informationNeeds.includes('Team performance data')) scores.collaborative_builder += 10;
+  if (safeProfile.informationNeeds.includes('Team performance data')) scores.collaborative_builder += 10;
 
   // Analytical Optimizer scoring (max 100 points)
-  const writingPresentation = deepProfile.workBreakdown.writing + deepProfile.workBreakdown.presentations;
+  const writingPresentation = safeProfile.workBreakdown.writing + safeProfile.workBreakdown.presentations;
   scores.analytical_optimizer += (writingPresentation / 100) * 25;
   
   if (thinkingLower.includes('data') || thinkingLower.includes('analytic') || thinkingLower.includes('systematic') || thinkingLower.includes('methodical')) {
@@ -133,11 +138,11 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
   }
   
   const analyticalInfo = ['Performance metrics', 'Industry benchmarks', 'Process documentation'].filter(
-    item => deepProfile.informationNeeds.includes(item)
+    item => safeProfile.informationNeeds.includes(item)
   );
   scores.analytical_optimizer += analyticalInfo.length * 10;
   
-  if (deepProfile.communicationStyle.includes('Visual & data-focused')) scores.analytical_optimizer += 15;
+  if (safeProfile.communicationStyle.includes('Visual & data-focused')) scores.analytical_optimizer += 15;
   
   if (challengeLower.includes('efficiency') || challengeLower.includes('process') || challengeLower.includes('optimize')) {
     scores.analytical_optimizer += 10;
@@ -147,7 +152,7 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
   scores.adaptive_explorer = 0;
   
   // Bonus for balanced work breakdown (no single area dominates)
-  const workValues = Object.values(deepProfile.workBreakdown);
+  const workValues = Object.values(safeProfile.workBreakdown);
   const maxWork = Math.max(...workValues);
   const minWork = Math.min(...workValues);
   const workRange = maxWork - minWork;
@@ -158,13 +163,13 @@ export function determineAILearningStyle(deepProfile: DeepProfileData): AILearni
   else if (workRange < 35) scores.adaptive_explorer += 10; // Somewhat balanced
   
   // Bonus for diverse communication styles
-  if (deepProfile.communicationStyle.length >= 3) scores.adaptive_explorer += 15;
-  else if (deepProfile.communicationStyle.length >= 2) scores.adaptive_explorer += 8;
+  if (safeProfile.communicationStyle.length >= 3) scores.adaptive_explorer += 15;
+  else if (safeProfile.communicationStyle.length >= 2) scores.adaptive_explorer += 8;
   
   // Bonus for diverse information needs
-  if (deepProfile.informationNeeds.length >= 5) scores.adaptive_explorer += 15;
-  else if (deepProfile.informationNeeds.length >= 4) scores.adaptive_explorer += 10;
-  else if (deepProfile.informationNeeds.length >= 3) scores.adaptive_explorer += 5;
+  if (safeProfile.informationNeeds.length >= 5) scores.adaptive_explorer += 15;
+  else if (safeProfile.informationNeeds.length >= 4) scores.adaptive_explorer += 10;
+  else if (safeProfile.informationNeeds.length >= 3) scores.adaptive_explorer += 5;
   
   // Bonus for learning/experimentation/flexibility mentions
   const adaptiveKeywords = ['learn', 'experiment', 'adapt', 'flexible', 'versatile', 'explore'];

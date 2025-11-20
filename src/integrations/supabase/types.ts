@@ -1078,11 +1078,15 @@ export type Database = {
           created_at: string | null
           decision_criteria: Json | null
           decision_process: string | null
+          decision_style_observed: string | null
           id: string
           key_concepts: Json | null
+          major_tensions: string[] | null
           next_steps: string[] | null
           sample_artifacts: Json | null
           tension_map: Json | null
+          time_to_alignment_minutes: number | null
+          unresolved_disagreements: string[] | null
           updated_at: string | null
           workshop_session_id: string | null
         }
@@ -1090,11 +1094,15 @@ export type Database = {
           created_at?: string | null
           decision_criteria?: Json | null
           decision_process?: string | null
+          decision_style_observed?: string | null
           id?: string
           key_concepts?: Json | null
+          major_tensions?: string[] | null
           next_steps?: string[] | null
           sample_artifacts?: Json | null
           tension_map?: Json | null
+          time_to_alignment_minutes?: number | null
+          unresolved_disagreements?: string[] | null
           updated_at?: string | null
           workshop_session_id?: string | null
         }
@@ -1102,11 +1110,15 @@ export type Database = {
           created_at?: string | null
           decision_criteria?: Json | null
           decision_process?: string | null
+          decision_style_observed?: string | null
           id?: string
           key_concepts?: Json | null
+          major_tensions?: string[] | null
           next_steps?: string[] | null
           sample_artifacts?: Json | null
           tension_map?: Json | null
+          time_to_alignment_minutes?: number | null
+          unresolved_disagreements?: string[] | null
           updated_at?: string | null
           workshop_session_id?: string | null
         }
@@ -2203,17 +2215,21 @@ export type Database = {
       }
       pilot_charter: {
         Row: {
+          budget_agreement_level: string | null
           calendar_events: Json | null
+          commitment_signals: Json | null
           created_at: string | null
           executive_sponsor: string
           extend_criteria: string | null
           id: string
           kill_criteria: string | null
+          kill_criteria_specificity: string | null
           meeting_cadence: string
           milestone_d10: string | null
           milestone_d30: string | null
           milestone_d60: string | null
           milestone_d90: string | null
+          owner_clarity_level: string | null
           pilot_budget: number | null
           pilot_owner: string
           scale_criteria: string | null
@@ -2221,17 +2237,21 @@ export type Database = {
           workshop_session_id: string | null
         }
         Insert: {
+          budget_agreement_level?: string | null
           calendar_events?: Json | null
+          commitment_signals?: Json | null
           created_at?: string | null
           executive_sponsor: string
           extend_criteria?: string | null
           id?: string
           kill_criteria?: string | null
+          kill_criteria_specificity?: string | null
           meeting_cadence: string
           milestone_d10?: string | null
           milestone_d30?: string | null
           milestone_d60?: string | null
           milestone_d90?: string | null
+          owner_clarity_level?: string | null
           pilot_budget?: number | null
           pilot_owner: string
           scale_criteria?: string | null
@@ -2239,17 +2259,21 @@ export type Database = {
           workshop_session_id?: string | null
         }
         Update: {
+          budget_agreement_level?: string | null
           calendar_events?: Json | null
+          commitment_signals?: Json | null
           created_at?: string | null
           executive_sponsor?: string
           extend_criteria?: string | null
           id?: string
           kill_criteria?: string | null
+          kill_criteria_specificity?: string | null
           meeting_cadence?: string
           milestone_d10?: string | null
           milestone_d30?: string | null
           milestone_d60?: string | null
           milestone_d90?: string | null
+          owner_clarity_level?: string | null
           pilot_budget?: number | null
           pilot_owner?: string
           scale_criteria?: string | null
@@ -2788,6 +2812,7 @@ export type Database = {
           before_snapshot: Json
           cost_savings_usd: number | null
           created_at: string | null
+          disagreement_points: string[] | null
           error_rate_after_pct: number | null
           error_rate_before_pct: number | null
           guardrails: Json | null
@@ -2809,6 +2834,7 @@ export type Database = {
           simulation_id: string
           simulation_name: string
           task_breakdown: Json | null
+          team_reactions: Json | null
           time_savings_pct: number | null
           vote_count: number | null
           workshop_session_id: string | null
@@ -2819,6 +2845,7 @@ export type Database = {
           before_snapshot?: Json
           cost_savings_usd?: number | null
           created_at?: string | null
+          disagreement_points?: string[] | null
           error_rate_after_pct?: number | null
           error_rate_before_pct?: number | null
           guardrails?: Json | null
@@ -2840,6 +2867,7 @@ export type Database = {
           simulation_id: string
           simulation_name: string
           task_breakdown?: Json | null
+          team_reactions?: Json | null
           time_savings_pct?: number | null
           vote_count?: number | null
           workshop_session_id?: string | null
@@ -2850,6 +2878,7 @@ export type Database = {
           before_snapshot?: Json
           cost_savings_usd?: number | null
           created_at?: string | null
+          disagreement_points?: string[] | null
           error_rate_after_pct?: number | null
           error_rate_before_pct?: number | null
           guardrails?: Json | null
@@ -2871,6 +2900,7 @@ export type Database = {
           simulation_id?: string
           simulation_name?: string
           task_breakdown?: Json | null
+          team_reactions?: Json | null
           time_savings_pct?: number | null
           vote_count?: number | null
           workshop_session_id?: string | null
@@ -2889,12 +2919,16 @@ export type Database = {
         Row: {
           ai_leverage_points: Json | null
           ceo_approved: boolean | null
+          convergence_time_minutes: number | null
           created_at: string | null
           data_governance_changes: string | null
+          governance_disagreements: string[] | null
           id: string
           org_process_changes: Json | null
           pilot_kpis: string | null
           policy_risk_checklist: Json | null
+          risk_alignment_level: string | null
+          sticking_points: string[] | null
           targets_at_risk: string | null
           updated_at: string | null
           working_group_inputs: Json | null
@@ -2903,12 +2937,16 @@ export type Database = {
         Insert: {
           ai_leverage_points?: Json | null
           ceo_approved?: boolean | null
+          convergence_time_minutes?: number | null
           created_at?: string | null
           data_governance_changes?: string | null
+          governance_disagreements?: string[] | null
           id?: string
           org_process_changes?: Json | null
           pilot_kpis?: string | null
           policy_risk_checklist?: Json | null
+          risk_alignment_level?: string | null
+          sticking_points?: string[] | null
           targets_at_risk?: string | null
           updated_at?: string | null
           working_group_inputs?: Json | null
@@ -2917,12 +2955,16 @@ export type Database = {
         Update: {
           ai_leverage_points?: Json | null
           ceo_approved?: boolean | null
+          convergence_time_minutes?: number | null
           created_at?: string | null
           data_governance_changes?: string | null
+          governance_disagreements?: string[] | null
           id?: string
           org_process_changes?: Json | null
           pilot_kpis?: string | null
           policy_risk_checklist?: Json | null
+          risk_alignment_level?: string | null
+          sticking_points?: string[] | null
           targets_at_risk?: string | null
           updated_at?: string | null
           working_group_inputs?: Json | null
@@ -3511,6 +3553,7 @@ export type Database = {
       workshop_sessions: {
         Row: {
           alignment_score: number | null
+          alignment_signals: Json | null
           bootcamp_plan_id: string | null
           cognitive_baseline_data: Json | null
           completed_at: string | null
@@ -3528,12 +3571,14 @@ export type Database = {
           segments_completed: string[] | null
           status: string
           tension_map: Json | null
+          tension_observations: Json | null
           updated_at: string | null
           workshop_date: string
           workshop_metadata: Json | null
         }
         Insert: {
           alignment_score?: number | null
+          alignment_signals?: Json | null
           bootcamp_plan_id?: string | null
           cognitive_baseline_data?: Json | null
           completed_at?: string | null
@@ -3551,12 +3596,14 @@ export type Database = {
           segments_completed?: string[] | null
           status?: string
           tension_map?: Json | null
+          tension_observations?: Json | null
           updated_at?: string | null
           workshop_date: string
           workshop_metadata?: Json | null
         }
         Update: {
           alignment_score?: number | null
+          alignment_signals?: Json | null
           bootcamp_plan_id?: string | null
           cognitive_baseline_data?: Json | null
           completed_at?: string | null
@@ -3574,6 +3621,7 @@ export type Database = {
           segments_completed?: string[] | null
           status?: string
           tension_map?: Json | null
+          tension_observations?: Json | null
           updated_at?: string | null
           workshop_date?: string
           workshop_metadata?: Json | null

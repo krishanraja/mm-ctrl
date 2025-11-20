@@ -6,6 +6,8 @@ import {
 } from './behavioralScoring';
 import { storeAssessmentEvents, storeBehavioralAdjustments } from './storeAssessmentEvents';
 import { determineAILearningStyle } from './aiLearningStyle';
+import { validateProfileData } from './validateProfileData';
+import type { DeepProfileData } from '@/types/profile';
 
 export interface AssessmentOrchestrationResult {
   success: boolean;
@@ -28,7 +30,7 @@ export interface AssessmentOrchestrationResult {
 export async function orchestrateAssessmentV2(
   contactData: any,
   assessmentData: any,
-  deepProfileData: any,
+  deepProfileData: DeepProfileData | null,
   sessionId: string,
   source: 'quiz' | 'voice' = 'quiz'
 ): Promise<AssessmentOrchestrationResult> {
@@ -36,6 +38,10 @@ export async function orchestrateAssessmentV2(
     console.log('🚀 Starting v2 assessment orchestration for:', contactData.email);
     console.log('📊 Assessment data received:', assessmentData);
     console.log('📊 Data types:', Object.entries(assessmentData).map(([k,v]) => `${k}: ${typeof v}`));
+    
+    // CRITICAL: Validate and normalize profile data at entry point
+    const safeProfile = validateProfileData(deepProfileData);
+    console.log('✅ Profile data validated with safe defaults');
 
     // Step 1: Calculate benchmark score and tier with behavioral adjustments
     const baseScores = {
@@ -47,8 +53,8 @@ export async function orchestrateAssessmentV2(
       riskGovernanceScore: assessmentData.riskGovernanceScore || 0,
     };
     
-    const adjustedScores = applyBehavioralAdjustments(baseScores, deepProfileData);
-    const executionGaps = calculateExecutionGaps(baseScores, adjustedScores, deepProfileData);
+    const adjustedScores = applyBehavioralAdjustments(baseScores, safeProfile);
+    const executionGaps = calculateExecutionGaps(baseScores, adjustedScores, safeProfile);
     
     // Use adjusted scores for final assessment
     const enhancedAssessmentData = { ...assessmentData, ...adjustedScores };
@@ -66,7 +72,7 @@ export async function orchestrateAssessmentV2(
       {
         contactData,
         assessmentData,
-        deepProfileData,
+        deepProfileData: safeProfile,
         sessionId,
         source,
         benchmarkScore,
@@ -96,12 +102,10 @@ export async function orchestrateAssessmentV2(
 
     // Phase 1: Store assessment events before generating insights
     console.log('💾 Storing assessment events for full traceability...');
-    await storeAssessmentEvents(assessmentId, leaderId, sessionId, assessmentData, deepProfileData, source);
+    await storeAssessmentEvents(assessmentId, leaderId, sessionId, assessmentData, safeProfile, source);
     
     // Phase 3: Store behavioral adjustments for transparency
-    if (deepProfileData) {
-      await storeBehavioralAdjustments(assessmentId, deepProfileData, adjustedScores, baseScores);
-    }
+    await storeBehavioralAdjustments(assessmentId, safeProfile, adjustedScores, baseScores);
     
     // 5a: Generate personalized insights (includes first moves now)
     const { data: insightsData, error: insightsError } = await invokeEdgeFunction(
@@ -109,7 +113,7 @@ export async function orchestrateAssessmentV2(
       {
         assessmentData,
         contactData,
-        deepProfileData,
+        deepProfileData: safeProfile,
         assessmentId,
         leaderId,
       },
@@ -158,7 +162,7 @@ export async function orchestrateAssessmentV2(
         userId: null,  // CP4: Don't pass leaderId as userId - causes FK violation
         contactData,
         assessmentData,
-        profileData: deepProfileData,
+        profileData: safeProfile,
         leaderId,
       },
       { logPrefix: '📚', silent: false }
@@ -166,7 +170,7 @@ export async function orchestrateAssessmentV2(
     if (libraryError) {
       console.error('⚠️ Prompt library generation failed:', libraryError);
       // CP4: Store fallback prompts so results page always shows something
-      await storeFallbackPrompts(assessmentId, contactData, assessmentData, deepProfileData);
+      await storeFallbackPrompts(assessmentId, contactData, assessmentData, safeProfile);
       
       // CP3: Log error to generation_status
       const { data: currentStatus } = await supabase
@@ -214,7 +218,7 @@ export async function orchestrateAssessmentV2(
         invokeEdgeFunction('compute-risk-signals', {
           assessment_id: assessmentId,
           assessment_data: assessmentData,
-          profile_data: deepProfileData,
+          profile_data: safeProfile,
         }, { logPrefix: '⚠️', silent: false }),
         60000,  // Increased from 15s to 60s
         'Risk signals'
@@ -224,7 +228,7 @@ export async function orchestrateAssessmentV2(
           assessment_id: assessmentId,
           dimension_scores: dimensionScores,
           assessment_data: assessmentData,
-          profile_data: deepProfileData,
+          profile_data: safeProfile,
         }, { logPrefix: '⚡', silent: false }),
         60000,  // Increased from 15s to 60s
         'Tensions'
@@ -324,25 +328,25 @@ export async function orchestrateAssessmentV2(
     }
 
     // Phase 3: Store index participant data with structured fields
-    const learningStyle = determineAILearningStyle(deepProfileData);
+    const learningStyle = determineAILearningStyle(safeProfile);
     try {
-      await supabase.from('index_participant_data').insert({
+      await supabase.from('index_participant_data').insert([{
         session_id: sessionId,
         readiness_score: benchmarkScore,
         tier: benchmarkTier,
-        dimension_scores: assessmentData,
-        deep_profile_data: deepProfileData,
+        dimension_scores: assessmentData as any,
+        deep_profile_data: safeProfile as any,
         completed_at: new Date().toISOString(),
         industry: contactData.industry,
         company_size: contactData.companySize,
         role_title: contactData.role,
         ai_learning_style: learningStyle,
-        time_waste_pct: deepProfileData?.timeWaste || null,
-        delegation_tasks_count: deepProfileData?.delegationTasks || null,
-        stakeholder_count: deepProfileData?.stakeholderNeeds || null,
-        urgency_level: deepProfileData?.urgency || null,
-        primary_bottleneck: deepProfileData?.primaryBottleneck || null
-      });
+        time_waste_pct: safeProfile.timeWaste,
+        delegation_tasks_count: safeProfile.delegationTasks.length,
+        stakeholder_count: safeProfile.stakeholders.length,
+        urgency_level: safeProfile.urgency,
+        primary_bottleneck: safeProfile.primaryBottleneck
+      }]);
       console.log('✅ Index participant data stored with structured behavioral fields');
     } catch (indexError) {
       console.error('⚠️ Failed to store index data:', indexError);

@@ -13,6 +13,72 @@ interface PromptLibraryResponse {
   durationMs: number;
 }
 
+// CRITICAL: Profile validation - duplicated here for edge function isolation
+interface SafeProfileData {
+  workBreakdown: { writing: number; presentations: number; planning: number; decisions: number; coaching: number };
+  timeWaste: number;
+  timeWasteExamples: string;
+  delegationTasks: string[];
+  delegateTasks: string[];
+  biggestChallenge: string;
+  stakeholders: string[];
+  communicationStyle: string[];
+  informationNeeds: string[];
+  transformationGoal: string;
+  urgency: string;
+  primaryBottleneck: string;
+  thinkingProcess: string;
+}
+
+const DEFAULT_PROFILE: SafeProfileData = {
+  workBreakdown: { writing: 20, presentations: 20, planning: 20, decisions: 20, coaching: 20 },
+  timeWaste: 30,
+  timeWasteExamples: "status updates, meeting prep, email management",
+  delegationTasks: ["routine reporting", "data gathering"],
+  delegateTasks: ["routine reporting", "data gathering"],
+  biggestChallenge: "scaling team capacity",
+  stakeholders: ["executive team", "direct reports"],
+  communicationStyle: ["Concise & data-driven"],
+  informationNeeds: ["Performance metrics"],
+  transformationGoal: "operational efficiency",
+  urgency: "moderate",
+  primaryBottleneck: "time constraints",
+  thinkingProcess: "systematic and methodical"
+};
+
+function validateProfileData(profile: any): SafeProfileData {
+  if (!profile || typeof profile !== 'object') {
+    console.warn('⚠️ Invalid profile data, using defaults');
+    return DEFAULT_PROFILE;
+  }
+
+  const safeWorkBreakdown = profile.workBreakdown && typeof profile.workBreakdown === 'object'
+    ? {
+        writing: typeof profile.workBreakdown.writing === 'number' ? profile.workBreakdown.writing : DEFAULT_PROFILE.workBreakdown.writing,
+        presentations: typeof profile.workBreakdown.presentations === 'number' ? profile.workBreakdown.presentations : DEFAULT_PROFILE.workBreakdown.presentations,
+        planning: typeof profile.workBreakdown.planning === 'number' ? profile.workBreakdown.planning : DEFAULT_PROFILE.workBreakdown.planning,
+        decisions: typeof profile.workBreakdown.decisions === 'number' ? profile.workBreakdown.decisions : DEFAULT_PROFILE.workBreakdown.decisions,
+        coaching: typeof profile.workBreakdown.coaching === 'number' ? profile.workBreakdown.coaching : DEFAULT_PROFILE.workBreakdown.coaching,
+      }
+    : DEFAULT_PROFILE.workBreakdown;
+
+  return {
+    workBreakdown: safeWorkBreakdown,
+    timeWaste: typeof profile.timeWaste === 'number' ? profile.timeWaste : DEFAULT_PROFILE.timeWaste,
+    timeWasteExamples: typeof profile.timeWasteExamples === 'string' ? profile.timeWasteExamples : DEFAULT_PROFILE.timeWasteExamples,
+    delegationTasks: Array.isArray(profile.delegationTasks) ? profile.delegationTasks : DEFAULT_PROFILE.delegationTasks,
+    delegateTasks: Array.isArray(profile.delegateTasks) ? profile.delegateTasks : DEFAULT_PROFILE.delegateTasks,
+    biggestChallenge: typeof profile.biggestChallenge === 'string' ? profile.biggestChallenge : DEFAULT_PROFILE.biggestChallenge,
+    stakeholders: Array.isArray(profile.stakeholders) ? profile.stakeholders : DEFAULT_PROFILE.stakeholders,
+    communicationStyle: Array.isArray(profile.communicationStyle) ? profile.communicationStyle : DEFAULT_PROFILE.communicationStyle,
+    informationNeeds: Array.isArray(profile.informationNeeds) ? profile.informationNeeds : DEFAULT_PROFILE.informationNeeds,
+    transformationGoal: typeof profile.transformationGoal === 'string' ? profile.transformationGoal : DEFAULT_PROFILE.transformationGoal,
+    urgency: typeof profile.urgency === 'string' ? profile.urgency : DEFAULT_PROFILE.urgency,
+    primaryBottleneck: typeof profile.primaryBottleneck === 'string' ? profile.primaryBottleneck : DEFAULT_PROFILE.primaryBottleneck,
+    thinkingProcess: typeof profile.thinkingProcess === 'string' ? profile.thinkingProcess : DEFAULT_PROFILE.thinkingProcess,
+  };
+}
+
 // Helper: Convert PEM to ArrayBuffer for crypto operations
 function pemToArrayBuffer(pem: string): ArrayBuffer {
   const b64 = pem
@@ -109,6 +175,10 @@ serve(async (req) => {
     const { assessmentId, sessionId, userId, contactData, assessmentData, profileData, leaderId } = await req.json();
     console.log('Generating prompt library for assessment:', assessmentId);
     
+    // CRITICAL: Validate profile data at entry point
+    const safeProfile = validateProfileData(profileData);
+    console.log('✅ Profile data validated with safe defaults');
+    
     // CP1: Verify Environment Variables Actually Exist
     console.log('🔑 CP1: API Keys check:', {
       gemini: !!Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY') && Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY')!.length > 50,
@@ -187,20 +257,20 @@ serve(async (req) => {
 
     // Build prompt with safe null handling for profileData
     let profileSection = '';
-    if (profileData && Object.keys(profileData).length > 0) {
+    if (Object.keys(safeProfile).length > 0) {
       profileSection = `
 
 DEEP PROFILE:
-- Thinking Process: ${profileData.thinkingProcess || 'structured'}
-- Communication Style: ${profileData.communicationStyle?.join(', ') || 'direct, data-driven'}
-- Work Breakdown: ${profileData.workBreakdown ? Object.entries(profileData.workBreakdown).map(([k, v]) => `${k}: ${v}%`).join(', ') : 'strategic planning, team management, operations'}
-- Information Needs: ${profileData.informationNeeds?.join(', ') || 'data insights, team updates, strategic guidance'}
-- Transformation Goal: ${profileData.transformationGoal || contactData.primaryFocus || 'AI adoption'}
-- Time on Non-Critical Work: ${profileData.timeWaste || 30}%
-- Specific Time Wasters: ${profileData.timeWasteExamples || 'repetitive tasks, status meetings'}
-- Top Delegation Priorities: ${profileData.delegateTasks?.join(', ') || 'routine analysis, reporting, scheduling'}
-- Biggest Communication Challenge: ${profileData.biggestChallenge || 'keeping stakeholders aligned'}
-- Key Stakeholders: ${profileData.stakeholders?.join(', ') || 'executive team, board members, key clients'}`;
+- Thinking Process: ${safeProfile.thinkingProcess}
+- Communication Style: ${safeProfile.communicationStyle.join(', ')}
+- Work Breakdown: ${Object.entries(safeProfile.workBreakdown).map(([k, v]) => `${k}: ${v}%`).join(', ')}
+- Information Needs: ${safeProfile.informationNeeds.join(', ')}
+- Transformation Goal: ${safeProfile.transformationGoal}
+- Time on Non-Critical Work: ${safeProfile.timeWaste}%
+- Specific Time Wasters: ${safeProfile.timeWasteExamples}
+- Top Delegation Priorities: ${safeProfile.delegateTasks.join(', ')}
+- Biggest Communication Challenge: ${safeProfile.biggestChallenge}
+- Key Stakeholders: ${safeProfile.stakeholders.join(', ')}`;
     } else {
       profileSection = `
 
@@ -614,21 +684,10 @@ Return ONLY valid JSON, no markdown formatting.`;
       console.log('⚠️ All AI services failed, using template fallback');
       generationModel = 'template';
       
-      // Safe defaults for profile data when using template fallback
-      const safeProfile = {
-        workBreakdown: profileData?.workBreakdown || { strategy: 30, operations: 40, people: 30 },
-        timeWaste: profileData?.timeWaste || 30,
-        timeWasteExamples: profileData?.timeWasteExamples || 'repetitive tasks, status meetings',
-        delegateTasks: profileData?.delegateTasks || ['routine analysis', 'reporting', 'scheduling'],
-        biggestChallenge: profileData?.biggestChallenge || 'keeping stakeholders aligned',
-        stakeholders: profileData?.stakeholders || ['executive team', 'key clients'],
-        communicationStyle: profileData?.communicationStyle || ['direct', 'data-driven'],
-        transformationGoal: profileData?.transformationGoal || contactData.primaryFocus || 'AI adoption'
-      };
-      
+      // safeProfile already exists from validation at entry point
       const fallbackLibrary = {
         executiveProfile: {
-          summary: `${contactData.fullName} operates as a ${contactData.roleTitle} focused on ${contactData.primaryFocus}. Their assessment shows strong capabilities in strategic thinking and team leadership, with opportunities to scale impact through AI-powered delegation and automation. Working in a ${contactData.companySize} organization, they balance ${safeProfile.workBreakdown.strategy}% strategic work with operational demands.`,
+          summary: `${contactData.fullName} operates as a ${contactData.roleTitle} focused on ${contactData.primaryFocus}. Their assessment shows strong capabilities in strategic thinking and team leadership, with opportunities to scale impact through AI-powered delegation and automation. Working in a ${contactData.companySize} organization, they balance ${safeProfile.workBreakdown.planning}% strategic work with operational demands.`,
           transformationOpportunity: `Transform ${safeProfile.timeWaste}% of non-critical work into strategic time by automating ${safeProfile.delegateTasks[0]}, streamlining ${safeProfile.biggestChallenge}, and empowering team decisions.`
         },
         recommendedProjects: [

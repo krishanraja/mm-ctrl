@@ -14,6 +14,72 @@ interface PersonalizedInsightsResponse {
   durationMs: number;
 }
 
+// CRITICAL: Profile validation - duplicated here for edge function isolation
+interface SafeProfileData {
+  workBreakdown: { writing: number; presentations: number; planning: number; decisions: number; coaching: number };
+  timeWaste: number;
+  timeWasteExamples: string;
+  delegationTasks: string[];
+  delegateTasks: string[];
+  biggestChallenge: string;
+  stakeholders: string[];
+  communicationStyle: string[];
+  informationNeeds: string[];
+  transformationGoal: string;
+  urgency: string;
+  primaryBottleneck: string;
+  thinkingProcess: string;
+}
+
+const DEFAULT_PROFILE: SafeProfileData = {
+  workBreakdown: { writing: 20, presentations: 20, planning: 20, decisions: 20, coaching: 20 },
+  timeWaste: 30,
+  timeWasteExamples: "status updates, meeting prep, email management",
+  delegationTasks: ["routine reporting", "data gathering"],
+  delegateTasks: ["routine reporting", "data gathering"],
+  biggestChallenge: "scaling team capacity",
+  stakeholders: ["executive team", "direct reports"],
+  communicationStyle: ["Concise & data-driven"],
+  informationNeeds: ["Performance metrics"],
+  transformationGoal: "operational efficiency",
+  urgency: "moderate",
+  primaryBottleneck: "time constraints",
+  thinkingProcess: "systematic and methodical"
+};
+
+function validateProfileData(profile: any): SafeProfileData {
+  if (!profile || typeof profile !== 'object') {
+    console.warn('⚠️ Invalid profile data, using defaults');
+    return DEFAULT_PROFILE;
+  }
+
+  const safeWorkBreakdown = profile.workBreakdown && typeof profile.workBreakdown === 'object'
+    ? {
+        writing: typeof profile.workBreakdown.writing === 'number' ? profile.workBreakdown.writing : DEFAULT_PROFILE.workBreakdown.writing,
+        presentations: typeof profile.workBreakdown.presentations === 'number' ? profile.workBreakdown.presentations : DEFAULT_PROFILE.workBreakdown.presentations,
+        planning: typeof profile.workBreakdown.planning === 'number' ? profile.workBreakdown.planning : DEFAULT_PROFILE.workBreakdown.planning,
+        decisions: typeof profile.workBreakdown.decisions === 'number' ? profile.workBreakdown.decisions : DEFAULT_PROFILE.workBreakdown.decisions,
+        coaching: typeof profile.workBreakdown.coaching === 'number' ? profile.workBreakdown.coaching : DEFAULT_PROFILE.workBreakdown.coaching,
+      }
+    : DEFAULT_PROFILE.workBreakdown;
+
+  return {
+    workBreakdown: safeWorkBreakdown,
+    timeWaste: typeof profile.timeWaste === 'number' ? profile.timeWaste : DEFAULT_PROFILE.timeWaste,
+    timeWasteExamples: typeof profile.timeWasteExamples === 'string' ? profile.timeWasteExamples : DEFAULT_PROFILE.timeWasteExamples,
+    delegationTasks: Array.isArray(profile.delegationTasks) ? profile.delegationTasks : DEFAULT_PROFILE.delegationTasks,
+    delegateTasks: Array.isArray(profile.delegateTasks) ? profile.delegateTasks : DEFAULT_PROFILE.delegateTasks,
+    biggestChallenge: typeof profile.biggestChallenge === 'string' ? profile.biggestChallenge : DEFAULT_PROFILE.biggestChallenge,
+    stakeholders: Array.isArray(profile.stakeholders) ? profile.stakeholders : DEFAULT_PROFILE.stakeholders,
+    communicationStyle: Array.isArray(profile.communicationStyle) ? profile.communicationStyle : DEFAULT_PROFILE.communicationStyle,
+    informationNeeds: Array.isArray(profile.informationNeeds) ? profile.informationNeeds : DEFAULT_PROFILE.informationNeeds,
+    transformationGoal: typeof profile.transformationGoal === 'string' ? profile.transformationGoal : DEFAULT_PROFILE.transformationGoal,
+    urgency: typeof profile.urgency === 'string' ? profile.urgency : DEFAULT_PROFILE.urgency,
+    primaryBottleneck: typeof profile.primaryBottleneck === 'string' ? profile.primaryBottleneck : DEFAULT_PROFILE.primaryBottleneck,
+    thinkingProcess: typeof profile.thinkingProcess === 'string' ? profile.thinkingProcess : DEFAULT_PROFILE.thinkingProcess,
+  };
+}
+
 // Helper: Convert PEM to ArrayBuffer for crypto operations
 function pemToArrayBuffer(pem: string): ArrayBuffer {
   const b64 = pem
@@ -107,6 +173,10 @@ serve(async (req) => {
 
   try {
     const { assessmentData, contactData, deepProfileData, assessmentId, leaderId } = await req.json();
+    
+    // CRITICAL: Validate profile data at entry point
+    const safeProfile = validateProfileData(deepProfileData);
+    console.log('✅ Profile data validated with safe defaults');
     
     // CP1: Verify Environment Variables Actually Exist
     console.log('🔑 CP1: API Keys check:', {
@@ -495,22 +565,22 @@ Return ONLY valid JSON matching the required structure.`
         growthReadiness: {
           level: avgScore >= 75 ? "High" : avgScore >= 60 ? "Medium-High" : avgScore >= 45 ? "Medium" : "Developing",
           preview: `Score: ${avgScore}/100 - ${avgScore >= 60 ? 'Strong foundation' : 'Building momentum'}`,
-          details: `${contactData.fullName}'s ${avgScore}/100 score shows ${avgScore >= 60 ? 'strong readiness' : 'solid progress'} in ${contactData.primaryFocus}.${deepProfileData?.transformationGoal ? ` Focus: ${deepProfileData.transformationGoal}` : ''}`
+          details: `${contactData.fullName}'s ${avgScore}/100 score shows ${avgScore >= 60 ? 'strong readiness' : 'solid progress'} in ${contactData.primaryFocus}. Focus: ${safeProfile.transformationGoal}`
         },
         leadershipStage: {
           stage: avgScore >= 75 ? "Confident" : avgScore >= 60 ? "Aware" : "Emerging",
           preview: avgScore >= 60 ? "Leading AI adoption" : "Building AI literacy",
-          details: `Ready to ${avgScore >= 60 ? 'scale AI adoption with team' : 'start pilot projects'}.${deepProfileData?.delegateTasks?.[0] ? ` Next: ${deepProfileData.delegateTasks[0]}` : ''}`
+          details: `Ready to ${avgScore >= 60 ? 'scale AI adoption with team' : 'start pilot projects'}. Next: ${safeProfile.delegateTasks[0]}`
         },
         keyFocus: {
           category: keyFocusMap[contactData.primaryFocus] || "Strategic Execution",
           preview: `Optimize ${contactData.primaryFocus.toLowerCase()}`,
-          details: `Focus on ${deepProfileData?.delegateTasks?.[0] || 'priority tasks'} to address ${deepProfileData?.biggestChallenge || 'key challenges'}`
+          details: `Focus on ${safeProfile.delegateTasks[0]} to address ${safeProfile.biggestChallenge}`
         },
         quickWins: [
           {
-            title: `Automate ${deepProfileData?.delegateTasks?.[0] || 'repetitive tasks'}`,
-            impact: `Save ${Math.min(deepProfileData?.timeWaste || 20, 30)}% of time currently spent on repetitive ${deepProfileData?.timeWasteExamples || 'manual processes'}`,
+            title: `Automate ${safeProfile.delegateTasks[0]}`,
+            impact: `Save ${Math.min(safeProfile.timeWaste, 30)}% of time currently spent on repetitive ${safeProfile.timeWasteExamples}`,
             timeToValue: "2 weeks"
           },
           {
