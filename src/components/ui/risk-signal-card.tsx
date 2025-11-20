@@ -1,96 +1,55 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, GraduationCap, DollarSign, Clock, Lock } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface RiskSignalCardProps {
-  riskKey: 'shadow_ai' | 'skills_gap' | 'roi_leakage' | 'decision_friction';
-  level: 'low' | 'medium' | 'high';
-  description: string;
-  isLocked?: boolean;
+  signal: {
+    risk_key: string;
+    level: 'low' | 'medium' | 'high';
+    description: string;
+    priority_rank: number;
+  };
 }
 
-const riskConfig = {
-  shadow_ai: {
-    icon: Shield,
-    label: 'Shadow AI',
-    color: 'text-primary',
-  },
-  skills_gap: {
-    icon: GraduationCap,
-    label: 'Skills Gap',
-    color: 'text-primary',
-  },
-  roi_leakage: {
-    icon: DollarSign,
-    label: 'ROI Leakage',
-    color: 'text-primary',
-  },
-  decision_friction: {
-    icon: Clock,
-    label: 'Decision Friction',
-    color: 'text-primary',
-  },
+const riskLabels: Record<string, string> = {
+  shadow_ai: 'Shadow AI',
+  skills_gap: 'Skills Gap',
+  roi_leakage: 'ROI Leakage',
+  decision_friction: 'Decision Friction',
 };
 
-const levelConfig = {
-  low: {
-    badge: 'secondary',
-    label: 'Low Risk',
-  },
-  medium: {
-    badge: 'default',
-    label: 'Medium Risk',
-  },
-  high: {
-    badge: 'destructive',
-    label: 'High Risk',
-  },
+const levelColors = {
+  low: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700',
+  medium: 'bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-700',
+  high: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700',
 };
 
-export const RiskSignalCard = React.memo<RiskSignalCardProps>(({ 
-  riskKey, 
-  level, 
-  description,
-  isLocked = false,
-}) => {
-  const config = riskConfig[riskKey];
-  const Icon = config.icon;
-  const levelInfo = levelConfig[level];
-
+export const RiskSignalCard: React.FC<RiskSignalCardProps> = ({ signal }) => {
+  const label = riskLabels[signal.risk_key] || signal.risk_key;
+  
   return (
-    <Card className="hover:shadow-md transition-shadow relative">
-      {isLocked && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg z-10 flex items-center justify-center">
-          <div className="text-center space-y-2">
-            <Lock className="h-6 w-6 sm:h-8 sm:w-8 mx-auto text-muted-foreground" />
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium px-4">
-              Unlock Full Diagnostic
-            </p>
+    <Card className="border-l-4 border-l-orange-500/50">
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0 mt-1">
+            <AlertTriangle className="h-5 w-5 text-orange-500" />
           </div>
-        </div>
-      )}
-      
-      <CardContent className="p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-          <div className={`p-2 sm:p-3 rounded-lg bg-primary/10 ${config.color} flex-shrink-0`}>
-            <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-          </div>
-          <div className="flex-1 space-y-2 min-w-0 w-full">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-              <h3 className="font-semibold text-base sm:text-lg break-words">{config.label}</h3>
-              <Badge variant={levelInfo.badge as any} className="self-start sm:self-auto whitespace-nowrap">
-                {levelInfo.label}
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <Badge variant="secondary" className="text-xs">
+                {label}
+              </Badge>
+              <Badge className={`text-xs ${levelColors[signal.level]}`}>
+                {signal.level.toUpperCase()}
               </Badge>
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed break-words">
-              {description}
+            <p className="text-sm text-foreground leading-relaxed">
+              {signal.description}
             </p>
           </div>
         </div>
       </CardContent>
     </Card>
   );
-});
-
-RiskSignalCard.displayName = 'RiskSignalCard';
+};

@@ -124,12 +124,12 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
         {/* AI Command Center */}
         <Card>
         <CardHeader>
-          <CardTitle>Your AI Command Center</CardTitle>
+          <CardTitle>Your Thinking Tools</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            {contactData.fullName}, based on your leadership profile and priorities, here are your personalized AI prompts. 
-            Each set is tailored to your role, communication style, and strategic objectives.
+            {contactData.fullName.split(' ')[0]}, these are ways to use AI as a thinking partner 
+            in your daily work. Each is tailored to your role, priorities, and how you communicate.
           </p>
         </CardContent>
       </Card>
@@ -147,7 +147,7 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
             ) : (
               <Copy className="h-4 w-4" />
             )}
-            Copy All Prompts
+            Copy All Tools
           </Button>
         </div>
       )}
