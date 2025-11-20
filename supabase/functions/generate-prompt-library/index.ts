@@ -606,36 +606,49 @@ Return ONLY valid JSON, no markdown formatting.`;
     if (!generatedContent) {
       console.log('⚠️ All AI services failed, using template fallback');
       generationModel = 'template';
+      
+      // Safe defaults for profile data when using template fallback
+      const safeProfile = {
+        workBreakdown: profileData?.workBreakdown || { strategy: 30, operations: 40, people: 30 },
+        timeWaste: profileData?.timeWaste || 30,
+        timeWasteExamples: profileData?.timeWasteExamples || 'repetitive tasks, status meetings',
+        delegateTasks: profileData?.delegateTasks || ['routine analysis', 'reporting', 'scheduling'],
+        biggestChallenge: profileData?.biggestChallenge || 'keeping stakeholders aligned',
+        stakeholders: profileData?.stakeholders || ['executive team', 'key clients'],
+        communicationStyle: profileData?.communicationStyle || ['direct', 'data-driven'],
+        transformationGoal: profileData?.transformationGoal || contactData.primaryFocus || 'AI adoption'
+      };
+      
       const fallbackLibrary = {
         executiveProfile: {
-          summary: `${contactData.fullName} operates as a ${contactData.roleTitle} focused on ${contactData.primaryFocus}. Their assessment shows strong capabilities in strategic thinking and team leadership, with opportunities to scale impact through AI-powered delegation and automation. Working in a ${contactData.companySize} organization, they balance ${profileData.workBreakdown.strategy || 30}% strategic work with operational demands.`,
-          transformationOpportunity: `Transform ${profileData.timeWaste}% of non-critical work into strategic time by automating ${profileData.delegateTasks[0]}, streamlining ${profileData.biggestChallenge}, and empowering team decisions.`
+          summary: `${contactData.fullName} operates as a ${contactData.roleTitle} focused on ${contactData.primaryFocus}. Their assessment shows strong capabilities in strategic thinking and team leadership, with opportunities to scale impact through AI-powered delegation and automation. Working in a ${contactData.companySize} organization, they balance ${safeProfile.workBreakdown.strategy}% strategic work with operational demands.`,
+          transformationOpportunity: `Transform ${safeProfile.timeWaste}% of non-critical work into strategic time by automating ${safeProfile.delegateTasks[0]}, streamlining ${safeProfile.biggestChallenge}, and empowering team decisions.`
         },
         recommendedProjects: [
           {
             name: "Executive Brief Generator",
             purpose: "Transform raw data and updates into executive-ready strategic summaries",
             whenToUse: "Before leadership meetings, quarterly reviews, or stakeholder updates",
-            masterInstructions: `Act as ${contactData.roleTitle}'s strategic communications advisor. Transform verbose updates into crisp executive briefs focusing on ${contactData.primaryFocus}. Structure: Executive Summary (3 bullets), Key Insights (2-3 items), Recommended Actions (prioritized), Timeline. Match their ${profileData.communicationStyle.join(' and ')} style.`,
+            masterInstructions: `Act as ${contactData.roleTitle}'s strategic communications advisor. Transform verbose updates into crisp executive briefs focusing on ${contactData.primaryFocus}. Structure: Executive Summary (3 bullets), Key Insights (2-3 items), Recommended Actions (prioritized), Timeline. Match their ${safeProfile.communicationStyle.join(' and ')} style.`,
             examplePrompts: [
               "Synthesize this week's project updates into an executive brief for our leadership team",
               "Create a strategic summary of Q4 performance highlighting ${contactData.primaryFocus} progress",
               "Transform these stakeholder meeting notes into actionable next steps"
             ],
             successMetrics: [
-              `Reduce brief preparation time by ${Math.min(profileData.timeWaste, 70)}%`,
+              `Reduce brief preparation time by ${Math.min(safeProfile.timeWaste, 70)}%`,
               "Increase stakeholder alignment scores by 30%"
             ]
           },
           {
             name: "Decision Framework Assistant",
             purpose: "Structure complex decisions with stakeholder analysis and risk assessment",
-            whenToUse: `When evaluating ${profileData.delegateTasks[1] || 'strategic initiatives'} or addressing ${profileData.biggestChallenge}`,
-            masterInstructions: `You're ${contactData.fullName}'s decision advisor. Analyze decisions through: 1) Stakeholder Impact (${profileData.stakeholders.join(', ')}), 2) Strategic Alignment (${contactData.primaryFocus}), 3) Resource Trade-offs, 4) Risk Mitigation. Present options in their ${profileData.communicationStyle[0]} style with clear recommendations.`,
+            whenToUse: `When evaluating ${safeProfile.delegateTasks[1]} or addressing ${safeProfile.biggestChallenge}`,
+            masterInstructions: `You're ${contactData.fullName}'s decision advisor. Analyze decisions through: 1) Stakeholder Impact (${safeProfile.stakeholders.join(', ')}), 2) Strategic Alignment (${contactData.primaryFocus}), 3) Resource Trade-offs, 4) Risk Mitigation. Present options in their ${safeProfile.communicationStyle[0]} style with clear recommendations.`,
             examplePrompts: [
-              `Analyze this ${profileData.delegateTasks[0]} decision considering our ${contactData.timeline} timeline`,
+              `Analyze this ${safeProfile.delegateTasks[0]} decision considering our ${contactData.timeline} timeline`,
               "Evaluate trade-offs between these three strategic options",
-              `Create a stakeholder impact assessment for ${profileData.biggestChallenge}`
+              `Create a stakeholder impact assessment for ${safeProfile.biggestChallenge}`
             ],
             successMetrics: [
               "Reduce decision cycle time by 40%",
@@ -644,16 +657,16 @@ Return ONLY valid JSON, no markdown formatting.`;
           },
           {
             name: "Team Communication Optimizer",
-            purpose: `Address ${profileData.biggestChallenge} through AI-powered communication templates`,
+            purpose: `Address ${safeProfile.biggestChallenge} through AI-powered communication templates`,
             whenToUse: "Team announcements, feedback sessions, change management, delegation",
-            masterInstructions: `Generate communications for ${contactData.companyName} teams that reflect ${contactData.fullName}'s ${profileData.communicationStyle.join(' and ')} approach. Adapt tone for ${profileData.stakeholders.join(', ')}. Focus on ${profileData.transformationGoal}. Include clear CTAs and success criteria.`,
+            masterInstructions: `Generate communications for ${contactData.companyName} teams that reflect ${contactData.fullName}'s ${safeProfile.communicationStyle.join(' and ')} approach. Adapt tone for ${safeProfile.stakeholders.join(', ')}. Focus on ${safeProfile.transformationGoal}. Include clear CTAs and success criteria.`,
             examplePrompts: [
-              `Draft a team message about ${profileData.delegateTasks[0]} that builds buy-in`,
-              `Create feedback templates for ${profileData.stakeholders[0]} conversations`,
-              `Write a change announcement addressing ${profileData.biggestChallenge}`
+              `Draft a team message about ${safeProfile.delegateTasks[0]} that builds buy-in`,
+              `Create feedback templates for ${safeProfile.stakeholders[0]} conversations`,
+              `Write a change announcement addressing ${safeProfile.biggestChallenge}`
             ],
             successMetrics: [
-              `Reduce communication drafting time by ${Math.min(profileData.timeWaste, 60)}%`,
+              `Reduce communication drafting time by ${Math.min(safeProfile.timeWaste, 60)}%`,
               "Increase team response rate by 45%"
             ]
           }
@@ -662,12 +675,12 @@ Return ONLY valid JSON, no markdown formatting.`;
           {
             name: "Strategic Synthesis",
             category: "Decision-Making",
-            prompt: `Analyze [SITUATION] from a ${contactData?.roleTitle || 'Executive'} perspective focusing on ${contactData.primaryFocus}. Consider ${contactData.fullName}'s transformation goal: "${profileData.transformationGoal}". Provide: 1) Core Issue, 2) Strategic Options aligned with ${contactData.timeline} timeline, 3) Stakeholder Impact (${profileData.stakeholders.join(', ')}), 4) Recommended Action addressing ${profileData.biggestChallenge}.`
+            prompt: `Analyze [SITUATION] from a ${contactData?.roleTitle || 'Executive'} perspective focusing on ${contactData.primaryFocus}. Consider ${contactData.fullName}'s transformation goal: "${safeProfile.transformationGoal}". Provide: 1) Core Issue, 2) Strategic Options aligned with ${contactData.timeline} timeline, 3) Stakeholder Impact (${safeProfile.stakeholders.join(', ')}), 4) Recommended Action addressing ${safeProfile.biggestChallenge}.`
           },
           {
             name: "Stakeholder Update",
             category: "Communication",
-            prompt: `Create an update for [STAKEHOLDER] about [TOPIC]. Use ${profileData.communicationStyle[0]} tone matching ${contactData.fullName}'s style. Consider stakeholder: ${profileData.stakeholders[0]}. Structure: Progress Summary tied to ${profileData.transformationGoal}, Key Wins, Blockers (if any), Next Steps aligned with ${contactData.timeline}, Support Needed.`
+            prompt: `Create an update for [STAKEHOLDER] about [TOPIC]. Use ${safeProfile.communicationStyle[0]} tone matching ${contactData.fullName}'s style. Consider stakeholder: ${safeProfile.stakeholders[0]}. Structure: Progress Summary tied to ${safeProfile.transformationGoal}, Key Wins, Blockers (if any), Next Steps aligned with ${contactData.timeline}, Support Needed.`
           },
           {
             name: "Team Delegation",
@@ -676,13 +689,21 @@ Return ONLY valid JSON, no markdown formatting.`;
           }
         ],
         implementationRoadmap: {
-          week1: `Start with Executive Brief Generator and Strategic Synthesis template - these directly address your ${profileData.timeWaste}% time waste on ${profileData.timeWasteExamples}. Test with 2-3 real scenarios.`,
-          week2to4: `Add Decision Framework Assistant for ${profileData.delegateTasks[0]} decisions. Introduce Team Communication Optimizer to address ${profileData.biggestChallenge}. Build team muscle memory with consistent templates.`,
-          month2plus: `Customize all templates to match specific stakeholder profiles (${profileData.stakeholders.join(', ')}). Add advanced prompts for ${profileData.transformationGoal}. Track time savings and decision quality improvements.`
+          week1: `Start with Executive Brief Generator and Strategic Synthesis template - these directly address your ${safeProfile.timeWaste}% time waste on ${safeProfile.timeWasteExamples}. Test with 2-3 real scenarios.`,
+          week2to4: `Add Decision Framework Assistant for ${safeProfile.delegateTasks[0]} decisions. Introduce Team Communication Optimizer to address ${safeProfile.biggestChallenge}. Build team muscle memory with consistent templates.`,
+          month2plus: `Customize all templates to match specific stakeholder profiles (${safeProfile.stakeholders.join(', ')}). Add advanced prompts for ${safeProfile.transformationGoal}. Track time savings and decision quality improvements.`
         }
       };
       
       generatedContent = JSON.stringify(fallbackLibrary);
+      console.log('✅ Template fallback completed successfully with safe defaults');
+      console.log('📊 Profile data availability:', {
+        hasWorkBreakdown: !!profileData?.workBreakdown,
+        hasDelegateTasks: !!profileData?.delegateTasks,
+        hasStakeholders: !!profileData?.stakeholders,
+        hasCommunicationStyle: !!profileData?.communicationStyle,
+        hasTransformationGoal: !!profileData?.transformationGoal
+      });
       console.log('📊 Generation metrics:', {
         source: 'template',
         durationMs: Date.now() - startTime,
