@@ -203,55 +203,23 @@ CONTEXT:
 - Timeline: ${contactData.timeline || 'Near-term'}`;
     }
 
-    const synthesisPro = `CRITICAL: You are creating THE DEFINITIVE AI COMMAND CENTER for this executive.
-This is NOT a suggestion library - these are MASTER COMMAND PROMPTS they will copy-paste verbatim into any AI assistant.
+    const synthesisPro = `PHASE 3: OPTIMIZED PROMPT - Create THE DEFINITIVE AI COMMAND CENTER for this executive.
 
-POSITIONING: Ultra-confident. This IS their personalized AI brain. No hedging, no "you could try", no "example". 
-Every prompt must convey: "THIS IS YOUR LAST MASTER PROMPT. COPY IT. USE IT EVERYWHERE."
+POSITIONING: Ultra-confident master prompts they'll copy-paste verbatim. Use gender-neutral language (they/their/them).
 
-IMPORTANT: Use ONLY gender-neutral language throughout (they/their/them).
+EXECUTIVE: ${contactData.fullName || 'Leader'} | ${contactData.roleTitle || contactData.department} | ${contactData.companyName || 'Organization'} (${contactData.companySize || 'mid-size'})
+FOCUS: ${contactData.primaryFocus || 'AI adoption'} | Timeline: ${contactData.timeline || 'near-term'}
 
-EXECUTIVE PROFILE:
-- Name: ${contactData.fullName || 'the leader'}
-- Role: ${contactData.roleTitle || contactData.department || 'Leader'}
-- Company: ${contactData.companyName || 'their organization'} (${contactData.companySize || 'mid-size'})
-- Primary Focus: ${contactData.primaryFocus || 'AI adoption'}
-- Timeline: ${contactData.timeline || 'near-term'}
+ASSESSMENT: ${Object.entries(assessmentData).map(([key, value]) => `${key}: ${value}`).join(' | ')}${profileSection}
 
-ASSESSMENT SCORES:
-${Object.entries(assessmentData).map(([key, value]) => `- ${key}: ${value}`).join('\n')}${profileSection}
+RULES:
+✅ Definitive authority: "Your AI Command Prompt" NOT "example"
+✅ 300-400 words per prompt with specific stakeholders/metrics/context
+✅ Zero placeholders - use actual data from profile
+❌ Generic frameworks that work for any executive
+❌ Suggestive language: "might", "consider", "could try"
 
-LANGUAGE RULES (CRITICAL):
-✅ "Your AI Command Prompt" (not "example prompt")
-✅ "Copy-paste this exact prompt" (not "here's an example")  
-✅ "Use as-is, no modifications needed" (not "customize as needed")
-✅ "This is personalized for YOU" (not "this could work for...")
-✅ Frame as DEFINITIVE authority, not suggestive
-
-ANTI-PATTERNS TO REJECT:
-❌ "Analyze this research and information synthesis decision..."
-❌ "Evaluate trade-offs between these three strategic options..."  
-❌ "Create a stakeholder impact assessment for..."
-❌ Any prompt that could work for ANY executive in ANY industry
-❌ Generic frameworks without specific names, metrics, or context
-❌ Suggestive language: "you might", "consider", "could try"
-
-QUALITY STANDARD (300-400 words per master prompt):
-✅ "As ${contactData.roleTitle || 'leader'} at ${contactData.companyName || 'the organization'}, draft a 3-minute update for [specific stakeholder from profile] that addresses [specific challenge from profile] using data from recent initiatives, focusing on how AI automation has impacted [specific metric or area]."
-✅ "You're presenting to [specific stakeholder from profile] about [specific initiative]. They care about [their priority]. Generate 3 talking points that connect AI ROI to their KPIs, using examples from ${contactData.companySize || 'similar-sized'} companies."
-✅ "I spend hours weekly on [specific time-waster from profile]. Design an AI workflow that reduces this by 70% by automating [specific subtask], then draft the delegation instructions for [specific role]."
-
-VALIDATION CHECKLIST (AI must verify before returning):
-- [ ] Every prompt is 300-400 words, fully personalized, copy-paste ready
-- [ ] Mentions actual stakeholders, time-wasters, or challenges from their profile
-- [ ] Includes role-specific and industry-specific terminology
-- [ ] References their specific context (company size, timeline, focus area)
-- [ ] Zero generic placeholders or "[insert X]" text
-- [ ] Uses authoritative language: "Use this", "This is your", "Copy-paste"
-- [ ] A different executive in different industry could NOT use these exact prompts
-
-YOUR TASK:
-Generate a comprehensive Executive AI Command Center in JSON format with radical specificity:
+TASK: Generate comprehensive Executive AI Command Center JSON with radical specificity:
 
 {
   "personalizedInsights": {
@@ -398,8 +366,7 @@ Return ONLY valid JSON, no markdown formatting.`;
             }],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 8000,
-              responseMimeType: "application/json"
+              maxOutputTokens: 12000 // PHASE 4: Increased from 8000 to 12000
             },
             tools: [{
               google_search: {}
@@ -517,7 +484,7 @@ Return ONLY valid JSON, no markdown formatting.`;
     if (!generatedContent && openaiApiKey) {
       console.log('⚠️ Gemini failed, trying OpenAI GPT-4.1...');
       const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 8000);
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 25000); // PHASE 4: Increased from 8s to 25s
 
       try {
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -585,7 +552,7 @@ Return ONLY valid JSON, no markdown formatting.`;
     if (!generatedContent && lovableApiKey) {
       console.log('⚠️ Gemini and OpenAI failed, trying Lovable AI as last resort...');
       const lovableController = new AbortController();
-      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 6000);
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 35000); // PHASE 4: Increased from 6s to 35s
 
       try {
         const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
