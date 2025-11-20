@@ -50,7 +50,12 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               alt="MindMaker Logo" 
               className="w-[190px] h-auto -ml-[18px]"
             />
-            {user ? (
+            <div className="flex items-center gap-2">
+              <SampleResultsDialog 
+                onStartQuiz={onStartQuiz}
+                onStartVoice={onStartVoice}
+              />
+              {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -86,17 +91,18 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Button
-                onClick={onSignIn}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <LogIn className="h-4 w-4" />
-                Sign In
-              </Button>
-            )}
+              ) : (
+                <Button
+                  onClick={onSignIn}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </Button>
+              )}
+            </div>
           </div>
           
           <div className="min-h-[4rem] sm:min-h-[5rem] md:min-h-[6rem] lg:min-h-[7rem]">
@@ -147,12 +153,6 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               </div>
             </div>
           </div>
-
-          {/* Sample Results Dialog */}
-          <SampleResultsDialog 
-            onStartQuiz={onStartQuiz}
-            onStartVoice={onStartVoice}
-          />
         </div>
       </div>
     </div>
