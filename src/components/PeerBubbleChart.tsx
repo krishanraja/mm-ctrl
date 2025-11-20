@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, ReferenceDot, Label } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TrendingUp, Users, HelpCircle } from 'lucide-react';
 import { AILearningStyle, getLearningStyleProfile } from '@/utils/aiLearningStyle';
-import { generateCohortPeers, CohortPeerData } from '@/utils/generateCohortPeers';
+import { generateRealisticPeers, calculateRealisticPercentile, getActualPeerCount } from '@/utils/realisticPeerGeneration';
 
 interface PeerData {
   x: number; // Primary dimension score
@@ -137,6 +137,18 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
   learningStyle = null,
   viewMode = 'all' 
 }) => {
+  const [actualPeerCount, setActualPeerCount] = useState(102);
+
+  // PHASE 3: Fetch actual peer count on mount
+  useEffect(() => {
+    const fetchPeerCount = async () => {
+      const count = await getActualPeerCount();
+      setActualPeerCount(count);
+      console.log('📊 Actual peer count:', count);
+    };
+    fetchPeerCount();
+  }, []);
+
   const chartData = useMemo(() => {
     // Get top 3 dimensions by score
     const topDimensions = [...userDimensions]
@@ -147,21 +159,13 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
 
     const [primary, secondary, tertiary] = topDimensions;
     
-    // Generate peer data - use cohort-specific if in cohort view
-    const peers = (viewMode === 'cohort' && learningStyle)
-      ? generateCohortPeers(
-          primary.score,
-          secondary.score,
-          tertiary.score,
-          learningStyle,
-          500
-        )
-      : generatePeerData(
-          primary.score,
-          secondary.score,
-          tertiary.score,
-          500
-        );
+    // PHASE 3: Generate realistic peers with proper distribution
+    const peers = generateRealisticPeers(
+      primary.score,
+      secondary.score,
+      tertiary.score,
+      actualPeerCount
+    );
 
     // Add user data point
     const userData: PeerData = {
@@ -175,13 +179,15 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
 
     const allData = [...peers, userData];
 
-    // Calculate statistics
-    const peersAhead = peers.filter(p => 
-      (p.x >= userData.x && p.y >= userData.y) || 
-      (p.x + p.y + p.z) / 3 > (userData.x + userData.y + userData.z) / 3
-    ).length;
+    // PHASE 3: Calculate realistic statistics with percentile cap
+    const avgScore = (userData.x + userData.y + userData.z) / 3;
+    const peerAvgScores = peers.map(p => (p.x + p.y + p.z) / 3);
     
-    const percentileRank = Math.round((1 - peersAhead / peers.length) * 100);
+    const percentileRank = calculateRealisticPercentile(avgScore, peerAvgScores);
+    
+    const peersAhead = peers.filter(p => 
+      (p.x + p.y + p.z) / 3 > avgScore
+    ).length;
 
     return {
       data: allData,
@@ -189,7 +195,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
       stats: {
         totalPeers: peers.length,
         peersAhead,
-        percentileRank: Math.max(85, percentileRank), // Ensure realistic percentile
+        percentileRank, // Now capped at 92nd percentile
         tierDistribution: {
           pioneer: peers.filter(p => p.tier === 'AI Pioneer').length,
           confident: peers.filter(p => p.tier === 'Confident Practitioner').length,
@@ -198,7 +204,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
         }
       }
     };
-  }, [userDimensions]);
+  }, [userDimensions, actualPeerCount]);
 
   if (chartData.dimensions.length < 3) {
     return (
@@ -249,7 +255,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 Peer Comparison Matrix
               </CardTitle>
               <CardDescription>
-                Your position among {stats?.totalPeers.toLocaleString()} AI leaders
+                Your position among {stats?.totalPeers.toLocaleString()}+ AI leaders
                 {viewMode === 'cohort' && learningStyle && (
                   <span className="block mt-1 text-xs">
                     Showing peers from <span className="font-semibold">{getLearningStyleProfile(learningStyle).label}</span> cohort

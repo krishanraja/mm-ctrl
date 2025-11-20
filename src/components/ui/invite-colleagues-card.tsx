@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,25 +7,48 @@ import { useToast } from '@/hooks/use-toast';
 
 interface InviteColleaguesCardProps {
   companyName: string;
-  assessmentUrl?: string;
+  assessmentId: string;
+  userEmail: string;
+  userName?: string;
 }
 
 export const InviteColleaguesCard = React.memo<InviteColleaguesCardProps>(({ 
   companyName,
-  assessmentUrl = 'https://teams.themindmaker.ai'
+  assessmentId,
+  userEmail,
+  userName
 }) => {
   const [copied, setCopied] = useState(false);
+  const [referralUrl, setReferralUrl] = useState<string>('');
+  const [referralStats, setReferralStats] = useState({ total: 0, converted: 0, pending: 0 });
   const { toast } = useToast();
+
+  // PHASE 4: Generate referral code on mount
+  useEffect(() => {
+    const initReferral = async () => {
+      const { generateReferralCode, getReferralStats } = await import('@/utils/generateReferralCode');
+      
+      const referralData = await generateReferralCode(assessmentId, userEmail, userName);
+      if (referralData) {
+        setReferralUrl(referralData.url);
+      }
+      
+      const stats = await getReferralStats(assessmentId);
+      setReferralStats(stats);
+    };
+    
+    initReferral();
+  }, [assessmentId, userEmail, userName]);
   
-  const inviteMessage = `I just completed an AI Leadership Assessment with MindMaker. It gave me personalized insights on my AI readiness. Want to see how ${companyName} compares as a team?\n\nTake the assessment here: ${assessmentUrl}`;
+  const inviteMessage = `I just completed an AI Leadership Assessment with MindMaker. It gave me personalized insights on my AI readiness. Want to see how ${companyName} compares as a team?\n\nTake the assessment here: ${referralUrl || window.location.origin}`;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(inviteMessage);
+      await navigator.clipboard.writeText(referralUrl || inviteMessage);
       setCopied(true);
       toast({
-        title: 'Copied!',
-        description: 'Share this link with your colleagues',
+        title: 'Referral Link Copied!',
+        description: 'Share this trackable link with your team',
       });
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -66,7 +89,7 @@ export const InviteColleaguesCard = React.memo<InviteColleaguesCardProps>(({
           <div className="flex gap-2">
             <Input
               readOnly
-              value={assessmentUrl}
+              value={referralUrl || 'Generating your unique link...'}
               className="flex-1 text-sm"
             />
             <Button
@@ -122,7 +145,9 @@ export const InviteColleaguesCard = React.memo<InviteColleaguesCardProps>(({
         </div>
 
         <div className="pt-2 border-t text-xs text-muted-foreground text-center">
-          Progress: 1/3 colleagues completed • Invite 2 more to unlock
+          Progress: {referralStats.converted + 1}/3 colleagues completed
+          {referralStats.converted < 2 && ` • Invite ${3 - referralStats.converted - 1} more to unlock`}
+          {referralStats.converted >= 2 && ' • Team insights unlocked! 🎉'}
         </div>
       </CardContent>
     </Card>

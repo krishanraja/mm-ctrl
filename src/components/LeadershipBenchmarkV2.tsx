@@ -21,6 +21,8 @@ import { Crown, Sparkles, Target, TrendingUp, Lock, Loader2, Download, LogIn, Lo
 import { ContactData } from './ContactCollectionForm';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import AuthScreen from './auth/AuthScreen';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface LeadershipBenchmarkV2Props {
   assessmentId: string;
@@ -85,12 +87,35 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
     return () => subscription.unsubscribe();
   }, []);
 
+  // PHASE 1: Sign-in modal instead of redirect
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   const handleAuth = async () => {
     if (user) {
       await supabase.auth.signOut();
       toast({ title: 'Signed out successfully' });
     } else {
-      window.location.href = '/';
+      setAuthModalOpen(true); // Open modal instead of redirect
+    }
+  };
+
+  const handleAuthSuccess = async () => {
+    setAuthModalOpen(false);
+    
+    // Link assessment to user
+    const { linkAssessmentToUser } = await import('@/utils/assessmentPersistence');
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    
+    if (currentUser) {
+      const linked = await linkAssessmentToUser(assessmentId, currentUser.id);
+      if (linked) {
+        toast({
+          title: 'Assessment Saved!',
+          description: 'Your results are now linked to your account',
+        });
+        // Reload results to reflect user ownership
+        loadResults();
+      }
     }
   };
 
