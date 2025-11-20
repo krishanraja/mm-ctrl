@@ -5,7 +5,7 @@ import {
   calculateExecutionGaps 
 } from './behavioralScoring';
 import { storeAssessmentEvents, storeBehavioralAdjustments } from './storeAssessmentEvents';
-import { calculateAILearningStyle } from './aiLearningStyle';
+import { determineAILearningStyle } from './aiLearningStyle';
 
 export interface AssessmentOrchestrationResult {
   success: boolean;
@@ -212,7 +212,7 @@ export async function orchestrateAssessmentV2(
     }
 
     // Phase 3: Store index participant data with structured fields
-    const learningStyle = calculateAILearningStyle(assessmentData);
+    const learningStyle = determineAILearningStyle(deepProfileData);
     try {
       await supabase.from('index_participant_data').insert({
         session_id: sessionId,
