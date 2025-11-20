@@ -366,11 +366,8 @@ Return ONLY valid JSON, no markdown formatting.`;
             }],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 12000 // PHASE 4: Increased from 8000 to 12000
-            },
-            tools: [{
-              google_search: {}
-            }]
+              maxOutputTokens: 14000
+            }
           })
         });
         
