@@ -99,7 +99,24 @@ Deno.serve(async (req) => {
 });
 
 function detectStagnationLoop(dimensionScores: any): OrgScenario | null {
-  const avgScore = Object.values(dimensionScores).reduce((sum: number, score: any) => sum + score, 0) / 6;
+  if (!dimensionScores || typeof dimensionScores !== 'object') {
+    return {
+      scenario_key: 'stagnation_loop',
+      summary: 'Assessment data is incomplete. Complete your profile for personalized organizational insights.',
+      priority_rank: 3,
+    };
+  }
+  
+  const scores = Object.values(dimensionScores).filter(v => typeof v === 'number');
+  if (scores.length === 0) {
+    return {
+      scenario_key: 'stagnation_loop',
+      summary: 'No dimension scores available. Retake assessment for insights.',
+      priority_rank: 3,
+    };
+  }
+  
+  const avgScore = scores.reduce((sum: number, score: any) => sum + score, 0) / scores.length;
   const experimentationScore = dimensionScores?.experimentation_cadence || 0;
   const decisionScore = dimensionScores?.decision_velocity || 0;
 
@@ -124,6 +141,10 @@ function detectStagnationLoop(dimensionScores: any): OrgScenario | null {
 }
 
 function detectShadowAIInstability(dimensionScores: any, riskSignals: any[]): OrgScenario | null {
+  if (!dimensionScores || typeof dimensionScores !== 'object') {
+    return null;
+  }
+  
   const governanceScore = dimensionScores?.risk_governance || 0;
   const experimentationScore = dimensionScores?.experimentation_cadence || 0;
   
@@ -150,7 +171,14 @@ function detectShadowAIInstability(dimensionScores: any, riskSignals: any[]): Or
 }
 
 function detectHighVelocityPath(dimensionScores: any, tensions: any[]): OrgScenario | null {
-  const avgScore = Object.values(dimensionScores).reduce((sum: number, score: any) => sum + score, 0) / 6;
+  if (!dimensionScores || typeof dimensionScores !== 'object') {
+    return null;
+  }
+  
+  const scores = Object.values(dimensionScores).filter(v => typeof v === 'number');
+  if (scores.length === 0) return null;
+  
+  const avgScore = scores.reduce((sum: number, score: any) => sum + score, 0) / scores.length;
   const experimentationScore = dimensionScores?.experimentation_cadence || 0;
   const alignmentScore = dimensionScores?.alignment_communication || 0;
 
@@ -177,6 +205,10 @@ function detectHighVelocityPath(dimensionScores: any, tensions: any[]): OrgScena
 }
 
 function detectCultureCapabilityMismatch(dimensionScores: any, tensions: any[]): OrgScenario | null {
+  if (!dimensionScores || typeof dimensionScores !== 'object') {
+    return null;
+  }
+  
   const fluencyScore = dimensionScores?.ai_fluency || 0;
   const alignmentScore = dimensionScores?.alignment_communication || 0;
   const experimentationScore = dimensionScores?.experimentation_cadence || 0;
