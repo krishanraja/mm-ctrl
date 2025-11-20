@@ -2406,6 +2406,7 @@ export type Database = {
           id: string
           implementation_roadmap: Json
           last_updated: string | null
+          leader_id: string | null
           prompt_templates: Json
           recommended_projects: Json
           session_id: string | null
@@ -2424,6 +2425,7 @@ export type Database = {
           id?: string
           implementation_roadmap?: Json
           last_updated?: string | null
+          leader_id?: string | null
           prompt_templates?: Json
           recommended_projects?: Json
           session_id?: string | null
@@ -2442,6 +2444,7 @@ export type Database = {
           id?: string
           implementation_roadmap?: Json
           last_updated?: string | null
+          leader_id?: string | null
           prompt_templates?: Json
           recommended_projects?: Json
           session_id?: string | null
@@ -2451,6 +2454,13 @@ export type Database = {
           workflow_preferences?: Json
         }
         Relationships: [
+          {
+            foreignKeyName: "prompt_library_profiles_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "leaders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "prompt_library_profiles_session_id_fkey"
             columns: ["session_id"]
