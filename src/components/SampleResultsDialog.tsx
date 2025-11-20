@@ -56,27 +56,27 @@ export function SampleResultsDialog({ onStartQuiz, onStartVoice }: SampleResults
         variant="ghost"
         size="sm"
         onClick={() => setOpen(true)}
-        className="text-xs text-muted-foreground hover:text-primary transition-colors group mt-4"
+        className="text-xs text-muted-foreground hover:text-primary transition-colors group"
       >
         <Sparkles className="h-3.5 w-3.5 mr-1.5 group-hover:text-primary transition-colors" />
-        See sample results
+        Sample
       </Button>
 
       {/* Modal Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-4xl p-0 gap-0">
+        <DialogContent className="max-w-2xl p-0 gap-0">
           {/* Header */}
-          <div className="px-6 pt-6 pb-4 border-b">
-            <DialogTitle className="text-2xl font-bold">
+          <div className="px-4 pt-4 pb-3 border-b">
+            <DialogTitle className="text-lg font-bold">
               Real Results in Under 5 Minutes
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground mt-1">
+            <DialogDescription className="text-sm text-muted-foreground mt-0.5">
               See the personalized insights you'll receive
             </DialogDescription>
           </div>
 
           {/* Carousel */}
-          <div className="p-6">
+          <div className="p-4">
             <Carousel setApi={setApi} className="w-full">
               <CarouselContent>
                 {sampleImages.map((image, index) => (
@@ -98,7 +98,7 @@ export function SampleResultsDialog({ onStartQuiz, onStartVoice }: SampleResults
             </Carousel>
 
             {/* Purple-Themed Dot Indicators */}
-            <div className="flex gap-2 justify-center mt-6">
+            <div className="flex gap-2 justify-center mt-4">
               {sampleImages.map((_, index) => (
                 <button
                   key={index}
@@ -116,14 +116,13 @@ export function SampleResultsDialog({ onStartQuiz, onStartVoice }: SampleResults
           </div>
 
           {/* Footer CTA */}
-          <div className="px-6 pb-6 pt-2 border-t bg-muted/30 flex flex-col sm:flex-row gap-3">
+          <div className="px-4 pb-4 pt-2 border-t bg-muted/30 flex flex-col sm:flex-row gap-2">
             <Button
               onClick={() => {
                 setOpen(false);
                 onStartQuiz();
               }}
               className="flex-1"
-              size="lg"
             >
               Get Your Results Now
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -134,10 +133,9 @@ export function SampleResultsDialog({ onStartQuiz, onStartVoice }: SampleResults
                 onStartVoice();
               }}
               variant="outline"
-              size="lg"
               className="flex-1 sm:flex-initial"
             >
-              🎙️ Use Voice Instead
+              🎙️ Use Voice
             </Button>
           </div>
         </DialogContent>
