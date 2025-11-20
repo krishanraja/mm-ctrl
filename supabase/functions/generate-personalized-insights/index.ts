@@ -133,7 +133,7 @@ serve(async (req) => {
         }
         
         const geminiController = new AbortController();
-        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 10000);
+        const geminiTimeoutId = setTimeout(() => geminiController.abort(), 15000);
 
         const vertexEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-flash:generateContent`;
         
@@ -187,7 +187,8 @@ Return ONLY valid JSON matching the required structure.`
             console.log('📊 Generation metrics:', {
               source: 'vertex-gemini-2.5-flash-rag',
               durationMs: Date.now() - startTime,
-              success: true
+              success: true,
+              ragUsed: !!groundingMetadata
             });
           }
         } else {
@@ -203,7 +204,7 @@ Return ONLY valid JSON matching the required structure.`
     if (!personalizedInsights && openaiApiKey) {
       console.log('⚠️ Gemini failed, trying OpenAI GPT-4.1...');
       const openaiController = new AbortController();
-      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 5000);
+      const openaiTimeoutId = setTimeout(() => openaiController.abort(), 8000);
 
       try {
         const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -219,7 +220,7 @@ Return ONLY valid JSON matching the required structure.`
             messages: [
               { 
                 role: 'system', 
-                content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative.' 
+                content: 'You are an executive AI leadership coach. Generate personalized insights based on assessment data. Be direct, actionable, and quantitative. Return valid JSON format.' 
               },
               { role: 'user', content: prompt }
             ],
@@ -252,7 +253,7 @@ Return ONLY valid JSON matching the required structure.`
     if (!personalizedInsights && lovableApiKey) {
       console.log('⚠️ Gemini and OpenAI failed, trying Lovable AI as last resort...');
       const lovableController = new AbortController();
-      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 6000);
+      const lovableTimeoutId = setTimeout(() => lovableController.abort(), 10000);
 
       try {
         const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {

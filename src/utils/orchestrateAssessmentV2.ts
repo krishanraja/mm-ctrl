@@ -115,6 +115,7 @@ export async function orchestrateAssessmentV2(
 
     // 5b: Generate prompt library with timeout protection
     console.log('📚 Generating prompt library...');
+    console.log('📚 assessmentId being passed:', assessmentId, 'type:', typeof assessmentId);
     const promptPromise = invokeEdgeFunction(
       'generate-prompt-library',
       {
