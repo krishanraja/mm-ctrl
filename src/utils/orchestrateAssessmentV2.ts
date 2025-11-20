@@ -118,8 +118,44 @@ export async function orchestrateAssessmentV2(
 
     if (insightsError) {
       console.error('⚠️ Insights generation failed:', insightsError);
+      // CP3: Log error to generation_status
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            insights_generated: false,
+            prompts_generated: false,
+            risks_computed: false,
+            tensions_computed: false,
+            scenarios_generated: false,
+            first_moves_generated: false,
+            last_updated: new Date().toISOString(),
+            error_log: [{ phase: 'insights_generated', error: insightsError.message, timestamp: new Date().toISOString() }]
+          }
+        })
+        .eq('id', assessmentId);
     } else {
       console.log('✅ Personalized insights generated');
+      // CP3: Update generation_status.insights_generated
+      console.log('✅ CP3: Updating generation_status.insights_generated = true in orchestrator');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            insights_generated: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
+      
       // Store first moves if returned
       if (insightsData?.personalizedInsights?.firstMoves) {
         await storeFirstMoves(assessmentId, insightsData.personalizedInsights.firstMoves);
@@ -142,8 +178,48 @@ export async function orchestrateAssessmentV2(
     );
     if (libraryError) {
       console.error('⚠️ Prompt library generation failed:', libraryError);
+      // CP3: Log error to generation_status
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      const errorLog = existingStatus.error_log || [];
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            prompts_generated: false,
+            last_updated: new Date().toISOString(),
+            error_log: [...errorLog, 
+              { phase: 'prompts_generated', error: libraryError.message, timestamp: new Date().toISOString() }]
+          }
+        })
+        .eq('id', assessmentId);
     } else {
       console.log('✅ Prompt library generated');
+      // CP3: Update generation_status.prompts_generated
+      console.log('✅ CP3: Updating generation_status.prompts_generated = true in orchestrator');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            prompts_generated: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
     }
 
     // 5c-5e: Run non-critical computations in parallel with timeout protection
@@ -192,21 +268,78 @@ export async function orchestrateAssessmentV2(
       )
     ]);
 
-    // Log results with graceful degradation
+    // Log results with graceful degradation + CP3 status tracking
     if (riskResult.status === 'fulfilled' && riskResult.value.data) {
       console.log(`✅ Risk signals computed: ${riskResult.value.data?.count || 0}`);
+      // CP3: Update generation_status.risks_computed
+      console.log('✅ CP3: Updating generation_status.risks_computed = true in orchestrator');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            risks_computed: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
     } else {
       console.warn('⚠️ Risk signals failed:', riskResult.status === 'rejected' ? riskResult.reason : riskResult.value.error);
     }
 
     if (tensionResult.status === 'fulfilled' && tensionResult.value.data) {
       console.log(`✅ Tensions computed: ${tensionResult.value.data?.count || 0}`);
+      // CP3: Update generation_status.tensions_computed
+      console.log('✅ CP3: Updating generation_status.tensions_computed = true in orchestrator');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            tensions_computed: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
     } else {
       console.warn('⚠️ Tensions failed:', tensionResult.status === 'rejected' ? tensionResult.reason : tensionResult.value.error);
     }
 
     if (scenarioResult.status === 'fulfilled' && scenarioResult.value.data) {
       console.log(`✅ Org scenarios derived: ${scenarioResult.value.data?.count || 0}`);
+      // CP3: Update generation_status.scenarios_generated
+      console.log('✅ CP3: Updating generation_status.scenarios_generated = true in orchestrator');
+      const { data: currentStatus } = await supabase
+        .from('leader_assessments')
+        .select('generation_status')
+        .eq('id', assessmentId)
+        .single();
+      
+      const existingStatus = (currentStatus?.generation_status as any) || {};
+      await supabase
+        .from('leader_assessments')
+        .update({
+          generation_status: {
+            ...existingStatus,
+            scenarios_generated: true,
+            last_updated: new Date().toISOString()
+          }
+        })
+        .eq('id', assessmentId);
     } else {
       console.warn('⚠️ Org scenarios failed:', scenarioResult.status === 'rejected' ? scenarioResult.reason : scenarioResult.value.error);
     }
