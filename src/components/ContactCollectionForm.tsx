@@ -23,6 +23,7 @@ export interface ContactData {
   primaryFocus: string;
   timeline: string;
   consentToInsights: boolean;
+  role?: string; // Optional role field for benchmarking
 }
 
 interface ContactCollectionFormProps {
