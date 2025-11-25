@@ -13,32 +13,45 @@
 @tailwind utilities;
 
 /* ========================================
-   MINDMAKER DESIGN SYSTEM - UNIVERSAL
-   Complete replacement for any project
+   MINDMAKER DESIGN SYSTEM - INK & MINT
+   New Brand Identity - Professional & Bold
    ======================================== */
 
 @layer base {
   :root {
-    /* === BASE COLORS - Soft Premium Palette === */
-    --background: 252 100% 98%;        /* Soft lavender white #F8F7FF */
-    --foreground: 240 18% 20%;         /* Deep charcoal */
-    --muted: 252 60% 96%;              /* Very light lavender */
-    --muted-foreground: 215 28% 25%;   /* Muted gray #2e3a4d */
+    /* === BRAND COLORS === */
+    --ink: 210 58% 11%;                /* #0e1a2b - Main structure, typography */
+    --mint: 158 82% 73%;               /* #7ef4c2 - Highlights, sparingly */
+    --off-white: 60 9% 96%;            /* #F7F7F5 - Background */
+    --light-grey: 60 5% 90%;           /* #E5E5E3 - Borders */
+    --mid-grey: 210 7% 62%;            /* #9AA0A6 - Secondary text */
+    --graphite: 200 5% 21%;            /* #333639 - Strong text */
 
-    /* === BRAND SYSTEM - Premium Purple === */
-    --primary: 248 73% 67%;            /* Primary purple #667eea */
-    --primary-100: 252 80% 97%;        /* Ultra light purple */
-    --primary-200: 252 75% 92%;        /* Very light purple */
-    --primary-300: 252 73% 85%;        /* Light purple */
-    --primary-400: 252 72% 78%;        /* Medium-light purple */
-    --primary-600: 252 70% 62%;        /* Medium purple */
-    --primary-700: 252 68% 54%;        /* Darker purple */
-    --primary-foreground: 0 0% 100%;   /* White */
+    /* === SEMANTIC MAPPINGS === */
+    --background: var(--off-white);
+    --foreground: var(--ink);
+    --muted: var(--light-grey);
+    --muted-foreground: var(--mid-grey);
+    --primary: var(--ink);
+    --primary-foreground: 0 0% 100%;   /* White text on ink */
+    --accent: var(--mint);
+    --accent-foreground: var(--ink);   /* Ink text on mint */
+    --ring: var(--mint);
 
-    /* === BRAND ACCENT === */
-    --accent: 264 42% 52%;             /* Deep purple */
-    --accent-400: 264 40% 62%;
-    --accent-foreground: 0 0% 100%;
+    /* === SURFACE COLORS === */
+    --card: 0 0% 100%;                 /* Pure white for cards */
+    --card-foreground: var(--ink);
+    --border: var(--light-grey);
+    --radius: 0.5rem;                  /* 8px - cleaner, less rounded */
+
+    /* === INPUT & POPOVER === */
+    --input: var(--light-grey);
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--ink);
+    
+    /* === SECONDARY SYSTEM === */
+    --secondary: var(--light-grey);
+    --secondary-foreground: var(--ink);
 
     /* === SEMANTIC COLORS === */
     --destructive: 0 84% 60%;
@@ -46,65 +59,30 @@
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
 
-    /* === SURFACE COLORS - Premium Cards === */
-    --card: 0 0% 100%;                 /* Pure white */
-    --card-foreground: var(--foreground);
-    --border: 252 40% 92%;             /* Soft purple border */
-    --ring: 252 71% 70%;
-    --radius: 1.25rem;                 /* Generous rounded corners */
-
-    /* === INPUT & POPOVER === */
-    --input: 252 40% 92%;
-    --popover: 0 0% 100%;
-    --popover-foreground: var(--foreground);
-    
-    /* === SECONDARY SYSTEM === */
-    --secondary: 252 60% 96%;          /* Soft lavender */
-    --secondary-foreground: var(--foreground);
-
-    /* === PREMIUM EFFECTS === */
-    --shadow-sm: 0 2px 8px hsl(252 71% 70% / 0.08);
-    --shadow-md: 0 4px 16px hsl(252 71% 70% / 0.12);
-    --shadow-lg: 0 8px 32px hsl(252 71% 70% / 0.16);
-    
-    /* === PREMIUM LEADERSHIP TIERS === */
-    --tier-orchestrator: 256 92% 65%;
-    --tier-orchestrator-light: 256 92% 75%;
-    --tier-confident: 211 92% 60%;
-    --tier-confident-light: 211 92% 70%;
-    --tier-aware: 25 85% 55%;
-    --tier-aware-light: 25 85% 65%;
-    --tier-emerging: 215 16% 47%;
-    --tier-emerging-light: 215 16% 57%;
-    
-    /* === PREMIUM ACCENTS === */
-    --gold-accent: 38 92% 50%;
+    /* === SHADOWS - Subtle, professional === */
+    --shadow-sm: 0 1px 3px hsl(210 58% 11% / 0.08);
+    --shadow-md: 0 4px 12px hsl(210 58% 11% / 0.12);
+    --shadow-lg: 0 8px 24px hsl(210 58% 11% / 0.16);
   }
 
   .dark {
-    --background: 222 47% 7%;
-    --foreground: 210 40% 98%;
-    --muted: 222 32% 12%;
-    --muted-foreground: 215 20% 75%;
-    --card: 222 47% 9%;
-    --card-foreground: var(--foreground);
-    --border: 222 28% 18%;
-    --ring: 262 100% 63%;
-    --input: 222 28% 18%;
-    --popover: 222 47% 9%;
-    --popover-foreground: var(--foreground);
-    --secondary: 222 32% 12%;
-    --secondary-foreground: var(--foreground);
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
-    --success: 142 84% 24%;
-    --success-foreground: 355 100% 100%;
-    
-    /* === DARK MODE TIER COLORS === */
-    --tier-orchestrator: 256 92% 70%;
-    --tier-confident: 211 92% 65%;
-    --tier-aware: 25 85% 60%;
-    --tier-emerging: 215 20% 60%;
+    --background: var(--ink);
+    --foreground: 0 0% 98%;
+    --muted: 210 50% 18%;
+    --muted-foreground: var(--mid-grey);
+    --card: 210 55% 14%;
+    --card-foreground: 0 0% 98%;
+    --border: 210 40% 22%;
+    --ring: var(--mint);
+    --input: 210 40% 22%;
+    --popover: 210 55% 14%;
+    --popover-foreground: 0 0% 98%;
+    --secondary: 210 50% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --primary: var(--mint);
+    --primary-foreground: var(--ink);
+    --accent: var(--mint);
+    --accent-foreground: var(--ink);
   }
 }
 
@@ -199,10 +177,10 @@ html {
 
   /* === ICON BADGE === */
   .icon-badge {
-    background: hsl(var(--primary-100));
-    color: hsl(var(--primary));
-    border-radius: 1rem;
-    padding: 1.25rem;
+    background: hsl(var(--mint) / 0.1);
+    color: hsl(var(--ink));
+    border-radius: 0.75rem;
+    padding: 1rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -269,79 +247,69 @@ html {
     animation: collapsible-up 0.3s ease-out;
   }
 
-  /* === PREMIUM HERO SECTION === */
+  /* === HERO SECTION === */
   .hero-section-premium {
-    background: hsl(var(--background));
+    background: hsl(var(--ink));
     position: relative;
     min-height: 100vh;
   }
 
   .btn-hero-cta {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
+    background: hsl(var(--mint));
+    color: hsl(var(--ink));
     border: none;
-    padding: 1rem 2.5rem;
-    font-size: 1.125rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
     font-weight: 600;
-    border-radius: 9999px;
+    border-radius: 0.5rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px hsl(var(--primary) / 0.2);
+    box-shadow: 0 4px 16px hsl(var(--mint) / 0.3);
   }
   
   .btn-hero-cta:hover {
-    background: hsl(var(--primary-600));
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px hsl(var(--primary) / 0.3);
+    background: hsl(var(--mint) / 0.9);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px hsl(var(--mint) / 0.4);
   }
 
-  /* === PREMIUM BADGE/TAG === */
+  /* === BADGE/TAG === */
   .premium-badge {
-    background: hsl(var(--primary-200));
-    color: hsl(var(--primary));
-    padding: 0.5rem 1.25rem;
-    border-radius: 9999px;
+    background: hsl(var(--mint) / 0.2);
+    color: hsl(var(--ink));
+    padding: 0.375rem 1rem;
+    border-radius: 0.375rem;
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.025em;
-    text-transform: uppercase;
   }
 
-  /* === PREMIUM HERO TEXT WITH SHIMMER === */
+  /* === HERO TEXT WITH MINT ACCENT === */
   .premium-hero-text {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-family: 'Gobold', 'Inter', system-ui, sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
     line-height: 1.2;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     text-align: center;
-    max-width: 42rem;
+    max-width: 56rem;
     margin-left: auto;
     margin-right: auto;
-    
-    background: linear-gradient(
-      110deg,
-      hsl(var(--primary)),
-      45%,
-      hsl(var(--primary-400)),
-      55%,
-      hsl(var(--primary))
-    );
-    background-size: 250% 100%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 8s ease-in-out infinite;
+    color: white;
+  }
+
+  .premium-hero-text .mint-highlight {
+    color: hsl(var(--mint));
   }
 
   @media (min-width: 640px) {
     .premium-hero-text {
-      font-size: 1.875rem;
+      font-size: 3rem;
     }
   }
 
   @media (min-width: 768px) {
     .premium-hero-text {
-      font-size: 2.25rem;
+      font-size: 3.75rem;
     }
   }
 }
@@ -361,12 +329,14 @@ html {
   }
 }
 
-@keyframes hero-text-shimmer {
-  0% { 
-    background-position: -200% center;
+@keyframes pulse-glow {
+  0%, 100% { 
+    opacity: 0.5;
+    transform: scale(1);
   }
-  100% { 
-    background-position: 200% center;
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
   }
 }
 

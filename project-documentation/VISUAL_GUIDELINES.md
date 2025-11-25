@@ -1,553 +1,329 @@
 # Visual Guidelines
 
-Visual design principles, layout patterns, and UI examples.
+**Last Updated:** 2025-11-25
 
 ---
 
-## Design Philosophy
+## Visual Principles
 
-### Core Principles
-
-**1. Calm Over Flashy**
-- Generous whitespace
-- Restrained color palette
-- Minimal animation
-- No visual noise
-
-**2. Clear Over Clever**
-- Obvious hierarchy
-- Explicit labels
-- Predictable interactions
-- No hidden affordances
-
-**3. Senior Over Playful**
-- Professional aesthetic
-- Executive-appropriate
-- No cartoon/game elements
-- Muted, sophisticated
-
-**4. Focused Over Comprehensive**
-- Show what matters
-- Hide complexity
-- One thing at a time
-- Progressive disclosure
+1. **Bold, Not Busy** - Strong elements, generous white space
+2. **Functional, Not Decorative** - Every visual serves purpose
+3. **Professional, Not Corporate** - Clean but not sterile
+4. **Modern, Not Trendy** - Timeless, not chasing fads
 
 ---
 
-## Layout Patterns
+## Layout System
 
-### Hero Section
-
-**Structure**:
+### Grid Structure
 ```
-[Logo]                [Navigation]
-
-        [Large headline]
-        
-    [Supporting description]
-    
-        [Primary CTA]
-    [Secondary CTA (optional)]
-    
-        [Trust signal]
+Desktop: 12-column grid, 24px gutter
+Tablet:  8-column grid, 16px gutter
+Mobile:  4-column grid, 12px gutter
 ```
 
-**Implementation**:
-- Max-width: 1200px
-- Centered content
-- Padding: 12rem top, 8rem bottom
-- Background: Subtle gradient or solid
-
-**Example** (HeroSection.tsx):
-- Headline: `text-4xl font-bold`
-- Description: `text-sm text-muted-foreground max-w-2xl`
-- Button: `Button size="lg"` with icon
-
----
-
-### Results Layout
-
-**Structure**:
+### Content Width
 ```
-[Header with name/date]
-
-[Horizontal tab navigation]
-
-[Tab content area]
-  ├─ Overview: Chart + dimension cards
-  ├─ Tensions: Stacked cards with left border
-  ├─ Tools: Categorized prompt cards
-  └─ Privacy: Consent toggles
+Max width: 1280px (7xl)
+Comfortable reading: 65-75 characters per line
+Centered content: mx-auto
 ```
 
-**Implementation**:
-- Container: `max-w-5xl mx-auto`
-- Tab navigation: Full-width, sticky on scroll
-- Content padding: `p-8` on desktop, `p-4` on mobile
-- Card spacing: `space-y-6` between sections
-
----
-
-### Card Layouts
-
-**Information Card**:
-```tsx
-<Card>
-  <CardHeader>
-    <CardTitle>Title</CardTitle>
-    <CardDescription>Subtitle</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <p className="text-sm">Body content</p>
-  </CardContent>
-</Card>
+### Spacing Rhythm
 ```
-
-**Diagnostic Card with Left Border**:
-```tsx
-<Card className="border-l-4 border-l-blue-500/50">
-  <CardContent className="p-6">
-    <div className="flex items-start gap-4">
-      <Icon className="h-5 w-5 flex-shrink-0 mt-1" />
-      <div className="flex-1">
-        <Badge>Category</Badge>
-        <p className="text-sm mt-2">Content</p>
-      </div>
-    </div>
-  </CardContent>
-</Card>
-```
-
-**Action Card**:
-```tsx
-<Card className="hover:shadow-lg transition-shadow cursor-pointer">
-  <CardContent className="p-6">
-    <div className="flex items-center justify-between">
-      <div>
-        <h3 className="font-semibold">Action Title</h3>
-        <p className="text-sm text-muted-foreground">Description</p>
-      </div>
-      <ArrowRight className="h-5 w-5 text-primary" />
-    </div>
-  </CardContent>
-</Card>
+Micro:    4px, 8px   (component internals)
+Small:    12px, 16px (related elements)
+Medium:   24px, 32px (section spacing)
+Large:    48px, 64px (major sections)
+XLarge:   80px+      (hero, major dividers)
 ```
 
 ---
 
-## Component Patterns
+## Hero Sections
 
-### Navigation
-
-**Top Navigation**:
-- Logo: Left-aligned, `h-8`
-- Links: Right-aligned, `text-sm`
-- Button: Primary action, right-most
-- Sticky: Add `sticky top-0 z-50` on scroll
-
-**Tab Navigation**:
-- Horizontal tabs for <5 options
-- Vertical tabs for 5+ options
-- Active state: Underline + bold
-- Icons: Optional, `h-4 w-4` left of label
-
-### Forms
-
-**Form Field**:
+### Structure
 ```tsx
-<div className="space-y-2">
-  <Label htmlFor="field">
-    Field Label <span className="text-destructive">*</span>
-  </Label>
-  <Input id="field" placeholder="Placeholder" />
-  <p className="text-xs text-muted-foreground">Helper text</p>
-</div>
+<section className="min-h-screen flex items-center bg-ink text-white">
+  {/* Background effects */}
+  {/* GIF overlay */}
+  {/* Gradient overlay */}
+  {/* Grid pattern */}
+  
+  {/* Content */}
+  <div className="container-width relative z-10">
+    <Logo />
+    <h1>Large headline with <span>mint highlight</span></h1>
+    <p>Supporting copy</p>
+    <CTAs />
+  </div>
+</section>
 ```
 
-**Form Layout**:
-- Single column on mobile
-- 2-column on tablet+ for short fields
-- Field spacing: `space-y-6`
-- Submit button: Full-width mobile, auto desktop
+### Visual Effects
+- Particle/dot GIF background (20% opacity)
+- Gradient overlays (dark to darker)
+- Animated grid pattern
+- Glowing orbs (mint, blurred, animated pulse)
 
-### Data Visualisation
+---
 
-**Benchmark Chart** (LeadershipBenchmarkV2.tsx):
-- Radar chart for 6 dimensions
-- Muted colors, no 3D effects
-- Clear axis labels
-- Hover tooltips for detail
+## Content Sections
 
-**Bubble Chart** (PeerBubbleChart.tsx):
-- X-axis: One dimension
-- Y-axis: Another dimension
-- Bubble size: Sample size or confidence
-- User bubble: Highlighted with border
-
-**Heatmap** (Partners tool):
-- Rows: Companies
-- Columns: Dimensions
-- Colors: Green (high) → Yellow (medium) → Red (low)
-- Hover: Show exact score
-
-### Modals & Dialogs
-
-**Standard Dialog**:
+### Standard Section
 ```tsx
-<Dialog>
-  <DialogContent className="max-w-2xl">
-    <DialogHeader>
-      <DialogTitle>Title</DialogTitle>
-      <DialogDescription>Supporting text</DialogDescription>
-    </DialogHeader>
-    <div className="space-y-4">
-      {/* Content */}
-    </div>
-    <DialogFooter>
-      <Button variant="outline">Cancel</Button>
-      <Button>Confirm</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+<section className="section-padding bg-background">
+  <div className="container-width">
+    <h2 className="text-center mb-12">Section Title</h2>
+    <Grid>{cards}</Grid>
+  </div>
+</section>
 ```
 
-**Upgrade Modal**:
-- Clear comparison: Free vs Paid
-- Price prominent: `text-3xl font-bold`
-- CTA: Large, centered
-- Exit: X button, "Maybe later" link
+### Alternating Backgrounds
+```
+Section 1: bg-background (off-white)
+Section 2: bg-muted (light grey)
+Section 3: bg-background
+Section 4: bg-ink (dark, with white text)
+```
+
+---
+
+## Card Patterns
+
+### Premium Card (Featured)
+```css
+background: white
+border: 2px solid border
+shadow: lg
+padding: 24px
+border-radius: 8px
+```
+
+**Use for:** Recommended products, highlighted content
+
+### Minimal Card (Standard)
+```css
+background: card
+border: 1px solid border
+padding: 24px
+border-radius: 8px
+```
+
+**Use for:** Standard content grid items
+
+### Glass Card (Hero)
+```css
+background: white/95
+backdrop-filter: blur(12px)
+border: 1px solid white/30
+shadow: 2xl
+```
+
+**Use for:** Hero CTAs, overlays on images
+
+---
+
+## Button Styles
+
+### Primary CTA (Mint)
+```tsx
+<Button className="bg-mint text-ink hover:bg-mint/90 
+                   shadow-lg hover:shadow-xl 
+                   hover:scale-105 transition-all">
+```
+**Use for:** Main conversion actions
+
+### Secondary CTA (Ink)
+```tsx
+<Button className="bg-ink text-white hover:bg-ink/90">
+```
+**Use for:** Supporting actions
+
+### Outline CTA
+```tsx
+<Button variant="outline" 
+        className="border-mint text-mint hover:bg-mint/20">
+```
+**Use for:** Tertiary actions, "learn more"
+
+---
+
+## Typography Hierarchy
+
+### Page Hierarchy
+```
+H1 (Hero):     60px bold, Gobold, mint accent
+H2 (Section):  36px bold, Inter, ink
+H3 (Card):     24px semibold, Inter, ink
+Body:          16px regular, Inter, foreground
+Caption:       14px regular, Inter, muted-foreground
+```
+
+### Visual Weight
+```
+Headlines:  font-bold (700)
+Subheads:   font-semibold (600)
+Body:       font-normal (400)
+Captions:   font-normal (400) with muted color
+```
+
+---
+
+## Color Application
+
+### Text Hierarchy
+```
+Primary text:    text-foreground (ink)
+Secondary text:  text-muted-foreground (mid-grey)
+Tertiary text:   text-muted-foreground/70
+Headings:        text-foreground (ink)
+Hero headings:   text-white with mint <span>
+```
+
+### Background Usage
+```
+Page background:     bg-background (off-white)
+Card background:     bg-card (white)
+Muted sections:      bg-muted (light grey)
+Dark sections:       bg-ink
+Accent areas:        bg-mint/10 (10% mint tint)
+```
+
+### Border Usage
+```
+Default:         border-border (light grey)
+Subtle:          border-border/50
+Emphasized:      border-mint
+Dark mode:       border-border (adjusted in dark mode)
+```
 
 ---
 
 ## Interactive States
 
-### Hover
-
-**Cards**:
-```tsx
-<Card className="hover:shadow-lg transition-shadow">
+### Hover Effects
+```css
+Buttons:    scale-105, shadow increase
+Cards:      subtle lift (shadow)
+Links:      underline, mint color
+Icons:      translateX(4px) for arrows
 ```
 
-**Buttons**:
-```tsx
-<Button className="group">
-  <span>Label</span>
-  <ArrowRight className="transition-transform group-hover:translate-x-1" />
-</Button>
+### Focus States
+```css
+All interactive: ring-2 ring-mint ring-offset-2
+Visible only:    focus-visible: modifier
 ```
 
-### Focus
-
-All interactive elements:
-```tsx
-className="focus:ring-2 focus:ring-ring focus:ring-offset-2"
+### Active States
+```css
+Buttons:    scale-98 (slight press)
 ```
-
-### Loading
-
-**Spinner**:
-```tsx
-<Loader2 className="h-8 w-8 animate-spin text-primary" />
-```
-
-**Skeleton**:
-```tsx
-<Skeleton className="h-20 w-full" />
-```
-
-### Error
-
-**Inline Error**:
-```tsx
-<p className="text-sm text-destructive">Error message</p>
-```
-
-**Error Card**:
-```tsx
-<Card className="border-destructive">
-  <CardContent className="p-6">
-    <AlertTriangle className="h-5 w-5 text-destructive" />
-    <p className="text-sm">Error details</p>
-  </CardContent>
-</Card>
-```
-
----
-
-## Responsive Patterns
-
-### Mobile (<768px)
-
-**Layout**:
-- Single column
-- Full-width components
-- Collapsible sections
-- Bottom navigation if needed
-
-**Typography**:
-- Slightly smaller headlines (scale down 1 level)
-- Line-height: 1.6 for readability
-- Touch targets: min 44×44px
-
-**Images**:
-- Full-width, constrained height
-- Lazy loading
-- WebP format with PNG fallback
-
-### Tablet (768px-1024px)
-
-**Layout**:
-- 2-column grid where appropriate
-- Sidebar navigation option
-- Increased padding
-
-**Cards**:
-- 2-up grid for equal cards
-- Single column for detailed cards
-
-### Desktop (>1024px)
-
-**Layout**:
-- 3-column grid max
-- Sidebar + content layouts
-- Generous margins (container max-width)
-
-**Charts**:
-- Full detail, larger size
-- Hover interactions enabled
 
 ---
 
 ## Animation Guidelines
 
-### When to Animate
+### Scroll Animations
+```tsx
+className="fade-in-up"
+style={{animationDelay: `${index * 0.1}s`}}
+```
 
-**Do animate**:
-- Page transitions (fade in)
-- Loading states (spinner)
-- Hover feedback (scale, translate)
-- Success confirmation (checkmark)
+**Stagger timing:** 0.1s per item  
+**Max delay:** 0.6s (no more than 6 items)
 
-**Don't animate**:
-- Core content appearance
-- Tab switches (instant)
-- Data updates (direct change)
-- Background elements
+### Micro-interactions
+```css
+Hover:      0.3s ease-out
+Focus:      0.2s ease
+Transitions: 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+```
 
-### Animation Duration
-
-- Micro-interactions: 150ms
-- Standard transitions: 300ms
-- Page transitions: 500ms
-- Loading spinners: Continuous
-
-### Easing
-
-- Default: `ease-in-out`
-- Entry: `ease-out`
-- Exit: `ease-in`
+### Pulse Effects
+```css
+Glowing orbs:  3-4s duration
+Hero accent:   2s duration
+CTAs:          group-hover:animate-pulse (on icon)
+```
 
 ---
 
-## Accessibility
+## Imagery Guidelines
+
+### Hero Images
+- High resolution (2560px+ width)
+- Dark overlays (40-60% opacity) for text legibility
+- Positioned: center or focal point
+- Never stretch or distort
+
+### Icons
+- Lucide React library
+- 20px (h-5 w-5) standard
+- 24px (h-6 w-6) for emphasis
+- Mint color for positive actions
+- Ink/foreground for neutral
+
+### Logos
+- Mindmaker icon: standalone mark
+- Wordmark: full logo with text
+- Krish headshot: circular crop, 192px diameter
+- Always on appropriate contrast background
+
+---
+
+## Mobile Considerations
+
+### Touch Targets
+```css
+Minimum: 44px × 44px (touch-target class)
+Buttons: px-6 py-3 minimum
+Icons:   Adequate padding around
+```
+
+### Responsive Patterns
+```
+Desktop:   3-4 columns
+Tablet:    2 columns
+Mobile:    1 column (stack)
+```
+
+### Font Scaling
+```
+Hero:     text-4xl → text-6xl (sm:md:lg)
+H2:       text-2xl → text-4xl
+Body:     text-base (consistent)
+```
+
+### Spacing Adjustments
+```
+Section padding: py-12 → py-20
+Container:       px-4 → px-6
+Gaps:            gap-4 → gap-6
+```
+
+---
+
+## Accessibility Visual Requirements
 
 ### Color Contrast
+- AA standard minimum (4.5:1 for body text)
+- AAA preferred (7:1)
+- Test: Ink on Off-White = 12.6:1 ✅
+- Test: Mint on White = 1.9:1 ❌ (accent only, not text)
 
-- Text on background: min 4.5:1 (WCAG AA)
-- Large text (18pt+): min 3:1
-- Interactive elements: min 3:1
-
-**Test both light and dark modes separately**
+### Visual Hierarchy
+- Clear heading levels (don't skip)
+- Adequate spacing between sections
+- Logical reading order
 
 ### Focus Indicators
-
-All interactive elements must have visible focus:
-```tsx
-focus:ring-2 focus:ring-ring focus:ring-offset-2
-```
-
-### Keyboard Navigation
-
-- Tab order follows visual order
-- Skip links for long pages
-- Escape closes modals
-- Enter submits forms
-
-### Screen Readers
-
-- Use semantic HTML (`<nav>`, `<main>`, `<article>`)
-- Add `aria-label` to icon-only buttons
-- Include `alt` text on all images
-- Use `role` attributes where needed
+- Visible on all interactive elements
+- Mint ring (2px) with 2px offset
+- Never remove focus styles
 
 ---
 
-## Dark Mode
-
-### Implementation
-
-All colors use CSS variables that switch in `.dark`:
-```tsx
-<div className="bg-background text-foreground">
-  {/* Automatically dark-mode compatible */}
-</div>
-```
-
-### Testing Checklist
-
-- [ ] All text readable in dark mode
-- [ ] All borders visible in dark mode
-- [ ] Charts legible in dark mode
-- [ ] Images have appropriate contrast
-- [ ] No white "flash" on load
-
----
-
-## Component Library (shadcn/ui)
-
-### Core Components Used
-
-- `Button`: Primary actions
-- `Card`: Content containers
-- `Badge`: Labels and tags
-- `Input`: Form fields
-- `Label`: Form labels
-- `Tabs`: Navigation between views
-- `Dialog`: Modals and overlays
-- `Select`: Dropdowns
-- `Checkbox`: Boolean inputs
-- `RadioGroup`: Single-choice inputs
-- `Progress`: Loading bars
-- `Skeleton`: Loading placeholders
-- `Tooltip`: Hover explanations
-
-### Customisation Rules
-
-1. Never override base component styles directly
-2. Use `className` prop for variants
-3. Define new variants in component file if reusable
-4. Keep shadcn components in `/components/ui/`
-5. Create composite components in `/components/`
-
----
-
-## Visual Hierarchy
-
-### Priority Levels
-
-**Level 1: Primary Focus**
-- Large, bold headlines
-- Primary CTA buttons
-- Critical data/metrics
-- Current tab/selection
-
-**Level 2: Supporting Content**
-- Body text
-- Secondary actions
-- Related information
-- Dimension cards
-
-**Level 3: Metadata**
-- Timestamps
-- Labels and tags
-- Helper text
-- Non-critical status
-
-**Level 4: Background**
-- Borders
-- Dividers
-- Subtle backgrounds
-- Placeholder text
-
-### Size Relationships
-
-- Headline: 2-3× body text size
-- Body text: 14-16px
-- Labels: 12px
-- Icons: Match text height
-
----
-
-## Example Screens
-
-### Landing Page (HeroSection.tsx)
-
-```
-┌─────────────────────────────────────┐
-│ [Logo]              [Sign In]       │
-│                                     │
-│     Know Where You Stand on AI      │
-│                                     │
-│   Spend 10 minutes mapping how AI   │
-│   fits your role, team, and company.│
-│                                     │
-│      [Start diagnostic →]           │
-│                                     │
-│   Used by 2,500+ leaders            │
-└─────────────────────────────────────┘
-```
-
-### Results Page (UnifiedResults.tsx)
-
-```
-┌─────────────────────────────────────┐
-│ Krish's Diagnostic                  │
-│ Completed: Jan 24, 2025             │
-├─────────────────────────────────────┤
-│ [Overview] [Tensions] [Tools] [⚙]  │
-├─────────────────────────────────────┤
-│                                     │
-│  ┌───────────────────────────────┐ │
-│  │ [Radar Chart]                 │ │
-│  │                               │ │
-│  └───────────────────────────────┘ │
-│                                     │
-│  ┌───────────────────────────────┐ │
-│  │ Strategic Vision        72    │ │
-│  │ [Progress bar]                │ │
-│  └───────────────────────────────┘ │
-│                                     │
-│  ┌───────────────────────────────┐ │
-│  │ Experimentation        65     │ │
-│  │ [Progress bar]                │ │
-│  └───────────────────────────────┘ │
-│                                     │
-└─────────────────────────────────────┘
-```
-
-### Tensions Tab (TensionsView.tsx)
-
-```
-┌─────────────────────────────────────┐
-│ Strategic Tensions                  │
-├─────────────────────────────────────┤
-│                                     │
-│ ║ Delegation Gap                    │
-│ ║ You want to automate but haven't  │
-│ ║ identified which tasks are safe.  │
-│ ║ Priority: 1                       │
-│                                     │
-│ ║ Governance Void                   │
-│ ║ Team experimenting without central│
-│ ║ visibility or guardrails.         │
-│ ║ Priority: 2                       │
-│                                     │
-└─────────────────────────────────────┘
-```
-
----
-
-## Quality Checklist
-
-Before shipping any visual change:
-
-- [ ] Follows semantic token system (no hardcoded colors)
-- [ ] Works in both light and dark mode
-- [ ] Responsive on mobile, tablet, desktop
-- [ ] All interactive elements keyboard accessible
-- [ ] Focus states visible
-- [ ] Color contrast meets WCAG AA
-- [ ] Loading and error states handled
-- [ ] Animations are subtle and purposeful
-- [ ] No placeholder or dummy content
-- [ ] Matches brand voice (calm, senior, clear)
+**End of VISUAL_GUIDELINES**

@@ -1,342 +1,231 @@
 # Design System
 
-Complete design system specification for Mindmaker.
+**Last Updated:** 2025-11-25
 
 ---
 
-## Design Tokens
+## Color System
 
-### Color System (HSL)
-
-All colors defined in `src/index.css` using CSS custom properties:
-
-```css
-:root {
-  --background: 0 0% 100%;           /* White */
-  --foreground: 222.2 84% 4.9%;      /* Near black */
-  --card: 0 0% 100%;                 /* White */
-  --card-foreground: 222.2 84% 4.9%; /* Near black */
-  --popover: 0 0% 100%;              /* White */
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 222.2 47.4% 11.2%;      /* Deep navy */
-  --primary-foreground: 210 40% 98%;  /* Off-white */
-  --secondary: 210 40% 96.1%;        /* Light blue-gray */
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;            /* Light gray */
-  --muted-foreground: 215.4 16.3% 46.9%; /* Medium gray */
-  --accent: 210 40% 96.1%;           /* Accent gray */
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;      /* Red */
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;       /* Light border */
-  --input: 214.3 31.8% 91.4%;        /* Input border */
-  --ring: 222.2 84% 4.9%;            /* Focus ring */
-  --radius: 0.5rem;                  /* Default border radius */
-}
-
-.dark {
-  --background: 222.2 84% 4.9%;      /* Near black */
-  --foreground: 210 40% 98%;         /* Off-white */
-  --card: 222.2 84% 4.9%;            /* Near black */
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 210 40% 98%;            /* Off-white */
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;    /* Dark blue-gray */
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;        /* Dark gray */
-  --muted-foreground: 215 20.2% 65.1%; /* Medium light gray */
-  --accent: 217.2 32.6% 17.5%;       /* Dark accent */
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;      /* Dark red */
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;       /* Dark border */
-  --input: 217.2 32.6% 17.5%;        /* Dark input border */
-  --ring: 212.7 26.8% 83.9%;         /* Light focus ring */
-}
+### Primary Palette
+```
+Ink:  #0e1a2b (HSL: 210 58% 11%)  - Main structure, typography
+Mint: #7ef4c2 (HSL: 158 82% 73%) - Highlights, sparingly
 ```
 
-### **Usage Rules**
+### Neutrals
+```
+Off-White:   #F7F7F5 (HSL: 60 9% 96%)  - Background
+Light Grey:  #E5E5E3 (HSL: 60 5% 90%)  - Borders
+Mid Grey:    #9AA0A6 (HSL: 210 7% 62%) - Secondary text
+Graphite:    #333639 (HSL: 200 5% 21%) - Strong text
+```
 
-1. **ALWAYS use semantic tokens** in components:
-   ```tsx
-   // ✅ CORRECT
-   <div className="bg-background text-foreground">
-   <Button className="bg-primary text-primary-foreground">
-   
-   // ❌ WRONG
-   <div className="bg-white text-black">
-   <Button className="bg-blue-600 text-white">
-   ```
-
-2. **For custom colors**, define in `index.css` first:
-   ```css
-   :root {
-     --success: 142 76% 36%;  /* Green */
-     --warning: 38 92% 50%;   /* Orange */
-     --info: 217 91% 60%;     /* Blue */
-   }
-   ```
-   
-3. **Then add to `tailwind.config.ts`**:
-   ```ts
-   colors: {
-     success: 'hsl(var(--success))',
-     warning: 'hsl(var(--warning))',
-     info: 'hsl(var(--info))',
-   }
-   ```
+### Semantic Mappings
+```css
+--background: var(--off-white)
+--foreground: var(--ink)
+--muted: var(--light-grey)
+--muted-foreground: var(--mid-grey)
+--primary: var(--ink)
+--accent: var(--mint)
+--ring: var(--mint)
+```
 
 ---
 
 ## Typography
 
 ### Font Families
-
-Defined in `tailwind.config.ts`:
-
-```ts
-fontFamily: {
-  sans: ["Inter", "sans-serif"],
-  heading: ["Inter", "sans-serif"],
-  mono: ["monospace"],
-}
+```
+Primary: 'Inter' - Body text, UI
+Display: 'Gobold' - Headlines, hero text
 ```
 
-### Font Sizes
-
-```ts
-fontSize: {
-  xs: '0.75rem',     // 12px
-  sm: '0.875rem',    // 14px
-  base: '1rem',      // 16px
-  lg: '1.125rem',    // 18px
-  xl: '1.25rem',     // 20px
-  '2xl': '1.5rem',   // 24px
-  '3xl': '1.875rem', // 30px
-  '4xl': '2.25rem',  // 36px
-  '5xl': '3rem',     // 48px
-}
+### Scale
+```
+Hero:     text-5xl to text-6xl (48-60px)
+H1:       text-4xl to text-5xl (36-48px)
+H2:       text-3xl to text-4xl (30-36px)
+H3:       text-2xl (24px)
+Body:     text-base (16px)
+Small:    text-sm (14px)
+Tiny:     text-xs (12px)
 ```
 
-### Font Weights
-
-```ts
-fontWeight: {
-  normal: '400',
-  medium: '500',
-  semibold: '600',
-  bold: '700',
-}
-```
-
-### Typography Scale Usage
-
-| Element | Class | Use Case |
-|---------|-------|----------|
-| **Hero Heading** | `text-4xl font-bold` | Landing page main headline |
-| **Section Heading** | `text-2xl font-semibold` | Major page sections |
-| **Card Title** | `text-lg font-semibold` | Card headers |
-| **Body Text** | `text-sm text-muted-foreground` | Standard paragraph text |
-| **Label** | `text-xs font-medium` | Form labels, badges |
-| **Caption** | `text-xs text-muted-foreground` | Metadata, helper text |
+### Usage Rules
+- **Gobold:** Hero headlines only, sparingly
+- **Inter:** All other text
+- **Line Height:** 1.6 for body, 1.2 for headlines
+- **Letter Spacing:** Tight (-0.02em) for headlines
 
 ---
 
-## Spacing
+## Spacing System
 
-### Scale
-
-```ts
-spacing: {
-  0: '0px',
-  1: '0.25rem',  // 4px
-  2: '0.5rem',   // 8px
-  3: '0.75rem',  // 12px
-  4: '1rem',     // 16px
-  6: '1.5rem',   // 24px
-  8: '2rem',     // 32px
-  12: '3rem',    // 48px
-  16: '4rem',    // 64px
-  24: '6rem',    // 96px
-}
+### Scale (Tailwind)
+```
+0.5  = 2px   (xs gaps)
+1    = 4px   (tight spacing)
+2    = 8px   (compact)
+3    = 12px  (default gap)
+4    = 16px  (comfortable)
+6    = 24px  (section spacing)
+8    = 32px  (large gaps)
+12   = 48px  (section padding)
+16   = 64px  (major sections)
+20   = 80px  (hero padding)
 ```
 
-### Usage Guidelines
-
-- **Component padding**: `p-6` (24px) for cards, `p-4` (16px) for buttons
-- **Section spacing**: `space-y-8` (32px) between major sections
-- **Element spacing**: `gap-4` (16px) between related elements
-- **Generous whitespace**: Use `space-y-12` (48px) for breathing room
+### Utility Classes
+```
+section-padding:    py-12 md:py-20 (sections)
+container-width:    max-w-7xl mx-auto px-4
+touch-target:       min-h-[44px] (mobile buttons)
+```
 
 ---
 
 ## Component Patterns
 
-### Cards
-
-```tsx
-<Card className="border-l-4 border-l-primary/50">
-  <CardHeader>
-    <CardTitle>Title</CardTitle>
-  </CardHeader>
-  <CardContent className="p-6">
-    <p className="text-sm text-muted-foreground">Content</p>
-  </CardContent>
-</Card>
-```
-
-**Variants**:
-- Default: Standard white/dark card
-- Left-border accent: Add `border-l-4 border-l-{color}/50`
-- Hover state: Add `hover:shadow-lg transition-shadow`
-
 ### Buttons
 
+**Primary (Mint)**
 ```tsx
-<Button variant="default" size="lg">
-  <Icon className="mr-2 h-4 w-4" />
-  Label
-</Button>
+<Button className="bg-mint text-ink hover:bg-mint/90">
 ```
 
-**Variants**:
-- `default`: Primary action (solid primary color)
-- `outline`: Secondary action (border only)
-- `ghost`: Tertiary action (no border)
-- `destructive`: Delete/remove actions (red)
-- `link`: Text-only link style
-
-**Sizes**:
-- `sm`: Compact buttons
-- `default`: Standard buttons
-- `lg`: Hero CTAs
-
-### Badges
-
+**Secondary (Ink)**
 ```tsx
-<Badge variant="secondary">Label</Badge>
+<Button className="bg-ink text-white hover:bg-ink/90">
 ```
 
-**Variants**:
-- `default`: Primary badge (solid primary)
-- `secondary`: Neutral badge (muted)
-- `outline`: Subtle badge (border only)
-- `destructive`: Error badge (red)
-
-### Form Inputs
-
+**Outline**
 ```tsx
-<div className="space-y-2">
-  <Label htmlFor="input">Label</Label>
-  <Input id="input" placeholder="Placeholder" />
-  <p className="text-xs text-muted-foreground">Helper text</p>
+<Button variant="outline" className="border-mint text-mint">
+```
+
+### Cards
+
+**Premium Card** (featured content)
+```tsx
+<div className="premium-card">
+  // bg-white, border-2, shadow-lg, p-6
 </div>
 ```
+
+**Minimal Card** (standard content)
+```tsx
+<div className="minimal-card">
+  // bg-card, border, p-6
+</div>
+```
+
+### Modals/Dialogs
+```tsx
+<Dialog>
+  <DialogContent className="sm:max-w-[520px]">
+    // White bg, rounded-lg, shadow
+  </DialogContent>
+</Dialog>
+```
+
+---
+
+## Animation System
+
+### Keyframes
+```css
+fade-in-up: opacity 0→1, translateY 20px→0 (0.6s)
+pulse: scale 1→1.05→1 (2s infinite)
+```
+
+### Usage
+```tsx
+className="fade-in-up" style={{animationDelay: '0.1s'}}
+```
+
+### Motion Preferences
+```css
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}
+```
+
+---
+
+## Responsive Breakpoints
+
+```
+sm:  640px  (mobile landscape)
+md:  768px  (tablet)
+lg:  1024px (desktop)
+xl:  1280px (large desktop)
+2xl: 1536px (extra large)
+```
+
+### Mobile-First Approach
+Base styles = mobile, use `md:`, `lg:` for larger screens
 
 ---
 
 ## Layout Patterns
 
-### Page Container
-
+### Hero Section
 ```tsx
-<div className="container mx-auto px-4 py-12 max-w-6xl">
-  {/* Page content */}
-</div>
+<section className="min-h-screen flex items-center bg-ink text-white">
+  <div className="container-width">
+    <h1 className="text-5xl md:text-6xl font-bold">
 ```
 
-### Section Spacing
-
+### Content Section
 ```tsx
-<div className="space-y-8">
-  <section>...</section>
-  <section>...</section>
-</div>
+<section className="section-padding bg-background">
+  <div className="container-width">
+    <h2 className="text-3xl md:text-4xl font-bold mb-8">
 ```
 
 ### Grid Layouts
-
 ```tsx
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {items.map(item => <Card key={item.id}>...</Card>)}
-</div>
-```
-
-### Flex Layouts
-
-```tsx
-<div className="flex items-center justify-between gap-4">
-  <div>Left content</div>
-  <div>Right content</div>
+<div className="grid md:grid-cols-3 gap-6">
+  // Mobile: 1 col, Tablet+: 3 cols
 </div>
 ```
 
 ---
 
-## Animation & Transitions
+## Icon System
 
-### Hover States
-
-```tsx
-<Button className="group">
-  <span>Label</span>
-  <ArrowRight className="ml-2 transition-transform group-hover:translate-x-1" />
-</Button>
-```
-
-### Loading States
+**Library:** Lucide React  
+**Size:** `h-5 w-5` standard, `h-6 w-6` large  
+**Color:** Inherit from parent
 
 ```tsx
-{isLoading ? (
-  <Loader2 className="h-8 w-8 animate-spin text-primary" />
-) : (
-  <Content />
-)}
-```
-
-### Fade In
-
-```tsx
-<div className="animate-in fade-in duration-500">
-  <Content />
-</div>
+import { ArrowRight, CheckCircle } from "lucide-react"
+<CheckCircle className="h-5 w-5 text-mint" />
 ```
 
 ---
 
-## Responsive Design
+## Form Elements
 
-### Breakpoints
-
-```ts
-screens: {
-  sm: '640px',
-  md: '768px',
-  lg: '1024px',
-  xl: '1280px',
-  '2xl': '1536px',
-}
+### Input Fields
+```tsx
+<Input 
+  className="border-input bg-background"
+  placeholder="Your email"
+/>
 ```
 
-### Mobile-First Approach
-
+### Labels
 ```tsx
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-  {/* 1 column mobile, 2 tablet, 3 desktop */}
-</div>
-
-<Button size="sm" className="md:size-default">
-  {/* Smaller button on mobile */}
-</Button>
+<Label className="text-sm font-semibold">
 ```
 
-### Hide/Show Patterns
-
+### Radio Groups
 ```tsx
-<span className="hidden sm:inline">Desktop text</span>
-<span className="sm:hidden">Mobile text</span>
+<RadioGroup>
+  <RadioGroupItem value="option" />
+</RadioGroup>
 ```
 
 ---
@@ -344,81 +233,31 @@ screens: {
 ## Accessibility
 
 ### Focus States
-
-All interactive elements must have visible focus states:
-```tsx
-<Button className="focus:ring-2 focus:ring-ring focus:ring-offset-2">
-  Click me
-</Button>
+```css
+focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
 ```
-
-### Color Contrast
-
-- All text must meet WCAG AA standards (4.5:1 for normal text)
-- Use `text-foreground` on `bg-background` (guaranteed contrast)
-- Test dark mode separately
 
 ### ARIA Labels
-
 ```tsx
-<Button aria-label="Close dialog">
-  <X className="h-4 w-4" />
-</Button>
+<button aria-label="Close dialog">
 ```
+
+### Semantic HTML
+Use `<main>`, `<section>`, `<nav>`, `<article>` appropriately
 
 ---
 
-## Icon System
+## Design Tokens Location
 
-### Library
+**File:** `src/index.css`  
+**Config:** `tailwind.config.ts`
 
-Using `lucide-react` for all icons:
-```tsx
-import { Icon } from 'lucide-react';
-<Icon className="h-5 w-5 text-primary" />
-```
+All colors, spacing, typography defined as CSS variables and Tailwind extensions.
 
-### Size Guidelines
-
-- **Inline with text**: `h-4 w-4`
-- **Button icons**: `h-5 w-5`
-- **Hero icons**: `h-8 w-8`
-- **Large features**: `h-12 w-12`
-
-### Common Icons
-
-- Navigation: `ArrowRight`, `ChevronRight`, `Menu`
-- Actions: `Plus`, `Edit`, `Trash2`, `Download`
-- Status: `Check`, `X`, `AlertTriangle`, `Info`
-- Features: `Brain`, `Target`, `TrendingUp`, `Shield`
+**Never hardcode colors** - always use tokens:
+- ✅ `bg-mint`, `text-ink`, `border-muted`
+- ❌ `bg-[#7ef4c2]`, `text-[#0e1a2b]`
 
 ---
 
-## Design Principles
-
-### 1. Clarity Over Cleverness
-- Use plain language, avoid jargon
-- Explicit labels, not ambiguous icons alone
-- Clear hierarchy with size and weight
-
-### 2. Calm, Senior Aesthetic
-- Generous whitespace
-- Minimal animations (only for feedback)
-- Restrained color palette
-- No "gamification" or "quiz" vibes
-
-### 3. Mobile-First Responsive
-- Touch-friendly targets (min 44×44px)
-- Single-column layouts on mobile
-- Readable text without zooming
-
-### 4. Consistent Patterns
-- Reuse components, don't create one-offs
-- Follow established interaction patterns
-- Maintain token-based styling
-
-### 5. Accessible by Default
-- Semantic HTML
-- Keyboard navigable
-- Screen reader friendly
-- High contrast in both modes
+**End of DESIGN_SYSTEM**
