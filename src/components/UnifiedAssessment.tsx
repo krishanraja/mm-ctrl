@@ -225,19 +225,18 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       }, 1000);
 
     try {
-      // Call v2 orchestration
-      const { orchestrateAssessmentV2 } = await import('@/utils/orchestrateAssessmentV2');
+      // Call simplified assessment pipeline
+      const { runAssessment } = await import('@/utils/runAssessment');
       const rawQuizData = getAssessmentData();
       
       // Convert quiz data to v2 format with numeric dimension scores
       const v2FormattedData = convertQuizToV2Format(rawQuizData);
       
-      const result = await orchestrateAssessmentV2(
+      const result = await runAssessment(
         contactData!,
         v2FormattedData,
         deepProfileData,
-        sessionId!,
-        'quiz'
+        sessionId!
       );
 
       if (result.success && result.assessmentId) {
@@ -369,10 +368,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const handleDeepProfileComplete = useCallback(async (profileData: DeepProfileData) => {
     setDeepProfileData(profileData);
     
-    // Calculate AI Learning Style
-    const { determineAILearningStyle } = await import('@/utils/aiLearningStyle');
-    const learningStyle = determineAILearningStyle(profileData);
-    console.log('🎯 Determined learning style:', learningStyle);
+    // Use default learning style
+    const { getDefaultLearningStyle } = await import('@/utils/aiLearningStyle');
+    const learningStyle = getDefaultLearningStyle();
+    console.log('🎯 Using learning style:', learningStyle);
     
     // Update index participant data with learning style and deep profile
     try {
@@ -467,29 +466,15 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       const { convertQuizToV2Format } = await import('@/utils/convertQuizToV2Format');
       const v2FormattedData = convertQuizToV2Format(rawQuizData);
       
-      // CRITICAL: Orchestrate v2 assessment BEFORE generating library
+      // Run assessment pipeline
       try {
-        const { orchestrateAssessmentV2 } = await import('@/utils/orchestrateAssessmentV2');
+        const { runAssessment } = await import('@/utils/runAssessment');
         
-        // CP2: Add 90-second timeout to prevent infinite UI hangs
-        const withTimeout = <T,>(promise: Promise<T>, ms: number): Promise<T> => {
-          return Promise.race([
-            promise,
-            new Promise<T>((_, reject) => 
-              setTimeout(() => reject(new Error(`Operation timed out after ${ms}ms`)), ms)
-            )
-          ]);
-        };
-        
-        const result = await withTimeout(
-          orchestrateAssessmentV2(
-            contactData!,
-            v2FormattedData,
-            profileData,
-            sessionId!,
-            'quiz'
-          ),
-          90000 // CP2: 90-second timeout
+        const result = await runAssessment(
+          contactData!,
+          v2FormattedData,
+          profileData,
+          sessionId!
         );
 
         if (result.success && result.assessmentId) {
@@ -548,8 +533,8 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             });
           }, 500);
         } else {
-          console.error('❌ V2 orchestration failed:', result.error);
-          throw new Error('Orchestration failed');
+          console.error('❌ Assessment failed:', result.error);
+          throw new Error('Assessment failed');
         }
       } catch (orchestrationError) {
         console.error('❌ V2 orchestration error:', orchestrationError);

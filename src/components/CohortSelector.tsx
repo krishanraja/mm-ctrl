@@ -22,7 +22,7 @@ export const CohortSelector: React.FC<CohortSelectorProps> = ({
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border rounded-lg bg-muted/30">
       <div className="flex items-center gap-3">
-        <span className="text-2xl">{profile.icon}</span>
+        <Users className="h-5 w-5 text-primary" />
         <div>
           <div className="flex items-center gap-2">
             <h4 className="font-semibold text-sm">Your Learning Style</h4>

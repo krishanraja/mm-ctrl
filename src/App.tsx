@@ -7,27 +7,11 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { testGoogleSheetsSync, testMainSyncFunction } from "./utils/testGoogleSheetsSync";
 import { processPendingSyncs } from "./utils/processPendingSyncs";
-import { 
-  testBasicOpenAIConnection, 
-  testAIAssessmentChat, 
-  testExecutiveInsightsGeneration,
-  testCompleteOpenAIIntegration,
-  diagnoseOpenAIIssues,
-  testAdvisorySprintNotification
-} from "./utils/testOpenAIIntegration";
-import { testGeminiRAG } from "./utils/testGeminiIntegration";
 
 // Temporarily expose test functions to global scope for debugging
 (window as any).testGoogleSheetsSync = testGoogleSheetsSync;
 (window as any).testMainSyncFunction = testMainSyncFunction;
 (window as any).processPendingSyncs = processPendingSyncs;
-(window as any).testBasicOpenAIConnection = testBasicOpenAIConnection;
-(window as any).testAIAssessmentChat = testAIAssessmentChat;
-(window as any).testExecutiveInsightsGeneration = testExecutiveInsightsGeneration;
-(window as any).testCompleteOpenAIIntegration = testCompleteOpenAIIntegration;
-(window as any).diagnoseOpenAIIssues = diagnoseOpenAIIssues;
-(window as any).testAdvisorySprintNotification = testAdvisorySprintNotification;
-(window as any).testGeminiRAG = testGeminiRAG;
 
 const queryClient = new QueryClient();
 
