@@ -15,7 +15,7 @@ import { CompassResults } from './CompassResults';
 import { RoiEstimate } from '@/types/voice';
 import { Award, TrendingUp, CheckCircle2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { orchestrateAssessmentV2 } from '@/utils/orchestrateAssessmentV2';
+import { runAssessment } from '@/utils/runAssessment';
 import { mapVoiceToAssessment, createMinimalDeepProfile } from '@/utils/mapVoiceToAssessment';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -63,8 +63,8 @@ export const VoiceSummary: React.FC<VoiceSummaryProps> = ({
       // Create minimal deep profile
       const deepProfile = createMinimalDeepProfile(compassResults, email);
 
-      // Call v2 orchestration
-      const result = await orchestrateAssessmentV2(
+      // Run assessment pipeline
+      const result = await runAssessment(
         {
           fullName,
           companyName,
@@ -77,8 +77,7 @@ export const VoiceSummary: React.FC<VoiceSummaryProps> = ({
         },
         assessmentData,
         deepProfile,
-        sessionId,
-        'voice'
+        sessionId
       );
 
       console.log('✅ V2 orchestration complete:', result);

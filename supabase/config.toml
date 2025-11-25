@@ -3,13 +3,7 @@ project_id = "bkyuxvschuwngtcdhsyg"
 [functions.create-leader-assessment]
 verify_jwt = false
 
-[functions.compute-risk-signals]
-verify_jwt = false
-
-[functions.compute-tensions]
-verify_jwt = false
-
-[functions.derive-org-scenarios]
+[functions.ai-generate]
 verify_jwt = false
 
 [functions.create-diagnostic-payment]
@@ -22,15 +16,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-advisory-sprint-notification]
-verify_jwt = false
-
-[functions.generate-executive-insights]
-verify_jwt = false
-
-[functions.generate-prompt-library]
-verify_jwt = false
-
-[functions.generate-personalized-insights]
 verify_jwt = false
 
 [functions.voice-transcribe]
