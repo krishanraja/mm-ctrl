@@ -14,18 +14,18 @@ serve(async (req) => {
   try {
     const { assessmentData, contactData } = await req.json();
 
-    console.log('🚀 AI Generate - Starting with Plan A (Gemini)');
+    console.log('🚀 AI Generate - Starting with Plan A (Vertex AI)');
 
     const prompt = buildPrompt(assessmentData, contactData);
     
-    // Plan A: Try Gemini (Vertex AI)
-    const geminiResult = await tryGemini(prompt);
-    if (geminiResult.success) {
-      console.log('✅ Plan A (Gemini) succeeded');
+    // Plan A: Try Vertex AI (with service account)
+    const vertexResult = await tryVertexAI(prompt);
+    if (vertexResult.success) {
+      console.log('✅ Plan A (Vertex AI) succeeded');
       return new Response(JSON.stringify({
         success: true,
-        source: 'gemini',
-        data: geminiResult.data
+        source: 'vertex-ai',
+        data: vertexResult.data
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -106,49 +106,139 @@ Generate a JSON response with this EXACT structure:
 Make it personal, specific, and actionable. No generic advice.`;
 }
 
-async function tryGemini(prompt: string): Promise<{ success: boolean; data?: any }> {
+async function tryVertexAI(prompt: string): Promise<{ success: boolean; data?: any }> {
   try {
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-    if (!GEMINI_API_KEY) {
-      console.log('⚠️ GEMINI_API_KEY not found');
+    const serviceAccountKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
+    if (!serviceAccountKey) {
+      console.log('⚠️ GEMINI_SERVICE_ACCOUNT_KEY not found');
       return { success: false };
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 2000,
-          }
-        })
-      }
-    );
+    // Parse service account credentials
+    const credentials = JSON.parse(serviceAccountKey);
+    const projectId = credentials.project_id;
+
+    // Get OAuth token
+    const tokenResponse = await getGoogleOAuthToken(credentials);
+    if (!tokenResponse.success) {
+      console.error('Failed to get OAuth token');
+      return { success: false };
+    }
+
+    // Call Vertex AI Gemini
+    const endpoint = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/gemini-2.0-flash-exp:generateContent`;
+    
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${tokenResponse.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 2000,
+          responseMimeType: 'application/json'
+        }
+      })
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
+      console.error('Vertex AI error:', response.status, errorText);
       return { success: false };
     }
 
     const result = await response.json();
     const text = result.candidates[0].content.parts[0].text;
     
-    // Extract JSON from markdown code blocks if present
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
-    const jsonText = jsonMatch ? jsonMatch[1] : text;
+    // Vertex AI with responseMimeType returns JSON directly, but still check for markdown
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
+      const jsonText = jsonMatch ? jsonMatch[1] : text;
+      data = JSON.parse(jsonText);
+    }
     
-    const data = JSON.parse(jsonText);
     return { success: true, data };
 
   } catch (error) {
-    console.error('Gemini error:', error);
+    console.error('Vertex AI error:', error);
+    return { success: false };
+  }
+}
+
+async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean; token?: string }> {
+  try {
+    const jwtHeader = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+    
+    const now = Math.floor(Date.now() / 1000);
+    const jwtPayload = btoa(JSON.stringify({
+      iss: credentials.client_email,
+      scope: 'https://www.googleapis.com/auth/cloud-platform',
+      aud: 'https://oauth2.googleapis.com/token',
+      exp: now + 3600,
+      iat: now
+    }));
+
+    // Import private key
+    const privateKeyPem = credentials.private_key
+      .replace(/-----BEGIN PRIVATE KEY-----/, '')
+      .replace(/-----END PRIVATE KEY-----/, '')
+      .replace(/\n/g, '');
+    
+    const binaryKey = Uint8Array.from(atob(privateKeyPem), c => c.charCodeAt(0));
+    
+    const cryptoKey = await crypto.subtle.importKey(
+      'pkcs8',
+      binaryKey,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    // Sign JWT
+    const signatureInput = `${jwtHeader}.${jwtPayload}`;
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      cryptoKey,
+      new TextEncoder().encode(signatureInput)
+    );
+
+    const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+
+    const jwt = `${signatureInput}.${signatureBase64}`;
+
+    // Exchange JWT for access token
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: jwt
+      })
+    });
+
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error('OAuth token error:', errorText);
+      return { success: false };
+    }
+
+    const tokenData = await tokenResponse.json();
+    return { success: true, token: tokenData.access_token };
+
+  } catch (error) {
+    console.error('OAuth token generation error:', error);
     return { success: false };
   }
 }
@@ -174,7 +264,8 @@ async function tryOpenAI(prompt: string): Promise<{ success: boolean; data?: any
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,
-        max_tokens: 2000
+        max_tokens: 2000,
+        response_format: { type: 'json_object' }
       })
     });
 
@@ -187,11 +278,7 @@ async function tryOpenAI(prompt: string): Promise<{ success: boolean; data?: any
     const result = await response.json();
     const text = result.choices[0].message.content;
     
-    // Extract JSON from markdown code blocks if present
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
-    const jsonText = jsonMatch ? jsonMatch[1] : text;
-    
-    const data = JSON.parse(jsonText);
+    const data = JSON.parse(text);
     return { success: true, data };
 
   } catch (error) {
