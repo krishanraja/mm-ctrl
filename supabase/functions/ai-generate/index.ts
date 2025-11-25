@@ -80,98 +80,193 @@ function buildPrompt(assessmentData: any, contactData: any): string {
 Contact: ${contactData.fullName} (${contactData.role || 'Leader'}) at ${contactData.companyName || 'their company'}
 Scores: ${scores}
 
-Generate a JSON response with this EXACT structure:
+Generate a JSON response with this EXACT structure. Follow the EXACT enum values specified:
+
 {
-  "yourEdge": "One sentence describing their unique competitive advantage based on scores",
+  "yourEdge": "One sentence describing their unique competitive advantage",
   "yourRisk": "One sentence describing their biggest hidden risk",
   "yourNextMove": "One specific action they should take in the next 7 days",
+  "dimensionScores": [
+    {
+      "key": "ai_readiness",
+      "score": 75,
+      "label": "Advancing",
+      "summary": "Brief insight about this dimension"
+    }
+  ],
   "tensions": [
-    { "key": "tension_1", "summary": "Brief description of a strategic tension" }
+    {
+      "key": "speed_vs_quality",
+      "summary": "Brief description of a strategic tension"
+    }
   ],
   "risks": [
-    { "key": "risk_1", "level": "medium", "description": "A specific risk signal" }
+    {
+      "key": "shadow_ai",
+      "level": "medium",
+      "description": "A specific risk signal"
+    }
   ],
   "scenarios": [
-    { "key": "scenario_1", "summary": "A strategic scenario recommendation" }
+    {
+      "key": "high_velocity_path",
+      "summary": "A strategic scenario recommendation"
+    }
   ],
   "prompts": [
     {
-      "category": "daily_efficiency",
-      "title": "Quick Wins",
+      "category": "strategic_planning",
+      "title": "AI Strategy Prompts",
+      "description": "Prompts for strategic planning",
+      "whatItsFor": "When you need to plan AI initiatives",
+      "whenToUse": "During quarterly planning",
+      "howToUse": "Copy and paste into ChatGPT",
       "prompts": ["Specific AI prompt they can use today"]
     }
+  ],
+  "firstMoves": [
+    "First concrete action to take this week",
+    "Second concrete action to take this week",
+    "Third concrete action to take this week"
   ]
 }
 
-Make it personal, specific, and actionable. No generic advice.`;
+CRITICAL ENUM CONSTRAINTS (use ONLY these exact values):
+- risk.key: Must be one of ["shadow_ai", "skills_gap", "roi_leakage", "decision_friction"]
+- risk.level: Must be one of ["low", "medium", "high"]
+- scenario.key: Must be one of ["stagnation_loop", "shadow_ai_instability", "high_velocity_path", "culture_capability_mismatch"]
+- prompt.category: Must be one of ["strategic_planning", "daily_efficiency", "team_enablement", "stakeholder_management"]
+
+Generate exactly 3-5 items for each array. Make it personal, specific, and actionable. No generic advice.`;
 }
 
-async function tryVertexAI(prompt: string): Promise<{ success: boolean; data?: any }> {
-  try {
-    const serviceAccountKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
-    if (!serviceAccountKey) {
-      console.log('⚠️ GEMINI_SERVICE_ACCOUNT_KEY not found');
-      return { success: false };
-    }
+function sanitizeEnums(data: any): any {
+  const validRiskKeys = ['shadow_ai', 'skills_gap', 'roi_leakage', 'decision_friction'];
+  const validRiskLevels = ['low', 'medium', 'high'];
+  const validScenarioKeys = ['stagnation_loop', 'shadow_ai_instability', 'high_velocity_path', 'culture_capability_mismatch'];
+  const validPromptCategories = ['strategic_planning', 'daily_efficiency', 'team_enablement', 'stakeholder_management'];
 
-    // Parse service account credentials
-    const credentials = JSON.parse(serviceAccountKey);
-    const projectId = credentials.project_id;
-
-    // Get OAuth token
-    const tokenResponse = await getGoogleOAuthToken(credentials);
-    if (!tokenResponse.success) {
-      console.error('Failed to get OAuth token');
-      return { success: false };
-    }
-
-    // Call Vertex AI Gemini
-    const endpoint = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/gemini-2.0-flash-exp:generateContent`;
-    
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${tokenResponse.token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          role: 'user',
-          parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 2000,
-          responseMimeType: 'application/json'
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Vertex AI error:', response.status, errorText);
-      return { success: false };
-    }
-
-    const result = await response.json();
-    const text = result.candidates[0].content.parts[0].text;
-    
-    // Vertex AI with responseMimeType returns JSON directly, but still check for markdown
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
-      const jsonText = jsonMatch ? jsonMatch[1] : text;
-      data = JSON.parse(jsonText);
-    }
-    
-    return { success: true, data };
-
-  } catch (error) {
-    console.error('Vertex AI error:', error);
-    return { success: false };
+  if (data.risks) {
+    data.risks = data.risks.map((r: any) => ({
+      ...r,
+      key: validRiskKeys.includes(r.key) ? r.key : 'shadow_ai',
+      level: validRiskLevels.includes(r.level) ? r.level : 'medium'
+    }));
   }
+
+  if (data.scenarios) {
+    data.scenarios = data.scenarios.map((s: any) => ({
+      ...s,
+      key: validScenarioKeys.includes(s.key) ? s.key : 'high_velocity_path'
+    }));
+  }
+
+  if (data.prompts) {
+    data.prompts = data.prompts.map((p: any) => ({
+      ...p,
+      category: validPromptCategories.includes(p.category) ? p.category : 'strategic_planning'
+    }));
+  }
+
+  return data;
+}
+
+function validateResponse(data: any): boolean {
+  if (!data) return false;
+  
+  const hasCore = data.yourEdge && data.yourRisk && data.yourNextMove;
+  const hasDimensions = Array.isArray(data.dimensionScores) && data.dimensionScores.length > 0;
+  const hasTensions = Array.isArray(data.tensions) && data.tensions.length > 0;
+  const hasRisks = Array.isArray(data.risks) && data.risks.length > 0;
+  const hasScenarios = Array.isArray(data.scenarios) && data.scenarios.length > 0;
+  const hasPrompts = Array.isArray(data.prompts) && data.prompts.length > 0;
+  const hasMoves = Array.isArray(data.firstMoves) && data.firstMoves.length === 3;
+  
+  return hasCore && hasDimensions && hasTensions && hasRisks && hasScenarios && hasPrompts && hasMoves;
+}
+
+async function tryVertexAI(prompt: string, retries = 1): Promise<{ success: boolean; data?: any }> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      if (attempt > 0) {
+        console.log(`🔄 Retry attempt ${attempt}/${retries}`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+      }
+
+      const serviceAccountKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
+      if (!serviceAccountKey) {
+        console.log('⚠️ GEMINI_SERVICE_ACCOUNT_KEY not found');
+        return { success: false };
+      }
+
+      const credentials = JSON.parse(serviceAccountKey);
+      const projectId = credentials.project_id;
+
+      const tokenResponse = await getGoogleOAuthToken(credentials);
+      if (!tokenResponse.success) {
+        console.error('Failed to get OAuth token');
+        continue;
+      }
+
+      const endpoint = `https://us-central1-aiplatform.googleapis.com/v1/projects/${projectId}/locations/us-central1/publishers/google/models/gemini-2.0-flash-exp:generateContent`;
+      
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${tokenResponse.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            role: 'user',
+            parts: [{ text: prompt }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 3000,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Vertex AI error:', response.status, errorText);
+        continue;
+      }
+
+      const result = await response.json();
+      const text = result.candidates[0].content.parts[0].text;
+      
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/```\n([\s\S]*?)\n```/);
+        const jsonText = jsonMatch ? jsonMatch[1] : text;
+        data = JSON.parse(jsonText);
+      }
+      
+      // Sanitize enums to valid values
+      data = sanitizeEnums(data);
+      
+      // Validate response structure
+      if (!validateResponse(data)) {
+        console.warn('⚠️ Response validation failed, will retry or fallback');
+        continue;
+      }
+      
+      return { success: true, data };
+
+    } catch (error) {
+      console.error(`Vertex AI error (attempt ${attempt + 1}):`, error);
+      if (attempt === retries) {
+        return { success: false };
+      }
+    }
+  }
+  
+  return { success: false };
 }
 
 async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean; token?: string }> {
@@ -243,48 +338,66 @@ async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean
   }
 }
 
-async function tryOpenAI(prompt: string): Promise<{ success: boolean; data?: any }> {
-  try {
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      console.log('⚠️ OPENAI_API_KEY not found');
-      return { success: false };
+async function tryOpenAI(prompt: string, retries = 1): Promise<{ success: boolean; data?: any }> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      if (attempt > 0) {
+        console.log(`🔄 Retry attempt ${attempt}/${retries}`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
+
+      const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+      if (!OPENAI_API_KEY) {
+        console.log('⚠️ OPENAI_API_KEY not found');
+        return { success: false };
+      }
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            { role: 'system', content: 'You are an AI leadership assessment analyzer. Always return valid JSON.' },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 3000,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('OpenAI API error:', response.status, errorText);
+        continue;
+      }
+
+      const result = await response.json();
+      const text = result.choices[0].message.content;
+      
+      let data = JSON.parse(text);
+      data = sanitizeEnums(data);
+      
+      if (!validateResponse(data)) {
+        console.warn('⚠️ Response validation failed, will retry or fallback');
+        continue;
+      }
+      
+      return { success: true, data };
+
+    } catch (error) {
+      console.error(`OpenAI error (attempt ${attempt + 1}):`, error);
+      if (attempt === retries) {
+        return { success: false };
+      }
     }
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: 'You are an AI leadership assessment analyzer. Always return valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-        response_format: { type: 'json_object' }
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
-      return { success: false };
-    }
-
-    const result = await response.json();
-    const text = result.choices[0].message.content;
-    
-    const data = JSON.parse(text);
-    return { success: true, data };
-
-  } catch (error) {
-    console.error('OpenAI error:', error);
-    return { success: false };
   }
+  
+  return { success: false };
 }
 
 function getFallbackContent() {
@@ -292,24 +405,54 @@ function getFallbackContent() {
     yourEdge: "Your systematic approach to AI adoption positions you for sustainable transformation",
     yourRisk: "Without immediate pilot programs, competitive advantage may erode within 6 months",
     yourNextMove: "Schedule a 2-hour AI strategy workshop with your leadership team this week",
+    dimensionScores: [
+      { key: "ai_readiness", score: 65, label: "Establishing", summary: "Strong foundation with clear opportunities for acceleration" },
+      { key: "value_clarity", score: 70, label: "Advancing", summary: "Business case articulation is solid but needs operational detail" },
+      { key: "team_capability", score: 60, label: "Establishing", summary: "Team shows promise but requires structured enablement" }
+    ],
     tensions: [
-      { key: "speed_vs_quality", summary: "Balancing rapid AI experimentation with governance requirements" }
+      { key: "speed_vs_quality", summary: "Balancing rapid AI experimentation with governance requirements" },
+      { key: "innovation_vs_risk", summary: "Managing innovation ambition against organizational risk tolerance" }
     ],
     risks: [
-      { key: "adoption_lag", level: "medium", description: "Team AI adoption velocity below industry benchmark" }
+      { key: "shadow_ai", level: "medium", description: "Uncoordinated AI adoption creating governance gaps" },
+      { key: "skills_gap", level: "medium", description: "Team AI literacy below threshold for sustainable adoption" }
     ],
     scenarios: [
-      { key: "quick_wins", summary: "Target 3 high-ROI use cases for immediate AI implementation" }
+      { key: "high_velocity_path", summary: "Accelerate through focused pilot programs with cross-functional teams" },
+      { key: "stagnation_loop", summary: "Risk of analysis paralysis without clear 90-day milestones" }
     ],
     prompts: [
       {
         category: "strategic_planning",
         title: "AI Strategy Prompts",
+        description: "Strategic planning and roadmap development",
+        whatItsFor: "Building AI initiatives aligned with business goals",
+        whenToUse: "During quarterly planning or strategy sessions",
+        howToUse: "Copy into ChatGPT and customize with your context",
         prompts: [
           "What are the top 3 business processes in my organization where AI could reduce cycle time by 50%?",
-          "Generate a 90-day AI pilot roadmap for [your specific department]"
+          "Generate a 90-day AI pilot roadmap for [your specific department]",
+          "Identify AI use cases that could deliver ROI within 6 months"
+        ]
+      },
+      {
+        category: "daily_efficiency",
+        title: "Daily Productivity",
+        description: "Day-to-day efficiency and automation",
+        whatItsFor: "Immediate productivity gains",
+        whenToUse: "Daily work optimization",
+        howToUse: "Use directly in your workflow",
+        prompts: [
+          "Summarize this meeting transcript and extract action items",
+          "Draft an executive summary of this report in 3 bullet points"
         ]
       }
+    ],
+    firstMoves: [
+      "Identify 2-3 high-impact AI use cases and assign executive sponsors by end of week",
+      "Schedule 60-minute AI literacy session for leadership team within 10 days",
+      "Create simple AI experimentation framework with clear success metrics"
     ]
   };
 }

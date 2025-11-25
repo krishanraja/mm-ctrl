@@ -197,33 +197,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     setInsightPhase('analyzing');
     setInsightProgress(15);
 
-      const progressInterval = setInterval(() => {
-        setInsightProgress(prev => {
-          // Phase 1: Analyzing (0-30%) in ~10s
-          if (prev < 30) {
-            if (prev >= 10 && insightPhase === 'analyzing') {
-              setInsightPhase('generating');
-            }
-            return prev + 3;
-          }
-          // Phase 2: Generating (30-60%) in ~15s
-          if (prev < 60) {
-            if (prev >= 30 && insightPhase === 'analyzing') {
-              setInsightPhase('generating');
-            }
-            return prev + 2;
-          }
-          // Phase 3: Finalizing (60-90%) in ~15s
-          if (prev < 90) {
-            if (prev >= 60 && insightPhase !== 'finalizing') {
-              setInsightPhase('finalizing');
-            }
-            return prev + 2;
-          }
-          return prev;
-        });
-      }, 1000);
-
     try {
       // Call simplified assessment pipeline
       const { runAssessment } = await import('@/utils/runAssessment');
@@ -289,14 +262,12 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       }
       
       // CP4: Continue to results even if generation fails - fallback content will be shown
-      clearInterval(progressInterval);
       setInsightProgress(100);
       setCurrentScreen('unified-results');
     }
 
     setTimeout(() => {
       setInsightProgress(100);
-      clearInterval(progressInterval);
       setCurrentScreen('unified-results');
     }, 8000);
   }, [contactData, deepProfileData, sessionId, getAssessmentData]);
@@ -439,28 +410,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       console.error('❌ Error sending deep profile notification:', error);
     }
 
-    // Start phase-locked progress animation - only moves forward
-    const progressInterval = setInterval(() => {
-      setLibraryProgress(prev => {
-        // Phase 1: Analyzing (0-35%)
-        if (prev < 35) {
-          if (prev === 0) setLibraryPhase('analyzing');
-          return Math.min(35, prev + 5);
-        }
-        // Phase 2: Generating (35-70%)
-        if (prev < 70) {
-          if (prev === 35) setLibraryPhase('generating');
-          return Math.min(70, prev + 3);
-        }
-        // Phase 3: Finalizing (70-98%)
-        if (prev < 98) {
-          if (prev === 70) setLibraryPhase('finalizing');
-          return Math.min(98, prev + 1);
-        }
-        return prev;
-      });
-    }, 800);
-
     try {
       const rawQuizData = getAssessmentData();
       const { convertQuizToV2Format } = await import('@/utils/convertQuizToV2Format');
@@ -522,7 +471,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             console.warn('⚠️ Prompts not ready after 15s, showing results anyway');
           }
           
-          clearInterval(progressInterval);
           setLibraryProgress(100);
           
           setTimeout(() => {
@@ -538,7 +486,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         }
       } catch (orchestrationError) {
         console.error('❌ V2 orchestration error:', orchestrationError);
-        clearInterval(progressInterval);
         
         toast({
           title: "Generation Error",
@@ -549,7 +496,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       }
     } catch (error: any) {
       console.error('Error in handleDeepProfileComplete:', error);
-      clearInterval(progressInterval);
       
       toast({
         title: "Unexpected Error",
