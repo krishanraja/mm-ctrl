@@ -41,9 +41,9 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
   }, []);
   
   return (
-    <div className="hero-section-premium relative overflow-hidden">
+    <div className="relative overflow-hidden bg-background min-h-screen">
       <div className="container-width relative z-10 px-6 py-20 md:py-32 lg:py-40">
-        <div className="glass-card p-8 md:p-12 lg:p-16 max-w-3xl space-y-8 md:space-y-10">
+        <div className="bg-white/80 backdrop-blur-sm border border-border rounded-lg shadow-lg p-8 md:p-12 lg:p-16 max-w-3xl space-y-8 md:space-y-10">
           <div className="flex justify-between items-start">
             <img 
               src={mindmakerLogo} 
@@ -112,7 +112,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             </h1>
           </div>
           
-          <p className="text-sm text-muted-foreground leading-relaxed text-left mb-6">
+          <p className="text-sm text-graphite leading-relaxed text-left mb-6">
             Spend 10 minutes mapping how AI fits your role, team, and company. Get a clear view 
             of the gaps that matter, practical next steps, and the questions you'll need when 
             vendors, boards, or staff bring AI to your door.
