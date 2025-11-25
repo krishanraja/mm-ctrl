@@ -43,7 +43,9 @@ Deno.serve(async (req) => {
 
     console.log('✅ Guaranteed 4 risk signals computed');
 
-    // Store risk signals in database
+    // PHASE 3: Store risk signals with graceful error handling
+    let storedCount = 0;
+    let failedCount = 0;
     for (const risk of risks) {
       const { error } = await supabase
         .from('leader_risk_signals')
@@ -56,10 +58,15 @@ Deno.serve(async (req) => {
         });
 
       if (error) {
-        console.error('Error storing risk signal:', error);
-        throw new Error(`Failed to store risk signal: ${error.message}`);
+        console.error('⚠️ Error storing risk signal:', error);
+        failedCount++;
+        // PHASE 3: Continue with remaining signals instead of throwing
+        continue;
       }
+      storedCount++;
     }
+    
+    console.log(`✅ Risk signals: ${storedCount} stored, ${failedCount} failed`);
 
     console.log('✅ Computed and stored', risks.length, 'risk signals');
 

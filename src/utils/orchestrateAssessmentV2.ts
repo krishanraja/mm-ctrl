@@ -35,6 +35,14 @@ export async function orchestrateAssessmentV2(
   source: 'quiz' | 'voice' = 'quiz'
 ): Promise<AssessmentOrchestrationResult> {
   try {
+    // PHASE 2: Input validation at entry
+    if (!sessionId || typeof sessionId !== 'string') {
+      throw new Error('sessionId is required and must be a string');
+    }
+    if (!contactData?.email || !contactData?.fullName) {
+      throw new Error('contactData must include email and fullName');
+    }
+    
     console.log('🚀 Starting v2 assessment orchestration for:', contactData.email);
     console.log('📊 Assessment data received:', assessmentData);
     console.log('📊 Data types:', Object.entries(assessmentData).map(([k,v]) => `${k}: ${typeof v}`));
@@ -43,14 +51,20 @@ export async function orchestrateAssessmentV2(
     const safeProfile = validateProfileData(deepProfileData);
     console.log('✅ Profile data validated with safe defaults');
 
-    // Step 1: Calculate benchmark score and tier with behavioral adjustments
+    // PHASE 2: NaN protection for scores
+    const safeNumber = (val: any): number => {
+      const num = Number(val);
+      return Number.isNaN(num) ? 0 : num;
+    };
+
+    // Step 1: Calculate benchmark score and tier with behavioral adjustments (with NaN protection)
     const baseScores = {
-      aiFluencyScore: assessmentData.aiFluencyScore || 0,
-      decisionVelocityScore: assessmentData.decisionVelocityScore || 0,
-      experimentationScore: assessmentData.experimentationScore || 0,
-      delegationScore: assessmentData.delegationScore || 0,
-      alignmentScore: assessmentData.alignmentScore || 0,
-      riskGovernanceScore: assessmentData.riskGovernanceScore || 0,
+      aiFluencyScore: safeNumber(assessmentData.aiFluencyScore),
+      decisionVelocityScore: safeNumber(assessmentData.decisionVelocityScore),
+      experimentationScore: safeNumber(assessmentData.experimentationScore),
+      delegationScore: safeNumber(assessmentData.delegationScore),
+      alignmentScore: safeNumber(assessmentData.alignmentScore),
+      riskGovernanceScore: safeNumber(assessmentData.riskGovernanceScore),
     };
     
     const adjustedScores = applyBehavioralAdjustments(baseScores, safeProfile);
@@ -213,14 +227,15 @@ export async function orchestrateAssessmentV2(
 
     const dimensionScores = convertToDimensionScores(assessmentData);
 
-    const [riskResult, tensionResult, scenarioResult] = await Promise.allSettled([
+    // PHASE 2: First, run risk signals and tensions in parallel
+    const [riskResult, tensionResult] = await Promise.allSettled([
       withTimeout(
         invokeEdgeFunction('compute-risk-signals', {
           assessment_id: assessmentId,
           assessment_data: assessmentData,
           profile_data: safeProfile,
         }, { logPrefix: '⚠️', silent: false }),
-        60000,  // Increased from 15s to 60s
+        60000,
         'Risk signals'
       ),
       withTimeout(
@@ -230,17 +245,21 @@ export async function orchestrateAssessmentV2(
           assessment_data: assessmentData,
           profile_data: safeProfile,
         }, { logPrefix: '⚡', silent: false }),
-        60000,  // Increased from 15s to 60s
+        60000,
         'Tensions'
-      ),
+      )
+    ]);
+
+    // PHASE 2: Then run scenarios with the results from risk signals and tensions
+    const [scenarioResult] = await Promise.allSettled([
       withTimeout(
         invokeEdgeFunction('derive-org-scenarios', {
           assessment_id: assessmentId,
           dimension_scores: dimensionScores,
-          risk_signals: [],
-          tensions: [],
+          risk_signals: riskResult.status === 'fulfilled' ? riskResult.value.data?.risks || [] : [],
+          tensions: tensionResult.status === 'fulfilled' ? tensionResult.value.data?.tensions || [] : [],
         }, { logPrefix: '🎯', silent: false }),
-        60000,  // Increased from 15s to 60s
+        60000,
         'Org scenarios'
       )
     ]);

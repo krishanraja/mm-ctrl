@@ -1,12 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, TrendingUp, Brain, Sparkles } from 'lucide-react';
+import { Shield, TrendingUp, Brain, Sparkles, Users } from 'lucide-react';
 import { LeadershipBenchmarkV2 } from './LeadershipBenchmarkV2';
 import { PromptLibraryV2 } from './PromptLibraryV2';
 import { TensionsView } from './TensionsView';
+import { BenchmarkComparison } from './BenchmarkComparison';
 import { ConsentManager } from './ConsentManager';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
+import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
 
 interface UnifiedResultsProps {
   assessmentData: any;
@@ -27,6 +29,13 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const [aggregatedData, setAggregatedData] = useState<any>(null);
+
+  // UUID validation helper
+  const isValidUUID = (str: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(str);
+  };
 
   // Restore assessment ID from persistence
   useEffect(() => {
@@ -34,10 +43,12 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
       const { getPersistedAssessmentId } = await import('@/utils/assessmentPersistence');
       const { assessmentId: storedId, source } = getPersistedAssessmentId();
       
-      if (storedId && storedId !== assessmentId) {
+      if (storedId && isValidUUID(storedId) && storedId !== assessmentId) {
         console.log('📊 Assessment ID restored from:', source, storedId);
         setAssessmentId(storedId);
         return true;
+      } else if (storedId && !isValidUUID(storedId)) {
+        console.error('❌ Invalid assessment ID format:', storedId);
       }
       return false;
     };
@@ -45,11 +56,25 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     checkForAssessmentId();
   }, []);
 
+  // Fetch aggregated data for Compare tab
+  useEffect(() => {
+    const fetchAggregatedData = async () => {
+      if (!assessmentId) return;
+      try {
+        const data = await aggregateLeaderResults(assessmentId, false);
+        setAggregatedData(data);
+      } catch (error) {
+        console.error('❌ Failed to fetch aggregated data:', error);
+      }
+    };
+    fetchAggregatedData();
+  }, [assessmentId]);
+
   return (
     <div className="bg-background min-h-screen py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-4 mb-12 bg-secondary/50 p-1 rounded-lg">
+          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-5 mb-12 bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger 
               value="overview" 
               className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
@@ -63,6 +88,13 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
             >
               <TrendingUp className="h-4 w-4 flex-shrink-0" />
               <span className="hidden sm:inline">Tensions</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="compare" 
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
+            >
+              <Users className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Compare</span>
             </TabsTrigger>
             <TabsTrigger 
               value="tools" 
@@ -102,6 +134,24 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">Loading diagnostic data...</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="compare" className="mt-0">
+            {assessmentId && aggregatedData?.leadershipComparison ? (
+              <BenchmarkComparison 
+                userScore={aggregatedData.benchmarkScore}
+                userTier={aggregatedData.benchmarkTier}
+                industry={contactData.companyName}
+                companySize={contactData.companyName}
+                role={contactData.role || 'Leader'}
+                leadershipComparison={aggregatedData.leadershipComparison}
+                showCohortToggle={true}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading peer comparison data...</p>
               </div>
             )}
           </TabsContent>

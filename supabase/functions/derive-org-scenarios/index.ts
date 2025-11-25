@@ -23,28 +23,40 @@ Deno.serve(async (req) => {
 
     const { assessment_id, dimension_scores, risk_signals, tensions } = await req.json();
 
+    // PHASE 3: Handle null inputs gracefully
+    const safeRiskSignals = Array.isArray(risk_signals) ? risk_signals : [];
+    const safeTensions = Array.isArray(tensions) ? tensions : [];
+    const safeDimensionScores = dimension_scores && typeof dimension_scores === 'object' ? dimension_scores : {};
+
     console.log('🎯 Deriving org scenarios for assessment:', assessment_id);
+    console.log('📊 Input safety:', {
+      riskSignals: safeRiskSignals.length,
+      tensions: safeTensions.length,
+      hasDimensionScores: Object.keys(safeDimensionScores).length > 0,
+    });
 
     const scenarios: OrgScenario[] = [];
 
-    // Detect scenarios based on dimension patterns
-    const stagnationScenario = detectStagnationLoop(dimension_scores);
+    // PHASE 3: Use safe inputs for scenario detection
+    const stagnationScenario = detectStagnationLoop(safeDimensionScores);
     if (stagnationScenario) scenarios.push(stagnationScenario);
 
-    const shadowAIScenario = detectShadowAIInstability(dimension_scores, risk_signals);
+    const shadowAIScenario = detectShadowAIInstability(safeDimensionScores, safeRiskSignals);
     if (shadowAIScenario) scenarios.push(shadowAIScenario);
 
-    const highVelocityScenario = detectHighVelocityPath(dimension_scores, tensions);
+    const highVelocityScenario = detectHighVelocityPath(safeDimensionScores, safeTensions);
     if (highVelocityScenario) scenarios.push(highVelocityScenario);
 
-    const cultureMismatchScenario = detectCultureCapabilityMismatch(dimension_scores, tensions);
+    const cultureMismatchScenario = detectCultureCapabilityMismatch(safeDimensionScores, safeTensions);
     if (cultureMismatchScenario) scenarios.push(cultureMismatchScenario);
 
     // Sort by priority and take top 3
     scenarios.sort((a, b) => a.priority_rank - b.priority_rank);
     const topScenarios = scenarios.slice(0, 3);
 
-    // Store scenarios in database
+    // PHASE 3: Store scenarios with graceful error handling
+    let storedCount = 0;
+    let failedCount = 0;
     for (const scenario of topScenarios) {
       const { error } = await supabase
         .from('leader_org_scenarios')
@@ -56,10 +68,15 @@ Deno.serve(async (req) => {
         });
 
       if (error) {
-        console.error('Error storing scenario:', error);
-        throw new Error(`Failed to store scenario: ${error.message}`);
+        console.error('⚠️ Error storing scenario:', error);
+        failedCount++;
+        // PHASE 3: Continue with remaining scenarios instead of throwing
+        continue;
       }
+      storedCount++;
     }
+    
+    console.log(`✅ Scenarios: ${storedCount} stored, ${failedCount} failed`);
 
     console.log('✅ Derived and stored', topScenarios.length, 'org scenarios');
 

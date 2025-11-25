@@ -43,7 +43,9 @@ Deno.serve(async (req) => {
     const delegationControlParadox = detectDelegationControlParadox(dimension_scores, assessment_data);
     if (delegationControlParadox) tensions.push(delegationControlParadox);
 
-    // Store tensions in database
+    // PHASE 3: Store tensions with graceful error handling
+    let storedCount = 0;
+    let failedCount = 0;
     for (const tension of tensions) {
       const { error } = await supabase
         .from('leader_tensions')
@@ -55,10 +57,15 @@ Deno.serve(async (req) => {
         });
 
       if (error) {
-        console.error('Error storing tension:', error);
-        throw new Error(`Failed to store tension: ${error.message}`);
+        console.error('⚠️ Error storing tension:', error);
+        failedCount++;
+        // PHASE 3: Continue with remaining tensions instead of throwing
+        continue;
       }
+      storedCount++;
     }
+    
+    console.log(`✅ Tensions: ${storedCount} stored, ${failedCount} failed`);
 
     console.log('✅ Computed and stored', tensions.length, 'tensions');
 

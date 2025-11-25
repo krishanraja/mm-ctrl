@@ -80,3 +80,25 @@ export interface GeneratedScenario {
   summary: string;
   priority_rank: number;
 }
+
+// PHASE 5: Edge function response contracts
+export interface EdgeFunctionResponse<T> {
+  success: boolean;
+  data: T | null;
+  error?: string;
+  generationSource?: 'vertex-ai' | 'openai' | 'lovable' | 'fallback';
+  durationMs?: number;
+}
+
+export interface OrchestrationResult {
+  success: boolean;
+  assessmentId: string | null;
+  phases: {
+    insights: EdgeFunctionResponse<any>;
+    prompts: EdgeFunctionResponse<any>;
+    risks: EdgeFunctionResponse<any>;
+    tensions: EdgeFunctionResponse<any>;
+    scenarios: EdgeFunctionResponse<any>;
+  };
+  errors: string[];
+}
