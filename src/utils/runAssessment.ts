@@ -1,5 +1,16 @@
+/**
+ * Assessment Pipeline Orchestrator
+ * 
+ * Purpose: Orchestrates the full assessment pipeline from submission to results
+ * Dependencies: Supabase client, ai-generate edge function, create-leader-assessment edge function
+ * 
+ * Flow: Create assessment → Generate AI content → Store to all tables → Update status flags
+ * 
+ * Returns: { success: boolean, assessmentId: string | null, source: string, durationMs: number, error?: string }
+ */
+
 import { supabase } from '@/integrations/supabase/client';
-import { deriveLeadershipComparison } from './scaleUpsMapping';
+import { validateContactData, validateAssessmentData, validateAIContent } from './pipelineGuards';
 
 export async function runAssessment(
   contactData: any,
@@ -269,6 +280,37 @@ export async function runAssessment(
       console.error('❌ Error storing executive insights:', e);
     }
 
+    // Step 10: Store assessment events (raw question/answer data)
+    try {
+      const eventRecords = Object.entries(assessmentData)
+        .filter(([key, value]) => key.includes('Score') && typeof value === 'number')
+        .map(([key, value]) => ({
+          assessment_id: assessmentId,
+          session_id: sessionId,
+          question_id: key,
+          question_text: key.replace(/Score$/, '').replace(/([A-Z])/g, ' $1').trim(),
+          raw_input: String(value),
+          structured_values: { score: Number(value), dimension: key } as Record<string, string | number>,
+          event_type: 'assessment_response',
+          tool_name: 'leaders_assessment',
+          flow_name: 'unified_assessment'
+        }));
+
+      if (eventRecords.length > 0) {
+        const { error: eventsError } = await supabase
+          .from('assessment_events')
+          .insert(eventRecords);
+
+        if (eventsError) {
+          console.error('⚠️ Failed to store assessment events:', eventsError);
+        } else {
+          console.log('✅ Assessment events stored:', eventRecords.length);
+        }
+      }
+    } catch (e) {
+      console.error('❌ Error storing assessment events:', e);
+    }
+
     const duration = Date.now() - startTime;
     console.log(`✅ Assessment pipeline complete in ${duration}ms`);
 
@@ -276,7 +318,7 @@ export async function runAssessment(
       success: true,
       assessmentId,
       source: generationSource,
-      durationMs: Date.now() - startTime
+      durationMs: duration
     };
 
   } catch (error) {

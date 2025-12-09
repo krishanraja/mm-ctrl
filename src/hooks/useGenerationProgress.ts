@@ -1,10 +1,15 @@
 /**
- * PHASE 2: Real-time Generation Progress Tracking
- * Tracks actual edge function execution status
+ * Real-time Generation Progress Tracking
+ * 
+ * Purpose: Polls database for generation_status updates and tracks phase completion
+ * Dependencies: Supabase client, sonner toast
+ * 
+ * Returns: { phases, isComplete, hasErrors, currentPhase, completedCount, totalCount, progressPercentage }
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface GenerationPhase {
   name: string;
@@ -43,6 +48,7 @@ export function useGenerationProgress(assessmentId: string) {
   const [isComplete, setIsComplete] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
   const [phaseStartTimes, setPhaseStartTimes] = useState<Record<string, number>>({});
+  const errorToastShown = useRef(false);
 
 
   const checkProgress = useCallback(async () => {
@@ -112,9 +118,19 @@ export function useGenerationProgress(assessmentId: string) {
       const allComplete = updatedPhases.every(p => p.status === 'complete');
       setIsComplete(allComplete);
 
-      // Check for errors
+      // Check for errors and show toast
       const anyErrors = status.error_log && status.error_log.length > 0;
       setHasErrors(anyErrors);
+
+      // Show error toast once if there are errors
+      if (anyErrors && !errorToastShown.current) {
+        errorToastShown.current = true;
+        const latestError = status.error_log[status.error_log.length - 1];
+        toast.error('Generation Issue', {
+          description: `Phase "${latestError.phase}" encountered an issue. Results may be partial.`,
+          duration: 5000
+        });
+      }
 
     } catch (error) {
       console.error('❌ Error checking progress:', error);

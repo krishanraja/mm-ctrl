@@ -75,12 +75,26 @@ function buildPrompt(assessmentData: any, contactData: any): string {
     .map(([key, value]) => `${key}: ${value}/100`)
     .join(', ');
 
-  return `You are an AI leadership assessment analyzer. Generate personalized insights for:
+  return `You are an AI leadership assessment analyzer with deep expertise in organizational AI adoption. 
+Generate personalized, actionable insights for:
 
 Contact: ${contactData.fullName} (${contactData.role || 'Leader'}) at ${contactData.companyName || 'their company'}
-Scores: ${scores}
+Assessment Scores: ${scores}
 
-Generate a JSON response with this EXACT structure. Follow the EXACT enum values specified:
+=== 10/10 QUALITY SELF-CHECK (Apply before finalizing) ===
+Before generating your response, verify:
+1. GROUNDING: Is every insight tied to a specific score or data point provided? If data is missing, acknowledge it.
+2. CLEAR NEXT MOVE: Does yourNextMove contain ONE specific, actionable step for the next 7 days? No vague coaching.
+3. USEFUL SURPRISE: Does at least one tension reveal a non-obvious blind spot or contradiction?
+4. SPECIFICITY: Are recommendations tied to their specific role, company, and scores? No generic advice.
+5. REUSABILITY: Can every score and label be written directly to a database?
+
+=== ANTI-FLUFF RULES ===
+- NO generic advice like "communicate more" or "be open to change"
+- Every recommendation MUST reference a specific score or input
+- When uncertain, provide two scenarios: "If X, then Y. If not-X, then Z."
+
+Generate a JSON response with this EXACT structure:
 
 {
   "yourEdge": "One sentence describing their unique competitive advantage",
@@ -136,8 +150,19 @@ CRITICAL ENUM CONSTRAINTS (use ONLY these exact values):
 - risk.level: Must be one of ["low", "medium", "high"]
 - scenario.key: Must be one of ["stagnation_loop", "shadow_ai_instability", "high_velocity_path", "culture_capability_mismatch"]
 - prompt.category: Must be one of ["strategic_planning", "daily_efficiency", "team_enablement", "stakeholder_management"]
+- dimensionScores[].key: Use snake_case like "ai_readiness", "value_clarity", "team_capability", "governance_maturity"
+- dimensionScores[].label: Must be one of ["Emerging", "Establishing", "Advancing", "Leading"]
 
-Generate exactly 3-5 items for each array. Make it personal, specific, and actionable. No generic advice.`;
+REQUIRED OUTPUT:
+- Generate exactly 3-5 dimensionScores covering the key AI leadership dimensions
+- Generate exactly 2-3 tensions showing strategic contradictions in their responses
+- Generate exactly 2-3 risks with appropriate severity levels based on their scores
+- Generate exactly 2 scenarios showing possible paths forward
+- Generate exactly 2-4 prompt sets with 2-3 actionable prompts each
+- Generate exactly 3 firstMoves as concrete actions for this week
+
+Make it personal to ${contactData.fullName}'s specific role as ${contactData.role || 'a leader'} at ${contactData.companyName || 'their organization'}. 
+Reference their specific scores. No generic advice.`;
 }
 
 function sanitizeEnums(data: any): any {
