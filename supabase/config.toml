@@ -1,51 +1,58 @@
 project_id = "bkyuxvschuwngtcdhsyg"
 
-[functions.create-leader-assessment]
-verify_jwt = false
-
-[functions.ai-generate]
-verify_jwt = false
-
+# === AUTHENTICATED FUNCTIONS (require JWT) ===
+# Payment functions - MUST require authentication
 [functions.create-diagnostic-payment]
-verify_jwt = false
+verify_jwt = true
 
 [functions.verify-diagnostic-payment]
-verify_jwt = false
+verify_jwt = true
 
+# AI/ML functions - costly API calls, require auth
+[functions.ai-generate]
+verify_jwt = true
+
+[functions.voice-transcribe]
+verify_jwt = true
+
+[functions.compass-analyze]
+verify_jwt = true
+
+[functions.roi-estimate]
+verify_jwt = true
+
+[functions.ai-assessment-chat]
+verify_jwt = true
+
+# User data functions - require auth
+[functions.create-leader-assessment]
+verify_jwt = true
+
+[functions.populate-index-participant]
+verify_jwt = true
+
+# === PUBLIC FUNCTIONS (webhooks, cron, email confirmations) ===
+# Email functions - may be called from external services
 [functions.send-diagnostic-email]
 verify_jwt = false
 
 [functions.send-advisory-sprint-notification]
 verify_jwt = false
 
-[functions.voice-transcribe]
-verify_jwt = false
-
-[functions.compass-analyze]
-verify_jwt = false
-
-[functions.roi-estimate]
-verify_jwt = false
-
-[functions.populate-index-participant]
-verify_jwt = false
-
-[functions.update-adoption-momentum]
-verify_jwt = false
-
 [functions.send-confirmation-email]
 verify_jwt = false
 
-[functions.ai-assessment-chat]
+[functions.send-booking-notification]
+verify_jwt = false
+
+# Backend/cron functions - called by Supabase scheduler
+[functions.update-adoption-momentum]
 verify_jwt = false
 
 [functions.batch-process-pending-syncs]
 verify_jwt = false
 
 [functions.generate-quarterly-index]
-verify_jwt = false
-
-[functions.send-booking-notification]
 verify_jwt = false
 
 [functions.sync-to-google-sheets]
