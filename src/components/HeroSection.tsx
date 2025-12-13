@@ -48,7 +48,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             <img 
               src={mindmakerLogo} 
               alt="MindMaker Logo" 
-              className="w-[190px] h-auto -ml-[18px]"
+              className="w-[190px] h-auto"
             />
             <div className="flex items-center gap-2">
               <SampleResultsDialog 
