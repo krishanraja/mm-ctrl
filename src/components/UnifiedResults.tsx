@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, TrendingUp, Brain, Sparkles, Users } from 'lucide-react';
+import { Shield, TrendingUp, Brain, Sparkles, Users, MessageSquare, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { LeadershipBenchmarkV2 } from './LeadershipBenchmarkV2';
 import { PromptLibraryV2 } from './PromptLibraryV2';
 import { TensionsView } from './TensionsView';
@@ -27,6 +29,7 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   sessionId,
   onBack
 }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [aggregatedData, setAggregatedData] = useState<any>(null);
@@ -178,6 +181,28 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Prompt Coach CTA */}
+        <div className="max-w-2xl mx-auto mt-12 p-6 bg-secondary/30 rounded-xl border border-border">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex-shrink-0 p-3 bg-primary/10 rounded-full">
+              <MessageSquare className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <h3 className="font-semibold text-foreground">Practice Your Prompts</h3>
+              <p className="text-sm text-muted-foreground">
+                Test any AI prompt before you use it. Get instant feedback on what's working and what to improve.
+              </p>
+            </div>
+            <Button 
+              onClick={() => navigate('/coach')}
+              className="group whitespace-nowrap"
+            >
+              Try Prompt Coach
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
