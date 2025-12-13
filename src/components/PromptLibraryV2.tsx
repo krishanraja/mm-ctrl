@@ -26,8 +26,11 @@ export const PromptLibraryV2: React.FC<PromptLibraryV2Props> = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    loadPrompts();
-  }, [assessmentId]);
+    if (assessmentId) {
+      loadPrompts();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assessmentId]); // loadPrompts is stable, assessmentId is the trigger
 
   const loadPrompts = async () => {
     setIsLoading(true);

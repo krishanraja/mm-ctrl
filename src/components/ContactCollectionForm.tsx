@@ -75,7 +75,8 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
     if (timelineError) newErrors.timeline = timelineError;
 
     if (!contactData.consentToInsights) {
-      newErrors.consentToInsights = 'You must consent to receiving personalized insights' as any;
+      // @ts-expect-error - consentToInsights error is a string message, not boolean
+      newErrors.consentToInsights = 'You must consent to receiving personalized insights';
     }
     
     setErrors(newErrors);
@@ -330,8 +331,13 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
                     type="checkbox"
                     id="consentToInsights"
                     checked={contactData.consentToInsights}
-                    onChange={(e) => handleInputChange('consentToInsights', e.target.checked ? 'true' : '')}
-                    className="mt-1 h-4 w-4 rounded border-input"
+                    onChange={(e) => {
+                      setContactData(prev => ({ ...prev, consentToInsights: e.target.checked }));
+                      if (errors.consentToInsights) {
+                        setErrors(prev => ({ ...prev, consentToInsights: undefined }));
+                      }
+                    }}
+                    className="mt-1 h-4 w-4 rounded border-input accent-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     aria-describedby={errors.consentToInsights ? "consent-error" : undefined}
                   />
                   <Label htmlFor="consentToInsights" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">

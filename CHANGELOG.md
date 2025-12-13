@@ -31,6 +31,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2024-12-13 - Production Readiness Audit
+
+### Security & Data Flow
+- Enhanced assessment ID restoration with retry logic in `UnifiedResults.tsx`
+- Implemented proper Supabase auth signup flow in `SingleScrollResults.tsx` unlock form
+- Added proper error handling for assessment ID validation
+
+### UX Improvements
+- **NotFound.tsx**: Complete redesign using design system tokens (was using hardcoded gray/blue colors)
+- **Index.tsx**: Fixed assessment history view functionality - users can now view past assessments
+- **HeroSection.tsx**: Added ARIA labels and screen reader support for typewriter animation
+- **TensionsView.tsx**: Added proper error states and loading feedback
+- **UnifiedResults.tsx**: Added retry logic and proper loading/error states for assessment ID restoration
+
+### Bug Fixes
+- **ContactCollectionForm.tsx**: Fixed consent checkbox handling (was converting boolean to string incorrectly)
+- **PromptLibraryV2.tsx**: Fixed useEffect dependency warning
+- **TensionsView.tsx**: Added proper TypeScript typing (was using `any`)
+- **SingleScrollResults.tsx**: Implemented actual account creation in unlock form (was TODO)
+
+### Code Quality
+- Added ESLint suppression comments for intentional dependency array exclusions
+- Improved TypeScript typing across multiple components
+- Fixed React key warnings by using unique keys based on data fields
+
+### Accessibility
+- Added `sr-only` class for screen readers in HeroSection typewriter effect
+- Added `aria-label` to animated heading for accessibility
+- Improved focus states on consent checkbox
+
+---
+
 ## [1.0.0] - 2024-12-09
 
 ### Initial Anti-Fragile Pipeline Implementation

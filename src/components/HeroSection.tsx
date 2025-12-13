@@ -106,9 +106,15 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
           </div>
           
           <div className="min-h-[4rem] sm:min-h-[5rem] md:min-h-[6rem] lg:min-h-[7rem]">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-wide text-primary mb-6 md:mb-10 text-left">
-              {displayedText}
-              <span className="inline-block w-0.5 h-[0.9em] bg-primary ml-1 animate-[blink_1s_step-end_infinite] align-middle" />
+            <h1 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-wide text-primary mb-6 md:mb-10 text-left"
+              aria-label={fullText}
+            >
+              <span aria-hidden="true">
+                {displayedText}
+                <span className="inline-block w-0.5 h-[0.9em] bg-primary ml-1 animate-[blink_1s_step-end_infinite] align-middle" />
+              </span>
+              <span className="sr-only">{fullText}</span>
             </h1>
           </div>
           

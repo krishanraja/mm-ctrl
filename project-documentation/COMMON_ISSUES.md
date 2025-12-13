@@ -87,6 +87,42 @@ Recurring bugs, architectural pain points, and solutions.
 
 ---
 
+---
+
+## Dec 2024 Audit Fixes
+
+### Issue 11: Broken Assessment History Viewing
+**Symptom**: Users couldn't view past assessments from history
+**Root Cause**: `viewingAssessmentId` state was set but never used
+**Solution**: Implemented complete viewing flow in `Index.tsx` with data loading
+**Status**: ✅ Resolved
+
+### Issue 12: NotFound Using Wrong Design Tokens
+**Symptom**: 404 page looked inconsistent with rest of app
+**Root Cause**: Hardcoded gray/blue colors instead of design system
+**Solution**: Complete redesign using Card, Button, and proper tokens
+**Status**: ✅ Resolved
+
+### Issue 13: Unlock Form Not Creating Accounts
+**Symptom**: Users "unlocked" results but no account was created
+**Root Cause**: `handleUnlock` had TODO - no Supabase auth implementation
+**Solution**: Implemented proper signUp flow with existing account handling
+**Status**: ✅ Resolved
+
+### Issue 14: Eternal Loading on Missing Assessment ID
+**Symptom**: Results page would show spinner forever if ID not found
+**Root Cause**: No retry logic or error state for assessment ID restoration
+**Solution**: Added 3-attempt retry with proper error messaging
+**Status**: ✅ Resolved
+
+### Issue 15: Checkbox Boolean/String Mismatch
+**Symptom**: Consent checkbox validation sometimes failed incorrectly
+**Root Cause**: Converting boolean to string in onChange handler
+**Solution**: Direct boolean assignment with proper state update
+**Status**: ✅ Resolved
+
+---
+
 ## Prevention Checklist
 
 Before shipping:
@@ -97,3 +133,6 @@ Before shipping:
 - [ ] Validate LLM outputs against schemas
 - [ ] Test free vs paid gating
 - [ ] Confirm edge functions complete successfully
+- [ ] Verify all forms handle all input types correctly
+- [ ] Check loading states and error states display
+- [ ] Test assessment history viewing (if logged in)

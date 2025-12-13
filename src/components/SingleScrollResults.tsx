@@ -154,18 +154,51 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   const handleUnlock = async (formData: UnlockFormData) => {
     setUnlockLoading(true);
     try {
-      // TODO: Implement actual signup with Supabase auth
-      // For now, just unlock the results
-      console.log('Unlock form submitted:', formData);
+      // Create account with Supabase Auth
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { getPersistedAssessmentId, linkAssessmentToUser } = await import('@/utils/assessmentPersistence');
       
-      // Simulate brief delay for UX
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: formData.fullName,
+            department: formData.department,
+          }
+        }
+      });
+
+      if (authError) {
+        // If user already exists, try to sign them in instead
+        if (authError.message.includes('already registered')) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password,
+          });
+          
+          if (signInError) {
+            throw new Error('Account exists but password is incorrect. Please try signing in.');
+          }
+        } else {
+          throw authError;
+        }
+      }
+      
+      // Link the assessment to the user if we have one
+      const { assessmentId: storedId } = getPersistedAssessmentId();
+      if (storedId && authData?.user?.id) {
+        await linkAssessmentToUser(storedId, authData.user.id);
+      }
       
       setIsUnlocked(true);
-      toast.success('Full results unlocked!');
-    } catch (error) {
+      toast.success('Account created! Full results unlocked.');
+    } catch (error: any) {
       console.error('Unlock error:', error);
-      toast.error('Failed to unlock results. Please try again.');
+      toast.error(error.message || 'Failed to create account. Please try again.');
     } finally {
       setUnlockLoading(false);
     }

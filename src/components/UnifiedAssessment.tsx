@@ -335,7 +335,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       setInsightProgress(100);
       setCurrentScreen('unified-results');
     }
-  }, [contactData, deepProfileData, sessionId, getAssessmentData, toast, setPromptLibrary]);
+  }, [contactData, deepProfileData, sessionId, getAssessmentData, toast, setPromptLibrary, setAssessmentInsights, setContextAssessmentId]);
 
 
   const handleContactSubmit = useCallback(async (data: ContactData) => {

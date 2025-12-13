@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
+import { aggregateLeaderResults, AggregatedLeaderResults } from '@/utils/aggregateLeaderResults';
 import { Loader2, AlertTriangle, TrendingUp, Target } from 'lucide-react';
 import { TensionCard } from '@/components/ui/tension-card';
 import { RiskSignalCard } from '@/components/ui/risk-signal-card';
@@ -13,16 +13,31 @@ interface TensionsViewProps {
 }
 
 export const TensionsView: React.FC<TensionsViewProps> = ({ assessmentId, contactData }) => {
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<AggregatedLeaderResults | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
-      const data = await aggregateLeaderResults(assessmentId, true);
-      setResults(data);
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await aggregateLeaderResults(assessmentId, true);
+        if (!data || (data.tensions.length === 0 && data.riskSignals.length === 0 && data.orgScenarios.length === 0)) {
+          setError('No diagnostic data found. Results may still be generating.');
+        }
+        setResults(data);
+      } catch (err) {
+        console.error('Failed to load tensions data:', err);
+        setError('Failed to load diagnostic data. Please refresh the page.');
+      } finally {
+        setIsLoading(false);
+      }
     };
-    loadData();
+    
+    if (assessmentId) {
+      loadData();
+    }
   }, [assessmentId]);
 
   if (isLoading) {
@@ -33,10 +48,11 @@ export const TensionsView: React.FC<TensionsViewProps> = ({ assessmentId, contac
     );
   }
 
-  if (!results) {
+  if (error || !results) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">Unable to load diagnostic data</p>
+        <AlertTriangle className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground">{error || 'Unable to load diagnostic data'}</p>
       </div>
     );
   }
@@ -70,8 +86,8 @@ export const TensionsView: React.FC<TensionsViewProps> = ({ assessmentId, contac
           <p className="text-sm text-muted-foreground">
             What you're saying versus what you're doing.
           </p>
-          {tensions.map((tension: any, index: number) => (
-            <TensionCard key={index} tension={tension} />
+          {tensions.map((tension, index: number) => (
+            <TensionCard key={`tension-${tension.dimension_key || index}`} tension={tension} />
           ))}
         </div>
       )}
@@ -86,8 +102,8 @@ export const TensionsView: React.FC<TensionsViewProps> = ({ assessmentId, contac
           <p className="text-sm text-muted-foreground">
             The places theatre, blind spots, or inefficiency might be creeping in.
           </p>
-          {riskSignals.map((signal: any, index: number) => (
-            <RiskSignalCard key={index} signal={signal} />
+          {riskSignals.map((signal, index: number) => (
+            <RiskSignalCard key={`risk-${signal.risk_key || index}`} signal={signal} />
           ))}
         </div>
       )}
@@ -102,8 +118,8 @@ export const TensionsView: React.FC<TensionsViewProps> = ({ assessmentId, contac
           <p className="text-sm text-muted-foreground">
             How AI will reshape your role, your company, and the decisions you'll need to make.
           </p>
-          {orgScenarios.map((scenario: any, index: number) => (
-            <OrgScenarioCard key={index} scenario={scenario} />
+          {orgScenarios.map((scenario, index: number) => (
+            <OrgScenarioCard key={`scenario-${scenario.scenario_key || index}`} scenario={scenario} />
           ))}
         </div>
       )}

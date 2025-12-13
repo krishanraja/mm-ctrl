@@ -142,7 +142,8 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
     }
-  }, [assessmentId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assessmentId]); // loadResults and toast are stable references
 
   const loadResults = async (retryCount = 0) => {
     setIsLoading(true);
