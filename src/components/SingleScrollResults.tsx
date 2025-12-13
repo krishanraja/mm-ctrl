@@ -15,9 +15,12 @@ import {
   ArrowRight,
   Shield,
   MessageSquare,
-  Zap
+  Zap,
+  Copy,
+  Check
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
@@ -38,10 +41,18 @@ import { AggregatedLeaderResults } from '@/utils/aggregateLeaderResults';
 
 const getTierColor = (tier: string) => {
   switch (tier?.toLowerCase()) {
-    case 'leading': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30';
-    case 'advancing': return 'bg-blue-500/10 text-blue-600 border-blue-500/30';
-    case 'establishing': return 'bg-amber-500/10 text-amber-600 border-amber-500/30';
-    case 'emerging': return 'bg-slate-500/10 text-slate-600 border-slate-500/30';
+    case 'leading': 
+    case 'ai-orchestrator':
+      return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30';
+    case 'advancing': 
+    case 'ai-confident':
+      return 'bg-blue-500/10 text-blue-600 border-blue-500/30';
+    case 'establishing': 
+    case 'ai-aware':
+      return 'bg-amber-500/10 text-amber-600 border-amber-500/30';
+    case 'emerging': 
+    case 'ai-emerging':
+      return 'bg-slate-500/10 text-slate-600 border-slate-500/30';
     default: return 'bg-primary/10 text-primary border-primary/30';
   }
 };
@@ -53,6 +64,36 @@ const getRiskColor = (level: string) => {
     case 'low': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30';
     default: return 'bg-slate-500/10 text-slate-600 border-slate-500/30';
   }
+};
+
+// Dynamic gradient based on tier and score
+const getScoreCardGradient = (tier: string, score: number) => {
+  const tierLower = tier?.toLowerCase() || '';
+  if (score >= 80 || tierLower.includes('orchestrator') || tierLower.includes('leading')) {
+    return 'from-emerald-500/20 via-emerald-400/10 to-transparent';
+  }
+  if (score >= 60 || tierLower.includes('confident') || tierLower.includes('advancing')) {
+    return 'from-blue-500/20 via-blue-400/10 to-transparent';
+  }
+  if (score >= 40 || tierLower.includes('aware') || tierLower.includes('establishing')) {
+    return 'from-amber-500/20 via-amber-400/10 to-transparent';
+  }
+  return 'from-slate-500/20 via-slate-400/10 to-transparent';
+};
+
+// Glow color based on tier
+const getScoreGlowColor = (tier: string, score: number) => {
+  const tierLower = tier?.toLowerCase() || '';
+  if (score >= 80 || tierLower.includes('orchestrator') || tierLower.includes('leading')) {
+    return 'text-emerald-600 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]';
+  }
+  if (score >= 60 || tierLower.includes('confident') || tierLower.includes('advancing')) {
+    return 'text-blue-600 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]';
+  }
+  if (score >= 40 || tierLower.includes('aware') || tierLower.includes('establishing')) {
+    return 'text-amber-600 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]';
+  }
+  return 'text-foreground';
 };
 
 export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
@@ -102,6 +143,20 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
+  // Track which prompt was just copied
+  const [copiedPromptIdx, setCopiedPromptIdx] = useState<string | null>(null);
+
+  const handleCopyPrompt = async (prompt: string, idx: string) => {
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setCopiedPromptIdx(idx);
+      toast.success('Prompt copied to clipboard!');
+      setTimeout(() => setCopiedPromptIdx(null), 2000);
+    } catch (err) {
+      toast.error('Failed to copy prompt');
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-background min-h-screen flex items-center justify-center">
@@ -121,17 +176,26 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     <div className="bg-background min-h-screen py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         
-        {/* 1. Score Card - Always Visible */}
-        <Card className="mb-6 shadow-sm border rounded-xl overflow-hidden">
-          <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 sm:p-8">
-            <div className="flex items-center gap-3 mb-4">
-              <img src={mindmakerLogo} alt="Mindmaker" className="h-8 w-8 object-contain" />
+        {/* 1. Score Card - Always Visible with Animation */}
+        <Card className="mb-6 shadow-lg border rounded-xl overflow-hidden animate-fade-in">
+          <div className={`bg-gradient-to-br ${getScoreCardGradient(data?.benchmarkTier || '', data?.benchmarkScore || 0)} p-6 sm:p-8`}>
+            {/* Logo Above Title - 4x Larger (128px) */}
+            <div className="flex flex-col items-center mb-6">
+              <img 
+                src={mindmakerLogo} 
+                alt="Mindmaker" 
+                className="h-32 w-32 object-contain mb-4 animate-scale-in" 
+                style={{ animationDelay: '0.1s' }}
+              />
               <span className="text-sm font-medium text-muted-foreground">AI Leadership Benchmark</span>
             </div>
             
             <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-8">
-              <div>
-                <div className="text-5xl sm:text-6xl font-bold text-foreground mb-2">
+              <div className="text-center sm:text-left">
+                <div 
+                  className={`text-5xl sm:text-6xl font-bold mb-2 transition-all duration-500 ${getScoreGlowColor(data?.benchmarkTier || '', data?.benchmarkScore || 0)}`}
+                  style={{ animationDelay: '0.2s' }}
+                >
                   {data?.benchmarkScore || 0}
                   <span className="text-2xl text-muted-foreground">/100</span>
                 </div>
@@ -283,7 +347,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
             </Collapsible>
           )}
 
-          {/* Prompt Library */}
+          {/* Prompt Library - Expandable with Copy */}
           {data?.promptSets && data.promptSets.length > 0 && (
             <Collapsible open={expandedSections.prompts} onOpenChange={() => toggleSection('prompts')}>
               <Card className="shadow-sm border rounded-xl">
@@ -297,16 +361,87 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                   </CardHeader>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <CardContent className="pt-0 pb-4 px-4 space-y-3">
-                    {data.promptSets.map((set, idx) => (
-                      <div key={idx} className="p-4 bg-secondary/20 rounded-lg">
-                        <h4 className="font-medium text-foreground mb-1">{set.title}</h4>
-                        <p className="text-sm text-muted-foreground mb-2">{set.description}</p>
-                        <Badge variant="outline" className="text-xs">
-                          {Array.isArray(set.prompts_json) ? set.prompts_json.length : 0} prompts
-                        </Badge>
-                      </div>
-                    ))}
+                  <CardContent className="pt-0 pb-4 px-4 space-y-4">
+                    {data.promptSets.map((set, setIdx) => {
+                      const prompts = Array.isArray(set.prompts_json) ? set.prompts_json : [];
+                      return (
+                        <Collapsible key={setIdx}>
+                          <Card className="border bg-card">
+                            <CollapsibleTrigger className="w-full">
+                              <CardHeader className="p-4 cursor-pointer hover:bg-secondary/20 transition-colors">
+                                <div className="flex items-start justify-between">
+                                  <div className="text-left">
+                                    <h4 className="font-semibold text-foreground">{set.title}</h4>
+                                    <p className="text-sm text-muted-foreground mt-1">{set.description}</p>
+                                    {set.what_its_for && (
+                                      <p className="text-xs text-muted-foreground mt-2">
+                                        <strong>What it's for:</strong> {set.what_its_for}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    <Badge variant="outline" className="text-xs">
+                                      {prompts.length} prompts
+                                    </Badge>
+                                    <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform" />
+                                  </div>
+                                </div>
+                              </CardHeader>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <CardContent className="pt-0 pb-4 px-4 space-y-3">
+                                {set.when_to_use && (
+                                  <p className="text-sm text-muted-foreground">
+                                    <strong className="text-foreground">When to use:</strong> {set.when_to_use}
+                                  </p>
+                                )}
+                                {set.how_to_use && (
+                                  <p className="text-sm text-muted-foreground">
+                                    <strong className="text-foreground">How to use:</strong> {set.how_to_use}
+                                  </p>
+                                )}
+                                <div className="space-y-2 mt-4">
+                                  {prompts.map((prompt: string | { text?: string; prompt?: string }, promptIdx: number) => {
+                                    const promptText = typeof prompt === 'string' ? prompt : (prompt?.text || prompt?.prompt || '');
+                                    const uniqueKey = `${setIdx}-${promptIdx}`;
+                                    return (
+                                      <div 
+                                        key={promptIdx} 
+                                        className="p-3 bg-secondary/30 rounded-lg border border-border/50 group"
+                                      >
+                                        <div className="flex items-start gap-3">
+                                          <span className="shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center font-medium">
+                                            {promptIdx + 1}
+                                          </span>
+                                          <p className="flex-1 text-sm text-foreground leading-relaxed font-mono">
+                                            {promptText}
+                                          </p>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleCopyPrompt(promptText, uniqueKey);
+                                            }}
+                                            className="shrink-0 h-8 w-8 p-0 opacity-60 hover:opacity-100 transition-opacity"
+                                          >
+                                            {copiedPromptIdx === uniqueKey ? (
+                                              <Check className="h-4 w-4 text-emerald-500" />
+                                            ) : (
+                                              <Copy className="h-4 w-4" />
+                                            )}
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </CardContent>
+                            </CollapsibleContent>
+                          </Card>
+                        </Collapsible>
+                      );
+                    })}
                   </CardContent>
                 </CollapsibleContent>
               </Card>
