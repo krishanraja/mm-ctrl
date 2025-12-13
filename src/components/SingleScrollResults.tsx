@@ -246,7 +246,30 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           </div>
         </Card>
 
-        {/* 2. #1 Tension - Prominent */}
+        {/* Prompt Coach CTA - High Visibility */}
+        <Card className="mb-6 shadow-sm border rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="shrink-0 p-3 bg-primary/10 rounded-full">
+                <MessageSquare className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="font-semibold text-foreground">Practice Your Prompts</h3>
+                <p className="text-sm text-muted-foreground">
+                  Test any AI prompt before you use it. Get instant feedback on what's working.
+                </p>
+              </div>
+              <Button 
+                onClick={() => navigate('/coach')}
+                className="group whitespace-nowrap"
+              >
+                Try Prompt Coach
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {primaryTension && (
           <Card className="mb-6 shadow-sm border rounded-xl border-l-4 border-l-amber-500">
             <CardContent className="p-6">
@@ -529,29 +552,6 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           </>
         )}
 
-        {/* Prompt Coach CTA */}
-        <Card className="mt-8 shadow-sm border rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <div className="shrink-0 p-3 bg-primary/10 rounded-full">
-                <MessageSquare className="h-6 w-6 text-primary" />
-              </div>
-              <div className="flex-1 text-center sm:text-left">
-                <h3 className="font-semibold text-foreground">Practice Your Prompts</h3>
-                <p className="text-sm text-muted-foreground">
-                  Test any AI prompt before you use it. Get instant feedback on what's working.
-                </p>
-              </div>
-              <Button 
-                onClick={() => navigate('/coach')}
-                className="group whitespace-nowrap"
-              >
-                Try Prompt Coach
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
       </div>
     </div>
