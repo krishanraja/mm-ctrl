@@ -122,10 +122,108 @@ serve(async (req) => {
 });
 
 function buildPrompt(assessmentData: any, contactData: any, deepProfileData?: any): string {
-  const scores = Object.entries(assessmentData)
-    .filter(([key]) => key.includes('Score'))
-    .map(([key, value]) => `${key}: ${value}/100`)
-    .join(', ');
+  // Parse and interpret assessment responses for rich context
+  const interpretResponse = (category: string, answer: string): { score: number; interpretation: string } => {
+    const match = answer?.match(/^(\d)/);
+    const score = match ? parseInt(match[1]) : 3;
+    const interpretations: Record<string, Record<number, string>> = {
+      'industry_impact': {
+        1: 'Cannot articulate AI industry impact - needs foundational understanding',
+        2: 'Vague understanding of AI industry impact - knows it matters but unclear how',
+        3: 'Basic awareness of AI industry impact - can discuss generally but not specifically',
+        4: 'Clear understanding of AI industry impact - can explain to stakeholders',
+        5: 'Expert articulation of AI industry impact - uses it in strategic positioning'
+      },
+      'business_acceleration': {
+        1: 'No visibility into AI workflow opportunities - reactive posture',
+        2: 'Limited visibility into AI opportunities - sees competitors doing things',
+        3: 'Some awareness of AI workflow opportunities - has ideas but not systematized',
+        4: 'Good identification of AI-first workflow areas - active exploration',
+        5: 'Deep mapping of AI acceleration opportunities - multiple initiatives underway'
+      },
+      'team_alignment': {
+        1: 'No shared AI narrative - team is fragmented or skeptical',
+        2: 'Weak team alignment on AI - scattered opinions, no consensus',
+        3: 'Emerging team alignment - conversations happening but not codified',
+        4: 'Strong team alignment on AI growth narrative - shared language emerging',
+        5: 'Unified AI growth narrative across leadership - strategic coherence'
+      },
+      'external_positioning': {
+        1: 'AI absent from external positioning - not part of market story',
+        2: 'AI marginally mentioned externally - not a differentiator',
+        3: 'AI mentioned in some external communications - opportunistic use',
+        4: 'AI integrated into external positioning - part of value proposition',
+        5: 'AI is core to external narrative - investors and market see it as advantage'
+      },
+      'kpi_connection': {
+        1: 'No connection between AI and business KPIs - AI is separate from performance',
+        2: 'Vague connection to KPIs - believes AI helps but cannot prove it',
+        3: 'Some KPI connection - tracking general metrics but not AI-specific',
+        4: 'Clear AI-KPI linkage - can show how AI affects margin, speed, or growth',
+        5: 'Sophisticated AI-KPI integration - AI embedded in performance management'
+      },
+      'coaching_champions': {
+        1: 'No AI champions being developed - purely top-down if any AI activity',
+        2: 'Minimal champion development - individuals exploring on their own',
+        3: 'Some informal coaching of AI enthusiasts - encouraging but not structured',
+        4: 'Active coaching of AI champions - creating multipliers in org',
+        5: 'Systematic champion development - AI leadership pipeline established'
+      }
+    };
+    return {
+      score,
+      interpretation: interpretations[category]?.[score] || `Score: ${score}/5`
+    };
+  };
+
+  // Build rich assessment context with interpretations
+  const assessmentContext = Object.entries(assessmentData)
+    .map(([category, answer]) => {
+      const { score, interpretation } = interpretResponse(category, answer as string);
+      return `- ${category}: ${score}/5 — ${interpretation}`;
+    })
+    .join('\n');
+
+  // Calculate overall readiness signals
+  const scores = Object.entries(assessmentData).map(([_, answer]) => {
+    const match = (answer as string)?.match(/^(\d)/);
+    return match ? parseInt(match[1]) : 3;
+  });
+  const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 3;
+  const minScore = Math.min(...scores);
+  const maxScore = Math.max(...scores);
+  const variance = maxScore - minScore;
+
+  // Identify specific contradictions for tension generation
+  const contradictions: string[] = [];
+  const industryScore = interpretResponse('industry_impact', assessmentData.industry_impact).score;
+  const teamScore = interpretResponse('team_alignment', assessmentData.team_alignment).score;
+  const kpiScore = interpretResponse('kpi_connection', assessmentData.kpi_connection).score;
+  const championScore = interpretResponse('coaching_champions', assessmentData.coaching_champions).score;
+  const externalScore = interpretResponse('external_positioning', assessmentData.external_positioning).score;
+  const businessScore = interpretResponse('business_acceleration', assessmentData.business_acceleration).score;
+
+  if (industryScore >= 4 && teamScore <= 2) {
+    contradictions.push(`VISION-EXECUTION GAP: Leader understands industry AI impact (${industryScore}/5) but team is not aligned (${teamScore}/5). Knowledge is trapped at the top.`);
+  }
+  if (kpiScore >= 4 && championScore <= 2) {
+    contradictions.push(`BOTTLENECK AT LEADER: Strong KPI connection (${kpiScore}/5) but no champions being developed (${championScore}/5). Leader is single point of AI progress.`);
+  }
+  if (externalScore >= 4 && teamScore <= 3) {
+    contradictions.push(`EXTERNAL-INTERNAL MISMATCH: AI is part of external narrative (${externalScore}/5) but team lacks shared story (${teamScore}/5). Credibility risk if exposed.`);
+  }
+  if (businessScore >= 4 && kpiScore <= 2) {
+    contradictions.push(`INTUITION WITHOUT PROOF: Knows where AI could accelerate business (${businessScore}/5) but cannot prove it with KPIs (${kpiScore}/5). Will struggle to get buy-in.`);
+  }
+  if (championScore >= 4 && industryScore <= 2) {
+    contradictions.push(`BOTTOM-UP WITHOUT VISION: Champions are being developed (${championScore}/5) but leader lacks industry AI clarity (${industryScore}/5). Risk of undirected energy.`);
+  }
+  if (variance <= 1 && avgScore <= 2.5) {
+    contradictions.push(`UNIFORMLY LOW READINESS: All dimensions scoring ${avgScore.toFixed(1)}/5. This is a foundational gap requiring structured development, not point fixes.`);
+  }
+  if (variance <= 1 && avgScore >= 4) {
+    contradictions.push(`HIGH PERFORMER PLATEAU: All dimensions strong (${avgScore.toFixed(1)}/5). Challenge is identifying 10x opportunities vs. incremental improvements.`);
+  }
 
   // Build rich deep profile context if available
   let profileContext = '';
@@ -138,9 +236,9 @@ function buildPrompt(assessmentData: any, contactData: any, deepProfileData?: an
     const commStyle = deepProfileData.communicationStyle || [];
 
     profileContext = `
-=== DEEP PROFILE CONTEXT (Use this to PERSONALIZE all outputs 10/10) ===
+=== DEEP PROFILE CONTEXT (CEO-LEVEL PERSONALIZATION REQUIRED) ===
 
-WORK BREAKDOWN (How they spend their time):
+WORK BREAKDOWN (Where their time goes - TARGET PROMPTS HERE):
 - Writing/Drafting: ${workBreakdown.writing || workBreakdown.strategic_work || 20}%
 - Presentations: ${workBreakdown.presentations || 20}%
 - Planning/Strategy: ${workBreakdown.planning || workBreakdown.operational_work || 20}%
@@ -148,146 +246,160 @@ WORK BREAKDOWN (How they spend their time):
 - Coaching/Managing: ${workBreakdown.coaching || workBreakdown.admin_waste || 20}%
 ${workBreakdown.ai_work ? `- AI-Assisted Work: ${workBreakdown.ai_work}%` : ''}
 
-TIME WASTE ANALYSIS:
+TIME WASTE ANALYSIS (PAIN POINT - ADDRESS DIRECTLY):
 - Percentage of time wasted: ${timeWaste.percentage || deepProfileData.timeWaste || 0}%
 - Examples of waste: ${Array.isArray(timeWaste.examples) ? timeWaste.examples.join('; ') : (deepProfileData.timeWasteExamples || 'Not specified')}
 
-TASKS THEY WANT TO DELEGATE:
-${Array.isArray(delegateTasks) && delegateTasks.length > 0 ? delegateTasks.map((t: string) => `- ${t}`).join('\n') : '- Not specified'}
+TASKS THEY WANT TO DELEGATE (CREATE PROMPTS FOR THESE):
+${Array.isArray(delegateTasks) && delegateTasks.length > 0 ? delegateTasks.map((t: string) => `- "${t}" — CREATE A PROMPT THAT AUTOMATES THIS`).join('\n') : '- Not specified'}
 
-BIGGEST CHALLENGE:
-${deepProfileData.biggestChallenge || 'Not specified'}
+BIGGEST CHALLENGE (THIS IS THE #1 PAIN - ADDRESS FIRST):
+"${deepProfileData.biggestChallenge || 'Not specified'}"
 
-KEY STAKEHOLDERS:
+KEY STAKEHOLDERS (REFERENCE IN COMMUNICATION PROMPTS):
 ${Array.isArray(stakeholders) && stakeholders.length > 0 ? stakeholders.map((s: string) => `- ${s}`).join('\n') : '- Not specified'}
 
-COMMUNICATION STYLE PREFERENCES:
+COMMUNICATION STYLE (MATCH THIS IN ALL OUTPUTS):
 ${Array.isArray(commStyle) && commStyle.length > 0 ? commStyle.join(', ') : 'Not specified'}
 
-INFORMATION NEEDS:
-${Array.isArray(infoNeeds) && infoNeeds.length > 0 ? infoNeeds.join(', ') : 'Not specified'}
+TRANSFORMATION GOAL (SUCCESS LOOKS LIKE THIS):
+"${deepProfileData.transformationGoal || 'Not specified'}"
 
-TRANSFORMATION GOAL:
-${deepProfileData.transformationGoal || 'Not specified'}
-
-URGENCY LEVEL:
-${deepProfileData.urgencyLevel || 'Not specified'}
-
-THINKING PROCESS:
-${deepProfileData.thinkingProcess || 'Not specified'}
-
-BOTTLENECKS:
-${Array.isArray(deepProfileData.bottlenecks) ? deepProfileData.bottlenecks.join(', ') : 'Not specified'}
-
-=== HOW TO USE THIS PROFILE ===
-1. MATCH their communication style in all outputs
-2. FOCUS prompts on their biggest time-wasters (${timeWaste.percentage || 0}% waste is significant)
-3. TARGET their specific transformation goal: "${deepProfileData.transformationGoal || 'efficiency'}"
-4. CREATE prompts for their work breakdown areas (if 40% on writing, give writing-focused prompts)
-5. ADDRESS their biggest challenge directly: "${deepProfileData.biggestChallenge || 'productivity'}"
-6. REFERENCE their stakeholders when relevant: ${Array.isArray(stakeholders) ? stakeholders.slice(0, 3).join(', ') : 'various stakeholders'}
+URGENCY LEVEL: ${deepProfileData.urgencyLevel || 'Not specified'}
 `;
   }
 
   return `${COGNITIVE_FRAMEWORKS_ANCHOR}
 
-You are an AI leadership assessment analyzer with deep expertise in organizational AI adoption.
+=== YOUR ROLE ===
+You are a world-class AI leadership advisor operating at McKinsey partner-level insight quality. Your outputs must feel like a $50,000 executive assessment, not a generic quiz result.
+
+=== CEO-LEVEL OUTPUT STANDARDS ===
+1. SPECIFICITY: Reference their exact role, company, scores, and challenges. No generic advice.
+2. TENSION REVELATION: Surface contradictions they haven't seen. Make them say "I never thought of it that way."
+3. ACTIONABLE PRECISION: Every recommendation includes WHO does WHAT by WHEN.
+4. STRATEGIC FRAMING: Connect AI to growth, competitive advantage, and value creation—not just "efficiency."
+5. COGNITIVE FRAMEWORKS: Apply A/B Framing, Dialectical Reasoning, Mental Contrasting, Reflective Equilibrium, and First-Principles Thinking.
 
 ${profileContext}
 
+=== ASSESSMENT RESULTS WITH INTERPRETATIONS ===
+${assessmentContext}
+
+=== COMPUTED INSIGHTS ===
+- Overall AI Leadership Score: ${(avgScore * 20).toFixed(0)}/100
+- Score Variance: ${variance} (higher = inconsistent maturity across dimensions)
+- Lowest Dimension Score: ${minScore}/5
+- Highest Dimension Score: ${maxScore}/5
+
+=== DETECTED CONTRADICTIONS (USE IN TENSIONS) ===
+${contradictions.length > 0 ? contradictions.join('\n') : '- No major contradictions detected. Look for optimization opportunities.'}
+
 === LEADER CONTEXT ===
 Name: ${contactData.fullName}
-Role: ${contactData.role || 'Leader'}
+Role: ${contactData.role || 'Senior Leader'}
 Company: ${contactData.companyName || 'their organization'}
 Industry: ${contactData.industry || 'Unknown'}
 Company Size: ${contactData.companySize || 'Unknown'}
+Department: ${contactData.department || 'Unknown'}
+Primary AI Focus: ${contactData.primaryFocus || 'Unknown'}
+Timeline: ${contactData.timeline || 'Unknown'}
 
-=== ASSESSMENT SCORES ===
-${scores}
+=== 10/10 QUALITY REQUIREMENTS ===
+Before generating, verify each output passes these tests:
 
-=== 10/10 QUALITY SELF-CHECK (Apply before finalizing) ===
-Before generating your response, verify:
-1. GROUNDING: Is every insight tied to a specific score or profile data point? If data is missing, acknowledge it.
-2. CLEAR NEXT MOVE: Does yourNextMove contain ONE specific, actionable step for the next 7 days? No vague coaching.
-3. USEFUL SURPRISE: Does at least one tension reveal a non-obvious blind spot or contradiction using DIALECTICAL REASONING?
-4. SPECIFICITY: Are recommendations tied to their specific role, company, work breakdown, and scores? No generic advice.
-5. FRAMEWORK APPLICATION: Have you applied at least 2 of the 5 cognitive frameworks in your analysis?
-6. PROFILE INTEGRATION: Have you referenced their biggest challenge, time waste areas, and transformation goal?
+✓ GROUNDED: Does every insight reference a specific score, contradiction, or profile data point?
+✓ SURPRISING: Would this make the leader say "I never saw that coming"?
+✓ ACTIONABLE: Can they do this in the next 7 days with clear next step?
+✓ PERSONALIZED: Is this obviously about THEM, not a template?
+✓ EXECUTIVE-LEVEL: Would a McKinsey partner be proud of this recommendation?
 
-=== ANTI-FLUFF RULES ===
-- NO generic advice like "communicate more" or "be open to change"
-- Every recommendation MUST reference a specific score, profile input, or work breakdown percentage
-- When uncertain, provide two scenarios: "If X, then Y. If not-X, then Z."
-- Tensions should reveal CONTRADICTIONS in their responses (e.g., "wants speed but has governance gaps")
+=== ANTI-PATTERNS (NEVER DO THESE) ===
+❌ "Consider improving communication" — vague, useless
+❌ "Explore AI opportunities" — what opportunities? Be specific.
+❌ "Build AI capabilities" — meaningless without specifics
+❌ Generic prompts like "summarize this" — tie to THEIR work breakdown
+❌ Risks without quantification — add time horizons and business impact
 
-Generate a JSON response with this EXACT structure:
+=== OUTPUT STRUCTURE (RETURN VALID JSON) ===
 
 {
-  "yourEdge": "One sentence describing their unique competitive advantage based on their profile and scores",
-  "yourRisk": "One sentence describing their biggest hidden risk based on tensions in their data",
-  "yourNextMove": "One specific action they should take in the next 7 days, referencing their role and biggest challenge",
+  "yourEdge": "One sentence: Their unique competitive advantage based on their SPECIFIC scores and profile. Reference their strongest dimension and how it creates advantage in their industry.",
+  
+  "yourRisk": "One sentence: Their biggest hidden risk based on SPECIFIC contradictions in their data. Quantify the business impact (time, money, competitive position).",
+  
+  "yourNextMove": "One specific action for next 7 days. Format: '[WHO] will [DO WHAT] by [WHEN] to [ACHIEVE WHAT]. Start by [FIRST STEP].' Reference their biggest challenge.",
+  
   "dimensionScores": [
     {
       "key": "ai_readiness",
-      "score": 75,
-      "label": "Advancing",
-      "summary": "Brief insight referencing their specific work breakdown or scores"
+      "score": ${(avgScore * 20).toFixed(0)},
+      "label": "${avgScore >= 4 ? 'Leading' : avgScore >= 3.5 ? 'Advancing' : avgScore >= 2.5 ? 'Establishing' : 'Emerging'}",
+      "summary": "Reference their SPECIFIC scores and what it means for their role at ${contactData.companyName || 'their company'}"
     }
   ],
+  
   "tensions": [
     {
-      "key": "speed_vs_quality",
-      "summary": "Tension description using dialectical reasoning - reference specific contradictions in their profile"
+      "key": "tension_key",
+      "summary": "Use detected contradictions above. Format: 'You have [STRENGTH] but [WEAKNESS], creating [RISK]. This shows up as [SPECIFIC BEHAVIOR].' Reference their scores."
     }
   ],
+  
   "risks": [
     {
-      "key": "shadow_ai",
-      "level": "medium",
-      "description": "Risk tied to their specific time waste areas or delegation gaps"
+      "key": "shadow_ai|skills_gap|roi_leakage|decision_friction",
+      "level": "low|medium|high",
+      "description": "Tie to their specific profile. Include time horizon: 'Within [X months], [SPECIFIC CONSEQUENCE] because [EVIDENCE FROM SCORES]'"
     }
   ],
+  
   "scenarios": [
     {
-      "key": "high_velocity_path",
-      "summary": "Scenario using mental contrasting - what's the outcome AND what's the obstacle?"
+      "key": "scenario_key",
+      "summary": "Use Mental Contrasting: 'If you [ACTION], you could [OUTCOME] within [TIMEFRAME]. The obstacle is [SPECIFIC CHALLENGE]. Mitigate by [CONCRETE STEP].'"
     }
   ],
+  
   "prompts": [
     {
-      "category": "strategic_planning",
-      "title": "AI Strategy Prompts for ${contactData.role || 'Leaders'}",
-      "description": "Prompts tailored to their ${deepProfileData?.biggestChallenge || 'key challenges'}",
-      "whatItsFor": "Addressing their specific ${deepProfileData?.transformationGoal || 'transformation goal'}",
-      "whenToUse": "Based on their work breakdown and time waste patterns",
-      "howToUse": "Copy and paste into ChatGPT, customize with their context",
-      "prompts": ["Specific AI prompt that addresses their biggest time waste area", "Prompt for their delegation tasks", "Prompt for their stakeholder communication"]
+      "category": "strategic_planning|daily_efficiency|team_enablement|stakeholder_management",
+      "title": "Title referencing their role and challenge",
+      "description": "Why this matters for ${contactData.fullName}",
+      "whatItsFor": "Tie to their transformation goal or biggest challenge",
+      "whenToUse": "Specific situations from their work breakdown",
+      "howToUse": "Copy into ChatGPT, customize [BRACKETS] with your context",
+      "prompts": [
+        "Prompt 1 - ADDRESS THEIR BIGGEST TIME WASTE: ${deepProfileData?.timeWasteExamples || 'their main inefficiency'}",
+        "Prompt 2 - FOR THEIR DELEGATION TASKS: Create prompt for tasks they want to offload",
+        "Prompt 3 - FOR THEIR STAKEHOLDERS: Communication prompt mentioning their specific stakeholder types"
+      ]
     }
   ],
+  
   "firstMoves": [
-    "First concrete action tied to their biggest challenge this week",
-    "Second action addressing their time waste areas",
-    "Third action for their transformation goal"
+    "Move 1: [WHO] [ACTION] [WHEN] — addresses their biggest challenge: '${deepProfileData?.biggestChallenge || 'key priority'}'",
+    "Move 2: [SPECIFIC ACTION] addressing their lowest score dimension",
+    "Move 3: [SPECIFIC ACTION] that leverages their highest score as an advantage"
   ]
 }
 
-CRITICAL ENUM CONSTRAINTS (use ONLY these exact values):
-- risk.key: Must be one of ["shadow_ai", "skills_gap", "roi_leakage", "decision_friction"]
-- risk.level: Must be one of ["low", "medium", "high"]
-- scenario.key: Must be one of ["stagnation_loop", "shadow_ai_instability", "high_velocity_path", "culture_capability_mismatch"]
-- prompt.category: Must be one of ["strategic_planning", "daily_efficiency", "team_enablement", "stakeholder_management"]
-- dimensionScores[].key: Use snake_case like "ai_readiness", "value_clarity", "team_capability", "governance_maturity"
-- dimensionScores[].label: Must be one of ["Emerging", "Establishing", "Advancing", "Leading"]
+=== CRITICAL ENUM CONSTRAINTS ===
+- risk.key: ONLY ["shadow_ai", "skills_gap", "roi_leakage", "decision_friction"]
+- risk.level: ONLY ["low", "medium", "high"]
+- scenario.key: ONLY ["stagnation_loop", "shadow_ai_instability", "high_velocity_path", "culture_capability_mismatch"]
+- prompt.category: ONLY ["strategic_planning", "daily_efficiency", "team_enablement", "stakeholder_management"]
+- dimensionScores[].label: ONLY ["Emerging", "Establishing", "Advancing", "Leading"]
 
-REQUIRED OUTPUT:
-- Generate exactly 3-5 dimensionScores covering the key AI leadership dimensions
-- Generate exactly 2-3 tensions showing strategic contradictions in their responses
-- Generate exactly 2-3 risks with appropriate severity levels based on their scores
-- Generate exactly 2 scenarios showing possible paths forward
-- Generate exactly 2-4 prompt sets with 2-3 actionable prompts each - HIGHLY PERSONALIZED to their profile
-- Generate exactly 3 firstMoves as concrete actions for this week
+=== REQUIRED OUTPUT COUNTS ===
+- 3-5 dimensionScores (cover key AI leadership dimensions)
+- 2-3 tensions (from detected contradictions)
+- 2-3 risks (quantified with timeframes)
+- 2 scenarios (Mental Contrasting format)
+- 2-4 prompt sets with 2-3 prompts each (HIGHLY PERSONALIZED to their work breakdown and challenges)
+- 3 firstMoves (concrete, dated, assigned)
 
-Make every output deeply personal to ${contactData.fullName}'s specific situation. Reference their work breakdown percentages, time waste areas, transformation goal, and biggest challenge throughout.`;
+Generate output that would make ${contactData.fullName} share it with their CEO and say "This is exactly what we needed to see."`;
 }
 
 function sanitizeEnums(data: any): any {
