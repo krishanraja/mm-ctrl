@@ -82,39 +82,75 @@ export async function aggregateLeaderResults(
   try {
     console.log('📊 Aggregating leader results for assessment:', assessmentId);
 
-    // Fetch assessment details
-    const { data: assessment, error: assessmentError } = await supabase
-      .from('leader_assessments')
-      .select('*')
-      .eq('id', assessmentId)
-      .single();
+    // PHASE 6: Fetch assessment details with RLS fallback
+    let assessment: any = null;
+    let hasFull = false;
+    let assessmentFetchFailed = false;
 
-    if (assessmentError || !assessment) {
-      console.error('❌ Assessment not found, returning empty safe structure:', assessmentError);
-      return safeDefaults;
+    try {
+      const { data: assessmentData, error: assessmentError } = await supabase
+        .from('leader_assessments')
+        .select('*')
+        .eq('id', assessmentId)
+        .single();
+
+      if (assessmentError) {
+        console.warn('⚠️ Assessment fetch failed (likely RLS):', assessmentError.message);
+        assessmentFetchFailed = true;
+      } else {
+        assessment = assessmentData;
+        hasFull = assessment?.has_full_diagnostic || false;
+      }
+    } catch (e) {
+      console.warn('⚠️ Assessment fetch exception:', e);
+      assessmentFetchFailed = true;
     }
 
-    const hasFull = assessment.has_full_diagnostic;
     const shouldApplyGating = applyGating && !hasFull;
 
-    // Fetch dimension scores with error handling
-    const { data: dimensionScoresRaw, error: dimError } = await supabase
-      .from('leader_dimension_scores')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('dimension_key');
-    
-    if (dimError) {
-      console.error('⚠️ Failed to fetch dimension scores:', dimError.message);
+    // PHASE 6: Fetch dimension scores with error handling - this works even if assessment fetch failed
+    let dimensionScores: LeaderDimensionScore[] = [];
+    try {
+      const { data: dimensionScoresRaw, error: dimError } = await supabase
+        .from('leader_dimension_scores')
+        .select('*')
+        .eq('assessment_id', assessmentId)
+        .order('dimension_key');
+      
+      if (dimError) {
+        console.warn('⚠️ Failed to fetch dimension scores:', dimError.message);
+      } else {
+        // Ensure dimension scores have correct shape
+        dimensionScores = (dimensionScoresRaw || []).map(d => ({
+          dimension_key: d.dimension_key || 'unknown',
+          score_numeric: typeof d.score_numeric === 'number' ? d.score_numeric : 0,
+          dimension_tier: d.dimension_tier || 'AI-Emerging',
+          explanation: d.explanation || ''
+        }));
+      }
+    } catch (e) {
+      console.warn('⚠️ Dimension scores fetch exception:', e);
     }
+
+    // PHASE 6: Compute benchmark from dimension scores if assessment fetch failed
+    let computedBenchmarkScore = assessment?.benchmark_score || 0;
+    let computedBenchmarkTier = assessment?.benchmark_tier || 'AI-Emerging';
     
-    // Ensure dimension scores have correct shape
-    const dimensionScores: LeaderDimensionScore[] = (dimensionScoresRaw || []).map(d => ({
-      dimension_key: d.dimension_key || 'unknown',
-      score_numeric: typeof d.score_numeric === 'number' ? d.score_numeric : 0,
-      dimension_tier: d.dimension_tier || 'emerging',
-      explanation: d.explanation || ''
-    }));
+    if (assessmentFetchFailed && dimensionScores.length > 0) {
+      // Calculate average score from dimensions
+      const avgScore = Math.round(
+        dimensionScores.reduce((sum, d) => sum + (d.score_numeric || 0), 0) / dimensionScores.length
+      );
+      computedBenchmarkScore = avgScore;
+      
+      // Derive tier from score
+      if (avgScore >= 80) computedBenchmarkTier = 'AI-Orchestrator';
+      else if (avgScore >= 60) computedBenchmarkTier = 'AI-Confident';
+      else if (avgScore >= 40) computedBenchmarkTier = 'AI-Aware';
+      else computedBenchmarkTier = 'AI-Emerging';
+      
+      console.log('📊 Computed benchmark from dimensions:', { avgScore, tier: computedBenchmarkTier });
+    }
 
     // Fetch tensions (apply gating: free users see only top 1) - PHASE 4: Type guard
     const { data: allTensions } = await supabase
@@ -230,10 +266,11 @@ export async function aggregateLeaderResults(
       hasLeadershipComparison: !!leadershipComparison,
     });
 
+    // PHASE 6: Return aggregated results with computed fallbacks
     return {
       assessmentId,
-      benchmarkScore: assessment.benchmark_score || 0,
-      benchmarkTier: assessment.benchmark_tier || 'AI-Emerging',
+      benchmarkScore: computedBenchmarkScore,
+      benchmarkTier: computedBenchmarkTier,
       hasFullDiagnostic: hasFull,
       dimensionScores,
       tensions,

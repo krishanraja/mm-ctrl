@@ -18,6 +18,7 @@ import { QuickPreview } from './QuickPreview';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
+import { persistAssessmentId } from '@/utils/assessmentPersistence';
 
 
 interface Message {
@@ -245,7 +246,8 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       if (result.success && result.assessmentId) {
         console.log('✅ V2 assessment orchestrated successfully');
         console.log('📊 Using v2 assessment ID:', result.assessmentId);
-        sessionStorage.setItem('v2_assessment_id', result.assessmentId);
+        // PHASE 1: Persist assessment ID to all storage layers (localStorage, sessionStorage, URL)
+        persistAssessmentId(result.assessmentId);
         
         // Fetch prompts from database
         const { data: promptSets, error: promptError } = await supabase
@@ -387,9 +389,8 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     setCurrentScreen('deep-profile-optin');
   }, [setContactData, getAssessmentData, getProgressData, sessionId, setCompanyHash]);
 
+  // PHASE 2: Fixed - let startInsightGeneration control progress, don't set redundant values
   const handleSkipDeepProfile = useCallback(() => {
-    setInsightPhase('analyzing');
-    setInsightProgress(15);
     startInsightGeneration();
   }, [startInsightGeneration]);
 
@@ -480,16 +481,27 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       try {
         const { runAssessment } = await import('@/utils/runAssessment');
         
+        // PHASE 2: Add progress callback for real-time UI updates
+        const handleProgress = (phase: string, percentage: number, message: string) => {
+          console.log(`📊 DeepProfile Progress: ${phase} - ${percentage}% - ${message}`);
+          setLibraryProgress(percentage);
+          if (percentage < 40) setLibraryPhase('analyzing');
+          else if (percentage < 80) setLibraryPhase('generating');
+          else setLibraryPhase('finalizing');
+        };
+        
         const result = await runAssessment(
           contactData!,
           v2FormattedData,
           profileData,
-          sessionId!
+          sessionId!,
+          handleProgress  // PHASE 2: Pass progress callback
         );
 
         if (result.success && result.assessmentId) {
           console.log('✅ V2 assessment orchestrated successfully:', result.assessmentId);
-          sessionStorage.setItem('v2_assessment_id', result.assessmentId);
+          // PHASE 1: Persist assessment ID to all storage layers
+          persistAssessmentId(result.assessmentId);
           
           // Poll for background prompt generation to complete (up to 15 seconds)
           let promptsLoaded = false;

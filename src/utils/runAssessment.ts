@@ -20,6 +20,73 @@ import { supabase } from '@/integrations/supabase/client';
 // Progress callback type for real-time UI updates
 export type ProgressCallback = (phase: string, percentage: number, message: string) => void;
 
+// PHASE 3: Valid dimension keys per database schema CHECK constraint
+const VALID_DIMENSION_KEYS = ['ai_fluency', 'decision_velocity', 'experimentation_cadence', 'delegation_augmentation', 'alignment_communication', 'risk_governance'] as const;
+
+// PHASE 3: Map AI-generated dimension keys to schema-valid keys
+const dimensionKeyMap: Record<string, string> = {
+  // AI variations → valid schema keys
+  'ai_readiness': 'ai_fluency',
+  'ai_literacy': 'ai_fluency',
+  'ai_awareness': 'ai_fluency',
+  'decision_making': 'decision_velocity',
+  'decisions': 'decision_velocity',
+  'experimentation': 'experimentation_cadence',
+  'innovation': 'experimentation_cadence',
+  'team_capability': 'delegation_augmentation',
+  'delegation': 'delegation_augmentation',
+  'team_empowerment': 'delegation_augmentation',
+  'value_clarity': 'alignment_communication',
+  'alignment': 'alignment_communication',
+  'communication': 'alignment_communication',
+  'governance_maturity': 'risk_governance',
+  'risk_management': 'risk_governance',
+  'governance': 'risk_governance',
+  // Direct matches
+  'ai_fluency': 'ai_fluency',
+  'decision_velocity': 'decision_velocity',
+  'experimentation_cadence': 'experimentation_cadence',
+  'delegation_augmentation': 'delegation_augmentation',
+  'alignment_communication': 'alignment_communication',
+  'risk_governance': 'risk_governance',
+};
+
+// PHASE 3: Valid tier labels per database schema CHECK constraint
+const VALID_TIERS = ['AI-Emerging', 'AI-Aware', 'AI-Confident', 'AI-Orchestrator'] as const;
+
+// PHASE 3: Map AI-generated tier labels to schema-valid tiers
+const tierMap: Record<string, string> = {
+  'emerging': 'AI-Emerging',
+  'ai-emerging': 'AI-Emerging',
+  'aware': 'AI-Aware',
+  'ai-aware': 'AI-Aware',
+  'confident': 'AI-Confident',
+  'ai-confident': 'AI-Confident',
+  'orchestrator': 'AI-Orchestrator',
+  'ai-orchestrator': 'AI-Orchestrator',
+  'leading': 'AI-Orchestrator',
+  'advancing': 'AI-Confident',
+  'establishing': 'AI-Aware',
+  'beginner': 'AI-Emerging',
+  'intermediate': 'AI-Aware',
+  'advanced': 'AI-Confident',
+  'expert': 'AI-Orchestrator',
+};
+
+// Helper to get valid dimension key with fallback
+function getValidDimensionKey(key: string | undefined, idx: number): string {
+  if (!key) return VALID_DIMENSION_KEYS[idx % VALID_DIMENSION_KEYS.length];
+  const normalized = key.toLowerCase().replace(/[^a-z_]/g, '_');
+  return dimensionKeyMap[normalized] || VALID_DIMENSION_KEYS[idx % VALID_DIMENSION_KEYS.length];
+}
+
+// Helper to get valid tier with fallback
+function getValidTier(tier: string | undefined): string {
+  if (!tier) return 'AI-Emerging';
+  const normalized = tier.toLowerCase().replace(/[^a-z-]/g, '');
+  return tierMap[normalized] || 'AI-Emerging';
+}
+
 // Safe insert helper with logging
 async function safeInsert(
   table: 'leader_dimension_scores' | 'leader_tensions' | 'leader_risk_signals' | 'leader_org_scenarios' | 'leader_prompt_sets' | 'leader_first_moves' | 'assessment_events',
@@ -168,12 +235,13 @@ export async function runAssessment(
     // - dimension_tier (not 'label')
     // - explanation (not 'insight_summary')
     // - NO priority_rank column
+    // PHASE 3: Use dimension key and tier mapping to ensure schema compliance
     if (aiContent.dimensionScores?.length > 0) {
-      const scoreRecords = aiContent.dimensionScores.map((d: any) => ({
+      const scoreRecords = aiContent.dimensionScores.map((d: any, idx: number) => ({
         assessment_id: assessmentId,
-        dimension_key: d.key || d.dimension_key || 'unknown',
+        dimension_key: getValidDimensionKey(d.key || d.dimension_key, idx),
         score_numeric: typeof d.score === 'number' ? d.score : 0,
-        dimension_tier: d.label || d.tier || 'emerging',
+        dimension_tier: getValidTier(d.label || d.tier),
         explanation: d.summary || d.insight_summary || d.explanation || ''
       }));
 
@@ -322,6 +390,7 @@ export async function runAssessment(
     }
 
     // Step 10: Store assessment events (raw question/answer data)
+    // PHASE 4: Use valid event_type and tool_name per schema CHECK constraints
     try {
       const eventRecords = Object.entries(assessmentData)
         .filter(([key, value]) => key.includes('Score') && typeof value === 'number')
@@ -332,8 +401,8 @@ export async function runAssessment(
           question_text: key.replace(/Score$/, '').replace(/([A-Z])/g, ' $1').trim(),
           raw_input: String(value),
           structured_values: { score: Number(value), dimension: key } as Record<string, string | number>,
-          event_type: 'assessment_response',
-          tool_name: 'leaders_assessment',
+          event_type: 'question_answered',  // PHASE 4: Was 'assessment_response'
+          tool_name: 'quiz',                 // PHASE 4: Was 'leaders_assessment'
           flow_name: 'unified_assessment'
         }));
 
