@@ -1,6 +1,17 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { ContactData } from '@/components/ContactCollectionForm';
 import { DeepProfileData } from '@/components/DeepProfileQuestionnaire';
+
+// Assessment insights summary for cross-feature intelligence
+export interface AssessmentInsights {
+  benchmarkScore: number;
+  benchmarkTier: string;
+  topTension: string | null;
+  topGap: string | null;
+  learningStyle: string | null;
+  primaryBottleneck: string | null;
+  suggestedPromptCategories: string[];
+}
 
 interface AssessmentContextValue {
   sessionId: string | null;
@@ -17,6 +28,13 @@ interface AssessmentContextValue {
   
   companyHash: string | null;
   setCompanyHash: (hash: string | null) => void;
+  
+  // Phase 3: Connected Intelligence
+  assessmentInsights: AssessmentInsights | null;
+  setAssessmentInsights: (insights: AssessmentInsights | null) => void;
+  
+  assessmentId: string | null;
+  setAssessmentId: (id: string | null) => void;
 }
 
 const AssessmentContext = createContext<AssessmentContextValue | undefined>(undefined);
@@ -27,6 +45,8 @@ export const AssessmentProvider: React.FC<{ children: ReactNode }> = ({ children
   const [deepProfileData, setDeepProfileData] = useState<DeepProfileData | null>(null);
   const [promptLibrary, setPromptLibrary] = useState<any>(null);
   const [companyHash, setCompanyHash] = useState<string | null>(null);
+  const [assessmentInsights, setAssessmentInsights] = useState<AssessmentInsights | null>(null);
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
   const value = {
     sessionId,
@@ -39,6 +59,10 @@ export const AssessmentProvider: React.FC<{ children: ReactNode }> = ({ children
     setPromptLibrary,
     companyHash,
     setCompanyHash,
+    assessmentInsights,
+    setAssessmentInsights,
+    assessmentId,
+    setAssessmentId,
   };
 
   return (
