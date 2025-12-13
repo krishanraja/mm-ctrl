@@ -4,7 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Brain, User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket } from 'lucide-react';
+import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket } from 'lucide-react';
+import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useStructuredAssessment } from '@/hooks/useStructuredAssessment';
@@ -195,21 +196,31 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const startInsightGeneration = useCallback(async () => {
     setCurrentScreen('generating-insights');
     setInsightPhase('analyzing');
-    setInsightProgress(15);
+    setInsightProgress(10);
 
     try {
-      // Call simplified assessment pipeline
+      // Call assessment pipeline with progress callback
       const { runAssessment } = await import('@/utils/runAssessment');
       const rawQuizData = getAssessmentData();
       
       // Convert quiz data to v2 format with numeric dimension scores
       const v2FormattedData = convertQuizToV2Format(rawQuizData);
       
+      // Progress callback for real-time UI updates
+      const handleProgress = (phase: string, percentage: number, message: string) => {
+        console.log(`📊 Progress: ${phase} - ${percentage}% - ${message}`);
+        setInsightProgress(percentage);
+        if (percentage < 40) setInsightPhase('analyzing');
+        else if (percentage < 80) setInsightPhase('generating');
+        else setInsightPhase('finalizing');
+      };
+      
       const result = await runAssessment(
         contactData!,
         v2FormattedData,
         deepProfileData,
-        sessionId!
+        sessionId!,
+        handleProgress
       );
 
       if (result.success && result.assessmentId) {
@@ -242,11 +253,25 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         } else {
           console.warn('⚠️ No prompts found for assessment:', result.assessmentId);
         }
+        
+        // Success - go to results
+        setInsightProgress(100);
+        setCurrentScreen('unified-results');
+      } else {
+        // Pipeline returned failure
+        console.error('❌ Assessment pipeline failed:', result.error);
+        toast({
+          title: "Assessment Processing Issue",
+          description: "Some insights may be incomplete. Showing available results.",
+          variant: "default",
+        });
+        setInsightProgress(100);
+        setCurrentScreen('unified-results');
       }
     } catch (error) {
       console.error('❌ V2 orchestration error:', error);
       
-      // CP2: Show user-friendly message for timeout vs other errors
+      // Show user-friendly message for timeout vs other errors
       if (error instanceof Error && error.message.includes('timed out')) {
         toast({
           title: "Generation Taking Longer Than Expected",
@@ -261,16 +286,11 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         });
       }
       
-      // CP4: Continue to results even if generation fails - fallback content will be shown
+      // Continue to results even if generation fails - fallback content will be shown
       setInsightProgress(100);
       setCurrentScreen('unified-results');
     }
-
-    setTimeout(() => {
-      setInsightProgress(100);
-      setCurrentScreen('unified-results');
-    }, 8000);
-  }, [contactData, deepProfileData, sessionId, getAssessmentData]);
+  }, [contactData, deepProfileData, sessionId, getAssessmentData, toast, setPromptLibrary]);
 
   const handleContactSubmit = useCallback(async (data: ContactData) => {
     setContactData(data);
@@ -523,7 +543,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             {/* Header */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-6 py-3 rounded-full text-base font-semibold mb-6">
-                <Brain className="h-5 w-5" />
+                <img src={mindmakerLogo} alt="Mindmaker" className="h-5 w-5 object-contain" />
                 Unlock $5,000 Value
               </div>
               <div className="text-sm font-semibold text-primary mb-2">BONUS</div>
@@ -677,7 +697,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         {/* Header - Clean Mobile Design */}
         <div className="text-center mb-6 sm:mb-8 pt-12 sm:pt-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm mb-6">
-            <Brain className="h-4 w-4" />
+            <img src={mindmakerLogo} alt="Mindmaker" className="h-4 w-4 object-contain" />
             AI Leadership Growth Benchmark
           </div>
           
