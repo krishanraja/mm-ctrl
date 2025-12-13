@@ -92,15 +92,18 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-lg mx-auto text-center bg-card border shadow-sm rounded-xl">
+      <Card className="w-full max-w-lg mx-auto text-center bg-card border shadow-sm rounded-xl animate-fade-in">
         <CardContent className="p-6 sm:p-8 space-y-6">
-          {/* Icon */}
+          {/* Icon with pulse animation */}
           <div className="flex justify-center">
-            <img 
-              src={mindmakerIcon} 
-              alt="Mindmaker" 
-              className="w-12 h-12"
-            />
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" style={{ animationDuration: '2s' }} />
+              <img 
+                src={mindmakerIcon} 
+                alt="Mindmaker" 
+                className="w-12 h-12 relative z-10"
+              />
+            </div>
           </div>
           
           {/* Title & Current Phase */}
@@ -108,7 +111,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
             <h2 className="text-xl font-semibold text-foreground">
               {title}
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground transition-all duration-300">
               {currentPhase.description}
             </p>
           </div>
@@ -118,7 +121,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
             <Progress value={progress} className="h-2" />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>{currentPhase.label}</span>
-              <span>{Math.round(progress)}%</span>
+              <span className="tabular-nums">{Math.round(progress)}%</span>
             </div>
           </div>
           
@@ -129,15 +132,15 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
               const isActive = phaseItem.label === currentPhase.label;
               const isPast = phases.indexOf(currentPhase) > idx;
               return (
-                <div key={phaseItem.label} className="flex flex-col items-center gap-1">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                    isActive ? 'bg-primary/20 text-primary' : 
+                <div key={phaseItem.label} className="flex flex-col items-center gap-1 transition-all duration-300">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    isActive ? 'bg-primary/20 text-primary scale-110' : 
                     isPast ? 'bg-emerald-500/20 text-emerald-600' : 
                     'bg-secondary text-muted-foreground'
                   }`}>
-                    <Icon className="h-4 w-4" />
+                    <Icon className={`h-4 w-4 transition-transform duration-300 ${isActive ? 'animate-pulse' : ''}`} />
                   </div>
-                  <span className={`text-xs ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                  <span className={`text-xs transition-colors duration-300 ${isActive ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                     {phaseItem.label}
                   </span>
                 </div>
@@ -145,11 +148,15 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
             })}
           </div>
           
-          {/* Educational Tip - Rotating */}
+          {/* Educational Tip - Smooth crossfade */}
           <div className="pt-4 border-t border-border">
-            <div className="bg-secondary/30 rounded-lg p-4 transition-all duration-500">
+            <div 
+              key={tipIndex}
+              className="bg-secondary/30 rounded-lg p-4 animate-fade-in"
+              style={{ animationDuration: '0.4s' }}
+            >
               <div className="flex items-start gap-3 text-left">
-                <div className="shrink-0 p-1.5 bg-primary/10 rounded">
+                <div className="shrink-0 p-1.5 bg-primary/10 rounded transition-colors duration-300">
                   <TipIcon className="h-4 w-4 text-primary" />
                 </div>
                 <div>
