@@ -3,15 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Sharpen from "./pages/Sharpen";
+import PromptCoach from "./pages/PromptCoach";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { testGoogleSheetsSync, testMainSyncFunction } from "./utils/testGoogleSheetsSync";
-import { processPendingSyncs } from "./utils/processPendingSyncs";
-
-// Temporarily expose test functions to global scope for debugging
-(window as any).testGoogleSheetsSync = testGoogleSheetsSync;
-(window as any).testMainSyncFunction = testMainSyncFunction;
-(window as any).processPendingSyncs = processPendingSyncs;
 
 const queryClient = new QueryClient();
 
@@ -23,7 +18,13 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            {/* New Sharpen experience - main entry point */}
+            <Route path="/" element={<Sharpen />} />
+            <Route path="/coach" element={<PromptCoach />} />
+            
+            {/* Legacy assessment - kept for enterprise/deep-dive */}
+            <Route path="/diagnostic" element={<Index />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

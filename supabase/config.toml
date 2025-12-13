@@ -1,5 +1,12 @@
 project_id = "bkyuxvschuwngtcdhsyg"
 
+# === NEW SHARPEN FUNCTIONS (public for quick access) ===
+[functions.sharpen-analyze]
+verify_jwt = false
+
+[functions.prompt-coach]
+verify_jwt = false
+
 # === AUTHENTICATED FUNCTIONS (require JWT) ===
 # Payment functions - MUST require authentication
 [functions.create-diagnostic-payment]

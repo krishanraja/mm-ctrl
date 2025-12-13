@@ -3770,7 +3770,6 @@ export type Database = {
         Returns: string
       }
       has_role:
-        | { Args: { _role: string; _user_id: string }; Returns: boolean }
         | {
             Args: {
               _role: Database["public"]["Enums"]["app_role"]
@@ -3778,6 +3777,7 @@ export type Database = {
             }
             Returns: boolean
           }
+        | { Args: { _role: string; _user_id: string }; Returns: boolean }
       hash_company_identifier: {
         Args: { email_domain: string }
         Returns: string
