@@ -124,7 +124,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     }
   }, [isInitialized, initializeAssessmentSession]);
 
-  // Phase 1: Show Quick Preview after question 3, then contact form after all questions
+  // Track if we should start generating after questions complete
+  const [shouldStartGeneration, setShouldStartGeneration] = useState(false);
+
+  // Phase 1: Show Quick Preview after question 3, then trigger generation after all questions
   useEffect(() => {
     const progressData = getProgressData();
     const hasAnsweredAllQuestions = progressData.completedAnswers >= totalQuestions;
@@ -135,11 +138,24 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       setCurrentScreen('quick-preview');
     }
     
-    // After all questions, go to contact form (value already shown)
-    if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData && insightProgress === 0) {
-      setCurrentScreen('contact-form');
+    // After all questions, set minimal contactData and trigger generation (contact form moved to results page)
+    if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment' && insightProgress === 0 && !shouldStartGeneration) {
+      // Set minimal contactData to allow assessment to proceed
+      if (!contactData) {
+        setContactData({
+          fullName: '',
+          companyName: '',
+          email: '',
+          department: '',
+          companySize: '',
+          primaryFocus: '',
+          timeline: '',
+          consentToInsights: false
+        });
+      }
+      setShouldStartGeneration(true);
     }
-  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, insightProgress, hasSeenQuickPreview]);
+  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, insightProgress, hasSeenQuickPreview, shouldStartGeneration, setContactData]);
 
   // Handle returning from quick preview to continue assessment
   const handleContinueFromPreview = useCallback(() => {
@@ -334,6 +350,13 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       setCurrentScreen('unified-results');
     }
   }, [contactData, deepProfileData, sessionId, getAssessmentData, toast, setPromptLibrary]);
+
+  // Trigger generation when shouldStartGeneration becomes true
+  useEffect(() => {
+    if (shouldStartGeneration && insightProgress === 0) {
+      startInsightGeneration();
+    }
+  }, [shouldStartGeneration, insightProgress, startInsightGeneration]);
 
   const handleContactSubmit = useCallback(async (data: ContactData) => {
     setContactData(data);

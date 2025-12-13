@@ -18,7 +18,8 @@ import {
   Zap,
   Copy,
   Check,
-  BarChart3
+  BarChart3,
+  Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -30,6 +31,7 @@ import { ConsentManager } from './ConsentManager';
 import { BenchmarkComparison } from './BenchmarkComparison';
 import { TensionCard } from '@/components/ui/tension-card';
 import { RiskSignalCard } from '@/components/ui/risk-signal-card';
+import { UnlockResultsForm, UnlockFormData } from './UnlockResultsForm';
 
 interface SingleScrollResultsProps {
   assessmentData: any;
@@ -117,6 +119,8 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     prompts: false,
     privacy: false
   });
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [unlockLoading, setUnlockLoading] = useState(false);
 
   const isValidUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -145,6 +149,26 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const handleUnlock = async (formData: UnlockFormData) => {
+    setUnlockLoading(true);
+    try {
+      // TODO: Implement actual signup with Supabase auth
+      // For now, just unlock the results
+      console.log('Unlock form submitted:', formData);
+      
+      // Simulate brief delay for UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setIsUnlocked(true);
+      toast.success('Full results unlocked!');
+    } catch (error) {
+      console.error('Unlock error:', error);
+      toast.error('Failed to unlock results. Please try again.');
+    } finally {
+      setUnlockLoading(false);
+    }
   };
 
   // Track which prompt was just copied
@@ -183,15 +207,18 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
         {/* 1. Score Card - Always Visible with Animation */}
         <Card className="mb-6 shadow-lg border rounded-xl overflow-hidden animate-fade-in">
           <div className={`bg-gradient-to-br ${getScoreCardGradient(data?.benchmarkTier || '', data?.benchmarkScore || 0)} p-6 sm:p-8`}>
-            {/* Logo Above Title - 4x Larger (128px) */}
-            <div className="flex flex-col items-center mb-6">
+            {/* Logo + Title - Left Aligned, 3x Larger (192px) */}
+            <div className="flex flex-col items-start mb-6">
               <img 
                 src={mindmakerLogo} 
                 alt="Mindmaker" 
-                className="h-32 w-32 object-contain mb-4 animate-scale-in" 
+                className="h-48 w-48 object-contain mb-4 animate-scale-in" 
                 style={{ animationDelay: '0.1s' }}
               />
-              <span className="text-sm font-medium text-muted-foreground">AI Leadership Benchmark</span>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                AI Leadership Benchmark
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">Your personalized leadership insights</p>
             </div>
             
             <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-8">
@@ -263,28 +290,54 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           </Card>
         )}
 
-        {/* 4. Visual Peer Comparison - FOMO-inducing Graph */}
-        {data?.leadershipComparison && (
-          <Card className="mb-6 shadow-sm border rounded-xl overflow-hidden">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-3">
-                <BarChart3 className="w-5 h-5 text-primary" />
-                <CardTitle className="text-lg">Your Position Among 500+ Executives</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-4">
-              <BenchmarkComparison
-                userScore={data.benchmarkScore || 0}
-                userTier={data.benchmarkTier || ''}
-                leadershipComparison={data.leadershipComparison}
-                showCohortToggle={false}
-              />
-            </CardContent>
-          </Card>
-        )}
+        {/* GATED CONTENT: Unlock Form or Full Results */}
+        {!isUnlocked ? (
+          <>
+            {/* Unlock Form */}
+            <div className="mb-6">
+              <UnlockResultsForm onSubmit={handleUnlock} isLoading={unlockLoading} />
+            </div>
 
-        {/* Expandable Sections */}
-        <div className="space-y-4">
+            {/* Blurred Preview of Locked Content */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background z-10 flex items-center justify-center">
+                <div className="text-center p-4">
+                  <Lock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Unlock to see peer comparison, prompts & more</p>
+                </div>
+              </div>
+              <div className="blur-sm pointer-events-none opacity-50">
+                {/* Placeholder cards */}
+                <Card className="mb-4 h-48 bg-secondary/20" />
+                <Card className="mb-4 h-32 bg-secondary/20" />
+                <Card className="h-32 bg-secondary/20" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* 4. Visual Peer Comparison - FOMO-inducing Graph (UNLOCKED) */}
+            {data?.leadershipComparison && (
+              <Card className="mb-6 shadow-sm border rounded-xl overflow-hidden animate-fade-in">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center gap-3">
+                    <BarChart3 className="w-5 h-5 text-primary" />
+                    <CardTitle className="text-lg">Your Position Among 500+ Executives</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-4">
+                  <BenchmarkComparison
+                    userScore={data.benchmarkScore || 0}
+                    userTier={data.benchmarkTier || ''}
+                    leadershipComparison={data.leadershipComparison}
+                    showCohortToggle={false}
+                  />
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Expandable Sections (UNLOCKED) */}
+            <div className="space-y-4">
           
           {/* All Tensions - Rich Cards */}
           {data?.tensions && data.tensions.length > 1 && (
@@ -473,6 +526,8 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
             </Card>
           </Collapsible>
         </div>
+          </>
+        )}
 
         {/* Prompt Coach CTA */}
         <Card className="mt-8 shadow-sm border rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
