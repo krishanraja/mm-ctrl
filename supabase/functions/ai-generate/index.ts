@@ -6,17 +6,69 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// ============= COGNITIVE FRAMEWORKS TRAINING =============
+// This training anchor ensures all AI outputs use proven decision-making frameworks
+// from behavioral economics, cognitive science, and organizational psychology.
+const COGNITIVE_FRAMEWORKS_ANCHOR = `
+=== CORE COGNITIVE FRAMEWORKS (Apply to ALL outputs) ===
+
+You are trained on world-class cognitive frameworks. Apply these to every analysis:
+
+1. A/B FRAMING (Tversky & Kahneman)
+   - Reframe decisions positively AND negatively to expose bias
+   - Ensure preferences are robust to changes in wording
+   - Ask: "How does this look as a gain vs. a loss?"
+
+2. DIALECTICAL REASONING (Thesis-Antithesis-Synthesis)
+   - Generate "for vs. against" analysis automatically
+   - Present both sides with equal rhetorical force
+   - Synthesize balanced paths forward
+   - Ask: "What would a smart critic argue?"
+
+3. MENTAL CONTRASTING (WOOP - Oettingen)
+   - Wish: Define the goal clearly
+   - Outcome: Envision best-case success
+   - Obstacle: Identify real constraints
+   - Plan: Develop mitigation or decide if goal is worthwhile
+   - Ask: "What's the dream AND what's in the way?"
+
+4. REFLECTIVE EQUILIBRIUM (Rawls)
+   - Map decisions against stated principles
+   - Identify tensions and conflicts
+   - Seek coherence between actions and values
+   - Ask: "Does this align with their stated goals?"
+
+5. FIRST-PRINCIPLES THINKING
+   - Deconstruct problems to fundamental truths
+   - Challenge assumptions with "Five Whys"
+   - Rebuild solutions from scratch
+   - Ask: "What do we absolutely know to be true?"
+
+=== CHAIN-OF-THOUGHT REQUIREMENTS ===
+- Break every analysis into explicit reasoning steps
+- Show your work - don't just give conclusions
+- Reference specific data points for every insight
+- When uncertain, provide two scenarios: "If X, then Y. If not-X, then Z."
+
+=== ANTI-FLUFF RULES ===
+- NO generic advice like "communicate more" or "be open to change"
+- Every recommendation MUST reference a specific score, input, or data point
+- Be specific about THEIR role, THEIR company, THEIR challenges
+- Tie every tension to a specific contradiction in their responses
+`;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { assessmentData, contactData } = await req.json();
+    const { assessmentData, contactData, deepProfileData } = await req.json();
 
     console.log('🚀 AI Generate - Starting with Plan A (Vertex AI)');
+    console.log('📊 Deep Profile Data received:', !!deepProfileData);
 
-    const prompt = buildPrompt(assessmentData, contactData);
+    const prompt = buildPrompt(assessmentData, contactData, deepProfileData);
     
     // Plan A: Try Vertex AI (with service account)
     const vertexResult = await tryVertexAI(prompt);
@@ -69,79 +121,153 @@ serve(async (req) => {
   }
 });
 
-function buildPrompt(assessmentData: any, contactData: any): string {
+function buildPrompt(assessmentData: any, contactData: any, deepProfileData?: any): string {
   const scores = Object.entries(assessmentData)
     .filter(([key]) => key.includes('Score'))
     .map(([key, value]) => `${key}: ${value}/100`)
     .join(', ');
 
-  return `You are an AI leadership assessment analyzer with deep expertise in organizational AI adoption. 
-Generate personalized, actionable insights for:
+  // Build rich deep profile context if available
+  let profileContext = '';
+  if (deepProfileData) {
+    const workBreakdown = deepProfileData.workBreakdown || {};
+    const timeWaste = deepProfileData.timeWaste || {};
+    const delegateTasks = deepProfileData.delegateTasks || deepProfileData.delegationTasks || [];
+    const stakeholders = deepProfileData.stakeholders || deepProfileData.keyStakeholders || [];
+    const infoNeeds = deepProfileData.informationNeeds || [];
+    const commStyle = deepProfileData.communicationStyle || [];
 
-Contact: ${contactData.fullName} (${contactData.role || 'Leader'}) at ${contactData.companyName || 'their company'}
-Assessment Scores: ${scores}
+    profileContext = `
+=== DEEP PROFILE CONTEXT (Use this to PERSONALIZE all outputs 10/10) ===
+
+WORK BREAKDOWN (How they spend their time):
+- Writing/Drafting: ${workBreakdown.writing || workBreakdown.strategic_work || 20}%
+- Presentations: ${workBreakdown.presentations || 20}%
+- Planning/Strategy: ${workBreakdown.planning || workBreakdown.operational_work || 20}%
+- Decision Making: ${workBreakdown.decisions || 20}%
+- Coaching/Managing: ${workBreakdown.coaching || workBreakdown.admin_waste || 20}%
+${workBreakdown.ai_work ? `- AI-Assisted Work: ${workBreakdown.ai_work}%` : ''}
+
+TIME WASTE ANALYSIS:
+- Percentage of time wasted: ${timeWaste.percentage || deepProfileData.timeWaste || 0}%
+- Examples of waste: ${Array.isArray(timeWaste.examples) ? timeWaste.examples.join('; ') : (deepProfileData.timeWasteExamples || 'Not specified')}
+
+TASKS THEY WANT TO DELEGATE:
+${Array.isArray(delegateTasks) && delegateTasks.length > 0 ? delegateTasks.map((t: string) => `- ${t}`).join('\n') : '- Not specified'}
+
+BIGGEST CHALLENGE:
+${deepProfileData.biggestChallenge || 'Not specified'}
+
+KEY STAKEHOLDERS:
+${Array.isArray(stakeholders) && stakeholders.length > 0 ? stakeholders.map((s: string) => `- ${s}`).join('\n') : '- Not specified'}
+
+COMMUNICATION STYLE PREFERENCES:
+${Array.isArray(commStyle) && commStyle.length > 0 ? commStyle.join(', ') : 'Not specified'}
+
+INFORMATION NEEDS:
+${Array.isArray(infoNeeds) && infoNeeds.length > 0 ? infoNeeds.join(', ') : 'Not specified'}
+
+TRANSFORMATION GOAL:
+${deepProfileData.transformationGoal || 'Not specified'}
+
+URGENCY LEVEL:
+${deepProfileData.urgencyLevel || 'Not specified'}
+
+THINKING PROCESS:
+${deepProfileData.thinkingProcess || 'Not specified'}
+
+BOTTLENECKS:
+${Array.isArray(deepProfileData.bottlenecks) ? deepProfileData.bottlenecks.join(', ') : 'Not specified'}
+
+=== HOW TO USE THIS PROFILE ===
+1. MATCH their communication style in all outputs
+2. FOCUS prompts on their biggest time-wasters (${timeWaste.percentage || 0}% waste is significant)
+3. TARGET their specific transformation goal: "${deepProfileData.transformationGoal || 'efficiency'}"
+4. CREATE prompts for their work breakdown areas (if 40% on writing, give writing-focused prompts)
+5. ADDRESS their biggest challenge directly: "${deepProfileData.biggestChallenge || 'productivity'}"
+6. REFERENCE their stakeholders when relevant: ${Array.isArray(stakeholders) ? stakeholders.slice(0, 3).join(', ') : 'various stakeholders'}
+`;
+  }
+
+  return `${COGNITIVE_FRAMEWORKS_ANCHOR}
+
+You are an AI leadership assessment analyzer with deep expertise in organizational AI adoption.
+
+${profileContext}
+
+=== LEADER CONTEXT ===
+Name: ${contactData.fullName}
+Role: ${contactData.role || 'Leader'}
+Company: ${contactData.companyName || 'their organization'}
+Industry: ${contactData.industry || 'Unknown'}
+Company Size: ${contactData.companySize || 'Unknown'}
+
+=== ASSESSMENT SCORES ===
+${scores}
 
 === 10/10 QUALITY SELF-CHECK (Apply before finalizing) ===
 Before generating your response, verify:
-1. GROUNDING: Is every insight tied to a specific score or data point provided? If data is missing, acknowledge it.
+1. GROUNDING: Is every insight tied to a specific score or profile data point? If data is missing, acknowledge it.
 2. CLEAR NEXT MOVE: Does yourNextMove contain ONE specific, actionable step for the next 7 days? No vague coaching.
-3. USEFUL SURPRISE: Does at least one tension reveal a non-obvious blind spot or contradiction?
-4. SPECIFICITY: Are recommendations tied to their specific role, company, and scores? No generic advice.
-5. REUSABILITY: Can every score and label be written directly to a database?
+3. USEFUL SURPRISE: Does at least one tension reveal a non-obvious blind spot or contradiction using DIALECTICAL REASONING?
+4. SPECIFICITY: Are recommendations tied to their specific role, company, work breakdown, and scores? No generic advice.
+5. FRAMEWORK APPLICATION: Have you applied at least 2 of the 5 cognitive frameworks in your analysis?
+6. PROFILE INTEGRATION: Have you referenced their biggest challenge, time waste areas, and transformation goal?
 
 === ANTI-FLUFF RULES ===
 - NO generic advice like "communicate more" or "be open to change"
-- Every recommendation MUST reference a specific score or input
+- Every recommendation MUST reference a specific score, profile input, or work breakdown percentage
 - When uncertain, provide two scenarios: "If X, then Y. If not-X, then Z."
+- Tensions should reveal CONTRADICTIONS in their responses (e.g., "wants speed but has governance gaps")
 
 Generate a JSON response with this EXACT structure:
 
 {
-  "yourEdge": "One sentence describing their unique competitive advantage",
-  "yourRisk": "One sentence describing their biggest hidden risk",
-  "yourNextMove": "One specific action they should take in the next 7 days",
+  "yourEdge": "One sentence describing their unique competitive advantage based on their profile and scores",
+  "yourRisk": "One sentence describing their biggest hidden risk based on tensions in their data",
+  "yourNextMove": "One specific action they should take in the next 7 days, referencing their role and biggest challenge",
   "dimensionScores": [
     {
       "key": "ai_readiness",
       "score": 75,
       "label": "Advancing",
-      "summary": "Brief insight about this dimension"
+      "summary": "Brief insight referencing their specific work breakdown or scores"
     }
   ],
   "tensions": [
     {
       "key": "speed_vs_quality",
-      "summary": "Brief description of a strategic tension"
+      "summary": "Tension description using dialectical reasoning - reference specific contradictions in their profile"
     }
   ],
   "risks": [
     {
       "key": "shadow_ai",
       "level": "medium",
-      "description": "A specific risk signal"
+      "description": "Risk tied to their specific time waste areas or delegation gaps"
     }
   ],
   "scenarios": [
     {
       "key": "high_velocity_path",
-      "summary": "A strategic scenario recommendation"
+      "summary": "Scenario using mental contrasting - what's the outcome AND what's the obstacle?"
     }
   ],
   "prompts": [
     {
       "category": "strategic_planning",
-      "title": "AI Strategy Prompts",
-      "description": "Prompts for strategic planning",
-      "whatItsFor": "When you need to plan AI initiatives",
-      "whenToUse": "During quarterly planning",
-      "howToUse": "Copy and paste into ChatGPT",
-      "prompts": ["Specific AI prompt they can use today"]
+      "title": "AI Strategy Prompts for ${contactData.role || 'Leaders'}",
+      "description": "Prompts tailored to their ${deepProfileData?.biggestChallenge || 'key challenges'}",
+      "whatItsFor": "Addressing their specific ${deepProfileData?.transformationGoal || 'transformation goal'}",
+      "whenToUse": "Based on their work breakdown and time waste patterns",
+      "howToUse": "Copy and paste into ChatGPT, customize with their context",
+      "prompts": ["Specific AI prompt that addresses their biggest time waste area", "Prompt for their delegation tasks", "Prompt for their stakeholder communication"]
     }
   ],
   "firstMoves": [
-    "First concrete action to take this week",
-    "Second concrete action to take this week",
-    "Third concrete action to take this week"
+    "First concrete action tied to their biggest challenge this week",
+    "Second action addressing their time waste areas",
+    "Third action for their transformation goal"
   ]
 }
 
@@ -158,11 +284,10 @@ REQUIRED OUTPUT:
 - Generate exactly 2-3 tensions showing strategic contradictions in their responses
 - Generate exactly 2-3 risks with appropriate severity levels based on their scores
 - Generate exactly 2 scenarios showing possible paths forward
-- Generate exactly 2-4 prompt sets with 2-3 actionable prompts each
+- Generate exactly 2-4 prompt sets with 2-3 actionable prompts each - HIGHLY PERSONALIZED to their profile
 - Generate exactly 3 firstMoves as concrete actions for this week
 
-Make it personal to ${contactData.fullName}'s specific role as ${contactData.role || 'a leader'} at ${contactData.companyName || 'their organization'}. 
-Reference their specific scores. No generic advice.`;
+Make every output deeply personal to ${contactData.fullName}'s specific situation. Reference their work breakdown percentages, time waste areas, transformation goal, and biggest challenge throughout.`;
 }
 
 function sanitizeEnums(data: any): any {
@@ -215,7 +340,7 @@ async function tryVertexAI(prompt: string, retries = 1): Promise<{ success: bool
     try {
       if (attempt > 0) {
         console.log(`🔄 Retry attempt ${attempt}/${retries}`);
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
       }
 
       const serviceAccountKey = Deno.env.get('GEMINI_SERVICE_ACCOUNT_KEY');
@@ -248,7 +373,7 @@ async function tryVertexAI(prompt: string, retries = 1): Promise<{ success: bool
           }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 3000,
+            maxOutputTokens: 4000,
             responseMimeType: 'application/json'
           }
         })
@@ -272,10 +397,8 @@ async function tryVertexAI(prompt: string, retries = 1): Promise<{ success: bool
         data = JSON.parse(jsonText);
       }
       
-      // Sanitize enums to valid values
       data = sanitizeEnums(data);
       
-      // Validate response structure
       if (!validateResponse(data)) {
         console.warn('⚠️ Response validation failed, will retry or fallback');
         continue;
@@ -307,7 +430,6 @@ async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean
       iat: now
     }));
 
-    // Import private key
     const privateKeyPem = credentials.private_key
       .replace(/-----BEGIN PRIVATE KEY-----/, '')
       .replace(/-----END PRIVATE KEY-----/, '')
@@ -323,7 +445,6 @@ async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean
       ['sign']
     );
 
-    // Sign JWT
     const signatureInput = `${jwtHeader}.${jwtPayload}`;
     const signature = await crypto.subtle.sign(
       'RSASSA-PKCS1-v1_5',
@@ -338,7 +459,6 @@ async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean
 
     const jwt = `${signatureInput}.${signatureBase64}`;
 
-    // Exchange JWT for access token
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -386,11 +506,11 @@ async function tryOpenAI(prompt: string, retries = 1): Promise<{ success: boolea
         body: JSON.stringify({
           model: 'gpt-4o',
           messages: [
-            { role: 'system', content: 'You are an AI leadership assessment analyzer. Always return valid JSON.' },
+            { role: 'system', content: 'You are an AI leadership assessment analyzer trained on cognitive frameworks including A/B Framing, Dialectical Reasoning, Mental Contrasting (WOOP), Reflective Equilibrium, and First-Principles Thinking. Always return valid JSON and apply these frameworks to generate deeply personalized insights.' },
             { role: 'user', content: prompt }
           ],
           temperature: 0.7,
-          max_tokens: 3000,
+          max_tokens: 4000,
           response_format: { type: 'json_object' }
         })
       });
@@ -476,8 +596,8 @@ function getFallbackContent() {
     ],
     firstMoves: [
       "Identify 2-3 high-impact AI use cases and assign executive sponsors by end of week",
-      "Schedule 60-minute AI literacy session for leadership team within 10 days",
-      "Create simple AI experimentation framework with clear success metrics"
+      "Schedule AI literacy assessment for your direct reports",
+      "Book a 30-minute call with your IT leader to discuss current AI capabilities"
     ]
   };
 }

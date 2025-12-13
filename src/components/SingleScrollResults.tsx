@@ -17,7 +17,8 @@ import {
   MessageSquare,
   Zap,
   Copy,
-  Check
+  Check,
+  BarChart3
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -26,6 +27,9 @@ import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
 import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
 import { ConsentManager } from './ConsentManager';
+import { BenchmarkComparison } from './BenchmarkComparison';
+import { TensionCard } from '@/components/ui/tension-card';
+import { RiskSignalCard } from '@/components/ui/risk-signal-card';
 
 interface SingleScrollResultsProps {
   assessmentData: any;
@@ -259,34 +263,22 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           </Card>
         )}
 
-        {/* 4. Peer Position Summary */}
+        {/* 4. Visual Peer Comparison - FOMO-inducing Graph */}
         {data?.leadershipComparison && (
-          <Card className="mb-6 shadow-sm border rounded-xl">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Users className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-foreground">Peer Comparison</h3>
+          <Card className="mb-6 shadow-sm border rounded-xl overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <BarChart3 className="w-5 h-5 text-primary" />
+                <CardTitle className="text-lg">Your Position Among 500+ Executives</CardTitle>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                <div className="p-3 bg-secondary/30 rounded-lg">
-                  <div className="text-2xl font-bold text-foreground">{data.leadershipComparison.dimensions?.length || 6}</div>
-                  <div className="text-xs text-muted-foreground">Dimensions Analyzed</div>
-                </div>
-                <div className="p-3 bg-secondary/30 rounded-lg">
-                  <div className="text-2xl font-bold text-foreground">
-                    {data.leadershipComparison.dimensions?.[0]?.percentile || '--'}%
-                  </div>
-                  <div className="text-xs text-muted-foreground">Top Dimension</div>
-                </div>
-                <div className="p-3 bg-secondary/30 rounded-lg">
-                  <div className="text-2xl font-bold text-foreground">500+</div>
-                  <div className="text-xs text-muted-foreground">Executives Compared</div>
-                </div>
-                <div className="p-3 bg-secondary/30 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">{data.benchmarkTier}</div>
-                  <div className="text-xs text-muted-foreground">Your Tier</div>
-                </div>
-              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <BenchmarkComparison
+                userScore={data.benchmarkScore || 0}
+                userTier={data.benchmarkTier || ''}
+                leadershipComparison={data.leadershipComparison}
+                showCohortToggle={false}
+              />
             </CardContent>
           </Card>
         )}
@@ -294,7 +286,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
         {/* Expandable Sections */}
         <div className="space-y-4">
           
-          {/* All Tensions */}
+          {/* All Tensions - Rich Cards */}
           {data?.tensions && data.tensions.length > 1 && (
             <Collapsible open={expandedSections.tensions} onOpenChange={() => toggleSection('tensions')}>
               <Card className="shadow-sm border rounded-xl">
@@ -302,7 +294,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                   <CardHeader className="flex flex-row items-center justify-between p-4 cursor-pointer hover:bg-secondary/30 transition-colors rounded-t-xl">
                     <div className="flex items-center gap-3">
                       <TrendingUp className="w-5 h-5 text-amber-500" />
-                      <CardTitle className="text-base font-semibold">All Tensions ({data.tensions.length})</CardTitle>
+                      <CardTitle className="text-base font-semibold">Strategic Tensions ({data.tensions.length})</CardTitle>
                     </div>
                     <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${expandedSections.tensions ? 'rotate-180' : ''}`} />
                   </CardHeader>
@@ -310,9 +302,14 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                 <CollapsibleContent>
                   <CardContent className="pt-0 pb-4 px-4 space-y-3">
                     {data.tensions.slice(1).map((tension, idx) => (
-                      <div key={idx} className="p-3 bg-secondary/20 rounded-lg">
-                        <p className="text-sm text-muted-foreground">{tension.summary_line}</p>
-                      </div>
+                      <TensionCard 
+                        key={idx} 
+                        tension={{
+                          dimension_key: tension.dimension_key || 'general',
+                          summary_line: tension.summary_line,
+                          priority_rank: tension.priority_rank || idx + 2
+                        }} 
+                      />
                     ))}
                   </CardContent>
                 </CollapsibleContent>
@@ -320,7 +317,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
             </Collapsible>
           )}
 
-          {/* Risks */}
+          {/* Risks - Rich Signal Cards */}
           {topRisks.length > 0 && (
             <Collapsible open={expandedSections.risks} onOpenChange={() => toggleSection('risks')}>
               <Card className="shadow-sm border rounded-xl">
@@ -336,10 +333,15 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                 <CollapsibleContent>
                   <CardContent className="pt-0 pb-4 px-4 space-y-3">
                     {topRisks.map((risk, idx) => (
-                      <div key={idx} className="p-3 bg-secondary/20 rounded-lg flex items-start gap-3">
-                        <Badge className={`shrink-0 ${getRiskColor(risk.level)}`}>{risk.level}</Badge>
-                        <p className="text-sm text-muted-foreground">{risk.description}</p>
-                      </div>
+                      <RiskSignalCard 
+                        key={idx} 
+                        signal={{
+                          risk_key: risk.risk_key || 'shadow_ai',
+                          level: (risk.level as 'low' | 'medium' | 'high') || 'medium',
+                          description: risk.description,
+                          priority_rank: risk.priority_rank || idx + 1
+                        }} 
+                      />
                     ))}
                   </CardContent>
                 </CollapsibleContent>
