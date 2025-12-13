@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Brain, TrendingUp, Target, Sparkles, Lightbulb, Users, Zap, LucideIcon } from 'lucide-react';
-import mindmakerIcon from '@/assets/mindmaker-icon.png';
+import mindmakerLogo from '@/assets/mindmaker-logo.png';
 
 interface ProgressPhase {
   label: string;
@@ -91,27 +91,24 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-[100dvh] flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-lg mx-auto text-center bg-card border shadow-sm rounded-xl animate-fade-in">
-        <CardContent className="p-6 sm:p-8 space-y-6">
-          {/* Icon with pulse animation */}
+        <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+          {/* Logo first - most important for branding */}
           <div className="flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping" style={{ animationDuration: '2s' }} />
-              <img 
-                src={mindmakerIcon} 
-                alt="Mindmaker" 
-                className="w-12 h-12 relative z-10"
-              />
-            </div>
+            <img 
+              src={mindmakerLogo} 
+              alt="Mindmaker" 
+              className="w-32 sm:w-40 h-auto"
+            />
           </div>
           
           {/* Title & Current Phase */}
-          <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-foreground">
+          <div className="space-y-1 sm:space-y-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">
               {title}
             </h2>
-            <p className="text-sm text-muted-foreground transition-all duration-300">
+            <p className="text-xs sm:text-sm text-muted-foreground transition-all duration-300">
               {currentPhase.description}
             </p>
           </div>
@@ -148,19 +145,19 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
             })}
           </div>
           
-          {/* Educational Tip - Smooth crossfade */}
-          <div className="pt-4 border-t border-border">
+          {/* Educational Tip - Smooth crossfade - hidden on very small screens */}
+          <div className="pt-3 sm:pt-4 border-t border-border hidden sm:block">
             <div 
               key={tipIndex}
-              className="bg-secondary/30 rounded-lg p-4 animate-fade-in"
+              className="bg-secondary/30 rounded-lg p-3 sm:p-4 animate-fade-in"
               style={{ animationDuration: '0.4s' }}
             >
-              <div className="flex items-start gap-3 text-left">
-                <div className="shrink-0 p-1.5 bg-primary/10 rounded transition-colors duration-300">
-                  <TipIcon className="h-4 w-4 text-primary" />
+              <div className="flex items-start gap-2 sm:gap-3 text-left">
+                <div className="shrink-0 p-1 sm:p-1.5 bg-primary/10 rounded transition-colors duration-300">
+                  <TipIcon className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-foreground mb-1">{currentTip.title}</p>
+                  <p className="text-xs font-medium text-foreground mb-0.5 sm:mb-1">{currentTip.title}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     {currentTip.content}
                   </p>

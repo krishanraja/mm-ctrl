@@ -6,7 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { Brain, ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { VoiceInput } from '@/components/ui/voice-input';
+import { Brain, ArrowRight, ArrowLeft, Check, Mic } from 'lucide-react';
 
 export interface DeepProfileData {
   thinkingProcess: string;
@@ -345,12 +346,33 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
       case 7:
         return (
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-foreground mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2 sm:mb-4">
               Describe 1-2 specific tasks that felt like a waste of your time recently
             </h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
               Be specific - this helps us create targeted AI workflows for you.
             </p>
+            
+            {/* Voice Input Option */}
+            <div className="flex items-center gap-2 mb-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
+              <Mic className="h-4 w-4 text-primary flex-shrink-0" />
+              <span className="text-xs sm:text-sm text-muted-foreground flex-1">
+                Prefer to speak? Record your answer:
+              </span>
+              <VoiceInput
+                placeholder="Record"
+                maxDuration={60}
+                onTranscript={(transcript) => {
+                  setProfileData(prev => ({
+                    ...prev,
+                    timeWasteExamples: prev.timeWasteExamples 
+                      ? `${prev.timeWasteExamples}\n\n${transcript}` 
+                      : transcript
+                  }));
+                }}
+              />
+            </div>
+            
             <Textarea
               value={profileData.timeWasteExamples}
               onChange={(e) => setProfileData(prev => ({ ...prev, timeWasteExamples: e.target.value }))}
@@ -361,7 +383,7 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
                 }
               }}
               placeholder="Example: Spent 3 hours reformatting a deck for different audiences, manually summarizing meeting notes..."
-              className="min-h-[120px] rounded-xl"
+              className="min-h-[100px] sm:min-h-[120px] rounded-xl text-sm"
             />
           </div>
         );
@@ -533,68 +555,63 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
   };
 
   return (
-    <div className="bg-background min-h-screen relative overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-6 sm:py-8">
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-8 pt-12 sm:pt-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm mb-6">
-            <Brain className="h-4 w-4" />
-            Unlock Your Personal AI Command Center
+    <div className="bg-background min-h-[100dvh] flex flex-col">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 flex-1 flex flex-col py-3 sm:py-6">
+        {/* Header - compact on mobile */}
+        <div className="text-center mb-3 sm:mb-6 pt-2 sm:pt-8">
+          <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs sm:text-sm mb-2 sm:mb-4">
+            <Brain className="h-3 w-3 sm:h-4 sm:w-4" />
+            Deep Profile
           </div>
           
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 leading-tight">
-            Deep Profile
+          <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-foreground mb-1 sm:mb-2 leading-tight">
+            Personalize Your Results
           </h1>
           
-          <p className="text-sm sm:text-base text-muted-foreground max-w-md sm:max-w-2xl mx-auto leading-relaxed">
-            Answer 10 questions to receive custom ChatGPT/Claude project instructions tailored to your thinking style
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto hidden sm:block">
+            Answer 10 questions to receive custom AI instructions tailored to your thinking style
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto">
-          {/* Progress */}
-          <Card className="mb-6 shadow-sm border rounded-xl">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium text-foreground">Question {currentStep} of {totalSteps}</span>
-                <span className="text-sm text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}%</span>
+        <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col">
+          {/* Progress - compact */}
+          <Card className="mb-3 sm:mb-6 shadow-sm border rounded-xl">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs sm:text-sm font-medium text-foreground">Q{currentStep}/{totalSteps}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}%</span>
               </div>
-              <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
+              <Progress value={(currentStep / totalSteps) * 100} className="h-1.5 sm:h-2" />
             </CardContent>
           </Card>
 
-          {/* Question Card */}
-          <Card className="shadow-sm border rounded-xl">
-            <CardContent className="p-6 sm:p-8">
+          {/* Question Card - flexible height */}
+          <Card className="shadow-sm border rounded-xl flex-1 flex flex-col">
+            <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
               {renderQuestion()}
 
               {/* Navigation - Only show for non-auto-advance questions */}
               {![1, 5, 9].includes(currentStep) && (
-                <div className="flex gap-3 mt-8 pt-6 border-t">
+                <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t mt-auto">
                   <Button
                     variant="outline"
                     onClick={handleBack}
                     disabled={currentStep === 1}
-                    className="rounded-xl"
+                    className="rounded-xl text-xs sm:text-sm"
+                    size="sm"
                   >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     Back
                   </Button>
                   <Button
                     variant="cta"
                     onClick={handleNext}
                     disabled={!canProceed()}
-                    className="flex-1 rounded-xl text-sm sm:text-base"
+                    className="flex-1 rounded-xl text-xs sm:text-sm"
+                    size="sm"
                   >
-                    {currentStep === totalSteps ? (
-                      <>
-                        <span className="hidden sm:inline">Generate My AI Toolkit</span>
-                        <span className="sm:hidden">Generate Toolkit</span>
-                      </>
-                    ) : (
-                      'Next'
-                    )}
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    {currentStep === totalSteps ? 'Generate Toolkit' : 'Next'}
+                    <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2" />
                   </Button>
                 </div>
               )}

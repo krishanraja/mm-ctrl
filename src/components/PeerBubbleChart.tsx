@@ -281,18 +281,18 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
             )}
           </div>
         </CardHeader>
-      <CardContent>
-        {/* Dimension labels */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+      <CardContent className="p-3 sm:p-6">
+        {/* Dimension labels - compact on mobile */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
           {dimensions.map((dim, idx) => (
             <div key={dim.dimension} className="text-center">
-              <div className="flex items-center justify-center gap-1 mb-1">
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {idx === 0 ? 'X-Axis' : idx === 1 ? 'Y-Axis' : 'Bubble Size'}
+              <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
+                <div className="text-[10px] sm:text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  {idx === 0 ? 'X' : idx === 1 ? 'Y' : 'Size'}
                 </div>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+                    <HelpCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-muted-foreground cursor-help hidden sm:inline" />
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
                     <p className="text-sm">
@@ -303,16 +303,16 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                   </TooltipContent>
                 </Tooltip>
               </div>
-              <div className="text-sm font-semibold">{dim.dimension}</div>
-              <div className="text-xs text-primary font-medium">You: {Math.round(dim.score)}/100</div>
+              <div className="text-xs sm:text-sm font-semibold truncate">{dim.dimension}</div>
+              <div className="text-[10px] sm:text-xs text-primary font-medium">{Math.round(dim.score)}</div>
             </div>
           ))}
         </div>
 
-        {/* Chart */}
-        <ResponsiveContainer width="100%" height={500}>
+        {/* Chart - responsive height */}
+        <ResponsiveContainer width="100%" height={280} className="sm:!h-[400px]">
           <ScatterChart
-            margin={{ top: 20, right: 20, bottom: 60, left: 60 }}
+            margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
           >
             <XAxis
               type="number"
@@ -322,10 +322,11 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
               label={{ 
                 value: primary.dimension, 
                 position: 'bottom',
-                offset: 40,
-                style: { fontSize: 12, fontWeight: 600 }
+                offset: 20,
+                style: { fontSize: 10, fontWeight: 600 }
               }}
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 9 }}
+              tickCount={5}
             />
             <YAxis
               type="number"
@@ -336,17 +337,18 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
                 value: secondary.dimension, 
                 angle: -90, 
                 position: 'left',
-                offset: 40,
-                style: { fontSize: 12, fontWeight: 600 }
+                offset: 20,
+                style: { fontSize: 10, fontWeight: 600 }
               }}
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 9 }}
+              tickCount={5}
             />
             <ZAxis
               type="number"
               dataKey="z"
               name={tertiary.dimension}
               domain={[0, 100]}
-              range={[20, 400]}
+              range={[15, 200]}
             />
             <RechartsTooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
             

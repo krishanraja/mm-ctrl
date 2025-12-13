@@ -41,14 +41,14 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
   }, []);
   
   return (
-    <div className="relative overflow-hidden bg-background min-h-screen">
-      <div className="container-width relative z-10 px-6 py-20 md:py-32 lg:py-40">
-        <div className="bg-white/80 backdrop-blur-sm border border-border rounded-lg shadow-lg p-8 md:p-12 lg:p-16 max-w-3xl space-y-8 md:space-y-10">
+    <div className="relative overflow-hidden bg-background min-h-[100dvh] flex items-center">
+      <div className="container-width relative z-10 px-4 sm:px-6 py-4 sm:py-8 w-full">
+        <div className="bg-white/80 backdrop-blur-sm border border-border rounded-lg shadow-lg p-4 sm:p-8 md:p-12 max-w-3xl space-y-4 sm:space-y-6 md:space-y-8">
           <div className="flex justify-between items-start">
             <img 
               src={mindmakerLogo} 
               alt="MindMaker Logo" 
-              className="w-[190px] h-auto"
+              className="w-[143px] h-auto"
             />
             <div className="flex items-center gap-2">
               <SampleResultsDialog 
@@ -105,9 +105,9 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             </div>
           </div>
           
-          <div className="min-h-[4rem] sm:min-h-[5rem] md:min-h-[6rem] lg:min-h-[7rem]">
+          <div className="min-h-[2.5rem] sm:min-h-[3rem] md:min-h-[4rem]">
             <h1 
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-wide text-primary mb-6 md:mb-10 text-left"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-wide text-primary text-left"
               aria-label={fullText}
             >
               <span aria-hidden="true">
@@ -118,20 +118,18 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             </h1>
           </div>
           
-          <p className="text-sm text-graphite leading-relaxed text-left mb-6">
-            Spend 10 minutes mapping how AI fits your role, team, and company. Get a clear view 
-            of the gaps that matter, practical next steps, and the questions you'll need when 
-            vendors, boards, or staff bring AI to your door.
+          <p className="text-xs sm:text-sm text-graphite leading-relaxed text-left">
+            Spend 10 minutes mapping how AI fits your role. Get practical next steps and the questions you'll need when vendors or staff bring AI to your door.
           </p>
 
-          <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-start items-start">
+          <div className="flex flex-col sm:flex-row gap-3 justify-start items-start">
             <Button 
               onClick={onStartQuiz}
-              className="btn-hero-cta group justify-start"
-              size="lg"
+              className="btn-hero-cta group justify-start w-full sm:w-auto"
+              size="default"
             >
               <span className="text-sm">Start diagnostic</span>
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
         </div>

@@ -123,6 +123,66 @@ Recurring bugs, architectural pain points, and solutions.
 
 ---
 
+## Dec 2024 Pipeline Anti-Fragile Update
+
+### Pipeline Failure Points Enumeration
+
+The following failure points have been identified and guarded in `pipelineGuards.ts`:
+
+#### 1. CREATE-LEADER-ASSESSMENT FUNCTION
+| Failure Point | Guard |
+|--------------|-------|
+| contactData.email null/undefined | `validateContactData()` with fallback |
+| leader lookup fails (RLS/network) | Fallback to create new leader |
+| assessment insert fails (schema mismatch) | Explicit column mapping |
+
+#### 2. AI-GENERATE FUNCTION
+| Failure Point | Guard |
+|--------------|-------|
+| Vertex AI timeout/fail | OpenAI fallback |
+| OpenAI timeout/fail | Static fallback content |
+| JSON parse fails | Regex extraction + parse retry |
+| Enum values invalid | `sanitizeEnums()` normalization |
+| Response validation fails | `validateResponse()` checks |
+
+#### 3. RUN-ASSESSMENT ORCHESTRATOR
+| Failure Point | Guard |
+|--------------|-------|
+| assessmentId null after create | Throw with clear message |
+| aiContent arrays empty | `safeInsert` handles gracefully |
+| DB insert fails (FK constraint) | Logged + continues |
+| generation_status update fails | Caught + logged |
+
+#### 4. AGGREGATE-LEADER-RESULTS
+| Failure Point | Guard |
+|--------------|-------|
+| assessmentId fetch fails (RLS) | Compute from dimension scores |
+| dimension_scores empty | Safe defaults array |
+| Type casting fails | Explicit type guards |
+| leadershipComparison generation fails | Returns null safely |
+
+#### 5. UI AGGREGATION
+| Failure Point | Guard |
+|--------------|-------|
+| data null | `safeDefaults` object |
+| arrays null/undefined | `ensureArray()` |
+| nested properties missing | `safeAccess()` |
+| component receives wrong shape | Type validation |
+
+### Issue 16: Mobile Viewport Overflow
+**Symptom**: Pages required vertical scrolling on mobile devices
+**Root Cause**: Fixed heights, large padding, non-responsive components
+**Solution**: Use 100dvh, compact padding on mobile, responsive components
+**Status**: ✅ Resolved
+
+### Issue 17: Peer Comparison Matrix Squashed on Mobile
+**Symptom**: Chart was 500px height with large margins, unusable on mobile
+**Root Cause**: Fixed chart dimensions, large font sizes
+**Solution**: Responsive height (280px mobile, 400px desktop), compact labels
+**Status**: ✅ Resolved
+
+---
+
 ## Prevention Checklist
 
 Before shipping:
