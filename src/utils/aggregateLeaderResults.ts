@@ -97,12 +97,24 @@ export async function aggregateLeaderResults(
     const hasFull = assessment.has_full_diagnostic;
     const shouldApplyGating = applyGating && !hasFull;
 
-    // Fetch dimension scores
-    const { data: dimensionScores } = await supabase
+    // Fetch dimension scores with error handling
+    const { data: dimensionScoresRaw, error: dimError } = await supabase
       .from('leader_dimension_scores')
       .select('*')
       .eq('assessment_id', assessmentId)
       .order('dimension_key');
+    
+    if (dimError) {
+      console.error('⚠️ Failed to fetch dimension scores:', dimError.message);
+    }
+    
+    // Ensure dimension scores have correct shape
+    const dimensionScores: LeaderDimensionScore[] = (dimensionScoresRaw || []).map(d => ({
+      dimension_key: d.dimension_key || 'unknown',
+      score_numeric: typeof d.score_numeric === 'number' ? d.score_numeric : 0,
+      dimension_tier: d.dimension_tier || 'emerging',
+      explanation: d.explanation || ''
+    }));
 
     // Fetch tensions (apply gating: free users see only top 1) - PHASE 4: Type guard
     const { data: allTensions } = await supabase
@@ -223,7 +235,7 @@ export async function aggregateLeaderResults(
       benchmarkScore: assessment.benchmark_score || 0,
       benchmarkTier: assessment.benchmark_tier || 'AI-Emerging',
       hasFullDiagnostic: hasFull,
-      dimensionScores: dimensionScores || [],
+      dimensionScores,
       tensions,
       riskSignals,
       orgScenarios,
