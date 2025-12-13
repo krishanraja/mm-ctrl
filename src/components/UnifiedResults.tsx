@@ -34,21 +34,29 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [aggregatedData, setAggregatedData] = useState<any>(null);
 
+  const [isLoadingId, setIsLoadingId] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   // UUID validation helper
   const isValidUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(str);
   };
 
-  // Restore assessment ID from persistence
+  // Restore assessment ID from persistence with retry logic
   useEffect(() => {
-    const checkForAssessmentId = async () => {
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = 1500;
+
+    const checkForAssessmentId = async (): Promise<boolean> => {
       const { getPersistedAssessmentId } = await import('@/utils/assessmentPersistence');
       const { assessmentId: storedId, source } = getPersistedAssessmentId();
       
-      if (storedId && isValidUUID(storedId) && storedId !== assessmentId) {
+      if (storedId && isValidUUID(storedId)) {
         console.log('📊 Assessment ID restored from:', source, storedId);
         setAssessmentId(storedId);
+        setIsLoadingId(false);
         return true;
       } else if (storedId && !isValidUUID(storedId)) {
         console.error('❌ Invalid assessment ID format:', storedId);
@@ -56,7 +64,19 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
       return false;
     };
     
-    checkForAssessmentId();
+    const attemptLoad = async () => {
+      const found = await checkForAssessmentId();
+      if (!found && retryCount < maxRetries) {
+        retryCount++;
+        console.log(`⏳ Assessment ID not found, retrying (${retryCount}/${maxRetries})...`);
+        setTimeout(attemptLoad, retryDelay);
+      } else if (!found) {
+        setLoadError('Unable to find assessment data. Please complete an assessment first.');
+        setIsLoadingId(false);
+      }
+    };
+
+    attemptLoad();
   }, []);
 
   // Fetch aggregated data for Compare tab
@@ -116,14 +136,24 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           </TabsList>
 
           <TabsContent value="overview" className="mt-0">
-            {assessmentId ? (
+            {loadError ? (
+              <div className="text-center py-12">
+                <Shield className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">{loadError}</p>
+              </div>
+            ) : isLoadingId ? (
+              <div className="text-center py-12">
+                <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+                <p className="text-muted-foreground">Loading diagnostic data...</p>
+              </div>
+            ) : assessmentId ? (
               <LeadershipBenchmarkV2 
                 assessmentId={assessmentId}
                 contactData={contactData}
               />
             ) : (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">Loading diagnostic data...</p>
+                <p className="text-muted-foreground">No assessment data found</p>
               </div>
             )}
           </TabsContent>

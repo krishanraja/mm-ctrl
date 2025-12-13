@@ -154,18 +154,51 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   const handleUnlock = async (formData: UnlockFormData) => {
     setUnlockLoading(true);
     try {
-      // TODO: Implement actual signup with Supabase auth
-      // For now, just unlock the results
-      console.log('Unlock form submitted:', formData);
+      // Create account with Supabase Auth
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { getPersistedAssessmentId, linkAssessmentToUser } = await import('@/utils/assessmentPersistence');
       
-      // Simulate brief delay for UX
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: formData.fullName,
+            department: formData.department,
+          }
+        }
+      });
+
+      if (authError) {
+        // If user already exists, try to sign them in instead
+        if (authError.message.includes('already registered')) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password,
+          });
+          
+          if (signInError) {
+            throw new Error('Account exists but password is incorrect. Please try signing in.');
+          }
+        } else {
+          throw authError;
+        }
+      }
+      
+      // Link the assessment to the user if we have one
+      const { assessmentId: storedId } = getPersistedAssessmentId();
+      if (storedId && authData?.user?.id) {
+        await linkAssessmentToUser(storedId, authData.user.id);
+      }
       
       setIsUnlocked(true);
-      toast.success('Full results unlocked!');
-    } catch (error) {
+      toast.success('Account created! Full results unlocked.');
+    } catch (error: any) {
       console.error('Unlock error:', error);
-      toast.error('Failed to unlock results. Please try again.');
+      toast.error(error.message || 'Failed to create account. Please try again.');
     } finally {
       setUnlockLoading(false);
     }
@@ -201,46 +234,46 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   const topRisks = data?.riskSignals?.slice(0, 3) || [];
 
   return (
-    <div className="bg-background min-h-screen py-8">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+    <div className="bg-background min-h-[100dvh] py-4 sm:py-6">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-4xl">
         
         {/* 1. Score Card - Always Visible with Animation */}
-        <Card className="mb-6 shadow-lg border rounded-xl overflow-hidden animate-fade-in">
-          <div className={`bg-gradient-to-br ${getScoreCardGradient(data?.benchmarkTier || '', data?.benchmarkScore || 0)} p-6 sm:p-8`}>
-            {/* Logo + Title - Left Aligned, 3x Larger (192px) */}
-            <div className="flex flex-col items-start mb-6">
+        <Card className="mb-4 sm:mb-6 shadow-lg border rounded-xl overflow-hidden animate-fade-in">
+          <div className={`bg-gradient-to-br ${getScoreCardGradient(data?.benchmarkTier || '', data?.benchmarkScore || 0)} p-4 sm:p-6`}>
+            {/* Logo + Title - Left Aligned */}
+            <div className="flex flex-col items-start mb-4 sm:mb-6">
               <img 
                 src={mindmakerLogo} 
                 alt="Mindmaker" 
-                className="w-48 h-auto mb-4 animate-scale-in" 
+                className="w-32 sm:w-36 h-auto mb-3 animate-scale-in" 
                 style={{ animationDelay: '0.1s' }}
               />
-              <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
                 AI Leadership Benchmark
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">Your personalized leadership insights</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">Your personalized leadership insights</p>
             </div>
             
-            <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-8">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-6">
               <div className="text-center sm:text-left">
                 <div 
-                  className={`text-5xl sm:text-6xl font-bold mb-2 transition-all duration-500 ${getScoreGlowColor(data?.benchmarkTier || '', data?.benchmarkScore || 0)}`}
+                  className={`text-4xl sm:text-5xl font-bold mb-1 sm:mb-2 transition-all duration-500 ${getScoreGlowColor(data?.benchmarkTier || '', data?.benchmarkScore || 0)}`}
                   style={{ animationDelay: '0.2s' }}
                 >
                   {data?.benchmarkScore || 0}
-                  <span className="text-2xl text-muted-foreground">/100</span>
+                  <span className="text-lg sm:text-2xl text-muted-foreground">/100</span>
                 </div>
-                <Badge className={`${getTierColor(data?.benchmarkTier || '')} px-3 py-1`}>
+                <Badge className={`${getTierColor(data?.benchmarkTier || '')} px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm`}>
                   {data?.benchmarkTier || 'Calculating...'} Tier
                 </Badge>
               </div>
               
-              <div className="flex-1 space-y-2">
-                <div className="flex justify-between text-sm">
+              <div className="flex-1 space-y-1 sm:space-y-2">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-muted-foreground">vs 500+ executives</span>
                   <span className="font-medium text-foreground">Top {data?.benchmarkScore ? Math.max(1, 100 - data.benchmarkScore) : '--'}%</span>
                 </div>
-                <Progress value={data?.benchmarkScore || 0} className="h-2" />
+                <Progress value={data?.benchmarkScore || 0} className="h-1.5 sm:h-2" />
               </div>
             </div>
           </div>

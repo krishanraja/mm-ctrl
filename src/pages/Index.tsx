@@ -2,19 +2,21 @@ import { UnifiedAssessment } from '@/components/UnifiedAssessment';
 import { HeroSection } from '@/components/HeroSection';
 import { VoiceOrchestrator } from '@/components/voice/VoiceOrchestrator';
 import { AssessmentHistory } from '@/components/AssessmentHistory';
+import { SingleScrollResults } from '@/components/SingleScrollResults';
 import AuthScreen from '@/components/auth/AuthScreen';
-import { AssessmentProvider } from '@/contexts/AssessmentContext';
-import { useState, useEffect } from 'react';
+import { AssessmentProvider, useAssessment } from '@/contexts/AssessmentContext';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { persistAssessmentId } from '@/utils/assessmentPersistence';
 import type { User } from '@supabase/supabase-js';
 
-type AssessmentMode = 'hero' | 'voice' | 'quiz' | 'signin' | 'history';
+type AssessmentMode = 'hero' | 'voice' | 'quiz' | 'signin' | 'view-results';
 
-const Index = () => {
+const IndexContent = () => {
   const [mode, setMode] = useState<AssessmentMode>('hero');
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [user, setUser] = useState<User | null>(null);
-  const [viewingAssessmentId, setViewingAssessmentId] = useState<string | null>(null);
+  const { contactData, setContactData } = useAssessment();
 
   useEffect(() => {
     // Get initial session
@@ -35,8 +37,59 @@ const Index = () => {
     setUser(null);
   };
 
+  const handleViewAssessment = useCallback(async (assessmentId: string) => {
+    // Persist the assessment ID for the results view
+    persistAssessmentId(assessmentId);
+    
+    // Fetch contact data for this assessment if needed
+    try {
+      const { data: assessment } = await supabase
+        .from('leader_assessments')
+        .select('leader_id')
+        .eq('id', assessmentId)
+        .single();
+      
+      if (assessment?.leader_id) {
+        const { data: leader } = await supabase
+          .from('leaders')
+          .select('full_name, email, company_name, role_title, industry, company_size')
+          .eq('id', assessment.leader_id)
+          .single();
+        
+        if (leader) {
+          setContactData({
+            fullName: leader.full_name || 'User',
+            email: leader.email || '',
+            companyName: leader.company_name || '',
+            department: leader.role_title || '',
+            companySize: leader.company_size || '',
+            primaryFocus: '',
+            timeline: '',
+            consentToInsights: true,
+            role: leader.role_title
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Could not fetch leader data for assessment:', error);
+      // Set minimal contact data to allow viewing
+      setContactData({
+        fullName: user?.email?.split('@')[0] || 'User',
+        email: user?.email || '',
+        companyName: '',
+        department: '',
+        companySize: '',
+        primaryFocus: '',
+        timeline: '',
+        consentToInsights: true
+      });
+    }
+    
+    setMode('view-results');
+  }, [user, setContactData]);
+
   return (
-    <AssessmentProvider>
+    <>
       {mode === 'voice' ? (
         <VoiceOrchestrator 
           sessionId={sessionId}
@@ -52,6 +105,15 @@ const Index = () => {
             <AuthScreen onAuthSuccess={() => setMode('hero')} />
           </div>
         </div>
+      ) : mode === 'view-results' && contactData ? (
+        <SingleScrollResults
+          assessmentData={{}}
+          promptLibrary={null}
+          contactData={contactData}
+          deepProfileData={null}
+          sessionId={sessionId}
+          onBack={() => setMode('hero')}
+        />
       ) : (
         <div className="min-h-screen">
           <HeroSection 
@@ -67,16 +129,20 @@ const Index = () => {
             <div id="assessment-history" className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
               <AssessmentHistory 
                 userEmail={user.email || ''}
-                onViewAssessment={(assessmentId) => {
-                  setViewingAssessmentId(assessmentId);
-                  // TODO: Navigate to results view with this assessment ID
-                  console.log('View assessment:', assessmentId);
-                }}
+                onViewAssessment={handleViewAssessment}
               />
             </div>
           )}
         </div>
       )}
+    </>
+  );
+};
+
+const Index = () => {
+  return (
+    <AssessmentProvider>
+      <IndexContent />
     </AssessmentProvider>
   );
 };

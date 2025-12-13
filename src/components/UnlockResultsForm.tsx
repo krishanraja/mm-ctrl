@@ -18,9 +18,19 @@ export interface UnlockFormData {
   fullName: string;
   email: string;
   department: string;
+  primaryFocus: string;
   password: string;
   consentToInsights: boolean;
 }
+
+const PRIMARY_FOCUS_OPTIONS = [
+  { value: 'Strategy & Vision', label: 'Building AI strategy & vision' },
+  { value: 'Team Enablement', label: 'Enabling my team with AI tools' },
+  { value: 'Process Automation', label: 'Automating business processes' },
+  { value: 'Product Innovation', label: 'AI-driven product innovation' },
+  { value: 'Competitive Advantage', label: 'Creating competitive advantage' },
+  { value: 'Cost Optimization', label: 'Cost optimization & efficiency' },
+] as const;
 
 interface UnlockResultsFormProps {
   onSubmit: (data: UnlockFormData) => void;
@@ -32,6 +42,7 @@ export const UnlockResultsForm: React.FC<UnlockResultsFormProps> = ({ onSubmit, 
     fullName: '',
     email: '',
     department: '',
+    primaryFocus: '',
     password: '',
     consentToInsights: false
   });
@@ -48,6 +59,9 @@ export const UnlockResultsForm: React.FC<UnlockResultsFormProps> = ({ onSubmit, 
 
     const departmentError = validateRequired(formData.department, 'Department');
     if (departmentError) newErrors.department = departmentError;
+
+    const primaryFocusError = validateRequired(formData.primaryFocus, 'Primary AI focus');
+    if (primaryFocusError) newErrors.primaryFocus = primaryFocusError as string;
 
     if (!formData.password || formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
@@ -152,6 +166,31 @@ export const UnlockResultsForm: React.FC<UnlockResultsFormProps> = ({ onSubmit, 
             </Select>
             {errors.department && (
               <p className="text-destructive text-xs">{errors.department}</p>
+            )}
+          </div>
+
+          {/* Primary AI Focus */}
+          <div className="space-y-1.5">
+            <Label htmlFor="unlockPrimaryFocus" className="text-foreground font-medium text-sm">
+              Primary AI Focus
+            </Label>
+            <Select
+              value={formData.primaryFocus}
+              onValueChange={(value) => handleInputChange('primaryFocus', value)}
+            >
+              <SelectTrigger id="unlockPrimaryFocus" className="rounded-lg bg-background">
+                <SelectValue placeholder="What's your main AI goal?" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover z-50">
+                {PRIMARY_FOCUS_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.primaryFocus && (
+              <p className="text-destructive text-xs">{errors.primaryFocus}</p>
             )}
           </div>
 

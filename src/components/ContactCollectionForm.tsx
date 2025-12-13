@@ -10,20 +10,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User, Building, Mail, ArrowRight } from 'lucide-react';
+import { User, Mail, ArrowRight, Target } from 'lucide-react';
 import { validateEmail, validateRequired } from '@/utils/formValidation';
 import { DEPARTMENTS } from '@/constants/departments';
 
 export interface ContactData {
   fullName: string;
-  companyName: string;
   email: string;
   department: string;
-  companySize: string;
   primaryFocus: string;
-  timeline: string;
-  consentToInsights: boolean;
-  role?: string; // Optional role field for benchmarking
+  // Legacy fields maintained for compatibility
+  companyName?: string;
+  companySize?: string;
+  timeline?: string;
+  consentToInsights?: boolean;
+  role?: string;
 }
 
 interface ContactCollectionFormProps {
@@ -31,19 +32,24 @@ interface ContactCollectionFormProps {
   onBack?: () => void;
 }
 
+const PRIMARY_FOCUS_OPTIONS = [
+  { value: 'Strategy & Vision', label: 'Building AI strategy & vision' },
+  { value: 'Team Enablement', label: 'Enabling my team with AI tools' },
+  { value: 'Process Automation', label: 'Automating business processes' },
+  { value: 'Product Innovation', label: 'AI-driven product innovation' },
+  { value: 'Competitive Advantage', label: 'Creating competitive advantage' },
+  { value: 'Cost Optimization', label: 'Cost optimization & efficiency' },
+] as const;
+
 export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ onSubmit, onBack }) => {
   const [contactData, setContactData] = useState<ContactData>({
     fullName: '',
-    companyName: '',
     email: '',
     department: '',
-    companySize: '',
     primaryFocus: '',
-    timeline: '',
-    consentToInsights: false
+    consentToInsights: true, // Default to true since we removed the checkbox
   });
-  const [errors, setErrors] = useState<Partial<ContactData>>({});
-  const [showDisqualifiedMessage, setShowDisqualifiedMessage] = useState(false);
+  const [errors, setErrors] = useState<Partial<Record<keyof ContactData, string>>>({});
 
   // Scroll to top on component mount
   useEffect(() => {
@@ -51,13 +57,10 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
   }, []);
 
   const validateForm = () => {
-    const newErrors: Partial<ContactData> = {};
+    const newErrors: Partial<Record<keyof ContactData, string>> = {};
     
     const fullNameError = validateRequired(contactData.fullName, 'Full name');
     if (fullNameError) newErrors.fullName = fullNameError;
-    
-    const companyNameError = validateRequired(contactData.companyName, 'Company name');
-    if (companyNameError) newErrors.companyName = companyNameError;
     
     const emailError = validateEmail(contactData.email);
     if (emailError) newErrors.email = emailError;
@@ -65,18 +68,8 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
     const departmentError = validateRequired(contactData.department, 'Department');
     if (departmentError) newErrors.department = departmentError;
 
-    const companySizeError = validateRequired(contactData.companySize, 'Company size');
-    if (companySizeError) newErrors.companySize = companySizeError;
-
-    const primaryFocusError = validateRequired(contactData.primaryFocus, 'Primary focus');
+    const primaryFocusError = validateRequired(contactData.primaryFocus, 'Primary AI focus');
     if (primaryFocusError) newErrors.primaryFocus = primaryFocusError;
-
-    const timelineError = validateRequired(contactData.timeline, 'Timeline');
-    if (timelineError) newErrors.timeline = timelineError;
-
-    if (!contactData.consentToInsights) {
-      newErrors.consentToInsights = 'You must consent to receiving personalized insights' as any;
-    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -96,273 +89,140 @@ export const ContactCollectionForm = React.memo<ContactCollectionFormProps>(({ o
     }
   };
 
-  if (showDisqualifiedMessage) {
-    return (
-      <div className="bg-background min-h-screen relative overflow-hidden flex items-center justify-center px-4">
-        <Card className="max-w-2xl w-full shadow-sm border rounded-xl">
-          <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">
-              Thank You for Your Interest!
+  return (
+    <div className="bg-background min-h-[100dvh] flex items-center justify-center px-4 py-6">
+      <Card className="w-full max-w-md shadow-sm border rounded-xl">
+        <CardContent className="p-5 sm:p-6">
+          {/* Header */}
+          <div className="text-center mb-5 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-1">
+              Almost there!
             </h2>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Based on your current situation, we recommend exploring our free educational resources to build your AI knowledge foundation. These resources are designed to help you get started with AI leadership concepts.
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              We'll personalize your results based on your role
             </p>
-            <div className="space-y-4">
-              <Button variant="cta" className="w-full rounded-xl" onClick={() => window.open('https://themindmaker.ai/resources', '_blank')}>
-                Access Free AI Resources
-              </Button>
-              {onBack && (
-                <Button variant="outline" className="w-full rounded-xl" onClick={onBack}>
-                  ← Back to Assessment
-                </Button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Full Name */}
+            <div className="space-y-1.5">
+              <Label htmlFor="fullName" className="text-foreground font-medium text-sm flex items-center gap-2">
+                <User className="h-3.5 w-3.5" />
+                Full Name
+              </Label>
+              <Input
+                id="fullName"
+                type="text"
+                value={contactData.fullName}
+                onChange={(e) => handleInputChange('fullName', e.target.value)}
+                className="rounded-lg"
+                placeholder="Your name"
+                autoComplete="name"
+              />
+              {errors.fullName && (
+                <p className="text-destructive text-xs">{errors.fullName}</p>
               )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
-  return (
-    <div className="bg-background min-h-screen relative overflow-hidden">
-      {/* Back Button */}
-      {onBack && (
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="rounded-xl"
-            aria-label="Go back to assessment"
-          >
-            ← Back
-          </Button>
-        </div>
-      )}
+            {/* Email */}
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-foreground font-medium text-sm flex items-center gap-2">
+                <Mail className="h-3.5 w-3.5" />
+                Work Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={contactData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                className="rounded-lg"
+                placeholder="you@company.com"
+                autoComplete="email"
+              />
+              {errors.email && (
+                <p className="text-destructive text-xs">{errors.email}</p>
+              )}
+            </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-6 sm:py-8">
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-8 pt-12 sm:pt-16">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 leading-tight">
-            Almost Done!
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-md sm:max-w-2xl mx-auto leading-relaxed">
-            Help us personalize your AI leadership insights and recommendations by sharing a few details.
-          </p>
-        </div>
-
-        <div className="max-w-lg sm:max-w-2xl mx-auto">
-          {/* Contact Form */}
-          <Card className="shadow-sm border rounded-xl">
-          <CardContent className="p-6 sm:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Full Name */}
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-foreground font-medium text-sm">
-                  <User className="h-4 w-4 inline mr-2" />
-                  Full Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  value={contactData.fullName}
-                  onChange={(e) => handleInputChange('fullName', e.target.value)}
-                  className="rounded-xl"
-                  placeholder="Enter your full name"
-                  autoComplete="name"
-                  aria-describedby={errors.fullName ? "fullName-error" : undefined}
-                />
-                {errors.fullName && (
-                  <p id="fullName-error" className="text-destructive text-sm" role="alert">{errors.fullName}</p>
-                )}
-              </div>
-
-              {/* Company Name */}
-              <div className="space-y-2">
-                <Label htmlFor="companyName" className="text-foreground font-medium text-sm">
-                  <Building className="h-4 w-4 inline mr-2" />
-                  Company Name <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="companyName"
-                  type="text"
-                  value={contactData.companyName}
-                  onChange={(e) => handleInputChange('companyName', e.target.value)}
-                  className="rounded-xl"
-                  placeholder="Enter your company name"
-                  autoComplete="organization"
-                  aria-describedby={errors.companyName ? "companyName-error" : undefined}
-                />
-                {errors.companyName && (
-                  <p id="companyName-error" className="text-destructive text-sm" role="alert">{errors.companyName}</p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-foreground font-medium text-sm">
-                  <Mail className="h-4 w-4 inline mr-2" />
-                  Email Address <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={contactData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="rounded-xl"
-                  placeholder="Enter your email address"
-                  autoComplete="email"
-                  aria-describedby={errors.email ? "email-error" : undefined}
-                />
-                {errors.email && (
-                  <p id="email-error" className="text-destructive text-sm" role="alert">{errors.email}</p>
-                )}
-              </div>
-
-              {/* Department */}
-              <div className="space-y-2">
-                <Label htmlFor="department" className="text-foreground font-medium text-sm">
-                  <Building className="h-4 w-4 inline mr-2" />
-                  Department <span className="text-destructive">*</span>
-                </Label>
-                <Select
-                  value={contactData.department}
-                  onValueChange={(value) => handleInputChange('department', value)}
-                >
-                  <SelectTrigger 
-                    id="department" 
-                    className="rounded-xl bg-background"
-                    aria-describedby={errors.department ? "department-error" : undefined}
-                  >
-                    <SelectValue placeholder="Select department" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover z-50">
-                    {DEPARTMENTS.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.department && (
-                  <p id="department-error" className="text-destructive text-sm" role="alert">{errors.department}</p>
-                )}
-              </div>
-
-              {/* Company Size */}
-              <div className="space-y-2">
-                <Label htmlFor="companySize" className="text-foreground font-medium text-sm">
-                  <Building className="h-4 w-4 inline mr-2" />
-                  Company Size <span className="text-destructive">*</span>
-                </Label>
-                <select
-                  id="companySize"
-                  value={contactData.companySize}
-                  onChange={(e) => handleInputChange('companySize', e.target.value)}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-describedby={errors.companySize ? "companySize-error" : undefined}
-                >
-                  <option value="">Select company size</option>
-                  <option value="1-10">1-10 employees</option>
-                  <option value="11-50">11-50 employees</option>
-                  <option value="51-200">51-200 employees</option>
-                  <option value="201-500">201-500 employees</option>
-                  <option value="501-1000">501-1000 employees</option>
-                  <option value="1000+">1000+ employees</option>
-                </select>
-                {errors.companySize && (
-                  <p id="companySize-error" className="text-destructive text-sm" role="alert">{errors.companySize}</p>
-                )}
-              </div>
-
-              {/* Primary AI Focus */}
-              <div className="space-y-2">
-                <Label htmlFor="primaryFocus" className="text-foreground font-medium text-sm">
-                  What's your primary AI focus? <span className="text-destructive">*</span>
-                </Label>
-                <select
-                  id="primaryFocus"
-                  value={contactData.primaryFocus}
-                  onChange={(e) => handleInputChange('primaryFocus', e.target.value)}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-describedby={errors.primaryFocus ? "primaryFocus-error" : undefined}
-                >
-                  <option value="">Select your primary focus</option>
-                  <option value="Strategy & Vision">Building AI strategy & vision</option>
-                  <option value="Team Enablement">Enabling my team with AI tools</option>
-                  <option value="Process Automation">Automating business processes</option>
-                  <option value="Product Innovation">AI-driven product innovation</option>
-                  <option value="Competitive Advantage">Creating competitive advantage</option>
-                  <option value="Cost Optimization">Cost optimization & efficiency</option>
-                </select>
-                {errors.primaryFocus && (
-                  <p id="primaryFocus-error" className="text-destructive text-sm" role="alert">{errors.primaryFocus}</p>
-                )}
-              </div>
-
-              {/* Implementation Timeline */}
-              <div className="space-y-2">
-                <Label htmlFor="timeline" className="text-foreground font-medium text-sm">
-                  What's your kick off timeline? <span className="text-destructive">*</span>
-                </Label>
-                <select
-                  id="timeline"
-                  value={contactData.timeline}
-                  onChange={(e) => handleInputChange('timeline', e.target.value)}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-describedby={errors.timeline ? "timeline-error" : undefined}
-                >
-                  <option value="">Select timeline</option>
-                  <option value="Immediate (0-30 days)">Immediate (0-30 days)</option>
-                  <option value="Short-term (1-3 months)">Short-term (1-3 months)</option>
-                  <option value="Medium-term (3-6 months)">Medium-term (3-6 months)</option>
-                  <option value="Long-term (6-12 months)">Long-term (6-12 months)</option>
-                  <option value="Exploring (12+ months)">Exploring (12+ months)</option>
-                </select>
-                {errors.timeline && (
-                  <p id="timeline-error" className="text-destructive text-sm" role="alert">{errors.timeline}</p>
-                )}
-              </div>
-
-              {/* Consent Checkbox */}
-              <div className="space-y-3 pt-4 border-t">
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="consentToInsights"
-                    checked={contactData.consentToInsights}
-                    onChange={(e) => handleInputChange('consentToInsights', e.target.checked ? 'true' : '')}
-                    className="mt-1 h-4 w-4 rounded border-input"
-                    aria-describedby={errors.consentToInsights ? "consent-error" : undefined}
-                  />
-                  <Label htmlFor="consentToInsights" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                    I consent to receiving personalized AI leadership insights and strategic recommendations from Krish based on my assessment results.
-                  </Label>
-                </div>
-                {errors.consentToInsights && (
-                  <p id="consent-error" className="text-destructive text-sm ml-7" role="alert">{errors.consentToInsights}</p>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                variant="cta"
-                className="w-full rounded-xl p-4"
-                aria-label="Submit contact information to view personalized results"
+            {/* Department */}
+            <div className="space-y-1.5">
+              <Label htmlFor="department" className="text-foreground font-medium text-sm">
+                Department
+              </Label>
+              <Select
+                value={contactData.department}
+                onValueChange={(value) => handleInputChange('department', value)}
               >
-                View My Personalized Results
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </form>
+                <SelectTrigger id="department" className="rounded-lg bg-background">
+                  <SelectValue placeholder="Select department" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover z-50">
+                  {DEPARTMENTS.map((dept) => (
+                    <SelectItem key={dept} value={dept}>
+                      {dept}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.department && (
+                <p className="text-destructive text-xs">{errors.department}</p>
+              )}
+            </div>
 
-              {/* Privacy Note */}
-              <p className="text-muted-foreground text-xs text-center mt-6 leading-relaxed">
-                Your information is secure and will only be used to deliver your personalized AI leadership insights. You'll receive tailored strategic recommendations based on your unique profile and assessment results.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            {/* Primary AI Focus */}
+            <div className="space-y-1.5">
+              <Label htmlFor="primaryFocus" className="text-foreground font-medium text-sm flex items-center gap-2">
+                <Target className="h-3.5 w-3.5" />
+                Primary AI Focus
+              </Label>
+              <Select
+                value={contactData.primaryFocus}
+                onValueChange={(value) => handleInputChange('primaryFocus', value)}
+              >
+                <SelectTrigger id="primaryFocus" className="rounded-lg bg-background">
+                  <SelectValue placeholder="What's your main AI goal?" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover z-50">
+                  {PRIMARY_FOCUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.primaryFocus && (
+                <p className="text-destructive text-xs">{errors.primaryFocus}</p>
+              )}
+            </div>
+
+            {/* Privacy Note */}
+            <p className="text-[10px] sm:text-xs text-muted-foreground text-center leading-relaxed">
+              Your data is used solely to personalize your results. We never share or sell your information.
+            </p>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              variant="cta"
+              className="w-full rounded-xl py-5"
+            >
+              See My Results
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+
+            {/* Back Link */}
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+              >
+                ← Back to questions
+              </button>
+            )}
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 });

@@ -9,25 +9,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- `project-documentation/MASTER_INSTRUCTIONS.md` - Permanent project knowledge for AI behavior
-- `CHANGELOG.md` - Change tracking for all significant updates
-- `PROJECT_NOTES.md` - Running decisions and context
-- `src/utils/pipelineGuards.ts` - Input validation utilities with safe defaults
-- Error toast surfacing in `useGenerationProgress.ts`
-- Assessment events storage in `runAssessment.ts`
-- 10/10 quality checks in `ai-generate` edge function prompts
+---
 
-### Changed
-- Updated `runAssessment.ts` to populate `assessment_events` table
-- Enhanced `ai-generate` prompts with self-check quality instructions
-- Updated `README.md` with project-specific documentation
-- Improved `useGenerationProgress.ts` with error notifications
+## [1.2.0] - 2024-12-13 - UI/UX & Anti-Fragile Pipeline Update
 
-### Fixed
-- Generation status flag merging (was overwriting, now merges)
-- Progress bar erratic behavior (removed fake timer-based progress)
-- Missing table population (`leader_dimension_scores`, `leader_prompt_sets`, `leader_first_moves`)
+### UI Improvements
+- **HeroSection**: Reduced logo size by 25% (190px → 143px), optimized for mobile viewport
+- **SingleScrollResults**: Reduced logo size by 25%, improved mobile spacing
+- **PeerBubbleChart**: Completely rethought for mobile - responsive height, compact labels, smaller bubbles
+- **DeepProfileQuestionnaire**: Full mobile viewport optimization, no vertical scrolling required
+- **ProgressScreen**: Logo now loads first for better UX, uses full logo instead of icon
+- **ContactCollectionForm**: Simplified to collect only Name, Email, Department, Primary AI Focus
+
+### New Features
+- **Voice Input**: Added voice recording option for "time waste examples" question using OpenAI Whisper
+- **Primary AI Focus**: Added to UnlockResultsForm for comprehensive user profiling
+
+### Anti-Fragile Pipeline Design
+- **pipelineGuards.ts**: Complete rewrite with comprehensive failure point enumeration
+  - 10 typed interfaces for safe data shapes
+  - Schema-compliant enum constants for all dimension keys, tiers, risk keys, etc.
+  - Mapping tables for AI output normalization
+  - Default values for all data types
+  - Normalization functions for all entity types
+  - DB insert helpers with schema compliance
+  - Comprehensive validation functions: validateContactData, validateAssessmentData, validateAIContent, validateAggregatedResults
+
+### Code Quality
+- Added VoiceInput component for reusable inline voice recording
+- Improved mobile-first responsive design across all pages
+- Uses 100dvh for proper mobile viewport handling
+
+---
+
+## [1.1.0] - 2024-12-13 - Production Readiness Audit
+
+### Security & Data Flow
+- Enhanced assessment ID restoration with retry logic in `UnifiedResults.tsx`
+- Implemented proper Supabase auth signup flow in `SingleScrollResults.tsx` unlock form
+- Added proper error handling for assessment ID validation
+
+### UX Improvements
+- **NotFound.tsx**: Complete redesign using design system tokens (was using hardcoded gray/blue colors)
+- **Index.tsx**: Fixed assessment history view functionality - users can now view past assessments
+- **HeroSection.tsx**: Added ARIA labels and screen reader support for typewriter animation
+- **TensionsView.tsx**: Added proper error states and loading feedback
+- **UnifiedResults.tsx**: Added retry logic and proper loading/error states for assessment ID restoration
+
+### Bug Fixes
+- **ContactCollectionForm.tsx**: Fixed consent checkbox handling (was converting boolean to string incorrectly)
+- **PromptLibraryV2.tsx**: Fixed useEffect dependency warning
+- **TensionsView.tsx**: Added proper TypeScript typing (was using `any`)
+- **SingleScrollResults.tsx**: Implemented actual account creation in unlock form (was TODO)
+
+### Code Quality
+- Added ESLint suppression comments for intentional dependency array exclusions
+- Improved TypeScript typing across multiple components
+- Fixed React key warnings by using unique keys based on data fields
+
+### Accessibility
+- Added `sr-only` class for screen readers in HeroSection typewriter effect
+- Added `aria-label` to animated heading for accessibility
+- Improved focus states on consent checkbox
 
 ---
 

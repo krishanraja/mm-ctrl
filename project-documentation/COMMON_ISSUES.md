@@ -87,6 +87,102 @@ Recurring bugs, architectural pain points, and solutions.
 
 ---
 
+---
+
+## Dec 2024 Audit Fixes
+
+### Issue 11: Broken Assessment History Viewing
+**Symptom**: Users couldn't view past assessments from history
+**Root Cause**: `viewingAssessmentId` state was set but never used
+**Solution**: Implemented complete viewing flow in `Index.tsx` with data loading
+**Status**: ✅ Resolved
+
+### Issue 12: NotFound Using Wrong Design Tokens
+**Symptom**: 404 page looked inconsistent with rest of app
+**Root Cause**: Hardcoded gray/blue colors instead of design system
+**Solution**: Complete redesign using Card, Button, and proper tokens
+**Status**: ✅ Resolved
+
+### Issue 13: Unlock Form Not Creating Accounts
+**Symptom**: Users "unlocked" results but no account was created
+**Root Cause**: `handleUnlock` had TODO - no Supabase auth implementation
+**Solution**: Implemented proper signUp flow with existing account handling
+**Status**: ✅ Resolved
+
+### Issue 14: Eternal Loading on Missing Assessment ID
+**Symptom**: Results page would show spinner forever if ID not found
+**Root Cause**: No retry logic or error state for assessment ID restoration
+**Solution**: Added 3-attempt retry with proper error messaging
+**Status**: ✅ Resolved
+
+### Issue 15: Checkbox Boolean/String Mismatch
+**Symptom**: Consent checkbox validation sometimes failed incorrectly
+**Root Cause**: Converting boolean to string in onChange handler
+**Solution**: Direct boolean assignment with proper state update
+**Status**: ✅ Resolved
+
+---
+
+## Dec 2024 Pipeline Anti-Fragile Update
+
+### Pipeline Failure Points Enumeration
+
+The following failure points have been identified and guarded in `pipelineGuards.ts`:
+
+#### 1. CREATE-LEADER-ASSESSMENT FUNCTION
+| Failure Point | Guard |
+|--------------|-------|
+| contactData.email null/undefined | `validateContactData()` with fallback |
+| leader lookup fails (RLS/network) | Fallback to create new leader |
+| assessment insert fails (schema mismatch) | Explicit column mapping |
+
+#### 2. AI-GENERATE FUNCTION
+| Failure Point | Guard |
+|--------------|-------|
+| Vertex AI timeout/fail | OpenAI fallback |
+| OpenAI timeout/fail | Static fallback content |
+| JSON parse fails | Regex extraction + parse retry |
+| Enum values invalid | `sanitizeEnums()` normalization |
+| Response validation fails | `validateResponse()` checks |
+
+#### 3. RUN-ASSESSMENT ORCHESTRATOR
+| Failure Point | Guard |
+|--------------|-------|
+| assessmentId null after create | Throw with clear message |
+| aiContent arrays empty | `safeInsert` handles gracefully |
+| DB insert fails (FK constraint) | Logged + continues |
+| generation_status update fails | Caught + logged |
+
+#### 4. AGGREGATE-LEADER-RESULTS
+| Failure Point | Guard |
+|--------------|-------|
+| assessmentId fetch fails (RLS) | Compute from dimension scores |
+| dimension_scores empty | Safe defaults array |
+| Type casting fails | Explicit type guards |
+| leadershipComparison generation fails | Returns null safely |
+
+#### 5. UI AGGREGATION
+| Failure Point | Guard |
+|--------------|-------|
+| data null | `safeDefaults` object |
+| arrays null/undefined | `ensureArray()` |
+| nested properties missing | `safeAccess()` |
+| component receives wrong shape | Type validation |
+
+### Issue 16: Mobile Viewport Overflow
+**Symptom**: Pages required vertical scrolling on mobile devices
+**Root Cause**: Fixed heights, large padding, non-responsive components
+**Solution**: Use 100dvh, compact padding on mobile, responsive components
+**Status**: ✅ Resolved
+
+### Issue 17: Peer Comparison Matrix Squashed on Mobile
+**Symptom**: Chart was 500px height with large margins, unusable on mobile
+**Root Cause**: Fixed chart dimensions, large font sizes
+**Solution**: Responsive height (280px mobile, 400px desktop), compact labels
+**Status**: ✅ Resolved
+
+---
+
 ## Prevention Checklist
 
 Before shipping:
@@ -97,3 +193,6 @@ Before shipping:
 - [ ] Validate LLM outputs against schemas
 - [ ] Test free vs paid gating
 - [ ] Confirm edge functions complete successfully
+- [ ] Verify all forms handle all input types correctly
+- [ ] Check loading states and error states display
+- [ ] Test assessment history viewing (if logged in)

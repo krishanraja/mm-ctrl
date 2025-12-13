@@ -27,6 +27,9 @@ This folder contains all technical and strategic documentation for the Mindmaker
 - [DECISIONS_LOG.md](./DECISIONS_LOG.md) - Key architectural and product decisions
 - [REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md) - Step-by-step rebuild instructions
 
+### Audit Reports
+- [PRODUCTION_AUDIT_2024_12_13.md](./PRODUCTION_AUDIT_2024_12_13.md) - Comprehensive production readiness audit
+
 ## Quick Start for New Developers
 
 1. Read [PURPOSE.md](./PURPOSE.md) to understand what you're building
@@ -49,6 +52,7 @@ This folder contains all technical and strategic documentation for the Mindmaker
 
 ## Version Control
 
-Documentation last updated: 2025-01-24
-Current product version: v2.0 (post-repositioning)
+Documentation last updated: 2024-12-13
+Current product version: v2.1 (post-production audit)
 Architecture version: Single DB-based architecture (dual architecture removed 2025-01-24)
+Last audit: 2024-12-13 (see [PRODUCTION_AUDIT_2024_12_13.md](./PRODUCTION_AUDIT_2024_12_13.md))
