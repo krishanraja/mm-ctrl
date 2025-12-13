@@ -13,7 +13,8 @@ import { ProgressScreen } from './ui/progress-screen';
 import LLMInsightEngine from './ai-chat/LLMInsightEngine';
 import { ContactCollectionForm, ContactData } from './ContactCollectionForm';
 import { DeepProfileQuestionnaire, DeepProfileData } from './DeepProfileQuestionnaire';
-import { UnifiedResults } from './UnifiedResults';
+import { SingleScrollResults } from './SingleScrollResults';
+import { QuickPreview } from './QuickPreview';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
@@ -28,6 +29,7 @@ interface Message {
 
 type ScreenState = 
   | 'assessment' 
+  | 'quick-preview'
   | 'contact-form' 
   | 'deep-profile-optin' 
   | 'deep-profile-questionnaire'
@@ -118,14 +120,27 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     }
   }, [isInitialized, initializeAssessmentSession]);
 
+  // Phase 1: Show Quick Preview after question 3, then contact form after all questions
   useEffect(() => {
     const progressData = getProgressData();
     const hasAnsweredAllQuestions = progressData.completedAnswers >= totalQuestions;
+    const hasAnsweredThreeQuestions = progressData.completedAnswers >= 3;
     
+    // After Q3, show quick preview (but only if not already past it)
+    if (hasAnsweredThreeQuestions && !hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData) {
+      setCurrentScreen('quick-preview');
+    }
+    
+    // After all questions, go to contact form (value already shown)
     if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData && insightProgress === 0) {
       setCurrentScreen('contact-form');
     }
   }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, insightProgress]);
+
+  // Handle returning from quick preview to continue assessment
+  const handleContinueFromPreview = useCallback(() => {
+    setCurrentScreen('assessment');
+  }, []);
 
   const handleOptionSelect = useCallback(async (option: string) => {
     if (!sessionId) return;
@@ -526,6 +541,18 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   }, [setDeepProfileData, getAssessmentData, getProgressData, contactData, sessionId, setPromptLibrary, toast, startInsightGeneration]);
 
   // Render based on current screen state
+  
+  // Quick Preview after Q3 - show value before asking for contact
+  if (currentScreen === 'quick-preview') {
+    const assessmentData = getAssessmentData();
+    return (
+      <QuickPreview
+        assessmentData={assessmentData}
+        onContinue={handleContinueFromPreview}
+      />
+    );
+  }
+  
   if (currentScreen === 'contact-form') {
     return (
       <ContactCollectionForm
@@ -538,53 +565,20 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   if (currentScreen === 'deep-profile-optin' && contactData) {
     return (
       <div className="bg-background min-h-screen relative overflow-hidden flex items-center justify-center px-4">
-        <Card className="max-w-3xl w-full shadow-lg border rounded-xl">
-          <CardContent className="p-8 sm:p-12">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-6 py-3 rounded-full text-base font-semibold mb-6">
-                <img src={mindmakerLogo} alt="Mindmaker" className="h-5 w-5 object-contain" />
-                Unlock $5,000 Value
+        <Card className="max-w-md w-full shadow-sm border rounded-xl">
+          <CardContent className="p-6 sm:p-8">
+            {/* Minimal Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center gap-2 text-primary text-sm mb-4">
+                <Zap className="h-4 w-4" />
+                <span>10x personalization</span>
               </div>
-              <div className="text-sm font-semibold text-primary mb-2">BONUS</div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 leading-tight">
-                Free Tailored Prompt Library Within Minutes
+              <h2 className="text-xl font-semibold text-foreground mb-2">
+                Quick personalization?
               </h2>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-                10 more questions = Custom AI toolkit designed for <span className="text-foreground font-semibold">YOUR</span> thinking style, 
-                <span className="text-foreground font-semibold"> YOUR</span> bottlenecks, and <span className="text-foreground font-semibold">YOUR</span> workflow.
+              <p className="text-sm text-muted-foreground">
+                10 more questions = prompts tailored to your exact workflow.
               </p>
-            </div>
-
-            {/* Value Cards - Compact Mobile Layout */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-8 text-sm">
-              <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-xl flex items-center gap-3 flex-1">
-                <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-primary/20">
-                  <Target className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <div className="font-bold text-foreground">5 Custom Projects</div>
-                  <div className="text-xs text-muted-foreground">Tailored to your role</div>
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-xl flex items-center gap-3 flex-1">
-                <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-primary/20">
-                  <Zap className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <div className="font-bold text-foreground">5-10 Hours/Week</div>
-                  <div className="text-xs text-muted-foreground">Time you'll save</div>
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-xl flex items-center gap-3 flex-1">
-                <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-primary/20">
-                  <Rocket className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <div className="font-bold text-foreground">Ready in 1 Day</div>
-                  <div className="text-xs text-muted-foreground">Start using immediately</div>
-                </div>
-              </div>
             </div>
 
             {/* CTA Buttons */}
@@ -592,23 +586,19 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
               <Button 
                 variant="cta" 
                 size="lg"
-                className="w-full rounded-xl text-lg py-6"
+                className="w-full rounded-xl"
                 onClick={handleStartDeepProfile}
               >
-                Yes, Build My AI Toolkit
-                <ArrowRight className="h-5 w-5 ml-2" />
+                Yes, personalize it
+                <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
               <button 
-                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
                 onClick={handleSkipDeepProfile}
               >
-                Skip - I'll see generic results instead
+                Skip for now
               </button>
             </div>
-
-            <p className="text-center text-xs text-muted-foreground mt-6">
-              ⏱️ 10 minutes · 💎 Highly personalized · 🎁 $5,000 value
-            </p>
           </CardContent>
         </Card>
       </div>
@@ -639,7 +629,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     const assessmentData = getAssessmentData();
     
     return (
-      <UnifiedResults
+      <SingleScrollResults
         assessmentData={assessmentData}
         promptLibrary={promptLibrary}
         contactData={contactData}
