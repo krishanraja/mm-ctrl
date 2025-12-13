@@ -47,6 +47,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('assessment');
+  const [hasSeenQuickPreview, setHasSeenQuickPreview] = useState(false);
   const [insightProgress, setInsightProgress] = useState(0);
   const [insightPhase, setInsightPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
   const [libraryProgress, setLibraryProgress] = useState(0);
@@ -128,8 +129,8 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     const hasAnsweredAllQuestions = progressData.completedAnswers >= totalQuestions;
     const hasAnsweredThreeQuestions = progressData.completedAnswers >= 3;
     
-    // After Q3, show quick preview (but only if not already past it)
-    if (hasAnsweredThreeQuestions && !hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData) {
+    // After Q3, show quick preview (but only if not already past it and not already seen)
+    if (hasAnsweredThreeQuestions && !hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData && !hasSeenQuickPreview) {
       setCurrentScreen('quick-preview');
     }
     
@@ -137,10 +138,11 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData && insightProgress === 0) {
       setCurrentScreen('contact-form');
     }
-  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, insightProgress]);
+  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, insightProgress, hasSeenQuickPreview]);
 
   // Handle returning from quick preview to continue assessment
   const handleContinueFromPreview = useCallback(() => {
+    setHasSeenQuickPreview(true);
     setCurrentScreen('assessment');
   }, []);
 
