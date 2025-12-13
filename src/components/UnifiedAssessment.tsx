@@ -63,7 +63,9 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     promptLibrary,
     setPromptLibrary,
     companyHash,
-    setCompanyHash
+    setCompanyHash,
+    setAssessmentInsights,
+    setAssessmentId: setContextAssessmentId
   } = useAssessment();
   
   const {
@@ -267,6 +269,28 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           console.log('✅ Prompts loaded from database:', promptSets.length);
         } else {
           console.warn('⚠️ No prompts found for assessment:', result.assessmentId);
+        }
+        
+        // Store assessment ID and insights in context for cross-feature intelligence
+        setContextAssessmentId(result.assessmentId);
+        
+        // Fetch and store assessment insights for Prompt Coach
+        try {
+          const { aggregateLeaderResults } = await import('@/utils/aggregateLeaderResults');
+          const aggregated = await aggregateLeaderResults(result.assessmentId, false);
+          
+          setAssessmentInsights({
+            benchmarkScore: aggregated.benchmarkScore,
+            benchmarkTier: aggregated.benchmarkTier,
+            topTension: aggregated.tensions?.[0]?.summary_line || null,
+            topGap: aggregated.dimensionScores?.find(d => d.score_numeric < 60)?.dimension_key || null,
+            learningStyle: null, // Will be populated from deep profile
+            primaryBottleneck: deepProfileData?.biggestChallenge || null,
+            suggestedPromptCategories: aggregated.promptSets?.slice(0, 3).map(p => p.category_key) || []
+          });
+          console.log('✅ Assessment insights stored in context for cross-feature use');
+        } catch (insightError) {
+          console.warn('⚠️ Could not store assessment insights:', insightError);
         }
         
         // Success - go to results
