@@ -212,7 +212,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
               <img 
                 src={mindmakerLogo} 
                 alt="Mindmaker" 
-                className="h-48 w-48 object-contain mb-4 animate-scale-in" 
+                className="w-48 h-auto mb-4 animate-scale-in" 
                 style={{ animationDelay: '0.1s' }}
               />
               <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
