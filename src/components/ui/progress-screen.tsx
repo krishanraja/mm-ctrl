@@ -78,9 +78,29 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
   phases = Object.values(defaultPhases)
 }) => {
   const [tipIndex, setTipIndex] = useState(0);
+  // Track the highest progress ever seen - never regress visually
+  const [displayProgress, setDisplayProgress] = useState(progress);
   const currentPhase = defaultPhases[phase];
   const currentTip = educationalTips[tipIndex];
   const TipIcon = currentTip.icon;
+
+  // Only update display progress if new progress is higher (monotonic increase)
+  useEffect(() => {
+    setDisplayProgress(prev => Math.max(prev, progress));
+  }, [progress]);
+
+  // Smooth minimum progress over time to feel premium
+  useEffect(() => {
+    // Start with at least 5% and gradually increase minimum floor
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - startTime) / 1000; // seconds
+      // Minimum progress: starts at 5%, reaches 85% at 30 seconds, caps there
+      const minProgress = Math.min(5 + (elapsed * 2.5), 85);
+      setDisplayProgress(prev => Math.max(prev, minProgress));
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
 
   // Rotate tips every 5 seconds
   useEffect(() => {
@@ -91,9 +111,9 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
   }, []);
 
   return (
-    <div className="min-h-[100dvh] flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-lg mx-auto text-center bg-card border shadow-sm rounded-xl animate-fade-in">
-        <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="min-h-[100dvh] h-[100dvh] flex items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-lg mx-auto text-center bg-card border shadow-xl rounded-2xl animate-fade-in min-h-[70vh] sm:min-h-0 flex flex-col justify-center">
+        <CardContent className="p-6 sm:p-8 space-y-6 sm:space-y-8 flex flex-col justify-center">
           {/* Logo first - most important for branding */}
           <div className="flex justify-center">
             <img 
@@ -113,12 +133,12 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
             </p>
           </div>
           
-          {/* Progress */}
+          {/* Progress - always uses monotonic displayProgress */}
           <div className="space-y-2">
-            <Progress value={progress} className="h-2" />
+            <Progress value={displayProgress} className="h-2" />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>{currentPhase.label}</span>
-              <span className="tabular-nums">{Math.round(progress)}%</span>
+              <span className="tabular-nums">{Math.round(displayProgress)}%</span>
             </div>
           </div>
           

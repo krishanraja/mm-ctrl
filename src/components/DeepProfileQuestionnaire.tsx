@@ -555,49 +555,40 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
   };
 
   return (
-    <div className="bg-background min-h-[100dvh] flex flex-col">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 flex-1 flex flex-col py-3 sm:py-6">
-        {/* Header - compact on mobile */}
-        <div className="text-center mb-3 sm:mb-6 pt-2 sm:pt-8">
-          <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs sm:text-sm mb-2 sm:mb-4">
-            <Brain className="h-3 w-3 sm:h-4 sm:w-4" />
-            Deep Profile
-          </div>
-          
-          <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-foreground mb-1 sm:mb-2 leading-tight">
-            Personalize Your Results
-          </h1>
-          
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto hidden sm:block">
-            Answer 10 questions to receive custom AI instructions tailored to your thinking style
-          </p>
-        </div>
-
-        <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col">
-          {/* Progress - compact */}
-          <Card className="mb-3 sm:mb-6 shadow-sm border rounded-xl">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs sm:text-sm font-medium text-foreground">Q{currentStep}/{totalSteps}</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}%</span>
+    <div className="bg-background min-h-[100dvh] h-[100dvh] flex flex-col overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 flex-1 flex flex-col py-2 sm:py-4 overflow-hidden">
+        {/* Compact Progress Header */}
+        <div className="max-w-2xl mx-auto w-full shrink-0 mb-2 sm:mb-4">
+          <Card className="shadow-sm border rounded-xl">
+            <CardContent className="p-2.5 sm:p-3">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5 text-primary text-xs sm:text-sm">
+                  <Brain className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="font-medium">Deep Profile</span>
+                </div>
+                <span className="text-xs sm:text-sm text-muted-foreground font-medium">Q{currentStep}/{totalSteps}</span>
               </div>
-              <Progress value={(currentStep / totalSteps) * 100} className="h-1.5 sm:h-2" />
+              <Progress value={(currentStep / totalSteps) * 100} className="h-1.5" />
             </CardContent>
           </Card>
+        </div>
 
-          {/* Question Card - flexible height */}
-          <Card className="shadow-sm border rounded-xl flex-1 flex flex-col">
-            <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
-              {renderQuestion()}
+        <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col min-h-0">
+          {/* Question Card - fills remaining space with scroll */}
+          <Card className="shadow-sm border rounded-xl flex-1 flex flex-col min-h-0">
+            <CardContent className="p-3 sm:p-5 flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto min-h-0">
+                {renderQuestion()}
+              </div>
 
               {/* Navigation - Only show for non-auto-advance questions */}
               {![1, 5, 9].includes(currentStep) && (
-                <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-6 pt-3 sm:pt-4 border-t mt-auto">
+                <div className="flex gap-2 sm:gap-3 pt-3 border-t shrink-0 mt-3">
                   <Button
                     variant="outline"
                     onClick={handleBack}
                     disabled={currentStep === 1}
-                    className="rounded-xl text-xs sm:text-sm"
+                    className="rounded-xl text-xs sm:text-sm min-h-[44px]"
                     size="sm"
                   >
                     <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -607,7 +598,7 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
                     variant="cta"
                     onClick={handleNext}
                     disabled={!canProceed()}
-                    className="flex-1 rounded-xl text-xs sm:text-sm"
+                    className="flex-1 rounded-xl text-xs sm:text-sm min-h-[44px]"
                     size="sm"
                   >
                     {currentStep === totalSteps ? 'Generate Toolkit' : 'Next'}

@@ -11,6 +11,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] - 2024-12-14 - Mobile UX Premium Experience
+
+### Changed
+- **Progress Bar**: Now monotonically increasing only - never regresses. Uses displayProgress state with smooth time-based minimum floor for premium feel
+- **Assessment Flow**: Removed contact collection form before results - users go directly from questions to Quick Personalization screen
+- **Homepage Card**: Full-height premium card on mobile (min-h-[80vh]), larger typography and CTA buttons
+- **Loading/Progress Screen**: Full-height premium card on mobile with centered content
+
+### Removed
+- **Toast Notifications**: Removed all toast notifications throughout the application - using inline UI feedback instead
+- **ContactCollectionForm**: Removed from pre-results flow - contact collection now happens via unlock form on results page
+
+### Added
+- **Dimension Scores Preview**: Results page now shows dimension scores before requiring unlock
+- **Risk Signal Preview**: Results page shows top risk signal before requiring unlock
+- **Collapsible Unlock Form**: Unlock form is collapsed by default - users expand when interested
+- **Resend Email Integration**: Unlock form now sends notification email via Resend when user creates account
+
+### Fixed
+- **Mobile Viewport Fit**: All input screens (assessment questions, deep profile, quick personalization) now fit within viewport without scrolling using h-[100dvh] and flex layouts
+- **Assessment Error Handling**: Removed error toasts, errors are now logged silently and flow continues to results
+
+---
+
 ## [1.2.0] - 2024-12-13 - UI/UX & Anti-Fragile Pipeline Update
 
 ### UI Improvements

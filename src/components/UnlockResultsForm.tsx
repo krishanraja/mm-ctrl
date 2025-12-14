@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -10,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import { User, Mail, Lock, ArrowRight } from 'lucide-react';
 import { validateEmail, validateRequired } from '@/utils/formValidation';
 import { DEPARTMENTS } from '@/constants/departments';
 
@@ -90,20 +89,7 @@ export const UnlockResultsForm: React.FC<UnlockResultsFormProps> = ({ onSubmit, 
   };
 
   return (
-    <Card className="shadow-lg border rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 via-background to-background">
-      <CardHeader className="pb-2 pt-6 px-6">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Sparkles className="h-5 w-5 text-primary" />
-          </div>
-          <CardTitle className="text-lg font-semibold">Unlock Your Full Results</CardTitle>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Create your account to access personalized prompts, peer comparison, and strategic insights.
-        </p>
-      </CardHeader>
-      <CardContent className="p-6 pt-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div className="space-y-1.5">
             <Label htmlFor="unlockFullName" className="text-foreground font-medium text-sm flex items-center gap-2">
@@ -234,17 +220,15 @@ export const UnlockResultsForm: React.FC<UnlockResultsFormProps> = ({ onSubmit, 
           </div>
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            variant="cta"
-            className="w-full rounded-lg py-5 mt-2"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Creating Account...' : 'Unlock Full Results'}
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+      <Button
+        type="submit"
+        variant="cta"
+        className="w-full rounded-lg py-5 mt-2"
+        disabled={isLoading}
+      >
+        {isLoading ? 'Creating Account...' : 'Unlock Full Results'}
+        <ArrowRight className="h-4 w-4 ml-2" />
+      </Button>
+    </form>
   );
 };

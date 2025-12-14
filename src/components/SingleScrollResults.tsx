@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -22,7 +22,6 @@ import {
   Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
@@ -117,10 +116,12 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     tensions: false,
     risks: false,
     prompts: false,
-    privacy: false
+    privacy: false,
+    unlock: false // Collapsed by default
   });
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [unlockLoading, setUnlockLoading] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
 
   const isValidUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -153,10 +154,12 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
 
   const handleUnlock = async (formData: UnlockFormData) => {
     setUnlockLoading(true);
+    setUnlockError(null);
     try {
       // Create account with Supabase Auth
       const { supabase } = await import('@/integrations/supabase/client');
       const { getPersistedAssessmentId, linkAssessmentToUser } = await import('@/utils/assessmentPersistence');
+      const { invokeEdgeFunction } = await import('@/utils/edgeFunctionClient');
       
       const redirectUrl = `${window.location.origin}/`;
       
@@ -181,10 +184,12 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           });
           
           if (signInError) {
-            throw new Error('Account exists but password is incorrect. Please try signing in.');
+            setUnlockError('Account exists but password is incorrect. Please try signing in.');
+            return;
           }
         } else {
-          throw authError;
+          setUnlockError(authError.message);
+          return;
         }
       }
       
@@ -194,11 +199,34 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
         await linkAssessmentToUser(storedId, authData.user.id);
       }
       
+      // Send notification email via Resend
+      try {
+        await invokeEdgeFunction('send-diagnostic-email', {
+          data: {
+            firstName: formData.fullName.split(' ')[0],
+            lastName: formData.fullName.split(' ').slice(1).join(' '),
+            email: formData.email,
+            title: formData.department,
+            primaryFocus: formData.primaryFocus,
+            consentToInsights: formData.consentToInsights,
+            // Include benchmark data for email
+            benchmarkScore: data?.benchmarkScore,
+            benchmarkTier: data?.benchmarkTier
+          },
+          scores: { total: data?.benchmarkScore || 0 },
+          contactType: 'results_unlock',
+          sessionId: sessionId
+        }, { logPrefix: '📧' });
+        console.log('✅ Unlock notification email sent');
+      } catch (emailError) {
+        console.error('❌ Email notification failed (non-blocking):', emailError);
+        // Don't block unlock if email fails
+      }
+      
       setIsUnlocked(true);
-      toast.success('Account created! Full results unlocked.');
     } catch (error: any) {
       console.error('Unlock error:', error);
-      toast.error(error.message || 'Failed to create account. Please try again.');
+      setUnlockError(error.message || 'Failed to create account. Please try again.');
     } finally {
       setUnlockLoading(false);
     }
@@ -211,10 +239,10 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     try {
       await navigator.clipboard.writeText(prompt);
       setCopiedPromptIdx(idx);
-      toast.success('Prompt copied to clipboard!');
+      // Visual indicator (checkmark) shows success - no toast needed
       setTimeout(() => setCopiedPromptIdx(null), 2000);
     } catch (err) {
-      toast.error('Failed to copy prompt');
+      console.error('Failed to copy prompt:', err);
     }
   };
 
@@ -346,27 +374,101 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           </Card>
         )}
 
-        {/* GATED CONTENT: Unlock Form or Full Results */}
-        {!isUnlocked ? (
-          <>
-            {/* Unlock Form */}
-            <div className="mb-6">
-              <UnlockResultsForm onSubmit={handleUnlock} isLoading={unlockLoading} />
-            </div>
+        {/* Show dimension scores preview for everyone */}
+        {data?.dimensionScores && data.dimensionScores.length > 0 && (
+          <Card className="mb-6 shadow-sm border rounded-xl">
+            <CardContent className="p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-primary" />
+                Your Dimension Scores
+              </h3>
+              <div className="space-y-3">
+                {data.dimensionScores.slice(0, 6).map((dim, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground capitalize">
+                        {dim.dimension_key?.replace(/_/g, ' ') || 'Dimension'}
+                      </span>
+                      <span className="font-medium text-foreground">{dim.score_numeric}/100</span>
+                    </div>
+                    <Progress value={dim.score_numeric} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-            {/* Blurred Preview of Locked Content */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background z-10 flex items-center justify-center">
-                <div className="text-center p-4">
-                  <Lock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Unlock to see peer comparison, prompts & more</p>
+        {/* Show top risk signal preview for everyone */}
+        {topRisks.length > 0 && (
+          <Card className="mb-6 shadow-sm border rounded-xl border-l-4 border-l-red-500">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 p-2 bg-red-500/10 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-semibold text-foreground">Top Risk Signal</h3>
+                    <Badge className={getRiskColor(topRisks[0].level || 'medium')}>
+                      {topRisks[0].level}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {topRisks[0].description}
+                  </p>
                 </div>
               </div>
-              <div className="blur-sm pointer-events-none opacity-50">
-                {/* Placeholder cards */}
-                <Card className="mb-4 h-48 bg-secondary/20" />
-                <Card className="mb-4 h-32 bg-secondary/20" />
-                <Card className="h-32 bg-secondary/20" />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* GATED CONTENT: Unlock Form (collapsed) or Full Results */}
+        {!isUnlocked ? (
+          <>
+            {/* Collapsible Unlock Form */}
+            <Collapsible open={expandedSections.unlock} onOpenChange={() => toggleSection('unlock')}>
+              <Card className="mb-6 shadow-lg border rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 via-background to-background">
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="flex flex-row items-center justify-between p-4 cursor-pointer hover:bg-secondary/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="text-left">
+                        <CardTitle className="text-base sm:text-lg font-semibold">Unlock Your Full Results</CardTitle>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                          Create an account for personalized prompts, peer comparison & more
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${expandedSections.unlock ? 'rotate-180' : ''}`} />
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="p-4 pt-0">
+                    {unlockError && (
+                      <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-sm text-destructive">
+                        {unlockError}
+                      </div>
+                    )}
+                    <UnlockResultsForm onSubmit={handleUnlock} isLoading={unlockLoading} />
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+
+            {/* Preview of what's locked */}
+            <div className="relative rounded-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/90 to-background z-10 flex items-end justify-center pb-6">
+                <div className="text-center p-4">
+                  <Lock className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs sm:text-sm text-muted-foreground">Unlock to see peer comparison, full prompt library & more</p>
+                </div>
+              </div>
+              <div className="blur-sm pointer-events-none opacity-40 space-y-4">
+                <Card className="h-40 bg-secondary/20" />
+                <Card className="h-24 bg-secondary/20" />
               </div>
             </div>
           </>

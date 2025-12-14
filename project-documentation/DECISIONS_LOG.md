@@ -73,3 +73,38 @@ Key architectural and product decisions with rationale.
 **Rationale**: Senior aesthetic, avoid "quiz app" feel
 **Trade-off**: Less flashy vs more professional
 **Outcome**: ✅ Matches brand
+
+## Decision 11: Remove Pre-Results Contact Form
+**Date**: Dec 2024
+**Decision**: Remove contact collection form before results, collect via unlock form on results page
+**Rationale**: Reduce friction in assessment flow, let users see value first
+**Trade-off**: Delayed contact capture vs better completion rates
+**Outcome**: ⏳ In progress
+
+## Decision 12: Remove All Toast Notifications
+**Date**: Dec 2024
+**Decision**: Remove toast notifications throughout the application
+**Rationale**: Toasts interrupt user flow, create anxiety, require dismissal action. CEOs shouldn't need to swipe away notifications.
+**Trade-off**: Less explicit feedback vs cleaner experience
+**Outcome**: ✅ Implemented - using inline UI feedback instead
+
+## Decision 13: Mobile Viewport-Fit Design
+**Date**: Dec 2024
+**Decision**: All input screens must fit within viewport without scrolling
+**Rationale**: Executive users shouldn't need to scroll during data input phases - reduces anxiety and improves completion rates
+**Trade-off**: Denser UI on mobile vs no-scroll guarantee
+**Outcome**: ✅ Implemented - using h-[100dvh] and flex layouts
+
+## Decision 14: Monotonic Progress Bar
+**Date**: Dec 2024
+**Decision**: Progress bar must only move forward, never regress
+**Rationale**: Regressing progress bars feel unprofessional and create uncertainty
+**Trade-off**: Progress may not be 100% accurate vs professional feel
+**Outcome**: ✅ Implemented - using displayProgress state with Math.max
+
+## Decision 15: Results Value Before Unlock
+**Date**: Dec 2024
+**Decision**: Show dimension scores and risk signals before requiring account creation
+**Rationale**: Users need to see value before being asked to unlock - increases conversion
+**Trade-off**: Give away some value vs higher unlock rates
+**Outcome**: ✅ Implemented - unlock form collapsed by default

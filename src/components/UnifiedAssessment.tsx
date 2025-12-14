@@ -7,14 +7,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket } from 'lucide-react';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+// Toast removed - using inline UI feedback instead
 import { useStructuredAssessment } from '@/hooks/useStructuredAssessment';
 import { ProgressScreen } from './ui/progress-screen';
 import LLMInsightEngine from './ai-chat/LLMInsightEngine';
-import { ContactCollectionForm, ContactData } from './ContactCollectionForm';
+import { ContactData } from './ContactCollectionForm';
 import { DeepProfileQuestionnaire, DeepProfileData } from './DeepProfileQuestionnaire';
 import { SingleScrollResults } from './SingleScrollResults';
-import { QuickPreview } from './QuickPreview';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
@@ -30,8 +29,6 @@ interface Message {
 
 type ScreenState = 
   | 'assessment' 
-  | 'quick-preview'
-  | 'contact-form' 
   | 'deep-profile-optin' 
   | 'deep-profile-questionnaire'
   | 'generating-insights'
@@ -48,13 +45,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('assessment');
-  const [hasSeenQuickPreview, setHasSeenQuickPreview] = useState(false);
   const [insightProgress, setInsightProgress] = useState(0);
   const [insightPhase, setInsightPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
   const [libraryProgress, setLibraryProgress] = useState(0);
   const [libraryPhase, setLibraryPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
-  const { toast } = useToast();
-  
   const {
     sessionId,
     setSessionId,
@@ -110,13 +104,9 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       
     } catch (error) {
       console.error('Error initializing assessment session:', error);
-      toast({
-        title: "Session Error",
-        description: "Failed to initialize assessment. Please refresh and try again.",
-        variant: "destructive",
-      });
+      // Session error logged - user can refresh to retry
     }
-  }, [setSessionId, totalQuestions, toast]);
+  }, [setSessionId, totalQuestions]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -124,30 +114,28 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     }
   }, [isInitialized, initializeAssessmentSession]);
 
-  // Phase 1: Show Quick Preview after question 3, then contact form after all questions
-
-  // Phase 1: Show Quick Preview after question 3, then trigger generation after all questions
+  // Phase 1: After all questions, go directly to Quick Personalization (deep-profile-optin)
+  // No contact form before results - collect contact only via unlock form on results page
   useEffect(() => {
     const progressData = getProgressData();
     const hasAnsweredAllQuestions = progressData.completedAnswers >= totalQuestions;
-    const hasAnsweredThreeQuestions = progressData.completedAnswers >= 3;
     
-    // After Q3, show quick preview (but only if not already past it and not already seen)
-    if (hasAnsweredThreeQuestions && !hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData && !hasSeenQuickPreview) {
-      setCurrentScreen('quick-preview');
+    // After all questions, go directly to deep profile opt-in (Quick Personalization)
+    if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment') {
+      // Set minimal contact data to satisfy downstream requirements
+      // Real contact collection happens on results page via UnlockResultsForm
+      if (!contactData) {
+        setContactData({
+          fullName: '',
+          email: '',
+          department: '',
+          primaryFocus: '',
+          consentToInsights: true,
+        });
+      }
+      setCurrentScreen('deep-profile-optin');
     }
-    
-    // After all questions, show contact form (data richness for outputs)
-    if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment' && !contactData) {
-      setCurrentScreen('contact-form');
-    }
-  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, hasSeenQuickPreview]);
-
-  // Handle returning from quick preview to continue assessment
-  const handleContinueFromPreview = useCallback(() => {
-    setHasSeenQuickPreview(true);
-    setCurrentScreen('assessment');
-  }, []);
+  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, setContactData]);
 
   const handleOptionSelect = useCallback(async (option: string) => {
     if (!sessionId) return;
@@ -303,94 +291,19 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         setInsightProgress(100);
         setCurrentScreen('unified-results');
       } else {
-        // Pipeline returned failure
+        // Pipeline returned failure - continue to results anyway
         console.error('❌ Assessment pipeline failed:', result.error);
-        toast({
-          title: "Assessment Processing Issue",
-          description: "Some insights may be incomplete. Showing available results.",
-          variant: "default",
-        });
         setInsightProgress(100);
         setCurrentScreen('unified-results');
       }
     } catch (error) {
       console.error('❌ V2 orchestration error:', error);
-      
-      // Show user-friendly message for timeout vs other errors
-      if (error instanceof Error && error.message.includes('timed out')) {
-        toast({
-          title: "Generation Taking Longer Than Expected",
-          description: "Your results are still being processed. We'll show what's ready now.",
-          variant: "default",
-        });
-      } else {
-        toast({
-          title: "Assessment Processing Failed",
-          description: error instanceof Error ? error.message : "Unable to generate your complete assessment. Please try again.",
-          variant: "destructive",
-        });
-      }
-      
       // Continue to results even if generation fails - fallback content will be shown
       setInsightProgress(100);
       setCurrentScreen('unified-results');
     }
-  }, [contactData, deepProfileData, sessionId, getAssessmentData, toast, setPromptLibrary, setAssessmentInsights, setContextAssessmentId]);
+  }, [contactData, deepProfileData, sessionId, getAssessmentData, setPromptLibrary, setAssessmentInsights, setContextAssessmentId]);
 
-
-  const handleContactSubmit = useCallback(async (data: ContactData) => {
-    setContactData(data);
-    
-    const assessmentData = getAssessmentData();
-    const progressData = getProgressData();
-    
-    // Populate index participant data and get company hash
-    let companyHash: string | null = null;
-    try {
-      console.log('📊 Populating AI Leadership Index data...');
-      const { data: indexData, error: indexError } = await invokeEdgeFunction('populate-index-participant', {
-        sessionId: sessionId,
-        userId: null,
-        assessmentData: assessmentData,
-        contactData: data,
-        consentFlags: {
-          index_publication: data.consentToInsights,
-          product_improvements: true,
-          case_study: false,
-          research_partnerships: false,
-          sales_outreach: false
-        }
-      }, { logPrefix: '📊' });
-      
-      if (!indexError && indexData?.companyHash) {
-        companyHash = indexData.companyHash;
-        console.log('✅ Index data populated successfully');
-        
-        // Update adoption momentum
-        try {
-          console.log('📈 Updating adoption momentum...');
-          await invokeEdgeFunction('update-adoption-momentum', {
-            companyHash: companyHash,
-            sessionId: sessionId,
-            userId: null,
-            contactData: data,
-            eventType: 'assessment_completed'
-          }, { logPrefix: '📈' });
-          console.log('✅ Momentum tracking updated');
-        } catch (momentumError) {
-          console.error('❌ Error updating momentum:', momentumError);
-          // Don't block user flow
-        }
-      }
-    } catch (error) {
-      console.error('❌ Error populating index data:', error);
-      // Don't block user flow if this fails
-    }
-    
-    // Email will be sent after deep profile completion with all data
-    
-    setCurrentScreen('deep-profile-optin');
-  }, [setContactData, getAssessmentData, getProgressData, sessionId, setCompanyHash]);
 
   // PHASE 2: Fixed - let startInsightGeneration control progress, don't set redundant values
   const handleSkipDeepProfile = useCallback(() => {
@@ -551,10 +464,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           
           setTimeout(() => {
             setCurrentScreen('unified-results');
-            toast({
-              title: "AI Command Center Ready!",
-              description: promptsLoaded ? "Your personalized assessment is complete" : "Still generating prompts - they'll appear shortly",
-            });
           }, 500);
         } else {
           console.error('❌ Assessment failed:', result.error);
@@ -562,51 +471,21 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         }
       } catch (orchestrationError) {
         console.error('❌ V2 orchestration error:', orchestrationError);
-        
-        toast({
-          title: "Generation Error",
-          description: "Failed to complete assessment. Showing basic results instead.",
-          variant: "destructive",
-        });
         startInsightGeneration();
       }
     } catch (error: any) {
       console.error('Error in handleDeepProfileComplete:', error);
-      
-      toast({
-        title: "Unexpected Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      // Errors are logged but don't block flow
     }
-  }, [setDeepProfileData, getAssessmentData, getProgressData, contactData, sessionId, setPromptLibrary, toast, startInsightGeneration]);
+  }, [setDeepProfileData, getAssessmentData, getProgressData, contactData, sessionId, setPromptLibrary, startInsightGeneration]);
 
   // Render based on current screen state
-  
-  // Quick Preview after Q3 - show value before asking for contact
-  if (currentScreen === 'quick-preview') {
-    const assessmentData = getAssessmentData();
-    return (
-      <QuickPreview
-        assessmentData={assessmentData}
-        onContinue={handleContinueFromPreview}
-      />
-    );
-  }
-  
-  if (currentScreen === 'contact-form') {
-    return (
-      <ContactCollectionForm
-        onSubmit={handleContactSubmit}
-        onBack={onBack}
-      />
-    );
-  }
+  // Note: contact-form and quick-preview screens removed - go directly to deep-profile-optin
 
-  if (currentScreen === 'deep-profile-optin' && contactData) {
+  if (currentScreen === 'deep-profile-optin') {
     return (
-      <div className="bg-background min-h-screen relative overflow-hidden flex items-center justify-center px-4">
-        <Card className="max-w-md w-full shadow-sm border rounded-xl">
+      <div className="bg-background min-h-[100dvh] h-[100dvh] flex items-center justify-center px-4">
+        <Card className="max-w-md w-full shadow-lg border rounded-xl">
           <CardContent className="p-6 sm:p-8">
             {/* Minimal Header */}
             <div className="text-center mb-6">
@@ -614,7 +493,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
                 <Zap className="h-4 w-4" />
                 <span>10x personalization</span>
               </div>
-              <h2 className="text-xl font-semibold text-foreground mb-2">
+              <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
                 Quick personalization?
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -627,14 +506,14 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
               <Button 
                 variant="cta" 
                 size="lg"
-                className="w-full rounded-xl"
+                className="w-full rounded-xl min-h-[52px]"
                 onClick={handleStartDeepProfile}
               >
                 Yes, personalize it
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
               <button 
-                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-3"
                 onClick={handleSkipDeepProfile}
               >
                 Skip for now
@@ -709,54 +588,31 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const currentQuestion = getCurrentQuestion();
 
   return (
-    <div className="bg-background min-h-screen relative overflow-hidden">
-        {/* Back Button - Mobile Optimized */}
-        {onBack && (
-          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
-            <Button
-              variant="outline"
-              onClick={onBack}
-              className="rounded-xl"
-              aria-label="Go back to home page"
-            >
-              ← Back to Selection
-            </Button>
-          </div>
-        )}
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-6 sm:py-8">
-        {/* Header - Clean Mobile Design */}
-        <div className="text-center mb-6 sm:mb-8 pt-12 sm:pt-16">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm mb-6">
-            <img src={mindmakerLogo} alt="Mindmaker" className="h-4 w-4 object-contain" />
-            AI Leadership Growth Benchmark
-          </div>
-          
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight leading-tight">
-            Benchmark Your AI
-            <span className="block text-primary">Leadership Growth</span>
-          </h1>
-          
-          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
+    <div className="bg-background min-h-[100dvh] h-[100dvh] flex flex-col overflow-hidden">
+      {/* Compact container that fits viewport */}
+      <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 py-3 sm:py-4 overflow-hidden">
+        {/* Compact Header - Mobile First */}
+        <div className="text-center mb-3 sm:mb-4 shrink-0">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Evaluate how your AI literacy drives strategic growth and competitive advantage
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
-          {/* Progress Section - Clean Design */}
-          <Card className="mb-6 sm:mb-8 shadow-sm border rounded-xl">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base sm:text-lg font-semibold text-foreground">Benchmark Progress</h2>
-                <Badge variant="outline" className="flex items-center gap-2 bg-primary/10 text-primary border-primary/20 px-3 py-1 whitespace-nowrap">
+        <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full overflow-hidden">
+          {/* Compact Progress Section */}
+          <Card className="mb-3 sm:mb-4 shadow-sm border rounded-xl shrink-0">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-sm sm:text-base font-semibold text-foreground">Benchmark Progress</h2>
+                <Badge variant="outline" className="flex items-center gap-1.5 bg-primary/10 text-primary border-primary/20 px-2 py-0.5 whitespace-nowrap">
                   <Clock className="h-3 w-3" />
-                  <span className="text-sm">{progressData.currentQuestion}/{totalQuestions}</span>
+                  <span className="text-xs sm:text-sm">{progressData.currentQuestion}/{totalQuestions}</span>
                 </Badge>
               </div>
               
-              <Progress value={progressData.progressPercentage} className="h-3 mb-3" />
+              <Progress value={progressData.progressPercentage} className="h-2 mb-2" />
               
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Phase: {progressData.phase}</span>
                 <span>{Math.round(progressData.estimatedTimeRemaining)} min remaining</span>
               </div>
@@ -764,33 +620,33 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           </Card>
 
 
-          {/* Current Question - Clean Design */}
+          {/* Current Question - Fills remaining space */}
           {currentQuestion && (
-            <Card className="shadow-sm border rounded-xl">
-              <CardContent className="p-4 sm:p-6">
-                <div className="mb-6">
-                  <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-3 leading-tight">
+            <Card className="shadow-sm border rounded-xl flex-1 flex flex-col min-h-0">
+              <CardContent className="p-3 sm:p-4 flex flex-col flex-1 overflow-hidden">
+                <div className="mb-3 shrink-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2 leading-tight">
                     Question {currentQuestion.id} of {totalQuestions}
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-4 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                     {currentQuestion.question}
                   </p>
                 </div>
                 
-                <div className="space-y-3">
-                  <h4 className="font-medium text-foreground mb-4 text-sm">
+                <div className="flex-1 overflow-y-auto space-y-2">
+                  <h4 className="font-medium text-foreground mb-2 text-xs shrink-0">
                     Select your answer:
                   </h4>
                   {currentQuestion.options.map((option, index) => (
                     <Button
                       key={index}
                       variant="outline"
-                      className="w-full h-auto text-left justify-start hover:bg-primary/10 transition-colors rounded-xl p-4"
+                      className="w-full h-auto text-left justify-start hover:bg-primary/10 transition-colors rounded-xl p-3 min-h-[44px]"
                       onClick={() => handleOptionSelect(option)}
                       aria-label={`Select option: ${option}`}
                     >
-                      <ArrowRight className="h-4 w-4 mr-3 flex-shrink-0 text-primary" />
-                      <span className="text-sm text-foreground leading-relaxed text-left">{option}</span>
+                      <ArrowRight className="h-4 w-4 mr-2 flex-shrink-0 text-primary" />
+                      <span className="text-xs sm:text-sm text-foreground leading-relaxed text-left">{option}</span>
                     </Button>
                   ))}
                 </div>
