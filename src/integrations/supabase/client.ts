@@ -1,0 +1,38 @@
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types';
+
+// Mindmaker AI Supabase Database Configuration
+// Project ID: bkyuxvschuwngtcdhsyg
+// Database: Mindmaker AI
+const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
+const DEFAULT_SUPABASE_URL = `https://${EXPECTED_PROJECT_ID}.supabase.co`;
+const DEFAULT_ANON_KEY = "sb_publishable_DDv1GyxEG09utDLjdWWz1A_JN-Z9eTp";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_ANON_KEY;
+
+// Strictly verify we're using the correct database
+if (!SUPABASE_URL.includes(EXPECTED_PROJECT_ID)) {
+  const errorMessage = `❌ CRITICAL: Supabase URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current URL: ${SUPABASE_URL}`;
+  console.error(errorMessage);
+  if (import.meta.env.PROD) {
+    throw new Error(errorMessage);
+  }
+}
+
+// Note: New Supabase publishable keys (sb_publishable_*) don't contain project ID
+// The key format is validated by Supabase itself when used
+if (SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_') && !SUPABASE_PUBLISHABLE_KEY.includes(EXPECTED_PROJECT_ID)) {
+  console.warn('⚠️ Warning: Supabase publishable key format may be incorrect. Expected format: sb_publishable_* or JWT token.');
+}
+
+// Import the supabase client like this:
+// import { supabase } from "@/integrations/supabase/client";
+
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    storage: localStorage,
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+});

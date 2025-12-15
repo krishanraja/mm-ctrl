@@ -1,0 +1,569 @@
+@font-face {
+  font-family: 'Gobold';
+  src: url('/fonts/Gobold_Bold.otf') format('opentype');
+  font-weight: bold;
+  font-display: swap;
+  font-size-adjust: 0.9;
+}
+
+@layer base, components, utilities;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   MINDMAKER DESIGN SYSTEM - INK & MINT
+   New Brand Identity - Professional & Bold
+   ======================================== */
+
+@layer base {
+  :root {
+    /* === BRAND COLORS === */
+    --ink: 210 58% 11%;                /* #0e1a2b - Main structure, typography */
+    --mint: 158 82% 73%;               /* #7ef4c2 - Highlights, sparingly */
+    --off-white: 60 9% 96%;            /* #F7F7F5 - Background */
+    --light-grey: 60 5% 90%;           /* #E5E5E3 - Borders */
+    --mid-grey: 210 7% 62%;            /* #9AA0A6 - Secondary text */
+    --graphite: 200 5% 21%;            /* #333639 - Strong text */
+
+    /* === SEMANTIC MAPPINGS === */
+    --background: var(--off-white);
+    --foreground: var(--ink);
+    --muted: var(--light-grey);
+    --muted-foreground: var(--mid-grey);
+    --primary: var(--ink);
+    --primary-foreground: 0 0% 100%;   /* White text on ink */
+    --accent: var(--mint);
+    --accent-foreground: var(--ink);   /* Ink text on mint */
+    --ring: var(--mint);
+
+    /* === SURFACE COLORS === */
+    --card: 0 0% 100%;                 /* Pure white for cards */
+    --card-foreground: var(--ink);
+    --border: var(--light-grey);
+    --radius: 0.5rem;                  /* 8px - cleaner, less rounded */
+
+    /* === INPUT & POPOVER === */
+    --input: var(--light-grey);
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--ink);
+    
+    /* === SECONDARY SYSTEM === */
+    --secondary: var(--light-grey);
+    --secondary-foreground: var(--ink);
+
+    /* === SEMANTIC COLORS === */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* === SHADOWS - Subtle, professional === */
+    --shadow-sm: 0 1px 3px hsl(210 58% 11% / 0.08);
+    --shadow-md: 0 4px 12px hsl(210 58% 11% / 0.12);
+    --shadow-lg: 0 8px 24px hsl(210 58% 11% / 0.16);
+  }
+
+  .dark {
+    --background: var(--ink);
+    --foreground: 0 0% 98%;
+    --muted: 210 50% 18%;
+    --muted-foreground: var(--mid-grey);
+    --card: 210 55% 14%;
+    --card-foreground: 0 0% 98%;
+    --border: 210 40% 22%;
+    --ring: var(--mint);
+    --input: 210 40% 22%;
+    --popover: 210 55% 14%;
+    --popover-foreground: 0 0% 98%;
+    --secondary: 210 50% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --primary: var(--mint);
+    --primary-foreground: var(--ink);
+    --accent: var(--mint);
+    --accent-foreground: var(--ink);
+  }
+}
+
+/* ========================================
+   GLOBAL BASE STYLES
+   ======================================== */
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', system-ui, sans-serif;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+/* ========================================
+   COMPONENT LAYER - DESIGN SYSTEM CLASSES
+   ======================================== */
+
+@layer components {
+  
+  /* === LAYOUT UTILITIES === */
+  .section-padding { 
+    @apply py-8 sm:py-12 md:py-20 lg:py-24;
+  }
+
+  .container-width { 
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* === MOBILE-FIRST TYPOGRAPHY === */
+  .mobile-text-sm {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+
+  .mobile-text-base {
+    @apply text-base sm:text-lg md:text-xl;
+  }
+
+  .mobile-text-lg {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  .mobile-text-xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  /* === MOBILE SPACING UTILITIES === */
+  .mobile-spacing {
+    @apply space-y-4 sm:space-y-6 md:space-y-8;
+  }
+
+  .mobile-padding {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+
+  /* === SAFE AREA UTILITIES === */
+  .pt-safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .pt-safe-area-top {
+    padding-top: max(5rem, env(safe-area-inset-top, 5rem));
+  }
+
+  .pb-safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  /* === PREMIUM CARD PATTERNS === */
+  .card {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border) / 0.5);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  /* === ICON BADGE === */
+  .icon-badge {
+    background: hsl(var(--mint) / 0.1);
+    color: hsl(var(--ink));
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* === GLASS MORPHISM UTILITIES === */
+  .glass-card {
+    background: hsl(var(--background) / 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid hsl(var(--border) / 0.3) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.08) !important;
+  }
+
+  .glass-card-dark {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Text Effects */
+  .hero-text-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary-light)) 50%,
+      hsl(var(--primary)) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hero-text-shimmer 3s ease-in-out infinite;
+  }
+
+  /* Background Gradients */
+  .bg-brand-gradient {
+    background: linear-gradient(135deg, var(--gradient-primary));
+  }
+
+  /* Animations */
+  .fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+  }
+
+  .number-update {
+    animation: number-update 0.3s ease-out;
+  }
+
+  .animate-stats-fade-in {
+    animation: stats-fade-in 0.3s ease-out;
+  }
+
+  .animate-stats-fade-out {
+    animation: stats-fade-out 0.3s ease-out;
+  }
+
+  .animate-collapsible-down {
+    animation: collapsible-down 0.3s ease-out;
+  }
+
+  .animate-collapsible-up {
+    animation: collapsible-up 0.3s ease-out;
+  }
+
+  /* === HERO SECTION === */
+  .hero-section-premium {
+    background: hsl(var(--ink));
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .btn-hero-cta {
+    background: hsl(var(--mint));
+    color: hsl(var(--ink));
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px hsl(var(--mint) / 0.3);
+  }
+  
+  .btn-hero-cta:hover {
+    background: hsl(var(--mint) / 0.9);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px hsl(var(--mint) / 0.4);
+  }
+
+  /* === BADGE/TAG === */
+  .premium-badge {
+    background: hsl(var(--mint) / 0.2);
+    color: hsl(var(--ink));
+    padding: 0.375rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+
+  /* === HERO TEXT WITH MINT ACCENT === */
+  .premium-hero-text {
+    font-family: 'Gobold', 'Inter', system-ui, sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    text-align: center;
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+  }
+
+  .premium-hero-text .mint-highlight {
+    color: hsl(var(--mint));
+  }
+
+  @media (min-width: 640px) {
+    .premium-hero-text {
+      font-size: 3rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .premium-hero-text {
+      font-size: 3.75rem;
+    }
+  }
+}
+
+/* ========================================
+   ANIMATION KEYFRAMES
+   ======================================== */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes subtle-glow {
+  0%, 100% { 
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% { 
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes stats-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes stats-fade-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.98);
+  }
+}
+
+@keyframes collapsible-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY & FOCUS STATES
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * { 
+    animation-duration: 0.01ms !important; 
+    animation-iteration-count: 1 !important; 
+  }
+}
+
+button:focus-visible, 
+a:focus-visible, 
+input:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px hsl(var(--ring)) !important;
+}
+
+/* ========================================
+   DROPDOWN FIX - PREVENT TRANSPARENCY
+   ======================================== */
+
+[role="menu"],
+[role="listbox"],
+.dropdown-content,
+[data-radix-popper-content-wrapper] {
+  background: hsl(var(--popover)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  z-index: 50 !important;
+}
+
+/* ========================================
+   CUSTOM SCROLLBAR
+   ======================================== */
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* ==========================================
+   UNIVERSAL CAROUSEL STANDARDS
+   ========================================== */
+
+/* Hide scrollbars while maintaining functionality */
+.scrollbar-hide {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none !important; /* Chrome/Safari */
+}
+
+/* Text truncation for all carousel cards */
+.carousel-card h1,
+.carousel-card h2,
+.carousel-card h3,
+.carousel-card h4 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.carousel-card p,
+.carousel-card .body-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.carousel-card li,
+.carousel-card .list-item {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+/* Card internal layout structure */
+.carousel-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+}
+
+.carousel-card-header {
+  flex-shrink: 0;
+  min-height: fit-content;
+}
+
+.carousel-card-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.carousel-card-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  min-height: fit-content;
+}
+
+/* Mobile-specific carousel constraints */
+@media (max-width: 640px) {
+  .carousel-card-content {
+    gap: 0.5rem;
+  }
+  
+  .carousel-card-header {
+    min-height: 3rem;
+  }
+  
+  .carousel-card-footer {
+    min-height: 2rem;
+  }
+}
+
+/* Two-line title heights for consistent alignment */
+.carousel-card-title-xl {
+  min-height: 3.75rem; /* 60px - accommodates 2 lines of text-xl */
+  line-height: 1.5;
+}
+
+.carousel-card-title-lg {
+  min-height: 2.8rem; /* 45px - accommodates 2 lines of text-lg */
+  line-height: 1.25;
+}
+
+.carousel-card-title-base {
+  min-height: 2.5rem; /* 40px - accommodates 2 lines of text-base */
+  line-height: 1.25;
+}
+
+.carousel-card-title-2xl {
+  min-height: 4.25rem; /* 68px - accommodates 2 lines of text-2xl */
+  line-height: 1.4;
+}
