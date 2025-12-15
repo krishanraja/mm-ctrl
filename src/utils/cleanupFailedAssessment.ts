@@ -1,67 +1,55 @@
 /**
- * Cleanup Failed Assessment Utility
+ * Cleanup Failed Assessment
  * 
- * Purpose: Deletes partial data when assessment pipeline fails
- * This prevents orphaned records and ensures data consistency
+ * Removes orphaned records when assessment pipeline fails
+ * This implements partial failure recovery
  */
 
 import { supabase } from '@/integrations/supabase/client';
 
-/**
- * Cleans up partial assessment data when pipeline fails
- * Deletes all related records to prevent orphaned data
- */
-export async function cleanupFailedAssessment(assessmentId: string | null): Promise<void> {
-  if (!assessmentId) {
-    console.log('⚠️ No assessment ID provided for cleanup');
-    return;
-  }
+export async function cleanupFailedAssessment(assessmentId: string): Promise<{ success: boolean; cleaned: string[]; errors: string[] }> {
+  const cleaned: string[] = [];
+  const errors: string[] = [];
 
   console.log(`🧹 Cleaning up failed assessment: ${assessmentId}`);
 
-  try {
-    // Delete in reverse order of dependencies to avoid FK constraint violations
-    const tables = [
-      'leader_first_moves',
-      'leader_prompt_sets',
-      'leader_org_scenarios',
-      'leader_risk_signals',
-      'leader_tensions',
-      'leader_dimension_scores',
-      'assessment_events',
-      'assessment_behavioral_adjustments'
-    ];
+  // Tables to clean up (in dependency order)
+  const tables: Array<'leader_first_moves' | 'leader_prompt_sets' | 'leader_org_scenarios' | 'leader_risk_signals' | 'leader_tensions' | 'leader_dimension_scores' | 'assessment_events'> = [
+    'leader_first_moves',
+    'leader_prompt_sets',
+    'leader_org_scenarios',
+    'leader_risk_signals',
+    'leader_tensions',
+    'leader_dimension_scores',
+    'assessment_events',
+  ];
 
-    for (const table of tables) {
+  // Delete from each table
+  for (const table of tables) {
+    try {
       const { error } = await supabase
         .from(table)
         .delete()
         .eq('assessment_id', assessmentId);
 
       if (error) {
-        console.error(`❌ Failed to delete from ${table}:`, error.message);
-        // Continue with other tables even if one fails
+        errors.push(`${table}: ${error.message}`);
       } else {
-        console.log(`✅ Cleaned up ${table}`);
+        cleaned.push(table);
       }
+    } catch (e: any) {
+      errors.push(`${table}: ${e.message || 'Unknown error'}`);
     }
-
-    // Finally, delete the assessment record itself
-    const { error: assessmentError } = await supabase
-      .from('leader_assessments')
-      .delete()
-      .eq('id', assessmentId);
-
-    if (assessmentError) {
-      console.error('❌ Failed to delete assessment record:', assessmentError.message);
-    } else {
-      console.log(`✅ Cleaned up assessment record: ${assessmentId}`);
-    }
-
-    console.log(`✅ Cleanup complete for assessment: ${assessmentId}`);
-  } catch (error) {
-    console.error('❌ Error during cleanup:', error);
-    // Don't throw - cleanup is best effort
   }
-}
 
+  // Note: We don't delete the leader_assessments record itself
+  // as it may contain useful metadata and can be marked as failed
+
+  console.log(`✅ Cleanup complete. Cleaned: ${cleaned.length}, Errors: ${errors.length}`);
+
+  return {
+    success: errors.length === 0,
+    cleaned,
+    errors,
+  };
+}

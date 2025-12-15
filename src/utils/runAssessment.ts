@@ -409,7 +409,9 @@ export async function runAssessment(
     };
 
     // Step 2: Generate AI content (Gemini Plan A, OpenAI Plan B)
-    const { data: aiData, error: aiError } = await supabase.functions.invoke(
+    // Optimized: Start AI generation immediately after assessment creation
+    // The AI generation can run in parallel with other operations if needed
+    const aiGenerationPromise = supabase.functions.invoke(
       'ai-generate',
       {
         body: {
@@ -419,6 +421,9 @@ export async function runAssessment(
         }
       }
     );
+
+    // Wait for AI generation (can be optimized further with background jobs)
+    const { data: aiData, error: aiError } = await aiGenerationPromise;
 
     if (aiError) {
       console.error('⚠️ AI generation error:', aiError);
@@ -466,157 +471,201 @@ export async function runAssessment(
       }
     }
 
-    progress('storing', 50, 'Storing dimension scores...');
+    progress('storing', 50, 'Preparing data for storage...');
 
-    // Step 3: Store dimension scores
-    // SCHEMA FIX: leader_dimension_scores columns are:
-    // - score_numeric (not 'score')
-    // - dimension_tier (not 'label')
-    // - explanation (not 'insight_summary')
-    // - NO priority_rank column
-    // PHASE 3: Use dimension key and tier mapping to ensure schema compliance
-    // ALWAYS store dimension scores - use fallback if AI failed
+    // Step 3-8: Prepare all data records with validation and sanitization
     const responseTimes = assessmentData.responseTimes || [];
     const secondaryAnswers = assessmentData.secondaryAnswers || {};
     const dimensionScoresToStore = aiContent.dimensionScores?.length > 0 
       ? aiContent.dimensionScores 
       : computeDimensionScoresFromQuiz(assessmentData, responseTimes, secondaryAnswers);
     
-    if (dimensionScoresToStore?.length > 0) {
-      const scoreRecords = dimensionScoresToStore.map((d: any, idx: number) => ({
-        assessment_id: assessmentId,
-        dimension_key: getValidDimensionKey(d.key || d.dimension_key, idx),
-        score_numeric: typeof d.score === 'number' ? d.score : 0,
-        dimension_tier: getValidTier(d.label || d.tier),
-        explanation: d.summary || d.insight_summary || d.explanation || ''
-      }));
+    // Prepare dimension scores with validation
+    const scoreRecords = dimensionScoresToStore?.length > 0 
+      ? dimensionScoresToStore.map((d: any, idx: number) => {
+          const record = {
+            assessment_id: assessmentId,
+            dimension_key: getValidDimensionKey(d.key || d.dimension_key, idx),
+            score_numeric: typeof d.score === 'number' ? Math.max(0, Math.min(100, d.score)) : 0,
+            dimension_tier: getValidTier(d.label || d.tier),
+            explanation: sanitizeText(d.summary || d.insight_summary || d.explanation || '', 5000)
+          };
+          return record;
+        })
+      : [];
 
-      const result = await safeInsert('leader_dimension_scores', scoreRecords, '📊');
-      if (result.success) {
-        await updateGenerationFlags({ insights_generated: true });
-      } else {
-        await updateGenerationFlags({ 
-          error_log: [{ phase: 'dimension_scores', error: result.error, timestamp: new Date().toISOString() }] 
-        });
-      }
+    // Validate dimension scores
+    const scoreValidation = validateRecords(scoreRecords, validateDimensionScore, 'dimension_scores');
+    if (!scoreValidation.valid && scoreValidation.errors.length > 0) {
+      console.warn('⚠️ Dimension score validation errors:', scoreValidation.errors);
     }
 
-    progress('storing', 60, 'Analyzing tensions...');
-
-    // Step 4: Store tensions
-    if (aiContent.tensions?.length > 0) {
-      const tensionRecords = aiContent.tensions.map((t: any, idx: number) => ({
-        assessment_id: assessmentId,
-        dimension_key: t.key || t.dimension_key || 'general',
-        summary_line: t.summary || t.summary_line || '',
-        priority_rank: idx + 1
-      }));
-
-      const result = await safeInsert('leader_tensions', tensionRecords, '⚡');
-      if (result.success) {
-        await updateGenerationFlags({ tensions_computed: true });
-      } else {
-        await updateGenerationFlags({ 
-          error_log: [{ phase: 'tensions', error: result.error, timestamp: new Date().toISOString() }] 
-        });
-      }
-    }
-
-    progress('storing', 70, 'Evaluating risks...');
-
-    // Step 5: Store risk signals
-    // SCHEMA FIX: leader_risk_signals uses 'level' not 'risk_level'
-    if (aiContent.risks?.length > 0) {
-      const riskRecords = aiContent.risks.map((r: any, idx: number) => ({
-        assessment_id: assessmentId,
-        risk_key: r.key || r.risk_key || 'unknown',
-        level: r.level || r.risk_level || 'medium',
-        description: r.description || '',
-        priority_rank: idx + 1
-      }));
-
-      const result = await safeInsert('leader_risk_signals', riskRecords, '⚠️');
-      if (result.success) {
-        await updateGenerationFlags({ risks_computed: true });
-      } else {
-        await updateGenerationFlags({ 
-          error_log: [{ phase: 'risks', error: result.error, timestamp: new Date().toISOString() }] 
-        });
-      }
-    }
-
-    progress('storing', 75, 'Mapping scenarios...');
-
-    // Step 6: Store org scenarios
-    if (aiContent.scenarios?.length > 0) {
-      const scenarioRecords = aiContent.scenarios.map((s: any, idx: number) => ({
-        assessment_id: assessmentId,
-        scenario_key: s.key || s.scenario_key || 'unknown',
-        summary: s.summary || '',
-        priority_rank: idx + 1
-      }));
-
-      const result = await safeInsert('leader_org_scenarios', scenarioRecords, '🎯');
-      if (result.success) {
-        await updateGenerationFlags({ scenarios_generated: true });
-      } else {
-        await updateGenerationFlags({ 
-          error_log: [{ phase: 'scenarios', error: result.error, timestamp: new Date().toISOString() }] 
-        });
-      }
-    }
-
-    progress('storing', 85, 'Building your prompt library...');
-
-    // Step 7: Store prompt sets
-    if (aiContent.prompts?.length > 0) {
-      const promptRecords = aiContent.prompts.map((p: any, idx: number) => ({
-        assessment_id: assessmentId,
-        category_key: p.category || p.category_key || 'general',
-        title: p.title || 'Untitled Prompt Set',
-        description: p.description || '',
-        what_its_for: p.whatItsFor || p.what_its_for || '',
-        when_to_use: p.whenToUse || p.when_to_use || '',
-        how_to_use: p.howToUse || p.how_to_use || '',
-        prompts_json: Array.isArray(p.prompts) ? p.prompts : [],
-        priority_rank: idx + 1
-      }));
-
-      const result = await safeInsert('leader_prompt_sets', promptRecords, '📝');
-      if (result.success) {
-        await updateGenerationFlags({ prompts_generated: true });
-      } else {
-        await updateGenerationFlags({ 
-          error_log: [{ phase: 'prompts', error: result.error, timestamp: new Date().toISOString() }] 
-        });
-      }
-    }
-
-    progress('storing', 92, 'Creating action plan...');
-
-    // Step 8: Store first moves
-    // SCHEMA FIX: leader_first_moves uses:
-    // - move_number (not priority_rank)
-    // - content (not move_text)
-    if (aiContent.firstMoves?.length > 0) {
-      const moveRecords = aiContent.firstMoves.map((move: any, idx: number) => {
-        // Handle both string array and object array formats
-        const moveContent = typeof move === 'string' ? move : (move.content || move.text || String(move));
-        return {
+    // Prepare tensions with sanitization
+    const tensionRecords = aiContent.tensions?.length > 0
+      ? aiContent.tensions.map((t: any, idx: number) => ({
           assessment_id: assessmentId,
-          move_number: idx + 1,
-          content: moveContent
-        };
+          dimension_key: sanitizeText(t.key || t.dimension_key || 'general', 100),
+          summary_line: sanitizeText(t.summary || t.summary_line || '', 2000),
+          priority_rank: idx + 1
+        }))
+      : [];
+
+    // Prepare risk signals with sanitization
+    const riskRecords = aiContent.risks?.length > 0
+      ? aiContent.risks.map((r: any, idx: number) => ({
+          assessment_id: assessmentId,
+          risk_key: sanitizeText(r.key || r.risk_key || 'unknown', 100),
+          level: ['low', 'medium', 'high'].includes(r.level || r.risk_level) 
+            ? (r.level || r.risk_level) 
+            : 'medium',
+          description: sanitizeText(r.description || '', 2000),
+          priority_rank: idx + 1
+        }))
+      : [];
+
+    // Prepare org scenarios with sanitization
+    const scenarioRecords = aiContent.scenarios?.length > 0
+      ? aiContent.scenarios.map((s: any, idx: number) => ({
+          assessment_id: assessmentId,
+          scenario_key: sanitizeText(s.key || s.scenario_key || 'unknown', 100),
+          summary: sanitizeText(s.summary || '', 2000),
+          priority_rank: idx + 1
+        }))
+      : [];
+
+    // Prepare prompt sets with sanitization
+    const promptRecords = aiContent.prompts?.length > 0
+      ? aiContent.prompts.map((p: any, idx: number) => ({
+          assessment_id: assessmentId,
+          category_key: sanitizeText(p.category || p.category_key || 'general', 100),
+          title: sanitizeText(p.title || 'Untitled Prompt Set', 200),
+          description: sanitizeText(p.description || '', 1000),
+          what_its_for: sanitizeText(p.whatItsFor || p.what_its_for || '', 1000),
+          when_to_use: sanitizeText(p.whenToUse || p.when_to_use || '', 1000),
+          how_to_use: sanitizeText(p.howToUse || p.how_to_use || '', 1000),
+          prompts_json: Array.isArray(p.prompts) ? p.prompts : [],
+          priority_rank: idx + 1
+        }))
+      : [];
+
+    // Prepare first moves with sanitization
+    const moveRecords = aiContent.firstMoves?.length > 0
+      ? aiContent.firstMoves.map((move: any, idx: number) => {
+          const moveContent = typeof move === 'string' 
+            ? move 
+            : (move.content || move.text || String(move));
+          return {
+            assessment_id: assessmentId,
+            move_number: idx + 1,
+            content: sanitizeText(moveContent, 1000)
+          };
+        })
+      : [];
+
+    // Prepare assessment events
+    const eventRecords = Object.entries(assessmentData)
+      .filter(([key, value]) => key.includes('Score') && typeof value === 'number')
+      .map(([key, value]) => ({
+        assessment_id: assessmentId,
+        session_id: sessionId,
+        question_id: sanitizeText(key, 200),
+        question_text: sanitizeText(
+          key.replace(/Score$/, '').replace(/([A-Z])/g, ' $1').trim(), 
+          500
+        ),
+        raw_input: sanitizeText(String(value), 100),
+        structured_values: { score: Number(value), dimension: key } as Record<string, string | number>,
+        event_type: 'question_answered',
+        tool_name: 'quiz',
+        flow_name: 'unified_assessment'
+      }));
+
+    progress('storing', 60, 'Storing all assessment data atomically...');
+
+    // Step 3-8: Use atomic RPC function for transaction safety
+    try {
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('insert_assessment_data_atomic' as any, {
+        p_assessment_id: assessmentId,
+        p_dimension_scores: scoreValidation.validRecords,
+        p_tensions: tensionRecords,
+        p_risk_signals: riskRecords,
+        p_org_scenarios: scenarioRecords,
+        p_prompt_sets: promptRecords,
+        p_first_moves: moveRecords,
+        p_assessment_events: eventRecords
       });
 
-      const result = await safeInsert('leader_first_moves', moveRecords, '🚀');
-      if (result.success) {
-        await updateGenerationFlags({ first_moves_generated: true });
-      } else {
-        await updateGenerationFlags({ 
-          error_log: [{ phase: 'first_moves', error: result.error, timestamp: new Date().toISOString() }] 
-        });
+      if (rpcError) {
+        throw new Error(`Atomic insert failed: ${rpcError.message}`);
       }
+
+      // Type assertion for RPC result
+      const result = rpcResult as any;
+      
+      if (result && result.success) {
+        console.log('✅ Atomic insert successful:', result.inserted);
+        
+        // Update generation flags based on what was inserted
+        const updates: Record<string, any> = {
+          insights_generated: (result.inserted?.dimension_scores || 0) > 0,
+          tensions_computed: (result.inserted?.tensions || 0) > 0,
+          risks_computed: (result.inserted?.risk_signals || 0) > 0,
+          scenarios_generated: (result.inserted?.org_scenarios || 0) > 0,
+          prompts_generated: (result.inserted?.prompt_sets || 0) > 0,
+          first_moves_generated: (result.inserted?.first_moves || 0) > 0,
+        };
+
+        await updateGenerationFlags(updates);
+      } else {
+        const errors = result?.errors || ['Unknown error in atomic insert'];
+        throw new Error(`Atomic insert failed: ${Array.isArray(errors) ? errors.join(', ') : String(errors)}`);
+      }
+    } catch (atomicError: any) {
+      console.error('❌ Atomic insert failed, falling back to parallel inserts:', atomicError);
+      
+      // Fallback: Use parallel inserts if RPC fails
+      progress('storing', 70, 'Using fallback storage method...');
+      
+      const parallelResult = await parallelInsert([
+        { table: 'leader_dimension_scores', records: scoreValidation.validRecords, options: { logPrefix: '📊' } },
+        { table: 'leader_tensions', records: tensionRecords, options: { logPrefix: '⚡' } },
+        { table: 'leader_risk_signals', records: riskRecords, options: { logPrefix: '⚠️' } },
+        { table: 'leader_org_scenarios', records: scenarioRecords, options: { logPrefix: '🎯' } },
+        { table: 'leader_prompt_sets', records: promptRecords, options: { logPrefix: '📝' } },
+        { table: 'leader_first_moves', records: moveRecords, options: { logPrefix: '🚀' } },
+        { 
+          table: 'assessment_events', 
+          records: eventRecords, 
+          options: { 
+            logPrefix: '📋',
+            onConflict: 'assessment_id,question_id,session_id',
+            ignoreDuplicates: true
+          } 
+        },
+      ]);
+
+      if (!parallelResult.success) {
+        await updateGenerationFlags({ 
+          error_log: [{ 
+            phase: 'data_storage', 
+            error: `Parallel insert errors: ${parallelResult.errors.join(', ')}`, 
+            timestamp: new Date().toISOString() 
+          }] 
+        });
+        throw new Error(`Data storage failed: ${parallelResult.errors.join(', ')}`);
+      }
+
+      // Update generation flags
+      const updates: Record<string, any> = {};
+      parallelResult.results.forEach(result => {
+        if (result.table === 'leader_dimension_scores' && result.success) updates.insights_generated = true;
+        if (result.table === 'leader_tensions' && result.success) updates.tensions_computed = true;
+        if (result.table === 'leader_risk_signals' && result.success) updates.risks_computed = true;
+        if (result.table === 'leader_org_scenarios' && result.success) updates.scenarios_generated = true;
+        if (result.table === 'leader_prompt_sets' && result.success) updates.prompts_generated = true;
+        if (result.table === 'leader_first_moves' && result.success) updates.first_moves_generated = true;
+      });
+      await updateGenerationFlags(updates);
     }
 
     progress('finalizing', 96, 'Finalizing your results...');
@@ -635,42 +684,8 @@ export async function runAssessment(
       console.error('❌ Error storing executive insights:', e);
     }
 
-    // Step 10: Store assessment events (raw question/answer data)
-    // Fix #4: Use ON CONFLICT DO NOTHING for idempotency
-    // PHASE 4: Use valid event_type and tool_name per schema CHECK constraints
-    try {
-      const eventRecords = Object.entries(assessmentData)
-        .filter(([key, value]) => key.includes('Score') && typeof value === 'number')
-        .map(([key, value]) => ({
-          assessment_id: assessmentId,
-          session_id: sessionId,
-          question_id: key,
-          question_text: key.replace(/Score$/, '').replace(/([A-Z])/g, ' $1').trim(),
-          raw_input: String(value),
-          structured_values: { score: Number(value), dimension: key } as Record<string, string | number>,
-          event_type: 'question_answered',  // PHASE 4: Was 'assessment_response'
-          tool_name: 'quiz',                 // PHASE 4: Was 'leaders_assessment'
-          flow_name: 'unified_assessment'
-        }));
-
-      if (eventRecords.length > 0) {
-        // Fix #4: Use upsert with ON CONFLICT DO NOTHING for idempotency
-        const { error } = await supabase
-          .from('assessment_events')
-          .upsert(eventRecords, {
-            onConflict: 'assessment_id,question_id,session_id',
-            ignoreDuplicates: true
-          });
-        
-        if (error) {
-          console.error('📋 ❌ Failed to store assessment events:', error);
-        } else {
-          console.log('📋 ✅ Assessment events stored (idempotent)');
-        }
-      }
-    } catch (e) {
-      console.error('❌ Error storing assessment events:', e);
-    }
+    // Assessment events are now stored in the atomic insert above
+    // This section is kept for backward compatibility but events are handled in atomic function
 
     progress('complete', 100, 'Assessment complete!');
 

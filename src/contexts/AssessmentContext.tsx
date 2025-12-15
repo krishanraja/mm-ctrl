@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { ContactData } from '@/components/ContactCollectionForm';
 import { DeepProfileData } from '@/components/DeepProfileQuestionnaire';
+import { supabase } from '@/integrations/supabase/client';
 
 // Assessment insights summary for cross-feature intelligence
 export interface AssessmentInsights {
@@ -47,6 +48,72 @@ export const AssessmentProvider: React.FC<{ children: ReactNode }> = ({ children
   const [companyHash, setCompanyHash] = useState<string | null>(null);
   const [assessmentInsights, setAssessmentInsights] = useState<AssessmentInsights | null>(null);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
+
+  // Client-server sync: Reconcile state with server on mount
+  useEffect(() => {
+    const syncWithServer = async () => {
+      if (!assessmentId) return;
+
+      try {
+        // Fetch assessment from server
+        const { data: assessment, error } = await supabase
+          .from('leader_assessments')
+          .select('*, leaders(*)')
+          .eq('id', assessmentId)
+          .single();
+
+        if (error) {
+          console.warn('⚠️ Failed to sync assessment with server:', error);
+          return;
+        }
+
+        if (assessment) {
+          // Sync contact data if available
+          if (assessment.leaders && !contactData) {
+            const leader = assessment.leaders as any;
+            setContactData({
+              fullName: leader.name || '',
+              email: leader.email || '',
+              department: leader.role || '',
+              primaryFocus: leader.primary_focus || '',
+              consentToInsights: true,
+            });
+          }
+
+          // Sync generation status
+          const generationStatus = assessment.generation_status as any;
+          if (generationStatus) {
+            // Update insights if available
+            if (generationStatus.insights_generated && !assessmentInsights) {
+              // Fetch insights from related tables
+              const { data: scores } = await supabase
+                .from('leader_dimension_scores')
+                .select('*')
+                .eq('assessment_id', assessmentId)
+                .order('score_numeric', { ascending: false })
+                .limit(1);
+
+              if (scores && scores.length > 0) {
+                setAssessmentInsights({
+                  benchmarkScore: assessment.benchmark_score || 0,
+                  benchmarkTier: assessment.benchmark_tier || 'AI-Emerging',
+                  topTension: null,
+                  topGap: scores[0]?.dimension_key || null,
+                  learningStyle: assessment.learning_style || null,
+                  primaryBottleneck: null,
+                  suggestedPromptCategories: [],
+                });
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error syncing with server:', error);
+      }
+    };
+
+    syncWithServer();
+  }, [assessmentId]); // Only sync when assessmentId changes
 
   const value = {
     sessionId,
