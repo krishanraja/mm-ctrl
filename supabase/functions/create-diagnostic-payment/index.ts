@@ -9,23 +9,71 @@ const corsHeaders = {
 
 const DIAGNOSTIC_PRICE_ID = "price_1SV9YlHGqJqsGEJLtNzC23S4";
 
+// Rate limiting store - MUST be outside handler to persist across requests
+// For production, consider using Supabase KV or Redis for distributed rate limiting
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Rate limiting: 10 payment sessions per hour per user
-    const requestBody = await req.json();
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    
+    // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
+    const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
+    if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
+      const error = `Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current: ${supabaseUrl}`;
+      console.error('❌', error);
+      return new Response(
+        JSON.stringify({ error }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
+    
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Authenticate user first to get actual user ID for rate limiting
     const authHeader = req.headers.get("Authorization");
-    const userId = authHeader ? authHeader.substring(0, 20) : 'anonymous';
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authorization header required" }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: authData } = await supabaseClient.auth.getUser(token);
+    const user = authData.user;
+    
+    if (!user?.id) {
+      return new Response(
+        JSON.stringify({ error: "User not authenticated" }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Rate limiting: 10 payment sessions per hour per user (using actual user ID)
+    const requestBody = await req.json();
+    const userId = user.id; // Use actual user ID from authentication
     
     // Simple rate limiting (in-memory)
     const rateLimitKey = `payment:${userId}`;
-    const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
     const now = Date.now();
     const windowMs = 60 * 60 * 1000; // 1 hour
     const maxRequests = 10;
+    
+    // Clean up expired entries periodically (every 1000 entries to avoid overhead)
+    if (rateLimitStore.size > 1000) {
+      for (const [key, value] of rateLimitStore.entries()) {
+        if (value.resetAt < now) {
+          rateLimitStore.delete(key);
+        }
+      }
+    }
     
     const entry = rateLimitStore.get(rateLimitKey);
     if (entry && entry.resetAt > now) {
@@ -49,31 +97,9 @@ serve(async (req) => {
       rateLimitStore.set(rateLimitKey, { count: 1, resetAt: now + windowMs });
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    
-    // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
-    const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
-    if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      const error = `Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current: ${supabaseUrl}`;
-      console.error('❌', error);
-      return new Response(
-        JSON.stringify({ error }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
-    
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-
     console.log('💳 Creating diagnostic payment session');
 
     const { assessment_id } = requestBody;
-
-    const authHeader = req.headers.get("Authorization")!;
-    const token = authHeader.replace("Bearer ", "");
-    const { data } = await supabaseClient.auth.getUser(token);
-    const user = data.user;
     
     if (!user?.email) {
       throw new Error("User not authenticated or email not available");

@@ -5,6 +5,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting store - MUST be outside handler to persist across requests
+// For production, consider using Supabase KV or Redis for distributed rate limiting
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -18,10 +22,18 @@ Deno.serve(async (req) => {
     // Simple rate limiting check (in-memory)
     // For production, consider using Supabase KV or Redis
     const rateLimitKey = `assessment:${sessionId}`;
-    const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
     const now = Date.now();
     const windowMs = 60 * 60 * 1000; // 1 hour
     const maxRequests = 3;
+    
+    // Clean up expired entries periodically (every 1000 entries to avoid overhead)
+    if (rateLimitStore.size > 1000) {
+      for (const [key, value] of rateLimitStore.entries()) {
+        if (value.resetAt < now) {
+          rateLimitStore.delete(key);
+        }
+      }
+    }
     
     const entry = rateLimitStore.get(rateLimitKey);
     if (entry && entry.resetAt > now) {

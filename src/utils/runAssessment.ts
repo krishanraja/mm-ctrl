@@ -702,14 +702,7 @@ export async function runAssessment(
   } catch (error) {
     console.error('❌ Assessment pipeline failed:', error);
     
-    // Cleanup partial data on failure
-    if (assessmentId) {
-      console.log('🧹 Cleaning up partial assessment data...');
-      const { cleanupFailedAssessment } = await import('./cleanupFailedAssessment');
-      await cleanupFailedAssessment(assessmentId);
-    }
-    
-    // Log critical failure
+    // Log critical failure BEFORE cleanup (since cleanup may delete the record)
     try {
       if (assessmentId) {
         const { data: current } = await supabase
@@ -732,7 +725,7 @@ export async function runAssessment(
                   phase: 'pipeline', 
                   error: error instanceof Error ? error.message : 'Unknown error',
                   timestamp: new Date().toISOString(),
-                  cleanup_performed: true
+                  cleanup_performed: false // Will be set to true after cleanup
                 }
               ]
             }
@@ -741,6 +734,34 @@ export async function runAssessment(
       }
     } catch (logError) {
       console.error('❌ Failed to log pipeline error:', logError);
+    }
+    
+    // Cleanup partial data on failure (AFTER logging, since cleanup doesn't delete leader_assessments)
+    if (assessmentId) {
+      console.log('🧹 Cleaning up partial assessment data...');
+      try {
+        const { cleanupFailedAssessment } = await import('./cleanupFailedAssessment');
+        await cleanupFailedAssessment(assessmentId);
+        
+        // Update error log to indicate cleanup was performed
+        try {
+          await supabase
+            .from('leader_assessments')
+            .update({ 
+              generation_status: (prev: any) => ({
+                ...prev,
+                error_log: (prev?.error_log || []).map((err: any) => 
+                  err.phase === 'pipeline' ? { ...err, cleanup_performed: true } : err
+                )
+              })
+            })
+            .eq('id', assessmentId);
+        } catch (updateError) {
+          console.error('⚠️ Failed to update cleanup status:', updateError);
+        }
+      } catch (cleanupError) {
+        console.error('❌ Failed to cleanup assessment:', cleanupError);
+      }
     }
     
     return {

@@ -58,11 +58,22 @@ serve(async (req) => {
     // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
     const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
     if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      console.error(`❌ Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current: ${supabaseUrl}`);
-      // Continue with transcription but log error
-    } else {
-      console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
+      const error = `Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current: ${supabaseUrl}`;
+      console.error(`❌ ${error}`);
+      // Return error response - don't proceed with wrong database
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Database configuration error. Cannot log instrumentation.',
+          transcription: text // Still return transcription even if logging fails
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
+    console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
