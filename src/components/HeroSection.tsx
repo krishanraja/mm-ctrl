@@ -3,6 +3,8 @@ import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users } from 
 import mindmakerLogo from "@/assets/mindmaker-logo.png";
 import { useState, useEffect } from "react";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { useNavigate } from "react-router-dom";
+import { getPersistedAssessmentId } from "@/utils/assessmentPersistence";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,11 +25,18 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignOut }: HeroSectionProps) {
   const [mounted, setMounted] = useState(false);
+  const [hasBaseline, setHasBaseline] = useState(false);
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Small delay for smooth entrance, but content is already positioned
     const timer = setTimeout(() => setMounted(true), 50);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const { assessmentId } = getPersistedAssessmentId();
+    setHasBaseline(Boolean(assessmentId));
   }, []);
   
   return (
@@ -195,26 +204,39 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               className={`transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '450ms' }}
             >
-              <Button 
-                onClick={onStartQuiz}
-                size="lg"
-                className="
-                  group w-full sm:w-auto 
-                  h-12 sm:h-14 
-                  px-6 sm:px-8 
-                  text-base sm:text-lg 
-                  font-semibold 
-                  bg-[hsl(var(--ink))] hover:bg-[hsl(var(--ink)/0.9)]
-                  text-white 
-                  shadow-lg shadow-[hsl(var(--ink)/0.15)]
-                  hover:shadow-xl hover:shadow-[hsl(var(--ink)/0.2)]
-                  transition-all duration-300
-                  rounded-xl
-                "
-              >
-                Start diagnostic
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <Button 
+                  onClick={onStartQuiz}
+                  size="lg"
+                  className="
+                    group w-full sm:w-auto 
+                    h-12 sm:h-14 
+                    px-6 sm:px-8 
+                    text-base sm:text-lg 
+                    font-semibold 
+                    bg-[hsl(var(--ink))] hover:bg-[hsl(var(--ink)/0.9)]
+                    text-white 
+                    shadow-lg shadow-[hsl(var(--ink)/0.15)]
+                    hover:shadow-xl hover:shadow-[hsl(var(--ink)/0.2)]
+                    transition-all duration-300
+                    rounded-xl
+                  "
+                >
+                  Start diagnostic
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
+
+                {hasBaseline ? (
+                  <Button
+                    onClick={() => navigate('/today')}
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl"
+                  >
+                    Continue
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </div>
           

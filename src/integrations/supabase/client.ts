@@ -6,7 +6,8 @@ import type { Database } from './types';
 // Database: Mindmaker AI
 const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
 const DEFAULT_SUPABASE_URL = `https://${EXPECTED_PROJECT_ID}.supabase.co`;
-const DEFAULT_ANON_KEY = "sb_publishable_DDv1GyxEG09utDLjdWWz1A_JN-Z9eTp";
+// Public anon key (safe to ship). Prefer setting VITE_SUPABASE_ANON_KEY in Vercel env.
+const DEFAULT_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJreXV4dnNjaHV3bmd0Y2Roc3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDE2NzgsImV4cCI6MjA2NzU3NzY3OH0.XmOP_W7gUdBuP23p4lH-iryMXPXMI69ZshU8Dwm6ujo";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_ANON_KEY;

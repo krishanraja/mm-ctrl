@@ -60,6 +60,7 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
     // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
     const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
@@ -70,6 +71,34 @@ Deno.serve(async (req) => {
     }
     console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
     
+    // Create client with user auth to get auth.uid()
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: req.headers.get('Authorization') ?? '',
+        },
+      },
+      auth: { persistSession: false }
+    });
+
+    // Get authenticated user ID (works for anonymous + logged-in)
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
+    const ownerUserId = userData?.user?.id ?? null;
+    
+    if (userErr || !ownerUserId) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Unauthorized: Please ensure you are authenticated (including anonymous sign-in).'
+        }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Create service role client for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false }
     });
@@ -83,14 +112,20 @@ Deno.serve(async (req) => {
       benchmarkTier,
     } = requestBody;
 
-    console.log('🔐 Creating assessment with service role for:', contactData.email);
+    // Handle empty/invalid email: generate pseudo-email for anonymous users
+    let leaderEmail = contactData.email?.trim() || '';
+    if (!leaderEmail || !leaderEmail.includes('@')) {
+      leaderEmail = `anon+${ownerUserId}@anon.local`;
+    }
+
+    console.log('🔐 Creating assessment with service role for:', leaderEmail, 'owner_user_id:', ownerUserId);
 
     // Fix #6: Create or get leader record with race condition protection
     // Use upsert to handle concurrent requests atomically
     const { data: leader, error: leaderError } = await supabase
       .from('leaders')
       .upsert({
-        email: contactData.email,
+        email: leaderEmail,
         name: contactData.fullName,
         role: contactData.roleTitle,
         company: contactData.companyName,
@@ -110,6 +145,13 @@ Deno.serve(async (req) => {
         .from('leaders')
         .select('*')
         .eq('email', contactData.email)
+        .single();
+      
+      // Try to get by email (using the normalized email)
+      const { data: existingLeader } = await supabase
+        .from('leaders')
+        .select('*')
+        .eq('email', leaderEmail)
         .single();
       
       if (existingLeader) {
@@ -142,17 +184,19 @@ Deno.serve(async (req) => {
 
     // Step 2: Create leader_assessment record (bypasses RLS with service role)
     // Fix #10: Include schema version for future compatibility
+    // Fix RLS: Set owner_user_id for proper access control
     const { data: assessment, error: assessmentError } = await supabase
       .from('leader_assessments')
       .insert({
         leader_id: leaderId,
+        owner_user_id: ownerUserId, // Critical: links assessment to auth.uid() for RLS
         source,
         benchmark_score: benchmarkScore,
         benchmark_tier: benchmarkTier,
         learning_style: assessmentData.learningStyle || null,
         has_deep_profile: !!deepProfileData,
         has_full_diagnostic: false,
-        session_id: sessionId,
+        session_id: sessionId, // Keep for backward compatibility
         schema_version: '1.0', // Fix #10: Current schema version
       })
       .select()

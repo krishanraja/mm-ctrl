@@ -31,6 +31,7 @@ import { BenchmarkComparison } from './BenchmarkComparison';
 import { TensionCard } from '@/components/ui/tension-card';
 import { RiskSignalCard } from '@/components/ui/risk-signal-card';
 import { UnlockResultsForm, UnlockFormData } from './UnlockResultsForm';
+import { ArrowRightCircle } from 'lucide-react';
 
 interface SingleScrollResultsProps {
   assessmentData: any;
@@ -337,6 +338,31 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   return (
     <div className="bg-background min-h-[100dvh] py-4 sm:py-6">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-4xl">
+
+        {/* Ongoing loop CTA (keeps baseline as “starting point”) */}
+        <Card className="mb-4 sm:mb-6 shadow-sm border rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
+          <CardContent className="p-4 sm:p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 p-2 bg-primary/10 rounded-lg">
+                  <ArrowRightCircle className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground">Make this compound weekly</div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    Weekly 30s check-ins + decision capture when you’re stuck.
+                  </div>
+                </div>
+              </div>
+              <div className="sm:ml-auto">
+                <Button variant="cta" onClick={() => navigate('/today')} className="w-full sm:w-auto">
+                  Go to Today
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         
         {/* 1. Score Card - Always Visible with Animation */}
         <Card className="mb-4 sm:mb-6 shadow-lg border rounded-xl overflow-hidden animate-fade-in">

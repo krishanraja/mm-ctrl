@@ -7,6 +7,12 @@ import { AssessmentProvider } from "@/contexts/AssessmentContext";
 import PromptCoach from "./pages/PromptCoach";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AppShell from "./pages/AppShell";
+import Today from "./pages/Today";
+import WeeklyCheckin from "./pages/WeeklyCheckin";
+import DecisionCapture from "./pages/DecisionCapture";
+import Timeline from "./pages/Timeline";
+import Baseline from "./pages/Baseline";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +30,15 @@ const App = () => (
               
               {/* Prompt Coach - practice tool */}
               <Route path="/coach" element={<PromptCoach />} />
+
+              {/* Ongoing loop (mobile-first) */}
+              <Route element={<AppShell />}>
+                <Route path="/today" element={<Today />} />
+                <Route path="/checkin" element={<WeeklyCheckin />} />
+                <Route path="/capture" element={<DecisionCapture />} />
+                <Route path="/timeline" element={<Timeline />} />
+                <Route path="/baseline" element={<Baseline />} />
+              </Route>
               
               <Route path="*" element={<NotFound />} />
             </Routes>

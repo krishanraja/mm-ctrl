@@ -77,16 +77,30 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    await supabase.from('voice_instrumentation').insert({
-      session_id: sessionId,
-      event_type: 'transcription_complete',
-      module_name: moduleType,
-      metadata: {
-        duration_seconds: duration,
-        transcript_length: text.length,
-        confidence: 0.95
+    // Some callers provide non-UUID session identifiers (e.g. deep-profile quick inputs).
+    // We must not fail transcription for instrumentation logging issues.
+    const sessionIdStr = String(sessionId);
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionIdStr);
+    const moduleName = moduleType ? String(moduleType) : null;
+
+    try {
+      const { error: instrumentationError } = await supabase.from('voice_instrumentation').insert({
+        session_id: isUuid ? sessionIdStr : null,
+        event_type: 'transcription_complete',
+        module_name: moduleName,
+        metadata: {
+          duration_seconds: duration,
+          transcript_length: text.length,
+          confidence: 0.95,
+          session_id_raw: isUuid ? null : sessionIdStr,
+        }
+      });
+      if (instrumentationError) {
+        console.warn('⚠️ Instrumentation insert failed (non-blocking):', instrumentationError.message);
       }
-    });
+    } catch (e) {
+      console.warn('⚠️ Instrumentation insert threw (non-blocking):', e);
+    }
 
     return new Response(
       JSON.stringify({
