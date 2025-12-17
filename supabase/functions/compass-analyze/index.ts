@@ -73,16 +73,16 @@ Return ONLY valid JSON (no markdown code blocks):
   "quickWins": ["This week: Try ChatGPT for one daily task", "This month: Host 30-min AI demo with team"]
 }`;
 
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
-        max_completion_tokens: 1500,
+    // Call OpenAI API with caching and optimized model
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+    
+    const { callOpenAI, selectModel } = await import('../_shared/openai-utils.ts');
+    
+    const aiResult = await callOpenAI(
+      {
         messages: [
           {
             role: 'system',
@@ -92,25 +92,24 @@ Return ONLY valid JSON (no markdown code blocks):
             role: 'user',
             content: prompt
           }
-        ]
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI Gateway error:', response.status, errorText);
-      throw new Error(`AI Gateway error: ${errorText}`);
+        ],
+        model: selectModel('analysis'), // Use optimized model selection
+        max_tokens: 2000,
+        temperature: 0.7,
+        response_format: { type: 'json_object' }
+      },
+      {
+        useCache: true,
+        supabase: supabase,
+      }
+    );
+    
+    if (aiResult.cached) {
+      console.log('✅ Used cached response for compass analysis');
     }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-
-    if (!content) {
-      throw new Error('No content in AI response');
-    }
-
+    
     // Parse JSON response - strip markdown code blocks if present
-    let cleanContent = content.trim();
+    let cleanContent = aiResult.content.trim();
     if (cleanContent.startsWith('```json')) {
       cleanContent = cleanContent.replace(/^```json\n/, '').replace(/\n```$/, '');
     } else if (cleanContent.startsWith('```')) {
@@ -118,11 +117,7 @@ Return ONLY valid JSON (no markdown code blocks):
     }
     const results = JSON.parse(cleanContent);
 
-    // Store in database
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    // Store in database (supabase already initialized above)
 
     await supabase.from('voice_sessions').upsert({
       session_id: sessionId,

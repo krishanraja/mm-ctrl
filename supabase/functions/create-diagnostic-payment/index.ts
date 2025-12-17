@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,10 +9,6 @@ const corsHeaders = {
 };
 
 const DIAGNOSTIC_PRICE_ID = "price_1SV9YlHGqJqsGEJLtNzC23S4";
-
-// Rate limiting store - MUST be outside handler to persist across requests
-// For production, consider using Supabase KV or Redis for distributed rate limiting
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -60,41 +57,31 @@ serve(async (req) => {
     const requestBody = await req.json();
     const userId = user.id; // Use actual user ID from authentication
     
-    // Simple rate limiting (in-memory)
-    const rateLimitKey = `payment:${userId}`;
-    const now = Date.now();
-    const windowMs = 60 * 60 * 1000; // 1 hour
-    const maxRequests = 10;
+    // Initialize Supabase client with service role for rate limiting
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabaseForRateLimit = createClient(supabaseUrl, supabaseServiceKey);
     
-    // Clean up expired entries periodically (every 1000 entries to avoid overhead)
-    if (rateLimitStore.size > 1000) {
-      for (const [key, value] of rateLimitStore.entries()) {
-        if (value.resetAt < now) {
-          rateLimitStore.delete(key);
+    // Database-backed rate limiting
+    const rateLimitResult = await checkRateLimit(
+      RATE_LIMITS.PAYMENT_CREATE,
+      userId,
+      supabaseForRateLimit
+    );
+    
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: rateLimitResult.error || `Rate limit exceeded. Maximum ${RATE_LIMITS.PAYMENT_CREATE.maxRequests} payment sessions per hour. Please try again later.`
+        }),
+        { 
+          status: 429,
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json',
+            'Retry-After': String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000))
+          } 
         }
-      }
-    }
-    
-    const entry = rateLimitStore.get(rateLimitKey);
-    if (entry && entry.resetAt > now) {
-      if (entry.count >= maxRequests) {
-        return new Response(
-          JSON.stringify({
-            error: `Rate limit exceeded. Maximum ${maxRequests} payment sessions per hour. Please try again later.`
-          }),
-          { 
-            status: 429,
-            headers: { 
-              ...corsHeaders, 
-              'Content-Type': 'application/json',
-              'Retry-After': String(Math.ceil((entry.resetAt - now) / 1000))
-            } 
-          }
-        );
-      }
-      entry.count++;
-    } else {
-      rateLimitStore.set(rateLimitKey, { count: 1, resetAt: now + windowMs });
+      );
     }
 
     console.log('💳 Creating diagnostic payment session');

@@ -70,26 +70,111 @@ async function decryptToken(encryptedToken: string): Promise<string> {
 // Get or refresh Google OAuth token with service account authentication
 async function getGoogleToken(supabase: any): Promise<string> {
   try {
-    // For production Google Sheets integration, use service account approach
-    // This is a simplified implementation for testing - requires proper service account setup
+    // Try service account approach first (preferred for server-to-server)
+    const serviceAccountKey = Deno.env.get('GOOGLE_OAUTH_CREDENTIALS');
+    
+    if (serviceAccountKey) {
+      try {
+        const credentials = JSON.parse(serviceAccountKey);
+        const tokenResult = await getGoogleOAuthToken(credentials);
+        
+        if (tokenResult.success && tokenResult.token) {
+          console.log('✅ Successfully obtained Google OAuth token via service account');
+          return tokenResult.token;
+        } else {
+          console.warn('⚠️ Service account OAuth failed, falling back to OAuth client');
+        }
+      } catch (parseError) {
+        console.error('Error parsing service account credentials:', parseError);
+      }
+    }
+    
+    // Fallback to OAuth client credentials (for user-based auth if needed)
     const clientId = Deno.env.get('GOOGLE_OAUTH_CLIENT_ID');
     const clientSecret = Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET');
     
     if (!clientId || !clientSecret) {
-      console.log('Google OAuth credentials not configured, using mock token for testing');
-      // Return a test token that will allow the function to proceed but skip actual Google API calls
+      console.warn('⚠️ Google OAuth credentials not configured - Google Sheets sync will use test mode');
       return 'test_token_for_logging_only';
     }
     
-    // TODO: Implement proper service account JWT authentication
-    // For now, return a working token placeholder
-    console.log('Using simplified authentication for Google Sheets sync');
-    return 'working_test_token';
+    // For OAuth client flow, we would need to implement the full OAuth 2.0 flow
+    // with refresh tokens stored in the database. For now, return test token.
+    // TODO: Implement full OAuth 2.0 flow with refresh token storage if needed
+    console.warn('⚠️ OAuth client credentials provided but full OAuth flow not implemented. Using test mode.');
+    return 'test_token_for_logging_only';
     
   } catch (error) {
     console.error('Error getting Google token:', error);
-    // Don't throw - return test token to allow function to continue
     return 'error_fallback_token';
+  }
+}
+
+// Generate Google OAuth token using service account JWT (similar to Vertex AI)
+async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean; token?: string }> {
+  try {
+    // Google Sheets API requires spreadsheets scope
+    const jwtHeader = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+    
+    const now = Math.floor(Date.now() / 1000);
+    const jwtPayload = btoa(JSON.stringify({
+      iss: credentials.client_email,
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      aud: 'https://oauth2.googleapis.com/token',
+      exp: now + 3600, // Token valid for 1 hour
+      iat: now
+    }));
+
+    const privateKeyPem = credentials.private_key
+      .replace(/-----BEGIN PRIVATE KEY-----/, '')
+      .replace(/-----END PRIVATE KEY-----/, '')
+      .replace(/\n/g, '');
+    
+    const binaryKey = Uint8Array.from(atob(privateKeyPem), c => c.charCodeAt(0));
+    
+    const cryptoKey = await crypto.subtle.importKey(
+      'pkcs8',
+      binaryKey,
+      { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    const signatureInput = `${jwtHeader}.${jwtPayload}`;
+    const signature = await crypto.subtle.sign(
+      'RSASSA-PKCS1-v1_5',
+      cryptoKey,
+      new TextEncoder().encode(signatureInput)
+    );
+
+    const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+
+    const jwt = `${signatureInput}.${signatureBase64}`;
+
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion: jwt
+      })
+    });
+
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error('Google OAuth token error:', errorText);
+      return { success: false };
+    }
+
+    const tokenData = await tokenResponse.json();
+    return { success: true, token: tokenData.access_token };
+
+  } catch (error) {
+    console.error('OAuth token generation error:', error);
+    return { success: false };
   }
 }
 

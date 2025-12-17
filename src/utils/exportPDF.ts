@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { uploadPDFToStorage } from './supabaseStorage';
 
 export interface ExportData {
   leaderName: string;
@@ -25,6 +26,7 @@ export interface ExportData {
     scenario_key: string;
     summary: string;
   }>;
+  assessmentId?: string; // Optional: for storage upload
 }
 
 export async function exportDiagnosticPDF(data: ExportData): Promise<void> {
@@ -191,7 +193,26 @@ export async function exportDiagnosticPDF(data: ExportData): Promise<void> {
     );
   }
 
-  // Save
+  // Generate PDF blob
+  const pdfBlob = pdf.output('blob');
   const fileName = `AI-Leadership-Benchmark-${data.leaderName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+  
+  // Save to local file system (user download)
   pdf.save(fileName);
+  
+  // Upload to Supabase Storage if assessmentId is provided
+  if (data.assessmentId) {
+    try {
+      const uploadResult = await uploadPDFToStorage(pdfBlob, data.assessmentId, data.leaderName);
+      if (uploadResult.success) {
+        console.log('✅ PDF uploaded to storage:', uploadResult.path);
+      } else {
+        console.warn('⚠️ PDF upload to storage failed:', uploadResult.error);
+        // Don't throw - local download still succeeded
+      }
+    } catch (error) {
+      console.warn('⚠️ PDF upload exception:', error);
+      // Don't throw - local download still succeeded
+    }
+  }
 }

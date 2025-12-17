@@ -157,13 +157,16 @@ Visit: https://supabase.com/dashboard/project/bkyuxvschuwngtcdhsyg/functions
 
 ## Deployment
 
+### Frontend (Vercel)
 1. Push changes to the repository
-2. Lovable auto-deploys on push
-3. Edge functions deploy automatically
+2. Vercel auto-deploys on push (if connected)
+3. Or manually deploy via Vercel CLI: `vercel --prod`
 
-Or manually via Lovable:
-1. Open [Lovable Project](https://lovable.dev/projects/e5f2499f-2eac-434d-91ad-1dcac5472915)
-2. Click **Share → Publish**
+### Edge Functions (Supabase)
+1. Edge functions deploy automatically on push to `supabase/functions/`
+2. Or manually deploy via Supabase CLI: `supabase functions deploy <function-name>`
+
+See [VERCEL_SETUP.md](./VERCEL_SETUP.md) for detailed deployment instructions.
 
 ---
 
@@ -204,4 +207,4 @@ Or manually via Lovable:
 
 ---
 
-*Built with [Lovable](https://lovable.dev)*
+*Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*

@@ -1,14 +1,12 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
+import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-// Rate limiting store - MUST be outside handler to persist across requests
-// For production, consider using Supabase KV or Redis for distributed rate limiting
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 // ============= COGNITIVE FRAMEWORKS TRAINING =============
 // This training anchor ensures all AI outputs use proven decision-making frameworks
@@ -117,46 +115,37 @@ serve(async (req) => {
   }
 
   try {
+    // Initialize Supabase client for rate limiting
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
     // Rate limiting: 5 AI generations per hour per session
     const requestBody = await req.json();
     const sessionId = requestBody.sessionId || requestBody.contactData?.email || 'anonymous';
     
-    // Simple rate limiting (in-memory)
-    const rateLimitKey = `ai-generate:${sessionId}`;
-    const now = Date.now();
-    const windowMs = 60 * 60 * 1000; // 1 hour
-    const maxRequests = 5;
+    // Database-backed rate limiting
+    const rateLimitResult = await checkRateLimit(
+      RATE_LIMITS.AI_GENERATE,
+      sessionId,
+      supabase
+    );
     
-    // Clean up expired entries periodically (every 1000 entries to avoid overhead)
-    if (rateLimitStore.size > 1000) {
-      for (const [key, value] of rateLimitStore.entries()) {
-        if (value.resetAt < now) {
-          rateLimitStore.delete(key);
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: rateLimitResult.error || `Rate limit exceeded. Maximum ${RATE_LIMITS.AI_GENERATE.maxRequests} AI generations per hour. Please try again later.`
+        }),
+        { 
+          status: 429,
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json',
+            'Retry-After': String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000))
+          } 
         }
-      }
-    }
-    
-    const entry = rateLimitStore.get(rateLimitKey);
-    if (entry && entry.resetAt > now) {
-      if (entry.count >= maxRequests) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: `Rate limit exceeded. Maximum ${maxRequests} AI generations per hour. Please try again later.`
-          }),
-          { 
-            status: 429,
-            headers: { 
-              ...corsHeaders, 
-              'Content-Type': 'application/json',
-              'Retry-After': String(Math.ceil((entry.resetAt - now) / 1000))
-            } 
-          }
-        );
-      }
-      entry.count++;
-    } else {
-      rateLimitStore.set(rateLimitKey, { count: 1, resetAt: now + windowMs });
+      );
     }
 
     const { assessmentData, contactData, deepProfileData } = requestBody;
@@ -563,7 +552,12 @@ async function tryVertexAI(prompt: string, retries = 1): Promise<{ success: bool
       const credentials = JSON.parse(serviceAccountKey);
       const projectId = credentials.project_id;
 
-      const tokenResponse = await getGoogleOAuthToken(credentials);
+      // Get Supabase client for token caching
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabaseForCache = createClient(supabaseUrl, supabaseServiceKey);
+
+      const tokenResponse = await getGoogleOAuthToken(credentials, supabaseForCache);
       if (!tokenResponse.success) {
         console.error('Failed to get OAuth token');
         continue;
@@ -628,14 +622,39 @@ async function tryVertexAI(prompt: string, retries = 1): Promise<{ success: bool
   return { success: false };
 }
 
-async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean; token?: string }> {
+async function getGoogleOAuthToken(credentials: any, supabase?: any): Promise<{ success: boolean; token?: string }> {
   try {
+    const tokenKey = 'vertex_ai:cloud-platform';
+    const scope = 'https://www.googleapis.com/auth/cloud-platform';
+    
+    // Try to get cached token if Supabase client is provided
+    if (supabase) {
+      try {
+        const { data: cachedToken } = await supabase
+          .from('oauth_token_cache')
+          .select('access_token, expires_at')
+          .eq('token_key', tokenKey)
+          .gt('expires_at', new Date().toISOString())
+          .single();
+        
+        if (cachedToken?.access_token) {
+          console.log('✅ Using cached OAuth token');
+          return { success: true, token: cachedToken.access_token };
+        }
+      } catch (cacheError) {
+        // Cache miss or error - continue to generate new token
+        console.log('ℹ️ No valid cached token, generating new one');
+      }
+    }
+    
+    // Generate new token
+    console.log('🔄 Generating new OAuth token');
     const jwtHeader = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
     
     const now = Math.floor(Date.now() / 1000);
     const jwtPayload = btoa(JSON.stringify({
       iss: credentials.client_email,
-      scope: 'https://www.googleapis.com/auth/cloud-platform',
+      scope: scope,
       aud: 'https://oauth2.googleapis.com/token',
       exp: now + 3600,
       iat: now
@@ -686,7 +705,25 @@ async function getGoogleOAuthToken(credentials: any): Promise<{ success: boolean
     }
 
     const tokenData = await tokenResponse.json();
-    return { success: true, token: tokenData.access_token };
+    const accessToken = tokenData.access_token;
+    const expiresIn = tokenData.expires_in || 3600; // Default to 1 hour
+    
+    // Cache the token if Supabase client is provided
+    if (supabase && accessToken) {
+      try {
+        await supabase.rpc('get_or_refresh_oauth_token', {
+          p_token_key: tokenKey,
+          p_access_token: accessToken,
+          p_expires_in_seconds: expiresIn
+        });
+        console.log('✅ Cached new OAuth token');
+      } catch (cacheError) {
+        console.warn('⚠️ Failed to cache OAuth token:', cacheError);
+        // Don't fail the request if caching fails
+      }
+    }
+    
+    return { success: true, token: accessToken };
 
   } catch (error) {
     console.error('OAuth token generation error:', error);

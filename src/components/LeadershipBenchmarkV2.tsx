@@ -234,6 +234,7 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
         scenario_key: s.scenario_key,
         summary: s.summary,
       })),
+      assessmentId, // Include assessmentId for storage upload
     };
 
     try {

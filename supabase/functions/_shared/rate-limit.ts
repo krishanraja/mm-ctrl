@@ -2,7 +2,11 @@
  * Rate Limiting Utility for Edge Functions
  * 
  * Purpose: Prevents abuse and cost escalation by limiting requests per session/IP
+ * 
+ * Uses database-backed rate limiting for distributed edge function deployments
  */
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
 interface RateLimitConfig {
   maxRequests: number;
@@ -17,64 +21,77 @@ interface RateLimitResult {
   error?: string;
 }
 
-// In-memory rate limit store (simple implementation)
-// For production, consider using Redis or Supabase KV
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-
 /**
- * Checks if a request should be rate limited
+ * Checks if a request should be rate limited using database-backed storage
  * @param config Rate limit configuration
  * @param identifier Unique identifier (session_id, IP, user_id)
+ * @param supabase Supabase client (must use service role key)
  * @returns Rate limit result
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   config: RateLimitConfig,
-  identifier: string
-): RateLimitResult {
-  const key = `${config.identifier}:${identifier}`;
-  const now = Date.now();
+  identifier: string,
+  supabase: any
+): Promise<RateLimitResult> {
+  const rateLimitKey = `${config.identifier}:${identifier}`;
+  const windowSeconds = Math.floor(config.windowMs / 1000);
   
-  // Clean up expired entries (simple cleanup)
-  if (rateLimitStore.size > 10000) {
-    for (const [k, v] of rateLimitStore.entries()) {
-      if (v.resetAt < now) {
-        rateLimitStore.delete(k);
-      }
+  try {
+    // Call database function to check and update rate limit atomically
+    const { data, error } = await supabase.rpc('check_rate_limit', {
+      p_rate_limit_key: rateLimitKey,
+      p_max_requests: config.maxRequests,
+      p_window_seconds: windowSeconds
+    });
+    
+    if (error) {
+      console.error('Rate limit check error:', error);
+      // On error, allow the request but log the issue
+      return {
+        allowed: true,
+        remaining: config.maxRequests - 1,
+        resetAt: Date.now() + config.windowMs,
+        error: 'Rate limit check failed, allowing request'
+      };
     }
-  }
-  
-  const entry = rateLimitStore.get(key);
-  
-  // If no entry or window expired, create new entry
-  if (!entry || entry.resetAt < now) {
-    const resetAt = now + config.windowMs;
-    rateLimitStore.set(key, { count: 1, resetAt });
+    
+    if (!data || data.length === 0) {
+      // Fallback if function returns no data
+      return {
+        allowed: true,
+        remaining: config.maxRequests - 1,
+        resetAt: Date.now() + config.windowMs
+      };
+    }
+    
+    const result = data[0];
+    const resetAtMs = new Date(result.reset_at).getTime();
+    
+    if (!result.allowed) {
+      return {
+        allowed: false,
+        remaining: result.remaining,
+        resetAt: resetAtMs,
+        error: `Rate limit exceeded. Maximum ${config.maxRequests} requests per ${windowSeconds} seconds.`
+      };
+    }
+    
+    return {
+      allowed: true,
+      remaining: result.remaining,
+      resetAt: resetAtMs
+    };
+    
+  } catch (error) {
+    console.error('Rate limit check exception:', error);
+    // On exception, allow the request but log the issue
     return {
       allowed: true,
       remaining: config.maxRequests - 1,
-      resetAt
+      resetAt: Date.now() + config.windowMs,
+      error: 'Rate limit check exception, allowing request'
     };
   }
-  
-  // Check if limit exceeded
-  if (entry.count >= config.maxRequests) {
-    return {
-      allowed: false,
-      remaining: 0,
-      resetAt: entry.resetAt,
-      error: `Rate limit exceeded. Maximum ${config.maxRequests} requests per ${config.windowMs / 1000} seconds.`
-    };
-  }
-  
-  // Increment count
-  entry.count++;
-  rateLimitStore.set(key, entry);
-  
-  return {
-    allowed: true,
-    remaining: config.maxRequests - entry.count,
-    resetAt: entry.resetAt
-  };
 }
 
 /**

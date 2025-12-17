@@ -1,13 +1,10 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-// Rate limiting store - MUST be outside handler to persist across requests
-// For production, consider using Supabase KV or Redis for distributed rate limiting
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -15,52 +12,41 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Initialize Supabase client for rate limiting
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    // Initialize Supabase client with service role for rate limiting
+    const supabaseForRateLimit = createClient(supabaseUrl, supabaseServiceKey);
+    
     // Rate limiting: 3 assessments per hour per session
     const requestBody = await req.json();
     const sessionId = requestBody.sessionId || 'anonymous';
     
-    // Simple rate limiting check (in-memory)
-    // For production, consider using Supabase KV or Redis
-    const rateLimitKey = `assessment:${sessionId}`;
-    const now = Date.now();
-    const windowMs = 60 * 60 * 1000; // 1 hour
-    const maxRequests = 3;
+    // Database-backed rate limiting
+    const rateLimitResult = await checkRateLimit(
+      RATE_LIMITS.ASSESSMENT_CREATE,
+      sessionId,
+      supabaseForRateLimit
+    );
     
-    // Clean up expired entries periodically (every 1000 entries to avoid overhead)
-    if (rateLimitStore.size > 1000) {
-      for (const [key, value] of rateLimitStore.entries()) {
-        if (value.resetAt < now) {
-          rateLimitStore.delete(key);
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: rateLimitResult.error || `Rate limit exceeded. Maximum ${RATE_LIMITS.ASSESSMENT_CREATE.maxRequests} assessments per hour. Please try again later.`
+        }),
+        { 
+          status: 429,
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json',
+            'Retry-After': String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000))
+          } 
         }
-      }
+      );
     }
-    
-    const entry = rateLimitStore.get(rateLimitKey);
-    if (entry && entry.resetAt > now) {
-      if (entry.count >= maxRequests) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: `Rate limit exceeded. Maximum ${maxRequests} assessments per hour. Please try again later.`
-          }),
-          { 
-            status: 429,
-            headers: { 
-              ...corsHeaders, 
-              'Content-Type': 'application/json',
-              'Retry-After': String(Math.ceil((entry.resetAt - now) / 1000))
-            } 
-          }
-        );
-      }
-      entry.count++;
-    } else {
-      rateLimitStore.set(rateLimitKey, { count: 1, resetAt: now + windowMs });
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
     // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
     const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';

@@ -156,29 +156,27 @@ serve(async (req) => {
 
     console.log('Sending request to OpenAI with', openAIMessages.length, 'messages');
 
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
+    // Call OpenAI API with caching
+    const { callOpenAI } = await import('../_shared/openai-utils.ts');
+    
+    const aiResult = await callOpenAI(
+      {
         messages: openAIMessages,
-        max_completion_tokens: 1500,
-        stream: false,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('OpenAI API error:', errorData);
-      throw new Error(`OpenAI API error: ${response.status}`);
+        model: 'gpt-4o', // Fixed model name (was incorrectly 'gpt-5-2025-08-07')
+        max_tokens: 1500,
+        temperature: 0.7,
+      },
+      {
+        useCache: true,
+        supabase: supabase,
+      }
+    );
+    
+    const aiResponse = aiResult.content;
+    
+    if (aiResult.cached) {
+      console.log('✅ Used cached response for chat');
     }
-
-    const data = await response.json();
-    const aiResponse = data.choices[0]?.message?.content || '';
 
     console.log('Received AI response, length:', aiResponse.length);
     
