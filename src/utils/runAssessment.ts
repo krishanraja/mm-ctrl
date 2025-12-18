@@ -119,16 +119,12 @@ function validateAIContent(data: any): { valid: boolean; missing: string[] } {
 }
 
 // FALLBACK: Compute dimension scores directly from quiz answers when AI fails
-// Now includes score variance for nuanced, non-round numbers
 function computeDimensionScoresFromQuiz(
   assessmentData: any,
   responseTimes: number[] = [],
   secondaryAnswers: Record<string, string> = {}
 ): any[] {
   console.log('🔧 Computing fallback dimension scores from quiz data:', assessmentData);
-  
-  // Import score variance utility dynamically to avoid circular deps
-  const { applyScoreVariance } = require('@/utils/scoreVariance');
   
   // Map assessment data keys to dimension keys
   const dimensionMapping = {
@@ -147,13 +143,9 @@ function computeDimensionScoresFromQuiz(
       ? assessmentData[assessmentKey] 
       : 0;
     
-    // Apply variance to get nuanced, non-round score
-    const finalScore = applyScoreVariance(
-      baseScore,
-      config.key,
-      responseTimes,
-      secondaryAnswers
-    );
+    // Add small variance based on hash of dimension key for non-round numbers
+    const variance = ((config.key.charCodeAt(0) + config.key.charCodeAt(1)) % 7) - 3;
+    const finalScore = Math.max(0, Math.min(100, baseScore + variance));
     
     // Determine tier based on final score
     let tier = 'AI-Emerging';
@@ -169,7 +161,7 @@ function computeDimensionScoresFromQuiz(
     });
   }
   
-  console.log('✅ Fallback dimension scores computed with variance:', scores);
+  console.log('✅ Fallback dimension scores computed:', scores);
   return scores;
 }
 
@@ -353,6 +345,17 @@ export async function runAssessment(
     progress('creating', 10, 'Creating your assessment...');
 
     // Step 1: Create leader assessment record
+    // #region agent log - Debug assessment creation
+    console.log('🔍 [DEBUG] Calling create-leader-assessment with:', JSON.stringify({
+      hasContactData: !!contactData,
+      contactDataKeys: contactData ? Object.keys(contactData) : [],
+      hasAssessmentData: !!assessmentData,
+      hasDeepProfileData: !!deepProfileData,
+      sessionId: sessionId
+    }));
+    fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'runAssessment.ts:356',message:'Calling create-leader-assessment',data:{hasContactData:!!contactData,hasAssessmentData:!!assessmentData,sessionId},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
+    
     const { data: createData, error: createError } = await supabase.functions.invoke(
       'create-leader-assessment',
       {
@@ -365,12 +368,25 @@ export async function runAssessment(
       }
     );
 
+    // #region agent log - Debug assessment creation result
+    console.log('🔍 [DEBUG] create-leader-assessment response:', JSON.stringify({
+      hasData: !!createData,
+      hasError: !!createError,
+      createData: createData,
+      errorMessage: createError?.message,
+      errorContext: createError?.context
+    }));
+    fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'runAssessment.ts:375',message:'create-leader-assessment response',data:{hasData:!!createData,hasError:!!createError,createData,errorMessage:createError?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
+
     if (createError) {
       console.error('❌ Create assessment error:', createError);
+      console.error('❌ Full error object:', JSON.stringify(createError, null, 2));
       throw new Error(`Failed to create assessment: ${createError.message}`);
     }
     if (!createData?.assessmentId) {
-      throw new Error('No assessment ID returned from create-leader-assessment');
+      console.error('❌ No assessmentId in response. createData:', JSON.stringify(createData));
+      throw new Error('No assessment ID returned from create-leader-assessment. Response: ' + JSON.stringify(createData));
     }
 
     assessmentId = createData.assessmentId;
@@ -637,9 +653,7 @@ export async function runAssessment(
           table: 'assessment_events', 
           records: eventRecords, 
           options: { 
-            logPrefix: '📋',
-            onConflict: 'assessment_id,question_id,session_id',
-            ignoreDuplicates: true
+            logPrefix: '📋'
           } 
         },
       ]);
