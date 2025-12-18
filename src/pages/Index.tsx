@@ -4,19 +4,33 @@ import { VoiceOrchestrator } from '@/components/voice/VoiceOrchestrator';
 import { AssessmentHistory } from '@/components/AssessmentHistory';
 import { SingleScrollResults } from '@/components/SingleScrollResults';
 import AuthScreen from '@/components/auth/AuthScreen';
+import { QuickVoiceEntry } from '@/components/QuickVoiceEntry';
 import { AssessmentProvider, useAssessment } from '@/contexts/AssessmentContext';
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { persistAssessmentId } from '@/utils/assessmentPersistence';
+import { persistAssessmentId, getPersistedAssessmentId } from '@/utils/assessmentPersistence';
 import type { User } from '@supabase/supabase-js';
 
-type AssessmentMode = 'hero' | 'voice' | 'quiz' | 'signin' | 'view-results';
+// Simplified: email-capture mode removed since QuickVoiceEntry handles it inline
+type AssessmentMode = 'hero' | 'quick-entry' | 'voice' | 'quiz' | 'signin' | 'view-results';
 
 const IndexContent = () => {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<AssessmentMode>('hero');
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [user, setUser] = useState<User | null>(null);
   const { contactData, setContactData } = useAssessment();
+
+  // Check for existing baseline and redirect returning users to /today
+  useEffect(() => {
+    const { assessmentId } = getPersistedAssessmentId();
+    if (assessmentId) {
+      // User has completed a baseline - redirect to Today for ongoing loop
+      console.log('📍 Returning user detected, redirecting to /today');
+      navigate('/today', { replace: true });
+    }
+  }, [navigate]);
 
   useEffect(() => {
     // Get initial session
@@ -36,6 +50,11 @@ const IndexContent = () => {
     await supabase.auth.signOut();
     setUser(null);
   };
+
+  // QuickVoiceEntry now handles email capture inline, so we just navigate to /today when done
+  const handleQuickEntryComplete = useCallback(() => {
+    navigate('/today');
+  }, [navigate]);
 
   const handleViewAssessment = useCallback(async (assessmentId: string) => {
     // Persist the assessment ID for the results view
@@ -90,7 +109,12 @@ const IndexContent = () => {
 
   return (
     <>
-      {mode === 'voice' ? (
+      {mode === 'quick-entry' ? (
+        <QuickVoiceEntry
+          onComplete={handleQuickEntryComplete}
+          onSkipToQuiz={() => setMode('quiz')}
+        />
+      ) : mode === 'voice' ? (
         <VoiceOrchestrator 
           sessionId={sessionId}
           onBack={() => setMode('hero')}
@@ -117,7 +141,7 @@ const IndexContent = () => {
       ) : (
         <div className="min-h-screen">
           <HeroSection 
-            onStartVoice={() => setMode('voice')} 
+            onStartVoice={() => setMode('quick-entry')} 
             onStartQuiz={() => setMode('quiz')}
             onSignIn={() => setMode('signin')}
             user={user}
