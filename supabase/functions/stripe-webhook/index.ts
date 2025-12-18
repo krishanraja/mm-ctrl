@@ -192,3 +192,4 @@ async function handlePaymentFailed(supabase: any, paymentIntent: Stripe.PaymentI
   // Could log to a payments_log table or send notification
   // For now, just log
 }
+

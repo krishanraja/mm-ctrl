@@ -175,3 +175,4 @@ export function normalizePromptForCache(prompt: string): string {
     .replace(/assessment[_-]?id["\s:=]+[a-zA-Z0-9_-]+/gi, 'assessment_id=[ASSESSMENT]') // Assessment IDs
     .trim();
 }
+

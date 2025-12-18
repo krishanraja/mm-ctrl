@@ -128,3 +128,4 @@ Create a new migration to:
 2. Test RLS policies with authenticated and unauthenticated users
 3. Verify service role can still perform necessary operations
 4. Document any exceptions or special cases
+

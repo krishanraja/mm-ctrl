@@ -114,7 +114,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             {/* Badge - Entry point above card */}
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-[hsl(var(--mint)/0.15)] text-[hsl(var(--ink))] border border-[hsl(var(--mint)/0.3)]">
               <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--mint))] animate-pulse" />
-              Free 10-minute diagnostic
+              30 seconds to your first insight
             </span>
             
             {/* Action Buttons - Clear labels on mobile */}
@@ -196,17 +196,18 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               className={`text-base sm:text-lg text-[hsl(var(--mid-grey))] leading-relaxed mb-6 sm:mb-8 max-w-lg transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '350ms' }}
             >
-              Spend 10 minutes mapping how AI fits your role. Get practical next steps and the questions you'll need when vendors or staff bring AI to your door.
+              Speak your biggest AI uncertainty. Get one insight and one action for this week. No course. No overwhelm.
             </p>
             
-            {/* CTA Button */}
+            {/* CTA Buttons */}
             <div
               className={`transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '450ms' }}
             >
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                {/* Primary: Quick 30-second entry */}
                 <Button 
-                  onClick={onStartQuiz}
+                  onClick={onStartVoice}
                   size="lg"
                   className="
                     group w-full sm:w-auto 
@@ -222,10 +223,11 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     rounded-xl
                   "
                 >
-                  Start diagnostic
+                  30 seconds to insight
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
 
+                {/* Secondary: Full diagnostic or Continue */}
                 {hasBaseline ? (
                   <Button
                     onClick={() => navigate('/today')}
@@ -233,9 +235,18 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     variant="outline"
                     className="w-full sm:w-auto h-12 sm:h-14 rounded-xl"
                   >
-                    Continue
+                    Continue to Today
                   </Button>
-                ) : null}
+                ) : (
+                  <Button
+                    onClick={onStartQuiz}
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl text-[hsl(var(--mid-grey))] hover:text-[hsl(var(--ink))]"
+                  >
+                    Full 2-min diagnostic →
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -252,21 +263,21 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-3 sm:gap-6 lg:gap-8">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(var(--mid-grey))]">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-white shadow-sm border border-[hsl(var(--light-grey))] flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
+                  <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
                 </div>
-                <span>100% confidential</span>
+                <span>30 seconds/week</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(var(--mid-grey))]">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-white shadow-sm border border-[hsl(var(--light-grey))] flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
+                  <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
                 </div>
-                <span>Under 10 minutes</span>
+                <span>100% private</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(var(--mid-grey))]">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-white shadow-sm border border-[hsl(var(--light-grey))] flex items-center justify-center flex-shrink-0">
                   <Users className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
                 </div>
-                <span>500+ leaders</span>
+                <span>No course. No fluff.</span>
               </div>
             </div>
           </div>

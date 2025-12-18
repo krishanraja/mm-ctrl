@@ -88,3 +88,4 @@ $$;
 -- Grant execute permissions
 GRANT EXECUTE ON FUNCTION public.get_or_refresh_oauth_token TO service_role;
 GRANT EXECUTE ON FUNCTION public.cleanup_expired_oauth_tokens TO service_role;
+

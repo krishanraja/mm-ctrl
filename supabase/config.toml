@@ -56,6 +56,9 @@ verify_jwt = false
 [functions.update-adoption-momentum]
 verify_jwt = false
 
+[functions.batch-compute-drift]
+verify_jwt = false
+
 [functions.batch-process-pending-syncs]
 verify_jwt = false
 

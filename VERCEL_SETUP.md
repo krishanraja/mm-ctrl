@@ -97,3 +97,4 @@ After deployment:
 - Verify SUPABASE_URL matches project ID: `bkyuxvschuwngtcdhsyg`
 - Check that anon key is correct format
 - Ensure RLS policies allow access if needed
+

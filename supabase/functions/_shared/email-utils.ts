@@ -120,10 +120,11 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
  * Get default email sender based on context
  */
 export function getDefaultSender(context: 'booking' | 'diagnostic' | 'confirmation' | 'reminder' | 'notification' = 'notification'): string {
+  // All emails use verified themindmaker.ai domain
   const senders = {
-    booking: 'AI Assessment <noreply@fractional-ai.com>',
+    booking: 'MindMaker <no-reply@themindmaker.ai>',
     diagnostic: 'AI Leadership Growth Benchmark <no-reply@themindmaker.ai>',
-    confirmation: 'Krish from MindMaker <onboarding@resend.dev>',
+    confirmation: 'Krish from MindMaker <no-reply@themindmaker.ai>',
     reminder: 'MindMaker <no-reply@themindmaker.ai>',
     notification: 'MindMaker <no-reply@themindmaker.ai>',
   };
@@ -179,3 +180,4 @@ export function createEmailButton(href: string, text: string, color: string = '#
     </a>
   `;
 }
+

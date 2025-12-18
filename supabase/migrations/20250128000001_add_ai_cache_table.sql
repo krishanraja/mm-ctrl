@@ -47,3 +47,4 @@ END;
 $$;
 
 COMMENT ON FUNCTION public.cleanup_expired_ai_cache() IS 'Cleans up expired AI response cache entries. Returns count of deleted rows.';
+

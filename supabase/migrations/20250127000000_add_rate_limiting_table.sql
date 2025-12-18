@@ -101,3 +101,4 @@ $$;
 -- Grant execute permissions
 GRANT EXECUTE ON FUNCTION public.check_rate_limit TO service_role;
 GRANT EXECUTE ON FUNCTION public.cleanup_expired_rate_limits TO service_role;
+

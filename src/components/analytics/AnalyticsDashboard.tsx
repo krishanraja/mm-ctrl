@@ -209,3 +209,4 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, icon: Icon, chang
     </Card>
   );
 };
+

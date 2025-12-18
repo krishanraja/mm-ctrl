@@ -151,3 +151,4 @@ const { data, error } = await supabase
 - User ID is automatically looked up by email
 - If user doesn't exist, user_id will be null
 - You can manually provide user_id in metadata when sending
+

@@ -148,3 +148,4 @@ function checkComplete(status: AssessmentStatus): boolean {
 function checkHasErrors(status: AssessmentStatus): boolean {
   return !!(status.error_log && status.error_log.length > 0);
 }
+

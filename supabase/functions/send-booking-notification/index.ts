@@ -130,7 +130,9 @@ serve(async (req) => {
       </div>
     `;
 
-    // Send email using Resend
+    console.log('📧 Sending booking notification to krish@themindmaker.ai');
+
+    // Send email using Resend - using verified themindmaker.ai domain
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -138,8 +140,8 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'AI Assessment <noreply@fractional-ai.com>',
-        to: ['hello@fractional-ai.com'],
+        from: 'MindMaker <no-reply@themindmaker.ai>',
+        to: ['krish@themindmaker.ai'],
         subject: emailSubject,
         html: emailHtml,
         reply_to: booking.email
@@ -172,10 +174,10 @@ serve(async (req) => {
       
       <p>Based on your AI Assessment, we've identified this as a ${service.priority} priority opportunity for your organization.</p>
       
-      <p>If you have any immediate questions, feel free to reply to this email or call us at +1 (234) 567-8900.</p>
+      <p>If you have any immediate questions, feel free to reply to this email.</p>
       
       <p>Best regards,<br>
-      The Fractional AI Team</p>
+      The MindMaker Team</p>
     `;
 
     await fetch('https://api.resend.com/emails', {
@@ -185,7 +187,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Fractional AI <hello@fractional-ai.com>',
+        from: 'MindMaker <no-reply@themindmaker.ai>',
         to: [booking.email],
         subject: `Confirmation: Your ${service.title} Request`,
         html: confirmationHtml

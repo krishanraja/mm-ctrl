@@ -239,6 +239,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       // Set minimal contact data to satisfy downstream requirements
       // Real contact collection happens on results page via UnlockResultsForm
       if (!contactData) {
+        // #region agent log
+        fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UnifiedAssessment.tsx:useEffect:contactData',message:'WARNING: Setting EMPTY contactData - this causes email issues!',data:{hypothesisId:'B',warning:'Contact data is being set to empty values'},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
+        console.log('🔍 [DEBUG] WARNING: Setting empty contactData - emails will have missing data!');
+        // #endregion
         setContactData({
           fullName: '',
           email: '',
@@ -439,6 +443,39 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             suggestedPromptCategories: aggregated.promptSets?.slice(0, 3).map(p => p.category_key) || []
           });
           console.log('✅ Assessment insights stored in context for cross-feature use');
+          
+          // Send quiz completion email (captures leads who skip deep profile)
+          try {
+            console.log('📧 Sending quiz completion notification email...');
+            await invokeEdgeFunction('send-diagnostic-email', {
+              data: {
+                firstName: contactData?.fullName?.split(' ')[0] || 'Anonymous',
+                lastName: contactData?.fullName?.split(' ').slice(1).join(' ') || '',
+                email: contactData?.email || '',
+                company: contactData?.companyName || '',
+                title: contactData?.department || '',
+                primaryFocus: contactData?.primaryFocus || '',
+                
+                // Assessment responses
+                industry_impact: v2FormattedData.industry_impact,
+                business_acceleration: v2FormattedData.business_acceleration,
+                team_alignment: v2FormattedData.team_alignment,
+                external_positioning: v2FormattedData.external_positioning,
+                kpi_connection: v2FormattedData.kpi_connection,
+                coaching_champions: v2FormattedData.coaching_champions,
+                
+                hasDeepProfile: false,
+                benchmarkScore: aggregated.benchmarkScore,
+                benchmarkTier: aggregated.benchmarkTier,
+              },
+              scores: { total: aggregated.benchmarkScore || 0 },
+              contactType: 'quiz_completed_no_profile',
+              sessionId: sessionId
+            }, { logPrefix: '📧' });
+            console.log('✅ Quiz completion notification email sent');
+          } catch (emailError) {
+            console.error('❌ Quiz completion email failed (non-blocking):', emailError);
+          }
         } catch (insightError) {
           console.warn('⚠️ Could not store assessment insights:', insightError);
         }
@@ -462,9 +499,14 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
 
 
   // PHASE 2: Fixed - let startInsightGeneration control progress, don't set redundant values
+  // Email is already sent inside startInsightGeneration after assessment pipeline completes
   const handleSkipDeepProfile = useCallback(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UnifiedAssessment.tsx:handleSkipDeepProfile',message:'User skipped deep profile - startInsightGeneration will send email',data:{hypothesisId:'B',sessionId:sessionId},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
+    console.log('🔍 [DEBUG] User skipped deep profile - startInsightGeneration will handle email');
+    // #endregion
     startInsightGeneration();
-  }, [startInsightGeneration]);
+  }, [startInsightGeneration, sessionId]);
 
   const handleStartDeepProfile = useCallback(() => {
     setCurrentScreen('deep-profile-questionnaire');
@@ -514,13 +556,31 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       const assessmentData = getAssessmentData();
       const progressData = getProgressData();
       
+      // #region agent log
+      const debugEmailPayload = {
+        fullName: contactData?.fullName,
+        firstName: contactData?.fullName.split(' ')[0],
+        lastName: contactData?.fullName.split(' ').slice(1).join(' '),
+        email: contactData?.email,
+        company: contactData?.companyName,
+        title: contactData?.department,
+        hasDeepProfile: true
+      };
+      fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UnifiedAssessment.tsx:handleDeepProfileComplete',message:'Calling send-diagnostic-email from deep profile',data:{hypothesisId:'B',payload:debugEmailPayload,sessionId:sessionId,contactDataExists:!!contactData,contactDataEmail:contactData?.email || 'EMPTY'},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
+      console.log('🔍 [DEBUG] Deep profile calling send-diagnostic-email with contactData:', debugEmailPayload);
+      // #endregion
+      
+      // Handle empty contact data - use placeholders to ensure email is still readable
+      const hasRealContactData = contactData?.fullName && contactData?.email;
+      
       await invokeEdgeFunction('send-diagnostic-email', {
         data: {
           ...contactData,
-          firstName: contactData?.fullName.split(' ')[0],
-          lastName: contactData?.fullName.split(' ').slice(1).join(' '),
-          company: contactData?.companyName,
-          title: contactData?.department,
+          firstName: contactData?.fullName?.split(' ')[0] || 'Deep Profile',
+          lastName: contactData?.fullName?.split(' ').slice(1).join(' ') || 'Completed',
+          email: contactData?.email || 'pending-unlock@assessment.local',
+          company: contactData?.companyName || 'Not yet provided',
+          title: contactData?.department || 'Will be provided at unlock',
           
           // Assessment responses
           industry_impact: assessmentData.industry_impact,
@@ -532,15 +592,22 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           
           // Deep profile data
           deepProfile: profileData,
-          hasDeepProfile: true
+          hasDeepProfile: true,
+          contactDataPending: !hasRealContactData
         },
         scores: { total: progressData.completedAnswers * 5 },
-        contactType: 'deep_profile_completed',
+        contactType: hasRealContactData ? 'deep_profile_completed' : 'deep_profile_anonymous',
         sessionId: sessionId
       }, { logPrefix: '📧' });
       
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UnifiedAssessment.tsx:handleDeepProfileComplete:success',message:'send-diagnostic-email completed',data:{hypothesisId:'C'},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
+      // #endregion
       console.log('✅ Deep profile notification email sent');
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UnifiedAssessment.tsx:handleDeepProfileComplete:error',message:'send-diagnostic-email FAILED',data:{hypothesisId:'C',error:String(error)},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
+      // #endregion
       console.error('❌ Error sending deep profile notification:', error);
     }
 

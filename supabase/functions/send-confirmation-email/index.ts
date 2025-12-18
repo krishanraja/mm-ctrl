@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     )
 
     const { error } = await resend.emails.send({
-      from: 'Krish from MindMaker <onboarding@resend.dev>',
+      from: 'Krish from MindMaker <no-reply@themindmaker.ai>',
       to: [user.email],
       subject: 'Welcome to MindMaker - Verify Your Email',
       html,

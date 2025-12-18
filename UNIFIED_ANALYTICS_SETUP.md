@@ -117,3 +117,4 @@ console.log('Conversion rate:', summary.conversionRate);
 - [ ] Drill-down into specific metrics
 - [ ] Comparison with previous periods
 - [ ] Goal tracking and alerts
+

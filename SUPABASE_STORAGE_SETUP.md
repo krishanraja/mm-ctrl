@@ -156,3 +156,4 @@ if (result.success) {
 - Check file size limits
 - Verify MIME types are allowed
 - Check browser console for detailed errors
+

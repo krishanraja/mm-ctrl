@@ -97,3 +97,4 @@ The existing `verify-diagnostic-payment` function can still be used as a fallbac
 2. Verify `assessment_id` is in session metadata when creating payment
 3. Check database to see if `has_full_diagnostic` was updated
 4. Verify the assessment ID exists in `leader_assessments` table
+

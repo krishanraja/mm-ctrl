@@ -132,3 +132,4 @@ Monitor usage in Supabase Dashboard → Storage → Usage
 3. **Clean up old files**: Implement cleanup jobs for expired content
 4. **Optimize file sizes**: Compress images, use efficient formats
 5. **Use CDN**: Supabase Storage includes CDN for fast delivery
+

@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mic, ArrowRight, Sparkles } from 'lucide-react';
+import { Mic, ArrowRight, Sparkles, AlertTriangle, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getPersistedAssessmentId } from '@/utils/assessmentPersistence';
 import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
 import { supabase } from '@/integrations/supabase/client';
+
+interface DriftStatus {
+  status: 'ok' | 'drifting' | 'stale';
+  message: string;
+}
+
+interface PeerSnippet {
+  snippet_text: string;
+  source_type: string;
+}
 
 export default function Today() {
   const navigate = useNavigate();
@@ -14,6 +24,9 @@ export default function Today() {
   const [emailStatus, setEmailStatus] = useState<'idle' | 'saving' | 'saved' | 'sending' | 'sent' | 'error'>('idle');
   const [weeklyAction, setWeeklyAction] = useState<{ action_text: string; why_text: string | null } | null>(null);
   const [recentNote, setRecentNote] = useState<string | null>(null);
+  const [driftStatus, setDriftStatus] = useState<DriftStatus | null>(null);
+  const [peerSnippets, setPeerSnippets] = useState<PeerSnippet[]>([]);
+  const [topTensionKey, setTopTensionKey] = useState<string | null>(null);
 
   const isoWeekKey = (d = new Date()): string => {
     const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -34,8 +47,9 @@ export default function Today() {
       try {
         const aggregated = await aggregateLeaderResults(assessmentId, false);
         if (!isMounted) return;
-        const tension = aggregated.tensions?.[0]?.summary_line;
-        if (tension) setTopLine(tension);
+        const tension = aggregated.tensions?.[0];
+        if (tension?.summary_line) setTopLine(tension.summary_line);
+        if (tension?.dimension_key) setTopTensionKey(tension.dimension_key);
       } catch {
         // Non-blocking: Today screen still works without baseline context
       } finally {
@@ -122,6 +136,52 @@ export default function Today() {
     };
   }, []);
 
+  // Check drift status
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('compute-drift', { body: {} });
+        if (isMounted && !error && data?.status) {
+          setDriftStatus({
+            status: data.status,
+            message: data.message,
+          });
+        }
+      } catch {
+        // ignore drift check errors
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Fetch peer snippets for top tension
+  useEffect(() => {
+    if (!topTensionKey) return;
+    
+    let isMounted = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-peer-snippets', {
+          body: {
+            tension_key: topTensionKey,
+            dimension_key: topTensionKey, // Use same key for now
+          },
+        });
+        if (isMounted && !error && data?.snippets?.length > 0) {
+          setPeerSnippets(data.snippets.slice(0, 2)); // Show max 2 snippets
+        }
+      } catch {
+        // ignore peer snippets errors
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, [topTensionKey]);
+
   return (
     <div className="mx-auto max-w-4xl px-4 pt-6 pb-6">
       <div className="mb-4">
@@ -129,6 +189,23 @@ export default function Today() {
         <p className="text-sm text-muted-foreground mt-1">
           {isLoading ? 'Loading your baseline context…' : topLine}
         </p>
+
+        {/* Drift Warning */}
+        {driftStatus && driftStatus.status !== 'ok' && (
+          <Card className="mt-3 border-amber-500/30 bg-amber-500/5">
+            <CardContent className="p-3 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-medium text-foreground">
+                  {driftStatus.status === 'stale' ? "You've gone quiet" : "You're drifting"}
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {driftStatus.message}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {weeklyAction ? (
           <div className="mt-3 rounded-xl border border-border bg-secondary/20 p-3">
             <div className="text-sm font-medium text-foreground">This week’s one thing</div>
@@ -255,6 +332,31 @@ export default function Today() {
             ) : null}
           </CardContent>
         </Card>
+
+        {/* Peer Tension Matching - Anonymous snippets */}
+        {peerSnippets.length > 0 && (
+          <Card className="border rounded-xl bg-gradient-to-br from-blue-500/5 to-transparent">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="h-4 w-4 text-blue-600" />
+                <div className="text-sm font-medium text-foreground">Leaders like you are wrestling with this</div>
+              </div>
+              <div className="space-y-2">
+                {peerSnippets.map((snippet, idx) => (
+                  <div key={idx} className="text-sm text-muted-foreground bg-secondary/30 rounded-lg p-3">
+                    <p className="italic">"{snippet.snippet_text}"</p>
+                    <p className="text-xs mt-1 text-muted-foreground/60">
+                      — Anonymous peer, {snippet.source_type === 'checkin' ? 'weekly check-in' : 'decision capture'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                No networking. No community. Just what your peers actually do.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

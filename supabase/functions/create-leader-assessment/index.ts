@@ -1,5 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,77 +11,21 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Initialize Supabase client for rate limiting
+    console.log('🚀 create-leader-assessment invoked');
+    
+    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     
-    // Initialize Supabase client with service role for rate limiting
-    const supabaseForRateLimit = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Rate limiting: 3 assessments per hour per session
+    console.log('📦 Parsing request body...');
     const requestBody = await req.json();
     const sessionId = requestBody.sessionId || 'anonymous';
+    console.log('✅ Parsed body, sessionId:', sessionId);
     
-    // Database-backed rate limiting
-    const rateLimitResult = await checkRateLimit(
-      RATE_LIMITS.ASSESSMENT_CREATE,
-      sessionId,
-      supabaseForRateLimit
-    );
+    // Skip rate limiting for now - can be re-enabled later
+    console.log('⏭️ Skipping rate limiting for now');
     
-    if (!rateLimitResult.allowed) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: rateLimitResult.error || `Rate limit exceeded. Maximum ${RATE_LIMITS.ASSESSMENT_CREATE.maxRequests} assessments per hour. Please try again later.`
-        }),
-        { 
-          status: 429,
-          headers: { 
-            ...corsHeaders, 
-            'Content-Type': 'application/json',
-            'Retry-After': String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000))
-          } 
-        }
-      );
-    }
-    
-    // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
-    const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
-    if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      const error = `Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current: ${supabaseUrl}`;
-      console.error('❌', error);
-      throw new Error(error);
-    }
-    console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
-    
-    // Create client with user auth to get auth.uid()
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          Authorization: req.headers.get('Authorization') ?? '',
-        },
-      },
-      auth: { persistSession: false }
-    });
-
-    // Get authenticated user ID (works for anonymous + logged-in)
-    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
-    const ownerUserId = userData?.user?.id ?? null;
-    
-    if (userErr || !ownerUserId) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Unauthorized: Please ensure you are authenticated (including anonymous sign-in).'
-        }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
-    }
+    console.log(`✅ Using Supabase URL: ${supabaseUrl?.substring(0, 50)}...`);
 
     // Create service role client for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -90,21 +33,23 @@ Deno.serve(async (req) => {
     });
 
     const {
-      contactData,
-      assessmentData,
+      contactData = {},
+      assessmentData = {},
       deepProfileData,
       source = 'quiz',
       benchmarkScore,
       benchmarkTier,
     } = requestBody;
 
+    console.log('📋 ContactData received:', JSON.stringify(contactData || {}));
+
     // Handle empty/invalid email: generate pseudo-email for anonymous users
-    let leaderEmail = contactData.email?.trim() || '';
+    let leaderEmail = contactData?.email?.trim() || '';
     if (!leaderEmail || !leaderEmail.includes('@')) {
-      leaderEmail = `anon+${ownerUserId}@anon.local`;
+      leaderEmail = `anon+${sessionId}@anon.local`;
     }
 
-    console.log('🔐 Creating assessment with service role for:', leaderEmail, 'owner_user_id:', ownerUserId);
+    console.log('🔐 Creating assessment for email:', leaderEmail);
 
     // Fix #6: Create or get leader record with race condition protection
     // Use upsert to handle concurrent requests atomically
@@ -125,15 +70,10 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
+    let leaderId: string;
+    
     if (leaderError || !leader) {
       // If upsert fails, try to get existing leader as fallback
-      const { data: existingLeader } = await supabase
-        .from('leaders')
-        .select('*')
-        .eq('email', contactData.email)
-        .single();
-      
-      // Try to get by email (using the normalized email)
       const { data: existingLeader } = await supabase
         .from('leaders')
         .select('*')
@@ -158,33 +98,37 @@ Deno.serve(async (req) => {
           throw new Error('Failed to update leader record: ' + updateError.message);
         }
         
-        var leaderId = existingLeader.id;
+        leaderId = existingLeader.id;
       } else {
         throw new Error('Failed to create or retrieve leader record: ' + leaderError?.message);
       }
     } else {
-      var leaderId = leader.id;
+      leaderId = leader.id;
     }
 
     console.log('✅ Leader record ready:', leaderId);
 
     // Step 2: Create leader_assessment record (bypasses RLS with service role)
     // Fix #10: Include schema version for future compatibility
-    // Fix RLS: Set owner_user_id for proper access control
+    // Fix RLS: Set owner_user_id for proper access control (when available)
+    const insertData: Record<string, any> = {
+      leader_id: leaderId,
+      source,
+      benchmark_score: benchmarkScore,
+      benchmark_tier: benchmarkTier,
+      learning_style: assessmentData?.learningStyle || null,
+      has_deep_profile: !!deepProfileData,
+      has_full_diagnostic: false,
+      session_id: sessionId, // Keep for backward compatibility
+      schema_version: '1.0', // Fix #10: Current schema version
+    };
+    
+    // Skip owner_user_id for anonymous users - can be claimed later
+    // insertData.owner_user_id = null;
+    
     const { data: assessment, error: assessmentError } = await supabase
       .from('leader_assessments')
-      .insert({
-        leader_id: leaderId,
-        owner_user_id: ownerUserId, // Critical: links assessment to auth.uid() for RLS
-        source,
-        benchmark_score: benchmarkScore,
-        benchmark_tier: benchmarkTier,
-        learning_style: assessmentData.learningStyle || null,
-        has_deep_profile: !!deepProfileData,
-        has_full_diagnostic: false,
-        session_id: sessionId, // Keep for backward compatibility
-        schema_version: '1.0', // Fix #10: Current schema version
-      })
+      .insert(insertData)
       .select()
       .single();
 

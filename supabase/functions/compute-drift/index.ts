@@ -90,6 +90,57 @@ serve(async (req) => {
       console.warn("drift flag upsert failed (non-blocking):", upsertErr);
     }
 
+    // Send drift notification email if status is drifting or stale
+    if (status !== "ok") {
+      const userEmail = userData?.user?.email;
+      if (userEmail) {
+        try {
+          const resendApiKey = Deno.env.get("RESEND_API_KEY");
+          if (resendApiKey) {
+            const origin = Deno.env.get("PUBLIC_SITE_URL") || "https://themindmaker.ai";
+            const checkinLink = `${origin.replace(/\/$/, "")}/checkin`;
+            
+            const emailHtml = `
+              <div style="font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:#f8fafc; padding:24px;">
+                <div style="max-width:560px; margin:0 auto; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:20px;">
+                  <h2 style="margin:0 0 12px; color:#0f172a; font-size:18px;">You're drifting 📉</h2>
+                  <p style="margin:0 0 16px; color:#475569; line-height:1.5;">
+                    ${message}
+                  </p>
+                  <p style="margin:0 0 16px; color:#475569; line-height:1.5;">
+                    <strong>This week:</strong> Before your next meeting with data or AI, ask: "What would we do differently if we had 10x the data?" Note what happens.
+                  </p>
+                  <a href="${checkinLink}" style="display:inline-block; background:#0f172a; color:#ffffff; text-decoration:none; padding:10px 14px; border-radius:10px; font-weight:600;">
+                    Do a 30s check-in
+                  </a>
+                  <p style="margin:16px 0 0; color:#94a3b8; font-size:12px;">
+                    This is what a good advisor would do. It's uncomfortable but valuable.
+                  </p>
+                </div>
+              </div>
+            `;
+
+            await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${resendApiKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "MindMaker <no-reply@themindmaker.ai>",
+                to: [userEmail],
+                subject: status === "stale" ? "You've gone quiet on AI 📉" : "You're drifting 📉",
+                html: emailHtml,
+              }),
+            });
+            console.log("✅ Drift notification email sent to:", userEmail);
+          }
+        } catch (emailErr) {
+          console.warn("Drift email failed (non-blocking):", emailErr);
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({
         success: true,

@@ -84,3 +84,4 @@ When moving from Lovable to Vercel:
 - Only frontend environment variables go to Vercel
 - Update `APP_URL` in Supabase secrets to point to Vercel domain
 - Remove `LOVABLE_API_KEY` if not needed
+

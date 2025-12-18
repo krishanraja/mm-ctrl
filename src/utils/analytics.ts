@@ -278,3 +278,4 @@ export async function getConversionFunnel() {
     completedBookings: bookings?.filter(b => b.status === 'completed').length || 0,
   };
 }
+

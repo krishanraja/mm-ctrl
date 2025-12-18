@@ -86,3 +86,4 @@ for await (const chunk of streamOpenAI({
 - [ ] Add function calling for structured data extraction
 - [ ] Add prompt normalization for better cache hits
 - [ ] Implement request batching where possible
+

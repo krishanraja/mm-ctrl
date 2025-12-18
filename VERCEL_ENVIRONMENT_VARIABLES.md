@@ -141,3 +141,4 @@ After deployment, verify:
 - ✅ Never add `SUPABASE_SERVICE_ROLE_KEY` to Vercel - it's a secret
 - ✅ Never add API keys with `VITE_` prefix - they'll be exposed to users
 - ✅ Edge function secrets stay in Supabase Dashboard only
+
