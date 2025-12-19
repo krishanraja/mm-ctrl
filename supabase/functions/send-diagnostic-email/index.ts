@@ -456,25 +456,8 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // #region agent log
-  console.log('🔍 [DEBUG] send-diagnostic-email invoked at:', new Date().toISOString());
-  // #endregion
-
   try {
     const { data, scores, contactType, sessionId }: DiagnosticEmailRequest = await req.json();
-
-    // #region agent log
-    console.log('🔍 [DEBUG] Received payload:', JSON.stringify({
-      hypothesisId: 'B',
-      hasEmail: !!data?.email,
-      email: data?.email || 'EMPTY',
-      firstName: data?.firstName || 'EMPTY',
-      lastName: data?.lastName || 'EMPTY',
-      contactType: contactType,
-      sessionId: sessionId,
-      scoresTotal: scores?.total
-    }));
-    // #endregion
 
     console.log("Generating comprehensive AI Leadership Growth Benchmark email for:", data.email);
 
@@ -485,18 +468,6 @@ const handler = async (req: Request): Promise<Response> => {
     if (!resendApiKey) {
       throw new Error('RESEND_API_KEY not configured');
     }
-
-    // #region agent log
-    console.log('🔍 [DEBUG] About to send email via Resend API:', JSON.stringify({
-      hypothesisId: 'D',
-      to: 'krish@themindmaker.ai',
-      from: 'AI Leadership Growth Benchmark <no-reply@themindmaker.ai>',
-      hasApiKey: !!resendApiKey,
-      apiKeyLength: resendApiKey?.length || 0,
-      tier: tier.name,
-      total: total
-    }));
-    // #endregion
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -680,14 +651,6 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (!emailResponse.ok) {
       const errorData = await emailResponse.text();
-      // #region agent log
-      console.log('🔍 [DEBUG] Resend API FAILED:', JSON.stringify({
-        hypothesisId: 'D',
-        status: emailResponse.status,
-        error: errorData,
-        timestamp: new Date().toISOString()
-      }));
-      // #endregion
       console.error('Resend API error:', errorData);
       console.warn('⚠️ Email sending failed but continuing assessment flow. Domain verification may be needed at https://resend.com/domains');
       
@@ -708,13 +671,6 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailResult = await emailResponse.json();
-    // #region agent log
-    console.log('🔍 [DEBUG] Resend API SUCCESS:', JSON.stringify({
-      hypothesisId: 'D',
-      emailId: emailResult.id,
-      timestamp: new Date().toISOString()
-    }));
-    // #endregion
     console.log("Comprehensive executive report email sent successfully:", emailResult.id);
 
     return new Response(JSON.stringify({ success: true, emailId: emailResult.id }), {

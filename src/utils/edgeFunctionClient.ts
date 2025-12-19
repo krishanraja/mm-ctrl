@@ -25,10 +25,6 @@ export async function invokeEdgeFunction<T = any>(
 ): Promise<EdgeFunctionResult<T>> {
   const { silent = false, logPrefix = '🔧', timeout = 30000 } = options; // Fix #9: Default 30s timeout
 
-  // #region agent log
-  fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edgeFunctionClient.ts:invokeEdgeFunction',message:`Invoking edge function: ${functionName}`,data:{hypothesisId:'C',functionName:functionName,bodyKeys:Object.keys(body || {}),hasBody:!!body},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
-  // #endregion
-
   if (!silent) {
     console.log(`${logPrefix} Invoking edge function: ${functionName}`, { body });
   }
@@ -45,16 +41,9 @@ export async function invokeEdgeFunction<T = any>(
       const { data, error } = await supabase.functions.invoke(functionName, { body });
 
       if (error) {
-        // #region agent log
-        fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edgeFunctionClient.ts:invokeEdgeFunction:error',message:`Edge function error: ${functionName}`,data:{hypothesisId:'C',functionName:functionName,error:String(error?.message || error)},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
-        // #endregion
         console.error(`❌ Edge function error (${functionName}):`, error);
         return { data: null, error };
       }
-
-      // #region agent log
-      fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edgeFunctionClient.ts:invokeEdgeFunction:success',message:`Edge function success: ${functionName}`,data:{hypothesisId:'C',functionName:functionName,hasData:!!data},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
-      // #endregion
 
       if (!silent) {
         console.log(`✅ Edge function success (${functionName}):`, data);

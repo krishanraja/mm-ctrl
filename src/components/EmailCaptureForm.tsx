@@ -208,3 +208,4 @@ export const EmailCaptureForm: React.FC<EmailCaptureFormProps> = ({
     </div>
   );
 };
+

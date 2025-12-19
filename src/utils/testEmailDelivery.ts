@@ -73,3 +73,4 @@ export async function testEmailDelivery(): Promise<{
 if (typeof window !== 'undefined') {
   (window as any).testEmailDelivery = testEmailDelivery;
 }
+

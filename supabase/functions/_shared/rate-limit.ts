@@ -6,7 +6,7 @@
  * Uses database-backed rate limiting for distributed edge function deployments
  */
 
-// Note: supabase client is passed in as a parameter, no direct import needed
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
 interface RateLimitConfig {
   maxRequests: number;

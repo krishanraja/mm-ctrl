@@ -275,21 +275,6 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
       
       // Send notification email via Resend
       try {
-        // #region agent log
-        const debugPayload = {
-          firstName: formData.fullName.split(' ')[0],
-          lastName: formData.fullName.split(' ').slice(1).join(' '),
-          email: formData.email,
-          title: formData.department,
-          primaryFocus: formData.primaryFocus,
-          consentToInsights: formData.consentToInsights,
-          benchmarkScore: data?.benchmarkScore,
-          benchmarkTier: data?.benchmarkTier
-        };
-        fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SingleScrollResults.tsx:handleUnlock',message:'Calling send-diagnostic-email from unlock form',data:{hypothesisId:'B',payload:debugPayload,sessionId:sessionId},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
-        console.log('🔍 [DEBUG] Unlock form calling send-diagnostic-email with:', debugPayload);
-        // #endregion
-        
         await invokeEdgeFunction('send-diagnostic-email', {
           data: {
             firstName: formData.fullName.split(' ')[0],
@@ -306,14 +291,8 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           contactType: 'results_unlock',
           sessionId: sessionId
         }, { logPrefix: '📧' });
-        // #region agent log
-        fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SingleScrollResults.tsx:handleUnlock:success',message:'send-diagnostic-email completed successfully',data:{hypothesisId:'C'},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
-        // #endregion
         console.log('✅ Unlock notification email sent');
       } catch (emailError) {
-        // #region agent log
-        fetch('http://127.0.0.1:7245/ingest/c6724669-2c15-4044-bf26-19693227e3c6',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'SingleScrollResults.tsx:handleUnlock:error',message:'send-diagnostic-email FAILED',data:{hypothesisId:'C',error:String(emailError)},timestamp:Date.now(),sessionId:'debug-session'})}).catch(()=>{});
-        // #endregion
         console.error('❌ Email notification failed (non-blocking):', emailError);
         // Don't block unlock if email fails
       }
@@ -369,15 +348,15 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                   <ArrowRightCircle className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-foreground">This Week's One Thing</div>
+                  <div className="text-sm font-semibold text-foreground">Make this compound weekly</div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    One action. One week. Compounds over time when you’re stuck.
+                    Weekly 30s check-ins + decision capture when you’re stuck.
                   </div>
                 </div>
               </div>
               <div className="sm:ml-auto">
                 <Button variant="cta" onClick={() => navigate('/today')} className="w-full sm:w-auto">
-                  Start Weekly Loop
+                  Go to Today
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -472,7 +451,27 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
           </Card>
         )}
 
-        {/* Next Move section moved to top "This Week's One Thing" card */}
+        {/* 3. Next Move - Actionable */}
+        {primaryMove && (
+          <Card className="mb-6 shadow-sm border rounded-xl border-l-4 border-l-emerald-500">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 p-2 bg-emerald-500/10 rounded-lg">
+                  <Target className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="font-semibold text-foreground">Your Next Move</h3>
+                    <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/30">This Week</Badge>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {primaryMove.content}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Show dimension scores preview for everyone */}
         {data?.dimensionScores && data.dimensionScores.length > 0 && (
