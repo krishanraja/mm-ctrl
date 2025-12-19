@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { VoiceInput } from '@/components/ui/voice-input';
-import { ArrowRight, Sparkles, Mic, Lightbulb, Target, Mail, Check } from 'lucide-react';
+import { ArrowRight, Sparkles, Mic, Lightbulb, Target, Mail, Check, RotateCcw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { validateEmail } from '@/utils/formValidation';
@@ -42,6 +42,11 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
 
   const handleTranscript = useCallback((text: string) => {
     setTranscript(prev => (prev ? `${prev} ${text}` : text));
+  }, []);
+
+  const handleClearTranscript = useCallback(() => {
+    setTranscript('');
+    setError(null);
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -375,7 +380,18 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
               {/* Transcript Preview */}
               {transcript && (
                 <div className="rounded-lg bg-secondary/30 p-3 text-sm text-foreground animate-fade-in">
-                  <p className="text-xs text-muted-foreground mb-1">What I heard:</p>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs text-muted-foreground">What I heard:</p>
+                    <button
+                      type="button"
+                      onClick={handleClearTranscript}
+                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      disabled={isProcessing}
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      Clear & try again
+                    </button>
+                  </div>
                   {transcript}
                 </div>
               )}

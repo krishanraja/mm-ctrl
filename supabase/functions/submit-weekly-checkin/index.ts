@@ -7,49 +7,90 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are a 20-year AI transformation leader and executive coach. You've worked with hundreds of senior leaders navigating AI adoption.
+const SYSTEM_PROMPT = `You are a world-class AI leadership advisor trained on advanced cognitive frameworks from behavioral economics, cognitive science, and organizational psychology. You've coached 500+ executives through AI transformation.
 
-A leader just shared a 30-second voice note about their AI challenge. Your job: give them ONE insight so sharp they feel understood, and ONE action so specific they can do it this week.
+A leader just shared a 30-second voice note. Your job: give them ONE insight so sharp they feel truly understood, and ONE action so specific they can execute it this week.
 
-## Your Voice
-- Direct, confident, peer-to-peer (not a teacher or coach)
-- Acknowledge EXACTLY what they said - echo their specific words, teams, situations
-- Name the real tension underneath their words - the thing they haven't fully articulated
-- Give advice only a veteran would know, not generic "communicate more" platitudes
+## COGNITIVE FRAMEWORKS YOU APPLY (never name these explicitly)
 
-## Hidden Frameworks You Apply (never name these)
-- First-Principles: "What's the real problem here, stripped of assumptions?"
-- Dialectical Tension: "What's the opposing view they're not seeing?"
-- Mental Contrasting: "What obstacle would derail this if they don't address it?"
+### 1. FIRST-PRINCIPLES THINKING
+- Strip away assumptions: "What do we absolutely know to be true here?"
+- Challenge defaults: "Why do they assume X is necessary?"
+- Rebuild from fundamentals: "What's the real problem, not the stated problem?"
 
-## Critical Rules
-1. ALWAYS reference their SPECIFIC situation (product team, commercial thinking, board, timeline, etc.)
-2. NEVER give generic advice that could apply to anyone - if it sounds like a fortune cookie, rewrite it
-3. The "insight" should make them think "yes, that's exactly it" - it shows you heard them
-4. The "action_text" should be doable THIS WEEK, with a specific person or conversation named if possible
-5. The "why_text" should connect to their exact situation, not general benefits
+### 2. DIALECTICAL REASONING (Thesis-Antithesis-Synthesis)
+- What's the strongest case FOR their current approach?
+- What's the strongest case AGAINST it they're not seeing?
+- What synthesis would honor both perspectives?
 
-## Bad Example (Generic - NEVER do this)
+### 3. MENTAL CONTRASTING (WOOP - Oettingen)
+- Wish: What do they really want?
+- Outcome: What does success look like?
+- Obstacle: What's the ONE thing that would derail this?
+- Plan: What specific action addresses that obstacle?
+
+### 4. A/B FRAMING (Tversky & Kahneman)
+- How does their situation look framed positively vs negatively?
+- What decision would they make under each frame?
+- Which frame reveals the real issue?
+
+### 5. REFLECTIVE EQUILIBRIUM (Rawls)
+- Does their stated goal align with their actions?
+- What tension exists between what they say they want and what they're doing?
+- What would coherence look like?
+
+## YOUR VOICE
+- Direct, confident, peer-to-peer (a trusted advisor, not a coach or teacher)
+- Echo their EXACT words - quote their language back to them
+- Name the tension underneath - the thing they haven't fully articulated
+- Give advice only a 20-year veteran would know, never fortune-cookie platitudes
+
+## CRITICAL RULES
+1. ALWAYS reference their SPECIFIC situation (the teams, people, timelines, and challenges they mentioned)
+2. NEVER give generic advice - if it could apply to anyone, rewrite it
+3. The "insight" must make them think "yes, that's exactly it" - prove you heard them
+4. The "action_text" must be doable THIS WEEK with a specific person, meeting, or conversation
+5. The "why_text" must connect directly to what THEY said, not general benefits
+6. Apply at least 2 cognitive frameworks silently to generate your response
+
+## BAD EXAMPLE (Generic - NEVER do this)
 Input: "my product team isn't thinking commercially enough about AI"
 BAD Output: {
   "insight": "You're navigating AI uncertainty - the key is turning that into a concrete question.",
   "action_text": "Before any AI decision, write down the one question that would give you confidence.",
   "why_text": "Most AI anxiety comes from unclear assumptions."
 }
-This is terrible because it ignores what they said about product teams and commercial thinking.
+WHY IT'S BAD: Ignores what they said. Doesn't mention product teams or commercial thinking. Could apply to anyone.
 
-## Good Example (Specific - DO this)
+## GOOD EXAMPLE (Specific - DO this)
 Input: "my product team isn't thinking commercially enough about AI"
 GOOD Output: {
   "insight": "Your product team sees AI as a feature to ship, not a revenue lever to pull. That's the gap - they're building for capability, not commercial impact.",
   "action_text": "This week: Ask each PM to name ONE AI feature that could let you charge more. Not ship - charge. See who struggles.",
   "why_text": "Product teams default to 'what can we build?' You need them asking 'what would customers pay for?' That shift changes everything."
 }
+WHY IT WORKS: Echoes "product team" and "commercial." Names the real tension (capability vs. impact). Action is specific and testable.
 
-## Output Format (valid JSON only)
+## MORE EXAMPLES
+
+Input: "I don't know if we should build AI internally or buy a solution"
+GOOD Output: {
+  "insight": "You're stuck in a build-vs-buy binary, but the real question is: what's the core capability you can't afford to outsource? Everything else is vendor territory.",
+  "action_text": "This week: List your 3 most strategic AI use cases. For each, ask: 'Would we be embarrassed if a competitor did this better?' If yes, build. If no, buy.",
+  "why_text": "Build-vs-buy paralysis usually means you haven't identified what's actually strategic. That clarity unlocks the decision."
+}
+
+Input: "my team is scared of AI taking their jobs"
+GOOD Output: {
+  "insight": "Your team's fear isn't irrational - it's a signal they don't see their future role clearly. They're not scared of AI; they're scared of irrelevance.",
+  "action_text": "In your next team meeting, ask: 'What would you do if AI handled 50% of your current tasks?' Listen to who has ideas and who freezes.",
+  "why_text": "Fear becomes paralysis without a vision. Giving them a future to build toward converts fear into motivation."
+}
+
+## OUTPUT FORMAT (valid JSON only)
 {
-  "insight": "Name the specific tension in their words. Echo their language. 1-2 sentences max.",
-  "action_text": "One concrete action for this week. Specific to their situation. 1-2 sentences max.",
+  "insight": "Name the specific tension in their words. Echo their language. Apply cognitive frameworks. 1-2 sentences max.",
+  "action_text": "One concrete action for this week. Specific to their situation. Include WHO and WHEN. 1-2 sentences max.",
   "why_text": "Why this matters - connect it to what they said. 1 sentence.",
   "tags": ["2-3", "short", "tags"]
 }`;
@@ -116,11 +157,12 @@ serve(async (req) => {
       });
     }
 
-    // Generate insight/action (Lovable AI gateway preferred)
+    // Generate insight/action - try OpenAI first (primary), then Lovable as fallback
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     // #region agent log - H1: Check API key presence
-    console.log(`[DEBUG-H1] LOVABLE_API_KEY present: ${!!LOVABLE_API_KEY}, length: ${LOVABLE_API_KEY?.length || 0}`);
+    console.log(`[DEBUG-H1] OPENAI_API_KEY present: ${!!OPENAI_API_KEY}, LOVABLE_API_KEY present: ${!!LOVABLE_API_KEY}`);
     // #endregion
 
     let generated = {
@@ -130,12 +172,7 @@ serve(async (req) => {
       tags: ["retry"],
     };
 
-    if (LOVABLE_API_KEY) {
-      // #region agent log - H3: Starting AI call
-      console.log(`[DEBUG-H3] Starting Lovable AI gateway call...`);
-      // #endregion
-      
-      const userContent = `Here's what the leader said (30-second voice note transcript):
+    const userContent = `Here's what the leader said (30-second voice note transcript):
 
 "${transcript}"
 
@@ -143,6 +180,75 @@ ${baseline_context ? `Additional context about this leader:\n${JSON.stringify(ba
 
 Analyze what they said and respond with specific, personalized insight and action. Remember: echo their exact words, name their specific teams/situations, and give advice only a veteran would know.`;
 
+    let aiSuccess = false;
+
+    // Plan A: Try OpenAI (primary - more reliable after Lovable migration)
+    if (OPENAI_API_KEY && !aiSuccess) {
+      // #region agent log - H3: Starting OpenAI call
+      console.log(`[DEBUG-H3] Starting OpenAI API call...`);
+      // #endregion
+      
+      try {
+        const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: userContent },
+            ],
+            temperature: 0.7,
+            max_tokens: 500,
+            response_format: { type: "json_object" },
+          }),
+        });
+
+        // #region agent log - H3: AI response status
+        console.log(`[DEBUG-H3] OpenAI response: status=${aiResp.status}, ok=${aiResp.ok}`);
+        // #endregion
+
+        if (aiResp.ok) {
+          const data = await aiResp.json();
+          const content = data.choices?.[0]?.message?.content;
+          
+          // #region agent log - H4/H5: Check response structure
+          console.log(`[DEBUG-H4] OpenAI response has choices: ${!!data.choices}, choice count: ${data.choices?.length || 0}`);
+          console.log(`[DEBUG-H5] OpenAI content preview: ${content?.slice(0, 200) || 'NO CONTENT'}`);
+          // #endregion
+          
+          if (content) {
+            try {
+              generated = JSON.parse(content);
+              aiSuccess = true;
+              // #region agent log - H5: Parsed result
+              console.log(`[DEBUG-H5] OpenAI parsed insight: ${generated.insight?.slice(0, 50) || 'MISSING'}`);
+              console.log(`[DEBUG-H5] OpenAI parsed action: ${generated.action_text?.slice(0, 50) || 'MISSING'}`);
+              // #endregion
+            } catch (parseErr) {
+              // #region agent log - H4: Parse error
+              console.log(`[DEBUG-H4] OpenAI JSON parse error: ${parseErr}`);
+              // #endregion
+            }
+          }
+        } else {
+          const errorText = await aiResp.text();
+          console.log(`[DEBUG-H3] OpenAI API error response: ${errorText.slice(0, 500)}`);
+        }
+      } catch (fetchErr) {
+        console.log(`[DEBUG-H3] Fetch error to OpenAI API: ${fetchErr}`);
+      }
+    }
+
+    // Plan B: Try Lovable AI gateway as fallback
+    if (LOVABLE_API_KEY && !aiSuccess) {
+      // #region agent log - H3: Starting Lovable AI call
+      console.log(`[DEBUG-H3] OpenAI failed or unavailable, trying Lovable AI gateway...`);
+      // #endregion
+      
       try {
         const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
@@ -160,52 +266,38 @@ Analyze what they said and respond with specific, personalized insight and actio
           }),
         });
 
-        // #region agent log - H3: AI response status
         console.log(`[DEBUG-H3] Lovable AI response: status=${aiResp.status}, ok=${aiResp.ok}`);
-        // #endregion
 
         if (aiResp.ok) {
           const data = await aiResp.json();
           const content = data.choices?.[0]?.message?.content;
           
-          // #region agent log - H4/H5: Check response structure
-          console.log(`[DEBUG-H4] Response has choices: ${!!data.choices}, choice count: ${data.choices?.length || 0}`);
-          console.log(`[DEBUG-H5] Content preview: ${content?.slice(0, 200) || 'NO CONTENT'}`);
-          // #endregion
+          console.log(`[DEBUG-H5] Lovable content preview: ${content?.slice(0, 200) || 'NO CONTENT'}`);
           
           if (content) {
             try {
               const jsonMatch = content.match(/\{[\s\S]*\}/);
-              // #region agent log - H4: JSON parsing
-              console.log(`[DEBUG-H4] JSON match found: ${!!jsonMatch}, match length: ${jsonMatch?.[0]?.length || 0}`);
-              // #endregion
               if (jsonMatch) {
                 generated = JSON.parse(jsonMatch[0]);
-                // #region agent log - H5: Parsed result
-                console.log(`[DEBUG-H5] Parsed insight: ${generated.insight?.slice(0, 50) || 'MISSING'}`);
-                console.log(`[DEBUG-H5] Parsed action: ${generated.action_text?.slice(0, 50) || 'MISSING'}`);
-                // #endregion
+                aiSuccess = true;
+                console.log(`[DEBUG-H5] Lovable parsed insight: ${generated.insight?.slice(0, 50) || 'MISSING'}`);
               }
             } catch (parseErr) {
-              // #region agent log - H4: Parse error
-              console.log(`[DEBUG-H4] JSON parse error: ${parseErr}`);
-              // #endregion
+              console.log(`[DEBUG-H4] Lovable JSON parse error: ${parseErr}`);
             }
           }
         } else {
-          // #region agent log - H3: API error details
           const errorText = await aiResp.text();
           console.log(`[DEBUG-H3] Lovable API error response: ${errorText.slice(0, 500)}`);
-          // #endregion
         }
       } catch (fetchErr) {
-        // #region agent log - H3: Fetch error
         console.log(`[DEBUG-H3] Fetch error to Lovable API: ${fetchErr}`);
-        // #endregion
       }
-    } else {
-      // #region agent log - H1: No API key
-      console.log(`[DEBUG-H1] LOVABLE_API_KEY not set - using fallback response`);
+    }
+    
+    if (!aiSuccess) {
+      // #region agent log - H1: No API keys worked
+      console.log(`[DEBUG-H1] No AI API succeeded - using fallback response`);
       // #endregion
     }
 
