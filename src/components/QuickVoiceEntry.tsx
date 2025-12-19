@@ -4,14 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { VoiceInput } from '@/components/ui/voice-input';
-import { ArrowRight, Sparkles, Mic, Lightbulb, Target, Mail, Check, RotateCcw } from 'lucide-react';
+import { ArrowRight, Mic, Lightbulb, Target, Mail, Check, RotateCcw, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { validateEmail } from '@/utils/formValidation';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
+import mindmakerIcon from '@/assets/mindmaker-icon.png';
 
 interface QuickVoiceEntryProps {
-  onComplete: (result: QuickEntryResult) => void;
+  onComplete: (result: QuickEntryResult, shouldStartAssessment?: boolean) => void;
   onSkipToQuiz: () => void;
 }
 
@@ -33,11 +34,15 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   const [result, setResult] = useState<QuickEntryResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   
-  // Email capture state (inline, not navigation)
+  // Email & password capture state (inline, not navigation)
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [emailCaptured, setEmailCaptured] = useState(false);
 
   const handleTranscript = useCallback((text: string) => {
@@ -122,7 +127,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     setShowEmailForm(true);
   }, []);
 
-  const handleEmailSubmit = useCallback(async (e: React.FormEvent) => {
+  const handleEmailSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     
     const validationError = validateEmail(email);
@@ -131,21 +136,58 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
       return;
     }
 
-    setIsSubmittingEmail(true);
+    // Email is valid - show password form
     setEmailError(null);
+    setShowPasswordForm(true);
+  }, [email]);
+
+  const handlePasswordSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      return;
+    }
+
+    setIsCreatingAccount(true);
+    setPasswordError(null);
 
     try {
-      // Create anonymous session if not logged in
-      const { data: sessionData } = await supabase.auth.getSession();
-      
-      if (!sessionData?.session) {
-        const { error: signUpError } = await supabase.auth.signInAnonymously();
-        if (signUpError) {
-          console.warn('Anonymous sign-in failed, continuing anyway:', signUpError);
+      // Create account with email and password
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            quick_entry_transcript: result?.transcript,
+            quick_entry_insight: result?.insight,
+          }
+        }
+      });
+
+      if (signUpError) {
+        // Check if user already exists
+        if (signUpError.message.includes('already registered')) {
+          // Try to sign in instead
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (signInError) {
+            setPasswordError('This email is already registered. Please use the correct password or sign in.');
+            setIsCreatingAccount(false);
+            return;
+          }
+        } else {
+          setPasswordError(signUpError.message);
+          setIsCreatingAccount(false);
+          return;
         }
       }
 
-      // Send lead capture email
+      console.log('✅ Account created successfully');
+
+      // Send lead capture email (non-blocking)
       try {
         await invokeEdgeFunction('send-diagnostic-email', {
           data: {
@@ -163,15 +205,14 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
             benchmarkTier: 'Quick Entry',
           },
           scores: { total: 0 },
-          contactType: 'quick_entry_email_capture',
+          contactType: 'quick_entry_account_created',
           sessionId: `quick_${Date.now()}`
         }, { logPrefix: '📧' });
-        console.log('✅ Quick entry lead email sent');
       } catch (emailErr) {
         console.error('❌ Quick entry email failed (non-blocking):', emailErr);
       }
 
-      // Store email preference for weekly reminders
+      // Store email preference for weekly reminders (non-blocking)
       try {
         await supabase.functions.invoke('upsert-notification-prefs', {
           body: { 
@@ -183,17 +224,18 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         console.warn('Notification prefs failed (non-blocking):', prefError);
       }
 
-      // Success - stay on page with confirmation
+      // Success - mark as captured and trigger assessment flow
       setEmailCaptured(true);
       setShowEmailForm(false);
+      setShowPasswordForm(false);
 
     } catch (err) {
-      console.error('Email capture error:', err);
-      setEmailError('Something went wrong. Please try again.');
+      console.error('Account creation error:', err);
+      setPasswordError('Something went wrong. Please try again.');
     } finally {
-      setIsSubmittingEmail(false);
+      setIsCreatingAccount(false);
     }
-  }, [email, result]);
+  }, [email, password, result]);
 
   // Show result screen
   if (result) {
@@ -203,8 +245,8 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
           <CardContent className="p-0">
             {/* Header */}
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-5 sm:p-6 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 mb-3">
-                <Sparkles className="h-6 w-6 text-primary" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3">
+                <img src={mindmakerIcon} alt="MindMaker" className="h-7 w-7" />
               </div>
               <h2 className="text-lg sm:text-xl font-semibold text-foreground">
                 Here's what AI sees
@@ -253,28 +295,94 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
             {/* CTA / Email Form / Success */}
             <div className="p-5 sm:p-6 border-t bg-secondary/30">
               {emailCaptured ? (
-                // Success state - stay on page
+                // Success state - guide to full assessment
                 <div className="text-center space-y-3">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/10 mx-auto">
                     <Check className="h-6 w-6 text-emerald-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">You're in</h3>
+                    <h3 className="font-semibold text-foreground">Account created!</h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Your first weekly insight is on its way.
+                      Now let's get your full AI readiness score.
                     </p>
                   </div>
                   <div className="pt-2">
                     <Button
-                      variant="outline"
-                      className="w-full rounded-xl"
-                      onClick={() => onComplete(result!)}
+                      variant="cta"
+                      className="w-full rounded-xl py-5"
+                      onClick={() => onComplete(result!, true)}
                     >
-                      Continue to your dashboard
+                      Take the 2-min assessment
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => onComplete(result!, false)}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Skip for now →
+                  </button>
                 </div>
+              ) : showPasswordForm ? (
+                // Password creation form
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                  <div className="text-center mb-4">
+                    <h3 className="font-semibold text-foreground">Create your account</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Save your insights and track your progress
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/50 rounded-lg px-3 py-2">
+                      <Mail className="h-3.5 w-3.5" />
+                      {email}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="quick-password" className="text-foreground font-medium text-sm flex items-center gap-2">
+                      <Lock className="h-3.5 w-3.5" />
+                      Create Password
+                    </Label>
+                    <Input
+                      id="quick-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (passwordError) setPasswordError(null);
+                      }}
+                      className="rounded-lg"
+                      placeholder="At least 6 characters"
+                      autoComplete="new-password"
+                      autoFocus
+                      disabled={isCreatingAccount}
+                    />
+                    {passwordError && (
+                      <p className="text-destructive text-xs">{passwordError}</p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    variant="cta"
+                    className="w-full rounded-xl py-5"
+                    disabled={isCreatingAccount}
+                  >
+                    {isCreatingAccount ? 'Creating account...' : 'Create account & continue'}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordForm(false)}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Back to email
+                  </button>
+                </form>
               ) : showEmailForm ? (
                 // Inline email form
                 <form onSubmit={handleEmailSubmit} className="space-y-4">
@@ -302,7 +410,6 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                       placeholder="you@company.com"
                       autoComplete="email"
                       autoFocus
-                      disabled={isSubmittingEmail}
                     />
                     {emailError && (
                       <p className="text-destructive text-xs">{emailError}</p>
@@ -313,9 +420,8 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                     type="submit"
                     variant="cta"
                     className="w-full rounded-xl py-5"
-                    disabled={isSubmittingEmail}
                   >
-                    {isSubmittingEmail ? 'Setting up...' : 'Send me weekly insights'}
+                    Continue
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
 
@@ -356,7 +462,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
       {/* Header */}
       <header className="w-full px-4 sm:px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <img src={mindmakerLogo} alt="MindMaker" className="h-8 sm:h-10" />
+          <img src={mindmakerLogo} alt="MindMaker" className="h-6 sm:h-7" />
         </div>
       </header>
 
@@ -454,4 +560,5 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     </div>
   );
 };
+
 

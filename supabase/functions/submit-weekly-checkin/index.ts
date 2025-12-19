@@ -87,6 +87,12 @@ GOOD Output: {
   "why_text": "Fear becomes paralysis without a vision. Giving them a future to build toward converts fear into motivation."
 }
 
+## BEFORE YOU RESPOND - MANDATORY CHECKLIST
+1. Quote at least ONE phrase the leader actually said (in quotes)
+2. Name the specific people, teams, or situations they mentioned
+3. Your action MUST include a day/time (e.g., "this week", "Monday", "in your next 1:1")
+4. If your response could apply to ANY leader, REWRITE IT - be ruthlessly specific
+
 ## OUTPUT FORMAT (valid JSON only)
 {
   "insight": "Name the specific tension in their words. Echo their language. Apply cognitive frameworks. 1-2 sentences max.",
@@ -194,12 +200,12 @@ Analyze what they said and respond with specific, personalized insight and actio
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             messages: [
               { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: userContent },
             ],
-            temperature: 0.7,
+            temperature: 0.5,
             max_tokens: 500,
             response_format: { type: "json_object" },
           }),
@@ -222,10 +228,8 @@ Analyze what they said and respond with specific, personalized insight and actio
             try {
               generated = JSON.parse(content);
               aiSuccess = true;
-              // #region agent log - H5: Parsed result
-              console.log(`[DEBUG-H5] OpenAI parsed insight: ${generated.insight?.slice(0, 50) || 'MISSING'}`);
-              console.log(`[DEBUG-H5] OpenAI parsed action: ${generated.action_text?.slice(0, 50) || 'MISSING'}`);
-              // #endregion
+              console.log(`[AI-PROVIDER] OpenAI gpt-4o SUCCESS`);
+              console.log(`[AI-INSIGHT] ${generated.insight?.slice(0, 100) || 'MISSING'}`);
             } catch (parseErr) {
               // #region agent log - H4: Parse error
               console.log(`[DEBUG-H4] OpenAI JSON parse error: ${parseErr}`);
@@ -260,7 +264,7 @@ Analyze what they said and respond with specific, personalized insight and actio
               { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: userContent },
             ],
-            temperature: 0.7,
+            temperature: 0.5,
           }),
         });
 
@@ -278,7 +282,8 @@ Analyze what they said and respond with specific, personalized insight and actio
               if (jsonMatch) {
                 generated = JSON.parse(jsonMatch[0]);
                 aiSuccess = true;
-                console.log(`[DEBUG-H5] Lovable parsed insight: ${generated.insight?.slice(0, 50) || 'MISSING'}`);
+                console.log(`[AI-PROVIDER] Lovable Gemini SUCCESS (fallback)`);
+                console.log(`[AI-INSIGHT] ${generated.insight?.slice(0, 100) || 'MISSING'}`);
               }
             } catch (parseErr) {
               console.log(`[DEBUG-H4] Lovable JSON parse error: ${parseErr}`);
@@ -294,9 +299,7 @@ Analyze what they said and respond with specific, personalized insight and actio
     }
     
     if (!aiSuccess) {
-      // #region agent log - H1: No API keys worked
-      console.log(`[DEBUG-H1] No AI API succeeded - using fallback response`);
-      // #endregion
+      console.log(`[AI-PROVIDER] NONE - using fallback response. OpenAI key present: ${!!OPENAI_API_KEY}, Lovable key present: ${!!LOVABLE_API_KEY}`);
     }
 
     const week = isoWeekKey();

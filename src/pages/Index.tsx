@@ -51,9 +51,15 @@ const IndexContent = () => {
     setUser(null);
   };
 
-  // QuickVoiceEntry now handles email capture inline, so we just navigate to /today when done
-  const handleQuickEntryComplete = useCallback(() => {
-    navigate('/today');
+  // QuickVoiceEntry handles email/password inline, then guides to assessment or dashboard
+  const handleQuickEntryComplete = useCallback((result: unknown, shouldStartAssessment?: boolean) => {
+    if (shouldStartAssessment) {
+      // Start the full 2-min assessment
+      setMode('quiz');
+    } else {
+      // Skip to dashboard
+      navigate('/today');
+    }
   }, [navigate]);
 
   const handleViewAssessment = useCallback(async (assessmentId: string) => {
