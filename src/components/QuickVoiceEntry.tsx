@@ -60,6 +60,17 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     // #endregion
 
     try {
+      // Ensure user is authenticated (anonymous sign-in if needed)
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session) {
+        console.log('🔐 No session found, signing in anonymously...');
+        const { error: signInError } = await supabase.auth.signInAnonymously();
+        if (signInError) {
+          console.warn('Anonymous sign-in failed:', signInError);
+          // Continue anyway - some edge functions may work without auth
+        }
+      }
+
       // Use the same AI endpoint as weekly check-in for consistency
       const { data, error: fnError } = await supabase.functions.invoke('submit-weekly-checkin', {
         body: {
