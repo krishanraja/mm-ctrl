@@ -72,6 +72,10 @@ serve(async (req) => {
   try {
     const { transcript, asked_prompt_key, baseline_context } = await req.json();
 
+    // #region agent log - H1: Check transcript received
+    console.log(`[DEBUG-H1] Transcript received: ${transcript?.length || 0} chars, type: ${typeof transcript}`);
+    // #endregion
+
     if (!transcript || typeof transcript !== "string") {
       return new Response(JSON.stringify({ error: "transcript is required" }), {
         status: 400,
@@ -99,7 +103,13 @@ serve(async (req) => {
     // Validate caller identity
     const { data: userData, error: userErr } = await supabase.auth.getUser();
     const userId = userData?.user?.id ?? null;
+    
+    // #region agent log - H2: Check authentication
+    console.log(`[DEBUG-H2] Auth check: userId=${userId}, userErr=${userErr?.message || 'none'}, hasAuthHeader=${!!req.headers.get("Authorization")}`);
+    // #endregion
+    
     if (userErr || !userId) {
+      console.log(`[DEBUG-H2] UNAUTHORIZED - returning 401`);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -108,6 +118,10 @@ serve(async (req) => {
 
     // Generate insight/action (Lovable AI gateway preferred)
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    
+    // #region agent log - H1: Check API key presence
+    console.log(`[DEBUG-H1] LOVABLE_API_KEY present: ${!!LOVABLE_API_KEY}, length: ${LOVABLE_API_KEY?.length || 0}`);
+    // #endregion
 
     let generated = {
       insight: "There's a specific tension in what you shared - let me process that for you.",
@@ -117,6 +131,10 @@ serve(async (req) => {
     };
 
     if (LOVABLE_API_KEY) {
+      // #region agent log - H3: Starting AI call
+      console.log(`[DEBUG-H3] Starting Lovable AI gateway call...`);
+      // #endregion
+      
       const userContent = `Here's what the leader said (30-second voice note transcript):
 
 "${transcript}"
@@ -125,34 +143,70 @@ ${baseline_context ? `Additional context about this leader:\n${JSON.stringify(ba
 
 Analyze what they said and respond with specific, personalized insight and action. Remember: echo their exact words, name their specific teams/situations, and give advice only a veteran would know.`;
 
-      const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: userContent },
-          ],
-          temperature: 0.7,
-        }),
-      });
+      try {
+        const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: userContent },
+            ],
+            temperature: 0.7,
+          }),
+        });
 
-      if (aiResp.ok) {
-        const data = await aiResp.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (content) {
-          try {
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) generated = JSON.parse(jsonMatch[0]);
-          } catch {
-            // fall back to deterministic copy
+        // #region agent log - H3: AI response status
+        console.log(`[DEBUG-H3] Lovable AI response: status=${aiResp.status}, ok=${aiResp.ok}`);
+        // #endregion
+
+        if (aiResp.ok) {
+          const data = await aiResp.json();
+          const content = data.choices?.[0]?.message?.content;
+          
+          // #region agent log - H4/H5: Check response structure
+          console.log(`[DEBUG-H4] Response has choices: ${!!data.choices}, choice count: ${data.choices?.length || 0}`);
+          console.log(`[DEBUG-H5] Content preview: ${content?.slice(0, 200) || 'NO CONTENT'}`);
+          // #endregion
+          
+          if (content) {
+            try {
+              const jsonMatch = content.match(/\{[\s\S]*\}/);
+              // #region agent log - H4: JSON parsing
+              console.log(`[DEBUG-H4] JSON match found: ${!!jsonMatch}, match length: ${jsonMatch?.[0]?.length || 0}`);
+              // #endregion
+              if (jsonMatch) {
+                generated = JSON.parse(jsonMatch[0]);
+                // #region agent log - H5: Parsed result
+                console.log(`[DEBUG-H5] Parsed insight: ${generated.insight?.slice(0, 50) || 'MISSING'}`);
+                console.log(`[DEBUG-H5] Parsed action: ${generated.action_text?.slice(0, 50) || 'MISSING'}`);
+                // #endregion
+              }
+            } catch (parseErr) {
+              // #region agent log - H4: Parse error
+              console.log(`[DEBUG-H4] JSON parse error: ${parseErr}`);
+              // #endregion
+            }
           }
+        } else {
+          // #region agent log - H3: API error details
+          const errorText = await aiResp.text();
+          console.log(`[DEBUG-H3] Lovable API error response: ${errorText.slice(0, 500)}`);
+          // #endregion
         }
+      } catch (fetchErr) {
+        // #region agent log - H3: Fetch error
+        console.log(`[DEBUG-H3] Fetch error to Lovable API: ${fetchErr}`);
+        // #endregion
       }
+    } else {
+      // #region agent log - H1: No API key
+      console.log(`[DEBUG-H1] LOVABLE_API_KEY not set - using fallback response`);
+      // #endregion
     }
 
     const week = isoWeekKey();
@@ -192,6 +246,10 @@ Analyze what they said and respond with specific, personalized insight and actio
       console.warn("weekly action upsert failed (non-blocking):", actionErr);
     }
 
+    // #region agent log - Final response
+    console.log(`[DEBUG-FINAL] Returning response: insight=${generated.insight?.slice(0, 50)}, action=${generated.action_text?.slice(0, 50)}, tags=${JSON.stringify(generated.tags)}`);
+    // #endregion
+    
     return new Response(
       JSON.stringify({
         success: true,
@@ -202,6 +260,9 @@ Analyze what they said and respond with specific, personalized insight and actio
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
+    // #region agent log - Top-level error
+    console.error(`[DEBUG-ERROR] submit-weekly-checkin top-level error: ${error}`);
+    // #endregion
     console.error("submit-weekly-checkin error:", error);
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
       status: 500,

@@ -50,6 +50,10 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     setIsProcessing(true);
     setError(null);
 
+    // #region agent log
+    fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:start',message:'Starting quick entry submission',data:{transcriptLength:transcript.trim().length,transcriptPreview:transcript.trim().slice(0,100)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H5'})}).catch(()=>{});
+    // #endregion
+
     try {
       // Use the same AI endpoint as weekly check-in for consistency
       const { data, error: fnError } = await supabase.functions.invoke('submit-weekly-checkin', {
@@ -59,6 +63,10 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
           baseline_context: null,
         },
       });
+
+      // #region agent log
+      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:response',message:'Edge function response received',data:{hasData:!!data,hasError:!!fnError,fnError:fnError?.message||null,dataKeys:data?Object.keys(data):[],insight:data?.insight?.slice(0,50),action_text:data?.action_text?.slice(0,50),errorField:data?.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3-H5'})}).catch(()=>{});
+      // #endregion
 
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
@@ -70,8 +78,15 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         why: data?.why_text || "Generic advice is useless. You deserve something tailored to what you actually said.",
       };
 
+      // #region agent log
+      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:success',message:'Entry result created',data:{usedDefaultInsight:!data?.insight,usedDefaultAction:!data?.action_text,insightPreview:entryResult.insight.slice(0,50)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+      // #endregion
+
       setResult(entryResult);
     } catch (err) {
+      // #region agent log
+      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:catch',message:'Quick entry failed - entering catch block',data:{errorMessage:err instanceof Error?err.message:String(err),errorName:err instanceof Error?err.name:'unknown'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H4'})}).catch(()=>{});
+      // #endregion
       console.error('Quick entry failed:', err);
       // Provide fallback that acknowledges we couldn't process their specific input
       const fallbackResult: QuickEntryResult = {
@@ -412,3 +427,4 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     </div>
   );
 };
+
