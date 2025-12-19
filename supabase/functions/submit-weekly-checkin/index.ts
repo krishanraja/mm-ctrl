@@ -141,7 +141,7 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
-    // Validate caller identity
+    // Check caller identity (optional - we'll allow unauthenticated for AI insights)
     const { data: userData, error: userErr } = await supabase.auth.getUser();
     const userId = userData?.user?.id ?? null;
     
@@ -149,12 +149,10 @@ serve(async (req) => {
     console.log(`[DEBUG-H2] Auth check: userId=${userId}, userErr=${userErr?.message || 'none'}, hasAuthHeader=${!!req.headers.get("Authorization")}`);
     // #endregion
     
-    if (userErr || !userId) {
-      console.log(`[DEBUG-H2] UNAUTHORIZED - returning 401`);
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // Allow unauthenticated users to get AI insights (just won't store the check-in)
+    const isAuthenticated = !userErr && userId;
+    if (!isAuthenticated) {
+      console.log(`[DEBUG-H2] User not authenticated - will generate insights but skip database storage`);
     }
 
     // Generate insight/action - try OpenAI first (primary), then Lovable as fallback
@@ -302,51 +300,56 @@ Analyze what they said and respond with specific, personalized insight and actio
     }
 
     const week = isoWeekKey();
+    let checkinId = null;
 
-    // Store check-in
-    const { data: checkinRow, error: insertErr } = await supabase
-      .from("leader_checkins" as never)
-      .insert({
-        user_id: userId,
-        asked_prompt_key: typeof asked_prompt_key === "string" ? asked_prompt_key : "weekly_default",
-        transcript,
-        extracted_json: generated,
-      } as never)
-      .select("id")
-      .single();
+    // Only store check-in if user is authenticated
+    if (isAuthenticated) {
+      const { data: checkinRow, error: insertErr } = await supabase
+        .from("leader_checkins" as never)
+        .insert({
+          user_id: userId,
+          asked_prompt_key: typeof asked_prompt_key === "string" ? asked_prompt_key : "weekly_default",
+          transcript,
+          extracted_json: generated,
+        } as never)
+        .select("id")
+        .single();
 
-    if (insertErr) {
-      console.error("leader_checkins insert error:", insertErr);
-      return new Response(JSON.stringify({ error: "Failed to store check-in" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+      if (insertErr) {
+        console.warn("leader_checkins insert error (non-blocking for unauthenticated):", insertErr);
+        // Don't return error - still provide the AI insight
+      } else {
+        checkinId = checkinRow?.id ?? null;
+      }
 
-    // Upsert weekly action (one per week)
-    const { error: actionErr } = await supabase
-      .from("leader_weekly_actions" as never)
-      .upsert({
-        user_id: userId,
-        iso_week: week,
-        action_text: String(generated.action_text ?? "").slice(0, 1000),
-        why_text: String(generated.why_text ?? "").slice(0, 2000),
-        source: "checkin",
-      } as never, { onConflict: "user_id,iso_week" } as never);
+      // Upsert weekly action (one per week)
+      const { error: actionErr } = await supabase
+        .from("leader_weekly_actions" as never)
+        .upsert({
+          user_id: userId,
+          iso_week: week,
+          action_text: String(generated.action_text ?? "").slice(0, 1000),
+          why_text: String(generated.why_text ?? "").slice(0, 2000),
+          source: "checkin",
+        } as never, { onConflict: "user_id,iso_week" } as never);
 
-    if (actionErr) {
-      console.warn("weekly action upsert failed (non-blocking):", actionErr);
+      if (actionErr) {
+        console.warn("weekly action upsert failed (non-blocking):", actionErr);
+      }
+    } else {
+      console.log(`[DEBUG] Skipping database storage - user not authenticated`);
     }
 
     // #region agent log - Final response
-    console.log(`[DEBUG-FINAL] Returning response: insight=${generated.insight?.slice(0, 50)}, action=${generated.action_text?.slice(0, 50)}, tags=${JSON.stringify(generated.tags)}`);
+    console.log(`[DEBUG-FINAL] Returning response: insight=${generated.insight?.slice(0, 50)}, action=${generated.action_text?.slice(0, 50)}, tags=${JSON.stringify(generated.tags)}, authenticated=${isAuthenticated}`);
     // #endregion
     
     return new Response(
       JSON.stringify({
         success: true,
-        checkinId: checkinRow?.id ?? null,
+        checkinId: checkinId,
         isoWeek: week,
+        authenticated: isAuthenticated,
         ...generated,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
