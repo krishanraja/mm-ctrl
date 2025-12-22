@@ -70,3 +70,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_leaders_user_id_unique
   ON public.leaders(user_id) 
   WHERE user_id IS NOT NULL;
 
+

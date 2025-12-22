@@ -133,3 +133,4 @@ Monitor usage in Supabase Dashboard → Storage → Usage
 4. **Optimize file sizes**: Compress images, use efficient formats
 5. **Use CDN**: Supabase Storage includes CDN for fast delivery
 
+

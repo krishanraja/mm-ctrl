@@ -98,3 +98,4 @@ After deployment:
 - Check that anon key is correct format
 - Ensure RLS policies allow access if needed
 
+

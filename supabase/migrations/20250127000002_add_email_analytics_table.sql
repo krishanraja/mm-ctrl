@@ -122,3 +122,9 @@ $$;
 -- Grant execute permissions
 GRANT EXECUTE ON FUNCTION public.get_email_statistics TO service_role;
 
+
+
+
+
+
+

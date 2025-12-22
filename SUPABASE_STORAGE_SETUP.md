@@ -157,3 +157,9 @@ if (result.success) {
 - Verify MIME types are allowed
 - Check browser console for detailed errors
 
+
+
+
+
+
+

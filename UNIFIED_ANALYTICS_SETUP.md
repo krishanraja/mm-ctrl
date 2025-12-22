@@ -118,3 +118,9 @@ console.log('Conversion rate:', summary.conversionRate);
 - [ ] Comparison with previous periods
 - [ ] Goal tracking and alerts
 
+
+
+
+
+
+

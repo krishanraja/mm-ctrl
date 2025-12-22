@@ -22,3 +22,4 @@ CREATE POLICY "Service role only for rate limit logs"
 -- Add comment
 COMMENT ON TABLE public.rate_limit_logs IS 'Stores rate limit request logs for distributed rate limiting across edge function instances';
 
+
