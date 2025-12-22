@@ -156,42 +156,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     }
   }, [isInitialized, sessionId, currentScreen, setContextAssessmentId]);
 
-  // Fix #7: Deep link support - restore quiz state from URL on mount
-  useEffect(() => {
-    if (currentScreen === 'assessment' && isInitialized) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const quizState = urlParams.get('quiz');
-      
-      if (quizState) {
-        try {
-          const parsed = JSON.parse(decodeURIComponent(quizState));
-          // Restore question number if valid
-          if (parsed.currentQuestion && parsed.currentQuestion > 1 && parsed.currentQuestion <= totalQuestions) {
-            // Note: We can't directly set the hook state, but we can navigate to the question
-            // The persisted state in localStorage will be loaded by useStructuredAssessment
-            console.log('📎 Restored quiz state from URL:', parsed);
-          }
-        } catch (error) {
-          console.warn('Failed to parse quiz state from URL:', error);
-        }
-      }
-    }
-  }, [currentScreen, isInitialized, totalQuestions]);
-
-  // Fix #7: Update URL with quiz state as user progresses
-  useEffect(() => {
-    if (currentScreen === 'assessment' && assessmentState.currentQuestion > 1) {
-      const quizState = {
-        currentQuestion: assessmentState.currentQuestion,
-        completedAnswers: assessmentState.responses.length,
-        phase: assessmentState.phase
-      };
-      
-      const url = new URL(window.location.href);
-      url.searchParams.set('quiz', encodeURIComponent(JSON.stringify(quizState)));
-      window.history.replaceState({}, '', url.toString());
-    }
-  }, [currentScreen, assessmentState.currentQuestion, assessmentState.responses.length, assessmentState.phase]);
+  // SECURITY: Quiz progress is stored in localStorage only (not URL)
+  // This prevents accidental sharing of quiz state via URL copy/paste
+  // Restoration happens automatically via useStructuredAssessment hook which reads from localStorage
+  // See: src/hooks/useStructuredAssessment.ts for persistence implementation
 
   // Fix #2: Add back button warning when quiz is in progress
   useEffect(() => {

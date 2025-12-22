@@ -5,13 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, Mail, Lock, User } from 'lucide-react';
+import { Brain, Mail, Lock, User, ArrowLeft, CheckCircle } from 'lucide-react';
+import { EmailVerificationPrompt } from './EmailVerificationPrompt';
 
 interface AuthScreenProps {
   onAuthSuccess: () => void;
 }
 
+type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'verify-email';
+
 const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
+  const [view, setView] = useState<AuthView>('auth');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -39,9 +43,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
 
       onAuthSuccess();
     } catch (error: any) {
+      // Handle specific error cases
+      const message = error.message || "Please check your credentials and try again.";
+      
       toast({
         title: "Sign In Failed",
-        description: error.message || "Please check your credentials and try again.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -71,16 +78,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Account Created!",
-        description: "Please check your email to verify your account before signing in.",
-      });
-
-      // Switch to sign in tab
-      setEmail('');
-      setPassword('');
-      setFirstName('');
-      setLastName('');
+      // Show verification prompt instead of toast
+      setView('verify-email');
     } catch (error: any) {
       toast({
         title: "Sign Up Failed",
@@ -92,6 +91,164 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl,
+      });
+
+      if (error) throw error;
+
+      // Show success view
+      setView('reset-sent');
+    } catch (error: any) {
+      toast({
+        title: "Reset Failed",
+        description: error.message || "Unable to send reset email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Email verification view
+  if (view === 'verify-email') {
+    return (
+      <EmailVerificationPrompt
+        email={email}
+        onBack={() => {
+          setView('auth');
+          setEmail('');
+          setPassword('');
+          setFirstName('');
+          setLastName('');
+        }}
+      />
+    );
+  }
+
+  // Password reset success view
+  if (view === 'reset-sent') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-emerald-500/10 rounded-full">
+                <CheckCircle className="h-8 w-8 text-emerald-600" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl font-bold">
+              Check Your Email
+            </CardTitle>
+            <p className="text-muted-foreground mt-2">
+              We've sent a password reset link to <span className="font-medium text-foreground">{email}</span>
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground text-center">
+              Click the link in your email to reset your password. If you don't see it, check your spam folder.
+            </p>
+            
+            <Button 
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setView('auth');
+                setEmail('');
+              }}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Sign In
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => setView('forgot-password')}
+              className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Didn't receive it? Try again
+            </button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Forgot password form
+  if (view === 'forgot-password') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-primary/10 rounded-full">
+                <Mail className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl font-bold">
+              Reset Password
+            </CardTitle>
+            <p className="text-muted-foreground">
+              Enter your email and we'll send you a reset link
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    placeholder="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    required
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isLoading || !email}
+              >
+                {isLoading ? "Sending..." : "Send Reset Link"}
+              </Button>
+
+              <Button 
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setView('auth')}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Sign In
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Main auth view (sign in / sign up)
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -152,6 +309,14 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                 >
                   {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
+
+                <button
+                  type="button"
+                  onClick={() => setView('forgot-password')}
+                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Forgot your password?
+                </button>
               </form>
             </TabsContent>
 

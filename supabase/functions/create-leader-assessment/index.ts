@@ -99,78 +99,84 @@ Deno.serve(async (req) => {
     } = requestBody;
 
     // Handle empty/invalid email: generate pseudo-email for anonymous users
-    let leaderEmail = contactData.email?.trim() || '';
+    let leaderEmail = contactData?.email?.trim() || '';
     if (!leaderEmail || !leaderEmail.includes('@')) {
       leaderEmail = `anon+${ownerUserId}@anon.local`;
     }
 
-    console.log('🔐 Creating assessment with service role for:', leaderEmail, 'owner_user_id:', ownerUserId);
+    console.log('🔐 Creating assessment with service role for user_id:', ownerUserId, 'email:', leaderEmail);
 
-    // Fix #6: Create or get leader record with race condition protection
-    // Use upsert to handle concurrent requests atomically
-    const { data: leader, error: leaderError } = await supabase
+    // P0-2 FIX: Look up leader by user_id (not email) to prevent cross-user overwrites
+    // First, try to find existing leader by user_id
+    let leaderId: string;
+    
+    const { data: existingLeaderByUserId } = await supabase
       .from('leaders')
-      .upsert({
-        email: leaderEmail,
-        name: contactData.fullName,
-        role: contactData.roleTitle,
-        company: contactData.companyName,
-        company_size_band: contactData.companySize,
-        primary_focus: contactData.primaryFocus,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'email',
-        ignoreDuplicates: false // Update existing record
-      })
-      .select()
+      .select('id')
+      .eq('user_id', ownerUserId)
       .single();
 
-    if (leaderError || !leader) {
-      // If upsert fails, try to get existing leader as fallback
-      const { data: existingLeader } = await supabase
+    if (existingLeaderByUserId) {
+      // User already has a leader record - update it
+      const { error: updateError } = await supabase
         .from('leaders')
-        .select('*')
-        .eq('email', contactData.email)
-        .single();
-      
-      // Try to get by email (using the normalized email)
-      const { data: existingLeader } = await supabase
-        .from('leaders')
-        .select('*')
-        .eq('email', leaderEmail)
-        .single();
-      
-      if (existingLeader) {
-        // Update existing leader
-        const { error: updateError } = await supabase
-          .from('leaders')
-          .update({
-            name: contactData.fullName,
-            role: contactData.roleTitle,
-            company: contactData.companyName,
-            company_size_band: contactData.companySize,
-            primary_focus: contactData.primaryFocus,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existingLeader.id);
-        
-        if (updateError) {
-          throw new Error('Failed to update leader record: ' + updateError.message);
-        }
-        
-        var leaderId = existingLeader.id;
-      } else {
-        throw new Error('Failed to create or retrieve leader record: ' + leaderError?.message);
+        .update({
+          name: contactData?.fullName || null,
+          email: leaderEmail,
+          role: contactData?.roleTitle || null,
+          company: contactData?.companyName || null,
+          company_size_band: contactData?.companySize || null,
+          primary_focus: contactData?.primaryFocus || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingLeaderByUserId.id);
+
+      if (updateError) {
+        console.error('❌ Failed to update leader:', updateError);
+        throw new Error('Failed to update leader record: ' + updateError.message);
       }
+
+      leaderId = existingLeaderByUserId.id;
+      console.log('✅ Updated existing leader record:', leaderId);
     } else {
-      var leaderId = leader.id;
+      // No leader for this user - create new one with user_id
+      const { data: newLeader, error: createError } = await supabase
+        .from('leaders')
+        .insert({
+          user_id: ownerUserId, // Critical: Link to auth.users for RLS
+          email: leaderEmail,
+          name: contactData?.fullName || null,
+          role: contactData?.roleTitle || null,
+          company: contactData?.companyName || null,
+          company_size_band: contactData?.companySize || null,
+          primary_focus: contactData?.primaryFocus || null,
+        })
+        .select('id')
+        .single();
+
+      if (createError || !newLeader) {
+        console.error('❌ Failed to create leader:', createError);
+        
+        // Fallback: If insert failed due to unique constraint on user_id, try to get existing
+        const { data: fallbackLeader } = await supabase
+          .from('leaders')
+          .select('id')
+          .eq('user_id', ownerUserId)
+          .single();
+        
+        if (fallbackLeader) {
+          leaderId = fallbackLeader.id;
+          console.log('✅ Found leader via fallback:', leaderId);
+        } else {
+          throw new Error('Failed to create leader record: ' + (createError?.message || 'Unknown error'));
+        }
+      } else {
+        leaderId = newLeader.id;
+        console.log('✅ Created new leader record:', leaderId);
+      }
     }
 
-    console.log('✅ Leader record ready:', leaderId);
-
     // Step 2: Create leader_assessment record (bypasses RLS with service role)
-    // Fix #10: Include schema version for future compatibility
-    // Fix RLS: Set owner_user_id for proper access control
     const { data: assessment, error: assessmentError } = await supabase
       .from('leader_assessments')
       .insert({
@@ -179,11 +185,11 @@ Deno.serve(async (req) => {
         source,
         benchmark_score: benchmarkScore,
         benchmark_tier: benchmarkTier,
-        learning_style: assessmentData.learningStyle || null,
+        learning_style: assessmentData?.learningStyle || null,
         has_deep_profile: !!deepProfileData,
         has_full_diagnostic: false,
         session_id: sessionId, // Keep for backward compatibility
-        schema_version: '1.0', // Fix #10: Current schema version
+        schema_version: '1.0',
       })
       .select()
       .single();

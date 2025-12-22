@@ -8,6 +8,7 @@ import { ArrowRight, Mic, Lightbulb, Target, Mail, Check, RotateCcw, Lock } from
 import { supabase } from '@/integrations/supabase/client';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { validateEmail } from '@/utils/formValidation';
+import { useAuth } from '@/hooks/useAuth';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import mindmakerIcon from '@/assets/mindmaker-icon.png';
 
@@ -29,6 +30,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   onComplete,
   onSkipToQuiz
 }) => {
+  const { signUp, signIn, isAuthenticated, hasSession } = useAuth();
   const [transcript, setTranscript] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<QuickEntryResult | null>(null);
@@ -153,33 +155,24 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     setPasswordError(null);
 
     try {
-      // Create account with email and password
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            quick_entry_transcript: result?.transcript,
-            quick_entry_insight: result?.insight,
-          }
-        }
+      // Use auth machine for signup
+      const signUpResult = await signUp(email, password, {
+        quick_entry_transcript: result?.transcript,
+        quick_entry_insight: result?.insight,
       });
 
-      if (signUpError) {
+      if (!signUpResult.success) {
         // Check if user already exists
-        if (signUpError.message.includes('already registered')) {
+        if (signUpResult.error?.includes('already registered')) {
           // Try to sign in instead
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          if (signInError) {
+          const signInResult = await signIn(email, password);
+          if (!signInResult.success) {
             setPasswordError('This email is already registered. Please use the correct password or sign in.');
             setIsCreatingAccount(false);
             return;
           }
         } else {
-          setPasswordError(signUpError.message);
+          setPasswordError(signUpResult.error || 'Sign up failed');
           setIsCreatingAccount(false);
           return;
         }
@@ -235,7 +228,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     } finally {
       setIsCreatingAccount(false);
     }
-  }, [email, password, result]);
+  }, [email, password, result, signUp, signIn]);
 
   // Show result screen
   if (result) {
@@ -560,5 +553,9 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     </div>
   );
 };
+
+
+
+
 
 

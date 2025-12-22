@@ -13,6 +13,8 @@ import WeeklyCheckin from "./pages/WeeklyCheckin";
 import DecisionCapture from "./pages/DecisionCapture";
 import Timeline from "./pages/Timeline";
 import Baseline from "./pages/Baseline";
+import { AuthDebugPanel } from "@/components/auth/AuthDebugPanel";
+import { SessionExpiredDialog } from "@/components/auth/SessionExpiredDialog";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,10 @@ const App = () => (
               
               <Route path="*" element={<NotFound />} />
             </Routes>
+            {/* Dev-only auth debug panel */}
+            <AuthDebugPanel />
+            {/* Session expiry dialog */}
+            <SessionExpiredDialog />
           </BrowserRouter>
         </TooltipProvider>
       </AssessmentProvider>
