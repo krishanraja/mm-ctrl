@@ -20,11 +20,31 @@ const IndexContent = () => {
   const [mode, setMode] = useState<AssessmentMode>('hero');
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [user, setUser] = useState<User | null>(null);
+  const [isCheckingRedirect, setIsCheckingRedirect] = useState(true);
   const { contactData, setContactData } = useAssessment();
 
-  // NOTE: Redirect logic removed - Index.tsx is now at /diagnostic, not /
-  // The ExecutiveControlSurface at "/" handles new vs returning user detection
-  // and shows appropriate UI (baseline CTA vs personalized tensions)
+  // Smart redirect: If user has completed diagnostic AND is logged in, go to Dashboard
+  useEffect(() => {
+    const checkRedirect = async () => {
+      const { assessmentId } = getPersistedAssessmentId();
+      
+      if (assessmentId) {
+        // User has completed diagnostic
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user && !session.user.is_anonymous) {
+          // Logged in with real account - redirect to dashboard
+          console.log('✅ Returning user with diagnostic - redirecting to dashboard');
+          navigate('/dashboard', { replace: true });
+          return;
+        }
+      }
+      
+      setIsCheckingRedirect(false);
+    };
+    
+    checkRedirect();
+  }, [navigate]);
 
   useEffect(() => {
     // Get initial session
@@ -52,7 +72,7 @@ const IndexContent = () => {
       setMode('quiz');
     } else {
       // Skip to dashboard
-      navigate('/today');
+      navigate('/dashboard');
     }
   }, [navigate]);
 
@@ -106,6 +126,15 @@ const IndexContent = () => {
     
     setMode('view-results');
   }, [user, setContactData]);
+
+  // Show loading while checking redirect
+  if (isCheckingRedirect) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>

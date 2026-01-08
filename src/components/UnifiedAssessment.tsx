@@ -4,7 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket } from 'lucide-react';
+import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket, Mail, Lock, Save } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { supabase } from '@/integrations/supabase/client';
 // Toast removed - using inline UI feedback instead
@@ -17,7 +19,8 @@ import { SingleScrollResults } from './SingleScrollResults';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
-import { persistAssessmentId } from '@/utils/assessmentPersistence';
+import { persistAssessmentId, linkAssessmentToUser, getPersistedAssessmentId } from '@/utils/assessmentPersistence';
+import { useNavigate } from 'react-router-dom';
 
 
 interface Message {
@@ -29,6 +32,7 @@ interface Message {
 
 type ScreenState = 
   | 'assessment' 
+  | 'save-results-prompt'
   | 'deep-profile-optin' 
   | 'deep-profile-questionnaire'
   | 'generating-insights'
@@ -42,6 +46,7 @@ interface UnifiedAssessmentProps {
 }
 
 export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete, onBack }) => {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('assessment');
@@ -49,6 +54,14 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const [insightPhase, setInsightPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
   const [libraryProgress, setLibraryProgress] = useState(0);
   const [libraryPhase, setLibraryPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
+  
+  // Auth form state
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authFullName, setAuthFullName] = useState('');
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  
   const {
     sessionId,
     setSessionId,
@@ -196,16 +209,14 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     }
   }, [assessmentState.responses.length, assessmentState.isComplete, onBack]);
 
-  // Phase 1: After all questions, go directly to Quick Personalization (deep-profile-optin)
-  // No contact form before results - collect contact only via unlock form on results page
+  // Phase 1: After all questions, prompt user to save their results (create account)
   useEffect(() => {
     const progressData = getProgressData();
     const hasAnsweredAllQuestions = progressData.completedAnswers >= totalQuestions;
     
-    // After all questions, go directly to deep profile opt-in (Quick Personalization)
+    // After all questions, show save results prompt
     if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment') {
       // Set minimal contact data to satisfy downstream requirements
-      // Real contact collection happens on results page via UnlockResultsForm
       if (!contactData) {
         setContactData({
           fullName: '',
@@ -215,9 +226,91 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           consentToInsights: true,
         });
       }
-      setCurrentScreen('deep-profile-optin');
+      setCurrentScreen('save-results-prompt');
     }
   }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, setContactData]);
+
+  // Handle account creation to save results
+  const handleSaveResults = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authEmail || !authPassword || !authFullName) return;
+    
+    setIsAuthLoading(true);
+    setAuthError(null);
+    
+    try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
+      // Try to sign up
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: authEmail,
+        password: authPassword,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: authFullName,
+            first_name: authFullName.split(' ')[0],
+            last_name: authFullName.split(' ').slice(1).join(' '),
+          }
+        }
+      });
+      
+      if (authError) {
+        // If user already exists, try to sign them in
+        if (authError.message.includes('already registered')) {
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email: authEmail,
+            password: authPassword,
+          });
+          
+          if (signInError) {
+            setAuthError('Account exists. Please use the correct password.');
+            setIsAuthLoading(false);
+            return;
+          }
+          
+          // Link assessment to existing user
+          const { assessmentId } = getPersistedAssessmentId();
+          if (assessmentId && signInData?.user?.id) {
+            await linkAssessmentToUser(assessmentId, signInData.user.id);
+          }
+        } else {
+          setAuthError(authError.message);
+          setIsAuthLoading(false);
+          return;
+        }
+      } else if (authData?.user?.id) {
+        // New user created - link assessment
+        const { assessmentId } = getPersistedAssessmentId();
+        if (assessmentId) {
+          await linkAssessmentToUser(assessmentId, authData.user.id);
+        }
+      }
+      
+      // Update contact data with user info
+      setContactData({
+        fullName: authFullName,
+        email: authEmail,
+        department: '',
+        primaryFocus: '',
+        consentToInsights: true,
+      });
+      
+      console.log('✅ Account created/signed in, proceeding to deep profile');
+      setCurrentScreen('deep-profile-optin');
+      
+    } catch (err: any) {
+      console.error('Auth error:', err);
+      setAuthError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsAuthLoading(false);
+    }
+  }, [authEmail, authPassword, authFullName, setContactData]);
+
+  // Skip save and continue without account
+  const handleSkipSave = useCallback(() => {
+    setCurrentScreen('deep-profile-optin');
+  }, []);
 
   const handleOptionSelect = useCallback(async (option: string) => {
     if (!sessionId) return;
@@ -604,7 +697,116 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   }, [setDeepProfileData, getAssessmentData, getProgressData, contactData, sessionId, setPromptLibrary, startInsightGeneration]);
 
   // Render based on current screen state
-  // Note: contact-form and quick-preview screens removed - go directly to deep-profile-optin
+
+  // Save Results Prompt - shown after diagnostic completion
+  if (currentScreen === 'save-results-prompt') {
+    return (
+      <div className="bg-background fixed inset-0 flex items-center justify-center px-4 overflow-hidden">
+        <Card className="max-w-md w-full shadow-lg border rounded-xl">
+          <CardContent className="p-5 sm:p-8">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
+                <Save className="h-6 w-6 text-primary" />
+              </div>
+              <h2 className="text-xl font-semibold text-foreground mb-2">
+                Save your results
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Create an account so you never have to take this diagnostic again.
+              </p>
+            </div>
+
+            {/* Auth Form */}
+            <form onSubmit={handleSaveResults} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="auth-name" className="text-sm font-medium">
+                  Your name
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="auth-name"
+                    type="text"
+                    placeholder="Jane Smith"
+                    value={authFullName}
+                    onChange={(e) => setAuthFullName(e.target.value)}
+                    className="pl-10 rounded-lg"
+                    required
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="auth-email" className="text-sm font-medium">
+                  Work email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="auth-email"
+                    type="email"
+                    placeholder="you@company.com"
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                    className="pl-10 rounded-lg"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="auth-password" className="text-sm font-medium">
+                  Create password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="auth-password"
+                    type="password"
+                    placeholder="At least 6 characters"
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                    className="pl-10 rounded-lg"
+                    minLength={6}
+                    required
+                  />
+                </div>
+              </div>
+
+              {authError && (
+                <p className="text-sm text-destructive">{authError}</p>
+              )}
+
+              <Button 
+                type="submit"
+                variant="cta" 
+                size="lg"
+                className="w-full rounded-xl min-h-[48px]"
+                disabled={isAuthLoading || !authEmail || !authPassword || !authFullName}
+              >
+                {isAuthLoading ? 'Creating account...' : 'Save & continue'}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </form>
+
+            <button 
+              type="button"
+              className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-3 mt-3"
+              onClick={handleSkipSave}
+            >
+              Skip for now
+            </button>
+
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              Your data is private. We'll never share it.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (currentScreen === 'deep-profile-optin') {
     return (

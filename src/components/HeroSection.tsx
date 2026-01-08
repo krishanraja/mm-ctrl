@@ -121,7 +121,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             {/* Badge - Entry point above card */}
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/15 text-primary border border-primary/30">
               <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              30 seconds to your first insight
+              Get quick AI help for you
             </span>
             
             {/* Action Buttons - Clear labels on mobile */}
@@ -222,7 +222,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               style={{ transitionDelay: '450ms' }}
             >
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                {/* Primary: Quick 30-second entry - Green CTA */}
+                {/* Primary: Quick entry - Green CTA */}
                 <Button 
                   onClick={onStartVoice}
                   size="lg"
@@ -240,7 +240,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     rounded-xl
                   "
                 >
-                  30 seconds to insight
+                  Get quick AI help for you
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
 
@@ -282,7 +282,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                   <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
-                <span>30 seconds/week</span>
+                <span>2 min diagnostic</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">

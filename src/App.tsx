@@ -2,14 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AssessmentProvider } from "@/contexts/AssessmentContext";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
-// Core Control Surface
-import ExecutiveControlSurface from "./components/ExecutiveControlSurface";
-
-// Demoted features (accessible but not primary)
+// Pages
 import PromptCoach from "./pages/PromptCoach";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -19,6 +16,7 @@ import WeeklyCheckin from "./pages/WeeklyCheckin";
 import DecisionCapture from "./pages/DecisionCapture";
 import Timeline from "./pages/Timeline";
 import Baseline from "./pages/Baseline";
+import Dashboard from "./pages/Dashboard";
 
 // Auth components
 import { AuthDebugPanel } from "@/components/auth/AuthDebugPanel";
@@ -27,24 +25,14 @@ import { SessionExpiredDialog } from "@/components/auth/SessionExpiredDialog";
 const queryClient = new QueryClient();
 
 /**
- * Wrapper component to provide navigate function to ExecutiveControlSurface
- * This enables proper SPA navigation instead of window.location.href
- */
-const ExecutiveControlSurfaceWrapper = () => {
-  const navigate = useNavigate();
-  return <ExecutiveControlSurface onNavigateToBaseline={() => navigate('/baseline')} />;
-};
-
-/**
- * Mindmaker Control
+ * Mindmaker for Leaders
  * 
- * A voice-first executive decision system that keeps leaders in control of AI-shaped work.
+ * A voice-first AI leadership tool that helps executives navigate AI uncertainty.
  * 
- * This is not a chatbot.
- * This is not a dashboard.
- * This is not a learning product.
- * 
- * It answers one question: "What do I need to know or decide right now?"
+ * User flow:
+ * 1. New users land on HeroSection ("Know Where You Stand")
+ * 2. Complete diagnostic → prompted to save/login
+ * 3. Returning users with completed diagnostic → Dashboard
  */
 const App = () => (
   <div className="min-h-screen bg-background">
@@ -57,30 +45,21 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 {/* 
-                  PRIMARY: Executive Control Surface
-                  The home screen. Nothing else competes with it.
-                  User intent: "I've got 30 seconds. Tell me what matters."
+                  PRIMARY: Landing page with smart redirect
+                  New users see HeroSection, returning users redirect to Dashboard
                 */}
-                <Route path="/" element={<ExecutiveControlSurfaceWrapper />} />
+                <Route path="/" element={<Index />} />
                 
                 {/* 
-                  DEMOTED: Diagnostic/Onboarding
-                  Entry only. Re-run occasionally. Never the main product.
-                */}
-                <Route path="/diagnostic" element={<Index />} />
-                <Route path="/onboarding" element={<Index />} />
-                
-                {/* 
-                  DEMOTED: Prompt Coach - practice tool
-                  Surface only when relevant. No library browsing.
+                  Prompt Coach - practice tool
                 */}
                 <Route path="/coach" element={<PromptCoach />} />
 
                 {/* 
-                  SECONDARY: Ongoing loop routes
-                  These power the home card - they do not get primary placement.
+                  App routes (require session)
                 */}
                 <Route element={<AppShell />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/today" element={<Today />} />
                   <Route path="/checkin" element={<WeeklyCheckin />} />
                   <Route path="/capture" element={<DecisionCapture />} />
