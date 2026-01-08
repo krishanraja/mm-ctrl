@@ -558,8 +558,18 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
     <div className="bg-background fixed inset-0 flex flex-col overflow-hidden">
       {/* Safe area container - no outer scroll */}
       <div className="flex-1 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
-        {/* Compact Progress Header */}
+        {/* Brand Header + Progress */}
         <div className="max-w-2xl mx-auto w-full shrink-0 py-2">
+          {/* Brand Icon */}
+          <div className="flex items-center justify-between mb-2">
+            <img 
+              src="/2.png" 
+              alt="Mindmaker" 
+              className="h-6 sm:h-7 w-auto"
+            />
+            <span className="text-xs text-muted-foreground">Personalization</span>
+          </div>
+          
           <Card className="shadow-sm border rounded-xl">
             <CardContent className="p-2 sm:p-2.5">
               <div className="flex items-center justify-between mb-1">

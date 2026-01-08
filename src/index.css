@@ -27,6 +27,14 @@
     --surface-elevated: 0 0% 14%;      /* #242424 - Elevated elements (slightly lighter) */
     --border-subtle: 0 0% 18%;         /* #2e2e2e - Subtle borders (slightly more visible) */
     --muted-text: 0 0% 60%;            /* #999999 - Secondary text (better readability) */
+    
+    /* === BRAND COLORS (for HeroSection compatibility) === */
+    --ink: 213 50% 11%;                /* #0e1a2b - Deep navy/charcoal */
+    --mint: 158 45% 55%;               /* #4db38a - Brand green accent */
+    --off-white: 40 20% 97%;           /* #faf9f7 - Warm off-white background */
+    --light-grey: 220 10% 90%;         /* #e3e5e8 - Subtle borders */
+    --mid-grey: 220 10% 50%;           /* #737a85 - Secondary text */
+    --graphite: 220 15% 25%;           /* #353d4a - Dark secondary */
 
     /* === SEMANTIC MAPPINGS (Dark Mode Only) === */
     --background: var(--near-black);

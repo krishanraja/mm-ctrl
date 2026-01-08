@@ -39,13 +39,21 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
   }, []);
   
   return (
-    <div className="relative min-h-[100dvh] bg-[hsl(var(--off-white))] flex flex-col">
-      {/* Subtle geometric background pattern */}
+    <div className="relative min-h-[100dvh] bg-background flex flex-col">
+      {/* Subtle geometric background pattern - lighter dots on dark */}
       <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--ink)) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--soft-white)) 1px, transparent 0)`,
           backgroundSize: '32px 32px',
+        }}
+      />
+      
+      {/* Gradient overlay for depth */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--deep-green) / 0.08), transparent)`,
         }}
       />
       
@@ -111,8 +119,8 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             style={{ transitionDelay: '100ms' }}
           >
             {/* Badge - Entry point above card */}
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-[hsl(var(--mint)/0.15)] text-[hsl(var(--ink))] border border-[hsl(var(--mint)/0.3)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--mint))] animate-pulse" />
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/15 text-primary border border-primary/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               30 seconds to your first insight
             </span>
             
@@ -128,7 +136,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                   onClick={onSignIn}
                   variant="ghost"
                   size="sm"
-                  className="h-8 sm:h-9 px-3 text-xs sm:text-sm flex items-center gap-1.5 hover:bg-secondary/80 border border-[hsl(var(--light-grey))] sm:border-0"
+                  className="h-8 sm:h-9 px-3 text-xs sm:text-sm flex items-center gap-1.5 hover:bg-secondary/80 border border-border sm:border-0 text-foreground"
                 >
                   <LogIn className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
                   <span className="whitespace-nowrap">Sign In</span>
@@ -137,31 +145,41 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             </div>
           </div>
           
-          {/* Hero Card */}
+          {/* Hero Card - Dark glass-morphism */}
           <div 
             className={`
-              bg-white rounded-2xl shadow-[0_4px_40px_rgba(14,26,43,0.08)] 
-              border border-[hsl(var(--light-grey))]
+              bg-card/80 backdrop-blur-xl rounded-2xl 
+              shadow-[0_8px_40px_rgba(0,0,0,0.4)] 
+              border border-primary/20
               p-6 sm:p-8 md:p-10
               transition-all duration-700 ease-out
+              relative overflow-hidden
               ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
             `}
           >
-            {/* Full Logo - Left-aligned, using 11.png from public */}
+            {/* Subtle gradient overlay inside card */}
             <div 
-              className={`mb-6 transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
+              className="absolute inset-0 pointer-events-none opacity-30"
+              style={{
+                background: `linear-gradient(135deg, hsl(var(--deep-green) / 0.1) 0%, transparent 50%, hsl(var(--deep-green) / 0.05) 100%)`,
+              }}
+            />
+            
+            {/* Full Logo - Left-aligned, using 11.png from public (white version for dark bg) */}
+            <div 
+              className={`mb-6 transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '150ms' }}
             >
               <img 
                 src="/11.png" 
                 alt="Mindmaker" 
-                className="h-6 sm:h-7 md:h-8 w-auto"
+                className="h-6 sm:h-7 md:h-8 w-auto brightness-0 invert"
               />
             </div>
             
             {/* Headline */}
             <h1 
-              className={`text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-[hsl(var(--ink))] leading-[1.15] mb-4 sm:mb-5 transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
+              className={`text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-foreground leading-[1.15] mb-4 sm:mb-5 transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '250ms' }}
             >
               Know Where You
@@ -169,7 +187,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               <span className="relative inline-block">
                 Stand on AI
                 <svg 
-                  className="absolute -bottom-1 left-0 w-full h-2 text-[hsl(var(--mint))]" 
+                  className="absolute -bottom-1 left-0 w-full h-2 text-primary" 
                   viewBox="0 0 200 8" 
                   fill="none" 
                   preserveAspectRatio="none"
@@ -192,7 +210,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             
             {/* Description */}
             <p 
-              className={`text-base sm:text-lg text-[hsl(var(--mid-grey))] leading-relaxed mb-6 sm:mb-8 max-w-lg transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
+              className={`text-base sm:text-lg text-muted-foreground leading-relaxed mb-6 sm:mb-8 max-w-lg transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '350ms' }}
             >
               Speak your biggest AI uncertainty. Get one insight and one action for this week. No course. No overwhelm.
@@ -200,11 +218,11 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             
             {/* CTA Buttons */}
             <div
-              className={`transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
+              className={`transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '450ms' }}
             >
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                {/* Primary: Quick 30-second entry */}
+                {/* Primary: Quick 30-second entry - Green CTA */}
                 <Button 
                   onClick={onStartVoice}
                   size="lg"
@@ -214,10 +232,10 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     px-6 sm:px-8 
                     text-base sm:text-lg 
                     font-semibold 
-                    bg-[hsl(var(--ink))] hover:bg-[hsl(var(--ink)/0.9)]
-                    text-white 
-                    shadow-lg shadow-[hsl(var(--ink)/0.15)]
-                    hover:shadow-xl hover:shadow-[hsl(var(--ink)/0.2)]
+                    bg-primary hover:bg-primary/90
+                    text-primary-foreground 
+                    shadow-lg shadow-primary/25
+                    hover:shadow-xl hover:shadow-primary/35
                     transition-all duration-300
                     rounded-xl
                   "
@@ -232,7 +250,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     onClick={() => navigate('/today')}
                     size="lg"
                     variant="outline"
-                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl"
+                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl border-border text-foreground hover:bg-secondary"
                   >
                     Continue to Today
                   </Button>
@@ -241,7 +259,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     onClick={onStartQuiz}
                     size="lg"
                     variant="outline"
-                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl text-[hsl(var(--mid-grey))] hover:text-[hsl(var(--ink))]"
+                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                   >
                     Full 2-min diagnostic →
                   </Button>
@@ -260,21 +278,21 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
           >
             {/* Mobile: Stack vertically, Desktop: Horizontal row */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-3 sm:gap-6 lg:gap-8">
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(var(--mid-grey))]">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-white shadow-sm border border-[hsl(var(--light-grey))] flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
                 <span>30 seconds/week</span>
               </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(var(--mid-grey))]">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-white shadow-sm border border-[hsl(var(--light-grey))] flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
                 <span>100% private</span>
               </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[hsl(var(--mid-grey))]">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-white shadow-sm border border-[hsl(var(--light-grey))] flex items-center justify-center flex-shrink-0">
-                  <Users className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-[hsl(var(--ink))]" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
+                  <Users className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
                 <span>No course. No fluff.</span>
               </div>

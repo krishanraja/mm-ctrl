@@ -715,10 +715,15 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     <div className="bg-background fixed inset-0 flex flex-col overflow-hidden">
       {/* Safe area container - no scroll on outer container */}
       <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
-        {/* Compact Header - Mobile First */}
-        <div className="text-center py-2 sm:py-3 shrink-0">
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Evaluate how your AI literacy drives strategic growth and competitive advantage
+        {/* Brand Header with Icon */}
+        <div className="flex items-center justify-between py-2 sm:py-3 shrink-0">
+          <img 
+            src="/2.png" 
+            alt="Mindmaker" 
+            className="h-6 sm:h-7 w-auto"
+          />
+          <p className="text-xs sm:text-sm text-muted-foreground text-right flex-1 ml-3">
+            AI Leadership Benchmark
           </p>
         </div>
 

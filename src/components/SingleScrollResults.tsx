@@ -338,8 +338,18 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   return (
     <div className="bg-background min-h-[100dvh] py-4 sm:py-6">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-4xl">
+        
+        {/* Brand Header */}
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <img 
+            src="/2.png" 
+            alt="Mindmaker" 
+            className="h-6 sm:h-7 w-auto"
+          />
+          <span className="text-xs sm:text-sm text-muted-foreground">Your Results</span>
+        </div>
 
-        {/* Ongoing loop CTA (keeps baseline as “starting point”) */}
+        {/* Ongoing loop CTA (keeps baseline as "starting point") */}
         <Card className="mb-4 sm:mb-6 shadow-sm border rounded-xl bg-gradient-to-br from-primary/5 to-transparent">
           <CardContent className="p-4 sm:p-5">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
