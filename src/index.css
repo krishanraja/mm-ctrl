@@ -13,76 +13,78 @@
 @tailwind utilities;
 
 /* ========================================
-   MINDMAKER DESIGN SYSTEM - INK & MINT
-   New Brand Identity - Professional & Bold
+   MINDMAKER CONTROL - EXECUTIVE DARK MODE
+   Voice-first. One thumb. One breath. One decision.
    ======================================== */
 
 @layer base {
   :root {
-    /* === BRAND COLORS === */
-    --ink: 210 58% 11%;                /* #0e1a2b - Main structure, typography */
-    --mint: 158 82% 73%;               /* #7ef4c2 - Highlights, sparingly */
-    --off-white: 60 9% 96%;            /* #F7F7F5 - Background */
-    --light-grey: 60 5% 90%;           /* #E5E5E3 - Borders */
-    --mid-grey: 210 7% 62%;            /* #9AA0A6 - Secondary text */
-    --graphite: 200 5% 21%;            /* #333639 - Strong text */
+    /* === EXECUTIVE DARK PALETTE === */
+    --near-black: 0 0% 4%;             /* #0a0a0a - True dark background */
+    --soft-white: 0 0% 90%;            /* #e5e5e5 - Readable text, never pure white */
+    --deep-green: 158 45% 42%;         /* #3d8b6e - Brighter green for better contrast on dark */
+    --surface: 0 0% 8%;                /* #141414 - Card surfaces */
+    --surface-elevated: 0 0% 14%;      /* #242424 - Elevated elements (slightly lighter) */
+    --border-subtle: 0 0% 18%;         /* #2e2e2e - Subtle borders (slightly more visible) */
+    --muted-text: 0 0% 60%;            /* #999999 - Secondary text (better readability) */
 
-    /* === SEMANTIC MAPPINGS === */
-    --background: var(--off-white);
-    --foreground: var(--ink);
-    --muted: var(--light-grey);
-    --muted-foreground: var(--mid-grey);
-    --primary: var(--ink);
-    --primary-foreground: 0 0% 100%;   /* White text on ink */
-    --accent: var(--mint);
-    --accent-foreground: var(--ink);   /* Ink text on mint */
-    --ring: var(--mint);
+    /* === SEMANTIC MAPPINGS (Dark Mode Only) === */
+    --background: var(--near-black);
+    --foreground: var(--soft-white);
+    --muted: var(--surface);
+    --muted-foreground: var(--muted-text);
+    --primary: var(--deep-green);
+    --primary-foreground: var(--soft-white);
+    --accent: var(--deep-green);
+    --accent-foreground: var(--soft-white);
+    --ring: var(--deep-green);
 
     /* === SURFACE COLORS === */
-    --card: 0 0% 100%;                 /* Pure white for cards */
-    --card-foreground: var(--ink);
-    --border: var(--light-grey);
-    --radius: 0.5rem;                  /* 8px - cleaner, less rounded */
+    --card: var(--surface);
+    --card-foreground: var(--soft-white);
+    --border: var(--border-subtle);
+    --radius: 0.75rem;
 
     /* === INPUT & POPOVER === */
-    --input: var(--light-grey);
-    --popover: 0 0% 100%;
-    --popover-foreground: var(--ink);
+    --input: var(--surface-elevated);
+    --popover: var(--surface);
+    --popover-foreground: var(--soft-white);
     
     /* === SECONDARY SYSTEM === */
-    --secondary: var(--light-grey);
-    --secondary-foreground: var(--ink);
+    --secondary: var(--surface-elevated);
+    --secondary-foreground: var(--soft-white);
 
     /* === SEMANTIC COLORS === */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 100%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: var(--soft-white);
+    --success: 160 35% 40%;
+    --success-foreground: var(--soft-white);
 
-    /* === SHADOWS - Subtle, professional === */
-    --shadow-sm: 0 1px 3px hsl(210 58% 11% / 0.08);
-    --shadow-md: 0 4px 12px hsl(210 58% 11% / 0.12);
-    --shadow-lg: 0 8px 24px hsl(210 58% 11% / 0.16);
+    /* === SHADOWS - Depth through darkness === */
+    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.4);
+    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.5);
+    --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.6);
   }
 
+  /* Dark class for compatibility - maps to same values */
   .dark {
-    --background: var(--ink);
-    --foreground: 0 0% 98%;
-    --muted: 210 50% 18%;
-    --muted-foreground: var(--mid-grey);
-    --card: 210 55% 14%;
-    --card-foreground: 0 0% 98%;
-    --border: 210 40% 22%;
-    --ring: var(--mint);
-    --input: 210 40% 22%;
-    --popover: 210 55% 14%;
-    --popover-foreground: 0 0% 98%;
-    --secondary: 210 50% 18%;
-    --secondary-foreground: 0 0% 98%;
-    --primary: var(--mint);
-    --primary-foreground: var(--ink);
-    --accent: var(--mint);
-    --accent-foreground: var(--ink);
+    --background: var(--near-black);
+    --foreground: var(--soft-white);
+    --muted: var(--surface);
+    --muted-foreground: var(--muted-text);
+    --card: var(--surface);
+    --card-foreground: var(--soft-white);
+    --border: var(--border-subtle);
+    --ring: var(--deep-green);
+    --input: var(--surface-elevated);
+    --popover: var(--surface);
+    --popover-foreground: var(--soft-white);
+    --secondary: var(--surface-elevated);
+    --secondary-foreground: var(--soft-white);
+    --primary: var(--deep-green);
+    --primary-foreground: var(--soft-white);
+    --accent: var(--deep-green);
+    --accent-foreground: var(--soft-white);
   }
 }
 
@@ -566,4 +568,274 @@ input:focus-visible {
 .carousel-card-title-2xl {
   min-height: 4.25rem; /* 68px - accommodates 2 lines of text-2xl */
   line-height: 1.4;
+}
+
+/* ==========================================
+   PREMIUM DESIGN SYSTEM - ANIMATED BORDERS
+   ========================================== */
+
+/* Animated border glow effect for cards */
+.border-glow {
+  position: relative;
+  border: 1px solid transparent;
+  background: 
+    linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+    linear-gradient(135deg, 
+      hsl(var(--deep-green) / 0.3), 
+      hsl(var(--deep-green) / 0.1), 
+      hsl(var(--deep-green) / 0.3)
+    ) border-box;
+  transition: all 0.3s ease;
+}
+
+.border-glow:hover,
+.border-glow:focus-within {
+  background: 
+    linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+    linear-gradient(135deg, 
+      hsl(var(--deep-green) / 0.6), 
+      hsl(var(--deep-green) / 0.3), 
+      hsl(var(--deep-green) / 0.6)
+    ) border-box;
+  box-shadow: 0 0 20px hsl(var(--deep-green) / 0.15);
+}
+
+/* Shimmer border animation */
+.border-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.border-shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--deep-green) / 0.4) 25%,
+    hsl(var(--deep-green) / 0.8) 50%,
+    hsl(var(--deep-green) / 0.4) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-shimmer 3s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.border-shimmer:hover::before,
+.border-shimmer:focus-within::before {
+  opacity: 1;
+}
+
+@keyframes border-shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Premium card with animated border */
+.card-premium {
+  position: relative;
+  background: hsl(var(--card));
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card-premium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--deep-green) / 0.2) 0%,
+    hsl(var(--deep-green) / 0.05) 50%,
+    hsl(var(--deep-green) / 0.2) 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transition: all 0.3s ease;
+}
+
+.card-premium:hover::before {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--deep-green) / 0.5) 0%,
+    hsl(var(--deep-green) / 0.2) 50%,
+    hsl(var(--deep-green) / 0.5) 100%
+  );
+}
+
+.card-premium:hover {
+  box-shadow: 0 8px 32px hsl(var(--deep-green) / 0.1);
+  transform: translateY(-2px);
+}
+
+/* Premium button with slide effect */
+.btn-premium {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid hsl(var(--deep-green) / 0.5);
+  color: hsl(var(--soft-white));
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-premium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--deep-green)) 0%,
+    hsl(var(--deep-green) / 0.8) 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: -1;
+}
+
+.btn-premium:hover::before {
+  transform: translateX(0);
+}
+
+.btn-premium:hover {
+  border-color: hsl(var(--deep-green));
+  box-shadow: 0 4px 16px hsl(var(--deep-green) / 0.3);
+}
+
+/* Primary button with gradient and glow */
+.btn-primary-glow {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--deep-green)) 0%,
+    hsl(158 45% 35%) 100%
+  );
+  border: none;
+  color: hsl(var(--soft-white));
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--deep-green) / 0.6) 0%,
+    hsl(var(--deep-green) / 0.2) 50%,
+    hsl(var(--deep-green) / 0.6) 100%
+  );
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-primary-glow:hover::before {
+  opacity: 1;
+}
+
+.btn-primary-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 16px hsl(var(--deep-green) / 0.4),
+    0 0 40px hsl(var(--deep-green) / 0.2);
+}
+
+.btn-primary-glow:active {
+  transform: translateY(0);
+}
+
+/* Mic orb pulse animation */
+.mic-orb-pulse {
+  position: relative;
+}
+
+.mic-orb-pulse::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid hsl(var(--deep-green) / 0.3);
+  animation: mic-pulse 2s ease-in-out infinite;
+}
+
+.mic-orb-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--deep-green) / 0.15);
+  animation: mic-pulse 2s ease-in-out infinite 0.5s;
+}
+
+@keyframes mic-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+/* Recording state - expanding rings */
+.mic-orb-recording::before,
+.mic-orb-recording::after {
+  animation: mic-recording-ring 1.5s ease-out infinite;
+}
+
+.mic-orb-recording::after {
+  animation-delay: 0.75s;
+}
+
+@keyframes mic-recording-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+    border-color: hsl(var(--deep-green) / 0.6);
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border-color: hsl(var(--deep-green) / 0);
+  }
+}
+
+/* Subtle border pulse for interactive elements */
+.border-pulse {
+  animation: border-pulse-anim 2s ease-in-out infinite;
+}
+
+@keyframes border-pulse-anim {
+  0%, 100% {
+    border-color: hsl(var(--border));
+  }
+  50% {
+    border-color: hsl(var(--deep-green) / 0.4);
+  }
 }

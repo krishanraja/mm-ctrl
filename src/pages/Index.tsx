@@ -22,15 +22,9 @@ const IndexContent = () => {
   const [user, setUser] = useState<User | null>(null);
   const { contactData, setContactData } = useAssessment();
 
-  // Check for existing baseline and redirect returning users to /today
-  useEffect(() => {
-    const { assessmentId } = getPersistedAssessmentId();
-    if (assessmentId) {
-      // User has completed a baseline - redirect to Today for ongoing loop
-      console.log('📍 Returning user detected, redirecting to /today');
-      navigate('/today', { replace: true });
-    }
-  }, [navigate]);
+  // NOTE: Redirect logic removed - Index.tsx is now at /diagnostic, not /
+  // The ExecutiveControlSurface at "/" handles new vs returning user detection
+  // and shows appropriate UI (baseline CTA vs personalized tensions)
 
   useEffect(() => {
     // Get initial session

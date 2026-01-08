@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users } from "lucide-react";
-import mindmakerLogo from "@/assets/mindmaker-logo.png";
 import { useState, useEffect } from "react";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useNavigate } from "react-router-dom";
@@ -148,15 +147,15 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
             `}
           >
-            {/* Logo - Above headline, 25% smaller */}
+            {/* Full Logo - Left-aligned, using 11.png from public */}
             <div 
               className={`mb-6 transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '150ms' }}
             >
               <img 
-                src={mindmakerLogo} 
-                alt="MindMaker" 
-                className="h-[0.9375rem] sm:h-[1.05rem] w-auto"
+                src="/11.png" 
+                alt="Mindmaker" 
+                className="h-6 sm:h-7 md:h-8 w-auto"
               />
             </div>
             

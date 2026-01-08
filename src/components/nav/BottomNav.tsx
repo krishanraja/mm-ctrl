@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Brain, Mic, History, BarChart3 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type NavItem = {
   to: string;
@@ -17,42 +18,53 @@ const NAV: NavItem[] = [
 
 /**
  * BottomNav
- * - Mobile-first navigation for the “ongoing loop”.
- * - Intentionally small: 4 destinations, all thumb-accessible.
+ * 
+ * Mindmaker Control: No visible tab bar on mobile.
+ * Desktop can have subtle sidebar - mobile must not.
+ * 
+ * Primary navigation is:
+ * - Vertical scroll
+ * - Contextual back gesture
+ * - Long-press for secondary actions
  */
 export function BottomNav() {
   const location = useLocation();
+  const isMobile = useIsMobile();
 
+  // No visible nav on mobile - this is intentional
+  // Executives do not explore software. They check it.
+  if (isMobile) {
+    return null;
+  }
+
+  // Desktop: subtle sidebar nav
   return (
     <nav
       aria-label="Primary"
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      className="fixed left-0 top-0 bottom-0 z-40 w-16 border-r border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 hidden md:flex flex-col items-center py-6"
     >
-      <div className="mx-auto max-w-4xl px-2 pb-safe-bottom">
-        <div className="grid grid-cols-4 gap-1 py-2">
-          {NAV.map((item) => {
-            const isActive =
-              location.pathname === item.to || location.pathname.startsWith(item.to + '/');
+      <div className="flex flex-col gap-2 mt-auto mb-auto">
+        {NAV.map((item) => {
+          const isActive =
+            location.pathname === item.to || location.pathname.startsWith(item.to + '/');
 
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  'flex flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-xs transition-colors',
-                  isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
-                )}
-              >
-                {item.icon}
-                <span className="leading-none">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              title={item.label}
+              className={cn(
+                'flex items-center justify-center w-10 h-10 rounded-xl transition-colors',
+                isActive
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+              )}
+            >
+              {item.icon}
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
 }
-

@@ -2,16 +2,21 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { BottomNav } from '@/components/nav/BottomNav';
 import { ensureAnonSession } from '@/utils/ensureAnonSession';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 /**
  * AppShell
- * - Wraps the “ongoing loop” routes.
- * - Ensures we have an identity (Supabase anon session) so future writes can be RLS-safe.
- * - Provides a consistent mobile-first frame + bottom navigation.
+ * 
+ * Mindmaker Control:
+ * - Wraps the "ongoing loop" routes
+ * - Ensures we have an identity (Supabase anon session) so future writes can be RLS-safe
+ * - No bottom nav on mobile - navigation via vertical scroll and back gestures
+ * - Desktop: subtle sidebar nav
  */
 export default function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     let isMounted = true;
@@ -31,17 +36,16 @@ export default function AppShell() {
     };
   }, [navigate]);
 
-  // Hide nav on the landing route (shouldn’t happen, but keep safe)
+  // Hide nav on certain routes
   const showNav = !['/', '/coach'].includes(location.pathname);
 
   return (
     <div className="min-h-[100dvh] bg-background">
-      {/* Content area: leave room for bottom nav on mobile */}
-      <div className={showNav ? 'pb-20' : undefined}>
+      {/* Content area: no bottom padding on mobile (no nav), left padding on desktop for sidebar */}
+      <div className={showNav && !isMobile ? 'md:pl-16' : undefined}>
         <Outlet />
       </div>
       {showNav ? <BottomNav /> : null}
     </div>
   );
 }
-
