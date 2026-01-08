@@ -18,11 +18,11 @@ import { Mic, ChevronRight, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTodaysTension } from '@/hooks/useTodaysTension';
 import { ExecutiveVoiceCapture } from '@/components/voice/ExecutiveVoiceCapture';
-import { transitions, variants, fadeInProps, premiumVariants } from '@/lib/motion';
+import { transitions, fadeInProps, premiumVariants } from '@/lib/motion';
 import { cn } from '@/lib/utils';
 import { getPersistedAssessmentId } from '@/utils/assessmentPersistence';
 import { ensureAnonSession } from '@/utils/ensureAnonSession';
-import { FaviconMark } from '@/components/ui/FaviconMark';
+import { FeedbackDialog, FeedbackButton } from '@/components/FeedbackDialog';
 
 interface ExecutiveControlSurfaceProps {
   onNavigateToBaseline?: () => void;
@@ -36,6 +36,7 @@ export const ExecutiveControlSurface: React.FC<ExecutiveControlSurfaceProps> = (
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [showWhy, setShowWhy] = useState(false);
   const [hasInitAuth, setHasInitAuth] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   
   // Detect if user is new (no baseline assessment)
   const { assessmentId } = getPersistedAssessmentId();
@@ -100,15 +101,43 @@ export const ExecutiveControlSurface: React.FC<ExecutiveControlSurfaceProps> = (
 
   return (
     <div 
-      className="min-h-[100dvh] bg-background flex flex-col items-center justify-center px-6 py-12"
+      className="min-h-[100dvh] bg-background flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
       onTouchStart={handlePressStart}
       onTouchEnd={handlePressEnd}
       onMouseDown={handlePressStart}
       onMouseUp={handlePressEnd}
       onMouseLeave={handlePressEnd}
     >
-      {/* Favicon mark in top-left */}
-      {!isVoiceActive && <FaviconMark />}
+      {/* Mobile-only video background at 30% opacity */}
+      <video
+        className="fixed inset-0 w-full h-full object-cover opacity-30 md:hidden -z-10 pointer-events-none"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+      >
+        <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
+      </video>
+      
+      {/* Full logo with Beta badge in top-left - only show when voice not active */}
+      {!isVoiceActive && (
+        <motion.div
+          className="fixed top-6 left-6 z-50 flex items-center gap-3"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={transitions.default}
+        >
+          <img 
+            src="/11.png" 
+            alt="Mindmaker" 
+            className="h-6 sm:h-7 w-auto brightness-0 invert"
+          />
+          <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-primary/20 text-primary rounded-full border border-primary/30">
+            Beta
+          </span>
+        </motion.div>
+      )}
       
       <AnimatePresence mode="wait">
         {isVoiceActive ? (
@@ -291,6 +320,18 @@ export const ExecutiveControlSurface: React.FC<ExecutiveControlSurfaceProps> = (
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Feedback button - appears after 2 seconds, only when not in voice mode */}
+      {!isVoiceActive && (
+        <FeedbackButton onClick={() => setShowFeedback(true)} />
+      )}
+      
+      {/* Feedback dialog */}
+      <FeedbackDialog
+        open={showFeedback}
+        onOpenChange={setShowFeedback}
+        pageContext="homepage"
+      />
     </div>
   );
 };
