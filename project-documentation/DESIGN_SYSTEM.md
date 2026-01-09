@@ -39,6 +39,7 @@ Graphite:    #333639 (HSL: 200 5% 21%) - Strong text
 ```
 Primary: 'Inter' - Body text, UI
 Display: 'Gobold' - Headlines, hero text
+Grotesk: 'Inter', 'Helvetica Neue', 'Arial' - Brand typography (Ctrl, MINDMAKER)
 ```
 
 ### Scale
@@ -55,8 +56,27 @@ Tiny:     text-xs (12px)
 ### Usage Rules
 - **Gobold:** Hero headlines only, sparingly
 - **Inter:** All other text
+- **Grotesk:** Brand typography (Ctrl, MINDMAKER) - use `.brand-typography-ctrl` utility
 - **Line Height:** 1.6 for body, 1.2 for headlines
 - **Letter Spacing:** Tight (-0.02em) for headlines
+
+### Brand Typography Pattern
+
+**Ctrl Text Styling:**
+```tsx
+<span className="brand-typography-ctrl">
+  CTRL
+</span>
+```
+
+**Specifications:**
+- Font: Grotesk (Inter, Helvetica Neue, Arial)
+- Size: 1.35rem (mobile), 1.575rem (sm), 1.8rem (md) - 20% larger than base
+- Case: Uppercase
+- Letter Spacing: 0.05em
+- Line Height: 1
+
+**Never hardcode brand typography** - always use `.brand-typography-ctrl` utility class.
 
 ---
 
@@ -191,6 +211,67 @@ Base styles = mobile, use `md:`, `lg:` for larger screens
 </div>
 ```
 
+### Video Background Pattern
+
+**Standard Pattern:**
+```tsx
+<div className="relative min-h-[100dvh] flex flex-col">
+  {/* Video at base layer, full opacity */}
+  <video
+    className="fixed inset-0 w-full h-full object-cover opacity-100 -z-20 pointer-events-none"
+    autoPlay
+    loop
+    muted
+    playsInline
+    preload="metadata"
+  >
+    <source src="/video.mp4" type="video/mp4" />
+  </video>
+  
+  {/* Semi-transparent black overlay - 50% opacity */}
+  <div className="fixed inset-0 bg-black/50 -z-10 pointer-events-none" />
+  
+  {/* Content */}
+  <main className="relative z-10">...</main>
+</div>
+```
+
+**Critical Rules:**
+1. **Never use `bg-background` on root App component** - `App.tsx` root div must NOT have `bg-background` as it creates solid black layer blocking video
+2. **Never use `bg-background` on parent container** - Component parent containers with video backgrounds must not have `bg-background`
+3. **Video must be at `opacity-100`** - transparency controlled by overlay, not video element
+4. **Z-index layering:**
+   - Video: `-z-20` (base layer)
+   - Overlay: `-z-10` (above video, below content)
+   - Content: `z-10` or higher (top layer)
+5. **Overlay opacity:** Use `bg-black/50` for 50% black overlay
+6. **Root container pattern:** App.tsx should use `<div className="min-h-screen">` (no bg-background) to allow child components to control backgrounds
+
+**Mobile-only video:**
+```tsx
+<video className="fixed inset-0 w-full h-full object-cover opacity-100 md:hidden -z-20 pointer-events-none" />
+<div className="fixed inset-0 bg-black/50 md:hidden -z-10 pointer-events-none" />
+```
+
+### Decorative Underline Pattern
+
+**When using SVG decorative underlines, never use CSS `underline` class:**
+```tsx
+{/* ❌ WRONG - Creates double underline */}
+<span className="relative inline-block">
+  <span className="underline">AI-era future</span>
+  <svg className="absolute -bottom-1 left-0 w-full h-2 text-primary">...</svg>
+</span>
+
+{/* ✅ CORRECT - Only SVG decorative underline */}
+<span className="relative inline-block">
+  <span>AI-era future</span>
+  <svg className="absolute -bottom-1 left-0 w-full h-2 text-primary">...</svg>
+</span>
+```
+
+**Rule:** If using SVG decorative underlines, remove `underline` class to prevent double underlines.
+
 ---
 
 ## Icon System
@@ -247,6 +328,60 @@ Use `<main>`, `<section>`, `<nav>`, `<article>` appropriately
 
 ---
 
+## Z-Index System
+
+**Standard Layering (from bottom to top):**
+```
+-z-20: Video backgrounds (base layer)
+-z-10: Overlays (semi-transparent backgrounds)
+z-0:   Base content
+z-10:  Main content
+z-20:  Headers, navigation
+z-50:  Modals, dropdowns, tooltips
+```
+
+**Rules:**
+- Never use arbitrary z-index values (e.g., `z-[999]`)
+- Follow the documented system above
+- Video backgrounds always use `-z-20`
+- Overlays always use `-z-10`
+- Content starts at `z-0` or `z-10`
+
+---
+
+## Root Container Rules
+
+### App.tsx Root Container
+
+**Critical Rule:** The root App component (`src/App.tsx`) must NOT have `bg-background`.
+
+**❌ WRONG:**
+```tsx
+// App.tsx
+<div className="min-h-screen bg-background">
+```
+
+**✅ CORRECT:**
+```tsx
+// App.tsx
+<div className="min-h-screen">
+  {/* No bg-background - allows child components to control backgrounds */}
+```
+
+**Why:** 
+- `bg-background` creates solid black layer (`rgb(10, 10, 10)`)
+- This blocks video backgrounds in child components
+- Backgrounds should be set at component level, not root
+
+**Enforcement:**
+- ESLint rule prevents `bg-background` on App.tsx
+- Build validation script checks for this
+- Component tests verify video visibility
+
+**See:** [VIDEO_BACKGROUND_PATTERN.md](../VIDEO_BACKGROUND_PATTERN.md) for complete guide
+
+---
+
 ## Design Tokens Location
 
 **File:** `src/index.css`  
@@ -257,6 +392,14 @@ All colors, spacing, typography defined as CSS variables and Tailwind extensions
 **Never hardcode colors** - always use tokens:
 - ✅ `bg-mint`, `text-ink`, `border-muted`
 - ❌ `bg-[#7ef4c2]`, `text-[#0e1a2b]`
+
+**Never hardcode brand typography** - always use utilities:
+- ✅ `.brand-typography-ctrl`
+- ❌ Inline styles or hardcoded font sizes
+
+**Never use bg-background on root App component:**
+- ✅ Component-level backgrounds
+- ❌ `bg-background` on App.tsx root
 
 ---
 

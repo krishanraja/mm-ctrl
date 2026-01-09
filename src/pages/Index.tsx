@@ -168,7 +168,7 @@ const IndexContent = () => {
           onBack={() => setMode('hero')}
         />
       ) : (
-        <div className="min-h-screen">
+        <>
           <HeroSection 
             onStartVoice={() => setMode('quick-entry')} 
             onStartQuiz={() => setMode('quiz')}
@@ -186,7 +186,7 @@ const IndexContent = () => {
               />
             </div>
           )}
-        </div>
+        </>
       )}
     </>
   );

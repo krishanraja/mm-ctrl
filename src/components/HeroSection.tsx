@@ -39,10 +39,10 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
   }, []);
   
   return (
-    <div className="relative min-h-[100dvh] bg-background flex flex-col">
-      {/* Background Video - 20% opacity */}
+    <div className="relative min-h-[100dvh] flex flex-col">
+      {/* Background Video - Full opacity at base layer */}
       <video
-        className="fixed inset-0 w-full h-full object-cover opacity-20 -z-10 pointer-events-none"
+        className="fixed inset-0 w-full h-full object-cover opacity-100 -z-20 pointer-events-none"
         autoPlay
         loop
         muted
@@ -52,9 +52,12 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
         <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
       </video>
       
+      {/* Semi-transparent black overlay - 50% opacity */}
+      <div className="fixed inset-0 bg-black/50 -z-10 pointer-events-none" />
+      
       {/* Subtle geometric background pattern - lighter dots on dark */}
       <div 
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        className="absolute inset-0 opacity-[0.04] pointer-events-none z-0"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--soft-white)) 1px, transparent 0)`,
           backgroundSize: '32px 32px',
@@ -63,7 +66,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
       
       {/* Gradient overlay for depth */}
       <div 
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-0"
         style={{
           background: `radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--deep-green) / 0.08), transparent)`,
         }}
@@ -181,14 +184,8 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 alt="Mindmaker" 
                 className="w-auto brightness-0 invert h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem]"
               />
-              <span 
-                className="font-sans leading-none h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem] flex items-center" 
-                style={{ 
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontSize: '1.125rem'
-                }}
-              >
-                <span className="sm:text-[1.3125rem] md:text-[1.5rem]">Ctrl</span>
+              <span className="brand-typography-ctrl flex items-center">
+                CTRL
               </span>
             </div>
             
@@ -200,7 +197,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               Build your
               <br />
               <span className="relative inline-block">
-                <span className="underline">AI-era future</span>
+                <span>AI-era future</span>
                 <svg 
                   className="absolute -bottom-1 left-0 w-full h-2 text-primary" 
                   viewBox="0 0 200 8" 
@@ -228,7 +225,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               className={`text-base sm:text-lg text-muted-foreground leading-relaxed mb-6 sm:mb-8 max-w-lg transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '350ms' }}
             >
-              Speak your biggest AI uncertainty. Get one insight and one action for this week. No course. No overwhelm.
+              Speak your biggest AI uncertainty. Get one insight and one action for this week.
             </p>
             
             {/* CTA Buttons */}

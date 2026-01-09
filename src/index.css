@@ -170,6 +170,62 @@ html {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
+  /* === BRAND TYPOGRAPHY UTILITIES === */
+  .brand-typography-ctrl {
+    font-family: 'Inter', 'Helvetica Neue', 'Arial', sans-serif; /* Grotesk-style */
+    font-size: 1.35rem; /* 20% larger than base 1.125rem */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  @media (min-width: 640px) {
+    .brand-typography-ctrl {
+      font-size: 1.575rem; /* 20% larger than 1.3125rem */
+    }
+  }
+
+  @media (min-width: 768px) {
+    .brand-typography-ctrl {
+      font-size: 1.8rem; /* 20% larger than 1.5rem */
+    }
+  }
+
+  /* === VIDEO BACKGROUND PATTERN === */
+  .video-background-container {
+    position: relative;
+    min-height: 100dvh;
+  }
+
+  .video-background-container video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 1; /* Full opacity for video */
+    z-index: -20; /* Base layer */
+    pointer-events: none;
+  }
+
+  .video-background-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* 50% black overlay */
+    z-index: -10; /* Above video, below content */
+    pointer-events: none;
+  }
+
+  /* === DECORATIVE UNDERLINE PATTERN === */
+  .decorative-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .decorative-underline-text {
+    /* No text-decoration underline - only SVG decorative underline */
+  }
+
   /* === PREMIUM CARD PATTERNS === */
   .card {
     background-color: hsl(var(--card));

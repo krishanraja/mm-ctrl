@@ -19,6 +19,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         gobold: ['Gobold', 'Impact', 'Arial Black', 'sans-serif'],
+        grotesk: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'], // Inter is a grotesk-style font
       },
       colors: {
         // Core brand colors

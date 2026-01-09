@@ -101,16 +101,16 @@ export const ExecutiveControlSurface: React.FC<ExecutiveControlSurfaceProps> = (
 
   return (
     <div 
-      className="min-h-[100dvh] bg-background flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
+      className="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
       onTouchStart={handlePressStart}
       onTouchEnd={handlePressEnd}
       onMouseDown={handlePressStart}
       onMouseUp={handlePressEnd}
       onMouseLeave={handlePressEnd}
     >
-      {/* Mobile-only video background at 30% opacity */}
+      {/* Mobile-only video background - Full opacity at base layer */}
       <video
-        className="fixed inset-0 w-full h-full object-cover opacity-30 md:hidden -z-10 pointer-events-none"
+        className="fixed inset-0 w-full h-full object-cover opacity-100 md:hidden -z-20 pointer-events-none"
         autoPlay
         loop
         muted
@@ -119,6 +119,9 @@ export const ExecutiveControlSurface: React.FC<ExecutiveControlSurfaceProps> = (
       >
         <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
       </video>
+      
+      {/* Semi-transparent black overlay - 50% opacity (mobile only) */}
+      <div className="fixed inset-0 bg-black/50 md:hidden -z-10 pointer-events-none" />
       
       {/* Full logo with Beta badge in top-left - only show when voice not active */}
       {!isVoiceActive && (

@@ -24,6 +24,9 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/no-unused-vars": "off",
+      // Note: Video background architecture validation is enforced via
+      // build-time script: npm run validate:video
+      // This checks for bg-background on App.tsx root and verifies video background patterns
     },
   }
 );

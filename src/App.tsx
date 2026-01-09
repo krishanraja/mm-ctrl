@@ -35,7 +35,8 @@ const queryClient = new QueryClient();
  * 3. Returning users with completed diagnostic → Dashboard
  */
 const App = () => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen">
+    {/* Note: No bg-background on root to allow video backgrounds in child components (e.g., HeroSection) */}
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AssessmentProvider>
