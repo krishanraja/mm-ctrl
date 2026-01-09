@@ -185,7 +185,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 className="w-auto brightness-0 invert h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem]"
               />
               <span className="brand-typography-ctrl flex items-center">
-                CTRL
+                ctrl
               </span>
             </div>
             
@@ -294,13 +294,13 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                   <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
-                <span>AI trained to combine your business outcomes with your personality</span>
+                <span>Trained on 20+ years of live anonymized learnings from 200+ leaders, businesses and cognitive frameworks.</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                   <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
-                <span>100% private</span>
+                <span>Uniquely learns YOU and brings you leading advice for your business outcomes tailored to your personality.</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
