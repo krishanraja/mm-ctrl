@@ -40,6 +40,18 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
   
   return (
     <div className="relative min-h-[100dvh] bg-background flex flex-col">
+      {/* Background Video - 20% opacity */}
+      <video
+        className="fixed inset-0 w-full h-full object-cover opacity-20 -z-10 pointer-events-none"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+      >
+        <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
+      </video>
+      
       {/* Subtle geometric background pattern - lighter dots on dark */}
       <div 
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -113,17 +125,11 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
       {/* Main Hero Content - Centered */}
       <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="w-full max-w-2xl mx-auto">
-          {/* Top Row: Badge + Action Buttons - Aligned above card */}
+          {/* Top Row: Action Buttons - Aligned above card */}
           <div 
-            className={`mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
+            className={`mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-end gap-2 sm:gap-3 transition-opacity duration-500 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}
             style={{ transitionDelay: '100ms' }}
           >
-            {/* Badge - Entry point above card */}
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/15 text-primary border border-primary/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Get quick AI help for you
-            </span>
-            
             {/* Action Buttons - Clear labels on mobile */}
             <div className="flex items-center gap-2 flex-shrink-0">
               <SampleResultsDialog 
@@ -165,16 +171,25 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               }}
             />
             
-            {/* Full Logo - Left-aligned, using 11.png from public (white version for dark bg) */}
+            {/* Full Logo - Left-aligned, using 11.png from public (white version for dark bg) - Reduced by 25% */}
             <div 
-              className={`mb-6 transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
+              className={`mb-6 transition-opacity duration-500 ease-out relative z-10 flex items-center gap-2 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '150ms' }}
             >
               <img 
                 src="/11.png" 
                 alt="Mindmaker" 
-                className="h-6 sm:h-7 md:h-8 w-auto brightness-0 invert"
+                className="w-auto brightness-0 invert h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem]"
               />
+              <span 
+                className="font-sans leading-none h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem] flex items-center" 
+                style={{ 
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                  fontSize: '1.125rem'
+                }}
+              >
+                <span className="sm:text-[1.3125rem] md:text-[1.5rem]">Ctrl</span>
+              </span>
             </div>
             
             {/* Headline */}
@@ -182,10 +197,10 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               className={`text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-foreground leading-[1.15] mb-4 sm:mb-5 transition-opacity duration-500 ease-out relative z-10 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               style={{ transitionDelay: '250ms' }}
             >
-              Know Where You
+              Build your
               <br />
               <span className="relative inline-block">
-                Stand on AI
+                <span className="underline">AI-era future</span>
                 <svg 
                   className="absolute -bottom-1 left-0 w-full h-2 text-primary" 
                   viewBox="0 0 200 8" 
@@ -240,7 +255,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     rounded-xl
                   "
                 >
-                  Get quick AI help for you
+                  Get answers
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
 
@@ -282,7 +297,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                   <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
-                <span>2 min diagnostic</span>
+                <span>AI trained to combine your business outcomes with your personality</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">

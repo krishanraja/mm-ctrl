@@ -1,15 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { VoiceInput } from '@/components/ui/voice-input';
-import { ArrowRight, Mic, Lightbulb, Target, Mail, Check, RotateCcw, Lock } from 'lucide-react';
+import { ArrowRight, Mic, Lightbulb, Target, Mail, Check, RotateCcw, Lock, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { validateEmail } from '@/utils/formValidation';
 import { useAuth } from '@/hooks/useAuth';
-import mindmakerLogo from '@/assets/mindmaker-logo.png';
+import { AudioRecorder } from '@/utils/audioRecorder';
 import mindmakerIcon from '@/assets/mindmaker-icon.png';
 
 interface QuickVoiceEntryProps {
@@ -25,6 +24,129 @@ export interface QuickEntryResult {
 }
 
 const QUICK_PROMPT = "What's your biggest AI uncertainty right now?";
+
+// Circular Mic Button Component
+interface CircularMicButtonProps {
+  onTranscript: (transcript: string) => void;
+  maxDuration?: number;
+}
+
+const CircularMicButton: React.FC<CircularMicButtonProps> = ({
+  onTranscript,
+  maxDuration = 30
+}) => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const recorderRef = useRef<AudioRecorder | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (recorderRef.current?.isRecording()) recorderRef.current.stop();
+    };
+  }, []);
+
+  const startRecording = async () => {
+    try {
+      setError(null);
+      recorderRef.current = new AudioRecorder();
+      
+      await recorderRef.current.start(async (audioBlob) => {
+        setIsTranscribing(true);
+        await transcribeAudio(audioBlob);
+      });
+
+      setIsRecording(true);
+      setElapsedTime(0);
+
+      timerRef.current = setInterval(() => {
+        setElapsedTime((prev) => {
+          if (prev >= maxDuration) {
+            stopRecording();
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    } catch (err) {
+      console.error('Error starting recording:', err);
+      setError('Could not access microphone');
+    }
+  };
+
+  const stopRecording = () => {
+    if (recorderRef.current) {
+      recorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  };
+
+  const transcribeAudio = async (audioBlob: Blob) => {
+    try {
+      const formData = new FormData();
+      formData.append('audio', audioBlob);
+      formData.append('sessionId', `quick-entry-${Date.now()}`);
+      formData.append('moduleType', 'quick_entry');
+
+      const { data, error } = await supabase.functions.invoke('voice-transcribe', {
+        body: formData
+      });
+
+      if (error) throw error;
+
+      if (data?.transcript) {
+        onTranscript(data.transcript);
+      }
+      setIsTranscribing(false);
+    } catch (err) {
+      console.error('Error transcribing:', err);
+      setError('Failed to transcribe. Try typing instead.');
+      setIsTranscribing(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <button
+        type="button"
+        onClick={isRecording ? stopRecording : startRecording}
+        disabled={isTranscribing}
+        className={`
+          w-20 h-20 rounded-full
+          flex items-center justify-center
+          transition-all duration-300
+          ${isRecording 
+            ? 'bg-red-500 hover:bg-red-600 animate-pulse scale-110' 
+            : 'bg-primary hover:bg-primary/90'
+          }
+          ${isTranscribing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+          shadow-lg hover:shadow-xl
+        `}
+      >
+        {isTranscribing ? (
+          <Loader2 className="h-8 w-8 text-white animate-spin" />
+        ) : (
+          <Mic className={`h-8 w-8 text-white ${isRecording ? 'animate-pulse' : ''}`} />
+        )}
+      </button>
+      {error && (
+        <span className="text-xs text-destructive text-center">{error}</span>
+      )}
+      {isRecording && (
+        <span className="text-xs text-muted-foreground">
+          {elapsedTime}s / {maxDuration}s
+        </span>
+      )}
+    </div>
+  );
+};
 
 export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   onComplete,
@@ -452,13 +574,6 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   // Entry screen
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col">
-      {/* Header */}
-      <header className="w-full px-4 sm:px-6 py-4">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <img src={mindmakerLogo} alt="MindMaker" className="h-6 sm:h-7" />
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-6">
         <Card className="w-full max-w-lg shadow-lg border rounded-xl">
@@ -466,7 +581,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
             {/* Prompt */}
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 mb-4">
-                <Mic className="h-7 w-7 text-primary" />
+                <img src="/mindmaker-og-image.png" alt="Mindmaker" className="h-10 w-10 rounded-full object-cover" />
               </div>
               <h1 className="text-xl sm:text-2xl font-semibold text-foreground mb-2">
                 {QUICK_PROMPT}
@@ -479,11 +594,9 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
             {/* Voice Input Area */}
             <div className="space-y-4">
               <div className="flex justify-center">
-                <VoiceInput
+                <CircularMicButton
                   onTranscript={handleTranscript}
-                  placeholder="Tap to speak"
                   maxDuration={30}
-                  className="scale-110"
                 />
               </div>
 
