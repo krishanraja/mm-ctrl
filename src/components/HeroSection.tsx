@@ -183,8 +183,9 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 src="/11.png" 
                 alt="Mindmaker" 
                 className="w-auto brightness-0 invert h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem]"
+                style={{ transform: 'translateY(-0.9px)' }}
               />
-              <span className="brand-typography-ctrl flex items-center font-bold uppercase shimmer-mint">
+              <span className="brand-typography-ctrl flex items-center font-bold uppercase shimmer-mint" style={{ transform: 'translateY(-0.5px)', letterSpacing: '0.06em' }}>
                 CTRL
               </span>
             </div>

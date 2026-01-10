@@ -173,20 +173,20 @@ html {
   /* === BRAND TYPOGRAPHY UTILITIES === */
   .brand-typography-ctrl {
     font-family: 'Space Grotesk', 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
-    font-size: 1.5525rem; /* 15% larger than previous 1.35rem */
-    letter-spacing: 0.05em;
+    font-size: 1.58355rem; /* 2% larger than 1.5525rem */
+    letter-spacing: 0.0579em !important; /* Increased by 5% from 0.055125em */
     line-height: 1;
   }
 
   @media (min-width: 640px) {
     .brand-typography-ctrl {
-      font-size: 1.81125rem; /* 15% larger than previous 1.575rem */
+      font-size: 1.847475rem; /* 2% larger than 1.81125rem */
     }
   }
 
   @media (min-width: 768px) {
     .brand-typography-ctrl {
-      font-size: 2.07rem; /* 15% larger than previous 1.8rem */
+      font-size: 2.1114rem; /* 2% larger than 2.07rem */
     }
   }
 
