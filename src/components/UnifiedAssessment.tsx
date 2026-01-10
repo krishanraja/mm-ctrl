@@ -323,35 +323,22 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   }, []);
 
   const handleOptionSelect = useCallback(async (option: string) => {
-    // Fix Issue 9: Ensure session is created before processing answer
-    let currentSessionId = sessionId;
-    if (!currentSessionId && sessionInitRef.current) {
-      currentSessionId = await sessionInitRef.current;
-      if (currentSessionId) {
-        setSessionId(currentSessionId);
-      } else {
-        console.warn('Session creation failed, cannot process answer');
-        return;
-      }
-    }
-    if (!currentSessionId) {
-      console.warn('No session available');
-      return;
-    }
-
     const currentQuestion = getCurrentQuestion();
     if (!currentQuestion) return;
 
+    // Brief blocking state update - disable buttons during this moment
+    setIsProcessingAnswer(true);
+
+    // Add user message to chat
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: option,
       timestamp: new Date()
     };
-
     setMessages(prev => [...prev, userMessage]);
     
-    // Answer the question - this updates state including isComplete
+    // Answer the question immediately - this updates state and advances to next question
     answerQuestion(option);
     
     // Show auto-save indicator (subtle feedback)
@@ -374,7 +361,6 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     
     if (isLastQuestion) {
       // Last question answered - show loading state briefly, then transition
-      setIsProcessingAnswer(true);
       console.log('✅ Last question answered, transitioning to save-results-prompt');
       // Small delay to show processing, then useEffect will handle transition
       setTimeout(() => {
@@ -383,101 +369,110 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       return;
     }
     
-    setIsProcessingAnswer(true);
+    // Re-enable buttons immediately - next question is now available
+    setIsProcessingAnswer(false);
 
-    const progressData = getProgressData();
-    const assessmentData = getAssessmentData();
-
-    // Fix #5: Add AI retry mechanism with exponential backoff
-    const maxRetries = 3;
-    let lastError: any = null;
-    let retryCount = 0;
-
-    while (retryCount <= maxRetries) {
+    // Make AI call asynchronously in background (non-blocking)
+    // This will update messages when response arrives, but doesn't block UI
+    (async () => {
       try {
-        const { data, error } = await invokeEdgeFunction('ai-assessment-chat', {
-          message: `The executive answered: "${option}" to the question: "${currentQuestion.question}". 
-        
-        Context: This is question ${currentQuestion.id} of ${totalQuestions} in phase "${currentQuestion.phase}".
-        Progress: ${progressData.completedAnswers}/${totalQuestions} questions completed.
-        
-        Provide a brief acknowledgment that shows understanding, then present the next question. Be professional and encouraging, like an executive coach.`,
-          sessionId: sessionId,
-          userId: null,
-          context: {
-            currentQuestion: progressData.currentQuestion,
-            phase: progressData.phase,
-            assessmentData: assessmentData,
-            isComplete: false // Not complete yet, we're still in the middle
+        // Get session ID non-blocking - use existing or wait for background init
+        let currentSessionId = sessionId;
+        if (!currentSessionId && sessionInitRef.current) {
+          currentSessionId = await sessionInitRef.current;
+          if (currentSessionId) {
+            setSessionId(currentSessionId);
+          } else {
+            console.warn('Session creation failed, skipping AI response');
+            return;
           }
-        }, { logPrefix: '🤖' });
-
-        if (error) {
-          lastError = error;
-          throw error;
+        }
+        if (!currentSessionId) {
+          console.warn('No session available for AI response');
+          return;
         }
 
-        if (data) {
-          const aiMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: 'assistant',
-            content: data.response,
-            timestamp: new Date()
-          };
+        const progressData = getProgressData();
+        const assessmentData = getAssessmentData();
 
-          setMessages(prev => [...prev, aiMessage]);
-          setIsProcessingAnswer(false);
-          return; // Success, exit retry loop
+        // Fix #5: Add AI retry mechanism with exponential backoff
+        const maxRetries = 3;
+        let retryCount = 0;
+
+        while (retryCount <= maxRetries) {
+          try {
+            const { data, error } = await invokeEdgeFunction('ai-assessment-chat', {
+              message: `The executive answered: "${option}" to the question: "${currentQuestion.question}". 
+            
+            Context: This is question ${currentQuestion.id} of ${totalQuestions} in phase "${currentQuestion.phase}".
+            Progress: ${progressData.completedAnswers}/${totalQuestions} questions completed.
+            
+            Provide a brief acknowledgment that shows understanding, then present the next question. Be professional and encouraging, like an executive coach.`,
+              sessionId: currentSessionId,
+              userId: null,
+              context: {
+                currentQuestion: progressData.currentQuestion,
+                phase: progressData.phase,
+                assessmentData: assessmentData,
+                isComplete: false // Not complete yet, we're still in the middle
+              }
+            }, { logPrefix: '🤖' });
+
+            if (error) {
+              throw error;
+            }
+
+            if (data) {
+              const aiMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                role: 'assistant',
+                content: data.response,
+                timestamp: new Date()
+              };
+
+              setMessages(prev => [...prev, aiMessage]);
+              return; // Success, exit retry loop
+            }
+
+          } catch (error) {
+            retryCount++;
+            
+            if (retryCount <= maxRetries) {
+              // Exponential backoff: 1s, 2s, 4s
+              const delayMs = Math.pow(2, retryCount - 1) * 1000;
+              console.warn(`🤖 AI call failed, retrying in ${delayMs}ms (attempt ${retryCount}/${maxRetries})...`);
+              
+              // Show retry message to user
+              const retryMessage: Message = {
+                id: `retry-${Date.now()}`,
+                role: 'assistant',
+                content: `Retrying... (attempt ${retryCount}/${maxRetries})`,
+                timestamp: new Date()
+              };
+              setMessages(prev => [...prev, retryMessage]);
+              
+              await new Promise(resolve => setTimeout(resolve, delayMs));
+            } else {
+              // All retries exhausted - silently fail, user can continue
+              console.error('Error generating AI response after retries:', error);
+              
+              // Show error message to user
+              const errorMessage: Message = {
+                id: `error-${Date.now()}`,
+                role: 'assistant',
+                content: `I'm having trouble connecting. You can continue without AI feedback.`,
+                timestamp: new Date()
+              };
+              setMessages(prev => [...prev, errorMessage]);
+            }
+          }
         }
-
       } catch (error) {
-        lastError = error;
-        retryCount++;
-        
-        if (retryCount <= maxRetries) {
-          // Exponential backoff: 1s, 2s, 4s
-          const delayMs = Math.pow(2, retryCount - 1) * 1000;
-          console.warn(`🤖 AI call failed, retrying in ${delayMs}ms (attempt ${retryCount}/${maxRetries})...`);
-          
-          // Show retry message to user
-          const retryMessage: Message = {
-            id: `retry-${Date.now()}`,
-            role: 'assistant',
-            content: `Retrying... (attempt ${retryCount}/${maxRetries})`,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, retryMessage]);
-          
-          await new Promise(resolve => setTimeout(resolve, delayMs));
-        } else {
-          // All retries exhausted
-          console.error('Error generating AI response after retries:', error);
-          
-          // Show error message to user with retry option
-          const errorMessage: Message = {
-            id: `error-${Date.now()}`,
-            role: 'assistant',
-            content: `I'm having trouble connecting. You can continue without AI feedback, or try again.`,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, errorMessage]);
-          setIsProcessingAnswer(false);
-          
-          // Fallback: show next question
-          const nextQuestion = getCurrentQuestion();
-          if (nextQuestion && !assessmentState.isComplete) {
-            const nextQuestionMessage: Message = {
-              id: (Date.now() + 1).toString(),
-              role: 'assistant',
-              content: `**Question ${nextQuestion.id} of ${totalQuestions}:** ${nextQuestion.question}`,
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, nextQuestionMessage]);
-          }
-        }
+        // Silently handle errors - don't block user experience
+        console.warn('AI response generation failed:', error);
       }
-    }
-  }, [sessionId, getCurrentQuestion, answerQuestion, getProgressData, getAssessmentData, assessmentState.isComplete, totalQuestions]);
+    })(); // Fire and forget - doesn't block UI
+  }, [sessionId, getCurrentQuestion, answerQuestion, getProgressData, getAssessmentData, assessmentState.isComplete, totalQuestions, setSessionId]);
 
   const startInsightGeneration = useCallback(async () => {
     setCurrentScreen('generating-insights');
