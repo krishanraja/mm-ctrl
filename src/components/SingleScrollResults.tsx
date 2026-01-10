@@ -32,6 +32,7 @@ import { TensionCard } from '@/components/ui/tension-card';
 import { RiskSignalCard } from '@/components/ui/risk-signal-card';
 import { UnlockResultsForm, UnlockFormData } from './UnlockResultsForm';
 import { ArrowRightCircle } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface SingleScrollResultsProps {
   assessmentData: any;
@@ -128,6 +129,22 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(str);
   };
+
+  // Fix Issue 1: Check auth state on mount and unlock for logged-in users
+  useEffect(() => {
+    const checkAuthState = async () => {
+      try {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user && !session.user.is_anonymous) {
+          setIsUnlocked(true);
+        }
+      } catch (error) {
+        console.warn('Could not check auth state:', error);
+      }
+    };
+    checkAuthState();
+  }, []);
 
   // Fix #3: Restore assessment ID and fetch data with generation status polling
   useEffect(() => {
@@ -412,14 +429,8 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
         {/* 1. Score Card - Always Visible with Animation */}
         <Card className="mb-4 sm:mb-6 shadow-lg border rounded-xl overflow-hidden animate-fade-in">
           <div className={`bg-gradient-to-br ${getScoreCardGradient(data?.benchmarkTier || '', data?.benchmarkScore || 0)} p-4 sm:p-6`}>
-            {/* Logo + Title - Left Aligned */}
+            {/* Title - Left Aligned (logo removed for better visibility on dark gradient) */}
             <div className="flex flex-col items-start mb-4 sm:mb-6">
-              <img 
-                src={mindmakerLogo} 
-                alt="Mindmaker" 
-                className="w-32 sm:w-36 h-auto mb-3 animate-scale-in" 
-                style={{ animationDelay: '0.1s' }}
-              />
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground tracking-tight">
                 AI Leadership Benchmark
               </h1>
@@ -428,27 +439,46 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
             
             <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-6">
               <div className="text-center sm:text-left">
-                <div 
-                  className={`text-4xl sm:text-5xl font-bold mb-1 sm:mb-2 transition-all duration-500 ${getScoreGlowColor(data?.benchmarkTier || '', data?.benchmarkScore || 0)}`}
-                  style={{ animationDelay: '0.2s' }}
-                >
-                  {data?.benchmarkScore || 0}
-                  <span className="text-lg sm:text-2xl text-muted-foreground">/100</span>
-                </div>
-                <Badge className={`${getTierColor(data?.benchmarkTier || '')} px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm mb-2`}>
-                  {data?.benchmarkTier || 'Calculating...'} Tier
-                </Badge>
-                <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                  Your AI leadership capability score based on 6 dimensions: strategic vision, experimentation, delegation, data quality, team capability, and governance.
-                </p>
+                {loading || !data?.benchmarkScore || data.benchmarkScore === 0 ? (
+                  <>
+                    <Skeleton className="h-12 sm:h-16 w-32 sm:w-40 mb-2" />
+                    <Skeleton className="h-6 w-24 mb-2" />
+                    <Skeleton className="h-4 w-64 mt-1" />
+                  </>
+                ) : (
+                  <>
+                    <div 
+                      className={`text-4xl sm:text-5xl font-bold mb-1 sm:mb-2 transition-all duration-500 ${getScoreGlowColor(data?.benchmarkTier || '', data?.benchmarkScore || 0)}`}
+                      style={{ animationDelay: '0.2s' }}
+                    >
+                      {data.benchmarkScore}
+                      <span className="text-lg sm:text-2xl text-muted-foreground">/100</span>
+                    </div>
+                    <Badge className={`${getTierColor(data?.benchmarkTier || '')} px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm mb-2`}>
+                      {data.benchmarkTier} Tier
+                    </Badge>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                      Your AI leadership capability score based on 6 dimensions: strategic vision, experimentation, delegation, data quality, team capability, and governance.
+                    </p>
+                  </>
+                )}
               </div>
               
               <div className="flex-1 space-y-1 sm:space-y-2">
-                <div className="flex justify-between text-xs sm:text-sm">
-                  <span className="text-muted-foreground">vs 500+ executives</span>
-                  <span className="font-medium text-foreground">Top {data?.benchmarkScore ? Math.max(1, 100 - data.benchmarkScore) : '--'}%</span>
-                </div>
-                <Progress value={data?.benchmarkScore || 0} className="h-1.5 sm:h-2" />
+                {loading || !data?.benchmarkScore || data.benchmarkScore === 0 ? (
+                  <>
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-2 w-full" />
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between text-xs sm:text-sm">
+                      <span className="text-muted-foreground">vs 500+ executives</span>
+                      <span className="font-medium text-foreground">Top {Math.max(1, 100 - data.benchmarkScore)}%</span>
+                    </div>
+                    <Progress value={data.benchmarkScore} className="h-1.5 sm:h-2" />
+                  </>
+                )}
               </div>
             </div>
           </div>

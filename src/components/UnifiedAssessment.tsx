@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -48,7 +48,8 @@ interface UnifiedAssessmentProps {
 export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete, onBack }) => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(true); // Fix Issue 9: Show questions immediately
+  const sessionInitRef = useRef<Promise<string | null>>(null); // Track session creation promise
   const [currentScreen, setCurrentScreen] = useState<ScreenState>('assessment');
   const [insightProgress, setInsightProgress] = useState(0);
   const [insightPhase, setInsightPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
@@ -87,10 +88,20 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     totalQuestions
   } = useStructuredAssessment();
 
-  const initializeAssessmentSession = useCallback(async () => {
+  // Fix Issue 9: Show welcome message immediately, create session in background
+  useEffect(() => {
+    const welcomeMessage: Message = {
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: `Welcome to your AI Leadership Growth Benchmark. I'll guide you through ${totalQuestions} strategic questions designed to evaluate how your AI literacy drives growth—not just buzzwords.\n\nThis benchmark will help you:\n• **Assess your AI leadership capability**\n• **Identify growth acceleration opportunities**\n• **Benchmark against other executives**\n• **Create a strategic roadmap**\n\nEach question evaluates a different dimension of AI leadership. Let's begin your benchmark.`,
+      timestamp: new Date()
+    };
+    setMessages([welcomeMessage]);
+  }, [totalQuestions]);
+
+  // Fix Issue 9: Initialize session in background (non-blocking)
+  const initializeAssessmentSession = useCallback(async (): Promise<string | null> => {
     try {
-      const anonymousSessionId = crypto.randomUUID();
-      
       const { data: session, error: sessionError } = await supabase
         .from('conversation_sessions')
         .insert({
@@ -105,28 +116,19 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       if (sessionError) throw sessionError;
 
       setSessionId(session.id);
-      setIsInitialized(true);
-
-      const welcomeMessage: Message = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: `Welcome to your AI Leadership Growth Benchmark. I'll guide you through ${totalQuestions} strategic questions designed to evaluate how your AI literacy drives growth—not just buzzwords.\n\nThis benchmark will help you:\n• **Assess your AI leadership capability**\n• **Identify growth acceleration opportunities**\n• **Benchmark against other executives**\n• **Create a strategic roadmap**\n\nEach question evaluates a different dimension of AI leadership. Let's begin your benchmark.`,
-        timestamp: new Date()
-      };
-
-      setMessages([welcomeMessage]);
-      
+      return session.id;
     } catch (error) {
       console.error('Error initializing assessment session:', error);
-      // Session error logged - user can refresh to retry
+      return null;
     }
-  }, [setSessionId, totalQuestions]);
+  }, [setSessionId]);
 
+  // Start session creation in background immediately
   useEffect(() => {
-    if (!isInitialized) {
-      initializeAssessmentSession();
+    if (!sessionInitRef.current) {
+      sessionInitRef.current = initializeAssessmentSession();
     }
-  }, [isInitialized, initializeAssessmentSession]);
+  }, [initializeAssessmentSession]);
 
   // Fix #8: Check generation status on mount to recover from refresh during generation
   useEffect(() => {
@@ -321,7 +323,21 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   }, []);
 
   const handleOptionSelect = useCallback(async (option: string) => {
-    if (!sessionId) return;
+    // Fix Issue 9: Ensure session is created before processing answer
+    let currentSessionId = sessionId;
+    if (!currentSessionId && sessionInitRef.current) {
+      currentSessionId = await sessionInitRef.current;
+      if (currentSessionId) {
+        setSessionId(currentSessionId);
+      } else {
+        console.warn('Session creation failed, cannot process answer');
+        return;
+      }
+    }
+    if (!currentSessionId) {
+      console.warn('No session available');
+      return;
+    }
 
     const currentQuestion = getCurrentQuestion();
     if (!currentQuestion) return;

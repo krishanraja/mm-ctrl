@@ -1,21 +1,26 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mic, ArrowRight, Sparkles, Target, Clock, ChevronRight, User } from 'lucide-react';
+import { Mic, ArrowRight, Sparkles, Target, Clock, ChevronRight, User, Brain, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { getPersistedAssessmentId } from '@/utils/assessmentPersistence';
 import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
 import { supabase } from '@/integrations/supabase/client';
 import { ExecutiveVoiceCapture } from '@/components/voice/ExecutiveVoiceCapture';
 import { transitions, fadeInProps } from '@/lib/motion';
+import { DailyProvocation } from '@/components/dashboard/DailyProvocation';
+import { PatternInsight } from '@/components/dashboard/PatternInsight';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 /**
- * Dashboard - The primary view for users who have completed the diagnostic
+ * Dashboard - AI Confidante Experience
  * 
- * Minimalistic, action-oriented, voice-enabled.
- * Shows personalized content based on their baseline assessment.
+ * Transformed into a trusted thinking partner that:
+ * - Challenges users with daily provocations
+ * - Captures stream-of-consciousness reflections
+ * - Learns patterns and provides personalized insights
+ * - Helps users become AI-literate boardroom leaders
  */
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -25,6 +30,8 @@ export default function Dashboard() {
   const [weeklyAction, setWeeklyAction] = useState<{ action_text: string; why_text: string | null } | null>(null);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [recentActivity, setRecentActivity] = useState<{ type: string; date: string } | null>(null);
+  const [dailyPrompt, setDailyPrompt] = useState<{ id: string; question: string; category: string } | null>(null);
+  const [promptLoading, setPromptLoading] = useState(true);
 
   // Get user info
   useEffect(() => {
@@ -147,6 +154,40 @@ export default function Dashboard() {
     return () => { isMounted = false; };
   }, []);
 
+  // Load daily prompt
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      setPromptLoading(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('get-daily-prompt', {
+          body: {},
+        });
+
+        if (isMounted && !error && data?.prompt) {
+          setDailyPrompt(data.prompt);
+        }
+      } catch (err) {
+        console.warn('Could not load daily prompt:', err);
+      } finally {
+        if (isMounted) setPromptLoading(false);
+      }
+    })();
+    return () => { isMounted = false; };
+  }, []);
+
+  const handlePromptResponse = useCallback(() => {
+    // Reload prompt after response
+    setDailyPrompt(null);
+    setPromptLoading(true);
+    supabase.functions.invoke('get-daily-prompt', { body: {} }).then(({ data, error }) => {
+      if (!error && data?.prompt) {
+        setDailyPrompt(data.prompt);
+      }
+      setPromptLoading(false);
+    });
+  }, []);
+
   const handleVoiceClose = useCallback(() => {
     setIsVoiceActive(false);
   }, []);
@@ -189,11 +230,48 @@ export default function Dashboard() {
           )}
         </motion.div>
 
+        {/* Daily Provocation - AI Confidante Core Feature */}
+        {dailyPrompt && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, ...transitions.default }}
+          >
+            <DailyProvocation
+              prompt={dailyPrompt}
+              onResponseSubmitted={handlePromptResponse}
+            />
+          </motion.div>
+        )}
+
+        {/* Pattern Insight - Learned from reflections */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, ...transitions.default }}
+        >
+          <PatternInsight />
+        </motion.div>
+
+        {promptLoading && !dailyPrompt && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, ...transitions.default }}
+          >
+            <Card className="mb-6 border rounded-2xl">
+              <CardContent className="p-6">
+                <div className="h-32 bg-secondary/30 rounded-lg animate-pulse" />
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         {/* This Week's Focus */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, ...transitions.default }}
+          transition={{ delay: 0.15, ...transitions.default }}
         >
           <Card className="mb-6 border rounded-2xl bg-gradient-to-br from-primary/5 to-transparent overflow-hidden">
             <CardContent className="p-5">
@@ -300,7 +378,7 @@ export default function Dashboard() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          Your dashboard builds over time as you check in weekly.
+          Your AI confidante learns from every reflection. The more you share, the better it gets.
         </motion.p>
       </div>
     </div>

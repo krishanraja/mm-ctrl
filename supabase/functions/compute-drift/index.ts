@@ -62,15 +62,35 @@ serve(async (req) => {
     const captureCount = recentCaptures?.length ?? 0;
     const totalActivity = checkinCount + captureCount;
 
+    // Fix Issue 2: Check user's first assessment date for 7-day grace period
+    const { data: firstAssessment } = await supabase
+      .from("leader_assessments" as never)
+      .select("created_at")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .single();
+
+    const firstActivityDate = firstAssessment?.created_at 
+      ? new Date(firstAssessment.created_at)
+      : null;
+    const daysSinceFirstActivity = firstActivityDate
+      ? Math.floor((now.getTime() - firstActivityDate.getTime()) / (24 * 60 * 60 * 1000))
+      : 0;
+    const isNewUser = daysSinceFirstActivity < 7;
+
     let status: "ok" | "drifting" | "stale" = "ok";
     let message = "You're staying engaged with AI decision-making.";
 
-    if (totalActivity === 0) {
-      status = "stale";
-      message = "You haven't checked in or captured a decision in 3+ weeks. The best time to build the habit is now.";
-    } else if (totalActivity < 2) {
-      status = "drifting";
-      message = "You're drifting. Your last few decisions didn't use AI as a thinking partner. Here's one thing to try this week.";
+    // Only show drift warning if user has been active for > 7 days
+    if (!isNewUser) {
+      if (totalActivity === 0) {
+        status = "stale";
+        message = "You haven't checked in or captured a decision in 3+ weeks. The best time to build the habit is now.";
+      } else if (totalActivity < 2) {
+        status = "drifting";
+        message = "You're drifting. Your last few decisions didn't use AI as a thinking partner. Here's one thing to try this week.";
+      }
     }
 
     // Upsert drift flag (replace any existing for this user)

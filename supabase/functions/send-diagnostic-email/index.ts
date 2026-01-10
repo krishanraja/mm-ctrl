@@ -525,21 +525,21 @@ const handler = async (req: Request): Promise<Response> => {
               
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Name:</strong> ${data.firstName || ''} ${data.lastName || ''}</p>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Email:</strong> <a href="mailto:${data.email}" style="color: #6366f1; text-decoration: none;">${data.email || 'Not provided'}</a></p>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Company:</strong> ${data.company || 'Not provided'}</p>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Title:</strong> ${data.title || data.roleTitle || 'Not provided'}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Name:</strong> ${data.firstName || ''} ${data.lastName || ''}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Email:</strong> <a href="mailto:${data.email}" style="color: #6366f1; text-decoration: none;">${data.email || 'Not provided'}</a></p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Company:</strong> ${data.company || 'Not provided'}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Title:</strong> ${data.title || data.roleTitle || 'Not provided'}</p>
                 </div>
                 <div>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Company Size:</strong> ${data.companySize || 'Not provided'}</p>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Primary AI Focus:</strong> ${data.primaryFocus || 'Not provided'}</p>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Timeline:</strong> ${data.timeline || 'Not provided'}</p>
-                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">Consent to Insights:</strong> ${data.consentToInsights ? '✅ Opted in' : '❌ No consent'}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Company Size:</strong> ${data.companySize || 'Not provided'}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Primary AI Focus:</strong> ${data.primaryFocus || 'Not provided'}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Timeline:</strong> ${data.timeline || 'Not provided'}</p>
+                  <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">Consent to Insights:</strong> ${data.consentToInsights ? '✅ Opted in' : '❌ No consent'}</p>
                 </div>
               </div>
               
               ${data.linkedinUrl ? `
-              <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #64748b;">LinkedIn:</strong> <a href="${data.linkedinUrl}" target="_blank" style="color: #6366f1; text-decoration: none;">${data.linkedinUrl}</a></p>
+              <p style="margin: 0 0 12px; color: #1e293b;"><strong style="color: #1e293b;">LinkedIn:</strong> <a href="${data.linkedinUrl}" target="_blank" style="color: #6366f1; text-decoration: none;">${data.linkedinUrl}</a></p>
               ` : ''}
               
               <div style="background: #fef3c7; padding: 18px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #f59e0b;">
@@ -552,7 +552,7 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Complete Assessment Responses -->
             <div style="background: white; padding: 30px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
               <h2 style="color: #1e293b; margin: 0 0 20px; border-bottom: 3px solid #6366f1; padding-bottom: 12px; font-size: 22px;">📋 Complete AI Leadership Assessment</h2>
-              <p style="color: #64748b; margin: 0 0 25px; font-style: italic; line-height: 1.6;">
+              <p style="color: #1e293b; margin: 0 0 25px; font-style: italic; line-height: 1.6;">
                 This executive completed our 6-dimension AI Growth Benchmark, measuring strategic leadership capabilities across key transformation areas. Each question uses a 1-5 scale from "Strongly Disagree" to "Strongly Agree".
               </p>
               ${formatLeadershipAssessment(data)}
@@ -562,7 +562,7 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Deep Profile Analysis -->
             <div style="background: white; padding: 30px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
               <h2 style="color: #1e293b; margin: 0 0 20px; border-bottom: 3px solid #8b5cf6; padding-bottom: 12px; font-size: 22px;">🔍 Deep Profile Analysis</h2>
-              <p style="color: #64748b; margin: 0 0 25px; font-style: italic; line-height: 1.6;">
+              <p style="color: #1e293b; margin: 0 0 25px; font-style: italic; line-height: 1.6;">
                 Extended questionnaire providing granular insights into work patterns, communication style, strategic priorities, and transformation goals. This data significantly enhances scope of work precision.
               </p>
               ${formatDeepProfile(data.deepProfile)}
@@ -579,20 +579,20 @@ const handler = async (req: Request): Promise<Response> => {
                 How You Compare to Other Leaders
               </h2>
               
-              <p style="color: #64748b; font-size: 14px; margin: 0 0 24px 0; line-height: 1.6;">
+              <p style="color: #1e293b; font-size: 14px; margin: 0 0 24px 0; line-height: 1.6;">
                 Based on ${data.firstName || 'the executive'}'s responses, here's how their AI leadership capabilities compare across 6 dimensions:
               </p>
               
               <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
                 ${deriveLeadershipComparisonForEmail(data).map(dim => `
                   <div style="background: white; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px;">
-                    <div style="color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                    <div style="color: #1e293b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
                       ${dim.dimension}
                     </div>
                     <div style="display: inline-block; background: ${getBadgeColor(dim.level)}; color: white; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 6px; margin-bottom: 8px;">
                       ${dim.level}
                     </div>
-                    <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0;">
+                    <p style="color: #1e293b; font-size: 13px; line-height: 1.5; margin: 0;">
                       ${dim.reasoning}
                     </p>
                   </div>
@@ -634,7 +634,7 @@ const handler = async (req: Request): Promise<Response> => {
             <!-- Footer -->
             <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
               <p style="margin: 0 0 10px; color: #1e293b; font-weight: 600;">AI Leadership Growth Benchmark Platform</p>
-              <p style="margin: 0; color: #64748b; font-size: 14px; line-height: 1.6;">
+              <p style="margin: 0; color: #1e293b; font-size: 14px; line-height: 1.6;">
                 This executive assessment report contains confidential business intelligence.<br>
                 All contact data and assessment results are securely stored in the CRM system.<br>
                 <strong>Contact:</strong> <a href="mailto:krish@themindmaker.ai" style="color: #6366f1; text-decoration: none;">krish@themindmaker.ai</a>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Brain, TrendingUp, Target, Sparkles, Lightbulb, Users, Zap, LucideIcon } from 'lucide-react';
-import mindmakerLogo from '@/assets/mindmaker-logo.png';
 
 interface ProgressPhase {
   label: string;
@@ -117,7 +116,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
           {/* Logo first - most important for branding */}
           <div className="flex justify-center">
             <img 
-              src={mindmakerLogo} 
+              src="/2.png" 
               alt="Mindmaker" 
               className="w-32 sm:w-40 h-auto"
             />
