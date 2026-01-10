@@ -48,6 +48,11 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
         muted
         playsInline
         preload="metadata"
+        onEnded={(e) => {
+          // Ensure infinite looping by restarting if video ends
+          e.currentTarget.currentTime = 0;
+          e.currentTarget.play();
+        }}
       >
         <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
       </video>
