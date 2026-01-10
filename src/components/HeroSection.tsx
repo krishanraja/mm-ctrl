@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users } from "lucide-react";
+import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users, LayoutDashboard, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useNavigate } from "react-router-dom";
@@ -107,6 +107,19 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                       {user.email}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/settings')}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       onClick={() => {
                         const historySection = document.getElementById('assessment-history');
@@ -118,6 +131,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                       <Sparkles className="mr-2 h-4 w-4" />
                       My Assessments
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={onSignOut} className="text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
                       Sign Out
@@ -262,7 +276,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
 
-                {/* Secondary: Full diagnostic or Continue */}
+                {/* Secondary: Full diagnostic, Continue, or Dashboard */}
                 {hasBaseline ? (
                   <Button
                     onClick={() => navigate('/today')}
@@ -272,6 +286,15 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                   >
                     Continue to Today
                   </Button>
+                ) : user && !user.is_anonymous ? (
+                  <Button
+                    onClick={() => navigate('/dashboard')}
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto h-12 sm:h-14 rounded-xl border-border text-foreground hover:bg-secondary"
+                  >
+                    Go to my dashboard
+                  </Button>
                 ) : (
                   <Button
                     onClick={onStartQuiz}
@@ -279,7 +302,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     variant="outline"
                     className="w-full sm:w-auto h-12 sm:h-14 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                   >
-                    6-question diagnostic (2 min) →
+                    Check my AI literacy level (2 min)
                   </Button>
                 )}
               </div>

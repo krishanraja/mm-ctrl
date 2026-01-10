@@ -17,6 +17,8 @@ import DecisionCapture from "./pages/DecisionCapture";
 import Timeline from "./pages/Timeline";
 import Baseline from "./pages/Baseline";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 // Auth components
 import { AuthDebugPanel } from "@/components/auth/AuthDebugPanel";
@@ -71,6 +73,8 @@ const App = () => (
                   <Route path="/capture" element={<DecisionCapture />} />
                   <Route path="/timeline" element={<Timeline />} />
                   <Route path="/baseline" element={<Baseline />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/settings" element={<Settings />} />
                 </Route>
                 
                 {/* Fallback */}
