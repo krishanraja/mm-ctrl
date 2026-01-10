@@ -313,10 +313,45 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
     try {
       await navigator.clipboard.writeText(prompt);
       setCopiedPromptIdx(idx);
-      // Visual indicator (checkmark) shows success - no toast needed
+      // Show toast for better visibility
+      const { toast } = await import('sonner');
+      toast.success('Copied to clipboard');
       setTimeout(() => setCopiedPromptIdx(null), 2000);
     } catch (err) {
       console.error('Failed to copy prompt:', err);
+      const { toast } = await import('sonner');
+      toast.error('Failed to copy');
+    }
+  };
+
+  const handleDownloadPrompts = (promptSets: any[]) => {
+    try {
+      const allPromptsText = promptSets
+        .map((set: any) => {
+          const prompts = Array.isArray(set.prompts_json) ? set.prompts_json : [];
+          return `## ${set.title}\n\n${set.description ? `${set.description}\n\n` : ''}${set.what_its_for ? `**What it's for:** ${set.what_its_for}\n\n` : ''}${set.when_to_use ? `**When to use:** ${set.when_to_use}\n\n` : ''}${set.how_to_use ? `**How to use:** ${set.how_to_use}\n\n` : ''}### Prompts:\n\n${prompts.map((p: string | { text?: string; prompt?: string }, i: number) => {
+            const promptText = typeof p === 'string' ? p : (p?.text || p?.prompt || '');
+            return `${i + 1}. ${promptText}`;
+          }).join('\n\n')}`;
+        })
+        .join('\n\n---\n\n');
+
+      const blob = new Blob([allPromptsText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mindmaker-prompt-library-${new Date().toISOString().split('T')[0]}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      const { toast } = require('sonner');
+      toast.success('Prompt library downloaded');
+    } catch (err) {
+      console.error('Failed to download prompts:', err);
+      const { toast } = require('sonner');
+      toast.error('Failed to download');
     }
   };
 
@@ -400,9 +435,12 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                   {data?.benchmarkScore || 0}
                   <span className="text-lg sm:text-2xl text-muted-foreground">/100</span>
                 </div>
-                <Badge className={`${getTierColor(data?.benchmarkTier || '')} px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm`}>
+                <Badge className={`${getTierColor(data?.benchmarkTier || '')} px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm mb-2`}>
                   {data?.benchmarkTier || 'Calculating...'} Tier
                 </Badge>
+                <p className="text-xs text-muted-foreground mt-1 max-w-xs">
+                  Your AI leadership capability score based on 6 dimensions: strategic vision, experimentation, delegation, data quality, team capability, and governance.
+                </p>
               </div>
               
               <div className="flex-1 space-y-1 sm:space-y-2">
@@ -679,7 +717,21 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                       <Sparkles className="w-5 h-5 text-primary" />
                       <CardTitle className="text-base font-semibold">Your Prompt Library ({data.promptSets.length} sets)</CardTitle>
                     </div>
-                    <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${expandedSections.prompts ? 'rotate-180' : ''}`} />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownloadPrompts(data.promptSets);
+                        }}
+                        className="h-8 px-2 text-xs"
+                      >
+                        <Copy className="h-3.5 w-3.5 mr-1" />
+                        Download
+                      </Button>
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${expandedSections.prompts ? 'rotate-180' : ''}`} />
+                    </div>
                   </CardHeader>
                 </CollapsibleTrigger>
                 <CollapsibleContent>

@@ -23,8 +23,12 @@ if (!SUPABASE_URL.includes(EXPECTED_PROJECT_ID)) {
 
 // Note: New Supabase publishable keys (sb_publishable_*) don't contain project ID
 // The key format is validated by Supabase itself when used
-if (SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_') && !SUPABASE_PUBLISHABLE_KEY.includes(EXPECTED_PROJECT_ID)) {
-  console.warn('⚠️ Warning: Supabase publishable key format may be incorrect. Expected format: sb_publishable_* or JWT token.');
+// JWT tokens are also valid (legacy format)
+if (SUPABASE_PUBLISHABLE_KEY && !SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_') && !SUPABASE_PUBLISHABLE_KEY.includes(EXPECTED_PROJECT_ID) && !SUPABASE_PUBLISHABLE_KEY.startsWith('eyJ')) {
+  // Only warn if it's not a JWT token (starts with eyJ) and not the new format
+  if (import.meta.env.DEV) {
+    console.warn('⚠️ Warning: Supabase publishable key format may be incorrect. Expected format: sb_publishable_* or JWT token.');
+  }
 }
 
 // Import the supabase client like this:

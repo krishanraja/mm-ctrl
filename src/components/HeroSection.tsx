@@ -184,8 +184,8 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                 alt="Mindmaker" 
                 className="w-auto brightness-0 invert h-[1.125rem] sm:h-[1.3125rem] md:h-[1.5rem]"
               />
-              <span className="brand-typography-ctrl flex items-center">
-                ctrl
+              <span className="brand-typography-ctrl flex items-center font-bold uppercase shimmer-mint">
+                CTRL
               </span>
             </div>
             
@@ -273,7 +273,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     variant="outline"
                     className="w-full sm:w-auto h-12 sm:h-14 rounded-xl border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
                   >
-                    Full 2-min diagnostic →
+                    6-question diagnostic (2 min) →
                   </Button>
                 )}
               </div>

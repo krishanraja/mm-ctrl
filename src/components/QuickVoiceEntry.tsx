@@ -73,7 +73,9 @@ const CircularMicButton: React.FC<CircularMicButtonProps> = ({
       }, 1000);
     } catch (err) {
       console.error('Error starting recording:', err);
-      setError('Could not access microphone');
+      setError('Could not access microphone. Click "Or type your answer instead" below.');
+      // Auto-show text input if mic fails
+      setTimeout(() => setShowTextInput(true), 1000);
     }
   };
 
@@ -157,6 +159,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<QuickEntryResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showTextInput, setShowTextInput] = useState(false);
   
   // Email & password capture state (inline, not navigation)
   const [showEmailForm, setShowEmailForm] = useState(false);
@@ -209,8 +212,10 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         },
       });
 
-      // #region agent log
-      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:response',message:'Edge function response received',data:{hasData:!!data,hasError:!!fnError,fnError:fnError?.message||null,dataKeys:data?Object.keys(data):[],insight:data?.insight?.slice(0,50),action_text:data?.action_text?.slice(0,50),errorField:data?.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3-H5'})}).catch(()=>{});
+      // #region agent log (wrapped to prevent console errors)
+      if (import.meta.env.DEV) {
+        fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:response',message:'Edge function response received',data:{hasData:!!data,hasError:!!fnError,fnError:fnError?.message||null,dataKeys:data?Object.keys(data):[],insight:data?.insight?.slice(0,50),action_text:data?.action_text?.slice(0,50),errorField:data?.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3-H5'})}).catch(()=>{});
+      }
       // #endregion
 
       if (fnError) throw fnError;
@@ -223,14 +228,18 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         why: data?.why_text || "Generic advice is useless. You deserve something tailored to what you actually said.",
       };
 
-      // #region agent log
-      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:success',message:'Entry result created',data:{usedDefaultInsight:!data?.insight,usedDefaultAction:!data?.action_text,insightPreview:entryResult.insight.slice(0,50)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+      // #region agent log (wrapped to prevent console errors)
+      if (import.meta.env.DEV) {
+        fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:success',message:'Entry result created',data:{usedDefaultInsight:!data?.insight,usedDefaultAction:!data?.action_text,insightPreview:entryResult.insight.slice(0,50)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+      }
       // #endregion
 
       setResult(entryResult);
     } catch (err) {
-      // #region agent log
-      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:catch',message:'Quick entry failed - entering catch block',data:{errorMessage:err instanceof Error?err.message:String(err),errorName:err instanceof Error?err.name:'unknown'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H4'})}).catch(()=>{});
+      // #region agent log (wrapped to prevent console errors)
+      if (import.meta.env.DEV) {
+        fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:catch',message:'Quick entry failed - entering catch block',data:{errorMessage:err instanceof Error?err.message:String(err),errorName:err instanceof Error?err.name:'unknown'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H4'})}).catch(()=>{});
+      }
       // #endregion
       console.error('Quick entry failed:', err);
       // Provide fallback that acknowledges we couldn't process their specific input
@@ -599,6 +608,41 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                   maxDuration={30}
                 />
               </div>
+              {/* Text Input Fallback */}
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowTextInput(true)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
+                >
+                  Or type your answer instead
+                </button>
+              </div>
+              {showTextInput && (
+                <div className="space-y-2">
+                  <Label htmlFor="text-input" className="text-sm font-medium">
+                    Type your AI uncertainty
+                  </Label>
+                  <Input
+                    id="text-input"
+                    type="text"
+                    value={transcript}
+                    onChange={(e) => setTranscript(e.target.value)}
+                    placeholder="What's your biggest AI uncertainty right now?"
+                    className="rounded-lg"
+                    autoFocus
+                  />
+                  <Button
+                    variant="cta"
+                    onClick={handleSubmit}
+                    disabled={!transcript.trim() || isProcessing}
+                    className="w-full rounded-xl"
+                  >
+                    {isProcessing ? 'Processing...' : 'Get insight'}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              )}
 
               {/* Transcript Preview */}
               {transcript && (

@@ -52,7 +52,19 @@ export const TensionsView: React.FC<TensionsViewProps> = ({ assessmentId, contac
     return (
       <div className="text-center py-12">
         <AlertTriangle className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-        <p className="text-muted-foreground">{error || 'Unable to load diagnostic data'}</p>
+        <p className="text-muted-foreground mb-4">{error || 'Unable to load diagnostic data'}</p>
+        {error?.includes('generating') && (
+          <p className="text-sm text-muted-foreground mb-4">
+            This usually takes 30-60 seconds. Please wait a moment and refresh.
+          </p>
+        )}
+        <Button
+          variant="outline"
+          onClick={() => window.location.reload()}
+          className="mt-2"
+        >
+          Refresh Page
+        </Button>
       </div>
     );
   }

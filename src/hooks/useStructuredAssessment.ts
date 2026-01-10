@@ -211,15 +211,19 @@ export const useStructuredAssessment = () => {
   const getProgressData = useCallback(() => {
     const totalQuestions = ASSESSMENT_QUESTIONS.length;
     const completedAnswers = assessmentState.responses.length;
-    const estimatedTimeRemaining = Math.max(0, (totalQuestions - completedAnswers) * 0.33); // 0.33 min per question
+    const questionsRemaining = Math.max(0, totalQuestions - completedAnswers);
+    // Always show at least 0.5 min if not complete, or show 0 on final question
+    const estimatedTimeRemaining = assessmentState.isComplete ? 0 : 
+      (questionsRemaining === 1 ? 0.5 : Math.max(0.5, questionsRemaining * 0.33)); // 0.33 min per question, min 0.5
 
     return {
       currentQuestion: assessmentState.currentQuestion,
       totalQuestions,
       phase: assessmentState.phase,
       completedAnswers,
-      estimatedTimeRemaining: Math.round(estimatedTimeRemaining),
-      progressPercentage: (completedAnswers / totalQuestions) * 100
+      estimatedTimeRemaining: Math.round(estimatedTimeRemaining * 10) / 10, // Round to 1 decimal
+      progressPercentage: (completedAnswers / totalQuestions) * 100,
+      isComplete: assessmentState.isComplete
     };
   }, [assessmentState]);
 

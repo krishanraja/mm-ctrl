@@ -54,6 +54,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const [insightPhase, setInsightPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
   const [libraryProgress, setLibraryProgress] = useState(0);
   const [libraryPhase, setLibraryPhase] = useState<'analyzing' | 'generating' | 'finalizing'>('analyzing');
+  const [isProcessingAnswer, setIsProcessingAnswer] = useState(false);
   
   // Auth form state
   const [authEmail, setAuthEmail] = useState('');
@@ -211,11 +212,12 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
 
   // Phase 1: After all questions, prompt user to save their results (create account)
   useEffect(() => {
-    const progressData = getProgressData();
-    const hasAnsweredAllQuestions = progressData.completedAnswers >= totalQuestions;
+    // Check completion directly from state, not from getProgressData (which may be stale)
+    const hasAnsweredAllQuestions = assessmentState.responses.length >= totalQuestions;
     
     // After all questions, show save results prompt
-    if (assessmentState.isComplete && hasAnsweredAllQuestions && currentScreen === 'assessment') {
+    // Use both isComplete flag and response count check for robustness
+    if ((assessmentState.isComplete || hasAnsweredAllQuestions) && currentScreen === 'assessment') {
       // Set minimal contact data to satisfy downstream requirements
       if (!contactData) {
         setContactData({
@@ -226,9 +228,15 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           consentToInsights: true,
         });
       }
-      setCurrentScreen('save-results-prompt');
+      
+      // Small delay to ensure state is fully updated, then transition
+      const timer = setTimeout(() => {
+        setCurrentScreen('save-results-prompt');
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
-  }, [assessmentState.isComplete, getProgressData, totalQuestions, currentScreen, contactData, setContactData]);
+  }, [assessmentState.isComplete, assessmentState.responses.length, totalQuestions, currentScreen, contactData, setContactData]);
 
   // Handle account creation to save results
   const handleSaveResults = useCallback(async (e: React.FormEvent) => {
@@ -326,7 +334,40 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     };
 
     setMessages(prev => [...prev, userMessage]);
+    
+    // Answer the question - this updates state including isComplete
     answerQuestion(option);
+    
+    // Show auto-save indicator (subtle feedback)
+    const saveIndicator = document.createElement('div');
+    saveIndicator.className = 'fixed bottom-4 right-4 bg-primary/90 text-primary-foreground text-xs px-3 py-1.5 rounded-lg shadow-lg z-50 animate-fade-in';
+    saveIndicator.textContent = '✓ Progress saved';
+    document.body.appendChild(saveIndicator);
+    setTimeout(() => {
+      saveIndicator.style.opacity = '0';
+      saveIndicator.style.transition = 'opacity 0.3s';
+      setTimeout(() => {
+        if (document.body.contains(saveIndicator)) {
+          document.body.removeChild(saveIndicator);
+        }
+      }, 300);
+    }, 2000);
+    
+    // Check if this was the last question
+    const isLastQuestion = currentQuestion.id === totalQuestions;
+    
+    if (isLastQuestion) {
+      // Last question answered - show loading state briefly, then transition
+      setIsProcessingAnswer(true);
+      console.log('✅ Last question answered, transitioning to save-results-prompt');
+      // Small delay to show processing, then useEffect will handle transition
+      setTimeout(() => {
+        setIsProcessingAnswer(false);
+      }, 500);
+      return;
+    }
+    
+    setIsProcessingAnswer(true);
 
     const progressData = getProgressData();
     const assessmentData = getAssessmentData();
@@ -351,7 +392,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             currentQuestion: progressData.currentQuestion,
             phase: progressData.phase,
             assessmentData: assessmentData,
-            isComplete: assessmentState.isComplete
+            isComplete: false // Not complete yet, we're still in the middle
           }
         }, { logPrefix: '🤖' });
 
@@ -369,6 +410,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           };
 
           setMessages(prev => [...prev, aiMessage]);
+          setIsProcessingAnswer(false);
           return; // Success, exit retry loop
         }
 
@@ -403,6 +445,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             timestamp: new Date()
           };
           setMessages(prev => [...prev, errorMessage]);
+          setIsProcessingAnswer(false);
           
           // Fallback: show next question
           const nextQuestion = getCurrentQuestion();
@@ -749,10 +792,27 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
                     type="email"
                     placeholder="you@company.com"
                     value={authEmail}
-                    onChange={(e) => setAuthEmail(e.target.value)}
+                    onChange={(e) => {
+                      setAuthEmail(e.target.value);
+                      // Real-time validation
+                      if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
+                        setAuthError('Please enter a valid email address');
+                      } else if (authError && e.target.value) {
+                        setAuthError(null);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Validate on blur
+                      if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
+                        setAuthError('Please enter a valid email address');
+                      }
+                    }}
                     className="pl-10 rounded-lg"
                     required
                   />
+                  {authError && authError.includes('email') && (
+                    <p className="text-xs text-destructive mt-1">Please enter a valid email address (e.g., you@company.com)</p>
+                  )}
                 </div>
               </div>
 
@@ -917,13 +977,25 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     <div className="bg-background fixed inset-0 flex flex-col overflow-hidden">
       {/* Safe area container - no scroll on outer container */}
       <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
-        {/* Brand Header with Icon */}
+        {/* Brand Header with Icon and Back Button */}
         <div className="flex items-center justify-between py-2 sm:py-3 shrink-0">
-          <img 
-            src="/2.png" 
-            alt="Mindmaker" 
-            className="h-6 sm:h-7 w-auto"
-          />
+          <div className="flex items-center gap-3">
+            {onBack && progressData.currentQuestion > 1 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackWithConfirmation}
+                className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+              >
+                ← Back
+              </Button>
+            )}
+            <img 
+              src="/2.png" 
+              alt="Mindmaker" 
+              className="h-6 sm:h-7 w-auto"
+            />
+          </div>
           <p className="text-xs sm:text-sm text-muted-foreground text-right flex-1 ml-3">
             AI Leadership Benchmark
           </p>
@@ -945,7 +1017,11 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
               
               <div className="flex justify-between text-[10px] sm:text-xs text-muted-foreground">
                 <span>Phase: {progressData.phase}</span>
-                <span>{Math.round(progressData.estimatedTimeRemaining)} min remaining</span>
+                <span>
+                  {progressData.isComplete || progressData.estimatedTimeRemaining === 0 
+                    ? 'Almost done' 
+                    : `${Math.round(progressData.estimatedTimeRemaining * 10) / 10} min remaining`}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -969,18 +1045,26 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
                   <h4 className="font-medium text-foreground mb-1 text-xs shrink-0">
                     Select your answer:
                   </h4>
-                  {currentQuestion.options.map((option, index) => (
-                    <Button
-                      key={index}
-                      variant="outline"
-                      className="w-full h-auto text-left justify-start hover:bg-primary/10 transition-colors rounded-xl p-2.5 sm:p-3 min-h-[42px]"
-                      onClick={() => handleOptionSelect(option)}
-                      aria-label={`Select option: ${option}`}
-                    >
-                      <ArrowRight className="h-3.5 w-3.5 mr-2 flex-shrink-0 text-primary" />
-                      <span className="text-xs sm:text-sm text-foreground leading-relaxed text-left">{option}</span>
-                    </Button>
-                  ))}
+                  {isProcessingAnswer && currentQuestion.id === totalQuestions ? (
+                    <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
+                      <div className="h-4 w-4 mr-2 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      Processing your responses...
+                    </div>
+                  ) : (
+                    currentQuestion.options.map((option, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="w-full h-auto text-left justify-start hover:bg-primary/10 transition-colors rounded-xl p-2.5 sm:p-3 min-h-[42px] disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={() => handleOptionSelect(option)}
+                        aria-label={`Select option: ${option}`}
+                        disabled={isProcessingAnswer || assessmentState.isComplete || (currentQuestion && currentQuestion.id === totalQuestions && progressData.completedAnswers >= totalQuestions)}
+                      >
+                        <ArrowRight className="h-3.5 w-3.5 mr-2 flex-shrink-0 text-primary" />
+                        <span className="text-xs sm:text-sm text-foreground leading-relaxed text-left">{option}</span>
+                      </Button>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
