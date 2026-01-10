@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { deriveLeadershipComparison, LeadershipComparison } from './scaleUpsMapping';
 import { normalizeAIInObject } from './normalizeAI';
+import { ensureArray, ensureString, ensureNumber, safeAccess } from './pipelineGuards';
 
 export interface LeaderDimensionScore {
   dimension_key: string;
@@ -155,106 +156,186 @@ export async function aggregateLeaderResults(
     }
 
     // Fetch tensions (apply gating: free users see only top 1) - PHASE 4: Type guard
-    const { data: allTensions } = await supabase
-      .from('leader_tensions')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('priority_rank');
+    let tensions: LeaderTension[] = [];
+    try {
+      const { data: allTensions, error: tensionsError } = await supabase
+        .from('leader_tensions')
+        .select('*')
+        .eq('assessment_id', assessmentId)
+        .order('priority_rank');
 
-    const safeTensions = Array.isArray(allTensions) ? allTensions : [];
-    const tensions = shouldApplyGating 
-      ? safeTensions.slice(0, 1)
-      : safeTensions;
+      if (tensionsError) {
+        console.warn('⚠️ Failed to fetch tensions:', tensionsError.message);
+      } else {
+        const safeTensions = ensureArray(allTensions, []);
+        tensions = (shouldApplyGating ? safeTensions.slice(0, 1) : safeTensions).map(t => ({
+          dimension_key: ensureString(t.dimension_key, 'general'),
+          summary_line: ensureString(t.summary_line, ''),
+          priority_rank: ensureNumber(t.priority_rank, 1, 1, 100)
+        }));
+      }
+    } catch (e) {
+      console.warn('⚠️ Tensions fetch exception:', e);
+    }
 
     // Fetch risk signals (apply gating: free users see only top 1) - PHASE 4: Type guard
-    const { data: allRiskSignals } = await supabase
-      .from('leader_risk_signals')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('priority_rank');
+    let riskSignals: LeaderRiskSignal[] = [];
+    try {
+      const { data: allRiskSignals, error: risksError } = await supabase
+        .from('leader_risk_signals')
+        .select('*')
+        .eq('assessment_id', assessmentId)
+        .order('priority_rank');
 
-    const safeRiskSignals = Array.isArray(allRiskSignals) ? allRiskSignals : [];
-    const riskSignals = shouldApplyGating
-      ? safeRiskSignals.slice(0, 1).map(r => ({
-          risk_key: r.risk_key as LeaderRiskSignal['risk_key'],
-          level: r.level as LeaderRiskSignal['level'],
-          description: r.description,
-          priority_rank: r.priority_rank,
-        }))
-      : safeRiskSignals.map(r => ({
-          risk_key: r.risk_key as LeaderRiskSignal['risk_key'],
-          level: r.level as LeaderRiskSignal['level'],
-          description: r.description,
-          priority_rank: r.priority_rank,
-        }));
+      if (risksError) {
+        console.warn('⚠️ Failed to fetch risk signals:', risksError.message);
+      } else {
+        const safeRiskSignals = ensureArray(allRiskSignals, []);
+        const validRiskKeys: LeaderRiskSignal['risk_key'][] = ['shadow_ai', 'skills_gap', 'roi_leakage', 'decision_friction'];
+        const validLevels: LeaderRiskSignal['level'][] = ['low', 'medium', 'high'];
+        
+        riskSignals = (shouldApplyGating ? safeRiskSignals.slice(0, 1) : safeRiskSignals)
+          .map(r => ({
+            risk_key: (validRiskKeys.includes(r.risk_key) ? r.risk_key : 'shadow_ai') as LeaderRiskSignal['risk_key'],
+            level: (validLevels.includes(r.level) ? r.level : 'medium') as LeaderRiskSignal['level'],
+            description: ensureString(r.description, ''),
+            priority_rank: ensureNumber(r.priority_rank, 1, 1, 100),
+          }))
+          .filter(r => r.description.length > 0); // Filter out invalid entries
+      }
+    } catch (e) {
+      console.warn('⚠️ Risk signals fetch exception:', e);
+    }
 
     // Fetch org scenarios (apply gating: free users see only top 1) - PHASE 4: Type guard
-    const { data: allOrgScenarios } = await supabase
-      .from('leader_org_scenarios')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('priority_rank');
+    let orgScenarios: LeaderOrgScenario[] = [];
+    try {
+      const { data: allOrgScenarios, error: scenariosError } = await supabase
+        .from('leader_org_scenarios')
+        .select('*')
+        .eq('assessment_id', assessmentId)
+        .order('priority_rank');
 
-    const safeOrgScenarios = Array.isArray(allOrgScenarios) ? allOrgScenarios : [];
-    const orgScenarios = shouldApplyGating
-      ? safeOrgScenarios.slice(0, 1).map(s => ({
-          scenario_key: s.scenario_key as LeaderOrgScenario['scenario_key'],
-          summary: s.summary,
-          priority_rank: s.priority_rank,
-        }))
-      : safeOrgScenarios.map(s => ({
-          scenario_key: s.scenario_key as LeaderOrgScenario['scenario_key'],
-          summary: s.summary,
-          priority_rank: s.priority_rank,
-        }));
+      if (scenariosError) {
+        console.warn('⚠️ Failed to fetch org scenarios:', scenariosError.message);
+      } else {
+        const safeOrgScenarios = ensureArray(allOrgScenarios, []);
+        const validScenarioKeys: LeaderOrgScenario['scenario_key'][] = [
+          'stagnation_loop', 'shadow_ai_instability', 'high_velocity_path', 'culture_capability_mismatch'
+        ];
+        
+        orgScenarios = (shouldApplyGating ? safeOrgScenarios.slice(0, 1) : safeOrgScenarios)
+          .map(s => ({
+            scenario_key: (validScenarioKeys.includes(s.scenario_key) 
+              ? s.scenario_key 
+              : 'high_velocity_path') as LeaderOrgScenario['scenario_key'],
+            summary: ensureString(s.summary, ''),
+            priority_rank: ensureNumber(s.priority_rank, 1, 1, 100),
+          }))
+          .filter(s => s.summary.length > 0); // Filter out invalid entries
+      }
+    } catch (e) {
+      console.warn('⚠️ Org scenarios fetch exception:', e);
+    }
 
     // Fetch first moves (apply gating: free users see only move 1)
-    const { data: allFirstMoves } = await supabase
-      .from('leader_first_moves')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('move_number');
+    let firstMoves: LeaderFirstMove[] = [];
+    try {
+      const { data: allFirstMoves, error: movesError } = await supabase
+        .from('leader_first_moves')
+        .select('*')
+        .eq('assessment_id', assessmentId)
+        .order('move_number');
 
-    const firstMoves = shouldApplyGating
-      ? (allFirstMoves || []).filter(m => m.move_number === 1)
-      : (allFirstMoves || []);
+      if (movesError) {
+        console.warn('⚠️ Failed to fetch first moves:', movesError.message);
+      } else {
+        const safeFirstMoves = ensureArray(allFirstMoves, []);
+        const filtered = shouldApplyGating
+          ? safeFirstMoves.filter(m => ensureNumber(m.move_number, 1, 1, 3) === 1)
+          : safeFirstMoves;
+        
+        firstMoves = filtered
+          .map(m => ({
+            move_number: ensureNumber(m.move_number, 1, 1, 3),
+            content: ensureString(m.content, ''),
+          }))
+          .filter(m => m.content.length > 0) // Filter out invalid entries
+          .sort((a, b) => a.move_number - b.move_number);
+      }
+    } catch (e) {
+      console.warn('⚠️ First moves fetch exception:', e);
+    }
 
     // Fetch prompt sets (apply gating: free users see only top 3)
-    const { data: allPromptSets } = await supabase
-      .from('leader_prompt_sets')
-      .select('*')
-      .eq('assessment_id', assessmentId)
-      .order('priority_rank');
+    let promptSets: LeaderPromptSet[] = [];
+    try {
+      const { data: allPromptSets, error: promptsError } = await supabase
+        .from('leader_prompt_sets')
+        .select('*')
+        .eq('assessment_id', assessmentId)
+        .order('priority_rank');
 
-    const promptSets = shouldApplyGating
-      ? (allPromptSets || []).slice(0, 3)
-      : (allPromptSets || []);
+      if (promptsError) {
+        console.warn('⚠️ Failed to fetch prompt sets:', promptsError.message);
+      } else {
+        const safePromptSets = ensureArray(allPromptSets, []);
+        const filtered = shouldApplyGating ? safePromptSets.slice(0, 3) : safePromptSets;
+        
+        promptSets = filtered
+          .map(p => ({
+            category_key: ensureString(p.category_key, 'strategic_planning'),
+            title: ensureString(p.title, 'Untitled'),
+            description: ensureString(p.description, ''),
+            what_its_for: ensureString(p.what_its_for, ''),
+            when_to_use: ensureString(p.when_to_use, ''),
+            how_to_use: ensureString(p.how_to_use, ''),
+            prompts_json: Array.isArray(p.prompts_json) ? p.prompts_json : (p.prompts_json || []),
+            priority_rank: ensureNumber(p.priority_rank, 1, 1, 100),
+          }))
+          .filter(p => p.title.length > 0 && Array.isArray(p.prompts_json)); // Filter out invalid entries
+      }
+    } catch (e) {
+      console.warn('⚠️ Prompt sets fetch exception:', e);
+    }
 
     // PHASE 4: Generate leadershipComparison from dimension scores
     let leadershipComparison: LeadershipComparison | null = null;
     try {
-      // Reconstruct assessment data from dimension scores for scaleUpsMapping
-      const reconstructedAssessmentData: any = {};
-      dimensionScores?.forEach(d => {
-        // Map dimension keys back to assessment data keys
-        const keyMap: Record<string, string> = {
-          'ai_fluency': 'aiFluencyScore',
-          'decision_velocity': 'decisionVelocityScore',
-          'experimentation_cadence': 'experimentationScore',
-          'delegation_augmentation': 'delegationScore',
-          'alignment_communication': 'alignmentScore',
-          'risk_governance': 'riskGovernanceScore',
-        };
-        const assessmentKey = keyMap[d.dimension_key];
-        if (assessmentKey) {
-          reconstructedAssessmentData[assessmentKey] = d.score_numeric;
+      // Only generate if we have dimension scores
+      if (dimensionScores && dimensionScores.length > 0) {
+        // Reconstruct assessment data from dimension scores for scaleUpsMapping
+        const reconstructedAssessmentData: any = {};
+        dimensionScores.forEach(d => {
+          // Map dimension keys back to assessment data keys
+          const keyMap: Record<string, string> = {
+            'ai_fluency': 'aiFluencyScore',
+            'decision_velocity': 'decisionVelocityScore',
+            'experimentation_cadence': 'experimentationScore',
+            'delegation_augmentation': 'delegationScore',
+            'alignment_communication': 'alignmentScore',
+            'risk_governance': 'riskGovernanceScore',
+          };
+          const assessmentKey = keyMap[d.dimension_key];
+          if (assessmentKey && typeof d.score_numeric === 'number') {
+            reconstructedAssessmentData[assessmentKey] = d.score_numeric;
+          }
+        });
+        
+        // Only call if we have at least some data
+        if (Object.keys(reconstructedAssessmentData).length > 0) {
+          try {
+            leadershipComparison = deriveLeadershipComparison(reconstructedAssessmentData, null);
+            console.log('✅ Leadership comparison generated');
+          } catch (deriveError) {
+            console.warn('⚠️ deriveLeadershipComparison failed:', deriveError);
+            // Continue without leadership comparison
+          }
         }
-      });
-      
-      leadershipComparison = deriveLeadershipComparison(reconstructedAssessmentData, null);
-      console.log('✅ Leadership comparison generated:', leadershipComparison);
+      }
     } catch (error) {
-      console.error('⚠️ Failed to generate leadership comparison:', error);
+      console.warn('⚠️ Failed to generate leadership comparison:', error);
+      // Continue without leadership comparison - it's optional
     }
 
     console.log('✅ Aggregated results:', {
@@ -269,21 +350,22 @@ export async function aggregateLeaderResults(
     });
 
     // PHASE 6: Return aggregated results with computed fallbacks
-    // Normalize AI capitalization in all text content
+    // Ensure all arrays are properly initialized (never null/undefined)
     const results: AggregatedLeaderResults = {
-      assessmentId,
-      benchmarkScore: computedBenchmarkScore,
-      benchmarkTier: computedBenchmarkTier,
-      hasFullDiagnostic: hasFull,
-      dimensionScores,
-      tensions,
-      riskSignals,
-      orgScenarios,
-      firstMoves,
-      promptSets,
-      leadershipComparison,
+      assessmentId: ensureString(assessmentId, ''),
+      benchmarkScore: ensureNumber(computedBenchmarkScore, 50, 0, 100),
+      benchmarkTier: ensureString(computedBenchmarkTier, 'AI-Emerging'),
+      hasFullDiagnostic: typeof hasFull === 'boolean' ? hasFull : false,
+      dimensionScores: ensureArray(dimensionScores, []),
+      tensions: ensureArray(tensions, []),
+      riskSignals: ensureArray(riskSignals, []),
+      orgScenarios: ensureArray(orgScenarios, []),
+      firstMoves: ensureArray(firstMoves, []),
+      promptSets: ensureArray(promptSets, []),
+      leadershipComparison: leadershipComparison, // Can be null, that's expected
     };
     
+    // Normalize AI capitalization in all text content
     return normalizeAIInObject(results);
   } catch (error) {
     console.error('❌ Aggregation failed completely, returning safe defaults:', error);

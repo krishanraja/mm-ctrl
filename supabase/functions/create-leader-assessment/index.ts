@@ -104,76 +104,204 @@ Deno.serve(async (req) => {
       leaderEmail = `anon+${ownerUserId}@anon.local`;
     }
 
-    console.log('🔐 Creating assessment with service role for user_id:', ownerUserId, 'email:', leaderEmail);
+    // Normalize email and name for matching
+    const normalizedEmail = leaderEmail.toLowerCase().trim();
+    const normalizedName = contactData?.fullName?.trim().toLowerCase().replace(/\s+/g, ' ') || null;
+    const leaderName = contactData?.fullName?.trim() || null;
 
-    // P0-2 FIX: Look up leader by user_id (not email) to prevent cross-user overwrites
-    // First, try to find existing leader by user_id
-    let leaderId: string;
+    console.log('🔐 Creating assessment with service role for user_id:', ownerUserId, 'email:', normalizedEmail);
+
+    // Enhanced Profile Lookup Strategy (Anti-Fragile Design):
+    // 1. Try user_id lookup first (most reliable, prevents cross-user overwrites)
+    // 2. Try email+name matching (normalized, case-insensitive)
+    // 3. Try email-only matching
+    // 4. Create new profile with upsert logic
+    let leaderId: string | null = null;
+    let isNewProfile = false;
     
-    const { data: existingLeaderByUserId } = await supabase
+    // Strategy 1: Lookup by user_id (most reliable)
+    const { data: existingLeaderByUserId, error: userIdError } = await supabase
       .from('leaders')
-      .select('id')
+      .select('id, email, name, archived_at')
       .eq('user_id', ownerUserId)
-      .single();
+      .is('archived_at', null) // Only active profiles
+      .maybeSingle();
 
-    if (existingLeaderByUserId) {
-      // User already has a leader record - update it
-      const { error: updateError } = await supabase
-        .from('leaders')
-        .update({
-          name: contactData?.fullName || null,
-          email: leaderEmail,
-          role: contactData?.roleTitle || null,
-          company: contactData?.companyName || null,
-          company_size_band: contactData?.companySize || null,
-          primary_focus: contactData?.primaryFocus || null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existingLeaderByUserId.id);
-
-      if (updateError) {
-        console.error('❌ Failed to update leader:', updateError);
-        throw new Error('Failed to update leader record: ' + updateError.message);
-      }
-
+    if (userIdError) {
+      console.warn('⚠️ Lookup by user_id failed:', userIdError.message);
+    } else if (existingLeaderByUserId) {
       leaderId = existingLeaderByUserId.id;
-      console.log('✅ Updated existing leader record:', leaderId);
-    } else {
-      // No leader for this user - create new one with user_id
+      isNewProfile = false;
+      console.log('✅ Found profile by user_id:', leaderId);
+      
+      // Update profile if email/name changed
+      const needsUpdate = 
+        (normalizedEmail && existingLeaderByUserId.email?.toLowerCase() !== normalizedEmail) ||
+        (normalizedName && existingLeaderByUserId.name?.toLowerCase().trim().replace(/\s+/g, ' ') !== normalizedName);
+
+      if (needsUpdate) {
+        const updateData: Record<string, any> = {
+          updated_at: new Date().toISOString()
+        };
+        if (normalizedEmail) updateData.email = normalizedEmail;
+        if (leaderName) updateData.name = leaderName;
+
+        const { error: updateError } = await supabase
+          .from('leaders')
+          .update(updateData)
+          .eq('id', leaderId);
+
+        if (updateError) {
+          console.warn('⚠️ Failed to update profile:', updateError.message);
+        } else {
+          console.log('✅ Updated profile with new email/name');
+        }
+      }
+    }
+
+    // Strategy 2: If not found by user_id, try email+name matching
+    if (!leaderId && normalizedEmail && normalizedName) {
+      const { data: existingByEmailName, error: emailNameError } = await supabase
+        .from('leaders')
+        .select('id, email, name, user_id, archived_at')
+        .eq('email', normalizedEmail)
+        .is('archived_at', null)
+        .maybeSingle();
+
+      if (emailNameError) {
+        console.warn('⚠️ Lookup by email failed:', emailNameError.message);
+      } else if (existingByEmailName) {
+        const existingNameNormalized = existingByEmailName.name?.toLowerCase().trim().replace(/\s+/g, ' ') || '';
+        
+        if (existingNameNormalized === normalizedName) {
+          // Email and name match - use this profile
+          leaderId = existingByEmailName.id;
+          isNewProfile = false;
+          console.log('✅ Found profile by email+name:', leaderId);
+
+          // Update user_id if not set
+          if (!existingByEmailName.user_id) {
+            const { error: updateError } = await supabase
+              .from('leaders')
+              .update({ 
+                user_id: ownerUserId,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', leaderId);
+
+            if (updateError) {
+              console.warn('⚠️ Failed to update user_id:', updateError.message);
+            }
+          }
+        }
+      }
+    }
+
+    // Strategy 3: If still not found, try email-only matching
+    if (!leaderId && normalizedEmail) {
+      const { data: existingByEmail, error: emailError } = await supabase
+        .from('leaders')
+        .select('id, email, name, user_id, archived_at')
+        .eq('email', normalizedEmail)
+        .is('archived_at', null)
+        .maybeSingle();
+
+      if (emailError) {
+        console.warn('⚠️ Lookup by email only failed:', emailError.message);
+      } else if (existingByEmail) {
+        leaderId = existingByEmail.id;
+        isNewProfile = false;
+        console.log('✅ Found profile by email:', leaderId);
+
+        // Update name and user_id if provided
+        const updateData: Record<string, any> = {
+          updated_at: new Date().toISOString()
+        };
+        if (leaderName) updateData.name = leaderName;
+        if (!existingByEmail.user_id) updateData.user_id = ownerUserId;
+
+        if (Object.keys(updateData).length > 1) { // More than just updated_at
+          const { error: updateError } = await supabase
+            .from('leaders')
+            .update(updateData)
+            .eq('id', leaderId);
+
+          if (updateError) {
+            console.warn('⚠️ Failed to update profile:', updateError.message);
+          }
+        }
+      }
+    }
+
+    // Strategy 4: Create new profile if not found
+    if (!leaderId) {
+      const insertData = {
+        user_id: ownerUserId, // Critical: Link to auth.users for RLS
+        email: normalizedEmail,
+        name: leaderName || 'Anonymous User',
+        role: contactData?.roleTitle || null,
+        company: contactData?.companyName || null,
+        company_size_band: contactData?.companySize || null,
+        primary_focus: contactData?.primaryFocus || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
       const { data: newLeader, error: createError } = await supabase
         .from('leaders')
-        .insert({
-          user_id: ownerUserId, // Critical: Link to auth.users for RLS
-          email: leaderEmail,
-          name: contactData?.fullName || null,
-          role: contactData?.roleTitle || null,
-          company: contactData?.companyName || null,
-          company_size_band: contactData?.companySize || null,
-          primary_focus: contactData?.primaryFocus || null,
-        })
+        .insert(insertData)
         .select('id')
         .single();
 
       if (createError || !newLeader) {
         console.error('❌ Failed to create leader:', createError);
         
-        // Fallback: If insert failed due to unique constraint on user_id, try to get existing
-        const { data: fallbackLeader } = await supabase
-          .from('leaders')
-          .select('id')
-          .eq('user_id', ownerUserId)
-          .single();
-        
-        if (fallbackLeader) {
-          leaderId = fallbackLeader.id;
-          console.log('✅ Found leader via fallback:', leaderId);
-        } else {
+        // Fallback: If insert failed due to unique constraint, try to find existing
+        if (createError?.code === '23505' || createError?.message?.includes('unique')) {
+          console.log('⚠️ Insert failed due to unique constraint, trying to find existing...');
+          
+          // Try to find by email
+          const { data: existingProfile } = await supabase
+            .from('leaders')
+            .select('id')
+            .eq('email', normalizedEmail)
+            .is('archived_at', null)
+            .maybeSingle();
+
+          if (existingProfile) {
+            leaderId = existingProfile.id;
+            isNewProfile = false;
+            console.log('✅ Found existing profile after conflict:', leaderId);
+          } else if (ownerUserId) {
+            // Try to find by user_id
+            const { data: existingByUserId } = await supabase
+              .from('leaders')
+              .select('id')
+              .eq('user_id', ownerUserId)
+              .is('archived_at', null)
+              .maybeSingle();
+
+            if (existingByUserId) {
+              leaderId = existingByUserId.id;
+              isNewProfile = false;
+              console.log('✅ Found existing profile by user_id after conflict:', leaderId);
+            }
+          }
+        }
+
+        if (!leaderId) {
           throw new Error('Failed to create leader record: ' + (createError?.message || 'Unknown error'));
         }
       } else {
         leaderId = newLeader.id;
+        isNewProfile = true;
         console.log('✅ Created new leader record:', leaderId);
       }
+    }
+
+    // Validate we have a leaderId before proceeding
+    if (!leaderId) {
+      throw new Error('Failed to obtain leader ID - cannot create assessment');
     }
 
     // Step 2: Create leader_assessment record (bypasses RLS with service role)
