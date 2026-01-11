@@ -11,6 +11,7 @@ import { ExecutiveVoiceCapture } from '@/components/voice/ExecutiveVoiceCapture'
 import { transitions, fadeInProps } from '@/lib/motion';
 import { DailyProvocation } from '@/components/dashboard/DailyProvocation';
 import { PatternInsight } from '@/components/dashboard/PatternInsight';
+import { MobileDashboard } from '@/components/mobile/MobileDashboard';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 /**
@@ -32,6 +33,18 @@ export default function Dashboard() {
   const [recentActivity, setRecentActivity] = useState<{ type: string; date: string } | null>(null);
   const [dailyPrompt, setDailyPrompt] = useState<{ id: string; question: string; category: string } | null>(null);
   const [promptLoading, setPromptLoading] = useState(true);
+  const [baselineData, setBaselineData] = useState<any>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Get user info
   useEffect(() => {
@@ -62,6 +75,7 @@ export default function Dashboard() {
         const aggregated = await aggregateLeaderResults(assessmentId, false);
         if (!isMounted) return;
         
+        setBaselineData(aggregated);
         const tension = aggregated.tensions?.[0];
         if (tension?.summary_line) {
           setTopTension(tension.summary_line);
@@ -211,6 +225,30 @@ export default function Dashboard() {
     );
   }
 
+  // Handle voice capture event from mobile dashboard
+  useEffect(() => {
+    const handleVoiceCapture = () => {
+      setIsVoiceActive(true);
+    };
+    window.addEventListener('open-voice-capture', handleVoiceCapture);
+    return () => window.removeEventListener('open-voice-capture', handleVoiceCapture);
+  }, []);
+
+  // Mobile-first dashboard
+  if (isMobile) {
+    return (
+      <MobileDashboard
+        user={user}
+        baselineData={baselineData}
+        weeklyAction={weeklyAction}
+        dailyPrompt={dailyPrompt}
+        recentActivity={recentActivity}
+        onNavigate={navigate}
+      />
+    );
+  }
+
+  // Desktop dashboard (existing layout)
   return (
     <div className="min-h-[100dvh] bg-background">
       <div className="mx-auto max-w-2xl px-4 pt-8 pb-24">
