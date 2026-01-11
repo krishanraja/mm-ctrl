@@ -12,6 +12,7 @@ import { transitions, fadeInProps } from '@/lib/motion';
 import { DailyProvocation } from '@/components/dashboard/DailyProvocation';
 import { PatternInsight } from '@/components/dashboard/PatternInsight';
 import { MobileDashboard } from '@/components/mobile/MobileDashboard';
+import { DesktopDashboard } from '@/components/mobile/DesktopDashboard';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 /**
@@ -248,177 +249,15 @@ export default function Dashboard() {
     );
   }
 
-  // Desktop dashboard (existing layout)
+  // Desktop dashboard (enhanced layout)
   return (
-    <div className="min-h-[100dvh] bg-background">
-      <div className="mx-auto max-w-2xl px-4 pt-8 pb-24">
-        {/* Header */}
-        <motion.div 
-          className="mb-8"
-          {...fadeInProps}
-          transition={transitions.default}
-        >
-          <h1 className="text-2xl font-semibold text-foreground">
-            {getUserGreeting()}
-          </h1>
-          {recentActivity && (
-            <p className="text-sm text-muted-foreground mt-1">
-              Last {recentActivity.type}: {recentActivity.date}
-            </p>
-          )}
-        </motion.div>
-
-        {/* Daily Provocation - AI Confidante Core Feature */}
-        {dailyPrompt && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, ...transitions.default }}
-          >
-            <DailyProvocation
-              prompt={dailyPrompt}
-              onResponseSubmitted={handlePromptResponse}
-            />
-          </motion.div>
-        )}
-
-        {/* Pattern Insight - Learned from reflections */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12, ...transitions.default }}
-        >
-          <PatternInsight />
-        </motion.div>
-
-        {promptLoading && !dailyPrompt && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, ...transitions.default }}
-          >
-            <Card className="mb-6 border rounded-2xl">
-              <CardContent className="p-6">
-                <div className="h-32 bg-secondary/30 rounded-lg animate-pulse" />
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* This Week's Focus */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, ...transitions.default }}
-        >
-          <Card className="mb-6 border rounded-2xl bg-gradient-to-br from-primary/5 to-transparent overflow-hidden">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Target className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">This week's focus</span>
-              </div>
-              
-              {isLoading ? (
-                <div className="h-12 bg-secondary/30 rounded-lg animate-pulse" />
-              ) : (
-                <>
-                  <p className="text-foreground leading-relaxed">
-                    {weeklyAction?.action_text || topTension || "Complete a weekly check-in to get personalized guidance."}
-                  </p>
-                  {weeklyAction?.why_text && (
-                    <p className="text-sm text-muted-foreground mt-2">{weeklyAction.why_text}</p>
-                  )}
-                </>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, ...transitions.default }}
-        >
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide mb-3">
-            Quick Actions
-          </h2>
-
-          {/* Voice Capture - Primary */}
-          <Card 
-            className="border rounded-2xl cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => setIsVoiceActive(true)}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Mic className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-foreground">Talk through a decision</div>
-                    <div className="text-sm text-muted-foreground">60 seconds → 3 sharp questions</div>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Weekly Check-in */}
-          <Card 
-            className="border rounded-2xl cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => navigate('/checkin')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-foreground">Weekly check-in</div>
-                    <div className="text-sm text-muted-foreground">30 seconds → one insight</div>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* View Baseline */}
-          <Card 
-            className="border rounded-2xl cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={() => navigate('/baseline')}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                    <User className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-foreground">Your baseline</div>
-                    <div className="text-sm text-muted-foreground">Scores, tensions, and prompts</div>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Subtle footer */}
-        <motion.p
-          className="text-center text-xs text-muted-foreground mt-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          Your AI confidante learns from every reflection. The more you share, the better it gets.
-        </motion.p>
-      </div>
-    </div>
+    <DesktopDashboard
+      user={user}
+      baselineData={baselineData}
+      weeklyAction={weeklyAction}
+      dailyPrompt={dailyPrompt}
+      recentActivity={recentActivity}
+      onNavigate={navigate}
+    />
   );
 }

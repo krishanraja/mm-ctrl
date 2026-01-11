@@ -86,8 +86,9 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               y,
               opacity,
               height: heightMap[height],
+              maxHeight: '90vh',
             }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl shadow-2xl overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background rounded-t-3xl shadow-2xl overflow-hidden touch-none"
           >
             {/* Handle */}
             {showHandle && (
@@ -116,7 +117,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             )}
 
             {/* Content */}
-            <div className="overflow-y-auto h-full pb-safe">
+            <div className="overflow-y-auto h-full pb-safe overscroll-contain">
               {children}
             </div>
           </motion.div>

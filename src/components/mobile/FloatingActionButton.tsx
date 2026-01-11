@@ -87,7 +87,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       >
         <Button
           size="lg"
-          className="h-14 w-14 rounded-full shadow-2xl relative"
+          className="h-14 w-14 rounded-full shadow-2xl relative touch-none"
           onClick={() => {
             if (isExpanded) {
               setIsExpanded(false);
@@ -95,6 +95,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
           }}
           {...longPress}
           disabled={isProcessing}
+          aria-label={isListening ? 'Stop listening' : 'Start voice input'}
         >
           <AnimatePresence mode="wait">
             {isProcessing ? (

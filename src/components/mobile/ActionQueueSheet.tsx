@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Target, CheckCircle2, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 
 interface ActionQueueSheetProps {
   weeklyAction: any;
@@ -14,6 +14,9 @@ export const ActionQueueSheet: React.FC<ActionQueueSheetProps> = ({
   weeklyAction,
   onNavigate,
 }) => {
+  const [completedActions, setCompletedActions] = useState<Set<string>>(new Set());
+  const [snoozedActions, setSnoozedActions] = useState<Set<string>>(new Set());
+
   const actions = [
     weeklyAction && {
       id: 'weekly-action',
@@ -50,7 +53,29 @@ export const ActionQueueSheet: React.FC<ActionQueueSheetProps> = ({
       priority: 'low',
       onClick: () => onNavigate('/baseline'),
     },
-  ].filter(Boolean);
+  ].filter(Boolean).filter(action => !completedActions.has(action.id) && !snoozedActions.has(action.id));
+
+  const handleSwipeComplete = (actionId: string, info: PanInfo) => {
+    const threshold = 100;
+    const velocity = info.velocity.x;
+
+    if (info.offset.x > threshold || velocity > 500) {
+      // Swipe right - complete
+      if ('vibrate' in navigator) {
+        navigator.vibrate(20);
+      }
+      setCompletedActions(prev => new Set([...prev, actionId]));
+    } else if (info.offset.x < -threshold || velocity < -500) {
+      // Swipe left - snooze
+      if ('vibrate' in navigator) {
+        navigator.vibrate([10, 50, 10]);
+      }
+      setSnoozedActions(prev => new Set([...prev, actionId]));
+    }
+  };
+
+  const completedCount = completedActions.size;
+  const totalActions = actions.length + completedCount;
 
   return (
     <div className="px-6 py-4 space-y-3">
@@ -61,13 +86,20 @@ export const ActionQueueSheet: React.FC<ActionQueueSheetProps> = ({
         </Badge>
       </div>
 
-      {actions.map((action, index) => (
-        <motion.div
-          key={action.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 }}
-        >
+      <AnimatePresence>
+        {actions.map((action, index) => (
+          <motion.div
+            key={action.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, x: 300, scale: 0.9 }}
+            transition={{ delay: index * 0.05 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, info) => handleSwipeComplete(action.id, info)}
+            whileTap={{ scale: 0.98 }}
+          >
           <Card
             className={`border rounded-2xl cursor-pointer transition-all hover:border-primary/50 ${
               action.priority === 'high'
@@ -119,8 +151,9 @@ export const ActionQueueSheet: React.FC<ActionQueueSheetProps> = ({
               </div>
             </CardContent>
           </Card>
-        </motion.div>
-      ))}
+          </motion.div>
+        ))}
+      </AnimatePresence>
 
       {/* Quick Wins Tracker */}
       <div className="mt-6 pt-6 border-t">
@@ -130,8 +163,24 @@ export const ActionQueueSheet: React.FC<ActionQueueSheetProps> = ({
         </h3>
         <Card className="border rounded-xl">
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">
-              Complete actions to build your AI literacy streak
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm text-foreground font-medium">
+                {completedCount} of {totalActions} completed
+              </p>
+              <Badge variant="outline" className="text-xs">
+                {totalActions > 0 ? Math.round((completedCount / totalActions) * 100) : 0}%
+              </Badge>
+            </div>
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-emerald-600"
+                initial={{ width: 0 }}
+                animate={{ width: `${totalActions > 0 ? (completedCount / totalActions) * 100 : 0}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Swipe right on actions to complete them
             </p>
           </CardContent>
         </Card>

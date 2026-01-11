@@ -39,7 +39,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
   };
 
   const userName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'Leader';
-  const userTier = 'Advancing'; // TODO: Get from baseline data
+  const userTier = 'Advancing'; // TODO: Get from baseline data passed as prop
 
   return (
     <AnimatePresence>
@@ -100,8 +100,13 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    onClick={() => handleItemClick(item)}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent transition-colors text-left"
+                    onClick={() => {
+                      if ('vibrate' in navigator) {
+                        navigator.vibrate(10);
+                      }
+                      handleItemClick(item);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent transition-colors text-left active:scale-[0.98]"
                   >
                     <Icon className="h-5 w-5 text-muted-foreground" />
                     <span className="text-foreground">{item.label}</span>

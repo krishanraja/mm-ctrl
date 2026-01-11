@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { Menu } from 'lucide-react';
+import { Menu, Loader2 } from 'lucide-react';
 import { HeroStatusCard } from './HeroStatusCard';
 import { PriorityCardStack } from './PriorityCardStack';
 import { FloatingActionButton } from './FloatingActionButton';
@@ -8,11 +8,17 @@ import { BottomSheet } from './BottomSheet';
 import { StrategicPulseSheet } from './StrategicPulseSheet';
 import { ActionQueueSheet } from './ActionQueueSheet';
 import { LearningEngineSheet } from './LearningEngineSheet';
-import { CompetitiveIntelligenceSheet } from './CompetitiveIntelligenceSheet';
-import { DecisionPrepSheet } from './DecisionPrepSheet';
 import { SideDrawer } from './SideDrawer';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { Button } from '@/components/ui/button';
+
+// Lazy load heavy components
+const CompetitiveIntelligenceSheet = lazy(() => 
+  import('./CompetitiveIntelligenceSheet').then(module => ({ default: module.CompetitiveIntelligenceSheet }))
+);
+const DecisionPrepSheet = lazy(() => 
+  import('./DecisionPrepSheet').then(module => ({ default: module.DecisionPrepSheet }))
+);
 
 interface MobileDashboardProps {
   user: any;
@@ -298,6 +304,7 @@ export const MobileDashboard: React.FC<MobileDashboardProps> = ({
       >
         <LearningEngineSheet
           dailyPrompt={dailyPrompt}
+          baselineData={baselineData}
           onNavigate={onNavigate}
         />
       </BottomSheet>
@@ -308,7 +315,13 @@ export const MobileDashboard: React.FC<MobileDashboardProps> = ({
         title="Competitive Intelligence"
         height="large"
       >
-        <CompetitiveIntelligenceSheet baselineData={baselineData} />
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        }>
+          <CompetitiveIntelligenceSheet baselineData={baselineData} />
+        </Suspense>
       </BottomSheet>
 
       <BottomSheet
@@ -317,10 +330,16 @@ export const MobileDashboard: React.FC<MobileDashboardProps> = ({
         title="Decision Prep"
         height="large"
       >
-        <DecisionPrepSheet
-          context={{ type: 'board', title: 'Board Meeting Prep' }}
-          baselineData={baselineData}
-        />
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        }>
+          <DecisionPrepSheet
+            context={{ type: 'board', title: 'Board Meeting Prep' }}
+            baselineData={baselineData}
+          />
+        </Suspense>
       </BottomSheet>
     </div>
   );

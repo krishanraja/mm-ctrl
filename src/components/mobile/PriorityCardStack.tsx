@@ -122,12 +122,13 @@ export const PriorityCardStack: React.FC<PriorityCardStackProps> = ({
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.2}
           onDragEnd={handleDragEnd}
+          whileDrag={{ scale: 1.02, zIndex: 10 }}
           transition={{
             type: 'spring',
             damping: 25,
             stiffness: 300,
           }}
-          className="absolute inset-0"
+          className="absolute inset-0 touch-none"
         >
           <Card
             className={`border rounded-2xl cursor-pointer transition-all ${getCardColor(currentCard.priority)} active:scale-[0.98]`}
