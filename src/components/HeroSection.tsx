@@ -40,7 +40,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
   }, []);
   
   return (
-    <div className="relative min-h-[100dvh] flex flex-col">
+    <div className="relative h-[var(--mobile-vh)] flex flex-col overflow-hidden">
       {/* Background Video - Full opacity at base layer */}
       <video
         className="fixed inset-0 w-full h-full object-cover opacity-100 -z-20 pointer-events-none"
@@ -187,7 +187,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
               bg-card/80 backdrop-blur-xl rounded-2xl 
               shadow-[0_8px_40px_rgba(0,0,0,0.4)] 
               border border-primary/20
-              p-6 sm:p-8 md:p-10
+              p-4 sm:p-6 md:p-8 lg:p-10
               transition-all duration-700 ease-out
               relative overflow-hidden
               ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
@@ -317,31 +317,31 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
             </div>
           </div>
           
-          {/* Trust indicators - Mobile-native layout below card */}
+          {/* Trust indicators - Compact mobile layout */}
           <div 
             className={`
-              mt-6 sm:mt-8 
+              mt-4 sm:mt-6 
               transition-all duration-700 ease-out delay-300
               ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
             `}
           >
-            {/* Mobile: Stack vertically, Desktop: Horizontal row */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-3 sm:gap-6 lg:gap-8">
+            {/* Mobile: Compact single-line, Desktop: Horizontal row */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 sm:gap-6 lg:gap-8">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
+                <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
-                <span>Trained on 20+ years of live anonymized learnings from 200+ leaders, businesses and cognitive frameworks.</span>
+                <span className="line-clamp-1 sm:line-clamp-none">Trained on 20+ years of live anonymized learnings from 200+ leaders, businesses and cognitive frameworks.</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
+                <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
-                <span>Uniquely learns YOU and brings you leading advice for your business outcomes tailored to your personality.</span>
+                <span className="line-clamp-1 sm:line-clamp-none">Uniquely learns YOU and brings you leading advice for your business outcomes tailored to your personality.</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
-                  <Users className="w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
+                <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
+                  <Users className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                 </div>
                 <span>No course. No fluff.</span>
               </div>

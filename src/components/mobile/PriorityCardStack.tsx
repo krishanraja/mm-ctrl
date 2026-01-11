@@ -108,7 +108,7 @@ export const PriorityCardStack: React.FC<PriorityCardStackProps> = ({
   };
 
   return (
-    <div className="relative h-48 w-full">
+    <div className="relative h-40 sm:h-48 w-full">
       <AnimatePresence mode="wait" custom={direction}>
         {/* Current Card */}
         <motion.div
@@ -134,14 +134,14 @@ export const PriorityCardStack: React.FC<PriorityCardStackProps> = ({
             className={`border rounded-2xl cursor-pointer transition-all ${getCardColor(currentCard.priority)} active:scale-[0.98]`}
             onClick={() => onCardTap?.(currentCard)}
           >
-            <CardContent className="p-5">
+            <CardContent className="p-4 sm:p-5">
               <div className="flex items-start gap-3 mb-3">
                 {getCardIcon(currentCard.type)}
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground mb-1">
                     {currentCard.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <p className="text-sm text-muted-foreground line-clamp-1 sm:line-clamp-2">
                     {currentCard.description}
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export const PriorityCardStack: React.FC<PriorityCardStackProps> = ({
             style={{ zIndex: 0 }}
           >
             <Card className={`border rounded-2xl ${getCardColor(nextCard.priority)}`}>
-              <CardContent className="p-5">
+              <CardContent className="p-4 sm:p-5">
                 <div className="flex items-start gap-3">
                   {getCardIcon(nextCard.type)}
                   <div className="flex-1">

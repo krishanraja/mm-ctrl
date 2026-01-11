@@ -44,7 +44,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-30">
+    <div className="fixed right-6 z-30" style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}>
       {/* Quick Actions Menu */}
       <AnimatePresence>
         {isExpanded && (

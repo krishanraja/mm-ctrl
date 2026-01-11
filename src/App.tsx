@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AssessmentProvider } from "@/contexts/AssessmentContext";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { initMobileViewport } from "@/utils/mobileViewport";
 
 // Pages
 import PromptCoach from "./pages/PromptCoach";
@@ -36,10 +38,17 @@ const queryClient = new QueryClient();
  * 2. Complete diagnostic → prompted to save/login
  * 3. Returning users with completed diagnostic → Dashboard
  */
-const App = () => (
-  <div className="min-h-screen">
-    {/* Note: No bg-background on root to allow video backgrounds in child components (e.g., HeroSection) */}
-    <ThemeProvider>
+const App = () => {
+  // Initialize mobile viewport utility on mount
+  useEffect(() => {
+    const cleanup = initMobileViewport();
+    return cleanup;
+  }, []);
+
+  return (
+    <div className="min-h-screen">
+      {/* Note: No bg-background on root to allow video backgrounds in child components (e.g., HeroSection) */}
+      <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AssessmentProvider>
           <TooltipProvider>
@@ -90,6 +99,7 @@ const App = () => (
       </QueryClientProvider>
     </ThemeProvider>
   </div>
-);
+  );
+};
 
 export default App;

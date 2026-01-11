@@ -349,6 +349,188 @@ z-50:  Modals, dropdowns, tooltips
 
 ---
 
+## Mobile Viewport System
+
+### Overview
+
+The mobile viewport system solves the 3-5% overflow issue where `100dvh` doesn't account for dynamic browser chrome (address bars, safe area insets). It provides accurate viewport height calculations that update on resize and orientation changes.
+
+### Core Utility
+
+**File:** `src/utils/mobileViewport.ts`
+
+The utility calculates actual viewport height using:
+1. `window.visualViewport` API (most accurate, accounts for keyboard/chrome)
+2. Fallback to `window.innerHeight` (excludes chrome when hidden)
+
+It sets a CSS custom property `--mobile-vh` that updates automatically on:
+- Window resize
+- Orientation change
+- Visual viewport changes (keyboard, browser chrome)
+
+### CSS Utilities
+
+**Location:** `src/index.css`
+
+```css
+.mobile-vh {
+  height: var(--mobile-vh, 100dvh);
+}
+
+.mobile-min-vh {
+  min-height: var(--mobile-vh, 100dvh);
+}
+
+.mobile-max-vh {
+  max-height: var(--mobile-vh, 100dvh);
+}
+```
+
+### Usage Patterns
+
+#### ✅ CORRECT: Using Mobile Viewport Height
+
+```tsx
+// Full-height container (no scroll)
+<div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col">
+  <header className="flex-shrink-0">Header</header>
+  <main className="flex-1 overflow-y-auto">Scrollable content</main>
+</div>
+
+// Or use utility class
+<div className="mobile-vh overflow-hidden">
+  {/* Content */}
+</div>
+```
+
+#### ✅ CORRECT: Scrollable Content Area
+
+```tsx
+<div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col">
+  <div className="flex-1 overflow-y-auto">
+    {/* Scrollable content */}
+  </div>
+</div>
+```
+
+#### ✅ CORRECT: Safe Area Insets
+
+```tsx
+// Account for notches and home indicators
+<div className="pt-safe-top pb-safe-bottom">
+  {/* Content */}
+</div>
+
+// Or inline style for fixed positioning
+<div style={{ bottom: 'max(1.5rem, env(safe-area-inset-bottom, 1.5rem))' }}>
+  {/* Fixed element */}
+</div>
+```
+
+#### ❌ WRONG: Using 100dvh Directly
+
+```tsx
+// DON'T: Doesn't account for browser chrome
+<div className="min-h-[100dvh]">
+  {/* Content */}
+</div>
+
+// DON'T: Fixed height without viewport utility
+<div className="h-screen">
+  {/* Content */}
+</div>
+```
+
+#### ❌ WRONG: Excessive Padding
+
+```tsx
+// DON'T: Large bottom padding causes overflow
+<div className="pb-32">
+  {/* Content */}
+</div>
+
+// DO: Use safe area utilities
+<div className="pb-safe-bottom">
+  {/* Content */}
+</div>
+```
+
+### MobileLayout Component
+
+**File:** `src/components/mobile/MobileLayout.tsx`
+
+Wrapper component for consistent no-scroll behavior:
+
+```tsx
+import { MobileLayout } from '@/components/mobile/MobileLayout';
+
+<MobileLayout>
+  <YourContent />
+</MobileLayout>
+```
+
+Automatically:
+- Initializes viewport utility
+- Sets `h-[var(--mobile-vh)]`
+- Prevents overflow with `overflow-hidden`
+- Provides flex container structure
+
+### Initialization
+
+The viewport utility is automatically initialized in `App.tsx`:
+
+```tsx
+useEffect(() => {
+  const cleanup = initMobileViewport();
+  return cleanup;
+}, []);
+```
+
+**Note:** It's safe to call `initMobileViewport()` multiple times (idempotent).
+
+### Anti-Patterns to Avoid
+
+1. **❌ Using `100vh` or `100dvh` directly on mobile components**
+   - ✅ Use `h-[var(--mobile-vh)]` or `.mobile-vh` utility
+
+2. **❌ Large fixed bottom padding (`pb-32`, `pb-24`)**
+   - ✅ Use `pb-safe-bottom` for safe area accounting
+
+3. **❌ `min-h-screen` without overflow control**
+   - ✅ Use `h-[var(--mobile-vh)] overflow-hidden` for no-scroll containers
+
+4. **❌ Fixed positioning without safe area insets**
+   - ✅ Use `env(safe-area-inset-bottom)` for bottom positioning
+
+5. **❌ Content that exceeds viewport without internal scroll**
+   - ✅ Use flex layout with `flex-1 overflow-y-auto` for scrollable areas
+
+### Testing Checklist
+
+When creating mobile components:
+
+- [ ] Uses `h-[var(--mobile-vh)]` or `.mobile-vh` instead of `100dvh`
+- [ ] Accounts for safe area insets with `pt-safe-top` / `pb-safe-bottom`
+- [ ] No excessive padding that causes overflow
+- [ ] Scrollable content uses `overflow-y-auto` on inner container
+- [ ] Fixed elements use safe area insets in positioning
+- [ ] Tested on iPhone SE (667px), iPhone 12 (844px), Android devices
+- [ ] Verified no vertical scroll on any device
+
+### Browser Chrome Behavior
+
+**iOS Safari:**
+- Address bar: ~44px when visible, 0px when hidden
+- Safe area insets: Top (notch), Bottom (home indicator)
+
+**Chrome Android:**
+- Address bar: ~56px when visible, 0px when hidden
+- Safe area insets: Varies by device
+
+**Solution:** The viewport utility accounts for these dynamically.
+
+---
+
 ## Root Container Rules
 
 ### App.tsx Root Container

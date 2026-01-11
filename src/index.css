@@ -170,6 +170,20 @@ html {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
+  /* === MOBILE VIEWPORT HEIGHT UTILITIES === */
+  /* Use var(--mobile-vh) instead of 100dvh to account for browser chrome */
+  .mobile-vh {
+    height: var(--mobile-vh, 100dvh);
+  }
+
+  .mobile-min-vh {
+    min-height: var(--mobile-vh, 100dvh);
+  }
+
+  .mobile-max-vh {
+    max-height: var(--mobile-vh, 100dvh);
+  }
+
   /* === BRAND TYPOGRAPHY UTILITIES === */
   .brand-typography-ctrl {
     font-family: 'Space Grotesk', 'Inter', 'Helvetica Neue', 'Arial', sans-serif;

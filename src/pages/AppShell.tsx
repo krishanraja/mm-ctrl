@@ -40,9 +40,9 @@ export default function AppShell() {
   const showNav = !['/', '/coach'].includes(location.pathname);
 
   return (
-    <div className="min-h-[100dvh] bg-background">
+    <div className="h-[var(--mobile-vh)] bg-background overflow-hidden flex flex-col">
       {/* Content area: no bottom padding on mobile (no nav), left padding on desktop for sidebar */}
-      <div className={showNav && !isMobile ? 'md:pl-16' : undefined}>
+      <div className={`flex-1 overflow-y-auto ${showNav && !isMobile ? 'md:pl-16' : undefined}`}>
         <Outlet />
       </div>
       {showNav ? <BottomNav /> : null}

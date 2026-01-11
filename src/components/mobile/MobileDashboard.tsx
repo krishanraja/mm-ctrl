@@ -202,7 +202,7 @@ export const MobileDashboard: React.FC<MobileDashboardProps> = ({
   };
 
   return (
-    <div className="min-h-[100dvh] bg-background pb-32">
+    <div className="h-[var(--mobile-vh)] bg-background overflow-hidden flex flex-col">
       {/* Side Drawer */}
       <SideDrawer
         isOpen={isDrawerOpen}
@@ -227,8 +227,8 @@ export const MobileDashboard: React.FC<MobileDashboardProps> = ({
       />
 
       {/* Header with Menu Button */}
-      <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-foreground">
+      <div className="px-4 pt-3 pb-1 flex items-center justify-between flex-shrink-0">
+        <h1 className="text-lg font-semibold text-foreground">
           {user?.user_metadata?.first_name || 'Dashboard'}
         </h1>
         <Button
@@ -246,7 +246,7 @@ export const MobileDashboard: React.FC<MobileDashboardProps> = ({
         </Button>
       </div>
 
-      <div className="px-4 pt-2 pb-6 space-y-6">
+      <div className="px-4 pt-2 pb-safe-bottom space-y-4 flex-1 overflow-y-auto">
         {/* Hero Status Card */}
         <HeroStatusCard
           {...heroStatus}

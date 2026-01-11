@@ -470,9 +470,7 @@ export async function safeInsertWithIntegrityChecks(
         validationErrors: fkErrors
       };
     }
-  }
-
-  // Step 3: Insert with retry (using existing safeInsertWithRetry logic)
+  }  // Step 3: Insert with retry (using existing safeInsertWithRetry logic)
   return safeInsertWithRetry(table, sanitizedRecords, {
     maxRetries,
     retryDelay,

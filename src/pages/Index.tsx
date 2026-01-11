@@ -1,7 +1,6 @@
 import { UnifiedAssessment } from '@/components/UnifiedAssessment';
 import { HeroSection } from '@/components/HeroSection';
 import { VoiceOrchestrator } from '@/components/voice/VoiceOrchestrator';
-import { AssessmentHistory } from '@/components/AssessmentHistory';
 import { SingleScrollResults } from '@/components/SingleScrollResults';
 import AuthScreen from '@/components/auth/AuthScreen';
 import { QuickVoiceEntry } from '@/components/QuickVoiceEntry';
@@ -209,16 +208,6 @@ const IndexContent = () => {
             user={user}
             onSignOut={handleSignOut}
           />
-          
-          {/* Assessment History Section */}
-          {user && (
-            <div id="assessment-history" className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-              <AssessmentHistory 
-                userEmail={user.email || ''}
-                onViewAssessment={handleViewAssessment}
-              />
-            </div>
-          )}
         </>
       )}
     </>
