@@ -23,44 +23,77 @@ const IndexContent = () => {
   const [isCheckingRedirect, setIsCheckingRedirect] = useState(true);
   const { contactData, setContactData } = useAssessment();
 
-  // Smart redirect: If user has completed diagnostic AND is logged in, go to Dashboard
+  // Combined: Load user state and check redirect in single effect to avoid race conditions
   useEffect(() => {
-    const checkRedirect = async () => {
+    let isMounted = true;
+
+    const initializeAuthAndRedirect = async () => {
+      // Get initial session and user state
+      const { data: { session } } = await supabase.auth.getSession();
+      const currentUser = session?.user ?? null;
+      
+      if (isMounted) {
+        setUser(currentUser);
+      }
+
+      // Check for redirect: Only redirect authenticated users with baseline
       const { assessmentId } = getPersistedAssessmentId();
       
-      if (assessmentId) {
-        // User has completed diagnostic
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user && !session.user.is_anonymous) {
-          // Logged in with real account - redirect to dashboard
-          console.log('✅ Returning user with diagnostic - redirecting to dashboard');
+      if (assessmentId && currentUser && !currentUser.is_anonymous) {
+        // Authenticated user with baseline - redirect to dashboard
+        console.log('✅ Returning authenticated user with diagnostic - redirecting to dashboard');
+        if (isMounted) {
           navigate('/dashboard', { replace: true });
           return;
         }
       }
+
+      // All other cases: stay on homepage
+      // - Authenticated user without baseline → show diagnostic button
+      // - Anonymous user with baseline → show "Sign in to continue"
+      // - Anonymous user without baseline → show diagnostic button
+      // - No user with baseline → show "Sign in to continue"
+      // - No user without baseline → show diagnostic button
       
-      setIsCheckingRedirect(false);
+      if (isMounted) {
+        setIsCheckingRedirect(false);
+      }
     };
-    
-    checkRedirect();
+
+    initializeAuthAndRedirect();
+
+    // Listen for auth changes and link baseline if user signs in
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (isMounted) {
+        const newUser = session?.user ?? null;
+        setUser(newUser);
+        
+        // Link baseline to user account when they sign in/up
+        if (event === 'SIGNED_IN' && newUser && !newUser.is_anonymous) {
+          const { assessmentId } = getPersistedAssessmentId();
+          if (assessmentId && newUser.id) {
+            try {
+              const { linkAssessmentToUser } = await import('@/utils/assessmentPersistence');
+              await linkAssessmentToUser(assessmentId, newUser.id);
+              console.log('✅ Linked baseline to user account');
+            } catch (error) {
+              console.warn('⚠️ Failed to link baseline to user:', error);
+            }
+          }
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const handleSignOut = async () => {
+    // Clear baseline on sign out to prevent data confusion with different accounts
+    const { clearPersistedAssessmentId } = await import('@/utils/assessmentPersistence');
+    clearPersistedAssessmentId();
     await supabase.auth.signOut();
     setUser(null);
   };

@@ -3,7 +3,7 @@ import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users, Layout
 import { useState, useEffect } from "react";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useNavigate } from "react-router-dom";
-import { getPersistedAssessmentId } from "@/utils/assessmentPersistence";
+import { useUserState } from "@/hooks/useUserState";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,18 +24,19 @@ interface HeroSectionProps {
 
 export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignOut }: HeroSectionProps) {
   const [mounted, setMounted] = useState(false);
-  const [hasBaseline, setHasBaseline] = useState(false);
   const navigate = useNavigate();
+  const { hasBaseline, isAuthenticated, isAnonymous } = useUserState();
+  
+  // Use prop user for display, but hook for logic consistency
+  // This allows parent to control user display while hook ensures state consistency
+  const effectiveUser = user;
+  const effectiveIsAuthenticated = effectiveUser && !effectiveUser.is_anonymous;
+  const effectiveIsAnonymous = effectiveUser && (effectiveUser.is_anonymous === true || (effectiveUser.user_metadata as any)?.is_anonymous === true);
   
   useEffect(() => {
     // Small delay for smooth entrance, but content is already positioned
     const timer = setTimeout(() => setMounted(true), 50);
     return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const { assessmentId } = getPersistedAssessmentId();
-    setHasBaseline(Boolean(assessmentId));
   }, []);
   
   return (
@@ -81,7 +82,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
       <header className="relative z-20 w-full px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-5xl mx-auto">
           <nav className="flex items-center justify-end">
-            {user && (
+            {effectiveUser && effectiveIsAuthenticated ? (
               <div 
                 className={`transition-opacity duration-500 delay-75 ${mounted ? 'opacity-100' : 'opacity-0'}`}
               >
@@ -96,7 +97,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                         <User className="h-3.5 w-3.5 text-primary" />
                       </div>
                       <span className="hidden sm:inline max-w-[80px] truncate text-xs">
-                        {user.email?.split('@')[0]}
+                        {effectiveUser.email?.split('@')[0]}
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -104,7 +105,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                      {user.email}
+                      {effectiveUser.email}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => navigate('/profile')}>
@@ -120,14 +121,7 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                       Settings
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => {
-                        const historySection = document.getElementById('assessment-history');
-                        if (historySection) {
-                          historySection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                    >
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
                       <Sparkles className="mr-2 h-4 w-4" />
                       My Assessments
                     </DropdownMenuItem>
@@ -139,7 +133,21 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-            )}
+            ) : effectiveUser && effectiveIsAnonymous ? (
+              <div 
+                className={`transition-opacity duration-500 delay-75 ${mounted ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <Button
+                  onClick={onSignIn}
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 px-2 sm:px-3 text-sm flex items-center gap-1.5 hover:bg-secondary/80"
+                >
+                  <LogIn className="h-3.5 w-3.5 text-primary" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Button>
+              </div>
+            ) : null}
           </nav>
         </div>
       </header>
@@ -272,12 +280,12 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     rounded-xl
                   "
                 >
-                  Get answers
+                  {hasBaseline ? "Get new insights" : "Get answers"}
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
 
-                {/* Secondary: Full diagnostic, Continue, or Dashboard */}
-                {hasBaseline ? (
+                {/* Secondary: Full diagnostic, Continue, or Sign In */}
+                {hasBaseline && effectiveUser && effectiveIsAuthenticated ? (
                   <Button
                     onClick={() => navigate('/today')}
                     size="lg"
@@ -286,14 +294,14 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                   >
                     Continue to Today
                   </Button>
-                ) : user && !user.is_anonymous ? (
+                ) : hasBaseline && (!effectiveUser || effectiveIsAnonymous) ? (
                   <Button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={onSignIn}
                     size="lg"
                     variant="outline"
                     className="w-full sm:w-auto h-12 sm:h-14 rounded-xl border-border text-foreground hover:bg-secondary"
                   >
-                    Go to my dashboard
+                    Sign in to continue
                   </Button>
                 ) : (
                   <Button
