@@ -144,8 +144,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   // Password reset success view
   if (view === 'reset-sent') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+        <Card className="w-full max-w-md max-h-full overflow-y-auto">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-3 bg-emerald-500/10 rounded-full">
@@ -192,8 +192,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   // Forgot password form
   if (view === 'forgot-password') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+        <Card className="w-full max-w-md max-h-full overflow-y-auto">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="p-3 bg-primary/10 rounded-full">
@@ -250,8 +250,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
 
   // Main auth view (sign in / sign up)
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+      <Card className="w-full max-w-md max-h-full overflow-y-auto">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-primary/10 rounded-full">

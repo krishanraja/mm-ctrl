@@ -277,7 +277,7 @@ export default function Dashboard() {
   // Show loading while checking mode
   if (isCheckingMode) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="h-[var(--mobile-vh)] overflow-hidden bg-background flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );

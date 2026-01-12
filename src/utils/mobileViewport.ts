@@ -28,10 +28,13 @@ export const getMobileViewportHeight = (): number => {
 /**
  * Set CSS custom property for viewport height
  * This allows components to use var(--mobile-vh) instead of 100dvh
+ * Accounts for 5% buffer to ensure content fits even with browser chrome
  */
 export const setViewportHeight = (): void => {
   const vh = getMobileViewportHeight();
-  document.documentElement.style.setProperty('--mobile-vh', `${vh}px`);
+  // Subtract 5% as buffer for browser chrome (address bars, navigation, etc.)
+  const bufferedVh = vh * 0.95;
+  document.documentElement.style.setProperty('--mobile-vh', `${bufferedVh}px`);
 };
 
 /**

@@ -341,9 +341,15 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
     // Answer the question immediately - this updates state and advances to next question
     answerQuestion(option);
     
-    // Show auto-save indicator (subtle feedback)
+    // Show auto-save indicator (subtle feedback) - prevent stacking
+    const existingIndicator = document.querySelector('.progress-saved-indicator');
+    if (existingIndicator) {
+      // Remove existing indicator before showing new one
+      existingIndicator.remove();
+    }
+    
     const saveIndicator = document.createElement('div');
-    saveIndicator.className = 'fixed bottom-4 right-4 bg-primary/90 text-primary-foreground text-xs px-3 py-1.5 rounded-lg shadow-lg z-50 animate-fade-in';
+    saveIndicator.className = 'progress-saved-indicator fixed bottom-4 right-4 bg-primary/90 text-primary-foreground text-xs px-3 py-1.5 rounded-lg shadow-lg z-50 animate-fade-in';
     saveIndicator.textContent = '✓ Progress saved';
     document.body.appendChild(saveIndicator);
     setTimeout(() => {
@@ -401,7 +407,12 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
 
         while (retryCount <= maxRetries) {
           try {
-            const { data, error } = await invokeEdgeFunction('ai-assessment-chat', {
+            // Add timeout handling
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Request timed out')), 30000); // 30 second timeout
+            });
+
+            const functionPromise = invokeEdgeFunction('ai-assessment-chat', {
               message: `The executive answered: "${option}" to the question: "${currentQuestion.question}". 
             
             Context: This is question ${currentQuestion.id} of ${totalQuestions} in phase "${currentQuestion.phase}".
@@ -417,6 +428,8 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
                 isComplete: false // Not complete yet, we're still in the middle
               }
             }, { logPrefix: '🤖' });
+
+            const { data, error } = await Promise.race([functionPromise, timeoutPromise]) as any;
 
             if (error) {
               throw error;
@@ -437,30 +450,41 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           } catch (error) {
             retryCount++;
             
+            // Provide user-friendly error messages
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            const isTimeout = errorMsg.includes('timeout') || errorMsg.includes('timed out');
+            const isNetwork = errorMsg.includes('network') || errorMsg.includes('fetch') || errorMsg.includes('Failed to fetch');
+            
             if (retryCount <= maxRetries) {
               // Exponential backoff: 1s, 2s, 4s
               const delayMs = Math.pow(2, retryCount - 1) * 1000;
               console.warn(`🤖 AI call failed, retrying in ${delayMs}ms (attempt ${retryCount}/${maxRetries})...`);
               
-              // Show retry message to user
+              // Show retry message to user with helpful context
               const retryMessage: Message = {
                 id: `retry-${Date.now()}`,
                 role: 'assistant',
-                content: `Retrying... (attempt ${retryCount}/${maxRetries})`,
+                content: isNetwork 
+                  ? `Connection issue detected. Retrying... (attempt ${retryCount}/${maxRetries})`
+                  : `Retrying... (attempt ${retryCount}/${maxRetries})`,
                 timestamp: new Date()
               };
               setMessages(prev => [...prev, retryMessage]);
               
               await new Promise(resolve => setTimeout(resolve, delayMs));
             } else {
-              // All retries exhausted - silently fail, user can continue
+              // All retries exhausted - show helpful error message
               console.error('Error generating AI response after retries:', error);
               
-              // Show error message to user
+              // Show user-friendly error message
               const errorMessage: Message = {
                 id: `error-${Date.now()}`,
                 role: 'assistant',
-                content: `I'm having trouble connecting. You can continue without AI feedback.`,
+                content: isNetwork
+                  ? `I'm having trouble connecting. Please check your internet connection. You can continue without AI feedback.`
+                  : isTimeout
+                  ? `The request took too long. Please try again. You can continue without AI feedback.`
+                  : `I'm having trouble connecting. You can continue without AI feedback.`,
                 timestamp: new Date()
               };
               setMessages(prev => [...prev, errorMessage]);
@@ -496,13 +520,20 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
         else setInsightPhase('finalizing');
       };
       
-      const result = await runAssessment(
+      // Add timeout handling for assessment generation (5 minutes max)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Assessment generation timed out. Please try again.')), 300000); // 5 minute timeout
+      });
+
+      const assessmentPromise = runAssessment(
         contactData!,
         v2FormattedData,
         deepProfileData,
         sessionId!,
         handleProgress
       );
+
+      const result = await Promise.race([assessmentPromise, timeoutPromise]) as any;
 
       if (result.success && result.assessmentId) {
         console.log('✅ V2 assessment orchestrated successfully');
@@ -569,6 +600,19 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       }
     } catch (error) {
       console.error('❌ V2 orchestration error:', error);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const isTimeout = errorMsg.includes('timeout') || errorMsg.includes('timed out');
+      const isNetwork = errorMsg.includes('network') || errorMsg.includes('fetch') || errorMsg.includes('Failed to fetch');
+      
+      // Show user-friendly error but continue to results
+      if (isTimeout) {
+        setAuthError('Assessment generation timed out. Showing results with available data. Please refresh if needed.');
+      } else if (isNetwork) {
+        setAuthError('Network error during generation. Showing results with available data. Please check your connection.');
+      } else {
+        setAuthError('Some data may be incomplete. Showing available results.');
+      }
+      
       // Continue to results even if generation fails - fallback content will be shown
       setInsightProgress(100);
       setCurrentScreen('unified-results');
@@ -755,7 +799,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   // Save Results Prompt - shown after diagnostic completion
   if (currentScreen === 'save-results-prompt') {
     return (
-      <div className="bg-background fixed inset-0 flex items-center justify-center px-4 overflow-hidden">
+      <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center px-4">
         <Card className="max-w-md w-full shadow-lg border rounded-xl">
           <CardContent className="p-5 sm:p-8">
             {/* Header */}
@@ -985,7 +1029,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   const currentQuestion = getCurrentQuestion();
 
   return (
-    <div className="bg-background fixed inset-0 flex flex-col overflow-hidden">
+    <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex flex-col">
       {/* Safe area container - no scroll on outer container */}
       <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header with Icon and Back Button */}

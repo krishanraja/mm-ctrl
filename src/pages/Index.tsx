@@ -213,7 +213,7 @@ const IndexContent = () => {
   // Show loading while checking redirect
   if (isCheckingRedirect) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="h-[var(--mobile-vh)] overflow-hidden bg-background flex items-center justify-center">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
       </div>
     );
@@ -222,11 +222,13 @@ const IndexContent = () => {
   return (
     <>
       {mode === 'mode-select' ? (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <ModeSelector
-            onSelectLeader={() => handleModeSelect('leader')}
-            onSelectOperator={() => handleModeSelect('operator')}
-          />
+        <div className="h-[var(--mobile-vh)] overflow-hidden bg-background flex items-center justify-center p-4">
+          <div className="w-full h-full flex items-center justify-center">
+            <ModeSelector
+              onSelectLeader={() => handleModeSelect('leader')}
+              onSelectOperator={() => handleModeSelect('operator')}
+            />
+          </div>
         </div>
       ) : mode === 'operator-intake' ? (
         <OperatorIntake
@@ -248,7 +250,7 @@ const IndexContent = () => {
           onBack={() => setMode('hero')}
         />
       ) : mode === 'signin' ? (
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center p-4">
           <div className="w-full max-w-md">
             <AuthScreen onAuthSuccess={() => setMode('hero')} />
           </div>

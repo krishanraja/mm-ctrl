@@ -16,8 +16,8 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="max-w-md w-full shadow-sm border rounded-xl">
+    <div className="h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center bg-background px-4">
+      <Card className="max-w-md w-full shadow-sm border rounded-xl max-h-full overflow-y-auto">
         <CardContent className="p-8 text-center">
           <img 
             src={mindmakerLogo} 

@@ -61,8 +61,8 @@ export const EmailVerificationPrompt: React.FC<EmailVerificationPromptProps> = (
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
+      <Card className="w-full max-w-md max-h-full overflow-y-auto">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-primary/10 rounded-full">

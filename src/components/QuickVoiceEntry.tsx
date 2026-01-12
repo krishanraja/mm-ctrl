@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,18 +29,42 @@ const QUICK_PROMPT = "What's your biggest AI uncertainty right now?";
 interface CircularMicButtonProps {
   onTranscript: (transcript: string) => void;
   maxDuration?: number;
+  hideTimer?: boolean; // New prop to hide timer when text input is active
+  onStopRecording?: () => void; // Callback to stop recording
 }
 
-const CircularMicButton: React.FC<CircularMicButtonProps> = ({
+const CircularMicButton = forwardRef<{ stopRecording: () => void }, CircularMicButtonProps>(({
   onTranscript,
-  maxDuration = 30
-}) => {
+  maxDuration = 30,
+  hideTimer = false,
+  onStopRecording
+}, ref) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const recorderRef = useRef<AudioRecorder | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const stopRecording = useCallback(() => {
+    if (recorderRef.current) {
+      recorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setElapsedTime(0);
+      if (onStopRecording) {
+        onStopRecording();
+      }
+    }
+  }, [onStopRecording]);
+
+  // Expose stopRecording method via ref
+  useImperativeHandle(ref, () => ({
+    stopRecording
+  }), [stopRecording]);
 
   useEffect(() => {
     return () => {
@@ -74,19 +98,6 @@ const CircularMicButton: React.FC<CircularMicButtonProps> = ({
     } catch (err) {
       console.error('Error starting recording:', err);
       setError('Could not access microphone. Click "Or type your answer instead" below.');
-      // Auto-show text input if mic fails
-      setTimeout(() => setShowTextInput(true), 1000);
-    }
-  };
-
-  const stopRecording = () => {
-    if (recorderRef.current) {
-      recorderRef.current.stop();
-      setIsRecording(false);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
     }
   };
 
@@ -141,14 +152,16 @@ const CircularMicButton: React.FC<CircularMicButtonProps> = ({
       {error && (
         <span className="text-xs text-destructive text-center">{error}</span>
       )}
-      {isRecording && (
+      {isRecording && !hideTimer && (
         <span className="text-xs text-muted-foreground">
           {elapsedTime}s / {maxDuration}s
         </span>
       )}
     </div>
   );
-};
+});
+
+CircularMicButton.displayName = 'CircularMicButton';
 
 export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   onComplete,
@@ -160,6 +173,8 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   const [result, setResult] = useState<QuickEntryResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showTextInput, setShowTextInput] = useState(false);
+  const [isRecordingActive, setIsRecordingActive] = useState(false);
+  const micButtonRef = useRef<{ stopRecording: () => void } | null>(null);
   
   // Email & password capture state (inline, not navigation)
   const [showEmailForm, setShowEmailForm] = useState(false);
@@ -174,6 +189,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
 
   const handleTranscript = useCallback((text: string) => {
     setTranscript(prev => (prev ? `${prev} ${text}` : text));
+    setIsRecordingActive(false);
   }, []);
 
   const handleClearTranscript = useCallback(() => {
@@ -200,11 +216,22 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         if (signInError) {
           console.warn('Anonymous sign-in failed:', signInError);
           // Continue anyway - some edge functions may work without auth
+          // Show user-friendly message if anonymous sign-in is disabled
+          if (signInError.message?.includes('disabled')) {
+            setError('Anonymous access is currently unavailable. Please sign in to continue.');
+            setIsProcessing(false);
+            return;
+          }
         }
       }
 
       // Use the same AI endpoint as weekly check-in for consistency
-      const { data, error: fnError } = await supabase.functions.invoke('submit-weekly-checkin', {
+      // Add timeout handling
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Request timed out. Please try again.')), 30000); // 30 second timeout
+      });
+
+      const functionPromise = supabase.functions.invoke('submit-weekly-checkin', {
         body: {
           transcript: transcript.trim(),
           asked_prompt_key: 'quick_entry',
@@ -212,13 +239,24 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         },
       });
 
+      const { data, error: fnError } = await Promise.race([functionPromise, timeoutPromise]) as any;
+
       // #region agent log (wrapped to prevent console errors)
       if (import.meta.env.DEV) {
         fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:response',message:'Edge function response received',data:{hasData:!!data,hasError:!!fnError,fnError:fnError?.message||null,dataKeys:data?Object.keys(data):[],insight:data?.insight?.slice(0,50),action_text:data?.action_text?.slice(0,50),errorField:data?.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3-H5'})}).catch(()=>{});
       }
       // #endregion
 
-      if (fnError) throw fnError;
+      if (fnError) {
+        // Provide user-friendly error messages
+        if (fnError.message?.includes('timeout') || fnError.message?.includes('timed out')) {
+          throw new Error('The request took too long. Please check your connection and try again.');
+        } else if (fnError.message?.includes('network') || fnError.message?.includes('fetch')) {
+          throw new Error('Network error. Please check your connection and try again.');
+        } else {
+          throw new Error(fnError.message || 'Something went wrong. Please try again.');
+        }
+      }
       if (data?.error) throw new Error(data.error);
 
       const entryResult: QuickEntryResult = {
@@ -242,6 +280,11 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
       }
       // #endregion
       console.error('Quick entry failed:', err);
+      
+      // Show user-friendly error message
+      const errorMessage = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
+      setError(errorMessage);
+      
       // Provide fallback that acknowledges we couldn't process their specific input
       const fallbackResult: QuickEntryResult = {
         transcript: transcript.trim(),
@@ -364,7 +407,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
   // Show result screen
   if (result) {
     return (
-      <div className="min-h-[100dvh] bg-background flex items-center justify-center px-4 py-6">
+      <div className="h-[var(--mobile-vh)] overflow-hidden bg-background flex items-center justify-center px-4 py-6">
         <Card className="w-full max-w-lg shadow-lg border rounded-xl overflow-hidden">
           <CardContent className="p-0">
             {/* Header */}
@@ -556,6 +599,13 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                   >
                     Back
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => onComplete(result!, false)}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors mt-2"
+                  >
+                    Skip for now →
+                  </button>
                 </form>
               ) : (
                 // Initial CTA
@@ -571,6 +621,13 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                   <p className="text-xs text-muted-foreground text-center mt-3">
                     Just your email. 30 seconds/week. No course.
                   </p>
+                  <button
+                    type="button"
+                    onClick={() => onComplete(result!, false)}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors mt-3"
+                  >
+                    Skip for now →
+                  </button>
                 </>
               )}
             </div>
@@ -582,7 +639,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
 
   // Entry screen
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col">
+    <div className="h-[var(--mobile-vh)] overflow-hidden bg-background flex flex-col">
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 py-6">
         <Card className="w-full max-w-lg shadow-lg border rounded-xl">
@@ -604,15 +661,27 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
             <div className="space-y-4">
               <div className="flex justify-center">
                 <CircularMicButton
+                  ref={micButtonRef}
                   onTranscript={handleTranscript}
                   maxDuration={30}
+                  hideTimer={showTextInput}
+                  onStopRecording={() => {
+                    setIsRecordingActive(false);
+                  }}
                 />
               </div>
               {/* Text Input Fallback */}
               <div className="text-center">
                 <button
                   type="button"
-                  onClick={() => setShowTextInput(true)}
+                  onClick={() => {
+                    // Stop recording if active
+                    if (micButtonRef.current) {
+                      micButtonRef.current.stopRecording();
+                    }
+                    setShowTextInput(true);
+                    setIsRecordingActive(false);
+                  }}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
                 >
                   Or type your answer instead
@@ -638,8 +707,17 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                     disabled={!transcript.trim() || isProcessing}
                     className="w-full rounded-xl"
                   >
-                    {isProcessing ? 'Processing...' : 'Get insight'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing... (usually 5-10 seconds)
+                      </>
+                    ) : (
+                      <>
+                        Get insight
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
                   </Button>
                 </div>
               )}
@@ -672,7 +750,8 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
               >
                 {isProcessing ? (
                   <>
-                    <span className="animate-pulse">Thinking...</span>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <span>Thinking... (usually 5-10 seconds)</span>
                   </>
                 ) : (
                   <>
