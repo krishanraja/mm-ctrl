@@ -116,19 +116,19 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
   };
 
   return (
-    <div className={`space-y-3 ${className}`}>
-      {label && <Label className="text-sm font-medium">{label}</Label>}
+    <div className={`space-y-2 ${className}`}>
+      {label && <Label className="text-xs font-medium">{label}</Label>}
       
       {/* Voice Button - Primary Input */}
       {!showTextInput && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Button
             type="button"
             variant={isRecording ? 'default' : 'cta'}
-            size="lg"
+            size="sm"
             onClick={isRecording ? stopRecording : startRecording}
             disabled={isTranscribing}
-            className={`w-full min-h-[56px] rounded-xl ${
+            className={`w-full h-10 rounded-xl ${
               isRecording 
                 ? 'animate-pulse bg-red-500 hover:bg-red-600' 
                 : 'bg-primary hover:bg-primary/90'
@@ -136,18 +136,18 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
           >
             {isTranscribing ? (
               <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Transcribing...
+                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
+                <span className="text-xs">Transcribing...</span>
               </>
             ) : isRecording ? (
               <>
-                <MicOff className="h-5 w-5 mr-2" />
-                Stop Recording ({elapsedTime}s)
+                <MicOff className="h-4 w-4 mr-1.5" />
+                <span className="text-xs">Stop ({elapsedTime}s)</span>
               </>
             ) : (
               <>
-                <Mic className="h-5 w-5 mr-2" />
-                {placeholder}
+                <Mic className="h-4 w-4 mr-1.5" />
+                <span className="text-xs">{placeholder}</span>
               </>
             )}
           </Button>
@@ -159,7 +159,7 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
                 setShowTextInput(true);
                 haptic.light();
               }}
-              className="text-xs text-muted-foreground hover:text-foreground underline w-full text-center"
+              className="text-[10px] text-muted-foreground hover:text-foreground underline w-full text-center"
             >
               Or type instead
             </button>
@@ -169,13 +169,13 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
 
       {/* Text Input Fallback */}
       {showTextInput && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="relative">
             <Input
               value={value}
               onChange={(e) => onValueChange(e.target.value)}
               placeholder={placeholder}
-              className="pr-20 min-h-[44px]"
+              className="pr-16 h-10 text-xs"
               autoFocus
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -187,9 +187,9 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
                   setShowTextInput(false);
                   haptic.light();
                 }}
-                className="h-8 w-8 p-0"
+                className="h-7 w-7 p-0"
               >
-                <Mic className="h-4 w-4" />
+                <Mic className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
@@ -198,10 +198,10 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
 
       {/* Transcript Display */}
       {value && !isRecording && !isTranscribing && (
-        <div className="relative p-3 bg-muted/50 rounded-lg border">
-          <div className="flex items-start justify-between gap-2">
-            <p className="text-sm text-foreground flex-1">{value}</p>
-            <div className="flex items-center gap-1">
+        <div className="relative p-2 bg-muted/50 rounded-lg border">
+          <div className="flex items-start justify-between gap-1.5">
+            <p className="text-xs text-foreground flex-1 leading-tight">{value}</p>
+            <div className="flex items-center gap-0.5">
               <Button
                 type="button"
                 variant="ghost"
@@ -211,18 +211,18 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
                   setShowTextInput(true);
                   haptic.light();
                 }}
-                className="h-8 w-8 p-0"
+                className="h-7 w-7 p-0"
               >
-                <Edit2 className="h-4 w-4" />
+                <Edit2 className="h-3.5 w-3.5" />
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={handleClear}
-                className="h-8 w-8 p-0"
+                className="h-7 w-7 p-0"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
@@ -230,7 +230,7 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
       )}
 
       {error && (
-        <p className="text-xs text-destructive">{error}</p>
+        <p className="text-[10px] text-destructive">{error}</p>
       )}
     </div>
   );

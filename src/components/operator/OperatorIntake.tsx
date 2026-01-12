@@ -184,47 +184,45 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium text-primary">Learning about your business</span>
+          <div className="flex-1 flex flex-col min-h-0 space-y-2">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
+              <span className="text-[10px] font-medium text-primary">Learning about your business</span>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+            <h3 className="text-base font-semibold text-foreground shrink-0">
               What are your revenue streams?
             </h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              List all the ways you make money. Each answer helps me understand your unique business mix so I can give you the right decision each week.
+            <p className="text-xs text-muted-foreground shrink-0 leading-tight">
+              List all the ways you make money. Each answer helps me understand your unique business mix.
             </p>
 
-            {/* Existing business lines */}
+            {/* Existing business lines - compact grid */}
             {intakeData.businessLines.length > 0 && (
-              <div className="space-y-3 mb-6">
+              <div className="grid grid-cols-2 gap-1.5">
                 {intakeData.businessLines.map((line, index) => (
-                  <Card key={index} className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="font-medium text-foreground mb-1">{line.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {line.revenuePercentage}% revenue • {line.timePercentage}% time
-                        </div>
+                  <Card key={index} className="p-1.5 relative">
+                    <div className="pr-6">
+                      <div className="font-medium text-xs text-foreground truncate mb-0.5">{line.name}</div>
+                      <div className="text-[9px] text-muted-foreground">
+                        {line.revenuePercentage}% rev • {line.timePercentage}% time
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeBusinessLine(index)}
-                        className="h-10 w-10 p-0 min-h-[44px] min-w-[44px]"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeBusinessLine(index)}
+                      className="absolute top-1 right-1 h-6 w-6 p-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
                   </Card>
                 ))}
               </div>
             )}
 
             {/* Add new business line */}
-            <Card className="p-4 sm:p-6 border-dashed">
-              <div className="space-y-6">
+            <Card className="p-3 border-dashed shrink-0">
+              <div className="space-y-3">
                 {/* Business Line Name - Voice First */}
                 <div>
                   <VoiceFirstInput
@@ -235,11 +233,11 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                     showTextFallback={true}
                   />
                   
-                  {/* Quick-select chips */}
-                  <div className="mt-3">
-                    <p className="text-xs text-muted-foreground mb-2">Or choose a common type:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {commonBusinessTypes.map(type => (
+                  {/* Quick-select chips - compact grid */}
+                  <div className="mt-2">
+                    <p className="text-[10px] text-muted-foreground mb-1.5">Or choose:</p>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {commonBusinessTypes.slice(0, 6).map(type => (
                         <Button
                           key={type}
                           type="button"
@@ -249,12 +247,31 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                             haptic.light();
                             setNewBusinessLine(prev => ({ ...prev, name: type }));
                           }}
-                          className="h-10 min-h-[44px] text-xs"
+                          className="h-8 text-[10px] px-2"
                         >
                           {type}
                         </Button>
                       ))}
                     </div>
+                    {commonBusinessTypes.length > 6 && (
+                      <div className="grid grid-cols-3 gap-1.5 mt-1.5">
+                        {commonBusinessTypes.slice(6).map(type => (
+                          <Button
+                            key={type}
+                            type="button"
+                            variant={newBusinessLine.name === type ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => {
+                              haptic.light();
+                              setNewBusinessLine(prev => ({ ...prev, name: type }));
+                            }}
+                            className="h-8 text-[10px] px-2"
+                          >
+                            {type}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -273,12 +290,12 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                 {/* Add Button */}
                 <Button
                   variant="cta"
-                  size="lg"
+                  size="sm"
                   onClick={addBusinessLine}
                   disabled={!newBusinessLine.name.trim() || newBusinessLine.revenuePercentage + newBusinessLine.timePercentage !== 100}
-                  className="w-full min-h-[56px] rounded-xl"
+                  className="w-full h-10 rounded-xl"
                 >
-                  <Plus className="h-5 w-5 mr-2" />
+                  <Plus className="h-4 w-4 mr-1.5" />
                   Add business line
                 </Button>
               </div>
@@ -288,19 +305,19 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
       case 2:
         return (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium text-primary">Personalizing your experience</span>
+          <div className="flex-1 flex flex-col min-h-0 space-y-3">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Zap className="h-3.5 w-3.5 text-primary animate-pulse" />
+              <span className="text-[10px] font-medium text-primary">Personalizing your experience</span>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-4">
+            <h3 className="text-base font-semibold text-foreground shrink-0">
               Tell us about your setup
             </h3>
             
-            <div className="space-y-6">
+            <div className="flex-1 flex flex-col justify-center space-y-4">
               <div>
-                <Label>How many email inboxes do you manage?</Label>
-                <div className="mt-2">
+                <Label className="text-sm">How many email inboxes?</Label>
+                <div className="mt-1.5">
                   <Slider
                     min={1}
                     max={10}
@@ -312,20 +329,20 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                     }}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                     <span>1</span>
-                    <span className="font-medium text-foreground">{intakeData.inboxCount} inboxes</span>
+                    <span className="font-medium text-foreground text-xs">{intakeData.inboxCount} inboxes</span>
                     <span>10+</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <Label>Technical comfort level</Label>
-                <p className="text-xs text-muted-foreground mb-2">
-                  How comfortable are you connecting tools and building automations?
+                <Label className="text-sm">Technical comfort level</Label>
+                <p className="text-[10px] text-muted-foreground mb-1.5 leading-tight">
+                  How comfortable connecting tools and building automations?
                 </p>
-                <div className="mt-2">
+                <div className="mt-1.5">
                   <Slider
                     min={1}
                     max={5}
@@ -337,23 +354,23 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                     }}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>Not technical</span>
-                    <span className="font-medium text-foreground">
+                  <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                    <span className="text-[9px]">Not technical</span>
+                    <span className="font-medium text-foreground text-xs">
                       {intakeData.technicalComfort === 1 ? 'Not technical' :
                        intakeData.technicalComfort === 2 ? 'A little' :
                        intakeData.technicalComfort === 3 ? 'Moderate' :
                        intakeData.technicalComfort === 4 ? 'Comfortable' :
                        'Very technical'}
                     </span>
-                    <span>Very technical</span>
+                    <span className="text-[9px]">Very technical</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <Label>Monthly budget for AI tools</Label>
-                <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <Label className="text-sm">Monthly budget for AI tools</Label>
+                <div className="mt-1.5 grid grid-cols-4 gap-1.5">
                   {['$0', '$50', '$100', '$200+'].map(budget => (
                     <Button
                       key={budget}
@@ -362,7 +379,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                         haptic.light();
                         setIntakeData(prev => ({ ...prev, monthlyBudget: budget }));
                       }}
-                      className="w-full min-h-[44px]"
+                      className="w-full h-10 text-xs"
                     >
                       {budget}
                     </Button>
@@ -375,31 +392,31 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
       case 3:
         return (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Target className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium text-primary">Identifying your priorities</span>
+          <div className="flex-1 flex flex-col min-h-0 space-y-2">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Target className="h-3.5 w-3.5 text-primary animate-pulse" />
+              <span className="text-[10px] font-medium text-primary">Identifying your priorities</span>
             </div>
-            <div className="flex items-center justify-between mb-2">
-              <Badge variant="secondary" className="text-xs font-semibold bg-primary/10 text-primary border-primary/20">
+            <div className="flex items-center justify-between shrink-0">
+              <Badge variant="secondary" className="text-[10px] font-semibold bg-primary/10 text-primary border-primary/20 px-1.5 py-0.5">
                 Select top 3
               </Badge>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-[10px] text-muted-foreground">
                 {intakeData.topPainPoints.length}/3 selected
               </span>
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-4">
+            <h3 className="text-base font-semibold text-foreground shrink-0">
               What are your biggest bottlenecks?
             </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Select your top 3 pain points. I'll use this to prioritize which decisions matter most for your business each week.
+            <p className="text-xs text-muted-foreground shrink-0 leading-tight mb-1">
+              Select your top 3 pain points. I'll prioritize decisions for your business.
             </p>
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-1.5">
               {commonPainPoints.map(point => (
                 <Button
                   key={point}
                   variant={intakeData.topPainPoints.includes(point) ? 'default' : 'outline'}
-                  className="w-full justify-start h-auto py-3 min-h-[44px]"
+                  className="w-full justify-start h-9 text-xs px-2"
                   onClick={() => {
                     haptic.light();
                     if (intakeData.topPainPoints.includes(point)) {
@@ -417,9 +434,9 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                   disabled={!intakeData.topPainPoints.includes(point) && intakeData.topPainPoints.length >= 3}
                 >
                   {intakeData.topPainPoints.includes(point) && (
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                   )}
-                  {point}
+                  <span className="truncate">{point}</span>
                 </Button>
               ))}
             </div>
@@ -428,41 +445,42 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
       case 4:
         return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+          <div className="flex-1 flex flex-col min-h-0 space-y-2">
+            <h3 className="text-base font-semibold text-foreground shrink-0">
               What AI tools have you tried?
             </h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Select the tools you've experimented with (optional)
+            <p className="text-xs text-muted-foreground shrink-0 leading-tight">
+              Select tools you've experimented with (optional)
             </p>
 
             {/* Checkbox Grid */}
-            <ToolCheckboxGrid
-              selectedTools={intakeData.toolsTried}
-              onToolsChange={(tools) => setIntakeData(prev => ({ ...prev, toolsTried: tools }))}
-              className="mb-6"
-            />
+            <div className="flex-1 min-h-0 flex flex-col">
+              <ToolCheckboxGrid
+                selectedTools={intakeData.toolsTried}
+                onToolsChange={(tools) => setIntakeData(prev => ({ ...prev, toolsTried: tools }))}
+                className="mb-2"
+              />
+            </div>
 
             {/* Voice Input for Other Tools */}
-            <div>
+            <div className="shrink-0">
               <VoiceFirstInput
                 value={voiceInputForTools}
                 onValueChange={(transcript) => {
                   setVoiceInputForTools(transcript);
                 }}
-                placeholder="Or say other tools you've tried"
+                placeholder="Or say other tools"
                 label="Other tools"
                 showTextFallback={true}
               />
               {voiceInputForTools && (
-                <div className="mt-3 flex gap-2">
+                <div className="mt-2 flex gap-1.5">
                   <Button
                     type="button"
                     variant="default"
                     size="sm"
                     onClick={() => {
                       haptic.double();
-                      // Parse transcript to extract tool names
                       const toolNames = voiceInputForTools
                         .split(/[,\n]/)
                         .map(t => t.trim())
@@ -473,13 +491,13 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                           ...prev,
                           toolsTried: [...new Set([...prev.toolsTried, ...toolNames])]
                         }));
-                        setVoiceInputForTools(''); // Clear after adding
+                        setVoiceInputForTools('');
                       }
                     }}
-                    className="min-h-[44px]"
+                    className="h-9 text-xs flex-1"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Tools
+                    <Plus className="h-3.5 w-3.5 mr-1" />
+                    Add
                   </Button>
                   <Button
                     type="button"
@@ -489,7 +507,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                       haptic.light();
                       setVoiceInputForTools('');
                     }}
-                    className="min-h-[44px]"
+                    className="h-9 text-xs"
                   >
                     Clear
                   </Button>
@@ -499,18 +517,23 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
             {/* Selected Tools Display */}
             {intakeData.toolsTried.length > 0 && (
-              <div className="mt-4">
-                <p className="text-xs text-muted-foreground mb-2">Selected ({intakeData.toolsTried.length}):</p>
-                <div className="flex flex-wrap gap-2">
-                  {intakeData.toolsTried.map(tool => (
+              <div className="shrink-0">
+                <p className="text-[10px] text-muted-foreground mb-1">Selected ({intakeData.toolsTried.length}):</p>
+                <div className="flex flex-wrap gap-1 max-h-12 overflow-hidden">
+                  {intakeData.toolsTried.slice(0, 8).map(tool => (
                     <Badge
                       key={tool}
                       variant="secondary"
-                      className="px-3 py-1.5 text-sm"
+                      className="px-1.5 py-0.5 text-[9px]"
                     >
                       {tool}
                     </Badge>
                   ))}
+                  {intakeData.toolsTried.length > 8 && (
+                    <Badge variant="secondary" className="px-1.5 py-0.5 text-[9px]">
+                      +{intakeData.toolsTried.length - 8}
+                    </Badge>
+                  )}
                 </div>
               </div>
             )}
@@ -519,31 +542,31 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
       case 5:
         const exampleQuestions = [
-          "Should I get ChatGPT Pro or Business account?",
+          "Should I get ChatGPT Pro or Business?",
           "Should I use Zapier or Make?",
-          "Should I build my own tool or use existing SaaS?",
-          "Should I focus on automation or content creation?"
+          "Build my own tool or use SaaS?",
+          "Focus on automation or content?"
         ];
 
         return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+          <div className="flex-1 flex flex-col min-h-0 space-y-2">
+            <h3 className="text-base font-semibold text-foreground shrink-0">
               What decisions are you stuck on?
             </h3>
-            <p className="text-sm text-muted-foreground mb-6">
-              Tell us about any "should I do X or Y" questions you're facing (optional)
+            <p className="text-xs text-muted-foreground shrink-0 leading-tight">
+              Tell us about any "should I do X or Y" questions (optional)
             </p>
             
-            {/* Smart Suggestions */}
-            <div className="mb-6">
-              <p className="text-xs text-muted-foreground mb-3">Quick examples:</p>
-              <div className="space-y-2">
+            {/* Smart Suggestions - compact */}
+            <div className="shrink-0">
+              <p className="text-[10px] text-muted-foreground mb-1.5">Quick examples:</p>
+              <div className="grid grid-cols-2 gap-1.5">
                 {exampleQuestions.map((question, index) => (
                   <Button
                     key={index}
                     type="button"
                     variant="outline"
-                    className="w-full justify-start text-left h-auto py-3 min-h-[44px]"
+                    className="w-full justify-start text-left h-10 text-xs px-2"
                     onClick={() => {
                       haptic.light();
                       setIntakeData(prev => ({
@@ -552,15 +575,15 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                       }));
                     }}
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    {question}
+                    <Plus className="h-3 w-3 mr-1" />
+                    <span className="truncate">{question}</span>
                   </Button>
                 ))}
               </div>
             </div>
 
             {/* Voice Input for Decisions */}
-            <div>
+            <div className="shrink-0">
               <VoiceFirstInput
                 value={voiceInputForDecisions}
                 onValueChange={(transcript) => {
@@ -571,27 +594,25 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                 showTextFallback={true}
               />
               {voiceInputForDecisions && (
-                <div className="mt-3 flex gap-2">
+                <div className="mt-2 flex gap-1.5">
                   <Button
                     type="button"
                     variant="default"
                     size="sm"
                     onClick={() => {
                       haptic.double();
-                      // Split by newlines or periods to get multiple questions
                       const questions = voiceInputForDecisions
                         .split(/[.\n]/)
                         .map(q => q.trim())
-                        .filter(q => q.length > 0 && q.length > 10); // Filter out very short fragments
+                        .filter(q => q.length > 0 && q.length > 10);
                       
                       if (questions.length > 0) {
                         setIntakeData(prev => ({
                           ...prev,
                           decisionsStuckOn: [...prev.decisionsStuckOn, ...questions]
                         }));
-                        setVoiceInputForDecisions(''); // Clear after adding
+                        setVoiceInputForDecisions('');
                       } else {
-                        // If no questions parsed, add the whole transcript as one question
                         setIntakeData(prev => ({
                           ...prev,
                           decisionsStuckOn: [...prev.decisionsStuckOn, voiceInputForDecisions]
@@ -599,10 +620,10 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                         setVoiceInputForDecisions('');
                       }
                     }}
-                    className="min-h-[44px]"
+                    className="h-9 text-xs flex-1"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Question
+                    <Plus className="h-3.5 w-3.5 mr-1" />
+                    Add
                   </Button>
                   <Button
                     type="button"
@@ -612,7 +633,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                       haptic.light();
                       setVoiceInputForDecisions('');
                     }}
-                    className="min-h-[44px]"
+                    className="h-9 text-xs"
                   >
                     Clear
                   </Button>
@@ -620,30 +641,30 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
               )}
             </div>
 
-            {/* Display Selected Questions */}
+            {/* Display Selected Questions - compact grid */}
             {intakeData.decisionsStuckOn.length > 0 && (
-              <div className="mt-6 space-y-2">
-                <Label className="text-sm font-medium">Your questions:</Label>
-                <div className="space-y-2">
+              <div className="shrink-0">
+                <Label className="text-xs font-medium mb-1">Your questions:</Label>
+                <div className="grid grid-cols-1 gap-1.5">
                   {intakeData.decisionsStuckOn.map((question, index) => (
-                    <Card key={index} className="p-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="text-sm text-foreground flex-1">{question}</p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            haptic.light();
-                            setIntakeData(prev => ({
-                              ...prev,
-                              decisionsStuckOn: prev.decisionsStuckOn.filter((_, i) => i !== index)
-                            }));
-                          }}
-                          className="h-8 w-8 p-0 min-h-[44px] min-w-[44px] flex-shrink-0"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                    <Card key={index} className="p-1.5 relative">
+                      <div className="pr-6">
+                        <p className="text-xs text-foreground leading-tight line-clamp-2">{question}</p>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          haptic.light();
+                          setIntakeData(prev => ({
+                            ...prev,
+                            decisionsStuckOn: prev.decisionsStuckOn.filter((_, i) => i !== index)
+                          }));
+                        }}
+                        className="absolute top-1 right-1 h-6 w-6 p-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </Card>
                   ))}
                 </div>
@@ -651,10 +672,10 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
             )}
 
             {/* Failed Lead Magnets */}
-            <div className="mt-8 pt-6 border-t">
-              <Label className="text-sm font-medium mb-2 block">Failed lead magnets/workflows</Label>
-              <p className="text-xs text-muted-foreground mb-4">
-                Any free workflows or templates you downloaded that didn't work? (optional)
+            <div className="shrink-0 pt-2 border-t">
+              <Label className="text-xs font-medium mb-1 block">Failed lead magnets/workflows</Label>
+              <p className="text-[10px] text-muted-foreground mb-2 leading-tight">
+                Any free workflows or templates that didn't work? (optional)
               </p>
               <VoiceFirstInput
                 value={intakeData.failedLeadMagnets.join('\n')}
@@ -696,45 +717,45 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
     <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex flex-col">
       <div className="flex-1 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header + Progress */}
-        <div className="max-w-2xl mx-auto w-full shrink-0 py-2">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <Briefcase className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium text-foreground">Operator Setup</span>
+        <div className="max-w-2xl mx-auto w-full shrink-0 py-1.5">
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-1.5">
+                <Briefcase className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-foreground">Operator Setup</span>
                 {currentStep > 1 && (
-                  <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20 ml-2">
-                    <Sparkles className="h-3 w-3 mr-1" />
+                  <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-primary/20 px-1 py-0">
+                    <Sparkles className="h-2.5 w-2.5 mr-0.5" />
                     Learning
                   </Badge>
                 )}
               </div>
-              <span className="text-xs text-muted-foreground">Step {currentStep}/{totalSteps}</span>
+              <span className="text-[10px] text-muted-foreground">Step {currentStep}/{totalSteps}</span>
             </div>
           
           <Card className="shadow-sm border rounded-xl">
-            <CardContent className="p-2 sm:p-2.5">
-              <Progress value={(currentStep / totalSteps) * 100} className="h-1.5" />
+            <CardContent className="p-1.5">
+              <Progress value={(currentStep / totalSteps) * 100} className="h-1" />
             </CardContent>
           </Card>
         </div>
 
         <div className="max-w-2xl mx-auto w-full flex-1 flex flex-col min-h-0 overflow-hidden">
           <Card className="shadow-sm border rounded-xl flex-1 flex flex-col min-h-0 overflow-hidden">
-            <CardContent className="p-3 sm:p-4 flex-1 flex flex-col min-h-0 overflow-hidden">
-              <div className="flex-1 overflow-y-auto min-h-0 pr-1">
+            <CardContent className="p-3 flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 flex flex-col min-h-0">
                 {renderQuestion()}
               </div>
 
               {submitError && (
-                <Alert variant="destructive" className="mb-3 mt-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="flex items-center justify-between">
+                <Alert variant="destructive" className="mb-2 mt-1.5 shrink-0">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  <AlertDescription className="flex items-center justify-between text-xs">
                     <span>{submitError}</span>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setSubmitError(null)}
-                      className="h-6 px-2 ml-2"
+                      className="h-6 px-1.5 ml-1.5"
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -742,12 +763,12 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                 </Alert>
               )}
 
-              <div className="flex gap-2 sm:gap-3 pt-2 border-t shrink-0 mt-2 bg-card">
+              <div className="flex gap-2 pt-2 border-t shrink-0 mt-1.5 bg-card">
                 <Button
                   variant="outline"
                   onClick={handleBack}
                   disabled={currentStep === 1}
-                  className="rounded-xl text-xs sm:text-sm min-h-[44px] min-w-[44px]"
+                  className="rounded-xl text-xs h-10 min-w-[44px]"
                   size="sm"
                 >
                   <ArrowLeft className="h-3 w-3 mr-1" />
@@ -757,13 +778,13 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                   variant="cta"
                   onClick={handleNext}
                   disabled={!canProceed() || isSubmitting}
-                  className="flex-1 rounded-xl text-xs sm:text-sm min-h-[44px] group"
+                  className="flex-1 rounded-xl text-xs h-10 group"
                   size="sm"
                 >
                   {isSubmitting ? (
                     <>
                       <Sparkles className="h-3 w-3 mr-1 animate-spin" />
-                      Preparing your dashboard...
+                      Preparing...
                     </>
                   ) : currentStep === totalSteps ? (
                     <>

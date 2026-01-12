@@ -44,12 +44,12 @@ export const DualPercentageSlider: React.FC<DualPercentageSliderProps> = ({
   };
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-3 ${className}`}>
       {/* Revenue Percentage */}
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium">Revenue %</Label>
-          <span className="text-lg font-semibold text-primary">{revenuePercentage}%</span>
+          <Label className="text-xs font-medium">Revenue %</Label>
+          <span className="text-sm font-semibold text-primary">{revenuePercentage}%</span>
         </div>
         <Slider
           min={0}
@@ -59,17 +59,17 @@ export const DualPercentageSlider: React.FC<DualPercentageSliderProps> = ({
           onValueChange={handleRevenueChange}
           className="w-full touch-none"
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between text-[10px] text-muted-foreground">
           <span>0%</span>
           <span>100%</span>
         </div>
       </div>
 
       {/* Time Percentage */}
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium">Time %</Label>
-          <span className="text-lg font-semibold text-primary">{timePercentage}%</span>
+          <Label className="text-xs font-medium">Time %</Label>
+          <span className="text-sm font-semibold text-primary">{timePercentage}%</span>
         </div>
         <Slider
           min={0}
@@ -79,15 +79,15 @@ export const DualPercentageSlider: React.FC<DualPercentageSliderProps> = ({
           onValueChange={handleTimeChange}
           className="w-full touch-none"
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between text-[10px] text-muted-foreground">
           <span>0%</span>
           <span>100%</span>
         </div>
       </div>
 
       {/* Summary */}
-      <div className="pt-2 border-t">
-        <div className="flex items-center justify-center gap-2 text-sm">
+      <div className="pt-1 border-t">
+        <div className="flex items-center justify-center gap-1.5 text-xs">
           <span className="text-muted-foreground">Total:</span>
           <span className={`font-semibold ${revenuePercentage + timePercentage === 100 ? 'text-primary' : 'text-destructive'}`}>
             {revenuePercentage + timePercentage}%

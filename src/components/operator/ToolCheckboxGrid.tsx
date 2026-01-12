@@ -47,7 +47,7 @@ export const ToolCheckboxGrid: React.FC<ToolCheckboxGridProps> = ({
 
   return (
     <div className={className}>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-1.5">
         {COMMON_AI_TOOLS.map(tool => {
           const isSelected = selectedTools.includes(tool);
           return (
@@ -55,13 +55,13 @@ export const ToolCheckboxGrid: React.FC<ToolCheckboxGridProps> = ({
               key={tool}
               type="button"
               variant={isSelected ? 'default' : 'outline'}
-              className={`h-12 justify-start text-sm font-normal ${
+              className={`h-9 justify-start text-xs font-normal px-2 ${
                 isSelected ? 'bg-primary text-primary-foreground' : ''
               }`}
               onClick={() => handleToolToggle(tool)}
             >
-              {isSelected && <Check className="h-4 w-4 mr-2" />}
-              {tool}
+              {isSelected && <Check className="h-3 w-3 mr-1" />}
+              <span className="truncate">{tool}</span>
             </Button>
           );
         })}
