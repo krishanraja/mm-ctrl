@@ -20,9 +20,10 @@ interface HeroSectionProps {
   onSignIn: () => void;
   user: SupabaseUser | null;
   onSignOut: () => void;
+  onSelectMode?: () => void;
 }
 
-export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignOut }: HeroSectionProps) {
+export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignOut, onSelectMode }: HeroSectionProps) {
   const [mounted, setMounted] = useState(false);
   const navigate = useNavigate();
   const { hasBaseline, isAuthenticated, isAnonymous } = useUserState();

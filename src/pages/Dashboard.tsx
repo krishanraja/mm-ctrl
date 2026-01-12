@@ -13,6 +13,7 @@ import { DailyProvocation } from '@/components/dashboard/DailyProvocation';
 import { PatternInsight } from '@/components/dashboard/PatternInsight';
 import { MobileDashboard } from '@/components/mobile/MobileDashboard';
 import { DesktopDashboard } from '@/components/mobile/DesktopDashboard';
+import { OperatorDashboard } from '@/components/operator/OperatorDashboard';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 /**
@@ -36,6 +37,8 @@ export default function Dashboard() {
   const [promptLoading, setPromptLoading] = useState(true);
   const [baselineData, setBaselineData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isOperator, setIsOperator] = useState(false);
+  const [isCheckingMode, setIsCheckingMode] = useState(true);
 
   // Detect mobile device
   useEffect(() => {
@@ -60,35 +63,71 @@ export default function Dashboard() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Load personalized data from baseline
+  // Check if user is operator or leader
   useEffect(() => {
     let isMounted = true;
     (async () => {
-      const { assessmentId } = getPersistedAssessmentId();
-      if (!assessmentId) {
-        // No baseline - redirect to home to complete diagnostic
-        navigate('/', { replace: true });
+      if (!user?.id) {
+        if (isMounted) {
+          setIsCheckingMode(false);
+          navigate('/', { replace: true });
+        }
         return;
       }
 
-      setIsLoading(true);
       try {
-        const aggregated = await aggregateLeaderResults(assessmentId, false);
-        if (!isMounted) return;
-        
-        setBaselineData(aggregated);
-        const tension = aggregated.tensions?.[0];
-        if (tension?.summary_line) {
-          setTopTension(tension.summary_line);
+        // Check for operator profile
+        const { data: operatorProfile } = await supabase
+          .from('operator_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (isMounted) {
+          setIsOperator(!!operatorProfile);
+          setIsCheckingMode(false);
         }
-      } catch (err) {
-        console.warn('Could not load baseline data:', err);
-      } finally {
-        if (isMounted) setIsLoading(false);
+
+        // If operator, we're done checking
+        if (operatorProfile) {
+          return;
+        }
+
+        // If not operator, check for leader baseline
+        const { assessmentId } = getPersistedAssessmentId();
+        if (!assessmentId) {
+          // No baseline - redirect to home to complete diagnostic
+          if (isMounted) {
+            navigate('/', { replace: true });
+          }
+          return;
+        }
+
+        setIsLoading(true);
+        try {
+          const aggregated = await aggregateLeaderResults(assessmentId, false);
+          if (!isMounted) return;
+          
+          setBaselineData(aggregated);
+          const tension = aggregated.tensions?.[0];
+          if (tension?.summary_line) {
+            setTopTension(tension.summary_line);
+          }
+        } catch (err) {
+          console.warn('Could not load baseline data:', err);
+        } finally {
+          if (isMounted) setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error checking user mode:', error);
+        if (isMounted) {
+          setIsCheckingMode(false);
+          navigate('/', { replace: true });
+        }
       }
     })();
     return () => { isMounted = false; };
-  }, [navigate]);
+  }, [navigate, user]);
 
   // Load weekly action
   useEffect(() => {
@@ -235,7 +274,21 @@ export default function Dashboard() {
     return () => window.removeEventListener('open-voice-capture', handleVoiceCapture);
   }, []);
 
-  // Mobile-first dashboard
+  // Show loading while checking mode
+  if (isCheckingMode) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
+
+  // Operator dashboard
+  if (isOperator) {
+    return <OperatorDashboard user={user} onNavigate={navigate} />;
+  }
+
+  // Mobile-first dashboard (Leader)
   if (isMobile) {
     return (
       <MobileDashboard
@@ -249,7 +302,7 @@ export default function Dashboard() {
     );
   }
 
-  // Desktop dashboard (enhanced layout)
+  // Desktop dashboard (enhanced layout) - Leader
   return (
     <DesktopDashboard
       user={user}

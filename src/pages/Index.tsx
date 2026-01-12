@@ -4,6 +4,8 @@ import { VoiceOrchestrator } from '@/components/voice/VoiceOrchestrator';
 import { SingleScrollResults } from '@/components/SingleScrollResults';
 import AuthScreen from '@/components/auth/AuthScreen';
 import { QuickVoiceEntry } from '@/components/QuickVoiceEntry';
+import { ModeSelector } from '@/components/operator/ModeSelector';
+import { OperatorIntake } from '@/components/operator/OperatorIntake';
 import { AssessmentProvider, useAssessment } from '@/contexts/AssessmentContext';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +14,7 @@ import { persistAssessmentId, getPersistedAssessmentId } from '@/utils/assessmen
 import type { User } from '@supabase/supabase-js';
 
 // Simplified: email-capture mode removed since QuickVoiceEntry handles it inline
-type AssessmentMode = 'hero' | 'quick-entry' | 'voice' | 'quiz' | 'signin' | 'view-results';
+type AssessmentMode = 'hero' | 'mode-select' | 'operator-intake' | 'quick-entry' | 'voice' | 'quiz' | 'signin' | 'view-results';
 
 const IndexContent = () => {
   const navigate = useNavigate();
@@ -20,6 +22,7 @@ const IndexContent = () => {
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingRedirect, setIsCheckingRedirect] = useState(true);
+  const [userMode, setUserMode] = useState<'leader' | 'operator' | null>(null);
   const { contactData, setContactData } = useAssessment();
 
   // Combined: Load user state and check redirect in single effect to avoid race conditions
@@ -35,15 +38,44 @@ const IndexContent = () => {
         setUser(currentUser);
       }
 
-      // Check for redirect: Only redirect authenticated users with baseline
+      // Check for redirect: Only redirect authenticated users with baseline or operator profile
       const { assessmentId } = getPersistedAssessmentId();
       
-      if (assessmentId && currentUser && !currentUser.is_anonymous) {
-        // Authenticated user with baseline - redirect to dashboard
-        console.log('✅ Returning authenticated user with diagnostic - redirecting to dashboard');
-        if (isMounted) {
-          navigate('/dashboard', { replace: true });
-          return;
+      if (currentUser && !currentUser.is_anonymous) {
+        // Check if user has operator profile
+        const { data: operatorProfile } = await supabase
+          .from('operator_profiles')
+          .select('id')
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
+        
+        if (operatorProfile) {
+          // User has operator profile - redirect to dashboard (will show operator dashboard)
+          if (isMounted) {
+            navigate('/dashboard', { replace: true });
+            return;
+          }
+        } else if (assessmentId) {
+          // Authenticated user with baseline - redirect to dashboard
+          console.log('✅ Returning authenticated user with diagnostic - redirecting to dashboard');
+          if (isMounted) {
+            navigate('/dashboard', { replace: true });
+            return;
+          }
+        }
+      }
+
+      // For new authenticated users without profile, show mode selector
+      if (isMounted && currentUser && !currentUser.is_anonymous && !assessmentId) {
+        const { data: hasOperatorProfile } = await supabase
+          .from('operator_profiles')
+          .select('id')
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
+        
+        if (!hasOperatorProfile && !assessmentId) {
+          // New user - show mode selector
+          setMode('mode-select');
         }
       }
 
@@ -168,9 +200,37 @@ const IndexContent = () => {
     );
   }
 
+  const handleModeSelect = (selectedMode: 'leader' | 'operator') => {
+    setUserMode(selectedMode);
+    if (selectedMode === 'leader') {
+      // Go to existing leader flow
+      setMode('hero');
+    } else {
+      // Go to operator intake
+      setMode('operator-intake');
+    }
+  };
+
+  const handleOperatorIntakeComplete = useCallback(() => {
+    // After intake, redirect to dashboard
+    navigate('/dashboard');
+  }, [navigate]);
+
   return (
     <>
-      {mode === 'quick-entry' ? (
+      {mode === 'mode-select' ? (
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+          <ModeSelector
+            onSelectLeader={() => handleModeSelect('leader')}
+            onSelectOperator={() => handleModeSelect('operator')}
+          />
+        </div>
+      ) : mode === 'operator-intake' ? (
+        <OperatorIntake
+          onComplete={handleOperatorIntakeComplete}
+          onBack={() => setMode('mode-select')}
+        />
+      ) : mode === 'quick-entry' ? (
         <QuickVoiceEntry
           onComplete={handleQuickEntryComplete}
           onSkipToQuiz={() => setMode('quiz')}
@@ -207,6 +267,7 @@ const IndexContent = () => {
             onSignIn={() => setMode('signin')}
             user={user}
             onSignOut={handleSignOut}
+            onSelectMode={() => setMode('mode-select')}
           />
         </>
       )}
