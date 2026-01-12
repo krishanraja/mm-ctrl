@@ -54,16 +54,24 @@ export function SplashScreen({ onComplete, duration = 4000 }: SplashScreenProps)
               <div className="splash-circle-shimmer w-32 h-32 sm:w-40 sm:h-40">
                 {/* Inner circle with icon */}
                 <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-                  <img 
-                    src="/11.png" 
+                  <motion.img 
+                    src="/mindmaker-favicon.png" 
                     alt="Mindmaker" 
-                    className="w-12 h-12 sm:w-16 sm:h-16 brightness-0 invert"
+                    className="w-12 h-12 sm:w-16 sm:h-16 brightness-0 invert splash-icon-pulse"
+                    animate={{
+                      scale: [1, 1.1, 1],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
                   />
                 </div>
               </div>
             </div>
 
-            {/* "Level up with AI" text - matching CTRL formatting */}
+            {/* "Level Up with AI" text - matching CTRL formatting */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -71,10 +79,10 @@ export function SplashScreen({ onComplete, duration = 4000 }: SplashScreenProps)
               className="text-center"
             >
               <span 
-                className="brand-typography-ctrl flex items-center justify-center font-bold uppercase shimmer-mint" 
+                className="brand-typography-ctrl flex items-center justify-center font-bold shimmer-mint" 
                 style={{ transform: 'translateY(-0.5px)', letterSpacing: '0.06em' }}
               >
-                Level up with AI
+                Level Up with AI
               </span>
             </motion.div>
           </div>
