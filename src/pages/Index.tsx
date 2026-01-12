@@ -191,16 +191,7 @@ const IndexContent = () => {
     setMode('view-results');
   }, [user, setContactData]);
 
-  // Show loading while checking redirect
-  if (isCheckingRedirect) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
-      </div>
-    );
-  }
-
-  const handleModeSelect = (selectedMode: 'leader' | 'operator') => {
+  const handleModeSelect = useCallback((selectedMode: 'leader' | 'operator') => {
     setUserMode(selectedMode);
     if (selectedMode === 'leader') {
       // Go to existing leader flow
@@ -209,12 +200,21 @@ const IndexContent = () => {
       // Go to operator intake
       setMode('operator-intake');
     }
-  };
+  }, []);
 
   const handleOperatorIntakeComplete = useCallback(() => {
     // After intake, redirect to dashboard
     navigate('/dashboard');
   }, [navigate]);
+
+  // Show loading while checking redirect
+  if (isCheckingRedirect) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>
