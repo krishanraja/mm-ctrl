@@ -1054,7 +1054,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
               </Button>
             )}
             <img 
-              src="/2.png" 
+              src="/mindmaker-favicon.png" 
               alt="Mindmaker" 
               className="h-6 sm:h-7 w-auto"
             />

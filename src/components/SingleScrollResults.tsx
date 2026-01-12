@@ -394,7 +394,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
         {/* Brand Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <img 
-            src="/2.png" 
+            src="/mindmaker-favicon.png" 
             alt="Mindmaker" 
             className="h-6 sm:h-7 w-auto"
           />

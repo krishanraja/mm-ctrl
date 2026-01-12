@@ -116,7 +116,7 @@ export const ProgressScreen: React.FC<ProgressScreenProps> = ({
           {/* Logo first - most important for branding */}
           <div className="flex justify-center">
             <img 
-              src="/2.png" 
+              src="/mindmaker-favicon.png" 
               alt="Mindmaker" 
               className="w-32 sm:w-40 h-auto"
             />

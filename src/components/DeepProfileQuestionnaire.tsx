@@ -563,7 +563,7 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
           {/* Brand Icon */}
           <div className="flex items-center justify-between mb-2">
             <img 
-              src="/2.png" 
+              src="/mindmaker-favicon.png" 
               alt="Mindmaker" 
               className="h-6 sm:h-7 w-auto"
             />

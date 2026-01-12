@@ -1,7 +1,7 @@
 /**
  * Mindmaker Favicon Mark
  * 
- * Displays the favicon icon (2.png) in the top-left corner
+ * Displays the favicon icon (mindmaker-favicon.png) in the top-left corner
  * when the main logo is not present on a page.
  */
 
@@ -32,7 +32,7 @@ export const FaviconMark: React.FC<FaviconMarkProps> = ({
       transition={transitions.default}
     >
       <motion.img 
-        src="/2.png" 
+        src="/mindmaker-favicon.png" 
         alt="Mindmaker" 
         className={`${sizeClasses[size]} object-contain`}
         whileHover={{ scale: 1.05 }}
