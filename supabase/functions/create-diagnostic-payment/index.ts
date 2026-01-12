@@ -9,8 +9,8 @@ const corsHeaders = {
 };
 
 const DIAGNOSTIC_PRICE_ID = "price_1SV9YlHGqJqsGEJLtNzC23S4";
-const DEEP_CONTEXT_PRICE_ID = "price_DEEP_CONTEXT_PLACEHOLDER"; // TODO: Replace with actual Stripe price ID
-const BUNDLE_PRICE_ID = "price_BUNDLE_PLACEHOLDER"; // TODO: Replace with actual Stripe price ID for bundle
+const DEEP_CONTEXT_PRICE_ID = "price_1SojAqHGqJqsGEJLDEd6BqMG"; // TODO: Replace with actual Stripe price ID
+const BUNDLE_PRICE_ID = "price_1SojArHGqJqsGEJLtmmGW7p3"; // TODO: Replace with actual Stripe price ID for bundle
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
