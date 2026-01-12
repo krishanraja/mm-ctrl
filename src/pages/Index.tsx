@@ -6,6 +6,7 @@ import AuthScreen from '@/components/auth/AuthScreen';
 import { QuickVoiceEntry } from '@/components/QuickVoiceEntry';
 import { ModeSelector } from '@/components/operator/ModeSelector';
 import { OperatorIntake } from '@/components/operator/OperatorIntake';
+import { SplashScreen } from '@/components/ui/splash-screen';
 import { AssessmentProvider, useAssessment } from '@/contexts/AssessmentContext';
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +24,7 @@ const IndexContent = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isCheckingRedirect, setIsCheckingRedirect] = useState(true);
   const [userMode, setUserMode] = useState<'leader' | 'operator' | null>(null);
+  const [showSplash, setShowSplash] = useState(true);
   const { contactData, setContactData } = useAssessment();
 
   // Combined: Load user state and check redirect in single effect to avoid race conditions
@@ -193,19 +195,20 @@ const IndexContent = () => {
 
   const handleModeSelect = useCallback((selectedMode: 'leader' | 'operator') => {
     setUserMode(selectedMode);
-    if (selectedMode === 'leader') {
-      // Go to existing leader flow
-      setMode('hero');
-    } else {
-      // Go to operator intake
-      setMode('operator-intake');
-    }
+    // Both leaders and operators see the beautiful HeroSection first
+    // Operators will have a different CTA that leads to intake
+    setMode('hero');
   }, []);
 
   const handleOperatorIntakeComplete = useCallback(() => {
     // After intake, redirect to dashboard
     navigate('/dashboard');
   }, [navigate]);
+
+  // Show splash screen first, then loading/redirect check
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
 
   // Show loading while checking redirect
   if (isCheckingRedirect) {
@@ -268,6 +271,8 @@ const IndexContent = () => {
             user={user}
             onSignOut={handleSignOut}
             onSelectMode={() => setMode('mode-select')}
+            userMode={userMode}
+            onStartOperatorIntake={() => setMode('operator-intake')}
           />
         </>
       )}

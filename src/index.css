@@ -889,6 +889,41 @@ input:focus-visible {
   display: inline-block;
 }
 
+/* Splash screen shimmering circle animation */
+.splash-circle-shimmer {
+  position: relative;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    #4db38a 60deg,
+    #6dd4a8 120deg,
+    #7fe5b8 180deg,
+    #6dd4a8 240deg,
+    #4db38a 300deg,
+    transparent 360deg
+  );
+  padding: 4px;
+  animation: splash-circle-rotate 3s linear infinite;
+  box-shadow: 
+    0 0 20px rgba(77, 179, 138, 0.4),
+    0 0 40px rgba(77, 179, 138, 0.2);
+}
+
+@keyframes splash-circle-rotate {
+  0% {
+    transform: rotate(0deg);
+    filter: brightness(1) drop-shadow(0 0 10px rgba(77, 179, 138, 0.5));
+  }
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 20px rgba(77, 179, 138, 0.7));
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: brightness(1) drop-shadow(0 0 10px rgba(77, 179, 138, 0.5));
+  }
+}
+
 .mic-orb-pulse::after {
   content: '';
   position: absolute;
