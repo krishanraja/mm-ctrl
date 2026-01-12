@@ -203,9 +203,12 @@ const IndexContent = () => {
     setUserMode(selectedMode);
     // Persist mode to sessionStorage for consistency
     sessionStorage.setItem('mindmaker_user_mode', selectedMode);
-    // Both leaders and operators see the beautiful HeroSection first
-    // Operators will have a different CTA that leads to intake
-    setMode('hero');
+    // Leaders see the HeroSection first, operators go directly to intake
+    if (selectedMode === 'operator') {
+      setMode('operator-intake');
+    } else {
+      setMode('hero');
+    }
   }, []);
 
   // Restore user mode from sessionStorage on mount
