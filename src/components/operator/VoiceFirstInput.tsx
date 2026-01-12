@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Mic, MicOff, Loader2, Edit2, X } from 'lucide-react';
 import { AudioRecorder } from '@/utils/audioRecorder';
 import { supabase } from '@/integrations/supabase/client';

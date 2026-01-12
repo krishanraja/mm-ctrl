@@ -40,7 +40,7 @@ const IndexContent = () => {
         setUser(currentUser);
       }
 
-      // Check for redirect: Only redirect authenticated users with baseline or operator profile
+      // Check for redirect: Handle users with profiles/assessments
       const { assessmentId } = getPersistedAssessmentId();
       
       if (currentUser && !currentUser.is_anonymous) {
@@ -51,33 +51,54 @@ const IndexContent = () => {
           .eq('user_id', currentUser.id)
           .maybeSingle();
         
-        if (operatorProfile) {
-          // User has operator profile - redirect to dashboard (will show operator dashboard)
-          if (isMounted) {
-            navigate('/dashboard', { replace: true });
-            return;
-          }
-        } else if (assessmentId) {
-          // Authenticated user with baseline - redirect to dashboard
-          console.log('✅ Returning authenticated user with diagnostic - redirecting to dashboard');
-          if (isMounted) {
-            navigate('/dashboard', { replace: true });
-            return;
-          }
-        }
-      }
-
-      // For new authenticated users without profile, show mode selector
-      if (isMounted && currentUser && !currentUser.is_anonymous && !assessmentId) {
-        const { data: hasOperatorProfile } = await supabase
-          .from('operator_profiles')
-          .select('id')
-          .eq('user_id', currentUser.id)
-          .maybeSingle();
+        // Check for leader assessment
+        const hasLeaderAssessment = !!assessmentId;
         
-        if (!hasOperatorProfile && !assessmentId) {
-          // New user - show mode selector
-          setMode('mode-select');
+        // Decision logic for authenticated users
+        if (operatorProfile && hasLeaderAssessment) {
+          // User has both - check preferred mode or let them choose
+          const preferredMode = sessionStorage.getItem('mindmaker_user_mode');
+          if (preferredMode === 'operator') {
+            // Redirect to operator dashboard
+            if (isMounted) {
+              navigate('/dashboard', { replace: true });
+              return;
+            }
+          } else if (preferredMode === 'leader') {
+            // Redirect to leader dashboard
+            if (isMounted) {
+              navigate('/dashboard', { replace: true });
+              return;
+            }
+          } else {
+            // No preference set - show mode selector to let them choose
+            if (isMounted) {
+              setMode('mode-select');
+              setIsCheckingRedirect(false);
+              return;
+            }
+          }
+        } else if (operatorProfile) {
+          // Only operator profile - redirect to operator dashboard
+          if (isMounted) {
+            // Set mode preference
+            sessionStorage.setItem('mindmaker_user_mode', 'operator');
+            navigate('/dashboard', { replace: true });
+            return;
+          }
+        } else if (hasLeaderAssessment) {
+          // Only leader assessment - redirect to leader dashboard
+          if (isMounted) {
+            // Set mode preference
+            sessionStorage.setItem('mindmaker_user_mode', 'leader');
+            navigate('/dashboard', { replace: true });
+            return;
+          }
+        } else {
+          // Neither profile nor assessment - show mode selector for new users
+          if (isMounted) {
+            setMode('mode-select');
+          }
         }
       }
 
@@ -203,13 +224,45 @@ const IndexContent = () => {
     setUserMode(selectedMode);
     // Persist mode to sessionStorage for consistency
     sessionStorage.setItem('mindmaker_user_mode', selectedMode);
-    // Leaders see the HeroSection first, operators go directly to intake
-    if (selectedMode === 'operator') {
-      setMode('operator-intake');
+    
+    // Check if user already has profile for selected mode
+    if (user && !user.is_anonymous) {
+      if (selectedMode === 'operator') {
+        // Check if operator profile exists
+        supabase
+          .from('operator_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle()
+          .then(({ data: operatorProfile }) => {
+            if (operatorProfile) {
+              // Profile exists - go to dashboard
+              navigate('/dashboard');
+            } else {
+              // No profile - go to intake
+              setMode('operator-intake');
+            }
+          });
+      } else {
+        // Leader mode
+        const { assessmentId } = getPersistedAssessmentId();
+        if (assessmentId) {
+          // Assessment exists - go to dashboard
+          navigate('/dashboard');
+        } else {
+          // No assessment - show hero section
+          setMode('hero');
+        }
+      }
     } else {
-      setMode('hero');
+      // Not authenticated - go to appropriate flow
+      if (selectedMode === 'operator') {
+        setMode('operator-intake');
+      } else {
+        setMode('hero');
+      }
     }
-  }, []);
+  }, [user, navigate]);
 
   // Restore user mode from sessionStorage on mount
   useEffect(() => {

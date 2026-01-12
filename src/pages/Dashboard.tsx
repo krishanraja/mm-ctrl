@@ -83,21 +83,58 @@ export default function Dashboard() {
           .eq('user_id', user.id)
           .maybeSingle();
 
-        if (isMounted) {
-          setIsOperator(!!operatorProfile);
-          setIsCheckingMode(false);
+        // Check for leader assessment
+        const { assessmentId } = getPersistedAssessmentId();
+        const hasLeaderAssessment = !!assessmentId;
+
+        // If user has both profiles, check mode preference
+        if (operatorProfile && hasLeaderAssessment) {
+          const preferredMode = sessionStorage.getItem('mindmaker_user_mode');
+          const shouldShowOperator = preferredMode === 'operator' || !preferredMode;
+          
+          if (isMounted) {
+            setIsOperator(shouldShowOperator);
+            setIsCheckingMode(false);
+          }
+          
+          // Load appropriate dashboard data
+          if (shouldShowOperator) {
+            return; // Operator dashboard doesn't need baseline data
+          } else {
+            // Load leader baseline data
+            setIsLoading(true);
+            try {
+              const aggregated = await aggregateLeaderResults(assessmentId, false);
+              if (!isMounted) return;
+              
+              setBaselineData(aggregated);
+              const tension = aggregated.tensions?.[0];
+              if (tension?.summary_line) {
+                setTopTension(tension.summary_line);
+              }
+            } catch (err) {
+              console.warn('Could not load baseline data:', err);
+            } finally {
+              if (isMounted) setIsLoading(false);
+            }
+            return;
+          }
         }
 
-        // If operator, we're done checking
+        // User has only operator profile
         if (operatorProfile) {
+          if (isMounted) {
+            setIsOperator(true);
+            setIsCheckingMode(false);
+          }
           return;
         }
 
-        // If not operator, check for leader baseline
-        const { assessmentId } = getPersistedAssessmentId();
-        if (!assessmentId) {
+        // User has only leader assessment (or neither)
+        if (!hasLeaderAssessment) {
           // No baseline - redirect to home to complete diagnostic
           if (isMounted) {
+            setIsCheckingMode(false);
             navigate('/', { replace: true });
           }
           return;

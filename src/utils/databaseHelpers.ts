@@ -451,9 +451,7 @@ export async function safeInsertWithIntegrityChecks(
           table: fk.table,
           id: record[fk.field],
           idColumn: fk.idColumn
-        }));
-
-      if (fkChecks.length > 0) {
+        }));      if (fkChecks.length > 0) {
         const fkValidation = await validateForeignKeys(fkChecks);
         if (!fkValidation.valid) {
           fkErrors.push(...fkValidation.errors);
@@ -531,9 +529,7 @@ export async function insertWithTransaction(
 
   // Fallback: Sequential inserts (not truly transactional but better than nothing)
   const results: Array<{ table: string; success: boolean; count: number; error?: string }> = [];
-  const errors: string[] = [];
-
-  for (const insert of inserts) {
+  const errors: string[] = [];  for (const insert of inserts) {
     const result = await safeInsertWithRetry(insert.table, insert.records, {
       onConflict: insert.options?.onConflict,
       ignoreDuplicates: insert.options?.ignoreDuplicates

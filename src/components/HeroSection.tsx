@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users, LayoutDashboard, Settings, Target } from "lucide-react";
+import { ArrowRight, LogIn, LogOut, User, Sparkles, Shield, Clock, Users, LayoutDashboard, Settings, Target, Briefcase } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useNavigate } from "react-router-dom";
@@ -129,6 +129,19 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                       My Assessments
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    {onSelectMode && (
+                      <DropdownMenuItem onClick={onSelectMode}>
+                        <Users className="mr-2 h-4 w-4" />
+                        Switch to Leader Mode
+                      </DropdownMenuItem>
+                    )}
+                    {onStartOperatorIntake && (
+                      <DropdownMenuItem onClick={onStartOperatorIntake}>
+                        <Briefcase className="mr-2 h-4 w-4" />
+                        Switch to Operator Mode
+                      </DropdownMenuItem>
+                    )}
+                    {(onSelectMode || onStartOperatorIntake) && <DropdownMenuSeparator />}
                     <DropdownMenuItem onClick={onSignOut} className="text-destructive">
                       <LogOut className="mr-2 h-4 w-4" />
                       Sign Out

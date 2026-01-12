@@ -7,8 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { VoiceInput } from '@/components/ui/voice-input';
-import { ArrowRight, ArrowLeft, Check, Mic, Plus, X, Briefcase, Sparkles, Zap, Target } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Mic, Plus, X, Briefcase, Sparkles, Zap, Target, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { DualPercentageSlider } from './DualPercentageSlider';
 import { VoiceFirstInput } from './VoiceFirstInput';
@@ -54,6 +55,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [newBusinessLine, setNewBusinessLine] = useState({ name: '', revenuePercentage: 50, timePercentage: 50, painPoints: [] as string[] });
   const [voiceInputForTools, setVoiceInputForTools] = useState('');
   const [voiceInputForDecisions, setVoiceInputForDecisions] = useState('');
@@ -91,6 +93,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -98,13 +101,16 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
           const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously();
-          if (anonError) throw anonError;
+          if (anonError) {
+            console.error('Error creating anonymous session:', anonError);
+            throw new Error(`Authentication failed: ${anonError.message}`);
+          }
           if (!anonData.user) throw new Error('Failed to create anonymous session');
         }
       }
 
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (!currentUser) throw new Error('No user session');
+      if (!currentUser) throw new Error('No user session available');
 
       // Create operator profile
       const { data: profile, error: profileError } = await supabase
@@ -116,17 +122,29 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
           technical_comfort: intakeData.technicalComfort,
           monthly_budget: intakeData.monthlyBudget,
           top_pain_points: intakeData.topPainPoints,
-          decision_stuck_on: intakeData.decisionsStuckOn
+          decision_stuck_on: intakeData.decisionsStuckOn,
+          tools_tried: intakeData.toolsTried,
+          failed_lead_magnets: intakeData.failedLeadMagnets
         })
         .select()
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Database error creating operator profile:', profileError);
+        throw new Error(`Failed to save profile: ${profileError.message}`);
+      }
+
+      if (!profile) {
+        throw new Error('Profile created but no data returned');
+      }
 
       onComplete();
     } catch (error) {
       console.error('Error creating operator profile:', error);
-      alert('Failed to save your profile. Please try again.');
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to save your profile. Please try again.';
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -706,6 +724,23 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
               <div className="flex-1 overflow-y-auto min-h-0 pr-1">
                 {renderQuestion()}
               </div>
+
+              {submitError && (
+                <Alert variant="destructive" className="mb-3 mt-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="flex items-center justify-between">
+                    <span>{submitError}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSubmitError(null)}
+                      className="h-6 px-2 ml-2"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <div className="flex gap-2 sm:gap-3 pt-2 border-t shrink-0 mt-2 bg-card">
                 <Button
