@@ -395,13 +395,13 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                       <Target className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                     </div>
-                    <span className="line-clamp-1 sm:line-clamp-none">Built for solopreneurs running multiple revenue streams.</span>
+                    <span className="line-clamp-2 sm:line-clamp-none">Built for solopreneurs running multiple revenue streams.</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                       <Shield className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                     </div>
-                    <span className="line-clamp-1 sm:line-clamp-none">Real business decisions. No theory. Just your next move.</span>
+                    <span className="line-clamp-2 sm:line-clamp-none">Real business decisions. No theory. Just your next move.</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
@@ -416,13 +416,13 @@ export function HeroSection({ onStartVoice, onStartQuiz, onSignIn, user, onSignO
                     <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                       <Clock className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                     </div>
-                    <span className="line-clamp-1 sm:line-clamp-none">Trained on 20+ years of executive learnings from 200+ leaders and cognitive frameworks.</span>
+                    <span className="line-clamp-2 sm:line-clamp-none">Trained on 20+ years of executive learnings from 200+ leaders and cognitive frameworks.</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
                       <Shield className="w-2 h-2 sm:w-3 sm:h-3 lg:w-4 lg:h-4 text-primary" />
                     </div>
-                    <span className="line-clamp-1 sm:line-clamp-none">Boardroom-ready insights tailored to your leadership style and business context.</span>
+                    <span className="line-clamp-2 sm:line-clamp-none">Boardroom-ready insights tailored to your leadership style and business context.</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
                     <div className="w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 rounded-full bg-card shadow-sm border border-border flex items-center justify-center flex-shrink-0">
