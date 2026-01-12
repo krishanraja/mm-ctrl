@@ -61,15 +61,25 @@ serve(async (req) => {
 
     // Check if payment is completed
     if (session.payment_status === 'paid') {
-      console.log('💰 Payment confirmed, unlocking diagnostic');
+      const upgradeType = session.metadata?.upgrade_type || 'full_diagnostic';
+      console.log('💰 Payment confirmed, unlocking:', upgradeType);
 
-      // Update leader_assessment to mark as paid
+      // Update leader_assessment based on upgrade type
+      const updateData: Record<string, any> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (upgradeType === 'full_diagnostic' || upgradeType === 'bundle') {
+        updateData.has_full_diagnostic = true;
+      }
+
+      if (upgradeType === 'deep_context' || upgradeType === 'bundle') {
+        updateData.has_deep_context = true;
+      }
+
       const { error: updateError } = await supabaseClient
         .from('leader_assessments')
-        .update({
-          has_full_diagnostic: true,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', assessment_id);
 
       if (updateError) {
@@ -77,7 +87,7 @@ serve(async (req) => {
         throw updateError;
       }
 
-      console.log('✅ Assessment unlocked successfully');
+      console.log('✅ Assessment unlocked successfully:', updateData);
 
       return new Response(
         JSON.stringify({

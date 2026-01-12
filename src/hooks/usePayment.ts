@@ -6,14 +6,20 @@ export function usePayment() {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
-  const createPaymentSession = async (assessmentId: string): Promise<string | null> => {
+  const createPaymentSession = async (
+    assessmentId: string,
+    upgradeType: 'full_diagnostic' | 'deep_context' | 'bundle' = 'full_diagnostic'
+  ): Promise<string | null> => {
     setIsProcessing(true);
     
     try {
-      console.log('💳 Creating payment session for assessment:', assessmentId);
+      console.log('💳 Creating payment session for assessment:', assessmentId, 'type:', upgradeType);
 
       const { data, error } = await supabase.functions.invoke('create-diagnostic-payment', {
-        body: { assessment_id: assessmentId },
+        body: { 
+          assessment_id: assessmentId,
+          upgrade_type: upgradeType,
+        },
       });
 
       if (error) {

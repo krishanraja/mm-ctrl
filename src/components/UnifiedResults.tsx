@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, TrendingUp, Brain, Sparkles, Users, MessageSquare, ArrowRight } from 'lucide-react';
+import { Shield, TrendingUp, Brain, Sparkles, Users, MessageSquare, ArrowRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { LeadershipBenchmarkV2 } from './LeadershipBenchmarkV2';
@@ -8,9 +8,11 @@ import { PromptLibraryV2 } from './PromptLibraryV2';
 import { TensionsView } from './TensionsView';
 import { BenchmarkComparison } from './BenchmarkComparison';
 import { ConsentManager } from './ConsentManager';
+import { MeetingPrepTab } from './MeetingPrepTab';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
 import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UnifiedResultsProps {
   assessmentData: any;
@@ -33,6 +35,7 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
   const [aggregatedData, setAggregatedData] = useState<any>(null);
+  const [hasDeepContext, setHasDeepContext] = useState(false);
 
   const [isLoadingId, setIsLoadingId] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -79,13 +82,14 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     attemptLoad();
   }, []);
 
-  // Fetch aggregated data for Compare tab
+  // Fetch aggregated data for Compare tab and check deep context status
   useEffect(() => {
     const fetchAggregatedData = async () => {
       if (!assessmentId) return;
       try {
         const data = await aggregateLeaderResults(assessmentId, false);
         setAggregatedData(data);
+        setHasDeepContext(data.hasDeepContext || false);
       } catch (error) {
         console.error('❌ Failed to fetch aggregated data:', error);
       }
@@ -97,7 +101,7 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     <div className="bg-background min-h-screen py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-5 mb-12 bg-secondary/50 p-1 rounded-lg">
+          <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-6 mb-12 bg-secondary/50 p-1 rounded-lg">
             <TabsTrigger 
               value="overview" 
               className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
@@ -125,6 +129,13 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
             >
               <Sparkles className="h-4 w-4 flex-shrink-0" />
               <span className="hidden sm:inline">Tools</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="meeting-prep" 
+              className="data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-2"
+            >
+              <Calendar className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">Meeting Prep</span>
             </TabsTrigger>
             <TabsTrigger 
               value="privacy" 
@@ -198,6 +209,20 @@ export const UnifiedResults: React.FC<UnifiedResultsProps> = ({
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">Loading thinking tools...</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="meeting-prep" className="mt-0">
+            {assessmentId ? (
+              <MeetingPrepTab 
+                assessmentId={assessmentId}
+                contactData={contactData}
+                hasDeepContext={hasDeepContext}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Loading diagnostic data...</p>
               </div>
             )}
           </TabsContent>

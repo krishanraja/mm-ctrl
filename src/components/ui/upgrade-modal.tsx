@@ -12,10 +12,11 @@ import { CheckCircle2, Lock, Sparkles } from 'lucide-react';
 interface UpgradeModalProps {
   open: boolean;
   onClose: () => void;
-  onUpgrade: () => void;
+  onUpgrade: (upgradeType?: 'full_diagnostic' | 'deep_context' | 'bundle') => void;
+  upgradeType?: 'full_diagnostic' | 'deep_context' | 'bundle';
 }
 
-const benefits = [
+const diagnosticBenefits = [
   'Full risk profile (all 4 signals)',
   'All tensions and contradictions',
   'Complete org scenarios',
@@ -24,11 +25,49 @@ const benefits = [
   'Exportable executive report (PDF)',
 ];
 
+const contextBenefits = [
+  'Company-specific insights from Apollo.io',
+  'Enhanced meeting prep materials',
+  'Board-ready context integration',
+  'Website and deck analysis',
+  'Personalized strategic recommendations',
+];
+
+const bundleBenefits = [
+  ...diagnosticBenefits,
+  ...contextBenefits,
+  'Save $10 with bundle pricing',
+];
+
 export const UpgradeModal = React.memo<UpgradeModalProps>(({ 
   open, 
   onClose,
   onUpgrade,
+  upgradeType = 'full_diagnostic',
 }) => {
+  const benefits = upgradeType === 'deep_context' 
+    ? contextBenefits 
+    : upgradeType === 'bundle'
+    ? bundleBenefits
+    : diagnosticBenefits;
+  
+  const title = upgradeType === 'deep_context'
+    ? 'Connect Your Context'
+    : upgradeType === 'bundle'
+    ? 'Unlock Everything'
+    : 'Unlock Your Full Leadership Diagnostic';
+  
+  const description = upgradeType === 'deep_context'
+    ? 'Get company-specific insights and enhanced meeting prep'
+    : upgradeType === 'bundle'
+    ? 'Get the complete diagnostic plus deep context integration'
+    : 'Get complete insights and actionable recommendations';
+  
+  const buttonText = upgradeType === 'deep_context'
+    ? 'Unlock Deep Context'
+    : upgradeType === 'bundle'
+    ? 'Unlock Bundle'
+    : 'Unlock Full Diagnostic';
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -38,11 +77,11 @@ export const UpgradeModal = React.memo<UpgradeModalProps>(({
               <Sparkles className="h-5 w-5 text-primary" />
             </div>
             <DialogTitle className="text-xl">
-              Unlock Your Full Leadership Diagnostic
+              {title}
             </DialogTitle>
           </div>
           <DialogDescription className="text-base pt-2">
-            Get complete insights and actionable recommendations
+            {description}
           </DialogDescription>
         </DialogHeader>
 
@@ -58,12 +97,12 @@ export const UpgradeModal = React.memo<UpgradeModalProps>(({
 
           <div className="pt-4 space-y-2">
             <Button 
-              onClick={onUpgrade} 
+              onClick={() => onUpgrade(upgradeType)} 
               className="w-full gap-2"
               size="lg"
             >
               <Lock className="h-4 w-4" />
-              Unlock Full Diagnostic
+              {buttonText}
             </Button>
             <Button 
               onClick={onClose} 

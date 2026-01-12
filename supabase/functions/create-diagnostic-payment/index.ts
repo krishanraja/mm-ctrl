@@ -9,6 +9,8 @@ const corsHeaders = {
 };
 
 const DIAGNOSTIC_PRICE_ID = "price_1SV9YlHGqJqsGEJLtNzC23S4";
+const DEEP_CONTEXT_PRICE_ID = "price_DEEP_CONTEXT_PLACEHOLDER"; // TODO: Replace with actual Stripe price ID
+const BUNDLE_PRICE_ID = "price_BUNDLE_PLACEHOLDER"; // TODO: Replace with actual Stripe price ID for bundle
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -84,9 +86,26 @@ serve(async (req) => {
       );
     }
 
-    console.log('💳 Creating diagnostic payment session');
+    console.log('💳 Creating payment session');
 
-    const { assessment_id } = requestBody;
+    const { assessment_id, upgrade_type = 'full_diagnostic' } = requestBody;
+    
+    // Determine price ID based on upgrade type
+    let priceId: string;
+    let upgradeDescription: string;
+    
+    if (upgrade_type === 'deep_context') {
+      priceId = DEEP_CONTEXT_PRICE_ID;
+      upgradeDescription = 'Deep Context';
+    } else if (upgrade_type === 'bundle') {
+      priceId = BUNDLE_PRICE_ID;
+      upgradeDescription = 'Full Diagnostic + Deep Context';
+    } else {
+      priceId = DIAGNOSTIC_PRICE_ID;
+      upgradeDescription = 'Full Diagnostic';
+    }
+    
+    console.log(`💳 Creating ${upgradeDescription} payment session`);
     
     if (!user?.email) {
       throw new Error("User not authenticated or email not available");
@@ -115,7 +134,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price: DIAGNOSTIC_PRICE_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -125,6 +144,7 @@ serve(async (req) => {
       metadata: {
         assessment_id,
         user_id: user.id,
+        upgrade_type: upgrade_type,
       },
     });
 

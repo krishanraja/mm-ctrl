@@ -23,6 +23,8 @@ import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import AuthScreen from './auth/AuthScreen';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { enrichCompanyContext } from '@/utils/enrichCompanyContext';
+import { ConnectContextUpgrade } from './ConnectContextUpgrade';
 
 interface LeadershipBenchmarkV2Props {
   assessmentId: string;
@@ -71,6 +73,8 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [enrichingContext, setEnrichingContext] = useState(false);
+  const [leaderId, setLeaderId] = useState<string | null>(null);
   const { createPaymentSession } = usePayment();
   const { toast } = useToast();
 
@@ -122,6 +126,25 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
   useEffect(() => {
     loadResults();
     
+    // Fetch leader_id from assessment
+    const fetchLeaderId = async () => {
+      try {
+        const { data: assessment } = await supabase
+          .from('leader_assessments')
+          .select('leader_id')
+          .eq('id', assessmentId)
+          .single();
+        
+        if (assessment?.leader_id) {
+          setLeaderId(assessment.leader_id);
+        }
+      } catch (error) {
+        console.error('Error fetching leader_id:', error);
+      }
+    };
+    
+    fetchLeaderId();
+    
     // Check for payment callback
     const paymentCallback = checkPaymentCallback();
     if (paymentCallback.success && paymentCallback.assessmentId === assessmentId) {
@@ -170,6 +193,11 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
         });
       } else {
         setResults(data);
+        
+        // Trigger passive company context enrichment if company name is available
+        if (data && contactData?.companyName && !enrichingContext) {
+          triggerPassiveEnrichment(data, contactData);
+        }
       }
     } catch (error) {
       console.error('❌ Error loading results:', error);
@@ -191,13 +219,69 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
     setIsLoading(false);
   };
 
+  // Passive company context enrichment (non-blocking, background)
+  const triggerPassiveEnrichment = async (
+    assessmentData: AggregatedLeaderResults,
+    contact: ContactData
+  ) => {
+    if (!contact.companyName) return;
+
+    setEnrichingContext(true);
+    
+    try {
+      // Get leader_id from assessment
+      const { data: assessment } = await supabase
+        .from('leader_assessments')
+        .select('leader_id')
+        .eq('id', assessmentId)
+        .single();
+
+      if (!assessment?.leader_id) {
+        console.warn('⚠️ No leader_id found for assessment, skipping enrichment');
+        return;
+      }
+
+      // Check if context already exists
+      const { data: existingContext } = await supabase
+        .from('company_context')
+        .select('id, enrichment_status')
+        .eq('leader_id', assessment.leader_id)
+        .eq('company_name', contact.companyName)
+        .maybeSingle();
+
+      // Only enrich if context doesn't exist or is incomplete
+      if (!existingContext || existingContext.enrichment_status === 'pending') {
+        console.log('🔍 Triggering passive company context enrichment...');
+        
+        const result = await enrichCompanyContext({
+          company_name: contact.companyName,
+          leader_id: assessment.leader_id,
+          assessment_id: assessmentId,
+        });
+
+        if (result.success) {
+          console.log('✅ Company context enriched:', result.enrichment_status);
+        } else {
+          console.warn('⚠️ Company context enrichment failed:', result.error);
+        }
+      } else {
+        console.log('✅ Company context already exists:', existingContext.enrichment_status);
+      }
+    } catch (error) {
+      console.error('❌ Error in passive enrichment:', error);
+      // Fail silently - this is a background enhancement
+    } finally {
+      setEnrichingContext(false);
+    }
+  };
+
   const handleUpgradeClick = () => {
     setUpgradeModalOpen(true);
   };
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = async (upgradeType: 'full_diagnostic' | 'deep_context' | 'bundle' = 'full_diagnostic') => {
     // Create Stripe checkout session
-    const checkoutUrl = await createPaymentSession(assessmentId);
+    const checkoutUrl = await createPaymentSession(assessmentId, upgradeType);
     
     if (checkoutUrl) {
       // Open Stripe checkout in new tab
@@ -274,6 +358,16 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
 
   return (
     <div className="space-y-6">
+      {/* Subtle enrichment indicator (non-intrusive) */}
+      {enrichingContext && contactData?.companyName && (
+        <Card className="border-muted bg-muted/30">
+          <CardContent className="p-3 flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Enriching company context...</span>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Upgrade Badge (Free users only) */}
       {!results.hasFullDiagnostic && (
         <Card className="border-primary/50 bg-primary/5">
@@ -310,6 +404,23 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* Connect Context Upgrade (Optional, post-diagnostic) */}
+      {results && contactData?.companyName && !results.hasDeepContext && leaderId && (
+        <ConnectContextUpgrade
+          assessmentId={assessmentId}
+          leaderId={leaderId}
+          companyName={contactData.companyName}
+          onEnrichmentComplete={(contextId) => {
+            // Reload results to show updated context status
+            loadResults();
+            toast({
+              title: 'Context Connected!',
+              description: 'Your company context has been enriched.',
+            });
+          }}
+        />
       )}
 
       {/* Benchmark Score Card */}
@@ -623,6 +734,7 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
         open={upgradeModalOpen}
         onClose={() => setUpgradeModalOpen(false)}
         onUpgrade={handleUpgrade}
+        upgradeType="full_diagnostic"
       />
     </div>
   );

@@ -50,6 +50,7 @@ export interface AggregatedLeaderResults {
   benchmarkScore: number;
   benchmarkTier: string;
   hasFullDiagnostic: boolean;
+  hasDeepContext: boolean;
   dimensionScores: LeaderDimensionScore[];
   tensions: LeaderTension[];
   riskSignals: LeaderRiskSignal[];
@@ -72,6 +73,7 @@ export async function aggregateLeaderResults(
     benchmarkScore: 0,
     benchmarkTier: 'AI-Emerging',
     hasFullDiagnostic: false,
+    hasDeepContext: false,
     dimensionScores: [],
     tensions: [],
     riskSignals: [],
@@ -87,6 +89,7 @@ export async function aggregateLeaderResults(
     // PHASE 6: Fetch assessment details with RLS fallback
     let assessment: any = null;
     let hasFull = false;
+    let hasDeep = false;
     let assessmentFetchFailed = false;
 
     try {
@@ -102,6 +105,7 @@ export async function aggregateLeaderResults(
       } else {
         assessment = assessmentData;
         hasFull = assessment?.has_full_diagnostic || false;
+        hasDeep = assessment?.has_deep_context || false;
       }
     } catch (e) {
       console.warn('⚠️ Assessment fetch exception:', e);
@@ -356,6 +360,7 @@ export async function aggregateLeaderResults(
       benchmarkScore: ensureNumber(computedBenchmarkScore, 50, 0, 100),
       benchmarkTier: ensureString(computedBenchmarkTier, 'AI-Emerging'),
       hasFullDiagnostic: typeof hasFull === 'boolean' ? hasFull : false,
+      hasDeepContext: typeof hasDeep === 'boolean' ? hasDeep : false,
       dimensionScores: ensureArray(dimensionScores, []),
       tensions: ensureArray(tensions, []),
       riskSignals: ensureArray(riskSignals, []),
