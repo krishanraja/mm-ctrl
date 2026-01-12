@@ -71,20 +71,6 @@ export function SplashScreen({ onComplete, duration = 4000 }: SplashScreenProps)
               </div>
             </div>
 
-            {/* "Level Up with AI" text - matching CTRL formatting */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-center"
-            >
-              <span 
-                className="brand-typography-ctrl flex items-center justify-center font-bold shimmer-mint" 
-                style={{ transform: 'translateY(-0.5px)', letterSpacing: '0.06em' }}
-              >
-                Level Up with AI
-              </span>
-            </motion.div>
           </div>
         </motion.div>
       )}

@@ -416,10 +416,10 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                 <img src={mindmakerIcon} alt="MindMaker" className="h-7 w-7" />
               </div>
               <h2 className="text-lg sm:text-xl font-semibold text-foreground">
-                Here's what AI sees
+                Here's what I learned
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                Based on 30 seconds of your thinking
+                From 30 seconds of your thinking—personalized to your context
               </p>
             </div>
 

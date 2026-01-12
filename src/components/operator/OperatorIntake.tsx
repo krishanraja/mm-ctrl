@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { VoiceInput } from '@/components/ui/voice-input';
-import { ArrowRight, ArrowLeft, Check, Mic, Plus, X, Briefcase } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Mic, Plus, X, Briefcase, Sparkles, Zap, Target } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface BusinessLine {
@@ -144,11 +144,15 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
       case 1:
         return (
           <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-xs font-medium text-primary">Learning about your business</span>
+            </div>
             <h3 className="text-xl font-semibold text-foreground mb-4">
               What are your revenue streams?
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              List all the ways you make money. We'll use this to personalize your AI decisions.
+              List all the ways you make money. Each answer helps me understand your unique business mix so I can give you the right decision each week.
             </p>
 
             {/* Existing business lines */}
@@ -231,6 +235,10 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
       case 2:
         return (
           <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-xs font-medium text-primary">Personalizing your experience</span>
+            </div>
             <h3 className="text-xl font-semibold text-foreground mb-4">
               Tell us about your setup
             </h3>
@@ -305,6 +313,10 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
       case 3:
         return (
           <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-xs font-medium text-primary">Identifying your priorities</span>
+            </div>
             <div className="flex items-center justify-between mb-2">
               <Badge variant="secondary" className="text-xs font-semibold bg-primary/10 text-primary border-primary/20">
                 Select top 3
@@ -317,7 +329,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
               What are your biggest bottlenecks?
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Select your top 3 pain points. This helps us prioritize your weekly decisions.
+              Select your top 3 pain points. I'll use this to prioritize which decisions matter most for your business each week.
             </p>
             <div className="space-y-2">
               {commonPainPoints.map(point => (
@@ -432,13 +444,19 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
       <div className="flex-1 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header + Progress */}
         <div className="max-w-2xl mx-auto w-full shrink-0 py-2">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium text-foreground">Operator Setup</span>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium text-foreground">Operator Setup</span>
+                {currentStep > 1 && (
+                  <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20 ml-2">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Learning
+                  </Badge>
+                )}
+              </div>
+              <span className="text-xs text-muted-foreground">Step {currentStep}/{totalSteps}</span>
             </div>
-            <span className="text-xs text-muted-foreground">Step {currentStep}/{totalSteps}</span>
-          </div>
           
           <Card className="shadow-sm border rounded-xl">
             <CardContent className="p-2 sm:p-2.5">
@@ -469,11 +487,25 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
                   variant="cta"
                   onClick={handleNext}
                   disabled={!canProceed() || isSubmitting}
-                  className="flex-1 rounded-xl text-xs sm:text-sm min-h-[42px]"
+                  className="flex-1 rounded-xl text-xs sm:text-sm min-h-[42px] group"
                   size="sm"
                 >
-                  {isSubmitting ? 'Saving...' : currentStep === totalSteps ? 'Complete Setup' : 'Next'}
-                  {!isSubmitting && <ArrowRight className="h-3 w-3 ml-1" />}
+                  {isSubmitting ? (
+                    <>
+                      <Sparkles className="h-3 w-3 mr-1 animate-spin" />
+                      Preparing your dashboard...
+                    </>
+                  ) : currentStep === totalSteps ? (
+                    <>
+                      Complete Setup
+                      <ArrowRight className="h-3 w-3 ml-1 transition-transform group-hover:translate-x-1" />
+                    </>
+                  ) : (
+                    <>
+                      Next
+                      <ArrowRight className="h-3 w-3 ml-1 transition-transform group-hover:translate-x-1" />
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

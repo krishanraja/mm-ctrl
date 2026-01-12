@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AssessmentProvider } from "@/contexts/AssessmentContext";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { initMobileViewport } from "@/utils/mobileViewport";
+import { OfflineIndicator } from "@/components/ui/offline-indicator";
 
 // Pages
 import PromptCoach from "./pages/PromptCoach";
@@ -52,6 +53,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <AssessmentProvider>
           <TooltipProvider>
+            <OfflineIndicator />
             <Toaster />
             <Sonner />
             <BrowserRouter

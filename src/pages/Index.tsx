@@ -133,14 +133,20 @@ const IndexContent = () => {
 
   // QuickVoiceEntry handles email/password inline, then guides to assessment or dashboard
   const handleQuickEntryComplete = useCallback((result: unknown, shouldStartAssessment?: boolean) => {
+    // CRITICAL: Operators should never see the quiz/assessment
+    if (userMode === 'operator') {
+      navigate('/dashboard');
+      return;
+    }
+    
     if (shouldStartAssessment) {
-      // Start the full 2-min assessment
+      // Start the full 2-min assessment (leaders only)
       setMode('quiz');
     } else {
       // Skip to dashboard
       navigate('/dashboard');
     }
-  }, [navigate]);
+  }, [navigate, userMode]);
 
   const handleViewAssessment = useCallback(async (assessmentId: string) => {
     // Persist the assessment ID for the results view
@@ -195,9 +201,19 @@ const IndexContent = () => {
 
   const handleModeSelect = useCallback((selectedMode: 'leader' | 'operator') => {
     setUserMode(selectedMode);
+    // Persist mode to sessionStorage for consistency
+    sessionStorage.setItem('mindmaker_user_mode', selectedMode);
     // Both leaders and operators see the beautiful HeroSection first
     // Operators will have a different CTA that leads to intake
     setMode('hero');
+  }, []);
+
+  // Restore user mode from sessionStorage on mount
+  useEffect(() => {
+    const storedMode = sessionStorage.getItem('mindmaker_user_mode') as 'leader' | 'operator' | null;
+    if (storedMode && (storedMode === 'leader' || storedMode === 'operator')) {
+      setUserMode(storedMode);
+    }
   }, []);
 
   const handleOperatorIntakeComplete = useCallback(() => {
@@ -248,6 +264,7 @@ const IndexContent = () => {
       ) : mode === 'quiz' ? (
         <UnifiedAssessment 
           onBack={() => setMode('hero')}
+          userMode={userMode}
         />
       ) : mode === 'signin' ? (
         <div className="h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center p-4">
@@ -267,8 +284,22 @@ const IndexContent = () => {
       ) : (
         <>
           <HeroSection 
-            onStartVoice={() => setMode('quick-entry')} 
-            onStartQuiz={() => setMode('quiz')}
+            onStartVoice={() => {
+              // Operators should not access voice entry (it leads to assessment)
+              if (userMode === 'operator') {
+                setMode('operator-intake');
+                return;
+              }
+              setMode('quick-entry');
+            }} 
+            onStartQuiz={() => {
+              // CRITICAL: Operators should never access quiz
+              if (userMode === 'operator') {
+                console.warn('Operators cannot access leader diagnostic');
+                return;
+              }
+              setMode('quiz');
+            }}
             onSignIn={() => setMode('signin')}
             user={user}
             onSignOut={handleSignOut}

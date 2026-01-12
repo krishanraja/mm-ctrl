@@ -459,9 +459,7 @@ export async function safeInsertWithIntegrityChecks(
           fkErrors.push(...fkValidation.errors);
         }
       }
-    }
-
-    if (fkErrors.length > 0) {
+    }    if (fkErrors.length > 0) {
       console.error(`${logPrefix} ❌ FK validation errors for ${table}:`, fkErrors);
       return {
         success: false,

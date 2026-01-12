@@ -13,10 +13,10 @@ export function ModeSelector({ onSelectLeader, onSelectOperator }: ModeSelectorP
     <div className="w-full max-w-3xl mx-auto space-y-3 sm:space-y-6 h-full flex flex-col">
       <div className="text-center mb-3 sm:mb-8 flex-shrink-0">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3">
-          Choose your path
+          How do you want to use AI?
         </h2>
         <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
-          Select the experience that matches your role
+          Two paths, both designed for leaders who need real results—not theory
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export function ModeSelector({ onSelectLeader, onSelectOperator }: ModeSelectorP
               </div>
               
               <p className="text-muted-foreground text-sm sm:text-base mb-3 sm:mb-6 flex-1">
-                Senior executive or C-suite leader building AI literacy and decision frameworks for your organization.
+                Know where you stand. See your blind spots. Get boardroom-ready frameworks in 2 minutes.
               </p>
 
               <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-6 flex-shrink-0">
@@ -95,7 +95,7 @@ export function ModeSelector({ onSelectLeader, onSelectOperator }: ModeSelectorP
               </div>
               
               <p className="text-muted-foreground text-sm sm:text-base mb-3 sm:mb-6 flex-1">
-                Solopreneur or small business owner running multiple revenue streams. Get one clear AI decision per week.
+                One clear decision per week. Personalized to your business mix. No fluff—just your next move.
               </p>
 
               <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-6 flex-shrink-0">

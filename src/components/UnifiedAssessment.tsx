@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket, Mail, Lock, Save } from 'lucide-react';
+import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket, Mail, Lock, Save, Sparkles, Brain } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import mindmakerLogo from '@/assets/mindmaker-logo.png';
@@ -43,9 +43,10 @@ type ScreenState =
 interface UnifiedAssessmentProps {
   onComplete?: (sessionData: any) => void;
   onBack?: () => void;
+  userMode?: 'leader' | 'operator' | null;
 }
 
-export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete, onBack }) => {
+export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete, onBack, userMode = 'leader' }) => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInitialized, setIsInitialized] = useState(true); // Fix Issue 9: Show questions immediately
@@ -89,15 +90,22 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   } = useStructuredAssessment();
 
   // Fix Issue 9: Show welcome message immediately, create session in background
+  // CRITICAL: This component is ONLY for leaders - operators should never reach here
   useEffect(() => {
+    if (userMode === 'operator') {
+      console.error('❌ UnifiedAssessment should never be shown to operators');
+      if (onBack) onBack();
+      return;
+    }
+
     const welcomeMessage: Message = {
       id: Date.now().toString(),
       role: 'assistant',
-      content: `Welcome to your AI Leadership Growth Benchmark. I'll guide you through ${totalQuestions} strategic questions designed to evaluate how your AI literacy drives growth—not just buzzwords.\n\nThis benchmark will help you:\n• **Assess your AI leadership capability**\n• **Identify growth acceleration opportunities**\n• **Benchmark against other executives**\n• **Create a strategic roadmap**\n\nEach question evaluates a different dimension of AI leadership. Let's begin your benchmark.`,
+      content: `Welcome to your AI Leadership Growth Benchmark. I'll guide you through ${totalQuestions} strategic questions designed to evaluate how your AI literacy drives growth—not just buzzwords.\n\nThis benchmark will help you:\n• **Assess your AI leadership capability**\n• **Identify growth acceleration opportunities**\n• **Benchmark against other executives**\n• **Create a strategic roadmap**\n\nEach question evaluates a different dimension of AI leadership. As you answer, I'm learning about your unique context and will personalize your insights. Let's begin your benchmark.`,
       timestamp: new Date()
     };
     setMessages([welcomeMessage]);
-  }, [totalQuestions]);
+  }, [totalQuestions, userMode, onBack]);
 
   // Fix Issue 9: Initialize session in background (non-blocking)
   const initializeAssessmentSession = useCallback(async (): Promise<string | null> => {
@@ -1061,7 +1069,15 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
           <Card className="mb-2 sm:mb-3 shadow-sm border rounded-xl shrink-0">
             <CardContent className="p-2.5 sm:p-3">
               <div className="flex items-center justify-between mb-1.5">
-                <h2 className="text-xs sm:text-sm font-semibold text-foreground">Benchmark Progress</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xs sm:text-sm font-semibold text-foreground">Benchmark Progress</h2>
+                  {progressData.currentQuestion > 1 && (
+                    <Badge variant="secondary" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20 px-1.5 py-0 text-[10px]">
+                      <Brain className="h-2.5 w-2.5 animate-pulse" />
+                      Learning
+                    </Badge>
+                  )}
+                </div>
                 <Badge variant="outline" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20 px-2 py-0.5 whitespace-nowrap">
                   <Clock className="h-3 w-3" />
                   <span className="text-xs">{progressData.currentQuestion}/{totalQuestions}</span>
@@ -1087,9 +1103,17 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
             <Card className="shadow-sm border rounded-xl flex-1 flex flex-col min-h-0 overflow-hidden">
               <CardContent className="p-3 sm:p-4 flex flex-col flex-1 min-h-0 overflow-hidden">
                 <div className="mb-2 shrink-0">
-                  <h3 className="text-sm sm:text-base font-semibold text-foreground mb-1 leading-tight">
-                    Question {currentQuestion.id} of {totalQuestions}
-                  </h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-sm sm:text-base font-semibold text-foreground leading-tight">
+                      Question {currentQuestion.id} of {totalQuestions}
+                    </h3>
+                    {progressData.completedAnswers > 0 && (
+                      <span className="text-[10px] text-primary flex items-center gap-1">
+                        <Sparkles className="h-3 w-3 animate-pulse" />
+                        <span className="hidden sm:inline">Personalizing...</span>
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                     {currentQuestion.question}
                   </p>
@@ -1103,7 +1127,10 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
                   {isProcessingAnswer && currentQuestion.id === totalQuestions ? (
                     <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
                       <div className="h-4 w-4 mr-2 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      Processing your responses...
+                      <span className="flex items-center gap-2">
+                        Processing your responses...
+                        <Brain className="h-4 w-4 text-primary animate-pulse" />
+                      </span>
                     </div>
                   ) : (
                     currentQuestion.options.map((option, index) => (
