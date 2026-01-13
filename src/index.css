@@ -229,6 +229,16 @@
   animation: shimmer 1.5s infinite;
 }
 
+/* === TEXT SHIMMER FOR HERO === */
+@keyframes shimmer-text {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 /* === SCROLLBAR STYLING === */
 ::-webkit-scrollbar {
   width: 6px;

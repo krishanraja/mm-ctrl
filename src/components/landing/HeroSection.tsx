@@ -102,13 +102,22 @@ export function HeroSection() {
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center mb-8"
           >
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight mb-3 text-foreground">
-              AI that actually
-              <br />
-              <span className="text-accent">knows you</span>
+            <h1 
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-4 text-foreground"
+              style={{ 
+                fontFamily: "'Space Grotesk', sans-serif",
+                background: 'linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--accent)) 50%, hsl(var(--foreground)) 100%)',
+                backgroundSize: '200% 200%',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                animation: 'shimmer-text 3s ease-in-out infinite',
+              }}
+            >
+              CTRL
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-sm mx-auto">
-              Talk once. We remember everything.
+            <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto">
+              The decision making confidante for AI in your life and business.
             </p>
           </motion.div>
 
