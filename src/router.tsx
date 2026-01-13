@@ -7,6 +7,7 @@ import Voice from '@/pages/Voice'
 import Pulse from '@/pages/Pulse'
 import Today from '@/pages/Today'
 import Profile from '@/pages/Profile'
+import Settings from '@/pages/Settings'
 import Auth from '@/pages/Auth'
 import { RequireAuth } from '@/components/auth/RequireAuth'
 
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
   {
     path: '/profile',
     element: <RequireAuth><Profile /></RequireAuth>,
+  },
+  {
+    path: '/settings',
+    element: <RequireAuth><Settings /></RequireAuth>,
   },
   {
     path: '*',

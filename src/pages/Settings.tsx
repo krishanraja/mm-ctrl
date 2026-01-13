@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Lock, Bell, Shield, Trash2, Save, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { AccountDeletionDialog } from '@/components/auth/AccountDeletionDialog';
 import { useToast } from '@/hooks/use-toast';
 import { Download } from 'lucide-react';
@@ -15,28 +15,15 @@ import type { User as SupabaseUser } from '@supabase/supabase-js';
 export default function Settings() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { email, userId } = useAuth();
-  const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoading: authLoading } = useAuth();
+  const email = user?.email;
+  const userId = user?.id;
   const [isExporting, setIsExporting] = useState(false);
   
   // Password change
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +64,6 @@ export default function Settings() {
       });
 
       // Clear form
-      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
@@ -150,7 +136,7 @@ export default function Settings() {
     }
   };
 
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-[100dvh] bg-background">
         <div className="mx-auto max-w-4xl px-4 pt-8 pb-24">
