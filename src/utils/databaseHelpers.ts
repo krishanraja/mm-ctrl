@@ -505,9 +505,7 @@ export async function insertWithTransaction(
           records: insert.records,
           options: insert.options
         }))
-      };
-
-      const { data, error } = await supabase.rpc(rpcFunctionName, rpcData);      if (error) {
+      };      const { data, error } = await supabase.rpc(rpcFunctionName, rpcData);      if (error) {
         console.warn('⚠️ RPC transaction failed, falling back to sequential:', error.message);
         // Fall through to sequential inserts
       } else if (data && data.success) {

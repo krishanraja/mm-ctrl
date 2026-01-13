@@ -1,0 +1,64 @@
+/**
+ * Design Tokens
+ * 
+ * Single source of truth for colors, spacing, and design values.
+ */
+
+:root {
+  /* Colors - Primary Palette */
+  --ink: 210 58% 11%; /* #0e1a2b */
+  --mint: 158 82% 73%; /* #7ef4c2 */
+  
+  /* Colors - Neutrals */
+  --off-white: 60 9% 96%; /* #F7F7F5 */
+  --light-grey: 60 5% 90%; /* #E5E5E3 */
+  --mid-grey: 210 7% 62%; /* #9AA0A6 */
+  --graphite: 200 5% 21%; /* #333639 */
+  
+  /* Semantic Color Mappings */
+  --background: var(--off-white);
+  --foreground: var(--ink);
+  --muted: var(--light-grey);
+  --muted-foreground: var(--mid-grey);
+  --primary: var(--ink);
+  --primary-foreground: var(--off-white);
+  --accent: var(--mint);
+  --accent-foreground: var(--ink);
+  --ring: var(--mint);
+  --border: var(--light-grey);
+  
+  /* Spacing Scale (4px base) */
+  --spacing-0-5: 0.125rem; /* 2px */
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem; /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem; /* 16px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-8: 2rem; /* 32px */
+  --spacing-12: 3rem; /* 48px */
+  --spacing-16: 4rem; /* 64px */
+  --spacing-20: 5rem; /* 80px */
+  
+  /* Breakpoints */
+  --mobile-breakpoint: 768px;
+  
+  /* Viewport Height */
+  --mobile-vh: 100dvh;
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem; /* 6px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-2xl: 1.5rem; /* 24px */
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  /* Dark mode tokens (if needed in future) */
+}

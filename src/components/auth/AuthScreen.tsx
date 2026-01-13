@@ -1,400 +1,128 @@
-import React, { useState } from 'react';
+/**
+ * AuthScreen Component
+ * 
+ * Sign in/sign up screen with baseline linking.
+ */
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { Brain, Mail, Lock, User, ArrowLeft, CheckCircle } from 'lucide-react';
-import { EmailVerificationPrompt } from './EmailVerificationPrompt';
+import { Label } from '@/components/ui/label';
+import { X, Loader2 } from 'lucide-react';
+import { useAuth } from './AuthProvider';
 
 interface AuthScreenProps {
-  onAuthSuccess: () => void;
+  onAuthSuccess?: () => void;
+  onCancel?: () => void;
+  mode?: 'signin' | 'signup';
 }
 
-type AuthView = 'auth' | 'forgot-password' | 'reset-sent' | 'verify-email';
-
-const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
-  const [view, setView] = useState<AuthView>('auth');
+export function AuthScreen({ onAuthSuccess, onCancel, mode: initialMode = 'signin' }: AuthScreenProps) {
+  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const [error, setError] = useState<string | null>(null);
+  const { signIn, signUp } = useAuth();
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
-
+    setError(null);
     setIsLoading(true);
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const result = mode === 'signin' ? await signIn(email, password) : await signUp(email, password);
 
-      if (error) throw error;
-
-      toast({
-        title: "Welcome back!",
-        description: "You've successfully signed in.",
-      });
-
-      onAuthSuccess();
-    } catch (error: any) {
-      // Handle specific error cases
-      const message = error.message || "Please check your credentials and try again.";
-      
-      toast({
-        title: "Sign In Failed",
-        description: message,
-        variant: "destructive",
-      });
-    } finally {
+      if (result.error) {
+        setError(result.error);
+        setIsLoading(false);
+      } else {
+        // Success - baseline will be linked automatically via AuthProvider
+        onAuthSuccess?.();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
       setIsLoading(false);
     }
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password || !firstName || !lastName) return;
-
-    setIsLoading(true);
-    try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      // Show verification prompt instead of toast
-      setView('verify-email');
-    } catch (error: any) {
-      toast({
-        title: "Sign Up Failed",
-        description: error.message || "Please try again with different credentials.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast({
-        title: "Email Required",
-        description: "Please enter your email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl,
-      });
-
-      if (error) throw error;
-
-      // Show success view
-      setView('reset-sent');
-    } catch (error: any) {
-      toast({
-        title: "Reset Failed",
-        description: error.message || "Unable to send reset email. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Email verification view
-  if (view === 'verify-email') {
-    return (
-      <EmailVerificationPrompt
-        email={email}
-        onBack={() => {
-          setView('auth');
-          setEmail('');
-          setPassword('');
-          setFirstName('');
-          setLastName('');
-        }}
-      />
-    );
-  }
-
-  // Password reset success view
-  if (view === 'reset-sent') {
-    return (
-      <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-        <Card className="w-full max-w-md max-h-full overflow-y-auto">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-emerald-500/10 rounded-full">
-                <CheckCircle className="h-8 w-8 text-emerald-600" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold">
-              Check Your Email
-            </CardTitle>
-            <p className="text-muted-foreground mt-2">
-              We've sent a password reset link to <span className="font-medium text-foreground">{email}</span>
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
-              Click the link in your email to reset your password. If you don't see it, check your spam folder.
-            </p>
-            
-            <Button 
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                setView('auth');
-                setEmail('');
-              }}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Sign In
-            </Button>
-
-            <button
-              type="button"
-              onClick={() => setView('forgot-password')}
-              className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Didn't receive it? Try again
-            </button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Forgot password form
-  if (view === 'forgot-password') {
-    return (
-      <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-        <Card className="w-full max-w-md max-h-full overflow-y-auto">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-primary/10 rounded-full">
-                <Mail className="h-8 w-8 text-primary" />
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold">
-              Reset Password
-            </CardTitle>
-            <p className="text-muted-foreground">
-              Enter your email and we'll send you a reset link
-            </p>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleForgotPassword} className="space-y-4">
-              <div className="space-y-2">
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                    autoFocus
-                  />
-                </div>
-              </div>
-
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading || !email}
-              >
-                {isLoading ? "Sending..." : "Send Reset Link"}
-              </Button>
-
-              <Button 
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={() => setView('auth')}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Sign In
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Main auth view (sign in / sign up)
   return (
-    <div className="h-[var(--mobile-vh)] overflow-hidden bg-gradient-to-br from-background via-background to-muted flex items-center justify-center p-4">
-      <Card className="w-full max-w-md max-h-full overflow-y-auto">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Brain className="h-8 w-8 text-primary" />
-            </div>
+    <div className="w-full max-w-md mx-auto p-6 bg-card rounded-2xl border border-border shadow-lg">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-foreground">
+          {mode === 'signin' ? 'Sign In' : 'Create Account'}
+        </h2>
+        {onCancel && (
+          <Button variant="ghost" size="icon" onClick={onCancel}>
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isLoading}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder={mode === 'signup' ? 'At least 6 characters' : 'Your password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={mode === 'signup' ? 6 : undefined}
+            disabled={isLoading}
+          />
+        </div>
+
+        {error && (
+          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <p className="text-sm text-destructive">{error}</p>
           </div>
-          <CardTitle className="text-2xl font-bold">
-            AI Assessment Portal
-          </CardTitle>
-          <p className="text-muted-foreground">
-            Sign in to access your personalized AI literacy assessment
-          </p>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
+        )}
 
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="email"
-                      placeholder="Email address"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {mode === 'signin' ? 'Signing in...' : 'Creating account...'}
+            </>
+          ) : (
+            mode === 'signin' ? 'Sign In' : 'Create Account'
+          )}
+        </Button>
+      </form>
 
-                <div className="space-y-2">
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
+      <div className="mt-4 text-center">
+        <button
+          type="button"
+          onClick={() => {
+            setMode(mode === 'signin' ? 'signup' : 'signin');
+            setError(null);
+          }}
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+        </button>
+      </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isLoading || !email || !password}
-                >
-                  {isLoading ? "Signing In..." : "Sign In"}
-                </Button>
-
-                <button
-                  type="button"
-                  onClick={() => setView('forgot-password')}
-                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Forgot your password?
-                </button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="First name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="email"
-                      placeholder="Email address"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="password"
-                      placeholder="Password (min. 6 characters)"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10"
-                      minLength={6}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full" 
-                  disabled={isLoading || !email || !password || !firstName || !lastName}
-                >
-                  {isLoading ? "Creating Account..." : "Create Account"}
-                </Button>
-
-                <p className="text-xs text-muted-foreground text-center">
-                  By creating an account, you agree to receive occasional useful updates from Fractional AI. 
-                  Your details will not be shared with any 3rd parties, ever.
-                </p>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      {mode === 'signup' && (
+        <p className="mt-4 text-xs text-muted-foreground text-center">
+          Your data is private. We'll never share it.
+        </p>
+      )}
     </div>
   );
-};
-
-export default AuthScreen;
+}

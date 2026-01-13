@@ -87,48 +87,50 @@ serve(async (req) => {
       );
     }
 
-    // Generate new action (Lovable AI gateway preferred)
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    // Generate new action using OpenAI
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
     let generated = {
       action_text: "Before your next AI-related decision, ask: 'What would have to be true for this to be worth it in 90 days?'",
       why_text: "It forces clarity on assumptions before money, vendors, or politics lock you in.",
     };
 
-    if (LOVABLE_API_KEY && baseline_context) {
+    if (OPENAI_API_KEY && baseline_context) {
       const userContent = `Baseline context:\n${JSON.stringify(baseline_context).slice(0, 2000)}\n\nGenerate ONE action for this week.`;
 
-      const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: userContent },
-          ],
-          temperature: 0.6,
-        }),
-      });
+      try {
+        const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: userContent },
+            ],
+            temperature: 0.6,
+            response_format: { type: "json_object" },
+          }),
+        });
 
-      if (aiResp.ok) {
-        const data = await aiResp.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (content) {
-          try {
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
+        if (aiResp.ok) {
+          const data = await aiResp.json();
+          const content = data.choices?.[0]?.message?.content;
+          if (content) {
+            try {
+              const parsed = JSON.parse(content) as Record<string, unknown>;
               if (typeof parsed.action_text === "string") generated.action_text = parsed.action_text.slice(0, 1000);
               if (typeof parsed.why_text === "string") generated.why_text = parsed.why_text.slice(0, 2000);
+            } catch {
+              // fall back to deterministic copy
             }
-          } catch {
-            // fall back to deterministic copy
           }
         }
+      } catch (err) {
+        console.warn("OpenAI API error (non-blocking):", err);
       }
     }
 

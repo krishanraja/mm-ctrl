@@ -86,7 +86,7 @@ export interface EdgeFunctionResponse<T> {
   success: boolean;
   data: T | null;
   error?: string;
-  generationSource?: 'vertex-ai' | 'openai' | 'lovable' | 'fallback';
+  generationSource?: 'vertex-ai' | 'openai' | 'gemini' | 'fallback';
   durationMs?: number;
 }
 

@@ -1,25 +1,16 @@
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import { ThemeProvider } from '@/components/ui/theme-provider'
-import ErrorBoundary from '@/components/ErrorBoundary'
+/**
+ * Main Entry Point
+ * 
+ * Application entry point with React 18 root.
+ */
 
-// Import test utility for browser console access
-// Usage: window.testEmailDelivery() in browser console
-import '@/utils/testEmailDelivery'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
 
-// SECURITY: Migrate any URL-based assessment IDs to localStorage
-// This is a one-time cleanup to prevent assessment ID exposure in URLs
-import { migrateUrlAssessmentId } from '@/utils/assessmentPersistence'
-migrateUrlAssessmentId()
-
-const root = document.getElementById("root");
-if (!root) throw new Error("Root element not found");
-
-createRoot(root).render(
-  <ErrorBoundary>
-    <ThemeProvider defaultTheme="light" storageKey="mindmaker-theme">
-      <App />
-    </ThemeProvider>
-  </ErrorBoundary>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );

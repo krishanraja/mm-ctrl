@@ -132,8 +132,8 @@ serve(async (req) => {
     };
 
     // Generate prescription using LLM
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
     let generated = {
       decision: "Set up email filtering rules for your inboxes to reduce overwhelm",
@@ -148,7 +148,7 @@ serve(async (req) => {
       expected_outcome: "Reduce time spent on email management by 40-60%"
     };
 
-    if (LOVABLE_API_KEY || OPENAI_API_KEY) {
+    if (OPENAI_API_KEY || GEMINI_API_KEY) {
       const userContent = `Operator Profile:
 - Business lines: ${JSON.stringify(context.businessLines)}
 - Inbox count: ${context.inboxCount}
@@ -159,53 +159,97 @@ serve(async (req) => {
 
 Generate ONE decision for this week. Make it specific to their business mix.`;
 
-      const apiKey = LOVABLE_API_KEY || OPENAI_API_KEY;
-      const apiUrl = LOVABLE_API_KEY 
-        ? "https://ai.gateway.lovable.dev/v1/chat/completions"
-        : "https://api.openai.com/v1/chat/completions";
-      const model = LOVABLE_API_KEY 
-        ? "google/gemini-2.5-flash"
-        : "gpt-4o-mini";
+      // Try OpenAI first
+      if (OPENAI_API_KEY) {
+        try {
+          const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [
+                { role: "system", content: SYSTEM_PROMPT },
+                { role: "user", content: userContent },
+              ],
+              temperature: 0.7,
+              response_format: { type: "json_object" },
+            }),
+          });
 
-      try {
-        const aiResp = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: [
-              { role: "system", content: SYSTEM_PROMPT },
-              { role: "user", content: userContent },
-            ],
-            temperature: 0.7,
-            response_format: { type: "json_object" },
-          }),
-        });
-
-        if (aiResp.ok) {
-          const data = await aiResp.json();
-          const content = data.choices?.[0]?.message?.content;
-          if (content) {
-            try {
-              const parsed = JSON.parse(content);
-              if (parsed.decision) generated.decision = parsed.decision.slice(0, 500);
-              if (parsed.why_this_now) generated.why_this_now = parsed.why_this_now.slice(0, 500);
-              if (Array.isArray(parsed.implementation_steps)) {
-                generated.implementation_steps = parsed.implementation_steps.slice(0, 5);
+          if (aiResp.ok) {
+            const data = await aiResp.json();
+            const content = data.choices?.[0]?.message?.content;
+            if (content) {
+              try {
+                const parsed = JSON.parse(content);
+                if (parsed.decision) generated.decision = parsed.decision.slice(0, 500);
+                if (parsed.why_this_now) generated.why_this_now = parsed.why_this_now.slice(0, 500);
+                if (Array.isArray(parsed.implementation_steps)) {
+                  generated.implementation_steps = parsed.implementation_steps.slice(0, 5);
+                }
+                if (parsed.time_estimate) generated.time_estimate = parsed.time_estimate.slice(0, 50);
+                if (parsed.cost_estimate) generated.cost_estimate = parsed.cost_estimate.slice(0, 50);
+                if (parsed.expected_outcome) generated.expected_outcome = parsed.expected_outcome.slice(0, 200);
+              } catch (e) {
+                console.warn("Failed to parse OpenAI response:", e);
               }
-              if (parsed.time_estimate) generated.time_estimate = parsed.time_estimate.slice(0, 50);
-              if (parsed.cost_estimate) generated.cost_estimate = parsed.cost_estimate.slice(0, 50);
-              if (parsed.expected_outcome) generated.expected_outcome = parsed.expected_outcome.slice(0, 200);
-            } catch (e) {
-              console.warn("Failed to parse LLM response:", e);
             }
           }
+        } catch (e) {
+          console.warn("OpenAI call failed, trying Gemini:", e);
+          // Fall through to Gemini
         }
-      } catch (e) {
-        console.warn("LLM call failed, using default:", e);
+      }
+
+      // Try Gemini as fallback
+      if (GEMINI_API_KEY && (!OPENAI_API_KEY || generated.decision === "Set up email filtering rules for your inboxes to reduce overwhelm")) {
+        try {
+          const geminiResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: `${SYSTEM_PROMPT}\n\n${userContent}`
+                }]
+              }],
+              generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 1000,
+              }
+            }),
+          });
+
+          if (geminiResp.ok) {
+            const data = await geminiResp.json();
+            const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (content) {
+              try {
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                  const parsed = JSON.parse(jsonMatch[0]);
+                  if (parsed.decision) generated.decision = parsed.decision.slice(0, 500);
+                  if (parsed.why_this_now) generated.why_this_now = parsed.why_this_now.slice(0, 500);
+                  if (Array.isArray(parsed.implementation_steps)) {
+                    generated.implementation_steps = parsed.implementation_steps.slice(0, 5);
+                  }
+                  if (parsed.time_estimate) generated.time_estimate = parsed.time_estimate.slice(0, 50);
+                  if (parsed.cost_estimate) generated.cost_estimate = parsed.cost_estimate.slice(0, 50);
+                  if (parsed.expected_outcome) generated.expected_outcome = parsed.expected_outcome.slice(0, 200);
+                }
+              } catch (e) {
+                console.warn("Failed to parse Gemini response:", e);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Gemini call failed, using default:", e);
+        }
       }
     }
 

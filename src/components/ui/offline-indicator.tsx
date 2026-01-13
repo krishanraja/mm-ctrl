@@ -1,18 +1,31 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+/**
+ * OfflineIndicator Component
+ * 
+ * Shows offline status and queues actions.
+ */
+
 import { WifiOff } from 'lucide-react';
-import { useOfflineDetection } from '@/hooks/useOfflineDetection';
+import { useOffline } from '@/hooks/useOffline';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function OfflineIndicator() {
-  const isOnline = useOfflineDetection();
-
-  if (isOnline) return null;
+  const { isOffline } = useOffline();
 
   return (
-    <Alert className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md border-destructive bg-destructive/10">
-      <WifiOff className="h-4 w-4" />
-      <AlertDescription>
-        You're offline. Some features may not work until you reconnect.
-      </AlertDescription>
-    </Alert>
+    <AnimatePresence>
+      {isOffline && (
+        <motion.div
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          exit={{ y: -100 }}
+          className="fixed top-0 left-0 right-0 z-50 bg-yellow-500/90 text-yellow-900 px-4 py-2 text-center text-sm font-medium"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <WifiOff className="h-4 w-4" />
+            <span>You're offline. Actions will be queued.</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

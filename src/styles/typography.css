@@ -1,0 +1,98 @@
+/**
+ * Typography System
+ * 
+ * Font families, scales, and brand typography utilities.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Font Families */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Gobold', serif; /* Hero headlines only */
+  --font-grotesk: 'Inter', 'Helvetica Neue', 'Arial', sans-serif; /* Brand typography */
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: 1.5rem; /* 24px */
+  --text-3xl: 1.875rem; /* 30px */
+  --text-4xl: 2.25rem; /* 36px */
+  --text-5xl: 3rem; /* 48px */
+  --text-6xl: 3.75rem; /* 60px */
+  
+  /* Line Heights */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+  
+  /* Letter Spacing */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+}
+
+/* Brand Typography Utility */
+.brand-typography-ctrl {
+  font-family: var(--font-grotesk);
+  font-size: 1.35rem; /* Mobile */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .brand-typography-ctrl {
+    font-size: 1.575rem; /* sm */
+  }
+}
+
+@media (min-width: 768px) {
+  .brand-typography-ctrl {
+    font-size: 1.8rem; /* md */
+  }
+}
+
+/* Typography Utilities */
+.text-hero {
+  font-size: var(--text-5xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 700;
+}
+
+.text-h1 {
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 700;
+}
+
+.text-h2 {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 600;
+}
+
+.text-h3 {
+  font-size: var(--text-2xl);
+  line-height: var(--leading-normal);
+  font-weight: 600;
+}
+
+.text-body {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  font-weight: 400;
+}
+
+.text-small {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  font-weight: 400;
+}

@@ -161,12 +161,11 @@ serve(async (req) => {
       console.log(`[DEBUG-H2] User not authenticated - will generate insights but skip database storage`);
     }
 
-    // Generate insight/action - try OpenAI first (primary), then Lovable as fallback
+    // Generate insight/action - use OpenAI
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     // #region agent log - H1: Check API key presence
-    console.log(`[DEBUG-H1] OPENAI_API_KEY present: ${!!OPENAI_API_KEY}, LOVABLE_API_KEY present: ${!!LOVABLE_API_KEY}`);
+    console.log(`[DEBUG-H1] OPENAI_API_KEY present: ${!!OPENAI_API_KEY}`);
     // #endregion
 
     let generated = {
@@ -186,7 +185,7 @@ Analyze what they said and respond with specific, personalized insight and actio
 
     let aiSuccess = false;
 
-    // Plan A: Try OpenAI (primary - more reliable after Lovable migration)
+    // Plan A: Try OpenAI (primary)
     if (OPENAI_API_KEY && !aiSuccess) {
       // #region agent log - H3: Starting OpenAI call
       console.log(`[DEBUG-H3] Starting OpenAI API call...`);
@@ -245,36 +244,33 @@ Analyze what they said and respond with specific, personalized insight and actio
       }
     }
 
-    // Plan B: Try Lovable AI gateway as fallback
-    if (LOVABLE_API_KEY && !aiSuccess) {
-      // #region agent log - H3: Starting Lovable AI call
-      console.log(`[DEBUG-H3] OpenAI failed or unavailable, trying Lovable AI gateway...`);
-      // #endregion
+    // Plan B: Try Gemini as fallback (if OpenAI fails)
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (GEMINI_API_KEY && !aiSuccess) {
+      console.log(`[DEBUG-H3] OpenAI failed, trying Gemini as fallback...`);
       
       try {
-        const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        const aiResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
-            messages: [
-              { role: "system", content: SYSTEM_PROMPT },
-              { role: "user", content: userContent },
-            ],
-            temperature: 0.5,
+            contents: [{
+              parts: [{
+                text: `${SYSTEM_PROMPT}\n\n${userContent}`
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.5,
+              maxOutputTokens: 500,
+            }
           }),
         });
 
-        console.log(`[DEBUG-H3] Lovable AI response: status=${aiResp.status}, ok=${aiResp.ok}`);
-
         if (aiResp.ok) {
           const data = await aiResp.json();
-          const content = data.choices?.[0]?.message?.content;
-          
-          console.log(`[DEBUG-H5] Lovable content preview: ${content?.slice(0, 200) || 'NO CONTENT'}`);
+          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
           
           if (content) {
             try {
@@ -282,24 +278,21 @@ Analyze what they said and respond with specific, personalized insight and actio
               if (jsonMatch) {
                 generated = JSON.parse(jsonMatch[0]);
                 aiSuccess = true;
-                console.log(`[AI-PROVIDER] Lovable Gemini SUCCESS (fallback)`);
+                console.log(`[AI-PROVIDER] Gemini SUCCESS (fallback)`);
                 console.log(`[AI-INSIGHT] ${generated.insight?.slice(0, 100) || 'MISSING'}`);
               }
             } catch (parseErr) {
-              console.log(`[DEBUG-H4] Lovable JSON parse error: ${parseErr}`);
+              console.log(`[DEBUG-H4] Gemini JSON parse error: ${parseErr}`);
             }
           }
-        } else {
-          const errorText = await aiResp.text();
-          console.log(`[DEBUG-H3] Lovable API error response: ${errorText.slice(0, 500)}`);
         }
       } catch (fetchErr) {
-        console.log(`[DEBUG-H3] Fetch error to Lovable API: ${fetchErr}`);
+        console.log(`[DEBUG-H3] Fetch error to Gemini API: ${fetchErr}`);
       }
     }
     
     if (!aiSuccess) {
-      console.log(`[AI-PROVIDER] NONE - using fallback response. OpenAI key present: ${!!OPENAI_API_KEY}, Lovable key present: ${!!LOVABLE_API_KEY}`);
+      console.log(`[AI-PROVIDER] NONE - using fallback response. OpenAI key present: ${!!OPENAI_API_KEY}`);
     }
 
     const week = isoWeekKey();

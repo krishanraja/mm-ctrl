@@ -1,0 +1,113 @@
+/**
+ * Global Styles
+ * 
+ * Base styles, resets, and global utilities.
+ */
+
+@import './tokens.css';
+@import './typography.css';
+@import './animations.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-primary);
+  font-size: 16px;
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Mobile Viewport Height Utility */
+.mobile-vh {
+  height: var(--mobile-vh);
+}
+
+.mobile-min-vh {
+  min-height: var(--mobile-vh);
+}
+
+.mobile-max-vh {
+  max-height: var(--mobile-vh);
+}
+
+/* Safe Area Insets */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left, 0);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Selection Styles */
+::selection {
+  background-color: hsl(var(--accent) / 0.3);
+  color: hsl(var(--accent-foreground));
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.7);
+}
+
+/* Utility Classes */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
