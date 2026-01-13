@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/voice',
-    element: <RequireAuth><Voice /></RequireAuth>,
+    element: <Voice />,
   },
   {
     path: '/pulse',

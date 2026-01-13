@@ -14,6 +14,15 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+export interface UserMemoryFact {
+  fact_key: string;
+  fact_category: string;
+  fact_label: string;
+  fact_value: string;
+  confidence_score: number;
+  verification_status: string;
+}
+
 export interface LLMContext {
   profile: {
     id: string;
@@ -21,6 +30,10 @@ export interface LLMContext {
     name: string | null;
     role: string | null;
     company: string | null;
+  };
+  userMemory: {
+    verified: UserMemoryFact[];
+    inferred: UserMemoryFact[];
   };
   recentEvents: Array<{
     id: string;
@@ -202,7 +215,37 @@ export async function buildLLMContext(
       errors.push(`Dimension scores fetch error: ${error.message}`);
     }
 
-    // Step 5: Build tool context
+    // Step 5: Fetch user memory (verified and high-confidence inferred facts)
+    let userMemory: LLMContext['userMemory'] = { verified: [], inferred: [] };
+    try {
+      // Try to get user_id from profile or auth
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData?.user?.id;
+      
+      if (userId) {
+        const { data: memoryFacts, error: memoryError } = await supabase
+          .from('user_memory')
+          .select('fact_key, fact_category, fact_label, fact_value, confidence_score, verification_status')
+          .eq('user_id', userId)
+          .eq('is_current', true)
+          .or('verification_status.in.(verified,corrected),confidence_score.gte.0.7');
+        
+        if (memoryError) {
+          console.warn('⚠️ User memory fetch failed:', memoryError.message);
+        } else if (memoryFacts) {
+          userMemory.verified = memoryFacts.filter(
+            f => f.verification_status === 'verified' || f.verification_status === 'corrected'
+          );
+          userMemory.inferred = memoryFacts.filter(
+            f => f.verification_status === 'inferred' && f.confidence_score >= 0.7
+          );
+        }
+      }
+    } catch (error: any) {
+      console.warn('⚠️ Error fetching user memory:', error);
+    }
+
+    // Step 6: Build tool context
     const toolContext: LLMContext['toolContext'] = {
       toolName,
       flowName,
@@ -217,6 +260,7 @@ export async function buildLLMContext(
         role: profile.role || null,
         company: profile.company || null
       },
+      userMemory,
       recentEvents,
       existingInsights,
       dimensionScores,
@@ -270,17 +314,47 @@ function getToolGoals(toolName: string, flowName: string | null): string[] {
 }
 
 /**
+ * Formats user memory for LLM context
+ */
+export function formatUserMemory(userMemory: LLMContext['userMemory']): string {
+  let formatted = '';
+  
+  if (userMemory.verified.length > 0) {
+    formatted += `=== USER MEMORY (Verified) ===\n`;
+    userMemory.verified.forEach(fact => {
+      formatted += `${fact.fact_label}: ${fact.fact_value}\n`;
+    });
+    formatted += '\n';
+  }
+  
+  if (userMemory.inferred.length > 0) {
+    formatted += `=== USER MEMORY (Inferred, High Confidence) ===\n`;
+    userMemory.inferred.forEach(fact => {
+      formatted += `${fact.fact_label}: ${fact.fact_value} (${Math.round(fact.confidence_score * 100)}% confident)\n`;
+    });
+    formatted += '\n';
+  }
+  
+  return formatted;
+}
+
+/**
  * Formats context for assessment_analyzer mode
  */
 export function formatContextForAssessmentAnalyzer(context: LLMContext): string {
-  const { profile, recentEvents, existingInsights, dimensionScores, toolContext } = context;
+  const { profile, userMemory, recentEvents, existingInsights, dimensionScores, toolContext } = context;
 
   let formatted = `=== PROFILE ===
 Name: ${profile.name || 'Anonymous'}
 Role: ${profile.role || 'Leader'}
 Company: ${profile.company || 'Unknown'}
 
-=== RECENT RESPONSES (${recentEvents.length} events) ===
+`;
+
+  // Add user memory if available
+  formatted += formatUserMemory(userMemory);
+
+  formatted += `=== RECENT RESPONSES (${recentEvents.length} events) ===
 `;
 
   recentEvents.slice(0, 10).forEach((event, idx) => {

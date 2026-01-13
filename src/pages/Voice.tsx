@@ -1,55 +1,52 @@
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Home } from "lucide-react"
 import { motion } from "framer-motion"
-import { VoiceRecorder } from "@/components/voice/VoiceRecorder"
-import { api } from "@/lib/api"
+import { VoiceMemoryCapture } from "@/components/memory/VoiceMemoryCapture"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { useToast } from "@/hooks/use-toast"
+import { cn } from "@/lib/utils"
 
 export default function Voice() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { toast } = useToast()
 
-  const handleTranscript = async (transcript: string) => {
-    if (!user?.id) {
-      toast({
-        title: "Error",
-        description: "Please sign in to submit your response.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      await api.generateInsight(transcript, user.id)
-      toast({
-        title: "Success",
-        description: "Your insight has been generated!",
-      })
+  const handleComplete = async (transcript: string) => {
+    toast({
+      title: "Got it!",
+      description: "We've learned more about you. Let's continue.",
+    })
+    
+    // Navigate to dashboard if authenticated, otherwise to diagnostic
+    if (user?.id) {
       navigate('/dashboard')
-    } catch (error) {
-      console.error('Error generating insight:', error)
-      toast({
-        title: "Error",
-        description: "Failed to process your response. Please try again.",
-        variant: "destructive",
-      })
+    } else {
+      navigate('/diagnostic')
     }
   }
 
   return (
-    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="flex-shrink-0 flex items-center gap-4 px-4 py-4 border-b border-border">
+      <header className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-4">
         <button
           onClick={() => navigate(-1)}
           className="p-2 -ml-2 rounded-lg hover:bg-secondary transition-colors"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5 text-muted-foreground" />
         </button>
-        <h1 className="text-lg font-semibold">Voice Entry</h1>
+        <img 
+          src="/mindmaker-full-logo.png" 
+          alt="Mindmaker" 
+          className="h-6 w-auto"
+        />
+        <button
+          onClick={() => navigate('/')}
+          className="p-2 -mr-2 rounded-lg hover:bg-secondary transition-colors"
+        >
+          <Home className="h-5 w-5 text-muted-foreground" />
+        </button>
       </header>
 
       {/* Content */}
@@ -57,12 +54,24 @@ export default function Voice() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-sm"
+          transition={{ duration: 0.4 }}
+          className="w-full"
         >
-          <VoiceRecorder onTranscript={handleTranscript} />
+          <VoiceMemoryCapture 
+            onComplete={handleComplete}
+            promptText="Tell me about your work and what's challenging you right now"
+            placeholder="I'm a VP of Engineering at a Series B startup. My biggest challenge is..."
+            showVerification={true}
+          />
         </motion.div>
       </main>
+
+      {/* Footer hint */}
+      <footer className="flex-shrink-0 px-4 sm:px-6 py-4">
+        <p className="text-xs text-center text-muted-foreground">
+          We'll extract key facts and ask you to verify the important ones
+        </p>
+      </footer>
     </div>
   )
 }
