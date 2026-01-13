@@ -56,20 +56,20 @@ export function HeroSection() {
 
   return (
     <div className="relative h-screen-safe overflow-hidden flex flex-col bg-background">
-      {/* Video Background - Desktop only, very subtle */}
+      {/* Video Background - Mobile at 20% opacity, Desktop at 8% */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-[0.08] hidden lg:block"
+        className="absolute inset-0 w-full h-full object-cover opacity-20 lg:opacity-[0.08]"
         style={{ filter: 'grayscale(0.5) brightness(0.6)' }}
       >
         <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
       </video>
       
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/98 to-background" />
+      {/* Gradient overlay - only on desktop to not block mobile video */}
+      <div className="absolute inset-0 hidden lg:block bg-gradient-to-b from-background via-background/98 to-background" />
 
       {/* Top Bar - Minimal, just auth button */}
       <header className="relative z-10 flex items-center justify-end px-4 sm:px-6 py-4">
@@ -94,11 +94,11 @@ export function HeroSection() {
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center mb-8"
           >
-            {/* Logo above CTRL - half size (was h-5/h-6, now using inline style for precise control) */}
+            {/* Logo above CTRL - half size, shifted 1px left */}
             <img 
               src="/mindmaker-full-logo.png" 
               alt="Mindmaker" 
-              style={{ height: '12px' }}
+              style={{ height: '12px', transform: 'translateX(-1px)' }}
               className="mx-auto mb-4 w-auto"
             />
             <h1 
