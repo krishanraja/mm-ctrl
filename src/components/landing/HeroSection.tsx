@@ -71,16 +71,8 @@ export function HeroSection() {
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/98 to-background" />
 
-      {/* Top Bar - Minimal */}
-      <header className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4">
-        <motion.img 
-          src="/mindmaker-full-logo.png" 
-          alt="Mindmaker" 
-          className="h-5 sm:h-6 w-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        />
+      {/* Top Bar - Minimal, just auth button */}
+      <header className="relative z-10 flex items-center justify-end px-4 sm:px-6 py-4">
         <motion.button
           onClick={() => navigate('/auth')}
           initial={{ opacity: 0 }}
@@ -102,6 +94,13 @@ export function HeroSection() {
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-center mb-8"
           >
+            {/* Logo above CTRL - half size (was h-5/h-6, now using inline style for precise control) */}
+            <img 
+              src="/mindmaker-full-logo.png" 
+              alt="Mindmaker" 
+              style={{ height: '12px' }}
+              className="mx-auto mb-4 w-auto"
+            />
             <h1 
               className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-4 text-foreground"
               style={{ 
@@ -117,7 +116,9 @@ export function HeroSection() {
               CTRL
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto">
-              The decision making confidante for AI in your life and business.
+              <span className="sm:inline">The decision making confidante</span>
+              <br className="sm:hidden" />
+              <span className="sm:inline"> for AI in your life and business.</span>
             </p>
           </motion.div>
 
