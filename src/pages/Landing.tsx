@@ -1,4 +1,3 @@
-// src/pages/Landing.tsx
 import * as React from "react"
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
@@ -33,11 +32,6 @@ export default function Landing() {
 
     checkBaseline()
   }, [user, isLoading, navigate])
-
-  // Light mode only for landing page
-  useEffect(() => {
-    document.documentElement.classList.remove('dark')
-  }, [])
 
   return <HeroSection />
 }

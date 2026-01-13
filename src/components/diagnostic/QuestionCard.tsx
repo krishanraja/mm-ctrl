@@ -1,6 +1,7 @@
-// src/components/diagnostic/QuestionCard.tsx
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { Check } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface QuestionCardProps {
   option: string
@@ -11,27 +12,31 @@ interface QuestionCardProps {
 
 export function QuestionCard({ option, label, selected, onClick }: QuestionCardProps) {
   return (
-    <button
+    <motion.button
       onClick={onClick}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       className={cn(
-        "w-full text-left p-6 sm:p-7 md:p-8 rounded-2xl border transition-all duration-200",
-        "bg-card hover:bg-muted/50 hover:shadow-md",
+        "w-full text-left p-4 rounded-xl border transition-all duration-200",
+        "bg-card hover:bg-secondary/50",
         selected
-          ? "border-accent border-2 bg-accent/5 shadow-sm"
-          : "border-border/50"
+          ? "border-accent bg-accent/10 shadow-sm"
+          : "border-border hover:border-border/80"
       )}
     >
-      <div className="flex items-start gap-4 sm:gap-5">
+      <div className="flex items-center gap-3">
         <div className={cn(
-          "flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 flex items-center justify-center transition-all",
-          selected ? "border-accent bg-accent scale-110" : "border-border"
+          "flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+          selected 
+            ? "border-accent bg-accent" 
+            : "border-muted-foreground/30"
         )}>
           {selected && (
-            <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-accent-foreground" />
+            <Check className="w-3 h-3 text-accent-foreground" />
           )}
         </div>
-        <span className="flex-1 text-lg sm:text-xl md:text-xl leading-[1.6] font-medium">{label}</span>
+        <span className="text-sm leading-relaxed">{label}</span>
       </div>
-    </button>
+    </motion.button>
   )
 }

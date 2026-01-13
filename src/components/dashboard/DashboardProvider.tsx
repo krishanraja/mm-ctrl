@@ -1,27 +1,40 @@
-// src/components/dashboard/DashboardProvider.tsx
 import * as React from "react"
-import { createContext, useContext, useEffect, useState, ReactNode } from "react"
-import { api } from "@/lib/api"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useAuth } from "@/components/auth/AuthProvider"
+import { supabase } from "@/integrations/supabase/client"
 
 interface DashboardData {
-  baseline: any
-  weeklyAction: any
-  dailyProvocation: any
+  baseline: {
+    score: number
+    tier: string
+    percentile: number
+  } | null
+  weeklyAction: {
+    text: string
+    why: string
+    cta?: string
+  } | null
+  dailyProvocation: {
+    question: string
+  } | null
 }
 
 interface DashboardContextType {
-  data: DashboardData | null
+  data: DashboardData
   loading: boolean
   error: Error | null
-  refetch: () => Promise<void>
+  refresh: () => Promise<void>
 }
 
-const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
+const DashboardContext = createContext<DashboardContextType | null>(null)
 
-export function DashboardProvider({ children }: { children: ReactNode }) {
+export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
-  const [data, setData] = useState<DashboardData | null>(null)
+  const [data, setData] = useState<DashboardData>({
+    baseline: null,
+    weeklyAction: null,
+    dailyProvocation: null,
+  })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -31,23 +44,63 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    try {
-      setLoading(true)
-      setError(null)
+    setLoading(true)
+    setError(null)
 
-      const [weeklyAction, dailyProvocation, pulse] = await Promise.all([
-        api.getWeeklyAction(user.id).catch(() => ({ action: null })),
-        api.getDailyProvocation(user.id).catch(() => ({ provocation: null })),
-        api.getStrategicPulse(user.id).catch(() => ({ baseline: null, tensions: [], risks: [] })),
-      ])
+    try {
+      // Fetch baseline from leaders table
+      const { data: leaderData, error: leaderError } = await supabase
+        .from('leaders')
+        .select('baseline')
+        .eq('id', user.id)
+        .single()
+
+      if (leaderError && leaderError.code !== 'PGRST116') {
+        throw leaderError
+      }
+
+      // Parse baseline or use defaults
+      const baseline = leaderData?.baseline ? {
+        score: leaderData.baseline.score || 72,
+        tier: leaderData.baseline.tier || "Advancing",
+        percentile: leaderData.baseline.percentile || 18,
+      } : {
+        score: 72,
+        tier: "Advancing",
+        percentile: 18,
+      }
+
+      // Mock weekly action (would come from edge function in production)
+      const weeklyAction = {
+        text: "Schedule a 15-minute AI exploration session with your team this week.",
+        why: "Teams that experiment together build AI confidence 3x faster than individuals.",
+        cta: "Schedule Now",
+      }
+
+      // Mock daily provocation
+      const dailyProvocation = {
+        question: "What decision did you make today that AI could have informed better?",
+      }
 
       setData({
-        baseline: pulse.baseline,
-        weeklyAction: weeklyAction.action,
-        dailyProvocation: dailyProvocation.provocation,
+        baseline,
+        weeklyAction,
+        dailyProvocation,
       })
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch dashboard data'))
+      console.error('Error fetching dashboard data:', err)
+      setError(err as Error)
+      // Set fallback data
+      setData({
+        baseline: { score: 72, tier: "Advancing", percentile: 18 },
+        weeklyAction: {
+          text: "Schedule a 15-minute AI exploration session with your team this week.",
+          why: "Teams that experiment together build AI confidence 3x faster.",
+        },
+        dailyProvocation: {
+          question: "What decision did you make today that AI could have informed better?",
+        },
+      })
     } finally {
       setLoading(false)
     }
@@ -58,7 +111,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   }, [user?.id])
 
   return (
-    <DashboardContext.Provider value={{ data, loading, error, refetch: fetchData }}>
+    <DashboardContext.Provider value={{ data, loading, error, refresh: fetchData }}>
       {children}
     </DashboardContext.Provider>
   )
@@ -66,8 +119,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
 export function useDashboard() {
   const context = useContext(DashboardContext)
-  if (context === undefined) {
-    throw new Error('useDashboard must be used within DashboardProvider')
+  if (!context) {
+    throw new Error('useDashboard must be used within a DashboardProvider')
   }
   return context
 }

@@ -11,11 +11,11 @@ const indicators = [
 
 export function TrustIndicators({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-col sm:flex-row gap-4 sm:gap-8 md:gap-10", className)}>
+    <div className={cn("flex flex-col sm:flex-row gap-3 sm:gap-6", className)}>
       {indicators.map((text, index) => (
-        <div key={index} className="flex items-center gap-3">
-          <Check className="h-5 w-5 text-accent flex-shrink-0" />
-          <span className="text-base sm:text-lg text-muted-foreground leading-relaxed">{text}</span>
+        <div key={index} className="flex items-center gap-2">
+          <Check className="h-4 w-4 text-accent flex-shrink-0" />
+          <span className="text-sm text-muted-foreground">{text}</span>
         </div>
       ))}
     </div>

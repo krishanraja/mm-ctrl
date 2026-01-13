@@ -1,42 +1,40 @@
-// src/components/dashboard/DailyProvocationCard.tsx
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { MessageCircle, Mic } from "lucide-react"
 
 interface DailyProvocationCardProps {
-  provocation: any
+  provocation: {
+    question: string
+  }
 }
 
 export function DailyProvocationCard({ provocation }: DailyProvocationCardProps) {
   const navigate = useNavigate()
 
-  if (!provocation) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-muted-foreground">No daily provocation available</p>
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card>
-      <CardHeader className="pb-6">
-        <CardTitle className="text-2xl sm:text-3xl font-bold">Today's Question</CardTitle>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+            <MessageCircle className="w-4 h-4 text-muted-foreground" />
+          </div>
+          <CardTitle className="text-base">Today's Question</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <p className="text-lg sm:text-xl leading-[1.6] font-medium">{provocation.question || provocation.text}</p>
-        <Button
-          variant="outline"
-          size="lg"
+      <CardContent className="space-y-4">
+        <p className="text-sm leading-relaxed italic">
+          "{provocation.question}"
+        </p>
+        <Button 
+          variant="accent" 
+          size="sm" 
+          className="w-full"
           onClick={() => navigate('/voice')}
-          className="w-full h-14 text-lg font-semibold"
         >
-          Answer
-          <ArrowRight className="h-5 w-5 ml-2" />
+          <Mic className="w-3 h-3 mr-2" />
+          Answer with Voice
         </Button>
       </CardContent>
     </Card>

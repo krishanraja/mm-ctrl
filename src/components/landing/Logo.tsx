@@ -6,7 +6,7 @@ export function Logo() {
     <img
       src="/mindmaker-full-logo.png"
       alt="MINDMAKER CTRL"
-      className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto"
+      className="h-8 sm:h-10 w-auto"
     />
   )
 }

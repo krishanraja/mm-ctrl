@@ -1,6 +1,6 @@
-// src/components/voice/VoiceRecorder.tsx
 import * as React from "react"
-import { Mic, Square } from "lucide-react"
+import { Mic, Square, Loader2 } from "lucide-react"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useVoice } from "@/hooks/useVoice"
 import { AudioWaveform } from "./AudioWaveform"
@@ -31,17 +31,18 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Show transcript result
   if (transcript) {
     return (
-      <div className="space-y-6 sm:space-y-8 w-full max-w-2xl">
-        <div className="p-8 sm:p-10 bg-muted/30 rounded-3xl border border-border/40">
-          <p className="text-lg sm:text-xl leading-[1.6] font-medium">{transcript}</p>
+      <div className="space-y-6 w-full">
+        <div className="p-4 bg-secondary rounded-xl">
+          <p className="text-sm leading-relaxed">{transcript}</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-          <Button variant="outline" size="lg" onClick={resetRecording} className="flex-1 h-14 text-lg font-semibold">
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={resetRecording} className="flex-1">
             Record Again
           </Button>
-          <Button size="lg" onClick={() => onTranscript?.(transcript)} className="flex-1 h-14 text-lg font-semibold">
+          <Button onClick={() => onTranscript?.(transcript)} className="flex-1">
             Submit
           </Button>
         </div>
@@ -50,61 +51,82 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-8">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl sm:text-3xl font-bold">Weekly Check-in</h2>
-        <p className="text-muted-foreground">
-          Share what's on your mind. Speak for up to 2 minutes.
+    <div className="flex flex-col items-center gap-6">
+      {/* Title */}
+      <div className="text-center">
+        <h2 className="text-lg font-semibold mb-1">Voice Check-in</h2>
+        <p className="text-sm text-muted-foreground">
+          Share what's on your mind. Up to 2 minutes.
         </p>
       </div>
 
+      {/* Error */}
       {error && (
-        <div className="text-sm text-destructive p-4 bg-destructive/10 rounded-xl">
+        <div className="w-full text-sm text-destructive bg-destructive/10 p-3 rounded-lg text-center">
           {error.message}
         </div>
       )}
 
+      {/* Processing state */}
       {isProcessing ? (
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-accent border-t-transparent mx-auto mb-4" />
-          <p className="text-muted-foreground">Processing your recording...</p>
+        <div className="flex flex-col items-center gap-4 py-8">
+          <Loader2 className="h-12 w-12 text-accent animate-spin" />
+          <p className="text-sm text-muted-foreground">Processing your recording...</p>
         </div>
       ) : (
         <>
-          <button
+          {/* Mic Button */}
+          <motion.button
             onClick={isRecording ? stopRecording : startRecording}
-            disabled={isProcessing}
-            className={`
-              h-20 w-20 rounded-full flex items-center justify-center
-              transition-all duration-200
-              ${isRecording
-                ? 'bg-destructive text-destructive-foreground scale-110'
-                : 'bg-accent text-accent-foreground hover:bg-accent/90'
-              }
-              shadow-lg
-            `}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={cn(
+              "w-20 h-20 rounded-full flex items-center justify-center",
+              "transition-all duration-200",
+              isRecording
+                ? "bg-destructive text-destructive-foreground recording-pulse"
+                : "bg-accent text-accent-foreground glow-accent-sm hover:glow-accent"
+            )}
           >
             {isRecording ? (
               <Square className="h-8 w-8" />
             ) : (
               <Mic className="h-8 w-8" />
             )}
-          </button>
+          </motion.button>
 
+          {/* Recording UI */}
           {isRecording && (
-            <>
-              <div className="text-4xl font-bold">
-                {formatTime(duration)} / {formatTime(120)}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center gap-4 w-full"
+            >
+              {/* Timer */}
+              <div className="text-3xl font-bold tabular-nums">
+                {formatTime(duration)}
+                <span className="text-lg text-muted-foreground ml-2">/ 2:00</span>
               </div>
+
+              {/* Waveform */}
               <AudioWaveform isRecording={isRecording} />
+
+              {/* Stop button */}
               <Button
                 variant="destructive"
                 onClick={stopRecording}
-                className="w-full h-14 text-lg"
+                className="w-full"
               >
                 Stop Recording
               </Button>
-            </>
+            </motion.div>
+          )}
+
+          {/* Idle hint */}
+          {!isRecording && (
+            <p className="text-xs text-muted-foreground">
+              Tap the microphone to start
+            </p>
           )}
         </>
       )}

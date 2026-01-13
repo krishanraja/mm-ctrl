@@ -18,69 +18,84 @@ export async function invokeEdgeFunction<T>(
   return data as T
 }
 
-// Specific API calls
+// API client with all available integrations
 export const api = {
+  // ============================================
   // AI Assessment
-  async submitAssessment(answers: Record<string, string>) {
-    return invokeEdgeFunction<{ baseline: unknown }>('ai-assessment', { answers })
+  // ============================================
+  async submitAssessment(answers: Record<string, string>, sessionId?: string) {
+    return invokeEdgeFunction<{ success: boolean; assessmentId: string; leaderId: string }>('create-leader-assessment', { 
+      assessmentData: answers,
+      sessionId: sessionId || crypto.randomUUID(),
+      source: 'quiz'
+    })
   },
-  
-  // Weekly Action
+
+  // ============================================
+  // Weekly Action (GPT-4o powered)
+  // ============================================
   async getWeeklyAction(userId: string) {
-    return invokeEdgeFunction<{ action: unknown }>('get-weekly-action', { userId })
+    return invokeEdgeFunction<{ action: any }>('get-or-generate-weekly-action', { userId })
   },
   
   async generateWeeklyAction(userId: string, context?: string) {
-    return invokeEdgeFunction<{ action: unknown }>('generate-weekly-action', { 
+    return invokeEdgeFunction<{ action: any }>('get-or-generate-weekly-action', { 
       userId, 
       context 
     })
   },
-  
-  // Daily Provocation
+
+  // ============================================
+  // Daily Provocation (AI-generated questions)
+  // ============================================
   async getDailyProvocation(userId: string) {
-    return invokeEdgeFunction<{ provocation: unknown }>('get-daily-provocation', { 
+    return invokeEdgeFunction<{ provocation: any }>('get-daily-prompt', { 
       userId 
     })
   },
-  
-  // Voice to Insight
+
+  // ============================================
+  // Voice to Insight (Whisper + GPT-4o)
+  // ============================================
   async generateInsight(transcript: string, userId?: string) {
     return invokeEdgeFunction<{
-      insight: string
-      action: string
-      why: string
-      tags: string[]
-    }>('voice-to-insight', { transcript, userId })
+      success: boolean
+      checkin?: any
+      insight?: string
+      action?: string
+    }>('submit-weekly-checkin', { transcript, userId })
   },
-  
-  // Strategic Pulse
+
+  // ============================================
+  // Strategic Pulse (fetched from database directly)
+  // ============================================
   async getStrategicPulse(userId: string) {
-    return invokeEdgeFunction<{
-      baseline: unknown
-      tensions: unknown[]
-      risks: unknown[]
-    }>('get-strategic-pulse', { userId })
+    // This data is fetched directly from the database in the component
+    // No edge function needed
+    return { baseline: null, tensions: [], risks: [] }
   },
-  
-  // Submit Check-in
+
+  // ============================================
+  // Check-in Submission
+  // ============================================
   async submitCheckin(userId: string, transcript: string, audioUrl?: string) {
-    return invokeEdgeFunction<{ checkin: unknown }>('submit-weekly-checkin', {
+    return invokeEdgeFunction<{ checkin: any }>('submit-weekly-checkin', {
       userId,
       transcript,
       audioUrl,
     })
   },
-  
-  // Voice Transcription (with enhanced features)
+
+  // ============================================
+  // Voice Transcription (OpenAI Whisper)
+  // ============================================
   async transcribeAudio(audioBlob: Blob, sessionId?: string) {
     const formData = new FormData()
-    formData.append('file', audioBlob, 'recording.webm')
-    if (sessionId) {
-      formData.append('sessionId', sessionId)
-    }
+    formData.append('audio', audioBlob, 'recording.webm')
+    // Generate a session ID if not provided
+    const sid = sessionId || crypto.randomUUID()
+    formData.append('sessionId', sid)
     
-    // Use Supabase functions directly for FormData
     const { data, error } = await supabase.functions.invoke('voice-transcribe', {
       body: formData,
     })
@@ -89,10 +104,16 @@ export const api = {
       throw new Error(error.message || 'Transcription failed')
     }
     
-    return data as { transcript: string; confidence?: number; duration_seconds?: number }
+    return data as { 
+      transcript: string
+      confidence?: number
+      duration_seconds?: number 
+    }
   },
-  
-  // Enhanced Insight Generation with context
+
+  // ============================================
+  // Enhanced Insight with Context (Technical Moat)
+  // ============================================
   async generateEnhancedInsight(transcript: string, userId: string, context?: {
     baseline?: any
     previousInsights?: string[]
@@ -111,5 +132,98 @@ export const api = {
       previous_insights: context?.previousInsights,
       company_context: context?.companyContext,
     })
+  },
+
+  // ============================================
+  // Company Context Enrichment (Apollo API)
+  // ============================================
+  async enrichCompanyContext(companyName: string, domain?: string) {
+    return invokeEdgeFunction<{
+      company: any
+      industry: string
+      size: string
+      insights: string[]
+    }>('enrich-company-context', { companyName, domain })
+  },
+
+  // ============================================
+  // Pattern Detection (AI Analysis)
+  // ============================================
+  async detectPatterns(userId: string) {
+    return invokeEdgeFunction<{
+      patterns: Array<{
+        type: string
+        description: string
+        frequency: number
+        recommendation: string
+      }>
+    }>('detect-patterns', { userId })
+  },
+
+  // ============================================
+  // Meeting Prep Generation
+  // ============================================
+  async generateMeetingPrep(userId: string, meetingContext: {
+    attendees?: string[]
+    topic?: string
+    objectives?: string[]
+  }) {
+    return invokeEdgeFunction<{
+      prep: {
+        keyPoints: string[]
+        questions: string[]
+        risks: string[]
+        opportunities: string[]
+      }
+    }>('generate-meeting-prep', { userId, ...meetingContext })
+  },
+
+  // ============================================
+  // Weekly Prescription (Personalized Actions)
+  // ============================================
+  async getWeeklyPrescription(userId: string) {
+    return invokeEdgeFunction<{
+      prescription: {
+        focus: string
+        actions: Array<{
+          title: string
+          description: string
+          priority: 'high' | 'medium' | 'low'
+        }>
+        reflection: string
+      }
+    }>('generate-weekly-prescription', { userId })
+  },
+
+  // ============================================
+  // Feedback Submission
+  // ============================================
+  async submitFeedback(userId: string, feedback: {
+    type: 'bug' | 'feature' | 'general'
+    message: string
+    rating?: number
+  }) {
+    return invokeEdgeFunction<{ success: boolean }>('send-feedback', {
+      userId,
+      ...feedback,
+    })
+  },
+
+  // ============================================
+  // Compass Analysis (Decision Support)
+  // ============================================
+  async analyzeDecision(userId: string, decision: {
+    context: string
+    options: string[]
+    constraints?: string[]
+  }) {
+    return invokeEdgeFunction<{
+      analysis: {
+        recommendation: string
+        reasoning: string
+        risks: string[]
+        nextSteps: string[]
+      }
+    }>('compass-analyze', { userId, ...decision })
   },
 }

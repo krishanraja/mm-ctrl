@@ -1,27 +1,35 @@
-// src/components/dashboard/desktop/Sidebar.tsx
 import * as React from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Home, BarChart3, Target, Mic, Settings } from "lucide-react"
+import { Home, BarChart3, Calendar, Mic, Settings, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Logo } from "@/components/landing/Logo"
+import { useAuth } from "@/components/auth/AuthProvider"
+import { Button } from "@/components/ui/button"
 
 const navItems = [
-  { path: '/dashboard', icon: Home, label: 'Home' },
-  { path: '/pulse', icon: BarChart3, label: 'Pulse' },
-  { path: '/today', icon: Target, label: 'Today' },
-  { path: '/voice', icon: Mic, label: 'Voice' },
+  { path: '/dashboard', icon: Home, label: 'Dashboard' },
+  { path: '/pulse', icon: BarChart3, label: 'Strategic Pulse' },
+  { path: '/today', icon: Calendar, label: 'Today' },
+  { path: '/voice', icon: Mic, label: 'Voice Entry' },
 ]
 
 export function Sidebar() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { signOut } = useAuth()
 
   return (
-    <aside className="w-72 flex-shrink-0 bg-card border-r border-border/40 h-screen overflow-y-auto">
-      <div className="p-8 sm:p-10 border-b border-border/40">
-        <Logo />
+    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-border flex flex-col">
+      {/* Logo */}
+      <div className="p-6 border-b border-border">
+        <img 
+          src="/mindmaker-favicon.png" 
+          alt="Mindmaker" 
+          className="h-8 w-8"
+        />
       </div>
-      <nav className="p-6 space-y-3">
+
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = location.pathname === item.path
@@ -30,25 +38,35 @@ export function Sidebar() {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-200 text-left font-semibold",
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium",
+                "transition-colors duration-200",
                 isActive
-                  ? "bg-accent/10 text-accent border-l-4 border-accent shadow-sm"
-                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               )}
             >
-              <Icon className="h-6 w-6" />
-              <span className="text-base">{item.label}</span>
+              <Icon className="h-5 w-5" />
+              {item.label}
             </button>
           )
         })}
       </nav>
-      <div className="p-6 border-t border-border/40">
+
+      {/* Footer */}
+      <div className="p-4 border-t border-border space-y-1">
         <button
           onClick={() => navigate('/profile')}
-          className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-all duration-200 font-semibold"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
         >
-          <Settings className="h-6 w-6" />
-          <span className="text-base">Settings</span>
+          <Settings className="h-5 w-5" />
+          Settings
+        </button>
+        <button
+          onClick={signOut}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+        >
+          <LogOut className="h-5 w-5" />
+          Sign Out
         </button>
       </div>
     </aside>
