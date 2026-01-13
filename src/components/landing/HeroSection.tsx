@@ -1,379 +1,328 @@
 import * as React from "react"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Mic, ArrowRight, User, Brain, Zap, Shield, ChevronDown } from "lucide-react"
-import { motion } from "framer-motion"
+import { Mic, ArrowRight, User, ChevronLeft, ChevronRight } from "lucide-react"
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
+// Feature data for carousel
+const FEATURES = [
+  {
+    title: "Remembers You",
+    description: "Your context persists across every conversation",
+  },
+  {
+    title: "Voice-First",
+    description: "Talk naturally, we extract what matters",
+  },
+  {
+    title: "You Control",
+    description: "Verify, edit, or reject anything we learn",
+  },
+  {
+    title: "Always Relevant",
+    description: "Advice grounded in who you actually are",
+  },
+]
+
 export function HeroSection() {
   const navigate = useNavigate()
-  const [isHoveringMic, setIsHoveringMic] = useState(false)
+  const [activeFeature, setActiveFeature] = useState(0)
+  const [showDrawer, setShowDrawer] = useState(false)
+  const dragX = useMotionValue(0)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const scrollToFeatures = () => {
-    document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
+  // Auto-advance carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveFeature((prev) => (prev + 1) % FEATURES.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Swipe handling for mobile carousel
+  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const threshold = 50
+    const velocity = info.velocity.x
+    const offset = info.offset.x
+
+    if (offset < -threshold || velocity < -500) {
+      setActiveFeature((prev) => Math.min(prev + 1, FEATURES.length - 1))
+    } else if (offset > threshold || velocity > 500) {
+      setActiveFeature((prev) => Math.max(prev - 1, 0))
+    }
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex flex-col bg-background">
-      {/* Video Background - Desktop only */}
+    <div className="relative h-screen-safe overflow-hidden flex flex-col bg-background">
+      {/* Video Background - Desktop only, very subtle */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-15 hidden lg:block"
-        style={{
-          filter: 'grayscale(0.3) brightness(0.7)',
-        }}
+        className="absolute inset-0 w-full h-full object-cover opacity-[0.08] hidden lg:block"
+        style={{ filter: 'grayscale(0.5) brightness(0.6)' }}
       >
         <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
       </video>
       
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background lg:from-background/80 lg:via-background/70 lg:to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/98 to-background" />
 
-      {/* Subtle grid pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}
-      />
-
-      {/* Top Bar */}
-      <header className="relative z-10 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center gap-2">
-          <img 
-            src="/mindmaker-full-logo.png" 
-            alt="Mindmaker" 
-            className="h-6 sm:h-7 w-auto"
-          />
-        </div>
-        <button
+      {/* Top Bar - Minimal */}
+      <header className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4">
+        <motion.img 
+          src="/mindmaker-full-logo.png" 
+          alt="Mindmaker" 
+          className="h-5 sm:h-6 w-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        />
+        <motion.button
           onClick={() => navigate('/auth')}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/5 hover:bg-foreground/10 transition-colors"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="p-2 rounded-full hover:bg-secondary/50 transition-colors"
         >
-          <User className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Sign in</span>
-        </button>
+          <User className="h-5 w-5 text-muted-foreground" />
+        </motion.button>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
-        <div className="w-full max-w-4xl">
+      {/* Main Content - Centered, No Scroll */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
+        <div className="w-full max-w-lg">
+          {/* Headline - Clean, Powerful */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-center mb-8 lg:mb-12"
+            className="text-center mb-8"
           >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6"
-            >
-              <Brain className="w-4 h-4 text-blue-400" />
-              <span className="text-sm text-blue-400 font-medium">AI That Actually Knows You</span>
-            </motion.div>
-
-            {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-4 lg:mb-6">
-              <span className="text-foreground">Your AI advisor that</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight mb-3 text-foreground">
+              AI that actually
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                remembers everything
-              </span>
+              <span className="text-accent">knows you</span>
             </h1>
-
-            {/* Subheadline */}
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Talk naturally. We extract your context, verify what matters, and build a memory that makes every interaction 10x more relevant than ChatGPT.
+            <p className="text-sm sm:text-base text-muted-foreground max-w-sm mx-auto">
+              Talk once. We remember everything.
             </p>
           </motion.div>
 
-          {/* CTA Card */}
+          {/* Voice CTA - The Hero Element */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="max-w-md mx-auto"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="flex flex-col items-center mb-8"
           >
-            <div className={cn(
-              "bg-gradient-to-b from-card/80 to-card/60",
-              "backdrop-blur-xl border border-white/10",
-              "rounded-3xl p-6 sm:p-8",
-              "shadow-2xl shadow-black/20"
-            )}>
-              {/* Question prompt */}
-              <p className="text-center text-foreground/80 mb-6">
-                What's the biggest challenge you're facing right now?
-              </p>
+            {/* Mic Button with Glow */}
+            <motion.button
+              onClick={() => navigate('/voice')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "relative w-20 h-20 sm:w-24 sm:h-24 rounded-full",
+                "bg-accent text-accent-foreground",
+                "flex items-center justify-center",
+                "glow-accent transition-all duration-300"
+              )}
+            >
+              {/* Subtle pulse ring */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-accent/30"
+                animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0, 0.5] }}
+                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+              />
+              <Mic className="h-8 w-8 sm:h-9 sm:w-9" />
+            </motion.button>
+            
+            <motion.p 
+              className="text-xs text-muted-foreground mt-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              Tap to speak
+            </motion.p>
+          </motion.div>
 
-              {/* Mic Button */}
-              <div className="flex justify-center mb-4">
-                <motion.button
-                  onClick={() => navigate('/voice')}
-                  onMouseEnter={() => setIsHoveringMic(true)}
-                  onMouseLeave={() => setIsHoveringMic(false)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={cn(
-                    "relative w-20 h-20 sm:w-24 sm:h-24 rounded-full",
-                    "bg-gradient-to-br from-blue-500 to-purple-600",
-                    "flex items-center justify-center",
-                    "shadow-lg shadow-blue-500/30",
-                    "border border-white/20",
-                    "group"
-                  )}
-                >
-                  {/* Pulse animation */}
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="absolute inset-0 rounded-full bg-blue-500/30"
-                  />
-                  <Mic className="h-8 w-8 sm:h-10 sm:w-10 text-white relative z-10" />
-                </motion.button>
-              </div>
-
-              <p className="text-center text-sm text-muted-foreground mb-6">
-                Tap to speak — we'll learn about you as you talk
-              </p>
-
-              {/* Divider */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex-1 h-px bg-foreground/10" />
-                <span className="text-xs text-foreground/30">or</span>
-                <div className="flex-1 h-px bg-foreground/10" />
-              </div>
-
-              {/* Primary CTA */}
-              <Button
-                onClick={() => navigate('/diagnostic')}
-                className={cn(
-                  "w-full h-12 text-base font-semibold",
-                  "bg-foreground text-background",
-                  "hover:bg-foreground/90"
-                )}
-                size="lg"
+          {/* Feature Carousel - Mobile Swipe / Desktop Dots */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mb-8"
+          >
+            {/* Carousel Container */}
+            <div 
+              ref={containerRef}
+              className="relative overflow-hidden"
+            >
+              <motion.div
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.1}
+                onDragEnd={handleDragEnd}
+                className="flex cursor-grab active:cursor-grabbing"
+                animate={{ x: -activeFeature * 100 + "%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
-                Take the 2-minute diagnostic
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+                {FEATURES.map((feature, idx) => (
+                  <div
+                    key={idx}
+                    className="w-full flex-shrink-0 px-2"
+                  >
+                    <div className={cn(
+                      "text-center py-4 px-6 rounded-2xl",
+                      "bg-secondary/30 border border-border/50",
+                      "transition-all duration-300",
+                      idx === activeFeature ? "opacity-100" : "opacity-50"
+                    )}>
+                      <p className="text-sm font-medium text-foreground mb-1">
+                        {feature.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
 
-              {/* Secondary link */}
-              <p className="text-center text-xs text-muted-foreground mt-4">
-                No account needed to start
-              </p>
+            {/* Carousel Indicators */}
+            <div className="flex justify-center gap-1.5 mt-4">
+              {FEATURES.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveFeature(idx)}
+                  className={cn(
+                    "h-1 rounded-full transition-all duration-300",
+                    idx === activeFeature 
+                      ? "w-6 bg-accent" 
+                      : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  )}
+                />
+              ))}
             </div>
           </motion.div>
 
-          {/* Scroll indicator */}
-          <motion.button
-            onClick={scrollToFeatures}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mx-auto mt-8 flex flex-col items-center gap-2 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-          >
-            <span className="text-xs">See how it works</span>
-            <motion.div
-              animate={{ y: [0, 4, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-            >
-              <ChevronDown className="w-5 h-5" />
-            </motion.div>
-          </motion.button>
-        </div>
-      </main>
-
-      {/* Features Section */}
-      <section id="features" className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="max-w-5xl mx-auto">
+          {/* Secondary CTA */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="flex flex-col items-center gap-3"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-              Why leaders choose Mindmaker
-            </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Built for executives who need AI that understands their context, not generic chatbots.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Feature 1 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className={cn(
-                "p-6 rounded-2xl",
-                "bg-gradient-to-b from-blue-500/10 to-transparent",
-                "border border-blue-500/20"
-              )}
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4">
-                <Brain className="w-5 h-5 text-blue-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Persistent Memory</h3>
-              <p className="text-sm text-muted-foreground">
-                We remember your role, company, goals, and blockers. Every conversation builds on the last.
-              </p>
-            </motion.div>
-
-            {/* Feature 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className={cn(
-                "p-6 rounded-2xl",
-                "bg-gradient-to-b from-purple-500/10 to-transparent",
-                "border border-purple-500/20"
-              )}
-            >
-              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
-                <Mic className="w-5 h-5 text-purple-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Voice-First Design</h3>
-              <p className="text-sm text-muted-foreground">
-                Talk naturally. We extract insights without making you fill out forms or answer 20 questions.
-              </p>
-            </motion.div>
-
-            {/* Feature 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className={cn(
-                "p-6 rounded-2xl",
-                "bg-gradient-to-b from-green-500/10 to-transparent",
-                "border border-green-500/20"
-              )}
-            >
-              <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
-                <Shield className="w-5 h-5 text-green-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">You Stay in Control</h3>
-              <p className="text-sm text-muted-foreground">
-                Verify what we learned. Edit or reject anything. Your memory, your rules.
-              </p>
-            </motion.div>
-
-            {/* Feature 4 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className={cn(
-                "p-6 rounded-2xl",
-                "bg-gradient-to-b from-orange-500/10 to-transparent",
-                "border border-orange-500/20"
-              )}
-            >
-              <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center mb-4">
-                <Zap className="w-5 h-5 text-orange-400" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Instant Relevance</h3>
-              <p className="text-sm text-muted-foreground">
-                No more explaining your situation every time. Get advice that fits your exact context.
-              </p>
-            </motion.div>
-
-            {/* Feature 5 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5 }}
-              className={cn(
-                "p-6 rounded-2xl sm:col-span-2 lg:col-span-2",
-                "bg-gradient-to-b from-pink-500/10 to-transparent",
-                "border border-pink-500/20"
-              )}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center flex-shrink-0">
-                  <ArrowRight className="w-5 h-5 text-pink-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">10x Better Than ChatGPT</h3>
-                  <p className="text-sm text-muted-foreground">
-                    ChatGPT forgets everything between sessions. We build a verified knowledge graph about you — your role, your company's stage, your blockers, your decision-making style. Every response is grounded in who you actually are.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4">
-            Ready to have AI that actually knows you?
-          </h2>
-          <p className="text-muted-foreground mb-8">
-            Start with a 2-minute diagnostic. No account required.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => navigate('/voice')}
-              size="lg"
-              className={cn(
-                "h-12 px-8",
-                "bg-gradient-to-r from-blue-500 to-purple-600",
-                "hover:from-blue-400 hover:to-purple-500",
-                "text-white font-semibold"
-              )}
-            >
-              <Mic className="w-4 h-4 mr-2" />
-              Start with voice
-            </Button>
             <Button
               onClick={() => navigate('/diagnostic')}
               variant="outline"
-              size="lg"
-              className="h-12 px-8"
+              className="h-11 px-6 text-sm font-medium border-border/50 hover:bg-secondary/50"
             >
-              Take the quiz
-              <ArrowRight className="w-4 h-4 ml-2" />
+              Prefer to type? Take the 2-min quiz
+              <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Footer */}
-      <footer className="relative z-10 px-4 sm:px-6 lg:px-8 py-8 border-t border-foreground/5">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <img 
-            src="/mindmaker-full-logo.png" 
-            alt="Mindmaker" 
-            className="h-5 w-auto opacity-50"
-          />
-          <p className="text-xs text-muted-foreground">
-            Built for senior leaders who need AI literacy fast, not depth.
-          </p>
+          </motion.div>
         </div>
+      </main>
+
+      {/* Bottom Drawer Trigger - Desktop Only */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="relative z-10 hidden lg:flex justify-center pb-6"
+      >
+        <button
+          onClick={() => setShowDrawer(true)}
+          className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+        >
+          Why Mindmaker?
+        </button>
+      </motion.div>
+
+      {/* Footer - Minimal */}
+      <footer className="relative z-10 px-4 sm:px-6 pb-4 lg:hidden">
+        <p className="text-[10px] text-muted-foreground/40 text-center">
+          For leaders who need AI literacy fast
+        </p>
       </footer>
+
+      {/* Desktop Feature Drawer */}
+      <AnimatePresence>
+        {showDrawer && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowDrawer(false)}
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm hidden lg:block"
+            />
+            
+            {/* Drawer */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 z-50 hidden lg:block"
+            >
+              <div className="bg-card border-t border-border rounded-t-3xl p-8 max-w-4xl mx-auto">
+                {/* Drawer Handle */}
+                <div className="flex justify-center mb-6">
+                  <button
+                    onClick={() => setShowDrawer(false)}
+                    className="w-10 h-1 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40 transition-colors"
+                  />
+                </div>
+
+                {/* Drawer Content */}
+                <div className="grid grid-cols-4 gap-6">
+                  {FEATURES.map((feature, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="text-center"
+                    >
+                      <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-3">
+                        <div className="w-2 h-2 rounded-full bg-accent" />
+                      </div>
+                      <h3 className="text-sm font-medium text-foreground mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Drawer CTA */}
+                <div className="flex justify-center mt-8">
+                  <Button
+                    onClick={() => {
+                      setShowDrawer(false)
+                      navigate('/voice')
+                    }}
+                    className="h-11 px-8 bg-accent text-accent-foreground hover:bg-accent/90"
+                  >
+                    <Mic className="h-4 w-4 mr-2" />
+                    Start with voice
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

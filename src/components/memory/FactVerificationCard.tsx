@@ -1,14 +1,13 @@
 /**
  * FactVerificationCard Component
- * Apple-style verification overlay for high-stakes facts
- * Shows 3-5 facts maximum, single-tap confirm or edit
+ * Premium verification overlay for high-stakes facts
+ * No scroll, swipe-to-dismiss on mobile
  */
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle2, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { Check, X, Pencil, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { MemoryPill } from './MemoryPill';
 import type { PendingVerification } from '@/types/memory';
 
 interface FactVerificationCardProps {
@@ -26,53 +25,67 @@ export const FactVerificationCard: React.FC<FactVerificationCardProps> = ({
   onDismiss,
   onComplete,
 }) => {
-  const [verifiedCount, setVerifiedCount] = useState(0);
-  const [remainingFacts, setRemainingFacts] = useState(facts);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleVerify = async (factId: string, newValue?: string) => {
+  const currentFact = facts[currentIndex];
+  const progress = ((currentIndex + 1) / facts.length) * 100;
+
+  const handleVerify = async () => {
+    if (!currentFact) return;
     setIsProcessing(true);
-    const success = await onVerify(factId, newValue);
-    if (success) {
-      setVerifiedCount(prev => prev + 1);
-      setRemainingFacts(prev => prev.filter(f => f.id !== factId));
-    }
+    await onVerify(currentFact.id);
     setIsProcessing(false);
-    
-    // Check if all facts are verified
-    if (remainingFacts.length === 1) {
-      setTimeout(onComplete, 300);
-    }
-    return success;
+    advanceOrComplete();
   };
 
-  const handleReject = async (factId: string) => {
+  const handleReject = async () => {
+    if (!currentFact) return;
     setIsProcessing(true);
-    const success = await onReject(factId);
-    if (success) {
-      setRemainingFacts(prev => prev.filter(f => f.id !== factId));
-    }
+    await onReject(currentFact.id);
     setIsProcessing(false);
-    
-    // Check if all facts are handled
-    if (remainingFacts.length === 1) {
-      setTimeout(onComplete, 300);
-    }
-    return success;
+    advanceOrComplete();
   };
 
-  const handleSkipAll = () => {
-    onDismiss();
+  const handleSaveEdit = async () => {
+    if (!currentFact || !editValue.trim()) return;
+    setIsProcessing(true);
+    await onVerify(currentFact.id, editValue.trim());
+    setIsProcessing(false);
+    setEditingId(null);
+    setEditValue('');
+    advanceOrComplete();
   };
 
-  const handleConfirmAll = async () => {
-    setIsProcessing(true);
-    for (const fact of remainingFacts) {
-      await onVerify(fact.id);
+  const advanceOrComplete = () => {
+    if (currentIndex < facts.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    } else {
+      onComplete();
     }
-    setIsProcessing(false);
-    onComplete();
   };
+
+  const startEdit = () => {
+    if (!currentFact) return;
+    setEditingId(currentFact.id);
+    setEditValue(currentFact.fact_value);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditValue('');
+  };
+
+  // Swipe down to dismiss
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    if (info.offset.y > 100 || info.velocity.y > 500) {
+      onDismiss();
+    }
+  };
+
+  if (!currentFact) return null;
 
   return (
     <motion.div
@@ -86,126 +99,201 @@ export const FactVerificationCard: React.FC<FactVerificationCardProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={handleSkipAll}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onDismiss}
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
       />
 
       {/* Card */}
       <motion.div
-        initial={{ opacity: 0, y: 100, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 100, scale: 0.95 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        initial={{ y: "100%", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: "100%", opacity: 0 }}
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.5 }}
+        onDragEnd={handleDragEnd}
+        transition={{ type: "spring", damping: 30, stiffness: 300 }}
         className={cn(
-          'relative w-full max-w-md mx-4 mb-4 sm:mb-0',
-          'bg-gradient-to-b from-gray-900/95 to-gray-950/95',
-          'border border-white/10 rounded-3xl',
-          'shadow-2xl backdrop-blur-xl',
-          'overflow-hidden'
+          "relative w-full max-w-md mx-4 mb-0 sm:mb-4",
+          "bg-card border border-border",
+          "rounded-t-3xl sm:rounded-3xl",
+          "shadow-2xl overflow-hidden"
         )}
       >
+        {/* Drag Handle */}
+        <div className="flex justify-center pt-3 pb-2 sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-muted-foreground/20" />
+        </div>
+
+        {/* Progress Bar */}
+        <div className="h-0.5 bg-muted mx-6 rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            className="h-full bg-accent rounded-full"
+          />
+        </div>
+
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-white/5">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10">
-                <Sparkles className="w-5 h-5 text-blue-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-white">
-                  Quick Verification
-                </h3>
-                <p className="text-sm text-white/50">
-                  We heard {facts.length} key things about you
-                </p>
-              </div>
-            </div>
+        <div className="px-6 pt-4 pb-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              {currentIndex + 1} of {facts.length}
+            </p>
             <button
-              onClick={handleSkipAll}
-              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              onClick={onDismiss}
+              className="p-1 rounded-full hover:bg-secondary transition-colors sm:hidden"
             >
-              <X className="w-5 h-5 text-white/40" />
+              <X className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
+          <h3 className="text-sm font-medium text-foreground mt-1">
+            Quick verification
+          </h3>
+        </div>
 
-          {/* Progress indicator */}
-          <div className="mt-4 flex items-center gap-2">
-            <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+        {/* Fact Display */}
+        <div className="px-6 py-4">
+          <AnimatePresence mode="wait">
+            {editingId === currentFact.id ? (
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${(verifiedCount / facts.length) * 100}%` }}
-                className="h-full bg-gradient-to-r from-green-400 to-emerald-400 rounded-full"
-              />
-            </div>
-            <span className="text-xs text-white/40 tabular-nums">
-              {verifiedCount}/{facts.length}
-            </span>
-          </div>
-        </div>
-
-        {/* Facts list */}
-        <div className="px-4 py-4 max-h-[60vh] overflow-y-auto space-y-3">
-          <AnimatePresence mode="popLayout">
-            {remainingFacts.map((fact) => (
-              <MemoryPill
-                key={fact.id}
-                fact={fact}
-                onVerify={handleVerify}
-                onReject={handleReject}
-                isProcessing={isProcessing}
-              />
-            ))}
+                key="edit"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-4"
+              >
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-2">
+                    {currentFact.fact_label}
+                  </label>
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    autoFocus
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl",
+                      "bg-secondary/50 border border-border",
+                      "text-foreground text-base",
+                      "focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    )}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveEdit();
+                      if (e.key === 'Escape') cancelEdit();
+                    }}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={cancelEdit}
+                    className={cn(
+                      "flex-1 py-3 rounded-xl",
+                      "bg-secondary/50 text-muted-foreground text-sm font-medium",
+                      "hover:bg-secondary transition-colors"
+                    )}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    disabled={!editValue.trim() || isProcessing}
+                    className={cn(
+                      "flex-1 py-3 rounded-xl",
+                      "bg-accent text-accent-foreground text-sm font-medium",
+                      "hover:bg-accent/90 transition-colors",
+                      "flex items-center justify-center gap-2",
+                      (!editValue.trim() || isProcessing) && "opacity-50"
+                    )}
+                  >
+                    <Check className="w-4 h-4" />
+                    Save
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="display"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <p className="text-xs text-muted-foreground mb-1">
+                  {currentFact.fact_label}
+                </p>
+                <p className="text-xl font-medium text-foreground mb-2">
+                  {currentFact.fact_value}
+                </p>
+                {currentFact.fact_context && (
+                  <p className="text-xs text-muted-foreground/60 italic line-clamp-2">
+                    "{currentFact.fact_context}"
+                  </p>
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
-
-          {/* All done state */}
-          {remainingFacts.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="py-8 text-center"
-            >
-              <CheckCircle2 className="w-12 h-12 text-green-400 mx-auto mb-3" />
-              <p className="text-white font-medium">All verified!</p>
-              <p className="text-white/50 text-sm">Your profile is now personalized</p>
-            </motion.div>
-          )}
         </div>
 
-        {/* Footer actions */}
-        {remainingFacts.length > 0 && (
-          <div className="px-6 py-4 border-t border-white/5 flex gap-3">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSkipAll}
-              className={cn(
-                'flex-1 py-3 px-4 rounded-xl',
-                'bg-white/5 border border-white/10',
-                'text-white/60 font-medium text-sm',
-                'hover:bg-white/10 transition-colors'
-              )}
+        {/* Actions */}
+        {editingId !== currentFact.id && (
+          <div className="px-6 pb-6 pt-2">
+            <div className="flex gap-3">
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={handleVerify}
+                disabled={isProcessing}
+                className={cn(
+                  "flex-1 py-3.5 rounded-xl",
+                  "bg-accent text-accent-foreground",
+                  "text-sm font-medium",
+                  "flex items-center justify-center gap-2",
+                  "hover:bg-accent/90 transition-colors",
+                  isProcessing && "opacity-50"
+                )}
+              >
+                <Check className="w-4 h-4" />
+                Correct
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={startEdit}
+                disabled={isProcessing}
+                className={cn(
+                  "py-3.5 px-4 rounded-xl",
+                  "bg-secondary/50 border border-border",
+                  "text-muted-foreground text-sm font-medium",
+                  "hover:bg-secondary transition-colors"
+                )}
+              >
+                <Pencil className="w-4 h-4" />
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={handleReject}
+                disabled={isProcessing}
+                className={cn(
+                  "py-3.5 px-4 rounded-xl",
+                  "bg-destructive/10 border border-destructive/20",
+                  "text-destructive/70 text-sm font-medium",
+                  "hover:bg-destructive/20 transition-colors"
+                )}
+              >
+                <X className="w-4 h-4" />
+              </motion.button>
+            </div>
+
+            {/* Skip option */}
+            <button
+              onClick={onDismiss}
+              className="w-full mt-4 py-2 text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors"
             >
               Skip for now
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleConfirmAll}
-              disabled={isProcessing}
-              className={cn(
-                'flex-1 py-3 px-4 rounded-xl',
-                'bg-gradient-to-r from-green-500 to-emerald-500',
-                'text-white font-medium text-sm',
-                'hover:from-green-400 hover:to-emerald-400 transition-colors',
-                'flex items-center justify-center gap-2',
-                isProcessing && 'opacity-50 cursor-not-allowed'
-              )}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              Confirm All
-            </motion.button>
+            </button>
           </div>
         )}
+
+        {/* Safe area padding for mobile */}
+        <div className="h-safe pb-safe sm:hidden" />
       </motion.div>
     </motion.div>
   );

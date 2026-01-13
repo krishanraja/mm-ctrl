@@ -536,9 +536,7 @@ export async function insertWithTransaction(
     results.push({
       table: insert.table,
       ...result
-    });
-
-    if (!result.success) {
+    });    if (!result.success) {
       errors.push(`${insert.table}: ${result.error}`);
       // Continue with other inserts (best effort)
     }
