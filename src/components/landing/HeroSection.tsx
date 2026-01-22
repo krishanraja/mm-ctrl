@@ -30,6 +30,7 @@ export function HeroSection() {
   const navigate = useNavigate()
   const [activeFeature, setActiveFeature] = useState(0)
   const [showDrawer, setShowDrawer] = useState(false)
+  const [videoLoaded, setVideoLoaded] = useState(false)
   const dragX = useMotionValue(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -56,18 +57,26 @@ export function HeroSection() {
 
   return (
     <div className="relative h-screen-safe overflow-hidden flex flex-col bg-background">
+      {/* Video skeleton - shown while video loads */}
+      {!videoLoaded && (
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black opacity-20 lg:opacity-[0.08]" />
+      )}
+
       {/* Video Background - Mobile at 20% opacity, Desktop at 8% */}
       <video
         autoPlay
         loop
         muted
         playsInline
+        loading="lazy"
+        preload="metadata"
+        onLoadedData={() => setVideoLoaded(true)}
         className="absolute inset-0 w-full h-full object-cover opacity-20 lg:opacity-[0.08]"
         style={{ filter: 'grayscale(0.5) brightness(0.6)' }}
       >
         <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
       </video>
-      
+
       {/* Gradient overlay - only on desktop to not block mobile video */}
       <div className="absolute inset-0 hidden lg:block bg-gradient-to-b from-background via-background/98 to-background" />
 

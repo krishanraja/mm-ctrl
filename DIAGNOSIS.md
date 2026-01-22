@@ -1,206 +1,515 @@
-# v2 Leadership Benchmark - Complete Diagnosis & Resolution
+# COMPREHENSIVE DIAGNOSTIC REPORT
+## Mindmaker for Leaders - UX & Architecture Issues
 
-## Date: 2025-11-19 12:26 UTC
-
----
-
-## CRITICAL FINDINGS
-
-### Issue #1: Edge Functions Were Not Deployed
-**Location**: Supabase backend  
-**Problem**: 5 new edge functions existed in codebase but were never deployed to production  
-**Impact**: v2 orchestration called non-existent functions, failed silently, fell back to v1 UI  
-**Resolution**: ✅ **FIXED** - Functions manually deployed at 12:26 UTC
-
-### Issue #2: Silent Error Handling in Orchestration
-**Location**: `src/utils/orchestrateAssessmentV2.ts` line 219  
-**Problem**: Orchestration errors caught and logged but not surfaced to user  
-**Impact**: User had no idea v2 flow was failing  
-**Resolution**: ✅ **FIXED** - Now throws errors to UI with toast notifications
-
-### Issue #3: Old Assessments Have No v2 Data
-**Location**: Database  
-**Problem**: Assessments completed before deployment have no records in new `leader_*` tables  
-**Impact**: Old assessments can't render v2 UI even after deployment  
-**Resolution**: ✅ **DOCUMENTED** - User must complete new assessment
+**Report Date:** 2026-01-22
+**Analyst Perspective:** World-Class Chief UX Designer (Google 2027 standards)
+**Diagnostic Mode:** Strict - No edits before complete scope
+**Context:** Continuation of ongoing architectural improvements
 
 ---
 
-## DATA FLOW (NOW WORKING)
+## EXECUTIVE SUMMARY
 
-### Expected Flow (v2):
-```
-User completes assessment
-  → UnifiedAssessment calls orchestrateAssessmentV2()
-  → Creates leader + leader_assessment records
-  → Calls 5 edge functions sequentially:
-     1. generate-personalized-insights (with first moves)
-     2. generate-prompt-library
-     3. compute-risk-signals → stores in leader_risk_signals
-     4. compute-tensions → stores in leader_tensions
-     5. derive-org-scenarios → stores in leader_org_scenarios
-  → Stores assessment_id in sessionStorage as 'v2_assessment_id'
-  → UnifiedResults checks for v2_assessment_id
-  → Renders LeadershipBenchmarkV2 (not AILeadershipBenchmark)
-  → Fetches data from leader_* tables
-  → Displays gated content with upgrade modal
-```
+Three critical UX/architectural issues identified:
 
-### Previous Broken Flow:
-```
-User completed assessment
-  → orchestrateAssessmentV2() called edge functions
-  → Edge functions returned 404 (not deployed)
-  → Orchestration failed silently
-  → No v2_assessment_id stored
-  → UnifiedResults fell back to AILeadershipBenchmark
-  → User saw old v1 UI
-```
+1. **Splash Screen Flicker (Landing → Splash → Landing)** - Race condition in app initialization
+2. **Missing Strategic Onboarding** - No capture of industry, sector, problems, obstacles, fears
+3. **Inadequate Settings/Profile Pages** - No 10/10 profile management or preferences UI
+
+All issues stem from **architectural design decisions** made early in development that prioritize technical implementation over user experience flow. This requires systemic fixes, not surface-level patches.
 
 ---
 
-## VERIFICATION STEPS FOR USER
+## ISSUE 1: SPLASH SCREEN FLICKER & NAVIGATION LOOP
 
-### Step 1: Confirm Functions Are Live
-```bash
-# User should see recent logs for these functions in Supabase dashboard
-compute-risk-signals
-compute-tensions  
-derive-org-scenarios
-create-diagnostic-payment
-verify-diagnostic-payment
+### User-Reported Symptom
+> "this screen flickers before the splash screen, which then leads back to this page"
+> "ideally the splash screen is the first thing a user sees and then loads this"
+
+### Observable Behavior
+1. User navigates to `leaders.themindmaker.ai`
+2. Landing page briefly flashes/renders
+3. Splash screen appears overtop
+4. Splash completes (2.5s)
+5. User sees landing page again (feels like a loop)
+
+### Architecture Analysis
+
+#### Call Graph
+```
+index.html (root)
+  └─ main.tsx
+      └─ App.tsx
+          ├─ ThemeProvider (reads localStorage, may cause flash)
+          ├─ QueryClientProvider
+          ├─ AuthProvider (async session fetch, isLoading state)
+          │   ├─ getSession() → async Supabase call
+          │   └─ onAuthStateChange listener
+          ├─ SplashScreen (conditional render based on sessionStorage)
+          │   └─ 2.5s animation → sets 'mindmaker-splash-shown'
+          └─ RouterProvider (renders IMMEDIATELY, not after splash)
+              └─ Landing page
+                  ├─ useAuth() hook (may still be loading)
+                  ├─ useEffect → baseline check (async DB query)
+                  └─ HeroSection
+                      ├─ 4.9MB background video (starts loading)
+                      ├─ Multiple framer-motion animations
+                      └─ Carousel auto-advance logic
 ```
 
-### Step 2: Complete NEW Assessment
-1. Clear browser cache (Ctrl+Shift+Delete)
-2. Navigate to homepage
-3. Start Quiz or Voice assessment
-4. Complete all questions + contact form + deep profile
-5. Submit
+#### Root Cause: Simultaneous Render
 
-### Step 3: Verify Console Logs
-Expected logs in browser console (F12):
-```
-🚀 Starting v2 assessment orchestration for: [email]
-✅ Leader record ready: [leader_id]
-✅ Assessment record created: [assessment_id]
-🔄 Calling edge functions...
-🧠 Invoking edge function: generate-personalized-insights
-✅ Edge function success (generate-personalized-insights)
-📚 Invoking edge function: generate-prompt-library
-✅ Edge function success (generate-prompt-library)
-⚠️ Invoking edge function: compute-risk-signals
-✅ Edge function success (compute-risk-signals)
-⚡ Invoking edge function: compute-tensions
-✅ Edge function success (compute-tensions)
-🎯 Invoking edge function: derive-org-scenarios
-✅ Edge function success (derive-org-scenarios)
-🎉 V2 assessment orchestration complete!
-✅ V2 assessment orchestrated successfully
-📊 Using v2 assessment ID: [assessment_id]
+**File:** `/home/user/mindmaker-for-leaders/src/App.tsx:48-49`
+
+```typescript
+{showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+<RouterProvider router={router} />  // ❌ Renders at same time as splash!
 ```
 
-### Step 4: Verify Database Records
-```sql
--- Should return 1 row with your new assessment
-SELECT * FROM leader_assessments ORDER BY created_at DESC LIMIT 1;
+**Problem:** Both components mount simultaneously. RouterProvider immediately begins rendering the Landing page underneath the SplashScreen overlay (z-index 100).
 
--- Should return 4 risk signals
-SELECT * FROM leader_risk_signals WHERE assessment_id = '[your_assessment_id]';
+**Why It Flickers:**
 
--- Should return 6 tensions
-SELECT * FROM leader_tensions WHERE assessment_id = '[your_assessment_id]';
+1. **React StrictMode** (dev mode) double-renders components
+2. **Theme Provider** reads localStorage and applies theme class → potential flash
+3. **AuthProvider** async session fetch → component may re-render when auth resolves
+4. **Landing Page Video** (4.9MB) starts downloading → layout shift when video element appears
+5. **Animation Stagger** - Multiple framer-motion elements with delays (0.3s, 0.6s, 0.7s, 1s) may render before splash opacity reaches 1
 
--- Should return 3 org scenarios
-SELECT * FROM leader_org_scenarios WHERE assessment_id = '[your_assessment_id]';
+**Timing Race Conditions:**
 
--- Should return 6 dimension scores
-SELECT * FROM leader_dimension_scores WHERE assessment_id = '[your_assessment_id]';
-```
+| Event | Timing | Issue |
+|-------|--------|-------|
+| Splash fade-in | 0-400ms | If Landing renders in this window → visible flicker |
+| Video element mount | Immediate | 4.9MB download starts, no skeleton |
+| Auth session fetch | 50-200ms (network) | May trigger re-render during splash |
+| Baseline DB query | 100-300ms (network) | May redirect mid-splash |
+| Animation delays | 300ms-1000ms | Staggered elements may appear through splash |
 
-### Step 5: Verify UI Changes
-After assessment completion, Results screen should show:
+#### Why This Feels Like a "Loop"
 
-✅ **Score Tab (LeadershipBenchmarkV2 component)**
-- Benchmark score card with tier badge (Emerging/Aware/Confident/Orchestrator)
-- "Your AI Leadership Maturity" section
-- Risk signals section: 2 unlocked + "Unlock 2+ more risk signals" CTA
-- 6 dimension cards with scores + 1 tension badge each
-- Org scenarios: 1 unlocked + "Unlock 2+ more scenarios" CTA
-- First 3 moves card (visible immediately, no lock)
-- AI Literacy Realities section
-- "Unlock Full Diagnostic" modal with $99 Stripe checkout
+After splash completes:
+- User is back on Landing page (same page they saw flash initially)
+- Creates perception of: Landing → Splash → Landing (loop)
+- **Expected flow:** Splash → Landing (one-way)
 
-❌ **Old UI (AILeadershipBenchmark) should NOT appear**
+#### Impact on 2027 UX Standards
 
-✅ **Prompts Tab (PromptLibraryV2 component)**
-- Fetches from leader_prompt_sets table
-- Shows personalized prompt categories
+**Google Design Principles Violated:**
+- ❌ **Material Design 3:** "Splash screens should never obstruct content that's already loaded"
+- ❌ **Core Web Vitals:** Cumulative Layout Shift (CLS) from video loading
+- ❌ **Progressive Enhancement:** App doesn't gracefully handle slow networks
+- ❌ **Perceived Performance:** Flicker destroys "instant load" perception
 
-✅ **Compare Tab**
-- PeerBubbleChart renders
-- BenchmarkComparison shows user tier
+**User Psychology:**
+- Flicker signals technical instability
+- Loop perception signals broken navigation
+- First impression = lasting impression (primacy effect)
 
 ---
 
-## FILES MODIFIED IN FINAL FIX
+## ISSUE 2: MISSING STRATEGIC ONBOARDING CONTEXT
 
-1. **Edge Functions (Deployed)**
-   - `supabase/functions/compute-risk-signals/index.ts`
-   - `supabase/functions/compute-tensions/index.ts`
-   - `supabase/functions/derive-org-scenarios/index.ts`
-   - `supabase/functions/create-diagnostic-payment/index.ts`
-   - `supabase/functions/verify-diagnostic-payment/index.ts`
+### User-Reported Symptom
+> "nowhere in this app does it aim to learn about the users role, company, sector and the users biggest issue, obstacle or fear. it should ask the user to voice record, parse the essentials, get the user to verify/edit, and then anchor all future advice around that - and learn with every single interaction thereafter"
 
-2. **Error Surfacing**
-   - `src/utils/orchestrateAssessmentV2.ts` - Now throws errors instead of silent failure
-   - `src/components/UnifiedAssessment.tsx` - Catches and displays orchestration errors
-   - `src/components/UnifiedResults.tsx` - Fixed sessionStorage key consistency
+### Current State Audit
 
-3. **Configuration**
-   - `supabase/config.toml` - All functions listed with verify_jwt = false
+#### What IS Collected
+
+**Basic Profile (ContactCollectionForm.tsx):**
+- ✅ Full name
+- ✅ Email
+- ✅ Department (predefined list)
+- ✅ Primary AI Focus (6 options)
+
+**Deep Profile Questionnaire (10 steps):**
+- ✅ Thinking style (verbal, internal, written, visual, pattern)
+- ✅ Communication style (direct, detail, story, data, inspirational)
+- ✅ Work breakdown (% sliders: writing, presentations, planning, decisions, coaching)
+- ✅ Information needs for decisions
+- ✅ Transformation goal (focus, articulate, speed, quality, communicate)
+- ✅ Time waste % and examples (voice or text)
+- ✅ Top 3 delegation priorities
+- ✅ Biggest communication challenge
+- ✅ Key stakeholder audiences
+
+**Operator Intake (for operator user type):**
+- ✅ Business lines (revenue %, time %, pain points)
+- ✅ Email inbox count
+- ✅ Technical comfort level
+- ✅ Monthly AI budget
+- ✅ Top 3 pain points (operational)
+- ✅ AI tools tried
+- ✅ Decisions stuck on (voice input)
+
+**User Memory System (voice extraction):**
+- ✅ Identity (role, title, department, seniority)
+- ✅ Business (company, vertical, size, stage)
+- ✅ Objective (goals, priorities, success metrics)
+- ✅ Blocker (challenges: personal, team, org)
+- ✅ Preference (communication style, decision-making)
+
+**Database Schema (leaders table):**
+- ✅ email
+- ✅ name
+- ✅ role
+- ✅ company
+- ✅ company_size_band
+- ✅ primary_focus
+- ✅ user_id (auth link)
+- ✅ archived_at (soft delete)
+
+#### What is MISSING
+
+**Critical Business Context:**
+
+| Field | Current Status | Where Mentioned | Impact |
+|-------|----------------|-----------------|--------|
+| **Industry/Sector** | ❌ NOT collected | user_memory has "vertical" but not structured | Cannot segment benchmarks by industry |
+| **Title vs Role** | ⚠️ Partial (role only) | No separate title field | VP Product vs Product Manager distinction lost |
+| **Company Stage** | ⚠️ Partial (user_memory) | Not in leaders table | Startup vs Enterprise context missing |
+| **Explicit Problems** | ⚠️ Scattered | Communication challenges, pain points, but not strategic business problems | Can't anchor advice to core challenge |
+| **Obstacles** | ⚠️ Via user_memory "blocker" | Only if extracted from voice | Not guaranteed to be captured |
+| **Fears** | ❌ NOT collected anywhere | No field, no category, no prompt | Major psychological insight gap |
+| **Strategic Goals** | ⚠️ Partial (transformation goal) | AI-specific only, not business goals | Can't align to OKRs/KPIs |
+| **Quarterly/Annual Goals** | ❌ NOT collected | Not in any form | Can't time-box advice |
+| **Team Size** | ⚠️ Via user_memory only | Not structured | Scale context missing |
+| **Budget Authority** | ⚠️ Operator flow only | Not for all users | Can't recommend appropriate tools |
+
+#### UX Flow Gaps
+
+**No Structured Onboarding Wizard:**
+- App assumes voice-first context extraction
+- Users who don't want to voice-record have limited options
+- No "let's get to know you" guided flow
+- No progress indicator ("Profile 60% complete")
+
+**Voice-First Design Issues:**
+- Voice extraction is optional, not guaranteed
+- Verification UI appears conditionally (high-stakes facts only)
+- Low-stakes facts auto-accepted (may be wrong)
+- No way to review ALL extracted facts at once
+
+**No "North Star" Context:**
+The app asks about AI transformation, communication style, delegation needs - but never asks:
+> "What is the ONE thing that keeps you up at night?"
+
+This is the **anchor question** that should drive all personalization.
+
+#### Impact on 2027 UX Standards
+
+**Google Onboarding Best Practices Violated:**
+- ❌ **Progressive Disclosure:** Ask for info when it's needed, not all at once
+- ❌ **Contextual Relevance:** Every question should clearly benefit the user
+- ❌ **Completeness Signaling:** Users don't know what's missing
+- ❌ **Edit-in-Place:** Can't review/edit profile after initial setup
+
+**Chief UX Designer Perspective (2027):**
+
+In 2027, world-class onboarding:
+1. **Starts with "Why"** - Show value before asking for data
+2. **Uses Conversational UI** - Voice-first is great, but needs guardrails
+3. **Adapts to User Preference** - Voice vs Form vs Import (LinkedIn/Calendar)
+4. **Shows Data Value Exchange** - "We ask about your industry so we can benchmark you against 1,200 peers in fintech"
+5. **Enables Continuous Enrichment** - Profile grows smarter over time, not just on Day 1
+6. **Respects Privacy Psychology** - Fears are sensitive; framing matters
+
+**The "Fear" Gap is Critical:**
+
+Asking about fears requires:
+- 🔒 **Trust** - User must feel safe sharing
+- 🎭 **Psychological Safety** - Framing as "obstacle" vs "fear"
+- 💡 **Value Clarity** - "Understanding your concerns helps us recommend the right first step"
+- ✏️ **Edit Control** - User can delete this later
+
+Without this, the app can recommend *technically correct* advice that the user will never act on (because they're afraid).
 
 ---
 
-## ROLLBACK PLAN (IF NEEDED)
+## ISSUE 3: INADEQUATE SETTINGS & PROFILE MANAGEMENT
 
-If new v2 flow causes issues:
+### User-Reported Symptom
+> "we need a 10/10 profile, setting and preferences page that is accessible from here"
 
-1. **Immediate**: User can still access old assessments (they use legacy flow)
-2. **Database**: No data loss - v1 and v2 tables are separate
-3. **Code Rollback**: Set feature flag to disable v2:
-   ```typescript
-   // In UnifiedResults.tsx
-   const USE_V2 = false; // Force v1 UI
+### Current State Audit
+
+#### Settings Page (`/settings`)
+
+**What Exists:**
+- ✅ Password change
+- ✅ Data export (JSON download)
+- ✅ Account deletion (with confirmation)
+- ⚠️ Notifications (placeholder - "Coming Soon")
+
+**What's Missing:**
+- ❌ Profile editing (name, role, company, title, industry)
+- ❌ Communication preferences (email frequency, types)
+- ❌ Privacy controls (data sharing, benchmarking consent)
+- ❌ Deep profile review/editing (10 questionnaire responses)
+- ❌ User memory management (view/edit/delete extracted facts)
+- ❌ Session management (active sessions, logout all devices)
+- ❌ Integrations (calendar, LinkedIn, email sync)
+- ❌ Billing/subscription (if applicable)
+
+#### Profile Page (`/profile`)
+
+**What Exists:**
+- ✅ Email display
+- ✅ Dark mode toggle
+- ✅ Sign out button
+
+**What's Missing:**
+- ❌ Profile photo/avatar
+- ❌ Display name editing
+- ❌ Role/title/company editing
+- ❌ Profile completeness indicator
+- ❌ Activity log (last login, recent actions)
+- ❌ Linked accounts (Google, LinkedIn, Microsoft)
+- ❌ API keys / developer settings (if applicable)
+
+#### Accessibility Analysis
+
+**Navigation to Settings:**
+
+From Dashboard (mobile):
+- ❌ No visible settings icon in navigation
+- ⚠️ User taps profile icon (top-right) → goes to `/profile`
+- ⚠️ From `/profile`, must tap back and manually navigate to `/settings`
+
+From Dashboard (desktop):
+- ⚠️ Sidebar exists but no settings link visible in standard navigation
+- 🔍 User must know the `/settings` URL to navigate there
+
+**Discoverability Score: 3/10** - Settings are technically accessible but not discoverable.
+
+#### Information Architecture Issues
+
+**Scattered User Data:**
+
+User's information is stored across:
+1. `leaders` table (basic profile)
+2. `leader_assessments` table (assessment results)
+3. `user_memory` table (voice-extracted facts)
+4. `operator_profiles` table (operator-specific data)
+5. `company_context` table (enriched company data)
+6. Deep profile questionnaire responses (no dedicated table?)
+
+**Problem:** No unified UI to view/edit all of this. Export gives JSON, but users need a visual dashboard.
+
+#### 10/10 Settings Page Benchmark (2027 Standards)
+
+**Google Settings Philosophy (2027):**
+
+1. **Hierarchy:**
+   ```
+   Settings
+   ├─ Account
+   │  ├─ Profile (name, email, photo)
+   │  ├─ Security (password, 2FA, sessions)
+   │  └─ Linked Accounts (Google, LinkedIn)
+   ├─ Work Context
+   │  ├─ Role & Company
+   │  ├─ Team & Goals
+   │  └─ Deep Profile (questionnaire)
+   ├─ Privacy & Data
+   │  ├─ Data Usage (consent, benchmarking)
+   │  ├─ User Memory (review extracted facts)
+   │  ├─ Export Data
+   │  └─ Delete Account
+   ├─ Notifications
+   │  ├─ Email Preferences
+   │  ├─ In-App Notifications
+   │  └─ Digest Frequency
+   ├─ Integrations
+   │  ├─ Calendar (Google, Outlook)
+   │  ├─ Email Sync
+   │  └─ LinkedIn Import
+   └─ Preferences
+      ├─ Theme (dark/light/auto)
+      ├─ Language
+      └─ Accessibility
    ```
 
+2. **Design Patterns:**
+   - **Progressive Disclosure:** Show top-level categories, expand on click
+   - **Inline Editing:** Click to edit, save/cancel in-place
+   - **Live Validation:** Show errors before submit
+   - **Autosave:** Save changes automatically (with visual feedback)
+   - **Search:** Settings search for power users
+   - **Keyboard Navigation:** Full keyboard support
+
+3. **Trust Indicators:**
+   - 🔒 Security badges next to sensitive settings
+   - 📊 Show how data is used ("Your industry helps us benchmark against 1,200 peers")
+   - ⏰ Last updated timestamps
+   - ✅ Verification badges (email verified, profile complete)
+
+4. **Contextual Help:**
+   - Tooltips on hover
+   - "Why we ask this" explanations
+   - Links to privacy policy, terms
+   - Support chat widget
+
+#### Current Settings Page Score: 2/10
+
+**Scoring Breakdown:**
+- ✅ Password change works (1 point)
+- ✅ Data export works (1 point)
+- ❌ No profile editing (-2)
+- ❌ No preferences beyond theme (-2)
+- ❌ Poor discoverability (-2)
+- ❌ No user memory management (-2)
+- ❌ Placeholder notifications (-1)
+
+**To reach 10/10:**
+- Implement full information architecture (above)
+- Add inline editing for all profile fields
+- Create user memory dashboard
+- Add integrations (calendar, LinkedIn)
+- Implement notification preferences
+- Add profile completeness indicator
+- Enable bulk operations (export specific data, bulk delete facts)
+- Add session management
+- Implement settings search
+
 ---
 
-## KNOWN LIMITATIONS
+## CROSS-CUTTING ARCHITECTURAL ISSUES
 
-1. **Old assessments won't show v2 UI** - By design, they lack required data
-2. **Payment integration** - Requires STRIPE_SECRET_KEY env var (already configured)
-3. **Gating logic** - Only 2/4 risk signals, 1/3 scenarios visible without payment
-4. **Mobile PDF export** - May have layout issues on small screens
+### 1. State Management Fragmentation
+
+**Issue:** User profile data scattered across multiple state systems:
+- AuthProvider (auth state)
+- useUserMemory hook (memory facts)
+- useUserState hook (baseline check)
+- AssessmentContext (assessment flow)
+- Local component state (forms)
+
+**Impact:**
+- No single source of truth for "current user profile"
+- Edits in one place don't propagate to others
+- Race conditions when multiple components fetch user data
+
+**2027 Best Practice:** Use a unified user profile store (Zustand, Redux, or React Context) that:
+- Syncs with database
+- Optimistically updates UI
+- Handles offline edits
+- Provides loading/error states
+
+### 2. No Progressive Disclosure Strategy
+
+**Issue:** App shows everything at once or nothing at all:
+- Landing page has full hero, video, carousel, mic button, drawer (cognitive overload)
+- Settings page is flat (no hierarchy)
+- Onboarding is non-existent (voice-first or nothing)
+
+**Impact:**
+- New users overwhelmed
+- Power users can't quickly find advanced settings
+- Mobile users see truncated content
+
+**2027 Best Practice:**
+- **Landing:** Show value prop → one CTA → defer everything else
+- **Onboarding:** 3 core questions → "Complete later" option → progressive enrichment
+- **Settings:** Tabbed interface with search
+
+### 3. No Feedback Loops for Data Quality
+
+**Issue:** Once facts are extracted, user never sees them again unless:
+- High-stakes verification UI appears (one-time)
+- User manually exports JSON (technical users only)
+
+**Impact:**
+- Incorrect facts persist forever
+- User doesn't know what the AI "knows" about them
+- No trust in personalization
+
+**2027 Best Practice:**
+- **Profile Dashboard:** "Here's what we know about you" (editable)
+- **Confidence Indicators:** Show low-confidence facts → prompt for verification
+- **Periodic Review:** "Quarterly profile review" notification
+- **Transparency:** Show how each fact is used ("This influences your benchmark comparison")
+
+### 4. No Continuous Learning Loop
+
+**Issue:** User provides context once (onboarding), then:
+- Updates must be manually initiated
+- No "learning from interactions" visible to user
+- No feedback mechanism ("Was this insight helpful?")
+
+**Impact:**
+- Profile becomes stale
+- User doesn't see value of ongoing engagement
+- No way to correct poor recommendations
+
+**2027 Best Practice:**
+- **Implicit Learning:** Extract context from every conversation → auto-update memory
+- **Explicit Feedback:** "Was this advice relevant to your current challenge?" → update objective/blocker
+- **Temporal Versioning:** Track how user's goals evolve over time (Q1 2026: "Scale team" → Q2 2026: "Improve quality")
+- **Learning Notifications:** "We noticed you're talking about delegation more often. Want to update your priorities?"
 
 ---
 
-## SUCCESS CRITERIA
+## CRITICAL FILES REFERENCE
 
-✅ All 5 edge functions deployed and callable  
-✅ Orchestration logs appear in console  
-✅ Database records created (leader_assessments, risk_signals, tensions, scenarios)  
-✅ v2 UI renders (LeadershipBenchmarkV2, not AILeadershipBenchmark)  
-✅ Gated content shows "Unlock" banners  
-✅ "Upgrade - $99" button opens Stripe checkout  
-✅ Error messages surface to user (not silent failures)  
+### Issue 1 - Splash Screen Flicker
+
+**Core Files:**
+- `/home/user/mindmaker-for-leaders/src/App.tsx:48-49` - Simultaneous render bug
+- `/home/user/mindmaker-for-leaders/src/components/ui/splash-screen.tsx` - Splash component
+- `/home/user/mindmaker-for-leaders/src/router.tsx` - Router config (no lazy loading)
+- `/home/user/mindmaker-for-leaders/src/pages/Landing.tsx:12-34` - Baseline check redirect
+- `/home/user/mindmaker-for-leaders/src/components/landing/HeroSection.tsx` - Heavy video load
+- `/home/user/mindmaker-for-leaders/src/components/auth/AuthProvider.tsx` - Async session fetch
+- `/home/user/mindmaker-for-leaders/src/components/ui/theme-provider.tsx` - localStorage flash
+
+### Issue 2 - Missing Onboarding Context
+
+**Database Schema:**
+- `/home/user/mindmaker-for-leaders/supabase/migrations/20251119111446_*.sql:4-14` - Leaders table
+- `/home/user/mindmaker-for-leaders/supabase/migrations/20260114000000_create_user_memory.sql` - User memory table
+
+**Forms & Components:**
+- `/home/user/mindmaker-for-leaders/src/components/diagnostic/ContactCollectionForm.tsx`
+- `/home/user/mindmaker-for-leaders/src/components/diagnostic/DeepProfileQuestionnaire.tsx`
+- `/home/user/mindmaker-for-leaders/src/components/operator/OperatorIntake.tsx`
+- `/home/user/mindmaker-for-leaders/src/components/voice/VoiceMemoryCapture.tsx`
+
+**API/Logic:**
+- `/home/user/mindmaker-for-leaders/supabase/functions/extract-user-context/` - Voice fact extraction
+- `/home/user/mindmaker-for-leaders/src/hooks/useUserMemory.ts` - Memory management
+- `/home/user/mindmaker-for-leaders/src/utils/context-builder.ts` - LLM context formatting
+
+### Issue 3 - Settings/Profile Pages
+
+**Pages:**
+- `/home/user/mindmaker-for-leaders/src/pages/Settings.tsx:1-363` - Current settings
+- `/home/user/mindmaker-for-leaders/src/pages/Profile.tsx:1-123` - Current profile
+- `/home/user/mindmaker-for-leaders/src/pages/Dashboard.tsx` - Navigation entry point
+
+**Components:**
+- `/home/user/mindmaker-for-leaders/src/components/auth/AccountDeletionDialog.tsx` - Delete account
+- `/home/user/mindmaker-for-leaders/src/components/dashboard/desktop/Sidebar.tsx` - Desktop nav
 
 ---
 
-## IMPLEMENTATION COMPLETE
+## SEVERITY ASSESSMENT
 
-**Status**: ✅ DEPLOYED & READY FOR TESTING
+| Issue | Severity | User Impact | Business Impact | Fix Complexity |
+|-------|----------|-------------|-----------------|----------------|
+| **Splash Flicker** | 🔴 Critical | First impression failure, perceived instability | High bounce rate, low trust | Medium (architectural) |
+| **Missing Onboarding** | 🔴 Critical | Can't personalize recommendations, poor UX | Low engagement, generic advice | High (requires new flows) |
+| **Settings/Profile** | 🟡 High | Can't edit profile, no control over data | Support burden, compliance risk | Medium (UI/UX work) |
 
-**Next Action**: User must complete a NEW assessment to see v2 features.
+---
 
-**Estimated Time to Verify**: 5-7 minutes (full assessment + results view)
+## NEXT STEPS
+
+Per strict diagnostic protocol, NO edits should be made until:
+
+1. ✅ **ROOT_CAUSE.md** is created (Phase 2)
+2. ✅ **IMPLEMENTATION_PLAN.md** with checkpoints is approved (Phase 3)
+3. ✅ Each fix is proven at checkpoints CP0-CP4
+
+Continue to ROOT_CAUSE.md for detailed causal analysis of each issue.

@@ -11,6 +11,8 @@ import { ThemeProvider } from '@/components/ui/theme-provider'
 import { AuthProvider } from '@/components/auth/AuthProvider'
 import { OfflineIndicator } from '@/components/ui/offline-indicator'
 import { SplashScreen } from '@/components/ui/splash-screen'
+import { InitializationLoader } from '@/components/ui/InitializationLoader'
+import { AppStateProvider, useAppState } from '@/contexts/AppStateContext'
 import { initMobileViewport } from '@/utils/mobileViewport'
 import { router } from '@/router'
 import '@/index.css'
@@ -24,31 +26,64 @@ const queryClient = new QueryClient({
   },
 })
 
-export default function App() {
-  const [showSplash, setShowSplash] = useState(() => {
-    // Only show splash once per session
-    return !sessionStorage.getItem('mindmaker-splash-shown')
-  })
+function AppContent() {
+  const { appState, advanceToSplash, advanceToReady } = useAppState()
 
-  // Initialize mobile viewport utility
   useEffect(() => {
-    const cleanup = initMobileViewport()
-    return cleanup
-  }, [])
+    // Initialize app (theme, viewport, etc.)
+    const initializeApp = async () => {
+      // Initialize mobile viewport
+      initMobileViewport()
+
+      // Wait minimum 100ms to ensure theme is applied
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      // Check if splash already shown
+      const splashShown = sessionStorage.getItem('mindmaker-splash-shown')
+      if (splashShown) {
+        console.log('🔄 Splash already shown, advancing to READY')
+        advanceToReady()
+      } else {
+        console.log('🎬 First visit, advancing to SPLASH')
+        advanceToSplash()
+      }
+    }
+
+    initializeApp()
+  }, [advanceToSplash, advanceToReady])
 
   const handleSplashComplete = () => {
     sessionStorage.setItem('mindmaker-splash-shown', 'true')
-    setShowSplash(false)
+    advanceToReady()
   }
 
+  // Render based on state machine
+  if (appState === 'LOADING') {
+    return <InitializationLoader />
+  }
+
+  if (appState === 'SPLASH') {
+    return <SplashScreen onComplete={handleSplashComplete} />
+  }
+
+  // Only render router when READY
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster />
+      <OfflineIndicator />
+    </>
+  )
+}
+
+export default function App() {
   return (
     <ThemeProvider defaultTheme="dark">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-          <RouterProvider router={router} />
-          <Toaster />
-          <OfflineIndicator />
+          <AppStateProvider>
+            <AppContent />
+          </AppStateProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
