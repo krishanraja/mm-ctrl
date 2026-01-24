@@ -3,7 +3,7 @@
  * Main app with splash screen, routing, and providers.
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from '@/components/ui/toaster'
@@ -13,6 +13,7 @@ import { OfflineIndicator } from '@/components/ui/offline-indicator'
 import { SplashScreen } from '@/components/ui/splash-screen'
 import { InitializationLoader } from '@/components/ui/InitializationLoader'
 import { AppStateProvider, useAppState } from '@/contexts/AppStateContext'
+import { DiagnosticsPanel } from '@/components/dev/DiagnosticsPanel'
 import { initMobileViewport } from '@/utils/mobileViewport'
 import { router } from '@/router'
 import '@/index.css'
@@ -72,6 +73,7 @@ function AppContent() {
       <RouterProvider router={router} />
       <Toaster />
       <OfflineIndicator />
+      <DiagnosticsPanel />
     </>
   )
 }

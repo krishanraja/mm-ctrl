@@ -1,13 +1,13 @@
 import * as React from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Home, BarChart3, Calendar, Mic } from "lucide-react"
+import { Home, BarChart3, Calendar, Brain } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/pulse', icon: BarChart3, label: 'Pulse' },
   { path: '/today', icon: Calendar, label: 'Today' },
-  { path: '/voice', icon: Mic, label: 'Voice' },
+  { path: '/memory', icon: Brain, label: 'Memory' },
 ]
 
 export function BottomNav() {

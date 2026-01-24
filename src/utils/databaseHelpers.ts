@@ -474,9 +474,7 @@ export async function safeInsertWithIntegrityChecks(
     onConflict,
     ignoreDuplicates
   });
-}
-
-/**
+}/**
  * Executes multiple inserts in a transaction-like manner using atomic RPC
  * Falls back to sequential inserts if RPC not available
  */
@@ -523,17 +521,13 @@ export async function insertWithTransaction(
       console.warn('⚠️ RPC transaction error, falling back to sequential:', error.message);
       // Fall through to sequential inserts
     }
-  }
-
-  // Fallback: Sequential inserts (not truly transactional but better than nothing)
+  }  // Fallback: Sequential inserts (not truly transactional but better than nothing)
   const results: Array<{ table: string; success: boolean; count: number; error?: string }> = [];
   const errors: string[] = [];  for (const insert of inserts) {
     const result = await safeInsertWithRetry(insert.table, insert.records, {
       onConflict: insert.options?.onConflict,
       ignoreDuplicates: insert.options?.ignoreDuplicates
-    });
-
-    results.push({
+    });    results.push({
       table: insert.table,
       ...result
     });    if (!result.success) {

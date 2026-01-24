@@ -1,15 +1,15 @@
 # Visual Guidelines
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2026-01-16
 
 ---
 
 ## Visual Principles
 
-1. **Bold, Not Busy** - Strong elements, generous white space
-2. **Functional, Not Decorative** - Every visual serves purpose
-3. **Professional, Not Corporate** - Clean but not sterile
-4. **Modern, Not Trendy** - Timeless, not chasing fads
+1. **Bold, Not Busy** - Strong elements, generous white space, one focal point per screen
+2. **Functional, Not Decorative** - Every visual serves purpose, no gradients for decoration
+3. **Professional, Not Corporate** - Clean but not sterile, executive-grade quality
+4. **Modern, Not Trendy** - Timeless, not chasing fads, Apple-like refinement
 
 ---
 
@@ -25,6 +25,7 @@ Mobile:  4-column grid, 12px gutter
 ### Content Width
 ```
 Max width: 1280px (7xl)
+Hero card max width: max-w-2xl
 Comfortable reading: 65-75 characters per line
 Centered content: mx-auto
 ```
@@ -35,36 +36,91 @@ Micro:    4px, 8px   (component internals)
 Small:    12px, 16px (related elements)
 Medium:   24px, 32px (section spacing)
 Large:    48px, 64px (major sections)
-XLarge:   80px+      (hero, major dividers)
+XLarge:   80px+      (hero padding)
 ```
 
 ---
 
 ## Hero Sections
 
-### Structure
+### Landing Page Hero Structure
 ```tsx
-<section className="min-h-screen flex items-center bg-ink text-white">
-  {/* Background effects */}
-  {/* GIF overlay */}
-  {/* Gradient overlay */}
-  {/* Grid pattern */}
-  
-  {/* Content */}
+<section className="h-[var(--mobile-vh)] flex items-center">
+  {/* Video background (subtle) */}
+  {/* Centered white card */}
   <div className="container-width relative z-10">
-    <Logo />
-    <h1>Large headline with <span>mint highlight</span></h1>
-    <p>Supporting copy</p>
-    <CTAs />
+    <div className="max-w-2xl mx-auto">
+      <Card className="p-8 sm:p-12 md:p-16 lg:p-20 rounded-3xl shadow-lg">
+        <Logo />
+        <h1>Large headline with <span>animated underline</span></h1>
+        <p>Supporting copy</p>
+        <CTAs />
+        <TrustIndicators />
+      </Card>
+    </div>
   </div>
 </section>
 ```
 
-### Visual Effects
+### Hero Card Specifications
+- Max width: `max-w-2xl`
+- Padding: `p-8 sm:p-12 md:p-16 lg:p-20`
+- Background: White
+- Border radius: `rounded-3xl`
+- Shadow: `shadow-lg`
+
+### Hero Elements
+1. Logo: Top-left, minimal spacing
+2. Headline: Large, bold, tight leading
+3. Underline animation: SVG path, animated draw
+4. Description: Large, readable, muted color
+5. CTA Buttons: Primary + Secondary, large, rounded
+6. Trust indicators: Small checkmarks, muted text
+
+### Hero Animations
+- Fade in on mount (staggered delays)
+- Slide up for card
+- SVG underline draw animation
+
+### Visual Effects (Background)
 - Particle/dot GIF background (20% opacity)
 - Gradient overlays (dark to darker)
 - Animated grid pattern
 - Glowing orbs (mint, blurred, animated pulse)
+
+---
+
+## Video Background
+
+### Specifications
+```css
+Opacity: 0.12 (12%)
+Filter: grayscale(0.4) brightness(0.95) contrast(0.9)
+Position: Fixed, full viewport
+Z-index: -z-20
+Overlay: bg-gradient-to-b from-black/5 via-transparent to-black/10
+Additional: Subtle radial gradient with mint at 3% opacity
+```
+
+**Critical:** Video must be truly subtle - barely visible, not distracting.
+
+### Implementation
+```tsx
+<video
+  className="fixed inset-0 w-full h-full object-cover -z-20 pointer-events-none"
+  style={{ opacity: 0.12, filter: 'grayscale(0.4) brightness(0.95) contrast(0.9)' }}
+  autoPlay
+  loop
+  muted
+  playsInline
+  preload="metadata"
+>
+  <source src="/video.mp4" type="video/mp4" />
+</video>
+
+{/* Overlay */}
+<div className="fixed inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/10 -z-10 pointer-events-none" />
+```
 
 ---
 
@@ -91,6 +147,15 @@ Section 4: bg-ink (dark, with white text)
 ---
 
 ## Card Patterns
+
+### Base Card Style
+```css
+background: white (--card)
+border: 1px solid border/40 (subtle)
+border-radius: 24px (rounded-3xl)
+shadow: shadow-lg (subtle, Apple-like)
+padding: p-8 sm:p-12 md:p-16 lg:p-20 (generous)
+```
 
 ### Premium Card (Featured)
 ```css
@@ -123,30 +188,42 @@ shadow: 2xl
 
 **Use for:** Hero CTAs, overlays on images
 
+### Card Hover States
+- Subtle background change: `hover:bg-muted/30`
+- Shadow elevation: `hover:shadow-md`
+- Transition: `transition-all duration-200`
+
 ---
 
 ## Button Styles
 
-### Primary CTA (Mint)
+### Primary CTA (Ink)
 ```tsx
-<Button className="bg-mint text-ink hover:bg-mint/90 
-                   shadow-lg hover:shadow-xl 
-                   hover:scale-105 transition-all">
+<Button className="bg-primary text-primary-foreground hover:bg-primary/90 
+                   border-0 rounded-2xl px-10 sm:px-12 h-14 sm:h-16
+                   shadow-md hover:shadow-lg text-lg sm:text-xl font-semibold">
 ```
 **Use for:** Main conversion actions
 
-### Secondary CTA (Ink)
+### Secondary CTA (Mint)
 ```tsx
-<Button className="bg-ink text-white hover:bg-ink/90">
+<Button className="bg-mint text-ink hover:bg-mint/90 
+                   shadow-lg hover:shadow-xl hover:scale-105 transition-all">
 ```
 **Use for:** Supporting actions
 
 ### Outline CTA
 ```tsx
 <Button variant="outline" 
-        className="border-mint text-mint hover:bg-mint/20">
+        className="border-border/60 rounded-2xl hover:bg-muted/50 hover:border-border/80">
 ```
 **Use for:** Tertiary actions, "learn more"
+
+### Button Requirements
+- All variants must have `border-0` explicitly
+- Smooth transitions (200ms)
+- Proper hover states
+- Accessible focus states
 
 ---
 
@@ -154,7 +231,7 @@ shadow: 2xl
 
 ### Page Hierarchy
 ```
-H1 (Hero):     60px bold, Gobold, mint accent
+H1 (Hero):     60px bold, Gobold, tight leading
 H2 (Section):  36px bold, Inter, ink
 H3 (Card):     24px semibold, Inter, ink
 Body:          16px regular, Inter, foreground
@@ -249,6 +326,11 @@ Hero accent:   2s duration
 CTAs:          group-hover:animate-pulse (on icon)
 ```
 
+### Animation Principles
+1. **Smooth, Not Bouncy** - Damping: 35, Stiffness: 400, Mass: 0.8
+2. **Fast, Not Slow** - Most animations: 200-350ms, Page transitions: 400ms
+3. **Subtle, Not Dramatic** - Small movements (24px max), gentle opacity changes
+
 ---
 
 ## Imagery Guidelines
@@ -304,6 +386,12 @@ Container:       px-4 → px-6
 Gaps:            gap-4 → gap-6
 ```
 
+### No-Scroll Mobile Experience
+- Every page fits viewport
+- Fixed headers
+- Scrollable content areas only
+- Proper viewport handling with `--mobile-vh`
+
 ---
 
 ## Accessibility Visual Requirements
@@ -323,6 +411,36 @@ Gaps:            gap-4 → gap-6
 - Visible on all interactive elements
 - Mint ring (2px) with 2px offset
 - Never remove focus styles
+
+---
+
+## Testing Requirements
+
+### Visual Testing
+- Screenshot every page on desktop (1920x1080)
+- Screenshot every page on mobile (375x812)
+- Compare against Apple design standards
+- Verify spacing consistency
+
+### Visual Audit Process
+1. Screenshot every page on desktop (1920x1080)
+2. Screenshot every page on mobile (375x812)
+3. Critically analyze each screenshot as if you were Steve Jobs
+4. Identify all visual issues
+5. Fix issues
+6. Repeat audit process
+7. Complete at least 5 full audit cycles
+8. Do not stop until visual quality is 10/10
+
+### What to Look For
+- Spacing consistency
+- Typography hierarchy
+- Color consistency
+- Component alignment
+- Animation smoothness
+- Visual polish
+- Apple-like refinement
+- Executive-grade quality
 
 ---
 

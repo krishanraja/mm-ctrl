@@ -12,6 +12,7 @@ const Pulse = lazy(() => import('@/pages/Pulse'))
 const Today = lazy(() => import('@/pages/Today'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Auth = lazy(() => import('@/pages/Auth'))
+const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
 
 // Loading component shown while lazy-loaded pages are loading
 function LoadingPage() {
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
   {
     path: '/profile',
     element: <LazyWrapper><RequireAuth><Profile /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/memory',
+    element: <LazyWrapper><RequireAuth><MemoryCenter /></RequireAuth></LazyWrapper>,
   },
   {
     path: '*',

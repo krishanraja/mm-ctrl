@@ -2,17 +2,24 @@
 
 Complete feature inventory across all three Mindmaker tools.
 
+**Last Updated:** 2026-01-16
+
 ---
 
 ## Leaders Tool: Individual AI Literacy Diagnostic
 
 ### Entry & Assessment
 
-**Diagnostic Entry** (`HeroSection.tsx`)
+**Landing Page** (`HeroSection.tsx`)
+- Apple-like, executive-grade design
+- Subtle video background (12% opacity)
+- Centered white card with generous padding
 - Plain-language value proposition
 - Single "Start diagnostic" CTA
+- Trust indicators (checkmarks, muted text)
 - No quiz/gamification language
 - 10-minute time expectation set
+- No-scroll on mobile
 
 **Assessment Flow** (`UnifiedAssessment.tsx`)
 - Quiz path: 20 Likert-scale questions across 6 dimensions
@@ -102,6 +109,100 @@ Complete feature inventory across all three Mindmaker tools.
 - Priority ranking and evidence
 - Downloadable reports
 - Payment: $49 via Stripe
+
+---
+
+## Mobile Dashboard Experience
+
+### Dashboard Page (`/dashboard`)
+
+**Mobile Layout** (`MobileDashboard.tsx`)
+- Full viewport height (no-scroll)
+- Fixed header with user name
+- Scrollable content area
+- Fixed bottom navigation
+- Floating voice button
+
+**Hero Status Card** (`HeroStatusCard.tsx`)
+- Current tier display
+- Percentile ranking
+- Quick stats overview
+- Visual tier indicator
+
+**Priority Card Stack** (`PriorityCardStack.tsx`)
+- Top priorities from tensions
+- Swipeable card interface
+- Action-oriented content
+- Links to detailed views
+
+**Bottom Navigation** (`BottomNav.tsx`)
+- 4 navigation items
+- Fixed bottom position
+- Active state indicators
+- Backdrop blur effect
+
+**Voice Button** (`VoiceButton.tsx`)
+- Floating action button
+- Positioned above bottom nav
+- Quick access to voice input
+- Animated state changes
+
+### Today Page (`/today`)
+
+**Layout**
+- Fixed header (title + subtitle)
+- Scrollable content area
+- No-scroll pattern on mobile
+
+**Weekly Action** (`WeeklyAction.tsx`)
+- Current week's focus action
+- Progress tracking
+- Completion status
+- Context from assessment
+
+**Daily Provocation** (`DailyProvocation.tsx`)
+- Daily thought-provoking question
+- Tied to user's tensions
+- Encourages reflection
+- Rotates daily
+
+### Voice Page (`/voice`)
+
+**Layout**
+- Fixed header with back button
+- Centered voice recorder
+- Large mic icon
+- Countdown timer
+- Start/Stop button
+
+**Voice Recorder** (`VoiceRecorder.tsx`)
+- OpenAI Whisper integration
+- Real-time transcription
+- Visual feedback during recording
+- Auto-stop on silence
+
+### Pulse Page (`/pulse`)
+
+**Strategic Pulse** (`StrategicPulse.tsx`)
+- Baseline assessment summary
+- Tensions overview
+- Risk signals display
+- Trend indicators
+
+**Layout**
+- Fixed header
+- Scrollable content
+- Card-based sections
+
+### Sheet Component (`Sheet.tsx`)
+
+**Specifications**
+- Bottom sheet pattern
+- Three height variants: small (40vh), medium (60vh), large (85vh)
+- Backdrop with blur
+- Spring animation physics
+- Drag handle indicator
+- Rounded top corners
 
 ---
 
@@ -282,9 +383,9 @@ Complete feature inventory across all three Mindmaker tools.
 - Profile management
 
 ### AI Integration
-- OpenAI GPT-4 for insight generation
-- Vertex AI (Gemini) as fallback
-- Voice transcription via Deepgram/Whisper
+- OpenAI GPT-4o for insight generation
+- Google Gemini as fallback
+- OpenAI Whisper for voice transcription
 - Structured output validation via Zod schemas
 
 ### Data Privacy & Consent
@@ -316,3 +417,62 @@ Complete feature inventory across all three Mindmaker tools.
 - Text file download of prompts
 - Referral code generation
 - Social sharing (coming soon)
+
+---
+
+## Mobile-First Architecture
+
+### No-Scroll Mobile Experience
+
+**Requirements**
+- Every page fits viewport on mobile
+- Fixed headers and navigation
+- Scrollable content areas only
+- Proper viewport handling with `--mobile-vh`
+
+**Implementation Pattern**
+```tsx
+<div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col">
+  <header className="flex-shrink-0">
+    {/* Fixed header */}
+  </header>
+  <main className="flex-1 overflow-y-auto">
+    {/* Scrollable content */}
+  </main>
+  <nav className="flex-shrink-0">
+    {/* Fixed bottom nav */}
+  </nav>
+</div>
+```
+
+### Touch Targets
+- Minimum 44x44px for all interactive elements
+- Generous padding on buttons
+- Adequate spacing between tap targets
+
+### Safe Areas
+- Account for notches (top safe area)
+- Account for home indicators (bottom safe area)
+- Use `env(safe-area-inset-*)` CSS functions
+
+---
+
+## Animation & Motion
+
+### Motion Library
+- Framer Motion for all animations
+- Consistent spring physics (stiffness: 400, damping: 35)
+- Shared animation variants in `src/lib/motion.ts`
+
+### Animation Types
+- `fadeIn`: Opacity transitions
+- `slideUp`: Vertical entrance animations
+- `scaleIn`: Scale transitions
+- `pageTransition`: Full page transitions
+- `cardEntrance`: Card-specific animations
+
+### Principles
+- Fast, not slow (200-350ms)
+- Smooth, not bouncy
+- Subtle, not dramatic
+- Respect reduced motion preferences

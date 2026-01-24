@@ -1,12 +1,29 @@
 # Design System
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2026-01-16
 
 ---
 
 ## Color System
 
 ### Primary Palette
+
+**Light Mode (Primary)**
+```css
+--background: 40 20% 97%;        /* #faf9f7 - Warm off-white */
+--foreground: 213 50% 11%;       /* #0e1a2b - Deep navy/ink */
+--card: 0 0% 100%;               /* Pure white for cards */
+--card-foreground: 213 50% 11%;  /* Ink */
+--border: 220 10% 90%;           /* #e3e5e8 - Light grey */
+--muted: 220 10% 90%;            /* Light grey */
+--muted-foreground: 220 10% 50%; /* #737a85 - Mid grey */
+--primary: 213 50% 11%;          /* Ink */
+--primary-foreground: 40 20% 97%; /* Off-white */
+--accent: 158 45% 55%;           /* #4db38a - Mint green */
+--accent-foreground: 213 50% 11%; /* Ink */
+```
+
+### Legacy Reference
 ```
 Ink:  #0e1a2b (HSL: 210 58% 11%)  - Main structure, typography
 Mint: #7ef4c2 (HSL: 158 82% 73%) - Highlights, sparingly
@@ -31,26 +48,48 @@ Graphite:    #333639 (HSL: 200 5% 21%) - Strong text
 --ring: var(--mint)
 ```
 
+### Shadows (Apple-like subtle)
+```css
+--shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+--shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.06);
+--shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05);
+--shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 10px 10px -5px hsl(0 0% 0% / 0.04);
+```
+
 ---
 
 ## Typography
 
 ### Font Families
 ```
-Primary: 'Inter' - Body text, UI
+Primary: System font stack (San Francisco on Mac, Segoe UI on Windows)
 Display: 'Gobold' - Headlines, hero text
-Grotesk: 'Inter', 'Helvetica Neue', 'Arial' - Brand typography (Ctrl, MINDMAKER)
+Brand: Grotesk ('Inter', 'Helvetica Neue', 'Arial') - Brand typography (Ctrl, MINDMAKER)
 ```
 
 ### Scale
 ```
 Hero:     text-5xl to text-6xl (48-60px)
-H1:       text-4xl to text-5xl (36-48px)
-H2:       text-3xl to text-4xl (30-36px)
-H3:       text-2xl (24px)
-Body:     text-base (16px)
+H1:       text-3xl → text-4xl → text-5xl → text-6xl (responsive)
+H2:       text-2xl → text-3xl → text-4xl
+H3:       text-xl → text-2xl
+Body:     text-base (16px) → text-lg → text-xl
 Small:    text-sm (14px)
 Tiny:     text-xs (12px)
+```
+
+### Line Heights
+```
+Headlines: leading-[1.1] (tight, modern)
+Body: leading-relaxed (1.625)
+Small: leading-normal (1.5)
+```
+
+### Letter Spacing
+```
+Brand text: 0.06em
+Headlines: tracking-tight (-0.02em)
+Body: default
 ```
 
 ### Usage Rules
@@ -58,7 +97,6 @@ Tiny:     text-xs (12px)
 - **Inter:** All other text
 - **Grotesk:** Brand typography (Ctrl, MINDMAKER) - use `.brand-typography-ctrl` utility
 - **Line Height:** 1.6 for body, 1.2 for headlines
-- **Letter Spacing:** Tight (-0.02em) for headlines
 
 ### Brand Typography Pattern
 
@@ -96,6 +134,21 @@ Tiny:     text-xs (12px)
 20   = 80px  (hero padding)
 ```
 
+### Padding Scale (Apple-like generous)
+```
+Cards: p-8 sm:p-12 md:p-16 lg:p-20 (generous, Apple-like)
+Buttons: px-10 sm:px-12 (horizontal), h-14 sm:h-16 (vertical)
+Sections: py-6 sm:py-8 md:py-12
+Gaps: gap-4 sm:gap-6 lg:gap-8
+```
+
+### Border Radius
+```
+Cards: rounded-3xl (24px)
+Buttons: rounded-2xl (16px)
+Small elements: rounded-xl (12px)
+```
+
 ### Utility Classes
 ```
 section-padding:    py-12 md:py-20 (sections)
@@ -109,22 +162,44 @@ touch-target:       min-h-[44px] (mobile buttons)
 
 ### Buttons
 
-**Primary (Mint)**
+**Primary Button (Ink)**
 ```tsx
-<Button className="bg-mint text-ink hover:bg-mint/90">
+<Button className="bg-primary text-primary-foreground hover:bg-primary/90 
+                   border-0 rounded-2xl px-10 sm:px-12 h-14 sm:h-16
+                   shadow-md hover:shadow-lg text-lg sm:text-xl font-semibold">
 ```
 
-**Secondary (Ink)**
+**Secondary Button (Mint)**
 ```tsx
-<Button className="bg-ink text-white hover:bg-ink/90">
+<Button className="bg-mint text-ink hover:bg-mint/90 shadow-lg hover:shadow-xl 
+                   hover:scale-105 transition-all">
 ```
 
-**Outline**
+**Outline Button**
 ```tsx
-<Button variant="outline" className="border-mint text-mint">
+<Button variant="outline" className="border-border/60 rounded-2xl
+                                     hover:bg-muted/50 hover:border-border/80">
 ```
+
+**Hero Button (Large CTA)**
+```tsx
+<Button className="bg-primary text-primary-foreground border-0 rounded-2xl
+                   px-10 sm:px-12 h-14 sm:h-16 shadow-md hover:shadow-lg
+                   text-lg sm:text-xl font-semibold">
+```
+
+**Critical:** All buttons must have `border-0` explicitly set (no default borders).
 
 ### Cards
+
+**Base Card Style**
+```css
+background: white (--card)
+border: 1px solid border/40 (subtle)
+border-radius: 24px (rounded-3xl)
+shadow: shadow-lg (subtle, Apple-like)
+padding: p-8 sm:p-12 md:p-16 lg:p-20 (generous)
+```
 
 **Premium Card** (featured content)
 ```tsx
@@ -139,6 +214,19 @@ touch-target:       min-h-[44px] (mobile buttons)
   // bg-card, border, p-6
 </div>
 ```
+
+**Glass Card** (Hero)
+```css
+background: white/95
+backdrop-filter: blur(12px)
+border: 1px solid white/30
+shadow: 2xl
+```
+
+**Hover States:**
+- Subtle background change: `hover:bg-muted/30`
+- Shadow elevation: `hover:shadow-md`
+- Transition: `transition-all duration-200`
 
 ### Modals/Dialogs
 ```tsx
@@ -159,10 +247,46 @@ fade-in-up: opacity 0→1, translateY 20px→0 (0.6s)
 pulse: scale 1→1.05→1 (2s infinite)
 ```
 
+### Motion Transitions
+```typescript
+fast: { duration: 0.2, ease: [0.4, 0, 0.2, 1] }
+normal: { duration: 0.35, ease: [0.4, 0, 0.2, 1] }
+slow: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
+spring: { type: 'spring', stiffness: 400, damping: 35, mass: 0.8 }
+```
+
+### Motion Variants
+- `fadeIn`: Opacity 0 → 1
+- `slideUp`: Y: 24px → 0, opacity 0 → 1
+- `scaleIn`: Scale: 0.96 → 1, opacity 0 → 1
+- `pageTransition`: Full page transitions
+- `cardEntrance`: Card-specific entrance
+
 ### Usage
 ```tsx
-className="fade-in-up" style={{animationDelay: '0.1s'}}
+import { fadeInProps, slideUpProps } from '@/lib/motion';
+
+<motion.div {...fadeInProps}>
+  {/* Content */}
+</motion.div>
 ```
+
+### Animation Principles
+
+1. **Smooth, Not Bouncy**
+   - Damping: 35
+   - Stiffness: 400
+   - Mass: 0.8
+
+2. **Fast, Not Slow**
+   - Most animations: 200-350ms
+   - Page transitions: 400ms
+   - No animations over 500ms
+
+3. **Subtle, Not Dramatic**
+   - Small movements (24px max)
+   - Gentle opacity changes
+   - No scale > 1.05
 
 ### Motion Preferences
 ```css
@@ -192,7 +316,7 @@ Base styles = mobile, use `md:`, `lg:` for larger screens
 
 ### Hero Section
 ```tsx
-<section className="min-h-screen flex items-center bg-ink text-white">
+<section className="h-[var(--mobile-vh)] flex items-center bg-ink text-white">
   <div className="container-width">
     <h1 className="text-5xl md:text-6xl font-bold">
 ```
@@ -234,6 +358,16 @@ Base styles = mobile, use `md:`, `lg:` for larger screens
   {/* Content */}
   <main className="relative z-10">...</main>
 </div>
+```
+
+**Subtle Video Background (Landing Page):**
+```css
+Opacity: 0.12 (12%)
+Filter: grayscale(0.4) brightness(0.95) contrast(0.9)
+Position: Fixed, full viewport
+Z-index: -z-20
+Overlay: bg-gradient-to-b from-black/5 via-transparent to-black/10
+Additional: Subtle radial gradient with mint at 3% opacity
 ```
 
 **Critical Rules:**
@@ -386,6 +520,25 @@ It sets a CSS custom property `--mobile-vh` that updates automatically on:
 }
 ```
 
+### No-Scroll Pattern
+
+**Structure:**
+```tsx
+<div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col">
+  {/* Fixed header */}
+  <div className="flex-shrink-0">
+    {/* Header content */}
+  </div>
+  
+  {/* Scrollable content */}
+  <div className="flex-1 overflow-y-auto">
+    {/* Main content */}
+  </div>
+</div>
+```
+
+**Critical:** Every mobile page must use this pattern.
+
 ### Usage Patterns
 
 #### ✅ CORRECT: Using Mobile Viewport Height
@@ -454,6 +607,20 @@ It sets a CSS custom property `--mobile-vh` that updates automatically on:
   {/* Content */}
 </div>
 ```
+
+### Safe Areas
+
+**Bottom Safe Area:**
+```css
+.pb-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+```
+
+**Usage:**
+- Bottom navigation
+- Scrollable content areas
+- Floating buttons
 
 ### MobileLayout Component
 
@@ -559,8 +726,6 @@ When creating mobile components:
 - ESLint rule prevents `bg-background` on App.tsx
 - Build validation script checks for this
 - Component tests verify video visibility
-
-**See:** [VIDEO_BACKGROUND_PATTERN.md](../VIDEO_BACKGROUND_PATTERN.md) for complete guide
 
 ---
 

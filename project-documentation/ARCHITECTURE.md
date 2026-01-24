@@ -2,18 +2,21 @@
 
 Complete system architecture and data flow documentation.
 
+**Last Updated:** 2026-01-16
+
 ---
 
 ## System Overview
 
 **Stack**:
 - **Frontend**: React 18 + TypeScript + Vite
-- **UI**: shadcn/ui + Tailwind CSS
+- **UI**: shadcn/ui + Tailwind CSS + Framer Motion
 - **Backend**: Supabase (PostgreSQL + Edge Functions)
-- **AI**: OpenAI GPT-4 (primary), Vertex AI Gemini (fallback)
+- **AI**: OpenAI GPT-4o/GPT-4o-mini (primary), Google Gemini (fallback)
+- **Voice**: OpenAI Whisper API for voice-to-text
 - **Payments**: Stripe
 - **Email**: Resend
-- **Hosting**: Lovable Cloud (frontend), Supabase Cloud (backend)
+- **Hosting**: Vercel/Netlify (frontend), Supabase Cloud (backend)
 
 **Architecture Type**: Serverless full-stack with edge functions
 
@@ -29,8 +32,24 @@ src/
 │   ├── ui/                    # shadcn components (DO NOT EDIT)
 │   ├── auth/                  # Authentication flows
 │   ├── voice/                 # Voice assessment components
-│   ├── ai-chat/               # AI chat interface (deprecated)
-│   ├── HeroSection.tsx        # Landing page hero
+│   ├── landing/
+│   │   └── HeroSection.tsx    # Landing page hero
+│   ├── dashboard/
+│   │   └── mobile/
+│   │       ├── MobileDashboard.tsx
+│   │       ├── BottomNav.tsx
+│   │       ├── VoiceButton.tsx
+│   │       ├── Sheet.tsx
+│   │       ├── HeroStatusCard.tsx
+│   │       └── PriorityCardStack.tsx
+│   ├── action/
+│   │   └── WeeklyAction.tsx
+│   ├── provocation/
+│   │   └── DailyProvocation.tsx
+│   ├── pulse/
+│   │   └── StrategicPulse.tsx
+│   ├── mobile/
+│   │   └── MobileLayout.tsx   # Mobile viewport wrapper
 │   ├── UnifiedAssessment.tsx  # Quiz + voice assessment orchestrator
 │   ├── UnifiedResults.tsx     # Results page with tabs
 │   ├── LeadershipBenchmarkV2.tsx  # Overview tab
@@ -44,11 +63,14 @@ src/
 │   ├── useExecutiveInsights.ts
 │   ├── useLeadQualification.ts
 │   └── [Other hooks]
+├── lib/
+│   └── motion.ts              # Animation utilities (Framer Motion)
 ├── utils/
 │   ├── orchestrateAssessmentV2.ts  # Main orchestration logic
 │   ├── aggregateLeaderResults.ts   # Data aggregation for UI
 │   ├── pipelineGuards.ts           # Input validation
 │   ├── edgeFunctionClient.ts       # Edge function wrapper
+│   ├── mobileViewport.ts           # Viewport handling
 │   └── [Other utilities]
 ├── types/
 │   ├── pipeline.ts            # Core type contracts
@@ -59,9 +81,14 @@ src/
 │   └── supabase/
 │       ├── client.ts          # Supabase client
 │       └── types.ts           # Generated DB types (READ-ONLY)
-└── pages/
-    ├── Index.tsx              # Main landing page
-    └── NotFound.tsx           # 404 page
+├── pages/
+│   ├── Index.tsx              # Main landing page
+│   ├── Dashboard.tsx
+│   ├── Today.tsx
+│   ├── Voice.tsx
+│   ├── Pulse.tsx
+│   └── NotFound.tsx           # 404 page
+└── index.css                  # Design system
 ```
 
 ### State Management
@@ -86,8 +113,205 @@ src/
 
 Using React Router v6:
 - `/` - Landing page
+- `/dashboard` - Main dashboard
+- `/today` - Today page
+- `/voice` - Voice recording
+- `/pulse` - Strategic pulse
 - `/auth` - Authentication (handled by Supabase Auth UI)
-- All other routes render `Index.tsx` (SPA architecture)
+- All other routes render `NotFound.tsx`
+
+---
+
+## Component Architecture
+
+### Core UI Components
+
+#### Button Component (`src/components/ui/button.tsx`)
+
+**Variants:**
+- `default`: Primary action (ink background, white text)
+- `outline`: Secondary action (transparent, bordered)
+- `ghost`: Tertiary action (transparent, hover background)
+- `hero`: Large primary CTA (for landing page)
+- `cta`: Accent-colored action
+
+**Sizes:**
+- `sm`: h-9
+- `default`: h-10
+- `lg`: h-11
+- `xl`: h-14, text-base
+
+**Critical Requirements:**
+- All variants must have `border-0` explicitly
+- Smooth transitions (200ms)
+- Proper hover states
+- Accessible focus states
+
+#### Card Component (`src/components/ui/card.tsx`)
+
+**Structure:**
+- `Card`: Base container (white, rounded-3xl, shadow-lg)
+- `CardHeader`: Title section (p-8 pb-6, space-y-3)
+- `CardContent`: Main content (p-8 pt-4)
+- `CardTitle`: Heading (text-xl, font-bold)
+
+**Styling:**
+- Background: Pure white
+- Border: Subtle (border/40)
+- Shadow: Soft, Apple-like
+- Padding: Generous (p-8 minimum)
+
+### Landing Page Components
+
+#### HeroSection (`src/components/landing/HeroSection.tsx`)
+
+**Layout:**
+- Full viewport height: `h-[var(--mobile-vh)]`
+- Centered content card
+- Video background (subtle)
+- No scroll on mobile
+
+**Content Card:**
+- Max width: `max-w-2xl`
+- Padding: `p-8 sm:p-12 md:p-16 lg:p-20`
+- Background: White
+- Border radius: `rounded-3xl`
+- Shadow: `shadow-lg`
+
+**Elements:**
+1. Logo: Top-left, minimal spacing
+2. Headline: Large, bold, tight leading
+3. Underline animation: SVG path, animated draw
+4. Description: Large, readable, muted color
+5. CTA Buttons: Primary + Secondary, large, rounded
+6. Trust indicators: Small checkmarks, muted text
+
+**Animations:**
+- Fade in on mount (staggered delays)
+- Slide up for card
+- SVG underline draw animation
+
+### Dashboard Components
+
+#### MobileDashboard (`src/components/dashboard/mobile/MobileDashboard.tsx`)
+
+**Layout:**
+- Full viewport height
+- Fixed header
+- Scrollable content area
+- Fixed bottom navigation
+- Floating voice button
+
+**Structure:**
+```
+┌─────────────────┐
+│ Header (fixed)  │
+├─────────────────┤
+│                 │
+│ Content (scroll)│
+│                 │
+├─────────────────┤
+│ BottomNav       │
+└─────────────────┘
+     [VoiceBtn]
+```
+
+#### BottomNav (`src/components/dashboard/mobile/BottomNav.tsx`)
+
+**Specifications:**
+- Fixed bottom
+- Height: `h-20`
+- Background: `bg-background/98` with backdrop blur
+- Border: Top border, subtle
+- Shadow: Subtle top shadow
+- Items: 4 navigation items
+- Active state: `text-primary bg-primary/10`
+
+#### Sheet Component (`src/components/dashboard/mobile/Sheet.tsx`)
+
+**Specifications:**
+- Bottom sheet pattern
+- Heights: small (40vh), medium (60vh), large (85vh)
+- Backdrop: `bg-black/40` with blur
+- Animation: Spring physics (stiffness: 400, damping: 35)
+- Handle: Top drag indicator
+- Rounded top corners: `rounded-t-3xl`
+
+---
+
+## Page Specifications
+
+### Landing Page (`/`)
+
+**Requirements:**
+- No scroll on mobile
+- Video background (subtle)
+- Centered white card
+- Large, readable typography
+- Clear CTAs
+- Trust indicators below
+
+**Mobile:**
+- Single viewport height
+- All content visible
+- No scrolling required
+
+**Desktop:**
+- Centered layout
+- Max width container
+- Same no-scroll principle
+
+### Dashboard (`/dashboard`)
+
+**Mobile:**
+- Fixed header with user name
+- Hero status card (tier, percentile)
+- Priority card stack
+- Bottom navigation
+- Floating voice button
+
+**Desktop:**
+- Sidebar navigation (optional)
+- Grid layout
+- More horizontal space
+
+### Today Page (`/today`)
+
+**Layout:**
+- Fixed header (title + subtitle)
+- Scrollable content area
+- Weekly action card
+- Daily provocation card
+
+**No-Scroll Pattern:**
+```tsx
+<div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col">
+  <div className="flex-shrink-0 px-6 pt-6 pb-4">
+    {/* Header */}
+  </div>
+  <div className="flex-1 overflow-y-auto px-6 pb-safe-bottom">
+    {/* Scrollable content */}
+  </div>
+</div>
+```
+
+### Voice Page (`/voice`)
+
+**Layout:**
+- Fixed header with back button
+- Centered voice recorder
+- Large mic icon
+- Countdown timer
+- Start/Stop button
+
+### Pulse Page (`/pulse`)
+
+**Layout:**
+- Fixed header
+- Scrollable content
+- Baseline card
+- Tensions cards
+- Risk signals cards
 
 ---
 
@@ -359,20 +583,20 @@ orchestrateAssessmentV2() with source='voice'
 
 ### LLM Architecture
 
-**Primary**: OpenAI GPT-4
-**Fallback**: Vertex AI (Gemini Pro)
+**Primary**: OpenAI GPT-4o/GPT-4o-mini
+**Fallback**: Google Gemini
 
 **Call Pattern**:
 ```typescript
 try {
   response = await openai.chat.completions.create({
-    model: 'gpt-4',
+    model: 'gpt-4o',
     messages: [...],
     response_format: { type: 'json_object' }
   });
 } catch (error) {
-  console.error('OpenAI failed, trying Vertex AI');
-  response = await vertexAI.generateContent({...});
+  console.error('OpenAI failed, trying Gemini');
+  response = await gemini.generateContent({...});
 }
 ```
 
@@ -422,7 +646,7 @@ Validation ensures:
 interface PipelineSafeResponse<T> {
   success: boolean;
   data: T;
-  generationSource: 'vertex-ai' | 'openai' | 'fallback' | 'none';
+  generationSource: 'vertex-ai' | 'openai' | 'gemini' | 'fallback' | 'none';
   durationMs: number;
   error?: string;
 }
@@ -444,7 +668,7 @@ export function validateProfileData(profile: any): SafeProfileData {
 
 **LLM Failures**:
 1. Try OpenAI
-2. If fails, try Vertex AI
+2. If fails, try Gemini
 3. If both fail, use generic fallbacks
 
 **Fallback Content**:
@@ -533,14 +757,14 @@ npm run build
 
 **Output**: `dist/` directory with static assets
 
-**Hosting**: Lovable Cloud (auto-deployed on git push)
+**Hosting**: Vercel/Netlify (auto-deployed on git push)
 
 ### Backend
 
 **Edge Functions**:
 - Auto-deployed via Supabase CLI
 - Environment variables stored in Supabase dashboard
-- Secrets: `OPENAI_API_KEY`, `VERTEX_AI_PROJECT_ID`, etc.
+- Secrets: `OPENAI_API_KEY`, `GEMINI_API_KEY`, etc.
 
 **Database Migrations**:
 - Located in `supabase/migrations/`
@@ -552,6 +776,7 @@ npm run build
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `OPENAI_API_KEY` (Supabase secrets)
+- `GEMINI_API_KEY` (Supabase secrets)
 - `RESEND_API_KEY` (Supabase secrets)
 - `STRIPE_SECRET_KEY` (Supabase secrets)
 
@@ -642,6 +867,7 @@ Before each release:
 - [ ] Prompt library displays
 - [ ] Dark mode works
 - [ ] Mobile responsive
+- [ ] No-scroll on mobile pages
 
 ---
 
@@ -656,6 +882,7 @@ Before each release:
   "react-router-dom": "^6.26.2",
   "@supabase/supabase-js": "^2.50.3",
   "@tanstack/react-query": "^5.56.2",
+  "framer-motion": "^11.x",
   "tailwindcss": "^3.x",
   "lucide-react": "^0.462.0",
   "zod": "^3.23.8"
@@ -683,12 +910,12 @@ All from `shadcn/ui`:
 - **No backend code execution**: Only edge functions (Deno runtime)
 - **No direct file uploads**: Use Supabase Storage API
 - **No WebSockets**: Use Supabase Realtime for live updates
-- **LLM rate limits**: OpenAI tier limits, Vertex AI quotas
+- **LLM rate limits**: OpenAI tier limits, Gemini quotas
 
 ### Business
 
 - **Supabase free tier limits**: 500 MB database, 2 GB egress/month
-- **OpenAI API costs**: ~$0.02 per assessment (GPT-4)
+- **OpenAI API costs**: ~$0.02 per assessment (GPT-4o)
 - **Stripe processing fees**: 2.9% + $0.30 per transaction
 
 ---

@@ -1,0 +1,160 @@
+/**
+ * MemoryItemCard Component
+ * 
+ * Displays a single memory item with quick actions.
+ * Mobile-first design with touch-friendly targets.
+ */
+
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Pencil, Trash2, Check, AlertCircle, User, Building, Target, AlertTriangle, Settings } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import type { UserMemoryFact, FactCategory } from '@/types/memory';
+
+interface MemoryItemCardProps {
+  memory: UserMemoryFact;
+  onEdit: (memory: UserMemoryFact) => void;
+  onDelete: (id: string) => void;
+  isDeleting?: boolean;
+}
+
+const categoryIcons: Record<FactCategory, React.ElementType> = {
+  identity: User,
+  business: Building,
+  objective: Target,
+  blocker: AlertTriangle,
+  preference: Settings,
+};
+
+const categoryColors: Record<FactCategory, string> = {
+  identity: 'bg-blue-500/10 text-blue-600',
+  business: 'bg-purple-500/10 text-purple-600',
+  objective: 'bg-green-500/10 text-green-600',
+  blocker: 'bg-orange-500/10 text-orange-600',
+  preference: 'bg-gray-500/10 text-gray-600',
+};
+
+const verificationBadges: Record<string, { label: string; className: string }> = {
+  verified: { label: 'Verified', className: 'bg-green-500/10 text-green-600' },
+  corrected: { label: 'Corrected', className: 'bg-blue-500/10 text-blue-600' },
+  inferred: { label: 'Inferred', className: 'bg-yellow-500/10 text-yellow-600' },
+  rejected: { label: 'Rejected', className: 'bg-red-500/10 text-red-600' },
+};
+
+export const MemoryItemCard: React.FC<MemoryItemCardProps> = ({
+  memory,
+  onEdit,
+  onDelete,
+  isDeleting = false,
+}) => {
+  const CategoryIcon = categoryIcons[memory.fact_category] || User;
+  const categoryColor = categoryColors[memory.fact_category] || categoryColors.identity;
+  const verificationBadge = verificationBadges[memory.verification_status] || verificationBadges.inferred;
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: isDeleting ? 0.5 : 1, y: 0 }}
+      exit={{ opacity: 0, x: -100 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        "bg-card border border-border rounded-2xl p-4",
+        "hover:shadow-md transition-shadow duration-200",
+        isDeleting && "pointer-events-none"
+      )}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <div className={cn("p-1.5 rounded-lg flex-shrink-0", categoryColor)}>
+            <CategoryIcon className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-medium text-foreground truncate">
+              {memory.fact_label}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {formatDate(memory.created_at)}
+            </p>
+          </div>
+        </div>
+        
+        {/* Quick actions */}
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <button
+            onClick={() => onEdit(memory)}
+            className={cn(
+              "p-2 rounded-lg min-h-[44px] min-w-[44px]",
+              "flex items-center justify-center",
+              "hover:bg-secondary/50 transition-colors",
+              "text-muted-foreground hover:text-foreground"
+            )}
+            aria-label="Edit memory"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(memory.id)}
+            disabled={isDeleting}
+            className={cn(
+              "p-2 rounded-lg min-h-[44px] min-w-[44px]",
+              "flex items-center justify-center",
+              "hover:bg-destructive/10 transition-colors",
+              "text-muted-foreground hover:text-destructive"
+            )}
+            aria-label="Delete memory"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <p className="text-foreground text-sm line-clamp-2 mb-3">
+        {memory.fact_value}
+      </p>
+
+      {/* Footer with badges */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <Badge variant="secondary" className={cn("text-xs", verificationBadge.className)}>
+          {memory.verification_status === 'verified' && <Check className="w-3 h-3 mr-1" />}
+          {verificationBadge.label}
+        </Badge>
+        
+        <Badge variant="secondary" className="text-xs bg-secondary/50 text-muted-foreground">
+          {memory.source_type}
+        </Badge>
+        
+        {memory.confidence_score < 0.7 && (
+          <Badge variant="secondary" className="text-xs bg-yellow-500/10 text-yellow-600">
+            <AlertCircle className="w-3 h-3 mr-1" />
+            Low confidence
+          </Badge>
+        )}
+      </div>
+
+      {/* Context snippet if available */}
+      {memory.fact_context && (
+        <p className="text-xs text-muted-foreground/70 mt-2 italic line-clamp-1">
+          "{memory.fact_context}"
+        </p>
+      )}
+    </motion.div>
+  );
+};
+
+export default MemoryItemCard;
