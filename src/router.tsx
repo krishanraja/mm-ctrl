@@ -17,6 +17,7 @@ const MissionCheckIn = lazy(() => import('@/pages/MissionCheckIn'))
 const MissionHistory = lazy(() => import('@/pages/MissionHistory'))
 const Progress = lazy(() => import('@/pages/Progress'))
 const WeeklyCheckIn = lazy(() => import('@/pages/WeeklyCheckIn'))
+const Booking = lazy(() => import('@/pages/Booking'))
 
 // Loading component shown while lazy-loaded pages are loading
 function LoadingPage() {
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
   {
     path: '/check-in',
     element: <LazyWrapper><RequireAuth><WeeklyCheckIn /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/booking',
+    element: <LazyWrapper><Booking /></LazyWrapper>,
   },
   {
     path: '*',
