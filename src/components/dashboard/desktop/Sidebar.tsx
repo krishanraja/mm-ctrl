@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useNavigate, useLocation } from "react-router-dom"
-import { Home, BarChart3, Calendar, Mic, Settings, LogOut } from "lucide-react"
+import { Home, BarChart3, Calendar, Mic, Target, ClipboardList, Settings, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { Button } from "@/components/ui/button"
@@ -10,6 +10,8 @@ const navItems = [
   { path: '/pulse', icon: BarChart3, label: 'Strategic Pulse' },
   { path: '/today', icon: Calendar, label: 'Today' },
   { path: '/voice', icon: Mic, label: 'Voice Entry' },
+  { path: '/progress', icon: Target, label: 'Progress' },
+  { path: '/missions/history', icon: ClipboardList, label: 'Missions' },
 ]
 
 export function Sidebar() {

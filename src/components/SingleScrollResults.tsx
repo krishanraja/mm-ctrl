@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { FirstMoveSelector } from '@/components/missions/FirstMoveSelector';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -124,6 +125,7 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [unlockLoading, setUnlockLoading] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [showMissionSelector, setShowMissionSelector] = useState(false);
 
   const isValidUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -545,10 +547,32 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
                   <p className="text-muted-foreground leading-relaxed">
                     {primaryMove.content}
                   </p>
+                  {isUnlocked && data?.firstMoves && data.firstMoves.length > 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setShowMissionSelector(true)}
+                      className="mt-3 border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
+                    >
+                      <Target className="h-3.5 w-3.5 mr-1.5" />
+                      Commit to a Move
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Mission Selector Modal */}
+        {data?.firstMoves && (
+          <FirstMoveSelector
+            open={showMissionSelector}
+            onOpenChange={setShowMissionSelector}
+            firstMoves={data.firstMoves}
+            assessmentId={data.assessmentId}
+            onMissionCreated={() => navigate('/dashboard')}
+          />
         )}
 
         {/* Show dimension scores preview for everyone */}
