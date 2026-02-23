@@ -904,6 +904,72 @@ export type Database = {
           },
         ]
       }
+      company_context: {
+        Row: {
+          apollo_data: Json | null
+          assessment_id: string | null
+          board_deck_content: Json | null
+          board_deck_urls: string[] | null
+          calendar_connected: boolean | null
+          calendar_events: Json | null
+          company_name: string
+          created_at: string | null
+          enrichment_status: string
+          id: string
+          leader_id: string
+          updated_at: string | null
+          website_content: string | null
+          website_url: string | null
+        }
+        Insert: {
+          apollo_data?: Json | null
+          assessment_id?: string | null
+          board_deck_content?: Json | null
+          board_deck_urls?: string[] | null
+          calendar_connected?: boolean | null
+          calendar_events?: Json | null
+          company_name: string
+          created_at?: string | null
+          enrichment_status?: string
+          id?: string
+          leader_id: string
+          updated_at?: string | null
+          website_content?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          apollo_data?: Json | null
+          assessment_id?: string | null
+          board_deck_content?: Json | null
+          board_deck_urls?: string[] | null
+          calendar_connected?: boolean | null
+          calendar_events?: Json | null
+          company_name?: string
+          created_at?: string | null
+          enrichment_status?: string
+          id?: string
+          leader_id?: string
+          updated_at?: string | null
+          website_content?: string | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_context_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_context_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "leaders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_identifier_salt: {
         Row: {
           created_at: string | null
@@ -925,6 +991,33 @@ export type Database = {
           is_active?: boolean | null
           rotated_at?: string | null
           salt_value?: string
+        }
+        Relationships: []
+      }
+      company_research_cache: {
+        Row: {
+          created_at: string | null
+          domain: string
+          expires_at: string
+          id: string
+          research_data: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          domain: string
+          expires_at: string
+          id?: string
+          research_data: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string
+          expires_at?: string
+          id?: string
+          research_data?: Json
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1367,6 +1460,36 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          created_at: string | null
+          feedback_text: string
+          id: string
+          page_context: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          feedback_text: string
+          id?: string
+          page_context?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          feedback_text?: string
+          id?: string
+          page_context?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       google_sheets_sync_log: {
         Row: {
           created_at: string
@@ -1727,6 +1850,7 @@ export type Database = {
           benchmark_tier: string | null
           created_at: string | null
           generation_status: Json | null
+          has_deep_context: boolean | null
           has_deep_profile: boolean | null
           has_full_diagnostic: boolean | null
           id: string
@@ -1741,6 +1865,7 @@ export type Database = {
           benchmark_tier?: string | null
           created_at?: string | null
           generation_status?: Json | null
+          has_deep_context?: boolean | null
           has_deep_profile?: boolean | null
           has_full_diagnostic?: boolean | null
           id?: string
@@ -1755,6 +1880,7 @@ export type Database = {
           benchmark_tier?: string | null
           created_at?: string | null
           generation_status?: Json | null
+          has_deep_context?: boolean | null
           has_deep_profile?: boolean | null
           has_full_diagnostic?: boolean | null
           id?: string
@@ -1770,6 +1896,60 @@ export type Database = {
             columns: ["leader_id"]
             isOneToOne: false
             referencedRelation: "leaders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_check_ins: {
+        Row: {
+          accepted_as_mission: boolean | null
+          ai_recommendation: string | null
+          ai_reflection: string | null
+          ai_suggested_move: string | null
+          check_in_text: string
+          created_at: string | null
+          id: string
+          leader_id: string
+          mission_id: string | null
+          voice_url: string | null
+        }
+        Insert: {
+          accepted_as_mission?: boolean | null
+          ai_recommendation?: string | null
+          ai_reflection?: string | null
+          ai_suggested_move?: string | null
+          check_in_text: string
+          created_at?: string | null
+          id?: string
+          leader_id: string
+          mission_id?: string | null
+          voice_url?: string | null
+        }
+        Update: {
+          accepted_as_mission?: boolean | null
+          ai_recommendation?: string | null
+          ai_reflection?: string | null
+          ai_suggested_move?: string | null
+          check_in_text?: string
+          created_at?: string | null
+          id?: string
+          leader_id?: string
+          mission_id?: string | null
+          voice_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_check_ins_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "leaders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_check_ins_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "leader_missions"
             referencedColumns: ["id"]
           },
         ]
@@ -1844,6 +2024,70 @@ export type Database = {
           },
         ]
       }
+      leader_missions: {
+        Row: {
+          assessment_id: string | null
+          check_in_date: string
+          completed_at: string | null
+          completion_notes: string | null
+          created_at: string | null
+          first_move_id: string | null
+          id: string
+          leader_id: string
+          mission_text: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          assessment_id?: string | null
+          check_in_date: string
+          completed_at?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          first_move_id?: string | null
+          id?: string
+          leader_id: string
+          mission_text: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          assessment_id?: string | null
+          check_in_date?: string
+          completed_at?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          first_move_id?: string | null
+          id?: string
+          leader_id?: string
+          mission_text?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_missions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_missions_first_move_id_fkey"
+            columns: ["first_move_id"]
+            isOneToOne: false
+            referencedRelation: "leader_first_moves"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_missions_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "leaders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leader_org_scenarios: {
         Row: {
           assessment_id: string
@@ -1875,6 +2119,57 @@ export type Database = {
             columns: ["assessment_id"]
             isOneToOne: false
             referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leader_progress_snapshots: {
+        Row: {
+          assessment_id: string | null
+          benchmark_score: number | null
+          benchmark_tier: string | null
+          comparison_to_baseline: Json | null
+          created_at: string | null
+          dimension_scores: Json
+          id: string
+          leader_id: string
+          snapshot_type: string | null
+        }
+        Insert: {
+          assessment_id?: string | null
+          benchmark_score?: number | null
+          benchmark_tier?: string | null
+          comparison_to_baseline?: Json | null
+          created_at?: string | null
+          dimension_scores?: Json
+          id?: string
+          leader_id: string
+          snapshot_type?: string | null
+        }
+        Update: {
+          assessment_id?: string | null
+          benchmark_score?: number | null
+          benchmark_tier?: string | null
+          comparison_to_baseline?: Json | null
+          created_at?: string | null
+          dimension_scores?: Json
+          id?: string
+          leader_id?: string
+          snapshot_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leader_progress_snapshots_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leader_progress_snapshots_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "leaders"
             referencedColumns: ["id"]
           },
         ]
@@ -2037,6 +2332,120 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      leads: {
+        Row: {
+          audience_type: string | null
+          calendly_opened: boolean | null
+          calendly_opened_at: string | null
+          commitment_level: string | null
+          company_research: Json | null
+          created_at: string | null
+          email: string
+          email_sent: boolean | null
+          email_sent_at: string | null
+          engagement_score: number | null
+          id: string
+          job_title: string | null
+          name: string
+          path_type: string | null
+          selected_program: string | null
+          session_data: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          audience_type?: string | null
+          calendly_opened?: boolean | null
+          calendly_opened_at?: string | null
+          commitment_level?: string | null
+          company_research?: Json | null
+          created_at?: string | null
+          email: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          engagement_score?: number | null
+          id?: string
+          job_title?: string | null
+          name: string
+          path_type?: string | null
+          selected_program?: string | null
+          session_data?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          audience_type?: string | null
+          calendly_opened?: boolean | null
+          calendly_opened_at?: string | null
+          commitment_level?: string | null
+          company_research?: Json | null
+          created_at?: string | null
+          email?: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          engagement_score?: number | null
+          id?: string
+          job_title?: string | null
+          name?: string
+          path_type?: string | null
+          selected_program?: string | null
+          session_data?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      meeting_prep_sessions: {
+        Row: {
+          agenda_text: string
+          assessment_id: string
+          company_context_id: string | null
+          created_at: string | null
+          generated_at: string | null
+          id: string
+          meeting_date: string | null
+          meeting_title: string
+          prep_materials: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          agenda_text: string
+          assessment_id: string
+          company_context_id?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          meeting_date?: string | null
+          meeting_title: string
+          prep_materials?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          agenda_text?: string
+          assessment_id?: string
+          company_context_id?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          meeting_date?: string | null
+          meeting_title?: string
+          prep_materials?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_prep_sessions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "leader_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meeting_prep_sessions_company_context_id_fkey"
+            columns: ["company_context_id"]
+            isOneToOne: false
+            referencedRelation: "company_context"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partner_intakes: {
         Row: {
@@ -3094,6 +3503,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_memory_settings: {
+        Row: {
+          auto_summarize_enabled: boolean | null
+          created_at: string | null
+          id: string
+          retention_days: number | null
+          store_memory_enabled: boolean | null
+          store_voice_transcripts: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_summarize_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          retention_days?: number | null
+          store_memory_enabled?: boolean | null
+          store_voice_transcripts?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_summarize_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          retention_days?: number | null
+          store_memory_enabled?: boolean | null
+          store_voice_transcripts?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -3745,6 +4187,9 @@ export type Database = {
           total_sessions: number
         }[]
       }
+      cleanup_expired_memories: { Args: never; Returns: number }
+      cleanup_expired_research_cache: { Args: never; Returns: undefined }
+      export_user_memory: { Args: { p_user_id: string }; Returns: Json }
       generate_referral_code: {
         Args: { p_assessment_id: string; p_email: string }
         Returns: string
@@ -3758,6 +4203,25 @@ export type Database = {
           industry: string
           organizer_name: string
         }[]
+      }
+      get_or_create_memory_settings: {
+        Args: { p_user_id: string }
+        Returns: {
+          auto_summarize_enabled: boolean | null
+          created_at: string | null
+          id: string
+          retention_days: number | null
+          store_memory_enabled: boolean | null
+          store_voice_transcripts: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_memory_settings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       get_or_create_profile: {
         Args: {

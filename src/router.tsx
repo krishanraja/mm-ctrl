@@ -13,6 +13,11 @@ const Today = lazy(() => import('@/pages/Today'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Auth = lazy(() => import('@/pages/Auth'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
+const WeeklyCheckin = lazy(() => import('@/pages/WeeklyCheckin'))
+const MissionCheckIn = lazy(() => import('@/pages/MissionCheckIn'))
+const MissionHistory = lazy(() => import('@/pages/MissionHistory'))
+const Progress = lazy(() => import('@/pages/Progress'))
+const Booking = lazy(() => import('@/pages/Booking'))
 
 // Loading component shown while lazy-loaded pages are loading
 function LoadingPage() {
@@ -64,6 +69,26 @@ export const router = createBrowserRouter([
   {
     path: '/memory',
     element: <LazyWrapper><RequireAuth><MemoryCenter /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/check-in',
+    element: <LazyWrapper><RequireAuth><WeeklyCheckin /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/mission-check-in',
+    element: <LazyWrapper><MissionCheckIn /></LazyWrapper>,
+  },
+  {
+    path: '/missions/history',
+    element: <LazyWrapper><RequireAuth><MissionHistory /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/progress',
+    element: <LazyWrapper><RequireAuth><Progress /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/booking',
+    element: <LazyWrapper><Booking /></LazyWrapper>,
   },
   {
     path: '*',

@@ -7,6 +7,7 @@ import { DailyProvocationCard } from "../DailyProvocationCard"
 import { BottomNav } from "./BottomNav"
 import { VoiceFAB } from "./VoiceFAB"
 import { useAuth } from "@/components/auth/AuthProvider"
+import { MissionsDashboard } from "@/components/missions/MissionsDashboard"
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -51,6 +52,7 @@ export function MobileDashboard() {
           ) : (
             <>
               {data.baseline && <HeroStatusCard baseline={data.baseline} />}
+              <MissionsDashboard />
               {data.weeklyAction && <WeeklyActionCard action={data.weeklyAction} />}
               {data.dailyProvocation && <DailyProvocationCard provocation={data.dailyProvocation} />}
             </>
