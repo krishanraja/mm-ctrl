@@ -33,6 +33,8 @@ import { RiskSignalCard } from '@/components/ui/risk-signal-card';
 import { UnlockResultsForm, UnlockFormData } from './UnlockResultsForm';
 import { ArrowRightCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { FirstMoveSelector, Mission } from './missions/FirstMoveSelector';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SingleScrollResultsProps {
   assessmentData: any;
@@ -124,6 +126,12 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [unlockLoading, setUnlockLoading] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
+  
+  // Phase 1: First Move Selection state
+  const [hasSelectedFirstMove, setHasSelectedFirstMove] = useState(false);
+  const [currentMission, setCurrentMission] = useState<Mission | null>(null);
+  const [showMissionSelector, setShowMissionSelector] = useState(false);
+  const [leaderId, setLeaderId] = useState<string | null>(null);
 
   const isValidUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -238,6 +246,59 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
       }
     };
   }, []);
+
+  // Phase 1: Check for existing first move selection
+  useEffect(() => {
+    const checkFirstMoveStatus = async () => {
+      if (!data?.assessmentId) return;
+      
+      try {
+        // Get leader ID from assessment
+        const { data: assessment } = await supabase
+          .from('leader_assessments')
+          .select('leader_id')
+          .eq('id', data.assessmentId)
+          .single();
+        
+        if (!assessment?.leader_id) return;
+        
+        setLeaderId(assessment.leader_id);
+        
+        // Check if user already selected first move for this assessment
+        const { data: mission } = await supabase
+          .from('leader_missions')
+          .select('*')
+          .eq('assessment_id', data.assessmentId)
+          .eq('status', 'active')
+          .single();
+        
+        if (mission) {
+          setHasSelectedFirstMove(true);
+          setCurrentMission(mission as Mission);
+        } else if (data.firstMoves && data.firstMoves.length > 0) {
+          // No mission selected yet and we have first moves - show selector
+          setShowMissionSelector(true);
+        }
+      } catch (error) {
+        console.error('Error checking first move status:', error);
+      }
+    };
+    
+    if (data && !loading) {
+      checkFirstMoveStatus();
+    }
+  }, [data, loading]);
+
+  const handleMissionSelected = (mission: Mission) => {
+    setCurrentMission(mission);
+    setHasSelectedFirstMove(true);
+    setShowMissionSelector(false);
+  };
+
+  const handleSkipMission = () => {
+    setShowMissionSelector(false);
+    setHasSelectedFirstMove(true); // Treat skip as "selected" to not block results
+  };
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -388,7 +449,19 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   const topRisks = data?.riskSignals?.slice(0, 3) || [];
 
   return (
-    <div className="bg-background min-h-[100dvh] py-4 sm:py-6">
+    <>
+      {/* Phase 1: First Move Selector Modal */}
+      {showMissionSelector && leaderId && data?.assessmentId && data?.firstMoves && data.firstMoves.length > 0 && (
+        <FirstMoveSelector
+          leaderId={leaderId}
+          assessmentId={data.assessmentId}
+          recommendedMoves={data.firstMoves}
+          onSelect={handleMissionSelected}
+          onSkip={handleSkipMission}
+        />
+      )}
+      
+      <div className="bg-background min-h-[100dvh] py-4 sm:py-6">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 max-w-4xl">
         
         {/* Brand Header */}
@@ -881,5 +954,6 @@ export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
 
       </div>
     </div>
+    </>
   );
 };
