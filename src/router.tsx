@@ -15,6 +15,7 @@ const Auth = lazy(() => import('@/pages/Auth'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
 const MissionCheckIn = lazy(() => import('@/pages/MissionCheckIn'))
 const MissionHistory = lazy(() => import('@/pages/MissionHistory'))
+const Progress = lazy(() => import('@/pages/Progress'))
 
 // Loading component shown while lazy-loaded pages are loading
 function LoadingPage() {
@@ -74,6 +75,10 @@ export const router = createBrowserRouter([
   {
     path: '/missions/history',
     element: <LazyWrapper><RequireAuth><MissionHistory /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/progress',
+    element: <LazyWrapper><RequireAuth><Progress /></RequireAuth></LazyWrapper>,
   },
   {
     path: '*',
