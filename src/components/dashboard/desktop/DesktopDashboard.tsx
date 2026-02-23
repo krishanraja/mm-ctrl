@@ -6,6 +6,7 @@ import { WeeklyActionCard } from "../WeeklyActionCard"
 import { DailyProvocationCard } from "../DailyProvocationCard"
 import { Sidebar } from "./Sidebar"
 import { useAuth } from "@/components/auth/AuthProvider"
+import { MissionsDashboard } from "@/components/missions/MissionsDashboard"
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -52,6 +53,13 @@ export function DesktopDashboard() {
               </>
             ) : (
               <>
+                {/* Phase 1: Missions Dashboard */}
+                {user?.id && (
+                  <div className="lg:col-span-2">
+                    <MissionsDashboard leaderId={user.id} />
+                  </div>
+                )}
+                
                 {data.baseline && (
                   <div className="lg:col-span-2">
                     <HeroStatusCard baseline={data.baseline} />
