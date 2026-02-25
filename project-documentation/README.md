@@ -4,8 +4,8 @@
 
 This folder contains all technical and strategic documentation for the Mindmaker AI literacy system.
 
-**Last Updated:** 2026-01-16
-**Current Version:** v3.0 (Apple-like executive-grade rebuild)
+**Last Updated:** 2026-02-25
+**Current Version:** v3.1 (Memory Center, Missions & Progress tracking)
 
 ---
 
@@ -26,18 +26,12 @@ This folder contains all technical and strategic documentation for the Mindmaker
 - [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) - Design tokens, components, and patterns
 - [BRANDING.md](./BRANDING.md) - Brand voice, tone, and messaging guidelines
 
-### AI Reasoning & Behavioral Framework
-- [LLM_CRITICAL_THINKING_TRAINING.md](./LLM_CRITICAL_THINKING_TRAINING.md) - **Critical document** for AI reasoning quality and behavioral psychology filters
-
 ### Operational Knowledge
 - [HISTORY.md](./HISTORY.md) - Evolution of the product and major pivots
 - [COMMON_ISSUES.md](./COMMON_ISSUES.md) - Recurring bugs and architectural pain points
 - [DECISIONS_LOG.md](./DECISIONS_LOG.md) - Key architectural and product decisions
 - [REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md) - Step-by-step rebuild instructions
 - [MASTER_INSTRUCTIONS.md](./MASTER_INSTRUCTIONS.md) - AI assistant behavior guidelines
-
-### Audit Reports
-- [PRODUCTION_AUDIT_2024_12_13.md](./PRODUCTION_AUDIT_2024_12_13.md) - Comprehensive production readiness audit
 
 ---
 
@@ -50,11 +44,9 @@ This folder contains all technical and strategic documentation for the Mindmaker
 5. Reference [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for UI implementation
 6. Review [VISUAL_GUIDELINES.md](./VISUAL_GUIDELINES.md) for visual standards
 
-## Critical: AI Reasoning Framework
+## AI Reasoning Framework
 
-**All AI-generated insights must be anchored in the cognitive frameworks defined in [LLM_CRITICAL_THINKING_TRAINING.md](./LLM_CRITICAL_THINKING_TRAINING.md).**
-
-This document defines the behavioral psychology filter for leadership decisions, including:
+All AI-generated insights are anchored in cognitive frameworks embedded in the `ai-generate` edge function.
 
 ### Five Core Cognitive Frameworks
 1. **A/B Framing** - Reframe decisions to expose bias (positive vs negative framing)
@@ -79,7 +71,7 @@ This document defines the behavioral psychology filter for leadership decisions,
 
 ---
 
-## Current State (v3.0)
+## Current State (v3.1)
 
 ### Design Philosophy
 - **Apple-like quality**: Executive-grade, 10/10 visual polish
@@ -91,9 +83,20 @@ This document defines the behavioral psychology filter for leadership decisions,
 - React 18 + TypeScript + Vite
 - Framer Motion for animations
 - Tailwind CSS + shadcn/ui components
-- Supabase (PostgreSQL + Edge Functions)
-- OpenAI GPT-4o + Whisper
-- Google Gemini fallback
+- Supabase (PostgreSQL + 45 Edge Functions)
+- Vertex AI (Gemini 2.0 Flash) primary + OpenAI GPT-4o fallback
+- OpenAI Whisper for voice transcription
+- 20 lazy-loaded pages across 14 routes
+- 24 custom hooks
+
+### Core Features
+- **Diagnostic Assessment**: 10-minute AI literacy diagnostic with quiz and voice paths
+- **Results & Insights**: AI-generated tensions, risk signals, org scenarios, thinking tools
+- **Memory Center**: Voice-first context extraction with encrypted storage
+- **Missions System**: First Moves commitment tracking with check-ins
+- **Progress Tracking**: Snapshots and drift detection over time
+- **Weekly Check-ins**: Structured reflections with AI-generated responses
+- **Operator Tools**: Decision advisor, meeting prep, prompt coaching
 
 ### Visual Standards
 - Generous spacing (Apple-like padding)
@@ -122,6 +125,10 @@ This document defines the behavioral psychology filter for leadership decisions,
 - **Risk Signals**: Blind spots, waste, or theatre indicators
 - **Org Scenarios**: 3-5 year structural change projections
 - **Thinking Tools**: Mental models and prompts (not "prompt library")
+- **First Moves**: Prioritised next steps from diagnostic (not "action items")
+- **Missions**: Active commitment to a First Move with check-in tracking
+- **Memory**: Voice-first context facts about a leader (identity, objectives, blockers)
+- **Check-ins**: Weekly structured reflections on progress
 
 ---
 
@@ -129,11 +136,15 @@ This document defines the behavioral psychology filter for leadership decisions,
 
 | Field | Value |
 |-------|-------|
-| Documentation last updated | 2026-01-16 |
-| Current product version | v3.0 (Apple-like rebuild) |
+| Documentation last updated | 2026-02-25 |
+| Current product version | v3.1 (Memory, Missions, Progress) |
 | Architecture version | Single DB-based architecture |
 | Design system version | v3.0 (Light mode, Apple-like) |
-| Last audit | 2024-12-13 |
+| AI primary model | Vertex AI (Gemini 2.0 Flash) |
+| AI fallback model | OpenAI GPT-4o |
+| Edge functions | 45 |
+| Pages | 20 (14 routes) |
+| Custom hooks | 24 |
 
 ---
 
@@ -173,6 +184,3 @@ This document defines the behavioral psychology filter for leadership decisions,
 | Known bugs | COMMON_ISSUES.md |
 | Past decisions | DECISIONS_LOG.md |
 | Setup guide | REPLICATION_GUIDE.md |
-| **AI reasoning frameworks** | **LLM_CRITICAL_THINKING_TRAINING.md** |
-| **Cognitive frameworks** | **LLM_CRITICAL_THINKING_TRAINING.md** |
-| **Behavioral psychology** | **LLM_CRITICAL_THINKING_TRAINING.md** |
