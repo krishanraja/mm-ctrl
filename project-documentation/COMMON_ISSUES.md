@@ -2,7 +2,7 @@
 
 Recurring bugs, architectural pain points, and solutions.
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-02-25
 
 ---
 
@@ -335,3 +335,56 @@ Before shipping:
 - [ ] Verify touch targets are adequate
 - [ ] Memory Center: verify RLS prevents cross-user access
 - [ ] Memory Center: verify encryption key is set in production
+- [ ] Missions: verify First Moves display after assessment
+- [ ] Missions: verify check-in flow works end-to-end
+- [ ] Progress: verify snapshot generation
+- [ ] Progress: verify drift computation accuracy
+- [ ] Weekly Check-in: verify AI response generation
+
+---
+
+## Missions System Issues (Feb 2026)
+
+### Issue 25: First Moves Not Displaying
+**Symptom**: Assessment completes but no First Moves shown on results page
+**Root Cause**: `leader_first_moves` table migration not applied or `ai-generate` not returning first moves in response
+**Solution**: Verify migration `20251119111446` is applied, check `ai-generate` response includes `first_moves` array
+**Status**: ⚠️ Monitor on deployment
+
+### Issue 26: Mission Status Not Updating
+**Symptom**: Completing or skipping a mission doesn't update status
+**Root Cause**: RLS policy may prevent update if `leader_id` doesn't match
+**Solution**: Verify RLS policy allows status updates for own missions
+**Status**: ⚠️ Requires verification
+
+---
+
+## Progress Tracking Issues (Feb 2026)
+
+### Issue 27: Drift Score Calculation
+**Symptom**: Drift score shows unexpected values or NaN
+**Root Cause**: Missing baseline assessment data or null dimension scores
+**Solution**: Add null guards in `compute-drift` function, ensure baseline exists before computing
+**Status**: ⚠️ Monitor
+
+### Issue 28: Batch Drift Timeout
+**Symptom**: `batch-compute-drift` edge function times out
+**Root Cause**: Processing too many leaders in a single invocation
+**Solution**: Implement pagination/batching within the function, increase timeout
+**Status**: ⚠️ Monitor
+
+---
+
+## AI Model Issues (Feb 2026)
+
+### Issue 29: Vertex AI Authentication Failure
+**Symptom**: AI generation falls back to OpenAI consistently
+**Root Cause**: Google service account key expired or misconfigured
+**Solution**: Verify `GOOGLE_SERVICE_ACCOUNT_KEY` in Supabase secrets, check OAuth token caching
+**Status**: ⚠️ Monitor
+
+### Issue 30: AI Cache Stale Content
+**Symptom**: Users with similar profiles get identical insights
+**Root Cause**: AI cache too aggressive, matching on insufficient key dimensions
+**Solution**: Review cache key generation in `_shared/ai-cache.ts`, ensure profile-specific differentiation
+**Status**: ⚠️ Monitor

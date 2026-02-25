@@ -108,3 +108,59 @@ Key architectural and product decisions with rationale.
 **Rationale**: Users need to see value before being asked to unlock - increases conversion
 **Trade-off**: Give away some value vs higher unlock rates
 **Outcome**: ✅ Implemented - unlock form collapsed by default
+
+## Decision 16: Vertex AI as Primary LLM
+**Date**: Jan 2026
+**Decision**: Switch primary AI model from OpenAI GPT-4o to Vertex AI (Gemini 2.0 Flash)
+**Rationale**: Lower cost per request, competitive quality, Google Cloud integration. OpenAI retained as fallback.
+**Trade-off**: Google Cloud dependency vs cost reduction and redundancy
+**Outcome**: ✅ Implemented - 3-tier fallback (Vertex → OpenAI → static)
+
+## Decision 17: Single ai-generate Function
+**Date**: Jan 2026
+**Decision**: Consolidate individual generation functions (insights, prompts, tensions, risks, scenarios) into a single `ai-generate` edge function
+**Rationale**: Reduced latency (one LLM call vs five), lower cost, simpler orchestration
+**Trade-off**: Larger single function vs simpler pipeline
+**Outcome**: ✅ Implemented - one comprehensive generation call
+
+## Decision 18: Memory Center with Voice-First
+**Date**: Jan 2026
+**Decision**: Build voice-first Memory Center for persistent leader context
+**Rationale**: Executives prefer speaking over typing; persistent context enables increasingly personalised AI interactions
+**Trade-off**: Development complexity vs long-term personalisation quality
+**Outcome**: ✅ Implemented - encrypted storage, fact verification, privacy controls
+
+## Decision 19: Missions System (First Moves Tracking)
+**Date**: Feb 2026
+**Decision**: Add Missions system for tracking commitment to diagnostic First Moves
+**Rationale**: Assessment value diminishes without follow-through; missions create accountability
+**Trade-off**: Ongoing engagement complexity vs retention and impact
+**Outcome**: ✅ Implemented - commit, check-in, complete flow
+
+## Decision 20: Progress Snapshots & Drift Detection
+**Date**: Feb 2026
+**Decision**: Implement progress tracking with periodic snapshots and drift scoring
+**Rationale**: Leaders need to see how their AI literacy evolves over time
+**Trade-off**: Additional data storage and computation vs demonstrable growth
+**Outcome**: ✅ Implemented - snapshot generation, drift computation
+
+## Decision 21: Lazy Loading All Pages
+**Date**: Feb 2026
+**Decision**: Lazy-load all 20 pages using React.lazy() with Suspense boundaries
+**Rationale**: Improve initial load performance; most users only visit a few pages per session
+**Trade-off**: Slight delay on first page navigation vs faster initial load
+**Outcome**: ✅ Implemented in src/router.tsx
+
+## Decision 22: Memory Encryption at Rest
+**Date**: Jan 2026
+**Decision**: Encrypt all memory content at rest using AES-256-GCM
+**Rationale**: Memory contains sensitive business context; encryption is non-negotiable for executive trust
+**Trade-off**: Performance overhead of encryption/decryption vs data security
+**Outcome**: ✅ Implemented - server-side only, never client-side decryption
+
+## Decision 23: Cognitive Frameworks in AI Prompts
+**Date**: Jan 2026
+**Decision**: Embed five cognitive frameworks (A/B Framing, Dialectical, WOOP, Reflective Equilibrium, First Principles) directly into ai-generate prompts
+**Rationale**: Ensures AI outputs are grounded in established reasoning frameworks, not generic advice
+**Trade-off**: Longer prompts and token usage vs higher quality, differentiated insights
+**Outcome**: ✅ Implemented - all AI-generated content applies frameworks

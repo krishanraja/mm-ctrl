@@ -2,7 +2,7 @@
 
 Complete feature inventory across all three Mindmaker tools.
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-02-25
 
 ---
 
@@ -88,11 +88,7 @@ Complete feature inventory across all three Mindmaker tools.
 
 **Edge Functions**
 - `create-leader-assessment`: Creates assessment record and initial scores
-- `generate-personalized-insights`: LLM-generated insights from diagnostic data
-- `generate-prompt-library`: Personalised thinking tools
-- `compute-tensions`: Strategic gap analysis
-- `compute-risk-signals`: Risk and blind spot detection
-- `derive-org-scenarios`: Future scenario generation
+- `ai-generate`: Central AI generation function (Vertex AI primary, OpenAI fallback) - produces insights, prompts, tensions, risks, scenarios, and first moves in a single call
 - `populate-index-participant`: Anonymised benchmark contribution
 
 ### Free vs Paid
@@ -203,6 +199,221 @@ Complete feature inventory across all three Mindmaker tools.
 - Spring animation physics
 - Drag handle indicator
 - Rounded top corners
+
+---
+
+## Memory Center
+
+### Overview
+
+Voice-first context extraction system that builds a persistent knowledge base about each leader, enabling increasingly personalised AI interactions over time.
+
+**Page**: `/memory` (auth required)
+
+### Features
+
+**Voice-First Fact Extraction** (`VoiceMemoryCapture.tsx`)
+- Record voice input about context, goals, blockers
+- OpenAI Whisper transcription via `voice-transcribe` edge function
+- AI extracts structured facts via `extract-user-context` edge function
+- Facts categorised: identity, business, objective, blocker, preference
+- Confidence scoring (0-1) on each extracted fact
+
+**Fact Verification** (`FactVerificationCard.tsx`)
+- Facts displayed with confidence indicators
+- User can verify, correct, or reject each fact
+- Verification statuses: inferred, verified, corrected, rejected
+- Sources tracked: voice, form, linkedin, calendar, enrichment
+
+**Memory Management** (`MemoryList.tsx`, `MemoryItemCard.tsx`, `MemoryPill.tsx`)
+- Browse all stored memory facts
+- Add facts manually via `AddMemorySheet.tsx`
+- View detail via `MemoryDetailSheet.tsx`
+- Delete or modify facts
+
+**Privacy Controls** (`PrivacyControlsPanel.tsx`)
+- Enable/disable memory collection
+- Enable/disable auto-extraction from voice
+- Set retention period (days)
+- All settings managed via `memory-settings` edge function
+
+**Data Export/Import** (`ExportImportPanel.tsx`)
+- Export all memory data
+- Import from external sources
+- Data portability compliance
+
+**Security**
+- Content encrypted at rest using AES-256-GCM
+- Encryption key stored in `MEMORY_ENCRYPTION_KEY` env var
+- Decryption only in edge functions, never client-side
+- RLS prevents cross-user access
+
+### Data Architecture
+
+**Tables Used**
+- `user_memory`: Fact storage with encryption
+- `user_memory_settings`: Privacy configuration
+
+**Edge Functions**
+- `memory-crud`: Create, read, update, delete memory facts
+- `memory-settings`: Privacy settings management
+- `extract-user-context`: AI fact extraction from voice
+- `enrich-company-context`: Company context enrichment
+
+### Components (11 files)
+- `MemoryList.tsx`, `AddMemorySheet.tsx`, `MemoryDetailSheet.tsx`
+- `MemoryItemCard.tsx`, `MemoryPill.tsx`, `FactVerificationCard.tsx`
+- `VoiceMemoryCapture.tsx`, `PrivacyControlsPanel.tsx`, `ExportImportPanel.tsx`
+- `MemoryErrorBoundary.tsx`
+
+### Hooks
+- `useMemoryQueries.ts`: React Query integration for memory CRUD
+- `useUserMemory.ts`: Memory state management
+
+---
+
+## Missions System (First Moves)
+
+### Overview
+
+After completing the diagnostic, leaders receive 3 prioritised "First Moves" - concrete next steps. The Missions system allows leaders to commit to a First Move, track progress through check-ins, and measure completion.
+
+### Features
+
+**First Move Selection** (`FirstMoveSelector.tsx`)
+- Displays 3 AI-generated first moves from diagnostic
+- Each move has content and priority ranking
+- Leader selects one to commit as active mission
+
+**Mission Dashboard** (`MissionsDashboard.tsx`)
+- Active mission display with status
+- Mission statuses: active, completed, skipped, extended
+- Quick access to check-in
+
+**Mission Check-In** (`MissionCheckIn.tsx` page)
+- Structured reflection on mission progress
+- Text and voice input support
+- AI-generated response to reflection
+- Check-in history
+
+**Mission History** (`MissionHistory.tsx` page)
+- View all past missions
+- Status tracking (completed, skipped, extended)
+- Timeline of check-ins per mission
+
+### Data Architecture
+
+**Tables Used**
+- `leader_first_moves`: AI-generated first moves (3 per assessment)
+- `leader_missions`: Active mission commitments
+- `leader_check_ins`: Check-in reflections and AI responses
+
+**Edge Functions**
+- `send-mission-check-in`: Check-in reminder notifications
+
+### Hooks
+- `useMissions.ts`: Missions CRUD and state management
+
+---
+
+## Progress Tracking
+
+### Overview
+
+Tracks leader progress over time through periodic snapshots and drift detection, measuring how AI literacy evolves after the initial diagnostic.
+
+### Features
+
+**Progress Snapshots** (`Progress.tsx` page)
+- Periodic captures of current state
+- Comparison against baseline assessment
+- Visual trajectory display
+
+**Drift Detection**
+- Measures change from baseline scores
+- Identifies areas of improvement or regression
+- Generates drift score
+
+**Adoption Momentum**
+- Tracks engagement patterns
+- Measures tool usage frequency
+- Identifies momentum trends
+
+### Data Architecture
+
+**Tables Used**
+- `leader_progress_snapshots`: Point-in-time captures
+
+**Edge Functions**
+- `generate-progress-snapshot`: Generate snapshot data
+- `compute-drift`: Calculate drift from baseline
+- `batch-compute-drift`: Batch drift computation
+- `update-adoption-momentum`: Momentum tracking
+
+### Hooks
+- `useProgress.ts`: Progress data queries
+
+---
+
+## Weekly Check-ins
+
+### Overview
+
+Structured weekly reflections that help leaders maintain engagement with their AI literacy development.
+
+**Page**: `/check-in` (auth required)
+
+### Features
+
+- Weekly structured reflection prompts
+- Text and voice input
+- AI-generated responses and recommendations
+- Check-in history and streaks
+
+### Data Architecture
+
+**Edge Functions**
+- `submit-weekly-checkin`: Process check-in submission
+- `send-weekly-checkin-reminder`: Reminder notifications
+- `generate-weekly-prescription`: Weekly prescription content
+
+### Hooks
+- `useCheckIns.ts`: Check-in queries and state
+
+---
+
+## Operator Tools
+
+### Overview
+
+AI-powered tools for day-to-day leadership decision-making, available after completing the diagnostic.
+
+### Features
+
+**Decision Advisor** (`operator-decision-advisor`)
+- AI-powered decision analysis
+- Contextualised to user's assessment data and memory
+- Applies cognitive frameworks
+
+**Meeting Prep** (`generate-meeting-prep`)
+- AI-generated meeting preparation content
+- Tailored to user's context and objectives
+
+**Prompt Coach** (`prompt-coach`, `PromptCoach.tsx` page)
+- Interactive prompt coaching
+- Teaches effective AI prompting techniques
+
+**Sharpen Analysis** (`sharpen-analyze`)
+- Skill improvement analysis
+- Targeted development recommendations
+
+**Daily Prompt** (`get-daily-prompt`)
+- Daily provocative prompt generation
+- Tied to user's tensions and context
+
+**Weekly Action** (`get-or-generate-weekly-action`)
+- Weekly action item generation
+- Contextualised to current mission and progress
 
 ---
 
@@ -383,10 +594,12 @@ Complete feature inventory across all three Mindmaker tools.
 - Profile management
 
 ### AI Integration
-- OpenAI GPT-4o for insight generation
-- Google Gemini as fallback
+- Vertex AI (Gemini 2.0 Flash) as primary generation model
+- OpenAI GPT-4o as fallback
 - OpenAI Whisper for voice transcription
 - Structured output validation via Zod schemas
+- Cognitive frameworks embedded in AI prompts
+- AI response caching and rate limiting
 
 ### Data Privacy & Consent
 - GDPR-compliant consent management

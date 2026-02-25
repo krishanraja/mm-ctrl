@@ -2,7 +2,7 @@
 
 Complete system architecture and data flow documentation.
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-02-25
 
 ---
 
@@ -12,11 +12,12 @@ Complete system architecture and data flow documentation.
 - **Frontend**: React 18 + TypeScript + Vite
 - **UI**: shadcn/ui + Tailwind CSS + Framer Motion
 - **Backend**: Supabase (PostgreSQL + Edge Functions)
-- **AI**: OpenAI GPT-4o/GPT-4o-mini (primary), Google Gemini (fallback)
+- **AI Primary**: Vertex AI (Gemini 2.0 Flash) via Google Cloud service account
+- **AI Fallback**: OpenAI GPT-4o
 - **Voice**: OpenAI Whisper API for voice-to-text
 - **Payments**: Stripe
 - **Email**: Resend
-- **Hosting**: Vercel/Netlify (frontend), Supabase Cloud (backend)
+- **Hosting**: Vercel (frontend), Supabase Cloud (backend)
 
 **Architecture Type**: Serverless full-stack with edge functions
 
@@ -30,9 +31,9 @@ Complete system architecture and data flow documentation.
 src/
 ├── components/
 │   ├── ui/                    # shadcn components (DO NOT EDIT)
-│   ├── auth/                  # Authentication flows
+│   ├── auth/                  # Authentication flows (RequireAuth)
 │   ├── voice/                 # Voice assessment components
-│   ├── landing/
+│   ├── landing/               # Landing page components
 │   │   └── HeroSection.tsx    # Landing page hero
 │   ├── dashboard/
 │   │   └── mobile/
@@ -42,32 +43,85 @@ src/
 │   │       ├── Sheet.tsx
 │   │       ├── HeroStatusCard.tsx
 │   │       └── PriorityCardStack.tsx
-│   ├── action/
+│   ├── action/                # Weekly action components
 │   │   └── WeeklyAction.tsx
+│   ├── ai-chat/               # AI chat components
+│   ├── analytics/             # Analytics components
+│   ├── diagnostic/            # Diagnostic-specific components
+│   ├── insight/               # Insight display components
+│   ├── memory/                # Memory Center components (11 files)
+│   │   ├── MemoryList.tsx
+│   │   ├── AddMemorySheet.tsx
+│   │   ├── MemoryDetailSheet.tsx
+│   │   ├── MemoryItemCard.tsx
+│   │   ├── MemoryPill.tsx
+│   │   ├── FactVerificationCard.tsx
+│   │   ├── VoiceMemoryCapture.tsx
+│   │   ├── PrivacyControlsPanel.tsx
+│   │   ├── ExportImportPanel.tsx
+│   │   └── MemoryErrorBoundary.tsx
+│   ├── missions/              # Missions system components
+│   │   ├── FirstMoveSelector.tsx
+│   │   └── MissionsDashboard.tsx
+│   ├── mobile/
+│   │   └── MobileLayout.tsx   # Mobile viewport wrapper
+│   ├── onboarding/            # Onboarding flow components
+│   ├── operator/              # Operator tools components
+│   ├── progress/              # Progress tracking components
 │   ├── provocation/
 │   │   └── DailyProvocation.tsx
 │   ├── pulse/
 │   │   └── StrategicPulse.tsx
-│   ├── mobile/
-│   │   └── MobileLayout.tsx   # Mobile viewport wrapper
+│   ├── settings/              # Settings components
+│   ├── sharpen/               # Sharpen analysis components
 │   ├── UnifiedAssessment.tsx  # Quiz + voice assessment orchestrator
 │   ├── UnifiedResults.tsx     # Results page with tabs
 │   ├── LeadershipBenchmarkV2.tsx  # Overview tab
 │   ├── PromptLibraryV2.tsx    # Tools tab
 │   ├── TensionsView.tsx       # Tensions tab
+│   ├── ConsentManager.tsx     # Privacy/consent tab
+│   ├── SingleScrollResults.tsx # Single-page results view
+│   ├── AssessmentHistory.tsx  # Past assessments
+│   ├── BenchmarkComparison.tsx
+│   ├── PeerBubbleChart.tsx
+│   ├── PeerComparisonMobile.tsx
+│   ├── MomentumDashboard.tsx
+│   ├── ErrorBoundary.tsx
 │   └── [Other components]
 ├── contexts/
-│   └── AssessmentContext.tsx  # Global assessment state
+│   ├── AppStateContext.tsx    # Global app state management
+│   └── AssessmentContext.tsx  # Assessment flow state
 ├── hooks/
+│   ├── useStructuredAssessment.ts
+│   ├── useRealtimeAssessment.ts
 │   ├── useAILiteracyAssessment.ts
+│   ├── useUserState.ts
+│   ├── useAuth.ts
+│   ├── useDevice.ts
+│   ├── useMemoryQueries.ts   # Memory Center queries
+│   ├── useUserMemory.ts      # Memory state management
+│   ├── useMissions.ts        # Missions system
+│   ├── useCheckIns.ts        # Check-in system
+│   ├── useProgress.ts        # Progress tracking
+│   ├── useTodaysTension.ts
+│   ├── useGenerationProgress.ts
 │   ├── useExecutiveInsights.ts
 │   ├── useLeadQualification.ts
-│   └── [Other hooks]
+│   ├── usePayment.ts
+│   ├── useVoice.ts
+│   ├── useVoiceInput.ts
+│   ├── useMediaQuery.ts
+│   ├── use-mobile.tsx
+│   ├── useLongPress.ts
+│   ├── useOffline.ts
+│   ├── useOfflineDetection.ts
+│   └── use-toast.ts
 ├── lib/
 │   └── motion.ts              # Animation utilities (Framer Motion)
 ├── utils/
-│   ├── orchestrateAssessmentV2.ts  # Main orchestration logic
-│   ├── aggregateLeaderResults.ts   # Data aggregation for UI
+│   ├── runAssessment.ts             # Main assessment orchestrator
+│   ├── orchestrateAssessmentV2.ts   # V2 orchestration logic
+│   ├── aggregateLeaderResults.ts    # Data aggregation for UI
 │   ├── pipelineGuards.ts           # Input validation
 │   ├── edgeFunctionClient.ts       # Edge function wrapper
 │   ├── mobileViewport.ts           # Viewport handling
@@ -76,49 +130,89 @@ src/
 │   ├── pipeline.ts            # Core type contracts
 │   ├── profile.ts             # Profile types
 │   ├── voice.ts               # Voice assessment types
-│   └── diagnostic.ts          # Diagnostic types
+│   ├── diagnostic.ts          # Diagnostic types
+│   ├── memory.ts              # Memory system types
+│   ├── memory-settings.ts     # Memory privacy settings types
+│   ├── missions.ts            # Missions system types
+│   └── video-background.ts    # Video background types
+├── data/
+│   ├── compassQuestions.ts    # Compass assessment questions
+│   ├── secondaryQuestions.ts  # Secondary assessment questions
+│   └── sharpenSystemPrompt.ts # Sharpen AI system prompt
 ├── integrations/
 │   └── supabase/
 │       ├── client.ts          # Supabase client
 │       └── types.ts           # Generated DB types (READ-ONLY)
 ├── pages/
-│   ├── Index.tsx              # Main landing page
-│   ├── Dashboard.tsx
-│   ├── Today.tsx
-│   ├── Voice.tsx
-│   ├── Pulse.tsx
+│   ├── Landing.tsx            # Main landing page (/)
+│   ├── Auth.tsx               # Authentication (/auth)
+│   ├── Diagnostic.tsx         # Assessment flow (/diagnostic)
+│   ├── Dashboard.tsx          # Main dashboard (/dashboard)
+│   ├── Voice.tsx              # Voice recording (/voice)
+│   ├── Pulse.tsx              # Strategic pulse (/pulse)
+│   ├── Today.tsx              # Today page (/today)
+│   ├── Profile.tsx            # User profile (/profile)
+│   ├── MemoryCenter.tsx       # Memory Center (/memory)
+│   ├── WeeklyCheckin.tsx      # Weekly check-in (/check-in)
+│   ├── MissionCheckIn.tsx     # Mission check-in (/mission-check-in)
+│   ├── MissionHistory.tsx     # Mission history (/missions/history)
+│   ├── Progress.tsx           # Progress tracking (/progress)
+│   ├── Booking.tsx            # Workshop booking (/booking)
+│   ├── Baseline.tsx           # Baseline assessment
+│   ├── DecisionCapture.tsx    # Decision capture
+│   ├── PromptCoach.tsx        # Prompt coaching
+│   ├── Settings.tsx           # User settings
+│   ├── Timeline.tsx           # Assessment timeline
 │   └── NotFound.tsx           # 404 page
+├── styles/                    # Design tokens & styles
+├── __tests__/                 # Test files
 └── index.css                  # Design system
 ```
 
 ### State Management
 
-**Global State** (AssessmentContext):
+**Global State** (AppStateContext + AssessmentContext):
 - Current assessment data
 - Contact information
 - Session ID
 - Completion status
+- App-wide state flags
 
 **Local State**:
 - Component-specific UI state
 - Form inputs
 - Loading states
 
-**Server State** (via Supabase + React Query):
+**Server State** (via Supabase + TanStack React Query):
 - Assessment results
 - User profile
 - Historical assessments
+- Memory data
+- Missions and check-ins
 
 ### Routing
 
-Using React Router v6:
-- `/` - Landing page
-- `/dashboard` - Main dashboard
-- `/today` - Today page
-- `/voice` - Voice recording
-- `/pulse` - Strategic pulse
-- `/auth` - Authentication (handled by Supabase Auth UI)
-- All other routes render `NotFound.tsx`
+Using React Router v6 with `createBrowserRouter` and lazy loading:
+
+| Route | Page | Auth Required |
+|-------|------|---------------|
+| `/` | Landing | No |
+| `/auth` | Auth | No |
+| `/diagnostic` | Diagnostic | No |
+| `/dashboard` | Dashboard | Yes |
+| `/voice` | Voice | No |
+| `/pulse` | Pulse | Yes |
+| `/today` | Today | Yes |
+| `/profile` | Profile | Yes |
+| `/memory` | MemoryCenter | Yes |
+| `/check-in` | WeeklyCheckin | Yes |
+| `/mission-check-in` | MissionCheckIn | No |
+| `/missions/history` | MissionHistory | Yes |
+| `/progress` | Progress | Yes |
+| `/booking` | Booking | No |
+| `*` | Redirect to `/` | No |
+
+All pages are lazy-loaded with `React.lazy()` and wrapped in `<Suspense>` boundaries.
 
 ---
 
@@ -251,16 +345,6 @@ Using React Router v6:
 - Clear CTAs
 - Trust indicators below
 
-**Mobile:**
-- Single viewport height
-- All content visible
-- No scrolling required
-
-**Desktop:**
-- Centered layout
-- Max width container
-- Same no-scroll principle
-
 ### Dashboard (`/dashboard`)
 
 **Mobile:**
@@ -270,18 +354,7 @@ Using React Router v6:
 - Bottom navigation
 - Floating voice button
 
-**Desktop:**
-- Sidebar navigation (optional)
-- Grid layout
-- More horizontal space
-
 ### Today Page (`/today`)
-
-**Layout:**
-- Fixed header (title + subtitle)
-- Scrollable content area
-- Weekly action card
-- Daily provocation card
 
 **No-Scroll Pattern:**
 ```tsx
@@ -295,23 +368,32 @@ Using React Router v6:
 </div>
 ```
 
+### Memory Center (`/memory`)
+
+**Features:**
+- Voice-first fact extraction
+- Fact verification cards with confidence scores
+- Privacy controls panel
+- Export/import panel
+- Error boundary wrapper
+
+### Missions (`/mission-check-in`, `/missions/history`)
+
+**Features:**
+- First Move commitment flow
+- Periodic check-in reflections
+- AI-generated responses to reflections
+- Mission history with status tracking
+
 ### Voice Page (`/voice`)
 
-**Layout:**
 - Fixed header with back button
 - Centered voice recorder
-- Large mic icon
-- Countdown timer
-- Start/Stop button
+- Large mic icon, countdown timer
 
 ### Pulse Page (`/pulse`)
 
-**Layout:**
-- Fixed header
-- Scrollable content
-- Baseline card
-- Tensions cards
-- Risk signals cards
+- Baseline card, tensions cards, risk signals cards
 
 ---
 
@@ -389,9 +471,61 @@ leader_risk_signals
 leader_org_scenarios
 ├── id (PK)
 ├── assessment_id (FK → leader_assessments)
-├── scenario_key (stagnation_loop | shadow_ai_instability | high_velocity_path | culture_capability_mismatch)
+├── scenario_key
 ├── summary
 └── priority_rank
+
+leader_first_moves
+├── id (PK)
+├── assessment_id (FK → leader_assessments)
+├── move_number (1, 2, 3)
+├── content (text)
+└── created_at
+
+leader_missions
+├── id (PK)
+├── leader_id (FK → leaders)
+├── assessment_id (FK → leader_assessments)
+├── first_move_id (FK → leader_first_moves)
+├── status (active | completed | skipped | extended)
+├── started_at
+├── completed_at
+└── created_at
+
+leader_check_ins
+├── id (PK)
+├── leader_id (FK → leaders)
+├── mission_id (FK → leader_missions)
+├── reflection_text
+├── ai_response (text)
+├── voice_url (text)
+└── created_at
+
+leader_progress_snapshots
+├── id (PK)
+├── leader_id (FK → leaders)
+├── snapshot_data (JSON)
+├── drift_score
+└── created_at
+
+user_memory
+├── id (PK)
+├── user_id (FK)
+├── fact_category (identity | business | objective | blocker | preference)
+├── fact_text
+├── confidence (0-1)
+├── source (voice | form | linkedin | calendar | enrichment)
+├── verification_status (inferred | verified | corrected | rejected)
+├── encrypted_content (bytea)
+└── created_at
+
+user_memory_settings
+├── id (PK)
+├── user_id (FK)
+├── memory_enabled (boolean)
+├── auto_extract (boolean)
+├── retention_days (integer)
+└── updated_at
 
 assessment_events
 ├── id (PK)
@@ -431,59 +565,93 @@ index_participant_data
 └── completed_at
 ```
 
-**Indexes**:
-- `leader_assessments.leader_id`
-- `leader_dimension_scores.assessment_id`
-- `leader_prompt_sets.assessment_id`
-- `assessment_events.assessment_id`
-- `index_participant_data.company_identifier_hash`
-
 ### Edge Functions
 
 **Location**: `supabase/functions/`
 
-**Core Functions**:
+**Total**: 45 edge functions + shared module directory
 
-1. **create-leader-assessment**
-   - Input: `leaderId`, `assessmentData`, `deepProfileData`, `contactData`, `source`
-   - Output: `assessmentId`, `scores`, `tier`
-   - Creates assessment record, calculates scores, applies behavioral adjustments
+#### Core Assessment Functions
 
-2. **generate-personalized-insights**
-   - Input: `assessmentId`, `leaderId`, `profileData`, `assessmentData`
-   - Output: `yourEdge`, `yourRisk`, `yourNextMove`, `dimensionInsights`
-   - LLM-generated insights tied to specific diagnostic data
+1. **create-leader-assessment** - Creates assessment record, calculates scores, applies behavioral adjustments
+2. **ai-generate** - Central AI generation function (Vertex AI primary, OpenAI fallback, static tertiary). Produces all AI content: insights, prompts, tensions, risks, scenarios, first moves. Applies cognitive frameworks.
+3. **compass-analyze** - Analyzes voice transcripts from Compass module
+4. **roi-estimate** - Extracts ROI data from voice transcripts
+5. **populate-index-participant** - Anonymises and stores benchmark data
 
-3. **generate-prompt-library**
-   - Input: `assessmentId`, `leaderId`, `profileData`, `assessmentData`
-   - Output: Array of `PromptSet` objects
-   - LLM-generated thinking tools personalised to user context
+#### Memory & Context Functions
 
-4. **compute-tensions**
-   - Input: `assessmentId`, `leaderId`, `scores`, `profileData`
-   - Output: Array of `Tension` objects
-   - Identifies strategic gaps between current and desired state
+6. **memory-crud** - Create, read, update, delete memory facts
+7. **memory-settings** - Memory privacy settings management
+8. **extract-user-context** - Extract context from voice input
+9. **enrich-company-context** - Enrich company data from external sources
 
-5. **compute-risk-signals**
-   - Input: `assessmentId`, `leaderId`, `scores`, `profileData`
-   - Output: Array of `RiskSignal` objects
-   - Flags blind spots, waste, and theatre indicators
+#### Missions & Progress Functions
 
-6. **derive-org-scenarios**
-   - Input: `assessmentId`, `leaderId`, `scores`, `profileData`
-   - Output: Array of `OrgScenario` objects
-   - Projects 3-5 year structural change scenarios
+10. **send-mission-check-in** - Send check-in reminder notifications
+11. **generate-progress-snapshot** - Generate progress snapshot data
+12. **compute-drift** - Compute drift from baseline assessment
+13. **batch-compute-drift** - Batch drift computation
+14. **update-adoption-momentum** - Track adoption momentum metrics
 
-7. **populate-index-participant**
-   - Input: `leaderId`, `assessmentData`, `consentFlags`
-   - Output: `participantId`
-   - Anonymises and stores data for AI Leadership Index
+#### Operator & Intelligence Functions
+
+15. **operator-decision-advisor** - AI-powered decision advisory
+16. **generate-meeting-prep** - AI meeting preparation content
+17. **prompt-coach** - Prompt coaching assistance
+18. **sharpen-analyze** - Sharpen analysis for skill improvement
+19. **detect-patterns** - Pattern detection across assessments
+20. **get-daily-prompt** - Daily provocative prompt generation
+21. **get-or-generate-weekly-action** - Weekly action item generation
+22. **generate-weekly-prescription** - Weekly prescription content
+23. **get-peer-snippets** - Anonymised peer comparison data
+
+#### Communication Functions
+
+24. **send-confirmation-email** - Assessment completion confirmation
+25. **send-diagnostic-email** - Diagnostic report delivery
+26. **send-booking-notification** - Workshop booking confirmation
+27. **send-advisory-sprint-notification** - Advisory sprint notification
+28. **send-weekly-checkin-reminder** - Weekly check-in reminders
+29. **send-feedback** - User feedback submission
+30. **resend-webhook** - Resend email webhook handler
+
+#### Payment Functions
+
+31. **create-diagnostic-payment** - Create Stripe payment intent
+32. **verify-diagnostic-payment** - Verify payment completion
+33. **stripe-webhook** - Stripe webhook handler
+34. **create-stripe-prices** - Stripe price configuration
+
+#### Data & Integration Functions
+
+35. **sync-to-google-sheets** - Sync leads to Google Sheets
+36. **batch-process-pending-syncs** - Batch sync processing
+37. **generate-quarterly-index** - Quarterly AI Leadership Index
+38. **claim-history** - Claim assessment history for authenticated users
+
+#### User Preference Functions
+
+39. **upsert-notification-prefs** - Notification preferences
+40. **upsert-sharing-consent** - Data sharing consent
+
+#### Voice & Interaction Functions
+
+41. **voice-transcribe** - OpenAI Whisper transcription
+42. **ai-assessment-chat** - AI assessment chat
+43. **submit-reflection** - Submit reflection responses
+44. **submit-decision-capture** - Capture decision data
+45. **submit-weekly-checkin** - Submit weekly check-in
 
 **Shared Modules** (`supabase/functions/_shared/`):
 - `context-builder.ts`: Builds LLM context from diagnostic data
-- `prompt-templates.ts`: System prompts for LLM calls
-- `quality-guardrails.ts`: Output validation and filtering
-- `schemas.ts`: Zod schemas for structured outputs
+- `openai-utils.ts`: OpenAI API wrapper utilities
+- `llm-quality-guardrails.ts`: Output validation and filtering
+- `ai-cache.ts`: AI response caching layer
+- `rate-limit.ts` / `rate-limiting.ts`: Rate limiting middleware
+- `email-utils.ts`: Email sending utilities
+- `storage-utils.ts`: Supabase Storage helpers
+- `validate-database.ts`: Database validation helpers
 
 ---
 
@@ -496,20 +664,25 @@ User completes assessment
          ↓
 UnifiedAssessment.tsx collects data
          ↓
-orchestrateAssessmentV2() invoked
+runAssessment.ts invoked
          ↓
 1. Validate inputs (pipelineGuards.ts)
 2. Calculate scores + behavioral adjustments
 3. Call create-leader-assessment edge function
 4. Store dimension scores
-5. Store execution gaps
          ↓
-Parallel edge function calls:
-├─ generate-personalized-insights
-├─ generate-prompt-library
-├─ compute-tensions
-├─ compute-risk-signals
-└─ derive-org-scenarios
+Call ai-generate edge function:
+├─ Plan A: Vertex AI (Gemini 2.0 Flash)
+├─ Plan B: OpenAI GPT-4o
+└─ Plan C: Static fallback content
+         ↓
+ai-generate produces all content:
+├─ Personalised insights (edge, risk, next move)
+├─ Thinking tools (prompt library)
+├─ Strategic tensions
+├─ Risk signals
+├─ Org scenarios
+└─ First moves (3 prioritised actions)
          ↓
 Store results in respective tables
          ↓
@@ -538,7 +711,8 @@ Queries:
 ├─ leader_prompt_sets (for thinking tools)
 ├─ leader_tensions (for tensions)
 ├─ leader_risk_signals (for risks)
-└─ leader_org_scenarios (for scenarios)
+├─ leader_org_scenarios (for scenarios)
+└─ leader_first_moves (for next steps)
          ↓
 Aggregates into single result object
          ↓
@@ -572,9 +746,60 @@ mapVoiceToAssessment() converts to V2 format
          ↓
 DeepProfileQuestionnaire collects context
          ↓
-orchestrateAssessmentV2() with source='voice'
+runAssessment() with source='voice'
          ↓
 [Same flow as quiz assessment]
+```
+
+### Memory Center Flow
+
+```
+User opens Memory Center (/memory)
+         ↓
+useMemoryQueries() fetches existing facts
+         ↓
+Voice-first input:
+├─ VoiceMemoryCapture records speech
+├─ voice-transcribe edge function transcribes
+├─ extract-user-context extracts structured facts
+└─ memory-crud stores encrypted facts
+         ↓
+Fact verification:
+├─ Facts shown with confidence scores
+├─ User verifies/corrects/rejects
+├─ Verification status updated
+         ↓
+Privacy controls:
+├─ memory-settings edge function
+├─ Enable/disable auto-extraction
+├─ Set retention period
+└─ Export/import data
+```
+
+### Missions Flow
+
+```
+After assessment, First Moves displayed
+         ↓
+FirstMoveSelector.tsx presents 3 moves
+         ↓
+User commits to a mission
+         ↓
+leader_missions record created (status: active)
+         ↓
+Periodic check-ins:
+├─ MissionCheckIn.tsx captures reflection
+├─ AI generates response
+├─ leader_check_ins record created
+         ↓
+Progress tracking:
+├─ generate-progress-snapshot captures state
+├─ compute-drift measures change from baseline
+├─ Progress.tsx displays trajectory
+         ↓
+Mission completion:
+├─ Status updated to completed/skipped/extended
+├─ MissionHistory.tsx shows all missions
 ```
 
 ---
@@ -583,57 +808,52 @@ orchestrateAssessmentV2() with source='voice'
 
 ### LLM Architecture
 
-**Primary**: OpenAI GPT-4o/GPT-4o-mini
-**Fallback**: Google Gemini
+**Primary**: Vertex AI (Gemini 2.0 Flash) via Google Cloud service account with OAuth token caching
+**Fallback**: OpenAI GPT-4o
 
-**Call Pattern**:
+**Call Pattern** (in `ai-generate/index.ts`):
 ```typescript
+// Plan A: Vertex AI
 try {
-  response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [...],
-    response_format: { type: 'json_object' }
-  });
+  response = await tryVertexAI(context, prompt);
+  generationSource = 'vertex-ai';
 } catch (error) {
-  console.error('OpenAI failed, trying Gemini');
-  response = await gemini.generateContent({...});
+  // Plan B: OpenAI
+  try {
+    response = await tryOpenAI(context, prompt);
+    generationSource = 'openai';
+  } catch (error) {
+    // Plan C: Static fallback
+    response = getStaticFallback(scores, tier);
+    generationSource = 'fallback';
+  }
 }
 ```
 
+**Model Configuration:**
+- Temperature: 0.7
+- Max tokens: 4000
+- Response format: JSON object with structured output
+
+### Cognitive Framework Integration
+
+The `ai-generate` function embeds five cognitive frameworks directly into prompts:
+
+1. **A/B Framing**: Forces alternative perspectives on each recommendation
+2. **Dialectical Reasoning**: Thesis-antithesis-synthesis for balanced insights
+3. **Mental Contrasting (WOOP)**: Goals, obstacles, realistic planning
+4. **Reflective Equilibrium**: Aligning with organizational principles
+5. **First-Principles Thinking**: Breaking down assumptions
+
 ### Structured Outputs
 
-Using Zod schemas (in `schemas.ts`):
+Using Zod schemas for validation. Validation ensures required fields, correct types, min/max lengths, and enum value constraints.
 
-```typescript
-PersonalizedInsightsSchema.parse(llmResponse);
-PromptLibrarySchema.parse(llmResponse);
-```
+### Quality Guardrails
 
-Validation ensures:
-- Required fields present
-- Correct types
-- Min/max lengths
-- Enum value constraints
-
-### Prompt Engineering
-
-**System Prompts** (`prompt-templates.ts`):
-- Role definition
-- Output format specification
-- Quality criteria
-- Examples (few-shot learning)
-
-**Context Building** (`context-builder.ts`):
-- Profile data
-- Assessment responses
-- Deep profile answers
-- Scoring results
-
-**Quality Guardrails** (`quality-guardrails.ts`):
-- Detect hallucinations
-- Filter inappropriate content
-- Validate evidence citations
-- Check personalization quality
+- `_shared/llm-quality-guardrails.ts`: Output validation and filtering
+- `_shared/ai-cache.ts`: Response caching for repeated patterns
+- `_shared/rate-limit.ts`: Per-user rate limiting
 
 ---
 
@@ -650,63 +870,17 @@ interface PipelineSafeResponse<T> {
   durationMs: number;
   error?: string;
 }
-
-interface SafeProfileData { /* ... */ }
-interface SafeAssessmentData { /* ... */ }
-interface SafeContactData { /* ... */ }
-```
-
-**Validation** (`pipelineGuards.ts`):
-```typescript
-export function validateProfileData(profile: any): SafeProfileData {
-  // Returns validated or default-filled object
-  // Never throws, always safe
-}
 ```
 
 ### Fallback Strategies
 
 **LLM Failures**:
-1. Try OpenAI
-2. If fails, try Gemini
+1. Try Vertex AI (Gemini 2.0 Flash)
+2. If fails, try OpenAI GPT-4o
 3. If both fail, use generic fallbacks
 
-**Fallback Content**:
-- Generic insights based on score tier
-- Standard prompt templates
-- Default tensions/risks/scenarios
-
 **DB Failures**:
-- Log error
-- Return empty arrays
-- UI shows graceful message
-
-### Error Handling
-
-**Edge Functions**:
-```typescript
-try {
-  const result = await processAssessment(...);
-  return new Response(JSON.stringify(result), { status: 200 });
-} catch (error) {
-  console.error('Error:', error);
-  return new Response(
-    JSON.stringify({ error: error.message }), 
-    { status: 500 }
-  );
-}
-```
-
-**Frontend**:
-```typescript
-const { data, error } = await invokeEdgeFunction('function-name', body);
-
-if (error) {
-  console.error('Edge function error:', error);
-  toast.error('Failed to generate insights. Using defaults.');
-  return fallbackInsights();
-}
-```
+- Log error, return empty arrays, UI shows graceful message
 
 ---
 
@@ -723,26 +897,16 @@ Using Supabase Auth:
 
 ### Row-Level Security (RLS)
 
-**Tables with RLS**:
-- `leaders`: Users can only read/update their own record
-- `leader_assessments`: Users can only read own assessments
-- `leader_insights`, `leader_prompt_sets`, etc.: Tied to assessment ownership
+All user-facing tables have RLS policies:
+- `leaders`, `leader_assessments`, `leader_insights`, `leader_prompt_sets`, etc.
+- `leader_missions`, `leader_check_ins`: Own data only
+- `user_memory`, `user_memory_settings`: Own data only
 
-**Anonymous Tables**:
-- `index_participant_data`: No user_id, anonymised
-- `ai_leadership_index_snapshots`: Public read, admin write
+### Memory Encryption
 
-### Data Privacy
-
-**Anonymisation** (`populate-index-participant`):
-- Hash company identifiers with salt
-- Remove PII (names, emails)
-- Store only aggregate dimensions
-
-**Consent Management** (`ConsentManager.tsx`):
-- Opt-in for AI Leadership Index
-- Audit trail of consent changes
-- Can revoke at any time
+- Content encrypted at rest using AES-256-GCM
+- Encryption key in `MEMORY_ENCRYPTION_KEY` env var
+- Decryption only in edge functions, never client-side
 
 ---
 
@@ -750,93 +914,28 @@ Using Supabase Auth:
 
 ### Frontend
 
-**Build**:
-```bash
-npm run build
-```
-
-**Output**: `dist/` directory with static assets
-
-**Hosting**: Vercel/Netlify (auto-deployed on git push)
+**Build**: `npm run build`
+**Hosting**: Vercel (auto-deployed on git push)
 
 ### Backend
 
-**Edge Functions**:
-- Auto-deployed via Supabase CLI
-- Environment variables stored in Supabase dashboard
-- Secrets: `OPENAI_API_KEY`, `GEMINI_API_KEY`, etc.
-
-**Database Migrations**:
-- Located in `supabase/migrations/`
-- Applied via Supabase CLI: `supabase db push`
+**Edge Functions**: Deployed via Supabase CLI
+**Database Migrations**: `supabase/migrations/`, applied via `supabase db push`
 
 ### Environment Variables
 
-**Required**:
+**Frontend (Vercel)**:
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
-- `OPENAI_API_KEY` (Supabase secrets)
-- `GEMINI_API_KEY` (Supabase secrets)
-- `RESEND_API_KEY` (Supabase secrets)
-- `STRIPE_SECRET_KEY` (Supabase secrets)
 
----
-
-## Performance
-
-### Optimisations
-
-**Frontend**:
-- Code splitting via React.lazy
-- Image lazy loading
-- Debounced inputs
-- React Query caching
-
-**Backend**:
-- Edge function warm-up
-- Database connection pooling
-- Parallel LLM calls where possible
-- Response caching (limited, AI content)
-
-### Bottlenecks
-
-**Known**:
-- LLM generation: 5-15 seconds per call
-- Multiple sequential edge functions: 30-60 seconds total
-- Voice transcription: 2-5 seconds per question
-
-**Mitigation**:
-- Show loading states
-- Use skeleton screens
-- Provide progress indicators
-- Parallelise edge function calls
-
----
-
-## Monitoring
-
-### Logging
-
-**Frontend**:
-- Console logs for debugging (prefixed with emoji)
-- Sentry (optional, not currently configured)
-
-**Backend**:
-- Supabase logs (auto-captured)
-- Edge function console.log → Supabase dashboard
-
-### Metrics
-
-**Track**:
-- Assessment completion rate
-- Edge function success/failure rate
-- LLM call duration
-- User conversion (free → paid)
-
-**Tools**:
-- Supabase Analytics
-- Stripe Dashboard
-- Custom DB queries
+**Backend (Supabase Secrets)**:
+- `OPENAI_API_KEY`
+- `GOOGLE_SERVICE_ACCOUNT_KEY` (Vertex AI)
+- `MEMORY_ENCRYPTION_KEY`
+- `RESEND_API_KEY`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `GOOGLE_SHEETS_CREDENTIALS`
 
 ---
 
@@ -844,30 +943,20 @@ npm run build
 
 ### Current State
 
-**Automated Testing**: None (not currently implemented)
+**Automated Testing**: Vitest configured (`vitest.config.ts`) with unit tests in `src/__tests__/`
 
-**Manual Testing**:
-- Test quiz flow end-to-end
-- Test voice flow end-to-end
-- Test results display in all tabs
-- Test free vs paid gating
-- Test dark mode
-- Test mobile responsiveness
-
-### Testing Checklist
-
-Before each release:
+**Manual Testing Checklist**:
 - [ ] Quiz assessment completes successfully
 - [ ] Voice assessment completes successfully
 - [ ] Results display correctly (Overview, Tensions, Tools)
+- [ ] First Moves display and mission commitment works
 - [ ] Free tier shows limited content
 - [ ] Paid upgrade flow works
-- [ ] Email confirmation sends
-- [ ] Benchmark chart renders
-- [ ] Prompt library displays
-- [ ] Dark mode works
-- [ ] Mobile responsive
-- [ ] No-scroll on mobile pages
+- [ ] Memory Center: create, read, update, delete, voice capture
+- [ ] Missions: commit, check-in, complete flow
+- [ ] Progress: snapshots generate correctly
+- [ ] Weekly Check-in: submission and AI response
+- [ ] Mobile responsive, no-scroll on mobile pages
 
 ---
 
@@ -883,62 +972,17 @@ Before each release:
   "@supabase/supabase-js": "^2.50.3",
   "@tanstack/react-query": "^5.56.2",
   "framer-motion": "^11.x",
-  "tailwindcss": "^3.x",
+  "tailwindcss": "^3.4.11",
   "lucide-react": "^0.462.0",
-  "zod": "^3.23.8"
+  "zod": "^3.23.8",
+  "typescript": "^5.5.3",
+  "vite": "^5.4.1"
 }
 ```
 
-### UI Components
-
-All from `shadcn/ui`:
-- button, card, badge, input, label, tabs, dialog, select, etc.
-
-### Build Tools
-
-- Vite: Fast dev server and bundler
-- TypeScript: Type safety
-- PostCSS: CSS processing
-- ESLint: Linting
-
----
-
-## Constraints
-
-### Technical
+### Constraints
 
 - **No backend code execution**: Only edge functions (Deno runtime)
-- **No direct file uploads**: Use Supabase Storage API
-- **No WebSockets**: Use Supabase Realtime for live updates
-- **LLM rate limits**: OpenAI tier limits, Gemini quotas
-
-### Business
-
-- **Supabase free tier limits**: 500 MB database, 2 GB egress/month
-- **OpenAI API costs**: ~$0.02 per assessment (GPT-4o)
-- **Stripe processing fees**: 2.9% + $0.30 per transaction
-
----
-
-## Future Architecture Considerations
-
-### Scalability
-
-**If user base grows significantly**:
-- Move to Supabase Pro plan
-- Implement Redis caching layer
-- Add CDN for static assets
-- Batch edge function calls
-
-### Features
-
-**Potential additions**:
-- Real-time collaboration (Teams tool)
-- Multi-language support (i18n)
-- API for external integrations
-- Mobile native apps
-
-**Architecture impact**:
-- Add i18n library
-- Create REST API layer
-- Build React Native version
+- **Node.js requirement**: >=22 <24
+- **LLM rate limits**: Vertex AI quotas, OpenAI tier limits
+- **AI API costs**: ~$0.01-0.02 per assessment (Vertex AI primary)
