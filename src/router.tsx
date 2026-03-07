@@ -3,23 +3,21 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { RequireAuth } from '@/components/auth/RequireAuth'
 
-// Lazy load pages for better initial load performance
+// Lazy load pages
 const Landing = lazy(() => import('@/pages/Landing'))
-const Diagnostic = lazy(() => import('@/pages/Diagnostic'))
-const Dashboard = lazy(() => import('@/pages/Dashboard'))
-const Voice = lazy(() => import('@/pages/Voice'))
-const Pulse = lazy(() => import('@/pages/Pulse'))
-const Today = lazy(() => import('@/pages/Today'))
-const Profile = lazy(() => import('@/pages/Profile'))
 const Auth = lazy(() => import('@/pages/Auth'))
+const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const Think = lazy(() => import('@/pages/Think'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
+const ContextExport = lazy(() => import('@/pages/ContextExport'))
+const Settings = lazy(() => import('@/pages/Settings'))
+const Diagnostic = lazy(() => import('@/pages/Diagnostic'))
+const Voice = lazy(() => import('@/pages/Voice'))
+const Profile = lazy(() => import('@/pages/Profile'))
 const WeeklyCheckin = lazy(() => import('@/pages/WeeklyCheckin'))
 const MissionCheckIn = lazy(() => import('@/pages/MissionCheckIn'))
-const MissionHistory = lazy(() => import('@/pages/MissionHistory'))
-const Progress = lazy(() => import('@/pages/Progress'))
 const Booking = lazy(() => import('@/pages/Booking'))
 
-// Loading component shown while lazy-loaded pages are loading
 function LoadingPage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">
@@ -28,12 +26,12 @@ function LoadingPage() {
   )
 }
 
-// Wrapper to provide Suspense boundary for lazy-loaded components
 function LazyWrapper({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingPage />}>{children}</Suspense>
 }
 
 export const router = createBrowserRouter([
+  // Public
   {
     path: '/',
     element: <LazyWrapper><Landing /></LazyWrapper>,
@@ -47,28 +45,38 @@ export const router = createBrowserRouter([
     element: <LazyWrapper><Diagnostic /></LazyWrapper>,
   },
   {
-    path: '/dashboard',
-    element: <LazyWrapper><RequireAuth><Dashboard /></RequireAuth></LazyWrapper>,
-  },
-  {
     path: '/voice',
     element: <LazyWrapper><Voice /></LazyWrapper>,
   },
   {
-    path: '/pulse',
-    element: <LazyWrapper><RequireAuth><Pulse /></RequireAuth></LazyWrapper>,
+    path: '/booking',
+    element: <LazyWrapper><Booking /></LazyWrapper>,
+  },
+  // Core app — Memory Web
+  {
+    path: '/dashboard',
+    element: <LazyWrapper><RequireAuth><Dashboard /></RequireAuth></LazyWrapper>,
   },
   {
-    path: '/today',
-    element: <LazyWrapper><RequireAuth><Today /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/profile',
-    element: <LazyWrapper><RequireAuth><Profile /></RequireAuth></LazyWrapper>,
+    path: '/think',
+    element: <LazyWrapper><RequireAuth><Think /></RequireAuth></LazyWrapper>,
   },
   {
     path: '/memory',
     element: <LazyWrapper><RequireAuth><MemoryCenter /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/context',
+    element: <LazyWrapper><RequireAuth><ContextExport /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/settings',
+    element: <LazyWrapper><RequireAuth><Settings /></RequireAuth></LazyWrapper>,
+  },
+  // Supporting routes
+  {
+    path: '/profile',
+    element: <LazyWrapper><RequireAuth><Profile /></RequireAuth></LazyWrapper>,
   },
   {
     path: '/check-in',
@@ -78,17 +86,22 @@ export const router = createBrowserRouter([
     path: '/mission-check-in',
     element: <LazyWrapper><MissionCheckIn /></LazyWrapper>,
   },
+  // Redirects — old routes to new
   {
-    path: '/missions/history',
-    element: <LazyWrapper><RequireAuth><MissionHistory /></RequireAuth></LazyWrapper>,
+    path: '/today',
+    element: <Navigate to="/think" replace />,
+  },
+  {
+    path: '/pulse',
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: '/progress',
-    element: <LazyWrapper><RequireAuth><Progress /></RequireAuth></LazyWrapper>,
+    element: <Navigate to="/dashboard" replace />,
   },
   {
-    path: '/booking',
-    element: <LazyWrapper><Booking /></LazyWrapper>,
+    path: '/missions/history',
+    element: <Navigate to="/think" replace />,
   },
   {
     path: '*',

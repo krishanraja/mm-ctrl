@@ -72,6 +72,104 @@ export const FACT_CATEGORY_META: Record<FactCategory, { icon: string; label: str
   preference: { icon: 'Settings', label: 'Preferences', color: 'gray' },
 };
 
+// ===== Memory Web Types =====
+
+export type Temperature = 'hot' | 'warm' | 'cold';
+
+export type PatternType = 'preference' | 'anti_preference' | 'behavior' | 'blindspot' | 'strength';
+
+export type ExportFormat = 'chatgpt' | 'claude' | 'gemini' | 'cursor' | 'claude-code' | 'markdown';
+
+export type ExportUseCase = 'general' | 'meeting' | 'decision' | 'code' | 'email' | 'strategy' | 'delegation' | 'board';
+
+export interface MemoryWebFact {
+  id: string;
+  user_id: string;
+  fact_key: string;
+  fact_category: FactCategory;
+  fact_label: string;
+  fact_value: string;
+  fact_context?: string;
+  confidence_score: number;
+  is_high_stakes: boolean;
+  verification_status: VerificationStatus;
+  verified_at?: string;
+  source_type: MemorySourceType;
+  source_session_id?: string;
+  is_current: boolean;
+  temperature: Temperature;
+  last_referenced_at?: string;
+  reference_count: number;
+  archived_at?: string | null;
+  tags?: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserPattern {
+  id: string;
+  user_id: string;
+  pattern_type: PatternType;
+  pattern_text: string;
+  confidence: number;
+  evidence_count: number;
+  first_observed_at: string;
+  last_confirmed_at: string;
+  status: 'confirmed' | 'emerging' | 'deprecated';
+  source_facts: string[];
+  created_at: string;
+}
+
+export type DecisionSource = 'manual' | 'voice' | 'check_in' | 'mission' | 'assessment';
+
+export interface UserDecision {
+  id: string;
+  user_id: string;
+  decision_text: string;
+  rationale: string | null;
+  context_snapshot: Record<string, unknown>;
+  status: 'active' | 'superseded' | 'reversed';
+  superseded_by: string | null;
+  source: DecisionSource;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MemoryWebStats {
+  total_facts: number;
+  verified_count: number;
+  verified_rate: number;
+  temperature_distribution: Record<Temperature, number>;
+  category_distribution: Record<FactCategory, number>;
+  health_score: number;
+  patterns_count: number;
+  decisions_count: number;
+}
+
+export interface GettingSmarterDelta {
+  new_facts: number;
+  new_patterns: number;
+  new_decisions: number;
+  period: string;
+}
+
+export interface MemoryBudget {
+  hot_token_count: number;
+  hot_max_tokens: number;
+  warm_token_count: number;
+  warm_max_tokens: number;
+  total_facts: number;
+  last_cleanup_at: string;
+}
+
+export interface MemoryExportResult {
+  format: ExportFormat;
+  use_case: ExportUseCase;
+  content: string;
+  token_count: number;
+  last_updated: string;
+}
+
 // Common fact keys and their labels
 export const FACT_KEY_LABELS: Record<string, string> = {
   role: 'Your Role',

@@ -1,15 +1,18 @@
 import * as React from "react"
-import { DashboardProvider } from "@/components/dashboard/DashboardProvider"
-import { MobileDashboard } from "@/components/dashboard/mobile/MobileDashboard"
-import { DesktopDashboard } from "@/components/dashboard/desktop/DesktopDashboard"
+import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashboard"
+import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
+import { GuidedFirstExperience } from "@/components/memory-web/GuidedFirstExperience"
 import { useDevice } from "@/hooks/useDevice"
+import { useGuidedCapture } from "@/hooks/useGuidedCapture"
 
 export default function Dashboard() {
   const { isMobile } = useDevice()
+  const { isFirstTime, completeOnboarding } = useGuidedCapture()
 
-  return (
-    <DashboardProvider>
-      {isMobile ? <MobileDashboard /> : <DesktopDashboard />}
-    </DashboardProvider>
-  )
+  // First-time users get the guided onboarding flow
+  if (isFirstTime) {
+    return <GuidedFirstExperience onComplete={completeOnboarding} />
+  }
+
+  return isMobile ? <MobileMemoryDashboard /> : <DesktopMemoryDashboard />
 }

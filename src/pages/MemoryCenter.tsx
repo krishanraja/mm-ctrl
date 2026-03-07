@@ -1,18 +1,6 @@
-/**
- * MemoryCenter Page
- * 
- * Main page for managing user memory with tabs for:
- * - Memory list with search/filter
- * - Privacy settings
- * - Export/Import
- * 
- * Mobile-first design with proper viewport handling.
- */
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Brain, Plus, Shield, Download } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Brain, Plus, Shield, Download, Search, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,11 +11,14 @@ import { AddMemorySheet } from '@/components/memory/AddMemorySheet';
 import { PrivacyControlsPanel } from '@/components/memory/PrivacyControlsPanel';
 import { ExportImportPanel } from '@/components/memory/ExportImportPanel';
 import { useDevice } from '@/hooks/useDevice';
+import { useMemoryWeb } from '@/hooks/useMemoryWeb';
+import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
+import { BottomNav } from '@/components/memory-web/BottomNav';
 import type { UserMemoryFact } from '@/types/memory';
 
 export default function MemoryCenter() {
-  const navigate = useNavigate();
   const { isMobile } = useDevice();
+  const { stats } = useMemoryWeb();
   const [activeTab, setActiveTab] = useState('memories');
   const [selectedMemory, setSelectedMemory] = useState<UserMemoryFact | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -38,63 +29,23 @@ export default function MemoryCenter() {
     setIsDetailOpen(true);
   };
 
-  const handleCloseDetail = () => {
-    setIsDetailOpen(false);
-    setSelectedMemory(null);
-  };
-
-  const handleAddMemory = () => {
-    setIsAddOpen(true);
-  };
-
-  const handleCloseAdd = () => {
-    setIsAddOpen(false);
-  };
-
-  return (
+  const content = (
     <MemoryErrorBoundary>
-      <div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col bg-background">
-        {/* Header */}
-        <header className="flex-shrink-0 px-4 pt-4 pb-2 border-b border-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate(-1)}
-                className="h-10 w-10"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-accent" />
-                  Memory Center
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  Your personal context and preferences
-                </p>
-              </div>
-            </div>
-            
-            {/* Add button - visible on memories tab */}
-            {activeTab === 'memories' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                <Button
-                  onClick={handleAddMemory}
-                  size="sm"
-                  className="border-0"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add
-                </Button>
-              </motion.div>
-            )}
-          </div>
-        </header>
+      <div className="space-y-4">
+        {/* Stats bar */}
+        {stats && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-4 text-sm text-muted-foreground"
+          >
+            <span>{stats.totalFacts} facts</span>
+            <span className="text-foreground/10">|</span>
+            <span>{stats.verifiedRate}% verified</span>
+            <span className="text-foreground/10">|</span>
+            <span>{stats.hotCount} hot, {stats.warmCount} warm</span>
+          </motion.div>
+        )}
 
         {/* Tabs */}
         <Tabs
@@ -102,57 +53,114 @@ export default function MemoryCenter() {
           onValueChange={setActiveTab}
           className="flex-1 flex flex-col overflow-hidden"
         >
-          <TabsList className="flex-shrink-0 mx-4 mt-3 grid grid-cols-3 h-11">
-            <TabsTrigger value="memories" className="text-sm">
-              <Brain className="h-4 w-4 mr-1.5 hidden sm:inline" />
-              Memories
-            </TabsTrigger>
-            <TabsTrigger value="privacy" className="text-sm">
-              <Shield className="h-4 w-4 mr-1.5 hidden sm:inline" />
-              Privacy
-            </TabsTrigger>
-            <TabsTrigger value="data" className="text-sm">
-              <Download className="h-4 w-4 mr-1.5 hidden sm:inline" />
-              Data
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex items-center justify-between">
+            <TabsList className="grid grid-cols-3 h-11">
+              <TabsTrigger value="memories" className="text-sm">
+                <Brain className="h-4 w-4 mr-1.5 hidden sm:inline" />
+                All Facts
+              </TabsTrigger>
+              <TabsTrigger value="privacy" className="text-sm">
+                <Shield className="h-4 w-4 mr-1.5 hidden sm:inline" />
+                Privacy
+              </TabsTrigger>
+              <TabsTrigger value="data" className="text-sm">
+                <Download className="h-4 w-4 mr-1.5 hidden sm:inline" />
+                Data
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Tab content */}
-          <div className="flex-1 overflow-hidden">
-            <TabsContent value="memories" className="h-full m-0 data-[state=active]:flex flex-col">
-              <MemoryList
-                onEditMemory={handleEditMemory}
-                onAddMemory={handleAddMemory}
-              />
-            </TabsContent>
-
-            <TabsContent value="privacy" className="h-full m-0 overflow-y-auto">
-              <div className="px-4 py-4 pb-safe">
-                <PrivacyControlsPanel />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="data" className="h-full m-0 overflow-y-auto">
-              <div className="px-4 py-4 pb-safe">
-                <ExportImportPanel />
-              </div>
-            </TabsContent>
+            {activeTab === 'memories' && (
+              <Button
+                onClick={() => setIsAddOpen(true)}
+                size="sm"
+                className="border-0"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            )}
           </div>
+
+          <TabsContent value="memories" className="mt-4">
+            <MemoryList
+              onEditMemory={handleEditMemory}
+              onAddMemory={() => setIsAddOpen(true)}
+            />
+          </TabsContent>
+
+          <TabsContent value="privacy" className="mt-4">
+            <PrivacyControlsPanel />
+          </TabsContent>
+
+          <TabsContent value="data" className="mt-4">
+            <ExportImportPanel />
+          </TabsContent>
         </Tabs>
-
-        {/* Memory Detail Sheet */}
-        <MemoryDetailSheet
-          memory={selectedMemory}
-          isOpen={isDetailOpen}
-          onClose={handleCloseDetail}
-        />
-
-        {/* Add Memory Sheet */}
-        <AddMemorySheet
-          isOpen={isAddOpen}
-          onClose={handleCloseAdd}
-        />
       </div>
+
+      <MemoryDetailSheet
+        memory={selectedMemory}
+        isOpen={isDetailOpen}
+        onClose={() => { setIsDetailOpen(false); setSelectedMemory(null); }}
+      />
+
+      <AddMemorySheet
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+      />
     </MemoryErrorBoundary>
+  );
+
+  if (!isMobile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <DesktopSidebar />
+        <main className="ml-64 p-8">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <div className="flex items-center gap-3 mb-1">
+                <Brain className="h-6 w-6 text-accent" />
+                <h1 className="text-2xl font-semibold">Memory Browser</h1>
+              </div>
+              <p className="text-muted-foreground">
+                View, verify, edit, and manage everything your AI knows about you.
+              </p>
+            </motion.div>
+            {content}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <header className="flex-shrink-0 px-4 pt-4 pb-2">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <Brain className="h-5 w-5 text-accent" />
+            <h1 className="text-xl font-semibold">Memory</h1>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Everything your AI knows about you
+          </p>
+        </motion.div>
+      </header>
+
+      <main className="flex-1 overflow-y-auto px-4 pb-32 scrollbar-hide">
+        <div className="py-2">
+          {content}
+        </div>
+      </main>
+
+      <BottomNav />
+    </div>
   );
 }
