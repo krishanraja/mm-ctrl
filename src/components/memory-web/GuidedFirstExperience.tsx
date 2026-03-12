@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mic,
   MicOff,
-  Sparkles,
   Copy,
   Check,
   ArrowRight,
@@ -16,6 +15,7 @@ import {
   Target,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import mindmakerIcon from '@/assets/mindmaker-icon.png';
 import { useGuidedCapture, type CaptureArea } from '@/hooks/useGuidedCapture';
 import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
@@ -33,9 +33,9 @@ const AREA_ICONS: Record<CaptureArea, typeof User> = {
 };
 
 const AREA_COLORS: Record<CaptureArea, string> = {
-  identity: 'from-violet-500 to-purple-600',
-  work: 'from-blue-500 to-indigo-600',
-  goals: 'from-emerald-500 to-teal-600',
+  identity: 'bg-primary',
+  work: 'bg-accent',
+  goals: 'bg-graphite',
 };
 
 export function GuidedFirstExperience({ onComplete }: Props) {
@@ -156,8 +156,8 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.3, type: 'spring' }}
               >
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center mx-auto shadow-lg shadow-accent/25">
-                  <Sparkles className="h-8 w-8 text-white" />
+                <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mx-auto shadow-lg shadow-accent/25">
+                  <img src={mindmakerIcon} alt="Mindmaker" className="h-8 w-8 object-contain" />
                 </div>
               </motion.div>
               <motion.div
@@ -201,9 +201,9 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               </h2>
               <div className="space-y-3">
                 {[
-                  { icon: Brain, title: 'Memory Web', desc: 'Facts about you, your work, your style', color: 'from-violet-500 to-purple-600' },
-                  { icon: Zap, title: '10X Skills Map', desc: 'Strengths to amplify, gaps to close', color: 'from-amber-500 to-orange-600' },
-                  { icon: MessageSquare, title: 'Master Prompts', desc: 'Custom prompts for ChatGPT, Claude, any AI', color: 'from-emerald-500 to-teal-600' },
+                  { icon: Brain, title: 'Memory Web', desc: 'Facts about you, your work, your style', color: 'bg-primary' },
+                  { icon: Zap, title: '10X Skills Map', desc: 'Strengths to amplify, gaps to close', color: 'bg-accent' },
+                  { icon: MessageSquare, title: 'Master Prompts', desc: 'Custom prompts for ChatGPT, Claude, any AI', color: 'bg-graphite' },
                 ].map((item, idx) => (
                   <motion.div
                     key={item.title}
@@ -213,7 +213,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                     className="flex items-start gap-3 p-3 rounded-xl bg-card border border-border"
                   >
                     <div className={cn(
-                      'w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center flex-shrink-0',
+                      'w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0',
                       item.color,
                     )}>
                       <item.icon className="h-4 w-4 text-white" />
@@ -255,7 +255,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               className="text-center space-y-6 max-w-md"
             >
               <div className={cn(
-                'w-14 h-14 rounded-xl bg-gradient-to-br flex items-center justify-center mx-auto shadow-lg',
+                'w-14 h-14 rounded-xl flex items-center justify-center mx-auto shadow-lg',
                 AREA_COLORS[currentArea],
               )}>
                 <AreaIcon className="h-7 w-7 text-white" />
@@ -282,7 +282,6 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 whileTap={{ scale: 0.95 }}
                 className={cn(
                   'w-20 h-20 rounded-full mx-auto',
-                  'bg-gradient-to-br',
                   AREA_COLORS[currentArea],
                   'flex items-center justify-center',
                   'shadow-lg',
@@ -312,9 +311,9 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 transition={{ repeat: Infinity, duration: 1.5 }}
                 className={cn(
                   'w-24 h-24 rounded-full mx-auto',
-                  'bg-gradient-to-br from-red-500 to-pink-600',
+                  'bg-destructive',
                   'flex items-center justify-center',
-                  'shadow-lg shadow-red-500/25',
+                  'shadow-lg shadow-destructive/25',
                 )}
               >
                 <MicOff className="w-10 h-10 text-white" />
@@ -330,11 +329,34 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                       duration: 0.4 + Math.random() * 0.4,
                       delay: i * 0.03,
                     }}
-                    className="w-0.5 bg-red-400 rounded-full"
+                    className="w-0.5 bg-destructive rounded-full"
                   />
                 ))}
               </div>
               <p className="text-xs text-muted-foreground/50">Tap the button when you're done</p>
+            </motion.div>
+          )}
+
+          {/* TRANSCRIBING - recording stopped, waiting for transcription */}
+          {step === 'recording' && !isRecording && (
+            <motion.div
+              key="transcribing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center space-y-4"
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+                className="w-20 h-20 rounded-full bg-gradient-to-r from-accent to-accent/30 p-[2px] mx-auto"
+              >
+                <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                  <img src={mindmakerIcon} alt="Mindmaker" className="w-8 h-8 object-contain" />
+                </div>
+              </motion.div>
+              <p className="text-foreground font-medium">Transcribing your response...</p>
+              <p className="text-sm text-muted-foreground">This may take a few seconds</p>
             </motion.div>
           )}
 
@@ -350,10 +372,10 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-                className="w-20 h-20 rounded-full bg-gradient-to-r from-accent via-purple-500 to-pink-500 p-[2px] mx-auto"
+                className="w-20 h-20 rounded-full bg-gradient-to-r from-accent to-accent/30 p-[2px] mx-auto"
               >
                 <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-                  <Sparkles className="w-8 h-8 text-purple-400" />
+                  <img src={mindmakerIcon} alt="Mindmaker" className="w-8 h-8 object-contain" />
                 </div>
               </motion.div>
               <p className="text-foreground font-medium">Extracting facts & patterns...</p>
@@ -395,7 +417,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               exit={{ opacity: 0 }}
               className="text-center space-y-5 max-w-md w-full"
             >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto shadow-lg">
+              <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center mx-auto shadow-lg">
                 <Download className="h-7 w-7 text-white" />
               </div>
               <h2 className="text-xl font-bold text-foreground">
@@ -415,7 +437,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                   className={cn(
                     'flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2',
                     copied
-                      ? 'bg-emerald-500/20 text-emerald-400'
+                      ? 'bg-accent/20 text-accent'
                       : 'bg-accent text-accent-foreground shadow-lg shadow-accent/25',
                   )}
                 >
@@ -445,7 +467,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring' }}
               >
-                <Check className="h-12 w-12 text-emerald-400 mx-auto" />
+                <Check className="h-12 w-12 text-accent mx-auto" />
               </motion.div>
               <h2 className="text-xl font-bold text-foreground">Your digital clone is live</h2>
               <p className="text-muted-foreground">
