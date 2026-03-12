@@ -1,347 +1,237 @@
 import * as React from "react"
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Mic, ArrowRight, User, ChevronLeft, ChevronRight } from "lucide-react"
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion"
+import { Brain, Zap, MessageSquare, ArrowRight, Sparkles, Download } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-// Feature data for carousel
-const FEATURES = [
+const PILLARS = [
   {
-    title: "Remembers You",
-    description: "Your context persists across every conversation",
+    icon: Brain,
+    title: "Memory Web",
+    description: "Every conversation builds a rich map of who you are, what you do, and how you think.",
+    color: "from-violet-500 to-purple-600",
+    glow: "shadow-violet-500/20",
   },
   {
-    title: "Voice-First",
-    description: "Talk naturally, we extract what matters",
+    icon: Zap,
+    title: "10X Skills",
+    description: "AI identifies your strengths to amplify and weaknesses to shore up — personalized to you.",
+    color: "from-amber-500 to-orange-600",
+    glow: "shadow-amber-500/20",
   },
   {
-    title: "You Control",
-    description: "Verify, edit, or reject anything we learn",
+    icon: MessageSquare,
+    title: "Master Prompts",
+    description: "Custom prompts that make any AI instantly understand your context, voice, and goals.",
+    color: "from-emerald-500 to-teal-600",
+    glow: "shadow-emerald-500/20",
   },
-  {
-    title: "Always Relevant",
-    description: "Advice grounded in who you actually are",
-  },
+]
+
+const JOURNEY_STEPS = [
+  "Talk naturally about your work",
+  "We extract facts, skills & patterns",
+  "Export to ChatGPT, Claude, or any AI",
+  "Every AI conversation gets 10x better",
 ]
 
 export function HeroSection() {
   const navigate = useNavigate()
-  const [activeFeature, setActiveFeature] = useState(0)
-  const [showDrawer, setShowDrawer] = useState(false)
-  const [videoLoaded, setVideoLoaded] = useState(false)
-  const dragX = useMotionValue(0)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [activeStep, setActiveStep] = useState(0)
 
-  // Auto-advance carousel
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveFeature((prev) => (prev + 1) % FEATURES.length)
-    }, 4000)
+      setActiveStep((prev) => (prev + 1) % JOURNEY_STEPS.length)
+    }, 3000)
     return () => clearInterval(interval)
   }, [])
 
-  // Swipe handling for mobile carousel
-  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const threshold = 50
-    const velocity = info.velocity.x
-    const offset = info.offset.x
-
-    if (offset < -threshold || velocity < -500) {
-      setActiveFeature((prev) => Math.min(prev + 1, FEATURES.length - 1))
-    } else if (offset > threshold || velocity > 500) {
-      setActiveFeature((prev) => Math.max(prev - 1, 0))
-    }
-  }
-
   return (
-    <div className="relative h-screen-safe overflow-hidden flex flex-col bg-background">
-      {/* Video skeleton - shown while video loads */}
-      {!videoLoaded && (
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black opacity-20 lg:opacity-[0.08]" />
-      )}
+    <div className="relative min-h-screen overflow-y-auto flex flex-col bg-background">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-purple-500/[0.03]" />
 
-      {/* Video Background - Mobile at 20% opacity, Desktop at 8% */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        loading="lazy"
-        preload="metadata"
-        onLoadedData={() => setVideoLoaded(true)}
-        className="absolute inset-0 w-full h-full object-cover opacity-20 lg:opacity-[0.08]"
-        style={{ filter: 'grayscale(0.5) brightness(0.6)' }}
-      >
-        <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
-      </video>
-
-      {/* Gradient overlay - only on desktop to not block mobile video */}
-      <div className="absolute inset-0 hidden lg:block bg-gradient-to-b from-background via-background/98 to-background" />
-
-      {/* Top Bar - Minimal, just auth button */}
-      <header className="relative z-10 flex items-center justify-end px-4 sm:px-6 py-4">
-        <motion.button
+      {/* Header */}
+      <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 py-5">
+        <div className="flex items-center gap-2">
+          <img
+            src="/mindmaker-full-logo.png"
+            alt="Mindmaker"
+            className="h-5 sm:h-6 w-auto"
+          />
+        </div>
+        <Button
           onClick={() => navigate('/auth')}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="p-2 rounded-full hover:bg-secondary/50 transition-colors"
+          variant="outline"
+          size="sm"
+          className="text-sm border-border/60 hover:bg-secondary/50"
         >
-          <User className="h-5 w-5 text-muted-foreground" />
-        </motion.button>
+          Sign In
+        </Button>
       </header>
 
-      {/* Main Content - Centered, No Scroll */}
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
-        <div className="w-full max-w-lg">
-          {/* Headline - Clean, Powerful */}
+      {/* Hero Content */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-5 sm:px-8 py-8 sm:py-12">
+        <div className="w-full max-w-3xl">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center mb-6"
+          >
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-medium text-accent">
+              <Sparkles className="h-3 w-3" />
+              For leaders building their AI advantage
+            </span>
+          </motion.div>
+
+          {/* Headline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-center mb-8"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-center mb-6"
           >
-            {/* Logo above CTRL - half size, shifted 1px left */}
-            <img 
-              src="/mindmaker-full-logo.png" 
-              alt="Mindmaker" 
-              style={{ height: '12px', transform: 'translateX(-1px)' }}
-              className="mx-auto mb-4 w-auto"
-            />
-            <h1 
-              className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-4 text-foreground"
-              style={{ 
-                fontFamily: "'Space Grotesk', sans-serif",
-                background: 'linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--accent)) 50%, hsl(var(--foreground)) 100%)',
-                backgroundSize: '200% 200%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                animation: 'shimmer-text 3s ease-in-out infinite',
-              }}
-            >
-              CTRL
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] text-foreground mb-4">
+              Talk. We learn.{" "}
+              <span className="bg-gradient-to-r from-accent via-purple-400 to-accent bg-clip-text text-transparent">
+                Every AI gets smarter.
+              </span>
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto">
-              <span className="sm:inline">The decision making confidante</span>
-              <br className="sm:hidden" />
-              <span className="sm:inline"> for AI in your life and business.</span>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Narrate your world and Mindmaker builds your personal Memory Web, identifies your 10X skills, 
+              and generates master prompts — a portable digital clone you take to any AI.
             </p>
           </motion.div>
 
-          {/* Voice CTA - The Hero Element */}
+          {/* CTA Buttons */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex flex-col items-center mb-8"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12 sm:mb-16"
           >
-            {/* Mic Button with Glow */}
-            <motion.button
-              onClick={() => navigate('/voice')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={cn(
-                "relative w-20 h-20 sm:w-24 sm:h-24 rounded-full",
-                "bg-accent text-accent-foreground",
-                "flex items-center justify-center",
-                "glow-accent transition-all duration-300"
-              )}
+            <Button
+              onClick={() => navigate('/auth')}
+              size="lg"
+              className="h-12 px-8 text-base font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/25"
             >
-              {/* Subtle pulse ring */}
-              <motion.div
-                className="absolute inset-0 rounded-full border-2 border-accent/30"
-                animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0, 0.5] }}
-                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-              />
-              <Mic className="h-8 w-8 sm:h-9 sm:w-9" />
-            </motion.button>
-            
-            <motion.p 
-              className="text-xs text-muted-foreground mt-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              Tap to speak
-            </motion.p>
+              Get Started Free
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+            <p className="text-xs text-muted-foreground/60">
+              2 minutes to your first export. No credit card needed.
+            </p>
           </motion.div>
 
-          {/* Feature Carousel - Mobile Swipe / Desktop Dots */}
+          {/* Three Pillars */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-12 sm:mb-16"
           >
-            {/* Carousel Container */}
-            <div 
-              ref={containerRef}
-              className="relative overflow-hidden"
-            >
+            {PILLARS.map((pillar, idx) => (
               <motion.div
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.1}
-                onDragEnd={handleDragEnd}
-                className="flex cursor-grab active:cursor-grabbing"
-                animate={{ x: -activeFeature * 100 + "%" }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                key={pillar.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 + idx * 0.1 }}
+                className={cn(
+                  "relative rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-5",
+                  "hover:border-accent/30 transition-all duration-300",
+                  "group"
+                )}
               >
-                {FEATURES.map((feature, idx) => (
-                  <div
-                    key={idx}
-                    className="w-full flex-shrink-0 px-2"
-                  >
-                    <div className={cn(
-                      "text-center py-4 px-6 rounded-2xl",
-                      "bg-secondary/30 border border-border/50",
-                      "transition-all duration-300",
-                      idx === activeFeature ? "opacity-100" : "opacity-50"
-                    )}>
-                      <p className="text-sm font-medium text-foreground mb-1">
-                        {feature.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                <div className={cn(
+                  "w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center mb-3",
+                  "shadow-lg",
+                  pillar.color,
+                  pillar.glow,
+                )}>
+                  <pillar.icon className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-foreground mb-1.5">{pillar.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{pillar.description}</p>
               </motion.div>
-            </div>
+            ))}
+          </motion.div>
 
-            {/* Carousel Indicators */}
-            <div className="flex justify-center gap-1.5 mt-4">
-              {FEATURES.map((_, idx) => (
-                <button
+          {/* How It Works — animated journey */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="max-w-md mx-auto"
+          >
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center mb-5">
+              How it works
+            </h2>
+            <div className="space-y-3">
+              {JOURNEY_STEPS.map((step, idx) => (
+                <motion.div
                   key={idx}
-                  onClick={() => setActiveFeature(idx)}
                   className={cn(
-                    "h-1 rounded-full transition-all duration-300",
-                    idx === activeFeature 
-                      ? "w-6 bg-accent" 
-                      : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-500",
+                    idx === activeStep
+                      ? "bg-accent/10 border border-accent/20"
+                      : "bg-transparent border border-transparent"
                   )}
-                />
+                >
+                  <span className={cn(
+                    "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500",
+                    idx === activeStep
+                      ? "bg-accent text-accent-foreground"
+                      : idx < activeStep
+                        ? "bg-accent/20 text-accent"
+                        : "bg-muted text-muted-foreground"
+                  )}>
+                    {idx + 1}
+                  </span>
+                  <span className={cn(
+                    "text-sm transition-colors duration-500",
+                    idx === activeStep ? "text-foreground font-medium" : "text-muted-foreground"
+                  )}>
+                    {step}
+                  </span>
+                </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* Secondary CTA */}
+          {/* Export targets */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="flex flex-col items-center gap-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mt-10 sm:mt-14 text-center"
           >
-            <Button
-              onClick={() => navigate('/diagnostic')}
-              variant="outline"
-              className="h-11 px-6 text-sm font-medium border-border/50 hover:bg-secondary/50"
-            >
-              Prefer to type? Take the 2-min quiz
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <Download className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <span className="text-xs text-muted-foreground/50 uppercase tracking-wider font-medium">
+                Export to
+              </span>
+            </div>
+            <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
+              {["ChatGPT", "Claude", "Gemini", "Cursor", "Any LLM"].map((name) => (
+                <span key={name} className="text-xs text-muted-foreground/40 font-medium">
+                  {name}
+                </span>
+              ))}
+            </div>
           </motion.div>
         </div>
       </main>
 
-      {/* Bottom Drawer Trigger - Desktop Only */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="relative z-10 hidden lg:flex justify-center pb-6"
-      >
-        <button
-          onClick={() => setShowDrawer(true)}
-          className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-        >
-          Why Mindmaker?
-        </button>
-      </motion.div>
-
-      {/* Footer - Minimal */}
-      <footer className="relative z-10 px-4 sm:px-6 pb-4 lg:hidden">
-        <p className="text-[10px] text-muted-foreground/40 text-center">
-          For leaders who need AI literacy fast
+      {/* Footer */}
+      <footer className="relative z-10 px-5 sm:px-8 py-4 text-center">
+        <p className="text-[10px] text-muted-foreground/30">
+          Your data is private. Export anytime. Delete anytime.
         </p>
       </footer>
-
-      {/* Desktop Feature Drawer */}
-      <AnimatePresence>
-        {showDrawer && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowDrawer(false)}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm hidden lg:block"
-            />
-            
-            {/* Drawer */}
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed bottom-0 left-0 right-0 z-50 hidden lg:block"
-            >
-              <div className="bg-card border-t border-border rounded-t-3xl p-8 max-w-4xl mx-auto">
-                {/* Drawer Handle */}
-                <div className="flex justify-center mb-6">
-                  <button
-                    onClick={() => setShowDrawer(false)}
-                    className="w-10 h-1 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40 transition-colors"
-                  />
-                </div>
-
-                {/* Drawer Content */}
-                <div className="grid grid-cols-4 gap-6">
-                  {FEATURES.map((feature, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="text-center"
-                    >
-                      <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-3">
-                        <div className="w-2 h-2 rounded-full bg-accent" />
-                      </div>
-                      <h3 className="text-sm font-medium text-foreground mb-1">
-                        {feature.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">
-                        {feature.description}
-                      </p>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Drawer CTA */}
-                <div className="flex justify-center mt-8">
-                  <Button
-                    onClick={() => {
-                      setShowDrawer(false)
-                      navigate('/voice')
-                    }}
-                    className="h-11 px-8 bg-accent text-accent-foreground hover:bg-accent/90"
-                  >
-                    <Mic className="h-4 w-4 mr-2" />
-                    Start with voice
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

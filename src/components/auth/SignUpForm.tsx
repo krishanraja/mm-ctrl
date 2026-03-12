@@ -39,7 +39,7 @@ export function SignUpForm() {
       setError(error)
       setLoading(false)
     } else {
-      navigate('/diagnostic')
+      navigate('/dashboard')
     }
   }
 

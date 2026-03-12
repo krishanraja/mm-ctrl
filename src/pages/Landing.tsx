@@ -3,35 +3,24 @@ import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { HeroSection } from "@/components/landing/HeroSection"
 import { useAuth } from "@/components/auth/AuthProvider"
-import { supabase } from "@/integrations/supabase/client"
 
 export default function Landing() {
-  const { user, isLoading } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Check if user has baseline and redirect to dashboard
-    const checkBaseline = async () => {
-      if (user && !isLoading) {
-        try {
-          const { data } = await supabase
-            .from('leaders')
-            .select('baseline')
-            .eq('id', user.id)
-            .single()
-
-          if (data?.baseline) {
-            navigate('/dashboard')
-          }
-        } catch (error) {
-          // User doesn't have baseline yet, stay on landing
-          console.error('Error checking baseline:', error)
-        }
-      }
+    if (!isLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true })
     }
+  }, [isAuthenticated, isLoading, navigate])
 
-    checkBaseline()
-  }, [user, isLoading, navigate])
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent" />
+      </div>
+    )
+  }
 
   return <HeroSection />
 }

@@ -1,8 +1,22 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Sparkles, Copy, Check, ArrowRight } from 'lucide-react';
+import {
+  Mic,
+  MicOff,
+  Sparkles,
+  Copy,
+  Check,
+  ArrowRight,
+  Brain,
+  Zap,
+  MessageSquare,
+  Download,
+  User,
+  Briefcase,
+  Target,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useGuidedCapture } from '@/hooks/useGuidedCapture';
+import { useGuidedCapture, type CaptureArea } from '@/hooks/useGuidedCapture';
 import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
@@ -12,8 +26,30 @@ interface Props {
   onComplete: () => void;
 }
 
+const AREA_ICONS: Record<CaptureArea, typeof User> = {
+  identity: User,
+  work: Briefcase,
+  goals: Target,
+};
+
+const AREA_COLORS: Record<CaptureArea, string> = {
+  identity: 'from-violet-500 to-purple-600',
+  work: 'from-blue-500 to-indigo-600',
+  goals: 'from-emerald-500 to-teal-600',
+};
+
 export function GuidedFirstExperience({ onComplete }: Props) {
-  const { step, currentPrompt, extractedFactCount, advance, completeOnboarding } = useGuidedCapture();
+  const {
+    step,
+    currentArea,
+    currentPromptData,
+    extractedFactCount,
+    completedAreas,
+    totalAreas,
+    areaIndex,
+    advance,
+    completeOnboarding,
+  } = useGuidedCapture();
   const {
     pendingVerifications,
     isExtracting,
@@ -27,19 +63,22 @@ export function GuidedFirstExperience({ onComplete }: Props) {
 
   const handleTranscript = useCallback(
     async (text: string) => {
-      advance(); // -> processing
+      advance();
       const result = await extractFromTranscript(text);
       const count = result?.pending_verifications?.length || 0;
-      advance(count); // -> verification
+      advance(count);
     },
     [advance, extractFromTranscript],
   );
 
-  const { isRecording, isProcessing: isTranscribing, duration, startRecording, stopRecording, resetRecording } =
-    useVoice({
-      maxDuration: 120,
-      onTranscript: handleTranscript,
-    });
+  const {
+    isRecording,
+    isProcessing: isTranscribing,
+    duration,
+    startRecording,
+    stopRecording,
+    resetRecording,
+  } = useVoice({ maxDuration: 120, onTranscript: handleTranscript });
 
   const handleVoiceToggle = useCallback(() => {
     if (isRecording) {
@@ -51,12 +90,11 @@ export function GuidedFirstExperience({ onComplete }: Props) {
   }, [isRecording, startRecording, stopRecording, resetRecording]);
 
   const handleVerificationComplete = useCallback(async () => {
-    // After first round verification, generate export for value moment
-    if (step === 'verification') {
+    if (completedAreas.length + 1 >= totalAreas) {
       await generateExport('claude', 'general');
     }
     advance();
-  }, [step, advance, generateExport]);
+  }, [completedAreas, totalAreas, advance, generateExport]);
 
   const handleCopy = async () => {
     if (exportResult?.content) {
@@ -66,238 +104,366 @@ export function GuidedFirstExperience({ onComplete }: Props) {
     }
   };
 
-  const formatTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+  const formatTime = (s: number) =>
+    `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+
+  const AreaIcon = AREA_ICONS[currentArea];
 
   return (
-    <div className="h-screen bg-background flex flex-col items-center justify-center px-6">
-      <AnimatePresence mode="wait">
-        {/* Welcome */}
-        {step === 'welcome' && (
-          <motion.div
-            key="welcome"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="text-center space-y-6 max-w-sm"
-          >
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: 'spring' }}>
-              <Sparkles className="h-12 w-12 text-accent mx-auto" />
+    <div className="h-screen bg-background flex flex-col">
+      {/* Progress bar */}
+      {step !== 'welcome' && step !== 'prompt_intro' && step !== 'complete' && (
+        <div className="flex-shrink-0 px-6 pt-6 pb-2">
+          <div className="flex items-center gap-2 mb-2">
+            {Array.from({ length: totalAreas }).map((_, i) => (
+              <div key={i} className="flex-1 h-1.5 rounded-full overflow-hidden bg-muted">
+                <motion.div
+                  className="h-full bg-accent rounded-full"
+                  initial={{ width: '0%' }}
+                  animate={{
+                    width:
+                      i < completedAreas.length
+                        ? '100%'
+                        : i === areaIndex && (step === 'verification' || step === 'processing' || step === 'recording')
+                          ? '50%'
+                          : '0%',
+                  }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Area {Math.min(areaIndex + 1, totalAreas)} of {totalAreas}
+          </p>
+        </div>
+      )}
+
+      {/* Main content area */}
+      <div className="flex-1 flex items-center justify-center px-6">
+        <AnimatePresence mode="wait">
+          {/* WELCOME */}
+          {step === 'welcome' && (
+            <motion.div
+              key="welcome"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="text-center space-y-8 max-w-md"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, type: 'spring' }}
+              >
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center mx-auto shadow-lg shadow-accent/25">
+                  <Sparkles className="h-8 w-8 text-white" />
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="space-y-3"
+              >
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                  Let's build your AI double
+                </h1>
+                <p className="text-muted-foreground leading-relaxed">
+                  In about 3 minutes, you'll have a portable digital clone that makes
+                  every AI conversation dramatically better.
+                </p>
+              </motion.div>
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                onClick={() => advance()}
+                className="px-8 py-3 rounded-xl bg-accent text-accent-foreground font-semibold flex items-center gap-2 mx-auto shadow-lg shadow-accent/25"
+              >
+                Let's Go
+                <ArrowRight className="h-4 w-4" />
+              </motion.button>
             </motion.div>
-            <motion.h1
+          )}
+
+          {/* INTRO — explain the 3 things we build */}
+          {step === 'prompt_intro' && (
+            <motion.div
+              key="intro"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-2xl font-semibold text-foreground"
+              exit={{ opacity: 0 }}
+              className="max-w-md space-y-6"
             >
-              This is your thinking space.
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="text-muted-foreground"
-            >
-              Speak freely. I'll remember what matters and build a portable context that makes any AI instantly useful.
-            </motion.p>
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.1 }}
-              onClick={() => advance()}
-              className="px-8 py-3 rounded-xl bg-accent text-accent-foreground font-medium flex items-center gap-2 mx-auto"
-            >
-              Get Started
-              <ArrowRight className="h-4 w-4" />
-            </motion.button>
-          </motion.div>
-        )}
-
-        {/* Prompt */}
-        {(step === 'first_prompt' || step === 'second_prompt') && (
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-center space-y-8 max-w-sm"
-          >
-            <p className="text-lg text-foreground/80 leading-relaxed">{currentPrompt}</p>
-            <motion.button
-              onClick={() => {
-                advance(); // -> recording
-                handleVoiceToggle();
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={cn(
-                'w-24 h-24 rounded-full mx-auto',
-                'bg-gradient-to-br from-accent to-accent/70',
-                'flex items-center justify-center',
-                'shadow-lg shadow-accent/20',
-              )}
-            >
-              <Mic className="w-10 h-10 text-white" />
-            </motion.button>
-            <p className="text-xs text-muted-foreground/50">Tap to speak</p>
-          </motion.div>
-        )}
-
-        {/* Recording */}
-        {step === 'recording' && isRecording && (
-          <motion.div
-            key="recording"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-center space-y-6"
-          >
-            <motion.button
-              onClick={handleVoiceToggle}
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className={cn(
-                'w-24 h-24 rounded-full mx-auto',
-                'bg-gradient-to-br from-red-500 to-pink-600',
-                'flex items-center justify-center',
-                'shadow-lg shadow-red-500/25',
-              )}
-            >
-              <MicOff className="w-10 h-10 text-white" />
-            </motion.button>
-            <div className="text-2xl font-bold tabular-nums">{formatTime(duration)}</div>
-            <div className="flex items-center justify-center gap-0.5 h-6">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ height: [4, Math.random() * 24 + 4, 4] }}
-                  transition={{ repeat: Infinity, duration: 0.4 + Math.random() * 0.4, delay: i * 0.03 }}
-                  className="w-0.5 bg-red-400 rounded-full"
-                />
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground/50">Tap to stop</p>
-          </motion.div>
-        )}
-
-        {/* Processing */}
-        {step === 'processing' && (
-          <motion.div
-            key="processing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-center space-y-4"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-              className="w-20 h-20 rounded-full bg-gradient-to-r from-accent via-purple-500 to-pink-500 p-[2px] mx-auto"
-            >
-              <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-purple-400" />
+              <h2 className="text-xl font-bold text-foreground text-center">
+                Here's what we'll build together
+              </h2>
+              <div className="space-y-3">
+                {[
+                  { icon: Brain, title: 'Memory Web', desc: 'Facts about you, your work, your style', color: 'from-violet-500 to-purple-600' },
+                  { icon: Zap, title: '10X Skills Map', desc: 'Strengths to amplify, gaps to close', color: 'from-amber-500 to-orange-600' },
+                  { icon: MessageSquare, title: 'Master Prompts', desc: 'Custom prompts for ChatGPT, Claude, any AI', color: 'from-emerald-500 to-teal-600' },
+                ].map((item, idx) => (
+                  <motion.div
+                    key={item.title}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + idx * 0.15 }}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-card border border-border"
+                  >
+                    <div className={cn(
+                      'w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center flex-shrink-0',
+                      item.color,
+                    )}>
+                      <item.icon className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="text-center space-y-3 pt-2"
+              >
+                <p className="text-xs text-muted-foreground">
+                  I'll ask you 3 questions. Talk naturally for 1-2 minutes each.
+                </p>
+                <button
+                  onClick={() => advance()}
+                  className="px-8 py-3 rounded-xl bg-accent text-accent-foreground font-semibold flex items-center gap-2 mx-auto"
+                >
+                  Start First Question
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </motion.div>
             </motion.div>
-            <p className="text-foreground font-medium">Learning about you...</p>
-            <p className="text-sm text-muted-foreground">This only takes a moment</p>
-          </motion.div>
-        )}
+          )}
 
-        {/* Verification — use existing FactVerificationCard */}
-        {step === 'verification' && pendingVerifications.length > 0 && (
-          <FactVerificationCard
-            facts={pendingVerifications}
-            onVerify={verifyFact}
-            onReject={rejectFact}
-            onDismiss={() => {
-              clearPendingVerifications();
-              handleVerificationComplete();
-            }}
-            onComplete={handleVerificationComplete}
-          />
-        )}
-
-        {/* Verification — no pending facts, auto-advance */}
-        {step === 'verification' && pendingVerifications.length === 0 && (
-          <motion.div
-            key="no-verify"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onAnimationComplete={handleVerificationComplete}
-            className="text-center"
-          >
-            <p className="text-muted-foreground">Processing...</p>
-          </motion.div>
-        )}
-
-        {/* Value Moment */}
-        {step === 'value_moment' && (
-          <motion.div
-            key="value"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-center space-y-5 max-w-sm w-full"
-          >
-            <Sparkles className="h-8 w-8 text-accent mx-auto" />
-            <h2 className="text-xl font-semibold text-foreground">
-              I now know {extractedFactCount} things about you.
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Copy this into ChatGPT or Claude. Notice how much better the responses are.
-            </p>
-            {exportResult?.content && (
-              <pre className="text-left text-xs text-foreground/70 bg-foreground/5 rounded-xl p-4 max-h-40 overflow-auto whitespace-pre-wrap font-mono">
-                {exportResult.content}
-              </pre>
-            )}
-            <div className="flex gap-3">
-              <button
-                onClick={handleCopy}
+          {/* PROMPT — show the question with context */}
+          {(step === 'prompt_identity' || step === 'prompt_work' || step === 'prompt_goals') && (
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-center space-y-6 max-w-md"
+            >
+              <div className={cn(
+                'w-14 h-14 rounded-xl bg-gradient-to-br flex items-center justify-center mx-auto shadow-lg',
+                AREA_COLORS[currentArea],
+              )}>
+                <AreaIcon className="h-7 w-7 text-white" />
+              </div>
+              <div className="space-y-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                  {currentPromptData.title}
+                </span>
+                <p className="text-lg font-medium text-foreground leading-relaxed">
+                  {currentPromptData.prompt}
+                </p>
+              </div>
+              <div className="bg-muted/50 rounded-xl p-4 text-left">
+                <p className="text-xs text-muted-foreground italic leading-relaxed">
+                  {currentPromptData.hint}
+                </p>
+              </div>
+              <motion.button
+                onClick={() => {
+                  advance();
+                  handleVoiceToggle();
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className={cn(
-                  'flex-1 py-3 rounded-xl font-medium flex items-center justify-center gap-2',
-                  copied ? 'bg-emerald-500/20 text-emerald-400' : 'bg-accent text-accent-foreground',
+                  'w-20 h-20 rounded-full mx-auto',
+                  'bg-gradient-to-br',
+                  AREA_COLORS[currentArea],
+                  'flex items-center justify-center',
+                  'shadow-lg',
                 )}
               >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {copied ? 'Copied!' : 'Copy Context'}
-              </button>
+                <Mic className="w-9 h-9 text-white" />
+              </motion.button>
+              <p className="text-xs text-muted-foreground/50">Tap to speak (1-2 minutes)</p>
+            </motion.div>
+          )}
+
+          {/* RECORDING */}
+          {step === 'recording' && isRecording && (
+            <motion.div
+              key="recording"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center space-y-6"
+            >
+              <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                {currentPromptData.title}
+              </span>
+              <motion.button
+                onClick={handleVoiceToggle}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+                className={cn(
+                  'w-24 h-24 rounded-full mx-auto',
+                  'bg-gradient-to-br from-red-500 to-pink-600',
+                  'flex items-center justify-center',
+                  'shadow-lg shadow-red-500/25',
+                )}
+              >
+                <MicOff className="w-10 h-10 text-white" />
+              </motion.button>
+              <div className="text-2xl font-bold tabular-nums">{formatTime(duration)}</div>
+              <div className="flex items-center justify-center gap-0.5 h-6">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ height: [4, Math.random() * 24 + 4, 4] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 0.4 + Math.random() * 0.4,
+                      delay: i * 0.03,
+                    }}
+                    className="w-0.5 bg-red-400 rounded-full"
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground/50">Tap the button when you're done</p>
+            </motion.div>
+          )}
+
+          {/* PROCESSING */}
+          {step === 'processing' && (
+            <motion.div
+              key="processing"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center space-y-4"
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+                className="w-20 h-20 rounded-full bg-gradient-to-r from-accent via-purple-500 to-pink-500 p-[2px] mx-auto"
+              >
+                <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-purple-400" />
+                </div>
+              </motion.div>
+              <p className="text-foreground font-medium">Extracting facts & patterns...</p>
+              <p className="text-sm text-muted-foreground">Building your Memory Web</p>
+            </motion.div>
+          )}
+
+          {/* VERIFICATION */}
+          {step === 'verification' && pendingVerifications.length > 0 && (
+            <FactVerificationCard
+              facts={pendingVerifications}
+              onVerify={verifyFact}
+              onReject={rejectFact}
+              onDismiss={() => {
+                clearPendingVerifications();
+                handleVerificationComplete();
+              }}
+              onComplete={handleVerificationComplete}
+            />
+          )}
+          {step === 'verification' && pendingVerifications.length === 0 && (
+            <motion.div
+              key="no-verify"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onAnimationComplete={handleVerificationComplete}
+              className="text-center"
+            >
+              <p className="text-muted-foreground">Processing...</p>
+            </motion.div>
+          )}
+
+          {/* VALUE MOMENT — show what was built + first export */}
+          {step === 'value_moment' && (
+            <motion.div
+              key="value"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-center space-y-5 max-w-md w-full"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto shadow-lg">
+                <Download className="h-7 w-7 text-white" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">
+                Your AI double knows {extractedFactCount} things about you
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Copy this into ChatGPT or Claude right now. Notice how much better the responses are.
+              </p>
+              {exportResult?.content && (
+                <pre className="text-left text-xs text-foreground/70 bg-foreground/5 rounded-xl p-4 max-h-48 overflow-auto whitespace-pre-wrap font-mono border border-border">
+                  {exportResult.content}
+                </pre>
+              )}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleCopy}
+                  className={cn(
+                    'flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2',
+                    copied
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : 'bg-accent text-accent-foreground shadow-lg shadow-accent/25',
+                  )}
+                >
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? 'Copied!' : 'Copy to Clipboard'}
+                </button>
+              </div>
               <button
                 onClick={() => advance()}
-                className="flex-1 py-3 rounded-xl font-medium bg-foreground/5 text-foreground"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
               >
-                Continue
+                Go to my dashboard
               </button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Complete */}
-        {step === 'complete' && (
-          <motion.div
-            key="complete"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center space-y-6 max-w-sm"
-          >
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}>
-              <Check className="h-12 w-12 text-emerald-400 mx-auto" />
             </motion.div>
-            <h2 className="text-xl font-semibold text-foreground">You're all set.</h2>
-            <p className="text-muted-foreground">
-              Come back anytime to add more. The more you share, the smarter your AI context becomes.
-            </p>
-            <button
-              onClick={() => {
-                completeOnboarding();
-                onComplete();
-              }}
-              className="px-8 py-3 rounded-xl bg-accent text-accent-foreground font-medium"
+          )}
+
+          {/* COMPLETE */}
+          {step === 'complete' && (
+            <motion.div
+              key="complete"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center space-y-6 max-w-sm"
             >
-              Go to Dashboard
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring' }}
+              >
+                <Check className="h-12 w-12 text-emerald-400 mx-auto" />
+              </motion.div>
+              <h2 className="text-xl font-bold text-foreground">Your digital clone is live</h2>
+              <p className="text-muted-foreground">
+                Come back anytime to narrate more. The more you share, the more powerful your AI context becomes.
+              </p>
+              <button
+                onClick={() => {
+                  completeOnboarding();
+                  onComplete();
+                }}
+                className="px-8 py-3 rounded-xl bg-accent text-accent-foreground font-semibold shadow-lg shadow-accent/25"
+              >
+                Go to Dashboard
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

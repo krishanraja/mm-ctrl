@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Lightbulb, Brain, FileText } from 'lucide-react';
+import { Home, Lightbulb, Brain, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/think', icon: Lightbulb, label: 'Think' },
   { path: '/memory', icon: Brain, label: 'Memory' },
-  { path: '/context', icon: FileText, label: 'Context' },
+  { path: '/context', icon: Download, label: 'Export' },
 ];
 
 export function BottomNav() {

@@ -1,17 +1,12 @@
-/**
- * DesktopSidebar
- * Clean sidebar navigation for the Memory Web desktop experience.
- */
-
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Lightbulb, Brain, FileText, Settings } from 'lucide-react';
+import { Home, Lightbulb, Brain, Download, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/think', icon: Lightbulb, label: 'Think' },
-  { path: '/memory', icon: Brain, label: 'Memory' },
-  { path: '/context', icon: FileText, label: 'Context' },
+  { path: '/memory', icon: Brain, label: 'Memory Web' },
+  { path: '/context', icon: Download, label: 'Export to AI' },
 ];
 
 export function DesktopSidebar() {
@@ -20,21 +15,20 @@ export function DesktopSidebar() {
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-64 bg-background border-r border-border flex flex-col z-40">
-      {/* App Name */}
       <div className="px-6 py-5 border-b border-border">
-        <h1 className="text-lg font-semibold tracking-tight text-foreground">
-          Mindmaker
-        </h1>
+        <img
+          src="/mindmaker-full-logo.png"
+          alt="Mindmaker"
+          className="h-5 w-auto"
+        />
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 p-3 space-y-0.5">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
             location.pathname === item.path ||
-            (item.path !== '/dashboard' &&
-              location.pathname.startsWith(item.path));
+            (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
 
           return (
             <button
@@ -45,13 +39,13 @@ export function DesktopSidebar() {
                 'transition-colors duration-150',
                 isActive
                   ? 'bg-accent/10 text-accent'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
               )}
             >
               <Icon
                 className={cn(
                   'h-[18px] w-[18px]',
-                  isActive ? 'text-accent' : 'text-muted-foreground'
+                  isActive ? 'text-accent' : 'text-muted-foreground',
                 )}
               />
               {item.label}
@@ -60,7 +54,6 @@ export function DesktopSidebar() {
         })}
       </nav>
 
-      {/* Separator + Settings */}
       <div className="p-3 border-t border-border">
         <button
           onClick={() => navigate('/settings')}
@@ -69,7 +62,7 @@ export function DesktopSidebar() {
             'transition-colors duration-150',
             location.pathname === '/settings'
               ? 'bg-accent/10 text-accent'
-              : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
+              : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
           )}
         >
           <Settings className="h-[18px] w-[18px]" />

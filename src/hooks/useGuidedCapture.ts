@@ -2,61 +2,93 @@ import { useState, useCallback } from 'react';
 
 export type CaptureStep =
   | 'welcome'
-  | 'first_prompt'
+  | 'prompt_intro'
+  | 'prompt_identity'
   | 'recording'
   | 'processing'
   | 'verification'
+  | 'prompt_work'
+  | 'prompt_goals'
   | 'value_moment'
-  | 'second_prompt'
   | 'complete';
 
-const GUIDED_PROMPTS = {
-  first: "Tell me about yourself. What do you do, what's your company, and what keeps you up at night?",
-  second: 'What are you working on right now? What decisions are you facing this week?',
-  followups: [
-    "What's the biggest thing on your plate right now?",
-    'Tell me about your team. Who do you rely on most?',
-    'What would success look like for you in the next 90 days?',
-    "What's something you keep putting off?",
-  ],
+export type CaptureArea = 'identity' | 'work' | 'goals';
+
+const GUIDED_PROMPTS: Record<CaptureArea, { title: string; prompt: string; hint: string }> = {
+  identity: {
+    title: "Who You Are",
+    prompt: "Tell me about yourself — your role, your company, and what you're known for.",
+    hint: "Example: \"I'm a VP of Product at a 200-person fintech startup. I'm known for building consensus across engineering and design teams.\"",
+  },
+  work: {
+    title: "What You're Working On",
+    prompt: "What are you working on right now? What decisions are on your plate this week?",
+    hint: "Example: \"We're deciding whether to build AI features in-house or partner with an API provider. I need to present a recommendation to the board by Friday.\"",
+  },
+  goals: {
+    title: "Where You're Headed",
+    prompt: "What does success look like for you in the next 90 days? What's in your way?",
+    hint: "Example: \"I need to ship our v2 product, hire a senior engineer, and reduce customer churn by 15%. My biggest blocker is bandwidth — I'm in meetings 6 hours a day.\"",
+  },
 };
+
+const CAPTURE_SEQUENCE: CaptureArea[] = ['identity', 'work', 'goals'];
 
 export function useGuidedCapture() {
   const [step, setStep] = useState<CaptureStep>('welcome');
-  const [isFirstTime] = useState(() => {
-    return !localStorage.getItem('mindmaker_onboarded');
-  });
-  const [currentPrompt, setCurrentPrompt] = useState(GUIDED_PROMPTS.first);
+  const [isFirstTime] = useState(() => !localStorage.getItem('mindmaker_onboarded'));
+  const [currentArea, setCurrentArea] = useState<CaptureArea>('identity');
+  const [areaIndex, setAreaIndex] = useState(0);
   const [extractedFactCount, setExtractedFactCount] = useState(0);
-  const [roundNumber, setRoundNumber] = useState(1);
+  const [completedAreas, setCompletedAreas] = useState<CaptureArea[]>([]);
+
+  const currentPromptData = GUIDED_PROMPTS[currentArea];
+  const totalAreas = CAPTURE_SEQUENCE.length;
 
   const advance = useCallback(
     (factsCount?: number) => {
       if (factsCount) setExtractedFactCount((prev) => prev + factsCount);
 
-      if (step === 'welcome') {
-        setStep('first_prompt');
-      } else if (step === 'first_prompt') {
-        setStep('recording');
-      } else if (step === 'recording') {
-        setStep('processing');
-      } else if (step === 'processing') {
-        setStep('verification');
-      } else if (step === 'verification') {
-        if (roundNumber === 1) {
-          setStep('value_moment');
-        } else {
-          setStep('complete');
+      switch (step) {
+        case 'welcome':
+          setStep('prompt_intro');
+          break;
+        case 'prompt_intro':
+          setStep('prompt_identity');
+          break;
+        case 'prompt_identity':
+        case 'prompt_work':
+        case 'prompt_goals':
+          setStep('recording');
+          break;
+        case 'recording':
+          setStep('processing');
+          break;
+        case 'processing':
+          setStep('verification');
+          break;
+        case 'verification': {
+          const newCompleted = [...completedAreas, currentArea];
+          setCompletedAreas(newCompleted);
+          const nextIdx = areaIndex + 1;
+          if (nextIdx < CAPTURE_SEQUENCE.length) {
+            const nextArea = CAPTURE_SEQUENCE[nextIdx];
+            setAreaIndex(nextIdx);
+            setCurrentArea(nextArea);
+            setStep(`prompt_${nextArea}` as CaptureStep);
+          } else {
+            setStep('value_moment');
+          }
+          break;
         }
-      } else if (step === 'value_moment') {
-        setRoundNumber(2);
-        setCurrentPrompt(GUIDED_PROMPTS.second);
-        setStep('second_prompt');
-      } else if (step === 'second_prompt') {
-        setStep('recording');
+        case 'value_moment':
+          setStep('complete');
+          break;
+        default:
+          break;
       }
     },
-    [step, roundNumber],
+    [step, areaIndex, currentArea, completedAreas],
   );
 
   const completeOnboarding = useCallback(() => {
@@ -64,19 +96,17 @@ export function useGuidedCapture() {
     setStep('complete');
   }, []);
 
-  const getNextPrompt = useCallback(() => {
-    const idx = Math.floor(Math.random() * GUIDED_PROMPTS.followups.length);
-    return GUIDED_PROMPTS.followups[idx];
-  }, []);
-
   return {
     step,
     isFirstTime,
-    currentPrompt,
+    currentArea,
+    currentPromptData,
     extractedFactCount,
+    completedAreas,
+    totalAreas,
+    areaIndex,
     advance,
     completeOnboarding,
-    getNextPrompt,
     prompts: GUIDED_PROMPTS,
   };
 }

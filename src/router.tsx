@@ -1,27 +1,22 @@
-// src/router.tsx
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { RequireAuth } from '@/components/auth/RequireAuth'
 
-// Lazy load pages
 const Landing = lazy(() => import('@/pages/Landing'))
 const Auth = lazy(() => import('@/pages/Auth'))
+const AuthCallback = lazy(() => import('@/pages/AuthCallback'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const Think = lazy(() => import('@/pages/Think'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
 const ContextExport = lazy(() => import('@/pages/ContextExport'))
 const Settings = lazy(() => import('@/pages/Settings'))
-const Diagnostic = lazy(() => import('@/pages/Diagnostic'))
-const Voice = lazy(() => import('@/pages/Voice'))
 const Profile = lazy(() => import('@/pages/Profile'))
-const WeeklyCheckin = lazy(() => import('@/pages/WeeklyCheckin'))
-const MissionCheckIn = lazy(() => import('@/pages/MissionCheckIn'))
 const Booking = lazy(() => import('@/pages/Booking'))
 
 function LoadingPage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00D9B6]"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00D9B6]" />
     </div>
   )
 }
@@ -31,7 +26,7 @@ function LazyWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export const router = createBrowserRouter([
-  // Public
+  // Public routes
   {
     path: '/',
     element: <LazyWrapper><Landing /></LazyWrapper>,
@@ -41,18 +36,15 @@ export const router = createBrowserRouter([
     element: <LazyWrapper><Auth /></LazyWrapper>,
   },
   {
-    path: '/diagnostic',
-    element: <LazyWrapper><Diagnostic /></LazyWrapper>,
-  },
-  {
-    path: '/voice',
-    element: <LazyWrapper><Voice /></LazyWrapper>,
+    path: '/auth/callback',
+    element: <LazyWrapper><AuthCallback /></LazyWrapper>,
   },
   {
     path: '/booking',
     element: <LazyWrapper><Booking /></LazyWrapper>,
   },
-  // Core app — Memory Web
+
+  // Authenticated routes
   {
     path: '/dashboard',
     element: <LazyWrapper><RequireAuth><Dashboard /></RequireAuth></LazyWrapper>,
@@ -73,35 +65,27 @@ export const router = createBrowserRouter([
     path: '/settings',
     element: <LazyWrapper><RequireAuth><Settings /></RequireAuth></LazyWrapper>,
   },
-  // Supporting routes
   {
     path: '/profile',
     element: <LazyWrapper><RequireAuth><Profile /></RequireAuth></LazyWrapper>,
   },
-  {
-    path: '/check-in',
-    element: <LazyWrapper><RequireAuth><WeeklyCheckin /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/mission-check-in',
-    element: <LazyWrapper><MissionCheckIn /></LazyWrapper>,
-  },
-  // Redirects — old routes to new
+
+  // Legacy redirects
   {
     path: '/today',
-    element: <Navigate to="/think" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: '/pulse',
     element: <Navigate to="/dashboard" replace />,
   },
   {
-    path: '/progress',
+    path: '/voice',
     element: <Navigate to="/dashboard" replace />,
   },
   {
-    path: '/missions/history',
-    element: <Navigate to="/think" replace />,
+    path: '/diagnostic',
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: '*',

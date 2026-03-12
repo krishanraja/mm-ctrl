@@ -1,19 +1,33 @@
 import * as React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import { SignInForm } from "@/components/auth/SignInForm"
 import { SignUpForm } from "@/components/auth/SignUpForm"
-import { Button } from "@/components/ui/button"
+import { useAuth } from "@/components/auth/AuthProvider"
 import { motion } from "framer-motion"
 
 export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true)
   const navigate = useNavigate()
+  const { isAuthenticated, isLoading } = useAuth()
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, isLoading, navigate])
+
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent" />
+      </div>
+    )
+  }
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      {/* Header */}
       <header className="flex items-center px-4 sm:px-6 py-4">
         <button
           onClick={() => navigate('/')}
@@ -24,7 +38,6 @@ export default function Auth() {
         </button>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 pb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -32,22 +45,29 @@ export default function Auth() {
           transition={{ duration: 0.4 }}
           className="w-full max-w-sm"
         >
-          {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <img 
-              src="/mindmaker-favicon.png" 
-              alt="Mindmaker" 
-              className="h-12 w-12"
+          <div className="flex justify-center mb-6">
+            <img
+              src="/mindmaker-full-logo.png"
+              alt="Mindmaker"
+              className="h-6 w-auto"
             />
           </div>
 
-          {/* Tab Switcher */}
+          <h2 className="text-xl font-semibold text-center text-foreground mb-1">
+            {isSignIn ? "Welcome back" : "Build your AI double"}
+          </h2>
+          <p className="text-sm text-muted-foreground text-center mb-6">
+            {isSignIn
+              ? "Sign in to access your Memory Web"
+              : "Start building your portable digital clone in 2 minutes"}
+          </p>
+
           <div className="flex gap-1 p-1 bg-secondary rounded-lg mb-6">
             <button
               onClick={() => setIsSignIn(true)}
               className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all ${
-                isSignIn 
-                  ? 'bg-background text-foreground shadow-sm' 
+                isSignIn
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -56,8 +76,8 @@ export default function Auth() {
             <button
               onClick={() => setIsSignIn(false)}
               className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all ${
-                !isSignIn 
-                  ? 'bg-background text-foreground shadow-sm' 
+                !isSignIn
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -65,7 +85,6 @@ export default function Auth() {
             </button>
           </div>
 
-          {/* Form */}
           {isSignIn ? <SignInForm /> : <SignUpForm />}
         </motion.div>
       </main>
