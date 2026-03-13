@@ -1,20 +1,36 @@
 // src/lib/api.ts
 import { supabase } from '@/integrations/supabase/client'
 
-// Generic edge function invoker with error handling
+// Timeout wrapper to prevent hanging requests
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms / 1000}s`)), ms)
+    ),
+  ])
+}
+
+const DEFAULT_TIMEOUT = 15_000 // 15 seconds for general edge functions
+const TRANSCRIPTION_TIMEOUT = 30_000 // 30 seconds for transcription
+
+// Generic edge function invoker with error handling and timeout
 export async function invokeEdgeFunction<T>(
   functionName: string,
-  payload?: Record<string, unknown>
+  payload?: Record<string, unknown>,
+  timeoutMs: number = DEFAULT_TIMEOUT
 ): Promise<T> {
-  const { data, error } = await supabase.functions.invoke(functionName, {
-    body: payload,
-  })
-  
+  const { data, error } = await withTimeout(
+    supabase.functions.invoke(functionName, { body: payload }),
+    timeoutMs,
+    functionName
+  )
+
   if (error) {
     console.error(`Edge function ${functionName} error:`, error)
     throw new Error(error.message || `Failed to call ${functionName}`)
   }
-  
+
   return data as T
 }
 
@@ -92,18 +108,19 @@ export const api = {
   async transcribeAudio(audioBlob: Blob, sessionId?: string) {
     const formData = new FormData()
     formData.append('audio', audioBlob, 'recording.webm')
-    // Generate a session ID if not provided
     const sid = sessionId || crypto.randomUUID()
     formData.append('sessionId', sid)
-    
-    const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-      body: formData,
-    })
-    
+
+    const { data, error } = await withTimeout(
+      supabase.functions.invoke('voice-transcribe', { body: formData }),
+      TRANSCRIPTION_TIMEOUT,
+      'voice-transcribe'
+    )
+
     if (error) {
       throw new Error(error.message || 'Transcription failed')
     }
-    
+
     return data as { 
       transcript: string
       confidence?: number

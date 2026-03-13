@@ -2,9 +2,9 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square70x70logo src="/mindmaker-favicon.png"/>
-      <square150x150logo src="/mindmaker-favicon.png"/>
-      <square310x310logo src="/mindmaker-favicon.png"/>
+      <square70x70logo src="/favicon-96x96.png"/>
+      <square150x150logo src="/favicon-192x192.png"/>
+      <square310x310logo src="/favicon-512x512.png"/>
       <TileColor>#3d8b6e</TileColor>
     </tile>
   </msapplication>

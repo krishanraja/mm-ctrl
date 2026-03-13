@@ -280,8 +280,8 @@ export default function ContextExport() {
           )}
         </div>
         <div className={cn(
-          'p-4 overflow-y-auto',
-          isMobile ? 'max-h-64' : 'max-h-[600px]'
+          'p-4 overflow-y-auto scrollbar-hide overscroll-contain',
+          isMobile ? 'flex-1 min-h-0' : 'max-h-[600px]'
         )}>
           {exportResult?.content ? (
             <pre className="text-xs text-foreground/90 whitespace-pre-wrap font-mono leading-relaxed">
@@ -391,36 +391,38 @@ export default function ContextExport() {
     );
   }
 
-  // Mobile layout
+  // Mobile layout — no-scroll, immersive
   return (
-    <div className="min-h-screen bg-background">
-      <div className="px-4 py-6 pb-28 space-y-6">
-        {/* Header */}
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      {/* Header */}
+      <header className="flex-shrink-0 px-4 pt-4 pb-2">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="flex items-center gap-2 mb-1">
             <FileText className="h-5 w-5 text-accent" />
-            <h1 className="text-xl font-semibold text-foreground">
-              What Your AI Knows About You
+            <h1 className="text-lg font-semibold text-foreground">
+              Export Context
             </h1>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {exportResult
-              ? `${exportResult.token_count.toLocaleString()} tokens | Last updated ${new Date(exportResult.last_updated).toLocaleDateString()}`
+              ? `${exportResult.token_count.toLocaleString()} tokens`
               : 'Generate your portable context'}
           </p>
         </motion.div>
+      </header>
 
-        {/* Stacked: selectors then preview */}
-        {selectorsContent}
-        {previewContent}
-      </div>
+      {/* Content — contained with internal scroll for preview */}
+      <main className="flex-1 overflow-hidden flex flex-col min-h-0 px-4 pb-2 gap-3">
+        <div className="flex-shrink-0">{selectorsContent}</div>
+        <div className="flex-1 min-h-0 overflow-hidden">{previewContent}</div>
+      </main>
 
-      {/* Sticky action buttons at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-lg border-t border-border z-50">
-        <div className="max-w-lg mx-auto">{actionButtons}</div>
+      {/* Action buttons — fixed at bottom */}
+      <div className="flex-shrink-0 px-4 py-3 bg-background/95 backdrop-blur-lg border-t border-border">
+        {actionButtons}
       </div>
     </div>
   );

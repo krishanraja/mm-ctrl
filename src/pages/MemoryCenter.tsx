@@ -81,18 +81,18 @@ export default function MemoryCenter() {
             )}
           </div>
 
-          <TabsContent value="memories" className="mt-4">
+          <TabsContent value="memories" className="mt-4 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
             <MemoryList
               onEditMemory={handleEditMemory}
               onAddMemory={() => setIsAddOpen(true)}
             />
           </TabsContent>
 
-          <TabsContent value="privacy" className="mt-4">
+          <TabsContent value="privacy" className="mt-4 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
             <PrivacyControlsPanel />
           </TabsContent>
 
-          <TabsContent value="data" className="mt-4">
+          <TabsContent value="data" className="mt-4 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
             <ExportImportPanel />
           </TabsContent>
         </Tabs>
@@ -154,10 +154,8 @@ export default function MemoryCenter() {
         </motion.div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pb-32 scrollbar-hide">
-        <div className="py-2">
-          {content}
-        </div>
+      <main className="flex-1 overflow-hidden px-4 py-2 flex flex-col min-h-0">
+        {content}
       </main>
 
       <BottomNav />

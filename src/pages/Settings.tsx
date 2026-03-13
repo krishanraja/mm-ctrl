@@ -13,49 +13,47 @@ export default function Settings() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-3xl font-bold">Settings</h1>
-          </div>
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <div className="flex-shrink-0 px-4 pt-4 pb-2">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl font-bold">Settings</h1>
         </div>
+      </div>
 
-        {/* Tabbed Interface */}
-        <Tabs defaultValue="work" className="space-y-6">
-          <TabsList className="grid grid-cols-5 w-full bg-gray-900">
-            <TabsTrigger value="account">Account</TabsTrigger>
-            <TabsTrigger value="work">Work Context</TabsTrigger>
-            <TabsTrigger value="privacy">Privacy & Data</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="preferences">Preferences</TabsTrigger>
+      <div className="flex-1 overflow-hidden flex flex-col min-h-0 px-4">
+        <Tabs defaultValue="work" className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <TabsList className="flex-shrink-0 flex overflow-x-auto scrollbar-hide w-full bg-secondary">
+            <TabsTrigger value="account" className="text-xs whitespace-nowrap">Account</TabsTrigger>
+            <TabsTrigger value="work" className="text-xs whitespace-nowrap">Work</TabsTrigger>
+            <TabsTrigger value="privacy" className="text-xs whitespace-nowrap">Privacy</TabsTrigger>
+            <TabsTrigger value="notifications" className="text-xs whitespace-nowrap">Notifs</TabsTrigger>
+            <TabsTrigger value="preferences" className="text-xs whitespace-nowrap">Prefs</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="account">
+          <TabsContent value="account" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
             <AccountTab />
           </TabsContent>
 
-          <TabsContent value="work">
+          <TabsContent value="work" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
             <WorkContextTab />
           </TabsContent>
 
-          <TabsContent value="privacy">
+          <TabsContent value="privacy" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
             <PrivacyDataTab />
           </TabsContent>
 
-          <TabsContent value="notifications">
+          <TabsContent value="notifications" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
             <NotificationsTab />
           </TabsContent>
 
-          <TabsContent value="preferences">
+          <TabsContent value="preferences" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
             <PreferencesTab />
           </TabsContent>
         </Tabs>

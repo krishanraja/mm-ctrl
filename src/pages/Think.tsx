@@ -143,10 +143,8 @@ export default function Think() {
         </motion.div>
       </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pb-32 scrollbar-hide">
-        <div className="py-4">
-          <ThinkContent />
-        </div>
+      <main className="flex-1 overflow-hidden px-4 flex flex-col justify-center">
+        <ThinkContent />
       </main>
 
       <BottomNav />
