@@ -4,9 +4,10 @@ import { Card } from '@/components/ui/card';
 import { VoiceCapture } from './VoiceCapture';
 import { COMPASS_QUESTIONS } from '@/data/compassQuestions';
 import { CompassResults } from '@/types/voice';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mic, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
+import { cn } from '@/lib/utils';
 
 interface CompassModuleProps {
   sessionId: string;
@@ -21,6 +22,8 @@ export const CompassModule = React.memo<CompassModuleProps>(({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [transcripts, setTranscripts] = useState<Record<string, string>>({});
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
+  const [textInput, setTextInput] = useState('');
 
   const currentQuestion = COMPASS_QUESTIONS[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / COMPASS_QUESTIONS.length) * 100;
@@ -30,6 +33,19 @@ export const CompassModule = React.memo<CompassModuleProps>(({
       ...transcripts,
       [currentQuestion.id]: transcript
     });
+  };
+
+  const handleTextSubmit = () => {
+    if (!textInput.trim()) return;
+    setTranscripts({
+      ...transcripts,
+      [currentQuestion.id]: textInput.trim()
+    });
+    setTextInput('');
+  };
+
+  const handleSwitchToText = () => {
+    setInputMode('text');
   };
 
   const handleNext = async () => {
@@ -136,16 +152,60 @@ export const CompassModule = React.memo<CompassModuleProps>(({
         </div>
       </Card>
 
-      {/* Voice capture */}
-      <VoiceCapture
-        key={currentQuestion.id}
-        promptHint={`Record your answer (max ${currentQuestion.timeLimit}s)`}
-        timeLimit={currentQuestion.timeLimit}
-        onTranscriptReady={handleTranscriptReady}
-        onError={handleError}
-        sessionId={sessionId}
-        moduleName="compass"
-      />
+      {/* Voice or Text capture */}
+      {inputMode === 'voice' ? (
+        <VoiceCapture
+          key={currentQuestion.id}
+          promptHint={`Record your answer (max ${currentQuestion.timeLimit}s)`}
+          timeLimit={currentQuestion.timeLimit}
+          onTranscriptReady={handleTranscriptReady}
+          onError={handleError}
+          sessionId={sessionId}
+          moduleName="compass"
+          onUseText={handleSwitchToText}
+        />
+      ) : (
+        <Card className="p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Type your answer</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setInputMode('voice')}
+              className="gap-2"
+            >
+              <Mic className="h-4 w-4" />
+              Use voice
+            </Button>
+          </div>
+          <textarea
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder={currentQuestion.example}
+            rows={4}
+            className={cn(
+              'w-full px-4 py-3 rounded-xl',
+              'bg-muted border border-border',
+              'text-foreground placeholder:text-muted-foreground',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30',
+              'resize-none text-sm',
+            )}
+          />
+          <Button
+            onClick={handleTextSubmit}
+            disabled={!textInput.trim()}
+            className="w-full gap-2"
+          >
+            <Send className="h-4 w-4" />
+            Submit Answer
+          </Button>
+          {transcripts[currentQuestion.id] && (
+            <div className="w-full p-4 bg-muted rounded-lg">
+              <p className="text-sm text-foreground">{transcripts[currentQuestion.id]}</p>
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Navigation */}
       <div className="flex justify-between">

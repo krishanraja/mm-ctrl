@@ -12,7 +12,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, X, Loader2, RotateCcw } from 'lucide-react';
+import { Mic, MicOff, X, Loader2, RotateCcw, MessageSquare, Send } from 'lucide-react';
 import { AudioRecorder } from '@/utils/audioRecorder';
 import { supabase } from '@/integrations/supabase/client';
 import { classifyVoiceIntent, VoiceIntent } from '@/utils/classifyVoiceIntent';
@@ -28,6 +28,7 @@ interface ExecutiveVoiceCaptureProps {
 }
 
 type CaptureState = 'idle' | 'recording' | 'transcribing' | 'processing' | 'response' | 'error';
+type InputMode = 'voice' | 'text';
 
 export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
   onClose,
@@ -40,6 +41,8 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [showHandOff, setShowHandOff] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [inputMode, setInputMode] = useState<InputMode>('voice');
+  const [textInput, setTextInput] = useState('');
   
   const recorderRef = useRef<AudioRecorder | null>(null);
   // Mounted guard to prevent state updates on unmounted component
@@ -181,7 +184,39 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
     setResponse(null);
     setError(null);
     setShowHandOff(false);
+    setTextInput('');
   }, []);
+
+  const processTextInput = useCallback(async (text: string) => {
+    if (!text.trim()) return;
+    
+    try {
+      setTranscript(text);
+      setState('processing');
+      
+      const classifiedIntent = classifyVoiceIntent(text);
+      if (!isMountedRef.current) return;
+      setIntent(classifiedIntent);
+      
+      const structuredResponse = await composeExecutiveResponse(text, tensionContext);
+      
+      if (!isMountedRef.current) return;
+      setResponse(structuredResponse);
+      setState('response');
+      setTextInput('');
+    } catch (err) {
+      console.error('Error processing text:', err);
+      if (!isMountedRef.current) return;
+      setError('Failed to process. Please try again.');
+      setState('error');
+    }
+  }, [tensionContext]);
+
+  const handleTextSubmit = useCallback(() => {
+    if (textInput.trim()) {
+      processTextInput(textInput.trim());
+    }
+  }, [textInput, processTextInput]);
 
   const renderContent = () => {
     // Response state - show the 3-part response
@@ -236,6 +271,72 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
               transition={transitions.fast}
             >
               New
+            </motion.button>
+          </div>
+        </motion.div>
+      );
+    }
+
+    // Text input mode
+    if (inputMode === 'text' && state !== 'processing') {
+      return (
+        <motion.div
+          key="text-capture"
+          className="flex flex-col items-center justify-center w-full max-w-md"
+          variants={variants.insightFadeIn}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={transitions.default}
+        >
+          <motion.p 
+            className="text-muted-foreground text-center mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            What's the decision or situation?
+          </motion.p>
+
+          <textarea
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder="Describe the decision or situation you're facing..."
+            rows={4}
+            autoFocus
+            className={cn(
+              'w-full px-4 py-3 rounded-xl',
+              'bg-secondary/30 border border-border',
+              'text-foreground placeholder:text-muted-foreground',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30',
+              'resize-none text-sm',
+            )}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.metaKey) handleTextSubmit();
+            }}
+          />
+
+          <div className="flex gap-3 mt-4 w-full">
+            <motion.button
+              onClick={() => setInputMode('voice')}
+              className="flex-1 py-3 px-4 rounded-xl bg-secondary text-secondary-foreground font-medium flex items-center justify-center gap-2"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Mic className="w-4 h-4" />
+              Use voice
+            </motion.button>
+            <motion.button
+              onClick={handleTextSubmit}
+              disabled={!textInput.trim()}
+              className={cn(
+                "flex-1 py-3 px-4 rounded-xl btn-primary-glow font-medium flex items-center justify-center gap-2",
+                !textInput.trim() && "opacity-50"
+              )}
+              whileHover={textInput.trim() ? { scale: 1.02 } : undefined}
+              whileTap={textInput.trim() ? { scale: 0.98 } : undefined}
+            >
+              <Send className="w-4 h-4" />
+              Submit
             </motion.button>
           </div>
         </motion.div>
@@ -310,14 +411,28 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
             <span>Retry processing</span>
           </motion.button>
         ) : (
-          <motion.p
-            className="text-sm text-muted-foreground mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            {state === 'recording' ? "Tap to stop" : "Tap to speak"}
-          </motion.p>
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <motion.p
+              className="text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              {state === 'recording' ? "Tap to stop" : "Tap to speak"}
+            </motion.p>
+            {state === 'idle' && (
+              <motion.button
+                onClick={() => setInputMode('text')}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground/70 hover:text-muted-foreground transition-colors"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <MessageSquare className="w-3 h-3" />
+                Type instead
+              </motion.button>
+            )}
+          </div>
         )}
 
         {/* Transcript preview (if available) */}

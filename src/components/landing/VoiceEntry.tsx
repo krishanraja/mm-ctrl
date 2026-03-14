@@ -6,11 +6,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, X, Loader2 } from 'lucide-react';
+import { Mic, X, Loader2, MessageSquare, Send } from 'lucide-react';
 import { useDevice } from '@/hooks/useDevice';
 import { haptics } from '@/lib/haptics';
 import { invokeEdgeFunction } from '@/lib/api';
 import { QUICK_VOICE_DURATION } from '@/core/constants';
+import { cn } from '@/lib/utils';
 
 interface VoiceEntryProps {
   onComplete: (transcript: string) => void;
@@ -24,6 +25,8 @@ export function VoiceEntry({ onComplete, onCancel }: VoiceEntryProps) {
   const [transcript, setTranscript] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
+  const [textInput, setTextInput] = useState('');
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -142,7 +145,46 @@ export function VoiceEntry({ onComplete, onCancel }: VoiceEntryProps) {
 
         {/* Recording Interface */}
         <div className="flex flex-col items-center space-y-4">
-          {isRecording ? (
+          {inputMode === 'text' ? (
+            <>
+              <textarea
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder="What's your biggest AI uncertainty right now?"
+                rows={4}
+                autoFocus
+                className={cn(
+                  'w-full px-4 py-3 rounded-xl',
+                  'bg-muted border border-border',
+                  'text-foreground placeholder:text-muted-foreground',
+                  'focus:outline-none focus:ring-2 focus:ring-primary/30',
+                  'resize-none text-sm',
+                )}
+              />
+              <div className="flex gap-2 w-full">
+                <Button
+                  onClick={() => setInputMode('voice')}
+                  variant="outline"
+                  className="flex-1 gap-2"
+                >
+                  <Mic className="h-4 w-4" />
+                  Use voice
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (textInput.trim()) {
+                      onComplete(textInput.trim());
+                    }
+                  }}
+                  disabled={!textInput.trim()}
+                  className="flex-1 gap-2"
+                >
+                  <Send className="h-4 w-4" />
+                  Submit
+                </Button>
+              </div>
+            </>
+          ) : isRecording ? (
             <>
               <div className="relative w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
@@ -170,6 +212,13 @@ export function VoiceEntry({ onComplete, onCancel }: VoiceEntryProps) {
                 <Mic className="mr-2 h-5 w-5" />
                 Start Recording
               </Button>
+              <button
+                onClick={() => setInputMode('text')}
+                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Type instead
+              </button>
             </>
           )}
 

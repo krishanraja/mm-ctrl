@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { VoiceInput } from '@/components/ui/voice-input';
-import { ArrowLeft, Mic, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Mic, HelpCircle, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { getPersistedAssessmentId } from '@/utils/assessmentPersistence';
 import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
@@ -15,6 +16,8 @@ export default function DecisionCapture() {
   const [nextStep, setNextStep] = useState<string | null>(null);
   const [watchout, setWatchout] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
+  const [textInput, setTextInput] = useState('');
 
   const handleGenerate = async () => {
     if (!transcript.trim()) return;
@@ -104,20 +107,85 @@ export default function DecisionCapture() {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center gap-3">
-            <VoiceInput
-              maxDuration={60}
-              placeholder="Record 60s"
-              onTranscript={(t) => setTranscript((prev) => (prev ? `${prev} ${t}` : t))}
-            />
-            <Button
-              variant="cta"
-              disabled={!transcript.trim() || isGenerating}
-              onClick={handleGenerate}
-              className="h-10"
+          <div className="mt-4 space-y-3">
+            {inputMode === 'voice' ? (
+              <div className="flex items-center gap-3">
+                <VoiceInput
+                  maxDuration={60}
+                  placeholder="Record 60s"
+                  onTranscript={(t) => setTranscript((prev) => (prev ? `${prev} ${t}` : t))}
+                />
+                <Button
+                  variant="cta"
+                  disabled={!transcript.trim() || isGenerating}
+                  onClick={handleGenerate}
+                  className="h-10"
+                >
+                  {isGenerating ? 'Thinking…' : 'Get questions'}
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <textarea
+                  value={textInput}
+                  onChange={(e) => setTextInput(e.target.value)}
+                  placeholder="Describe the decision and what's making you unsure..."
+                  rows={4}
+                  className={cn(
+                    'w-full px-4 py-3 rounded-xl',
+                    'bg-secondary/30 border border-border',
+                    'text-foreground placeholder:text-muted-foreground',
+                    'focus:outline-none focus:ring-2 focus:ring-primary/30',
+                    'resize-none text-sm',
+                  )}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (textInput.trim()) {
+                        setTranscript((prev) => (prev ? `${prev} ${textInput.trim()}` : textInput.trim()));
+                      }
+                      setTextInput('');
+                    }}
+                    disabled={!textInput.trim()}
+                    className="flex-1"
+                  >
+                    Add to input
+                  </Button>
+                  <Button
+                    variant="cta"
+                    disabled={(!transcript.trim() && !textInput.trim()) || isGenerating}
+                    onClick={() => {
+                      if (textInput.trim()) {
+                        setTranscript((prev) => (prev ? `${prev} ${textInput.trim()}` : textInput.trim()));
+                        setTextInput('');
+                      }
+                      handleGenerate();
+                    }}
+                    className="flex-1"
+                  >
+                    {isGenerating ? 'Thinking…' : 'Get questions'}
+                  </Button>
+                </div>
+              </div>
+            )}
+            <button
+              onClick={() => setInputMode(inputMode === 'voice' ? 'text' : 'voice')}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              {isGenerating ? 'Thinking…' : 'Get questions'}
-            </Button>
+              {inputMode === 'voice' ? (
+                <>
+                  <MessageSquare className="w-3 h-3" />
+                  Type instead
+                </>
+              ) : (
+                <>
+                  <Mic className="w-3 h-3" />
+                  Use voice instead
+                </>
+              )}
+            </button>
           </div>
 
           {transcript ? (

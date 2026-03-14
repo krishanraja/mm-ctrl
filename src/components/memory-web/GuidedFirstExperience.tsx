@@ -13,6 +13,8 @@ import {
   User,
   Briefcase,
   Target,
+  Send,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import mindmakerIcon from '@/assets/mindmaker-icon.png';
@@ -60,6 +62,8 @@ export function GuidedFirstExperience({ onComplete }: Props) {
   } = useUserMemory();
   const { exportResult, generateExport } = useMemoryExport();
   const [copied, setCopied] = useState(false);
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
+  const [textInput, setTextInput] = useState('');
 
   const handleTranscript = useCallback(
     async (text: string) => {
@@ -88,6 +92,21 @@ export function GuidedFirstExperience({ onComplete }: Props) {
       startRecording();
     }
   }, [isRecording, startRecording, stopRecording, resetRecording]);
+
+  const handleTextSubmit = useCallback(async () => {
+    if (!textInput.trim()) return;
+    advance();
+    const result = await extractFromTranscript(textInput.trim());
+    const count = result?.pending_verifications?.length || 0;
+    advance(count);
+    setTextInput('');
+    setInputMode('voice');
+  }, [textInput, advance, extractFromTranscript]);
+
+  const handleSwitchToText = useCallback(() => {
+    setInputMode('text');
+    advance();
+  }, [advance]);
 
   const handleVerificationComplete = useCallback(async () => {
     if (completedAreas.length + 1 >= totalAreas) {
@@ -289,12 +308,22 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               >
                 <Mic className="w-9 h-9 text-white" />
               </motion.button>
-              <p className="text-xs text-muted-foreground/50">Tap to speak (1-2 minutes)</p>
+              <div className="flex items-center justify-center gap-3">
+                <p className="text-xs text-muted-foreground/50">Tap to speak (1-2 minutes)</p>
+                <span className="text-muted-foreground/20">|</span>
+                <button
+                  onClick={handleSwitchToText}
+                  className="flex items-center gap-1 text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                >
+                  <MessageSquare className="w-3 h-3" />
+                  Type instead
+                </button>
+              </div>
             </motion.div>
           )}
 
-          {/* RECORDING */}
-          {step === 'recording' && isRecording && (
+          {/* RECORDING - Voice Mode */}
+          {step === 'recording' && isRecording && inputMode === 'voice' && (
             <motion.div
               key="recording"
               initial={{ opacity: 0 }}
@@ -337,8 +366,86 @@ export function GuidedFirstExperience({ onComplete }: Props) {
             </motion.div>
           )}
 
+          {/* RECORDING - Text Mode */}
+          {step === 'recording' && inputMode === 'text' && !isTranscribing && (
+            <motion.div
+              key="text-input"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="w-full max-w-md space-y-4"
+            >
+              <div className="text-center space-y-2">
+                <div className={cn(
+                  'w-10 h-10 rounded-lg flex items-center justify-center mx-auto',
+                  AREA_COLORS[currentArea],
+                )}>
+                  <AreaIcon className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-accent block">
+                  {currentPromptData.title}
+                </span>
+                <p className="text-sm text-muted-foreground">
+                  {currentPromptData.prompt}
+                </p>
+              </div>
+              <textarea
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder={currentPromptData.hint}
+                autoFocus
+                rows={5}
+                className={cn(
+                  'w-full px-4 py-3 rounded-xl',
+                  'bg-foreground/5 border border-foreground/10',
+                  'text-foreground placeholder:text-foreground/30',
+                  'focus:outline-none focus:ring-2 focus:ring-accent/30',
+                  'resize-none text-sm',
+                )}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.metaKey) handleTextSubmit();
+                }}
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setInputMode('voice');
+                    setTextInput('');
+                    resetRecording();
+                  }}
+                  className="flex-1 py-2.5 rounded-xl bg-foreground/5 text-muted-foreground text-sm font-medium flex items-center justify-center gap-1.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Cancel
+                </button>
+                <button
+                  onClick={handleTextSubmit}
+                  disabled={!textInput.trim()}
+                  className={cn(
+                    'flex-1 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5',
+                    'bg-accent text-accent-foreground',
+                    !textInput.trim() && 'opacity-50',
+                  )}
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  Submit
+                </button>
+              </div>
+              <button
+                onClick={() => {
+                  setInputMode('voice');
+                  handleVoiceToggle();
+                }}
+                className="w-full text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors flex items-center justify-center gap-1"
+              >
+                <Mic className="w-3 h-3" />
+                Switch to voice
+              </button>
+            </motion.div>
+          )}
+
           {/* TRANSCRIBING - recording stopped, waiting for transcription */}
-          {step === 'recording' && !isRecording && (
+          {step === 'recording' && !isRecording && inputMode === 'voice' && (
             <motion.div
               key="transcribing"
               initial={{ opacity: 0 }}

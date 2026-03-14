@@ -6,9 +6,10 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { VoiceCapture } from './VoiceCapture';
 import { RoiEstimate, RoiInputs } from '@/types/voice';
-import { Loader2, Edit2, Check } from 'lucide-react';
+import { Loader2, Edit2, Check, Mic, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
+import { cn } from '@/lib/utils';
 
 interface RoiModuleProps {
   sessionId: string;
@@ -28,9 +29,21 @@ export const RoiModule = React.memo<RoiModuleProps>(({
   const [isEditing, setIsEditing] = useState(false);
   const [editedInputs, setEditedInputs] = useState<RoiInputs | null>(null);
   const [useConservative, setUseConservative] = useState(true);
+  const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
+  const [textInput, setTextInput] = useState('');
 
   const handleTranscriptReady = (text: string) => {
     setTranscript(text);
+  };
+
+  const handleTextSubmit = () => {
+    if (!textInput.trim()) return;
+    setTranscript(textInput.trim());
+    setTextInput('');
+  };
+
+  const handleSwitchToText = () => {
+    setInputMode('text');
   };
 
   const handleEstimate = async () => {
@@ -308,14 +321,58 @@ export const RoiModule = React.memo<RoiModuleProps>(({
         </p>
       </Card>
 
-      <VoiceCapture
-        promptHint="Describe the process in 30-45 seconds"
-        timeLimit={45}
-        onTranscriptReady={handleTranscriptReady}
-        onError={handleError}
-        sessionId={sessionId}
-        moduleName="roi"
-      />
+      {inputMode === 'voice' ? (
+        <VoiceCapture
+          promptHint="Describe the process in 30-45 seconds"
+          timeLimit={45}
+          onTranscriptReady={handleTranscriptReady}
+          onError={handleError}
+          sessionId={sessionId}
+          moduleName="roi"
+          onUseText={handleSwitchToText}
+        />
+      ) : (
+        <Card className="p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Type your answer</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setInputMode('voice')}
+              className="gap-2"
+            >
+              <Mic className="h-4 w-4" />
+              Use voice
+            </Button>
+          </div>
+          <textarea
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder="Describe the process: hours per week, people involved, approximate salary range..."
+            rows={4}
+            className={cn(
+              'w-full px-4 py-3 rounded-xl',
+              'bg-muted border border-border',
+              'text-foreground placeholder:text-muted-foreground',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30',
+              'resize-none text-sm',
+            )}
+          />
+          <Button
+            onClick={handleTextSubmit}
+            disabled={!textInput.trim()}
+            className="w-full gap-2"
+          >
+            <Send className="h-4 w-4" />
+            Submit
+          </Button>
+          {transcript && (
+            <div className="w-full p-4 bg-muted rounded-lg">
+              <p className="text-sm text-foreground">{transcript}</p>
+            </div>
+          )}
+        </Card>
+      )}
 
       <Button
         onClick={handleEstimate}
