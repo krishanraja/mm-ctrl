@@ -49,43 +49,49 @@ export function useGuidedCapture() {
     (factsCount?: number) => {
       if (factsCount) setExtractedFactCount((prev) => prev + factsCount);
 
-      switch (step) {
-        case 'welcome':
-          setStep('prompt_intro');
-          break;
-        case 'prompt_intro':
-          setStep('prompt_identity');
-          break;
-        case 'prompt_identity':
-        case 'prompt_work':
-        case 'prompt_goals':
-          setStep('recording');
-          break;
-        case 'recording':
-          setStep('processing');
-          break;
-        case 'processing':
-          setStep('verification');
-          break;
-        case 'verification': {
-          const newCompleted = [...completedAreas, currentArea];
-          setCompletedAreas(newCompleted);
-          const nextIdx = areaIndex + 1;
-          if (nextIdx < CAPTURE_SEQUENCE.length) {
-            const nextArea = CAPTURE_SEQUENCE[nextIdx];
-            setAreaIndex(nextIdx);
-            setCurrentArea(nextArea);
-            setStep(`prompt_${nextArea}` as CaptureStep);
-          } else {
-            setStep('value_moment');
-          }
-          break;
+      // Use functional updater to avoid stale closure bugs when advance()
+      // is called multiple times within the same async handler (e.g.
+      // handleTranscript calls advance() then awaits extraction then advance(count)).
+      setStep((currentStep) => {
+        switch (currentStep) {
+          case 'welcome':
+            return 'prompt_intro';
+          case 'prompt_intro':
+            return 'prompt_identity';
+          case 'prompt_identity':
+          case 'prompt_work':
+          case 'prompt_goals':
+            return 'recording';
+          case 'recording':
+            return 'processing';
+          case 'processing':
+            return 'verification';
+          case 'value_moment':
+            return 'complete';
+          case 'verification':
+            // Handled below with side effects
+            return currentStep;
+          default:
+            return currentStep;
         }
-        case 'value_moment':
-          setStep('complete');
-          break;
-        default:
-          break;
+      });
+
+      // Handle verification → next area transition separately because it
+      // requires updating multiple pieces of state (completedAreas, areaIndex,
+      // currentArea). This path is only reached from UI event handlers where
+      // the closure values are fresh.
+      if (step === 'verification') {
+        const newCompleted = [...completedAreas, currentArea];
+        setCompletedAreas(newCompleted);
+        const nextIdx = areaIndex + 1;
+        if (nextIdx < CAPTURE_SEQUENCE.length) {
+          const nextArea = CAPTURE_SEQUENCE[nextIdx];
+          setAreaIndex(nextIdx);
+          setCurrentArea(nextArea);
+          setStep(`prompt_${nextArea}` as CaptureStep);
+        } else {
+          setStep('value_moment');
+        }
       }
     },
     [step, areaIndex, currentArea, completedAreas],
