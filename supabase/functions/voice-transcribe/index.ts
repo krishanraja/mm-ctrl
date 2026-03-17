@@ -26,11 +26,12 @@ serve(async (req) => {
     
     const startTime = Date.now();
 
-    // Send to OpenAI Whisper API
+    // Send to OpenAI Whisper API with verbose_json for real confidence scores
     const whisperFormData = new FormData();
     whisperFormData.append('file', audioBlob, 'audio.webm');
     whisperFormData.append('model', 'whisper-1');
     whisperFormData.append('language', 'en');
+    whisperFormData.append('response_format', 'verbose_json');
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
@@ -46,8 +47,28 @@ serve(async (req) => {
       throw new Error(`Whisper API error: ${errorText}`);
     }
 
-    const { text } = await response.json();
+    const whisperResult = await response.json();
+    const text = whisperResult.text;
     const duration = (Date.now() - startTime) / 1000;
+
+    // Compute real confidence from segment-level scores returned by Whisper.
+    // Each segment has avg_logprob; we convert to probability and average.
+    let confidence = 0.95; // fallback
+    if (whisperResult.segments && whisperResult.segments.length > 0) {
+      const segmentProbs = whisperResult.segments.map(
+        (seg: { avg_logprob: number; no_speech_prob?: number }) => {
+          // avg_logprob is negative; exp() gives probability 0-1
+          const prob = Math.exp(seg.avg_logprob);
+          // Penalize segments with high no-speech probability
+          const noSpeechPenalty = seg.no_speech_prob ? (1 - seg.no_speech_prob * 0.5) : 1;
+          return prob * noSpeechPenalty;
+        }
+      );
+      confidence = segmentProbs.reduce((a: number, b: number) => a + b, 0) / segmentProbs.length;
+      // Clamp to [0, 1]
+      confidence = Math.max(0, Math.min(1, confidence));
+      confidence = Math.round(confidence * 100) / 100;
+    }
 
     console.log(`Transcription complete in ${duration}s: "${text.substring(0, 100)}..."`);
 
@@ -91,7 +112,7 @@ serve(async (req) => {
         metadata: {
           duration_seconds: duration,
           transcript_length: text.length,
-          confidence: 0.95,
+          confidence,
           session_id_raw: isUuid ? null : sessionIdStr,
         }
       });
@@ -105,9 +126,9 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         transcript: text,
-        confidence: 0.95,
+        confidence,
         duration_seconds: duration,
-        needs_clarification: false
+        needs_clarification: confidence < 0.5
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

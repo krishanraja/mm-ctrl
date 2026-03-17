@@ -124,7 +124,7 @@ serve(async (req) => {
     const content = openaiData.choices?.[0]?.message?.content;
     
     let extractedFacts: ExtractedFact[] = [];
-    
+
     try {
       const parsed = JSON.parse(content);
       extractedFacts = Array.isArray(parsed) ? parsed : (parsed.facts || []);
@@ -136,20 +136,194 @@ serve(async (req) => {
       );
     }
 
+    // === VALIDATION PASS ===
+    // Second LLM call to cross-check extracted facts against the original transcript.
+    // This catches hallucinations, misinterpretations, and temporal/negation errors.
+    if (extractedFacts.length > 0) {
+      try {
+        const validationResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {
+                role: 'system',
+                content: `You are a strict fact-checker. Given a transcript and a list of extracted facts, verify each fact against the transcript.
+
+For each fact, determine:
+- "valid": The fact is clearly stated or strongly implied in the transcript
+- "invalid": The fact is NOT in the transcript, is hallucinated, or misinterprets what was said
+- "adjusted": The fact needs correction (e.g. negation missed, temporal context wrong, value slightly off)
+
+COMMON ERRORS TO CATCH:
+- Negations: "I'm NOT a micromanager" extracted as a preference for micromanagement
+- Temporal: "I was a VP" vs "I am a VP" - check tense carefully
+- Hypotheticals: "If I had more time I'd..." is NOT a current fact
+- Exaggerations: Numbers or claims that don't match the transcript
+- Invented details: Facts that sound plausible but aren't in the transcript
+
+Return a JSON object with a "results" array. Each entry has:
+- fact_key: string (matching the input)
+- status: "valid" | "invalid" | "adjusted"
+- adjusted_value: string | null (only if status is "adjusted")
+- adjusted_confidence: number | null (suggested confidence 0-1, only if status is "adjusted")
+- reason: string (brief explanation)`,
+              },
+              {
+                role: 'user',
+                content: `TRANSCRIPT:\n"${transcript}"\n\nEXTRACTED FACTS:\n${JSON.stringify(extractedFacts, null, 2)}`,
+              },
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.1,
+            max_tokens: 2000,
+          }),
+        });
+
+        if (validationResponse.ok) {
+          const validationData = await validationResponse.json();
+          const validationContent = validationData.choices?.[0]?.message?.content;
+          const validation = JSON.parse(validationContent);
+          const results = validation.results || [];
+
+          // Build a lookup map from validation results
+          const validationMap = new Map<string, {
+            status: string;
+            adjusted_value?: string;
+            adjusted_confidence?: number;
+            reason?: string;
+          }>();
+          for (const r of results) {
+            validationMap.set(r.fact_key, r);
+          }
+
+          // Filter out invalid facts, adjust corrected ones
+          extractedFacts = extractedFacts
+            .filter(fact => {
+              const v = validationMap.get(fact.fact_key);
+              if (v?.status === 'invalid') {
+                console.log(`Validation rejected fact "${fact.fact_key}": ${v.reason}`);
+                return false;
+              }
+              return true;
+            })
+            .map(fact => {
+              const v = validationMap.get(fact.fact_key);
+              if (v?.status === 'adjusted') {
+                console.log(`Validation adjusted fact "${fact.fact_key}": ${v.reason}`);
+                return {
+                  ...fact,
+                  fact_value: v.adjusted_value || fact.fact_value,
+                  confidence_score: v.adjusted_confidence ?? Math.max(fact.confidence_score - 0.15, 0.3),
+                };
+              }
+              return fact;
+            });
+        } else {
+          console.warn('Validation pass failed, proceeding with unvalidated facts');
+        }
+      } catch (validationError) {
+        console.warn('Validation pass error (non-blocking):', validationError);
+      }
+    }
+
     // If user is authenticated, store facts in database
     if (userId && extractedFacts.length > 0) {
-      // First, check for existing facts to avoid duplicates
+      // Fetch existing facts (key + value + metadata for semantic comparison)
       const { data: existingFacts } = await supabase
         .from('user_memory')
-        .select('fact_key')
+        .select('id, fact_key, fact_value, fact_category, confidence_score, verification_status')
         .eq('user_id', userId)
         .eq('is_current', true);
 
-      const existingKeys = new Set(existingFacts?.map(f => f.fact_key) || []);
+      const existingList = existingFacts || [];
+      const existingKeys = new Set(existingList.map(f => f.fact_key));
 
-      // Prepare facts for insertion
+      // === SEMANTIC DEDUPLICATION ===
+      // Use embeddings to detect duplicate or contradictory facts even when
+      // fact_key strings differ (e.g. "role" vs "job_title" for the same info).
+      let semanticDuplicates = new Map<string, { existingId: string; existingKey: string; similarity: number }>();
+
+      // Only run embedding-based dedup for new facts (keys not already in DB)
+      const newFacts = extractedFacts.filter(f => !existingKeys.has(f.fact_key));
+
+      if (newFacts.length > 0 && existingList.length > 0) {
+        try {
+          // Build embedding texts: "category: label = value" for semantic comparison
+          const existingTexts = existingList.map(f => `${f.fact_category}: ${f.fact_key} = ${f.fact_value}`);
+          const newTexts = newFacts.map(f => `${f.fact_category}: ${f.fact_key} = ${f.fact_value}`);
+          const allTexts = [...existingTexts, ...newTexts];
+
+          const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${OPENAI_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'text-embedding-3-small',
+              input: allTexts,
+            }),
+          });
+
+          if (embeddingResponse.ok) {
+            const embeddingData = await embeddingResponse.json();
+            const embeddings: number[][] = embeddingData.data.map((d: { embedding: number[] }) => d.embedding);
+            const existingEmbeddings = embeddings.slice(0, existingTexts.length);
+            const newEmbeddings = embeddings.slice(existingTexts.length);
+
+            // Cosine similarity helper
+            const cosineSim = (a: number[], b: number[]): number => {
+              let dot = 0, normA = 0, normB = 0;
+              for (let i = 0; i < a.length; i++) {
+                dot += a[i] * b[i];
+                normA += a[i] * a[i];
+                normB += b[i] * b[i];
+              }
+              return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+            };
+
+            // Check each new fact against all existing facts
+            const SIMILARITY_THRESHOLD = 0.85;
+            for (let ni = 0; ni < newFacts.length; ni++) {
+              let bestSim = 0;
+              let bestExistingIdx = -1;
+              for (let ei = 0; ei < existingList.length; ei++) {
+                // Only compare within same category
+                if (existingList[ei].fact_category !== newFacts[ni].fact_category) continue;
+                const sim = cosineSim(newEmbeddings[ni], existingEmbeddings[ei]);
+                if (sim > bestSim) {
+                  bestSim = sim;
+                  bestExistingIdx = ei;
+                }
+              }
+              if (bestSim >= SIMILARITY_THRESHOLD && bestExistingIdx >= 0) {
+                const existing = existingList[bestExistingIdx];
+                console.log(
+                  `Semantic duplicate: "${newFacts[ni].fact_key}" ≈ "${existing.fact_key}" (similarity: ${bestSim.toFixed(3)})`
+                );
+                semanticDuplicates.set(newFacts[ni].fact_key, {
+                  existingId: existing.id,
+                  existingKey: existing.fact_key,
+                  similarity: bestSim,
+                });
+              }
+            }
+          } else {
+            console.warn('Embedding API failed, falling back to key-based dedup only');
+          }
+        } catch (embeddingError) {
+          console.warn('Semantic dedup error (non-blocking):', embeddingError);
+        }
+      }
+
+      // Prepare facts for insertion: exclude exact key matches AND semantic duplicates
       const factsToInsert = extractedFacts
-        .filter(fact => !existingKeys.has(fact.fact_key))
+        .filter(fact => !existingKeys.has(fact.fact_key) && !semanticDuplicates.has(fact.fact_key))
         .map(fact => ({
           user_id: userId,
           fact_key: fact.fact_key,
@@ -165,29 +339,36 @@ serve(async (req) => {
         }));
 
       // Update existing facts if new extraction has higher confidence
-      for (const fact of extractedFacts) {
-        if (existingKeys.has(fact.fact_key)) {
-          const { data: existing } = await supabase
-            .from('user_memory')
-            .select('id, confidence_score, verification_status')
-            .eq('user_id', userId)
-            .eq('fact_key', fact.fact_key)
-            .eq('is_current', true)
-            .single();
+      // (handles both exact key matches and semantic duplicates)
+      const factsToUpdate = extractedFacts.filter(
+        f => existingKeys.has(f.fact_key) || semanticDuplicates.has(f.fact_key)
+      );
 
-          // Only update if new confidence is higher and fact isn't verified
-          if (existing && 
-              existing.verification_status === 'inferred' && 
-              fact.confidence_score > existing.confidence_score) {
-            await supabase
-              .from('user_memory')
-              .update({
-                fact_value: fact.fact_value,
-                fact_context: fact.fact_context,
-                confidence_score: fact.confidence_score,
-              })
-              .eq('id', existing.id);
-          }
+      for (const fact of factsToUpdate) {
+        const semanticMatch = semanticDuplicates.get(fact.fact_key);
+        const matchId = semanticMatch?.existingId;
+        const matchKey = semanticMatch?.existingKey || fact.fact_key;
+
+        const { data: existing } = await supabase
+          .from('user_memory')
+          .select('id, confidence_score, verification_status')
+          .eq('user_id', userId)
+          .eq(matchId ? 'id' : 'fact_key', matchId || matchKey)
+          .eq('is_current', true)
+          .single();
+
+        // Only update if new confidence is higher and fact isn't verified
+        if (existing &&
+            existing.verification_status === 'inferred' &&
+            fact.confidence_score > existing.confidence_score) {
+          await supabase
+            .from('user_memory')
+            .update({
+              fact_value: fact.fact_value,
+              fact_context: fact.fact_context,
+              confidence_score: fact.confidence_score,
+            })
+            .eq('id', existing.id);
         }
       }
 
