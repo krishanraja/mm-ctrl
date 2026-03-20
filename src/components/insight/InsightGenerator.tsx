@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { invokeEdgeFunction } from '@/lib/api';
+import { api } from '@/lib/api';
 import { InsightCard } from './InsightCard';
 
 interface InsightGeneratorProps {
@@ -31,29 +31,16 @@ export function InsightGenerator({ transcript, onComplete }: InsightGeneratorPro
     const generateInsight = async () => {
       try {
         // Call submit-weekly-checkin edge function for insight generation
-        const { data, error } = await invokeEdgeFunction<{
-          insight: string;
-          action_text: string;
-          why_text: string;
-          tags?: string[];
-        }>(
-          'submit-weekly-checkin',
-          {
-            transcript,
-            asked_prompt_key: 'voice_entry',
-            baseline_context: null, // Will be fetched by backend if user is authenticated
-          },
-          { retries: 1 }
-        );
+        const result = await api.generateInsight(transcript);
 
-        if (error || !data) {
-          throw new Error(error || 'Failed to generate insight');
+        if (!result) {
+          throw new Error('Failed to generate insight');
         }
 
         setInsight({
-          insight: data.insight || 'Processing your input...',
-          action_text: data.action_text || 'No action generated',
-          why_text: data.why_text || '',
+          insight: result.insight || 'Processing your input...',
+          action_text: (result as any).action_text || result.action || 'No action generated',
+          why_text: (result as any).why_text || '',
         });
         setIsLoading(false);
         onComplete?.();

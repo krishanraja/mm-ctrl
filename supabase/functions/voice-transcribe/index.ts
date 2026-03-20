@@ -78,49 +78,41 @@ serve(async (req) => {
     
     // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
     const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
+    let skipInstrumentation = false;
     if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      const error = `Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Current: ${supabaseUrl}`;
-      console.error(`❌ ${error}`);
-      // Return error response - don't proceed with wrong database
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Database configuration error. Cannot log instrumentation.',
-          transcription: text // Still return transcription even if logging fails
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      console.warn(`⚠️ Database validation: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Skipping instrumentation.`);
+      skipInstrumentation = true;
+    } else {
+      console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
     }
-    console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
     
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    if (!skipInstrumentation) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Some callers provide non-UUID session identifiers (e.g. deep-profile quick inputs).
-    // We must not fail transcription for instrumentation logging issues.
-    const sessionIdStr = String(sessionId);
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionIdStr);
-    const moduleName = moduleType ? String(moduleType) : null;
+      // Some callers provide non-UUID session identifiers (e.g. deep-profile quick inputs).
+      // We must not fail transcription for instrumentation logging issues.
+      const sessionIdStr = String(sessionId);
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionIdStr);
+      const moduleName = moduleType ? String(moduleType) : null;
 
-    try {
-      const { error: instrumentationError } = await supabase.from('voice_instrumentation').insert({
-        session_id: isUuid ? sessionIdStr : null,
-        event_type: 'transcription_complete',
-        module_name: moduleName,
-        metadata: {
-          duration_seconds: duration,
-          transcript_length: text.length,
-          confidence,
-          session_id_raw: isUuid ? null : sessionIdStr,
+      try {
+        const { error: instrumentationError } = await supabase.from('voice_instrumentation').insert({
+          session_id: isUuid ? sessionIdStr : null,
+          event_type: 'transcription_complete',
+          module_name: moduleName,
+          metadata: {
+            duration_seconds: duration,
+            transcript_length: text.length,
+            confidence,
+            session_id_raw: isUuid ? null : sessionIdStr,
+          }
+        });
+        if (instrumentationError) {
+          console.warn('⚠️ Instrumentation insert failed (non-blocking):', instrumentationError.message);
         }
-      });
-      if (instrumentationError) {
-        console.warn('⚠️ Instrumentation insert failed (non-blocking):', instrumentationError.message);
+      } catch (e) {
+        console.warn('⚠️ Instrumentation insert threw (non-blocking):', e);
       }
-    } catch (e) {
-      console.warn('⚠️ Instrumentation insert threw (non-blocking):', e);
     }
 
     return new Response(

@@ -87,7 +87,9 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
           // Transcribe using Whisper API
           const result = await api.transcribeAudio(audioBlob)
           setTranscript(result.transcript)
-          onTranscript?.(result.transcript)
+          if (onTranscript) {
+            await onTranscript(result.transcript)
+          }
         } catch (err) {
           console.error('Transcription error:', err)
           setError(err as Error)
