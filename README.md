@@ -1,19 +1,64 @@
-# Mindmaker AI Leadership Assessment
+# Mindmaker — Your Portable AI Double
 
-> AI-powered leadership readiness diagnostic tool that helps executives understand their AI adoption posture and provides personalized recommendations.
+> Talk. We learn. Every AI gets smarter.
+
+Mindmaker builds a **Memory Web** about you — who you are, what you do, how you think — then exports that context to any AI tool you use. ChatGPT, Claude, Gemini, Cursor, any LLM. Every AI conversation becomes personalized from the first word.
+
+**For leaders building their AI advantage.**
 
 ---
 
-## Features
+## How It Works
 
-- **AI Readiness Assessment** - Comprehensive questionnaire covering 4 core dimensions
-- **Deep Profile Capture** - Optional detailed work context for personalized insights
-- **AI-Generated Insights** - Personalized edge, risk, and next moves via Vertex AI / OpenAI
-- **Prompt Library** - Role-specific AI prompts for immediate use
-- **Risk Signals** - Identification of shadow AI, skills gaps, and other concerns
-- **Strategic Scenarios** - Organizational path recommendations
-- **PDF Export** - Downloadable assessment report
-- **Progress Tracking** - Real-time generation status with phase indicators
+1. **Talk naturally** about your work, goals, challenges
+2. **We extract** facts, skills, and patterns automatically
+3. **Export to any AI** — ChatGPT, Claude, Gemini, Cursor, Claude Code
+4. **Every AI conversation gets 10x better**
+
+2 minutes to your first export. Voice-first, text always available.
+
+---
+
+## Core Features
+
+### Memory Web
+Every conversation builds a rich map of who you are, what you do, and how you think. Facts are categorized (identity, business, goals, challenges, preferences), verified by you, and encrypted at rest.
+
+### Context Export — Portable AI Context
+Generate your personal context for **any** AI tool:
+- **ChatGPT** — Custom instructions
+- **Claude** — Conversation context
+- **Gemini** — Formatted context
+- **Cursor** — .cursorrules file
+- **Claude Code** — CLAUDE.md file
+- **Raw Markdown** — Use anywhere
+
+Export optimized for specific use cases: General Advisor, Meeting Prep, Decision Support, Code Review, Email Drafting, Strategic Planning.
+
+### AI Tools That Know You
+Four tools powered by your Memory Web:
+- **Decision Advisor** — Think through decisions with AI that knows your context
+- **Meeting Prep** — Contextual briefs for your next meeting
+- **Prompt Coach** — Sharpen your AI prompts with your context baked in
+- **Stream of Consciousness** — Just speak, we extract what matters
+
+### 10X Skills & Patterns
+AI identifies your strengths to amplify and blind spots to address — personalized from your Memory Web data. Pattern detection surfaces behaviors, preferences, and recurring themes.
+
+### Missions & Progress
+Commit to action items from your diagnostic. Track progress through check-ins. Adaptive prompts adjust based on your momentum.
+
+### AI Literacy Diagnostic
+10-minute assessment covering Strategic Vision, Experimentation Culture, Delegation & Automation, Data & Decision Quality, Team Capability, and Governance. Surfaces tensions, risk signals, and organizational scenarios.
+
+---
+
+## Design Philosophy
+
+- **Apple-like quality** — Executive-grade, 10/10 visual polish
+- **Voice-first** — Talk naturally, we handle the structure
+- **Mobile-first** — Immersive, no-scroll experience on every page
+- **Light mode** — Warm off-white backgrounds, deep ink text, pure white cards
 
 ---
 
@@ -21,12 +66,16 @@
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | React 18, TypeScript, Vite |
+| Frontend | React 18, TypeScript, Vite, Framer Motion |
 | Styling | Tailwind CSS, shadcn/ui |
 | State | React Context, TanStack Query |
-| Backend | Supabase (PostgreSQL, Edge Functions) |
-| AI | Vertex AI (Gemini 2.0 Flash), OpenAI (GPT-4o) fallback |
-| Auth | Supabase Auth (optional) |
+| Backend | Supabase (PostgreSQL, 45+ Edge Functions) |
+| AI | OpenAI GPT-4o (primary), Vertex AI Gemini (fallback) |
+| Voice | OpenAI Whisper |
+| Auth | Supabase Auth (Email + Google OAuth) |
+| Payments | Stripe |
+| Email | Resend |
+| Hosting | Vercel (frontend), Supabase (backend) |
 
 ---
 
@@ -36,89 +85,38 @@
 src/
 ├── components/        # UI components
 │   ├── ui/           # shadcn/ui primitives
-│   ├── auth/         # Authentication components
-│   ├── voice/        # Voice capture modules
-│   └── ai-chat/      # AI interaction components
-├── hooks/            # Custom React hooks
-├── utils/            # Utility functions
-├── contexts/         # React contexts
-├── pages/            # Route pages
+│   ├── auth/         # Authentication
+│   ├── voice/        # Voice capture
+│   ├── memory-web/   # Memory Web dashboard
+│   ├── onboarding/   # Guided first experience
+│   └── ai-chat/      # AI interaction
+├── hooks/            # 30+ custom React hooks
+├── pages/            # 20 lazy-loaded pages
+├── contexts/         # Auth, Theme, AppState
 ├── types/            # TypeScript types
+├── utils/            # Utilities
 └── integrations/     # External service clients
 
 supabase/
-├── functions/        # Edge functions
-│   ├── ai-generate/  # AI content generation
-│   ├── create-leader-assessment/
+├── functions/        # 45+ edge functions
+│   ├── voice-transcribe/
+│   ├── extract-user-context/
+│   ├── memory-crud/
+│   ├── memory-export/
+│   ├── ai-generate/
+│   ├── detect-patterns/
+│   ├── submit-decision-capture/
+│   ├── generate-meeting-prep/
+│   ├── prompt-coach/
 │   └── ...
-└── config.toml       # Supabase configuration
+└── config.toml
 ```
-
----
-
-## Assessment Pipeline
-
-```
-User Input → UnifiedAssessment.tsx
-    ↓
-runAssessment.ts (orchestrator)
-    ↓
-create-leader-assessment (edge function)
-    ↓
-ai-generate (edge function)
-    ├── Plan A: Vertex AI (Gemini 2.0 Flash)
-    ├── Plan B: OpenAI (GPT-4o)
-    └── Plan C: Fallback content
-    ↓
-Store to tables:
-    - leader_dimension_scores
-    - leader_tensions
-    - leader_risk_signals
-    - leader_org_scenarios
-    - leader_prompt_sets
-    - leader_first_moves
-    ↓
-useGenerationProgress (polls generation_status)
-    ↓
-aggregateLeaderResults.ts
-    ↓
-UnifiedResults.tsx
-```
-
----
-
-## Database Schema
-
-### Core Tables
-
-| Table | Purpose |
-|-------|---------|
-| `leaders` | User profiles (email, name, company) |
-| `leader_assessments` | Assessment records with `generation_status` |
-| `leader_dimension_scores` | AI-generated dimension scores |
-| `leader_tensions` | Strategic tensions identified |
-| `leader_risk_signals` | Risk signals with severity levels |
-| `leader_org_scenarios` | Organizational path recommendations |
-| `leader_prompt_sets` | Personalized prompt library |
-| `leader_first_moves` | Prioritized action items |
-| `assessment_events` | Raw question/answer events |
 
 ---
 
 ## Local Development
 
-### Prerequisites
-- Node.js 18+
-- npm or bun
-- Supabase CLI (optional, for local functions)
-
-### Setup
-
 ```bash
-# Clone the repository
-git clone <YOUR_GIT_URL>
-cd <YOUR_PROJECT_NAME>
-
 # Install dependencies
 npm install
 
@@ -126,55 +124,7 @@ npm install
 npm run dev
 ```
 
-### Environment Variables
-
-Create a `.env` file (or use Supabase dashboard for edge function secrets):
-
-```env
-# These are set in Supabase Edge Function secrets
-GEMINI_SERVICE_ACCOUNT_KEY=<service-account-json>
-OPENAI_API_KEY=<your-openai-key>
-```
-
----
-
-## Edge Functions
-
-| Function | Purpose |
-|----------|---------|
-| `ai-generate` | AI content generation (Vertex AI → OpenAI → Fallback) |
-| `create-leader-assessment` | Creates assessment record |
-| `send-confirmation-email` | Email notifications via Resend |
-| `sync-to-google-sheets` | Lead sync to Google Sheets |
-| `compass-analyze` | Compass module analysis |
-| `roi-estimate` | ROI calculation |
-
-### Viewing Logs
-
-Visit: https://supabase.com/dashboard/project/bkyuxvschuwngtcdhsyg/functions
-
----
-
-## Deployment
-
-### Frontend (Vercel)
-1. Push changes to the repository
-2. Vercel auto-deploys on push (if connected)
-3. Or manually deploy via Vercel CLI: `vercel --prod`
-
-### Edge Functions (Supabase)
-1. Edge functions deploy automatically on push to `supabase/functions/`
-2. Or manually deploy via Supabase CLI: `supabase functions deploy <function-name>`
-
-See [VERCEL_SETUP.md](./VERCEL_SETUP.md) for detailed deployment instructions.
-
----
-
-## Custom Domain
-
-1. Navigate to **Project > Settings > Domains**
-2. Click **Connect Domain**
-3. Follow DNS configuration instructions
+Requires Node.js 18+. Environment variables configured in Supabase dashboard for edge function secrets.
 
 ---
 
@@ -182,29 +132,24 @@ See [VERCEL_SETUP.md](./VERCEL_SETUP.md) for detailed deployment instructions.
 
 | Document | Purpose |
 |----------|---------|
-| [MASTER_INSTRUCTIONS.md](./project-documentation/MASTER_INSTRUCTIONS.md) | AI development guidelines |
+| [SALES_BRIEF.md](./project-documentation/SALES_BRIEF.md) | Sales-ready product overview |
+| [FEATURES.md](./project-documentation/FEATURES.md) | Complete feature inventory |
+| [VALUE_PROP.md](./project-documentation/VALUE_PROP.md) | Value propositions by audience |
+| [PURPOSE.md](./project-documentation/PURPOSE.md) | Core mission and problem statement |
+| [ICP.md](./project-documentation/ICP.md) | Ideal customer profile |
 | [ARCHITECTURE.md](./project-documentation/ARCHITECTURE.md) | System architecture |
-| [FEATURES.md](./project-documentation/FEATURES.md) | Feature documentation |
-| [COMMON_ISSUES.md](./project-documentation/COMMON_ISSUES.md) | Troubleshooting guide |
-| [CHANGELOG.md](./CHANGELOG.md) | Change history |
-| [PROJECT_NOTES.md](./PROJECT_NOTES.md) | Running decisions |
+| [BRANDING.md](./project-documentation/BRANDING.md) | Brand voice and guidelines |
+| [MASTER_INSTRUCTIONS.md](./project-documentation/MASTER_INSTRUCTIONS.md) | AI development guidelines |
+
+Full documentation index: [project-documentation/README.md](./project-documentation/README.md)
 
 ---
 
-## Contributing
+## Deployment
 
-1. Follow the [MASTER_INSTRUCTIONS.md](./project-documentation/MASTER_INSTRUCTIONS.md)
-2. Update CHANGELOG.md with every significant change
-3. Test the full assessment pipeline before pushing
-4. Check edge function logs after deployment
+- **Frontend**: Auto-deploys to Vercel on push
+- **Edge Functions**: Auto-deploys to Supabase on push to `supabase/functions/`
 
 ---
 
-## Support
-
-- **Lovable Docs**: https://docs.lovable.dev
-- **Supabase Dashboard**: https://supabase.com/dashboard/project/bkyuxvschuwngtcdhsyg
-
----
-
-*Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*
+*Built by [Krish Raja](https://mindmaker.ai) — Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*

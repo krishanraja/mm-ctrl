@@ -2,7 +2,7 @@
 
 Evolution of Mindmaker and major product pivots.
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-03-20
 
 ---
 
@@ -119,6 +119,44 @@ Evolution of Mindmaker and major product pivots.
 
 ---
 
+### Phase 5: Memory Web & Portable AI Context (Current)
+**Period**: February–March 2026
+**Positioning**: "Your Portable AI Double"
+
+**Trigger**: Recognition that the real value isn't the diagnostic — it's making every AI tool a leader uses dramatically better through portable context.
+
+**Key Features Added**:
+- **Memory Web**: Voice-first context extraction building a living knowledge base
+- **Context Export**: One-click export to ChatGPT, Claude, Gemini, Cursor, Claude Code
+- **Guided First Experience**: 3-question onboarding that delivers exportable context in 2 minutes
+- **Pattern Detection**: AI surfaces strengths, blind spots, and behavioral preferences
+- **Decision Tracking**: Records captured through Decision Advisor
+- **AI Tools Hub (Think page)**: Decision Advisor, Meeting Prep, Prompt Coach, Stream of Consciousness
+- **10X Skills Map**: Strength amplification and gap identification
+- **Memory Health Dashboard**: AI Double health score, coverage visualization, fact grid
+
+**Technical Changes**:
+- 45+ Edge Functions (up from ~20)
+- 30+ custom hooks
+- Memory encryption (AES-256-GCM)
+- Token-aware context building with budget management
+- Memory lifecycle management (temperature system: hot/warm/cold)
+- Google OAuth added alongside email auth
+- Text input alternatives to all voice-only components
+
+**Key Copy/Positioning**:
+- Headline: "Talk. We learn. Every AI gets smarter."
+- Subheadline: "Narrate your world and Mindmaker builds your personal Memory Web"
+- CTA: "Get Started Free — 2 minutes to your first export"
+
+**Outcomes**:
+- Product shifted from assessment tool to context platform
+- Immediate value delivery (2 min to first export vs. 10 min diagnostic)
+- Portable context as primary differentiator
+- Voice-first as interaction paradigm, not just an alternative input
+
+---
+
 ## Major Pivots
 
 ### Pivot 1: From Implementation to Literacy
@@ -151,6 +189,16 @@ Evolution of Mindmaker and major product pivots.
 **After**: Viewport-fit, no-scroll mobile experience
 **Rationale**: Executive users expect polished, contained experiences
 
+### Pivot 7: From Assessment to Portable AI Context
+**Before**: "Take a 10-minute AI literacy diagnostic"
+**After**: "Build a portable AI double in 2 minutes that makes every AI tool better"
+**Rationale**: The real value is personalized AI interactions across all tools, not a one-time assessment score
+
+### Pivot 8: From AI Tool to AI Infrastructure
+**Before**: Mindmaker as another AI tool to learn
+**After**: Mindmaker as the layer that makes every AI tool you already use better
+**Rationale**: Leaders don't want another tool — they want their existing tools to work better
+
 ---
 
 ## Key Learnings
@@ -174,3 +222,4 @@ Evolution of Mindmaker and major product pivots.
 | 2.0 | Mid 2024 | Dual architecture with V2 components |
 | 2.1 | Jan 2025 | AI Literacy repositioning, unified architecture |
 | 3.0 | Jan 2026 | Complete rebuild with Apple-like design system |
+| 4.0 | Feb-Mar 2026 | Memory Web, Context Export, Portable AI Double |

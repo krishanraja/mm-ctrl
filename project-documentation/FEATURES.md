@@ -2,7 +2,7 @@
 
 Complete feature inventory across all three Mindmaker tools.
 
-**Last Updated:** 2026-02-25
+**Last Updated:** 2026-03-20
 
 ---
 
@@ -269,6 +269,177 @@ Voice-first context extraction system that builds a persistent knowledge base ab
 ### Hooks
 - `useMemoryQueries.ts`: React Query integration for memory CRUD
 - `useUserMemory.ts`: Memory state management
+
+---
+
+## Context Export — Portable AI Context
+
+### Overview
+
+The headline differentiator: export your Memory Web as formatted context to any AI tool. One click to make ChatGPT, Claude, Gemini, Cursor, or any LLM instantly personalized.
+
+**Page**: `/context-export` (auth required)
+
+### Export Formats (6)
+
+| Format | Target | Instructions |
+|--------|--------|-------------|
+| **ChatGPT** | OpenAI ChatGPT | Go to Settings > Personalization > Custom Instructions |
+| **Claude** | Anthropic Claude | Paste at beginning of first message in new conversation |
+| **Gemini** | Google Gemini | Paste as first message with "Context about me:" prefix |
+| **Cursor** | Cursor IDE | Save as .cursorrules in project root |
+| **Claude Code** | Claude Code CLI | Save as CLAUDE.md in project root |
+| **Raw Markdown** | Any tool | Use anywhere that accepts markdown |
+
+### Export Use Cases (6)
+
+| Use Case | Optimized For |
+|----------|--------------|
+| **General Advisor** | All-purpose context for any AI conversation |
+| **Meeting Prep** | Context optimized for preparing for meetings |
+| **Decision Support** | Focus on goals, blockers, and decision history |
+| **Code Review** | Technical preferences and project context |
+| **Email Drafting** | Communication style and relationship context |
+| **Strategic Planning** | Business context, objectives, and patterns |
+
+### Features
+
+- Format + use case selection matrix
+- Real-time preview of generated context
+- Token count display ("X tokens | Last updated [date]")
+- One-click copy to clipboard
+- Download as .md file
+- Per-format instruction banners
+- Quick export shortcut from dashboard header
+
+### Data Architecture
+
+**Edge Functions**
+- `memory-export`: Generates formatted context from Memory Web, respecting privacy settings and token budgets
+
+**Hooks**
+- `useMemoryExport.ts`: Export generation, format selection, and clipboard integration
+
+---
+
+## Guided First Experience (Onboarding)
+
+### Overview
+
+Builds a leader's "digital double" in approximately 3 minutes through 3 guided voice questions. Designed to deliver immediate value — the user has an exportable AI context before reaching the dashboard.
+
+### Flow
+
+1. **Welcome** — "Let's build your AI double" (icon + CTA)
+2. **Intro** — Shows 3 pillars: Memory Web, 10X Skills Map, Master Prompts
+3. **Question 1: Identity** — "Tell me about yourself" (voice or text)
+4. **Question 2: Work** — "Tell me about your work" (voice or text)
+5. **Question 3: Goals** — "What are you working toward?" (voice or text)
+6. **Processing** — Transcription → Fact extraction → Memory Web building (animated)
+7. **Value Moment** — "Your AI double knows X things about you" + live preview of exportable context + copy to clipboard
+8. **Complete** — "Your digital clone is live" → Dashboard
+
+### Key Design Decisions
+
+- Voice-first with text alternatives on every question
+- Animated waveform during recording
+- Progress bars (3 areas) at top
+- Each question has area icon, title, prompt, hint
+- Fact verification step lets user accept/reject extracted facts
+- Value moment shows actual exportable context — proves immediate value
+
+### Components
+- `GuidedFirstExperience.tsx` (orchestrator)
+- `src/components/onboarding/` (step components)
+
+---
+
+## Pattern Detection & 10X Skills
+
+### Overview
+
+AI analyzes the Memory Web to surface patterns: strengths to amplify, blind spots to address, and behavioral preferences. Displayed on the dashboard.
+
+### Pattern Types
+
+| Type | Description | Dashboard Section |
+|------|-------------|-------------------|
+| **strength** | Strengths to 10X — capabilities to amplify | "Strengths to 10X" card |
+| **blind_spot** | Gaps or risks to address | "Blind Spots" card |
+| **preference** | Working style and approach preferences | "Behaviors & Preferences" card |
+| **behavior** | Recurring behavioral patterns | "Behaviors & Preferences" card |
+| **anti_preference** | Things the user avoids or dislikes | "Behaviors & Preferences" card |
+
+### Features
+
+- Confidence scoring (0–1) on each pattern
+- Patterns derived from Memory Web facts
+- Auto-updated as Memory Web grows
+- Up to 4 patterns displayed per section on dashboard
+
+### Data Architecture
+
+**Tables Used**
+- `user_patterns`: Pattern storage with type, label, description, confidence
+
+**Edge Functions**
+- `detect-patterns`: AI pattern detection from Memory Web facts
+
+---
+
+## Decision Tracking
+
+### Overview
+
+Tracks decisions captured through the Decision Advisor tool, maintaining a history of choices with active/superseded status.
+
+### Data Architecture
+
+**Tables Used**
+- `user_decisions`: Decision records with status (active, superseded), content, and timestamps
+
+**Hooks**
+- `useDecisions.ts`: Decision CRUD and history queries
+
+---
+
+## Memory Web Dashboard
+
+### Overview
+
+The central hub showing the leader's AI double health, Memory Web coverage, patterns, and facts.
+
+### Dashboard Components
+
+**AI Double Health Card**
+- Animated health score percentage
+- Stats: Total facts, Verified count, Patterns count, Decisions count
+- Progress bar visualization
+- "Getting Smarter" progress indicators
+
+**Memory Web Coverage**
+- Breakdown by category: Identity, Business, Goals, Challenges, Preferences
+- Horizontal bar charts with counts per category
+- Visual indicators for coverage gaps
+
+**Skills & Patterns (3-column layout)**
+- Strengths to 10X (with confidence scores)
+- Blind Spots (with confidence scores)
+- Behaviors & Preferences
+
+**Memory Web Facts Grid**
+- 2-column grid, up to 12 facts displayed
+- Each fact: label, value, category badge, temperature badge (hot/warm/cold), verification status
+- Expandable for context and confidence
+- "View all X facts" link
+
+**Voice Input Bar**
+- Mic button with live recording indicator
+- Text input: "Add to your digital clone — narrate anything about your work, goals, or challenges..."
+- Persistent on dashboard for continuous Memory Web building
+
+**Quick Export**
+- Dashboard header shortcut to copy Claude export to clipboard
 
 ---
 

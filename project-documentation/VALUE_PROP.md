@@ -2,68 +2,81 @@
 
 Clear value propositions for each audience, differentiated from alternatives.
 
+**Last Updated:** 2026-03-20
+
 ---
 
 ## Leaders Tool: Individual Executives
 
 ### Core Value Proposition
 
-**For**: Senior leaders who need to stay sharp and in control as AI reshapes their industry
+**For**: Senior leaders who use AI tools daily but get generic results because the AI doesn't know them
 
-**Who**: Are time-poor, sceptical of hype, and can't distinguish AI substance from theatre
+**Who**: Are time-poor, skeptical of hype, and tired of re-explaining their context every time they open ChatGPT or Claude
 
-**Mindmaker**: Is an AI literacy diagnostic
+**Mindmaker**: Is a portable AI context platform
 
-**That**: Maps where you stand, surfaces your blind spots, and gives you the mental models to use AI as a thinking partner
+**That**: Builds a Memory Web about you from natural conversation, then exports your context to any AI tool — so every interaction is personalized from the first word
 
-**Unlike**: Generic AI training, ChatGPT tricks, or vendor-driven "transformation" programs
+**Unlike**: Custom GPTs (locked to one platform), manual system prompts (time-consuming), or AI training courses (theoretical)
 
-**We**: Give you clarity, questions, and daily habits so you can challenge proposals, make better decisions, and maintain credibility in every AI conversation
+**We**: Give you a digital double in 2 minutes that makes ChatGPT, Claude, Gemini, and every other AI tool dramatically better — plus built-in thinking tools that already know your world
+
+### The Flywheel
+
+The more you use Mindmaker, the richer your Memory Web becomes. The richer your Memory Web, the better every AI tool works for you. The better your AI tools work, the more you use them. This is the compounding AI advantage.
 
 ### Component Value Props
 
-**Diagnostic Assessment**
+**Memory Web**
+- "Build a living knowledge base about yourself by just talking"
+- Every fact verified by you, encrypted at rest, fully portable
+
+**Context Export (the killer feature)**
+- "One click. Every AI tool you use knows who you are."
+- Works across ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown
+- Optimized for 6 use cases: meetings, decisions, email, strategy, code, general
+
+**AI Tools That Know You**
+- "Decision support, meeting prep, and prompt coaching that already know your context"
+- No setup required — they read your Memory Web automatically
+
+**10X Skills & Patterns**
+- "AI surfaces your strengths to amplify and your blind spots to address"
+- Pattern detection from your Memory Web data
+
+**AI Literacy Diagnostic**
 - "Know where you stand in 10 minutes, not 10 hours of courses"
-- Trade-off: Depth vs speed → We choose speed with strategic depth
-
-**Tensions & Risk Signals**
-- "See the gaps and blind spots that matter, not generic advice"
-- Trade-off: Comprehensive vs focused → We choose focused on what's material
-
-**Thinking Tools**
-- "Use AI for real work decisions, not toy examples"
-- Trade-off: Theoretical vs applied → We choose applied to your context
-
-**Benchmark Comparison**
-- "See where peers struggle, not where you rank for ego"
-- Trade-off: Competitive positioning vs learning → We choose learning
+- Surfaces tensions, risk signals, and organizational scenarios specific to you
 
 ### Differentiation Matrix
 
 | Alternative | What They Offer | What We Offer Instead |
 |-------------|----------------|----------------------|
-| **LinkedIn Learning / Coursera** | Hours of video content on AI basics | 10-minute diagnostic + contextual insights |
-| **Prompt Engineering Courses** | Technical prompt tricks | Mental models for AI as thinking partner |
-| **AI Transformation Consultants** | Multi-month implementation projects | Literacy foundation you own |
-| **Generic Leadership Training** | AI content bolted onto existing programs | AI literacy as core competency |
-| **Free ChatGPT Exploration** | Trial and error with no framework | Structured diagnostic with personalisation |
+| **ChatGPT Custom Instructions** | Manual context writing, locked to OpenAI | Auto-extracted context, portable to any AI |
+| **Claude Projects** | Document upload for one workspace | Living Memory Web that works everywhere |
+| **Writing System Prompts by Hand** | Hours of prompt engineering | 2 minutes of talking, structure extracted automatically |
+| **Custom GPTs** | One-off bots for specific tasks | Universal context that makes every AI interaction better |
+| **AI Training Courses** | Hours of education | Immediate infrastructure (2 min to first export) |
+| **AI Consultants** | $15K+ engagement, creates dependency | Self-serve, leader owns their data, no dependency |
+| **Doing Nothing** | Re-explain yourself to AI every single time | Set it once, works everywhere, gets better over time |
 
 ### Why Leaders Choose Mindmaker
 
 **Emotional Jobs**
-- Reduce anxiety about falling behind
-- Increase confidence in AI conversations
-- Feel prepared, not panicked
+- Stop re-explaining yourself to AI tools every day
+- Feel like AI actually "gets" you
+- Confidence that you're getting the best possible AI output
 
 **Functional Jobs**
-- Challenge vendor proposals credibly
-- Make AI investment decisions faster
-- Prepare for agent-driven workflow changes
+- Make every AI conversation personalized in one click
+- Get contextual decision support, meeting prep, and prompt coaching
+- Export context to any tool without prompt engineering skills
 
 **Social Jobs**
-- Demonstrate AI competence to board/peers
-- Lead AI discussions in leadership team
-- Mentor direct reports on AI thinking
+- Demonstrate sophisticated AI usage to peers and board
+- Share approach with team (not just the tool, the thinking)
+- Stay ahead of leaders who use AI generically
 
 ---
 
@@ -87,19 +100,15 @@ Clear value propositions for each audience, differentiated from alternatives.
 
 **Pre-Work Assessment**
 - "Start the workshop already knowing where tensions hide"
-- Trade-off: Cold start vs prepared → We choose prepared with data
 
 **7-Segment Structure**
 - "Cover cognitive baseline to pilot charter in one session"
-- Trade-off: Flexibility vs structure → We choose structure with evidence
 
 **Pilot Charter Output**
 - "Leave with a charter, not a wish list"
-- Trade-off: Inspiration vs execution → We choose execution-ready
 
 **Provocation Report**
 - "Get the uncomfortable questions boards will ask"
-- Trade-off: Comfort vs honesty → We choose honesty with support
 
 ### Differentiation Matrix
 
@@ -110,23 +119,6 @@ Clear value propositions for each audience, differentiated from alternatives.
 | **AI Vendors** | Product demos and "vision" pitches | Vendor-neutral literacy and criteria |
 | **Internal Planning Meetings** | Circular debates with no resolution | Structured process with outputs |
 | **AI Training Providers** | Multi-day training programs | Focused strategy sprint with pilot |
-
-### Why Teams Choose Mindmaker
-
-**Emotional Jobs**
-- Surface hidden disagreements safely
-- Build confidence in team's AI readiness
-- Reduce fear of making wrong decision
-
-**Functional Jobs**
-- Align team on investment priorities
-- Define credible success metrics
-- Establish governance model
-
-**Social Jobs**
-- Demonstrate leadership effectiveness to board
-- Show CEO/board that team is prepared
-- Build peer accountability
 
 ---
 
@@ -140,29 +132,11 @@ Clear value propositions for each audience, differentiated from alternatives.
 
 **Mindmaker**: Is a portfolio assessment platform
 
-**That**: Maps AI literacy across companies, prioritises interventions, and packages value-add offerings
+**That**: Maps AI literacy across companies, prioritizes interventions, and packages value-add offerings
 
 **Unlike**: Ad-hoc assessments or generic portfolio reviews
 
 **We**: Give you a repeatable framework that demonstrates value-add and identifies co-delivery opportunities
-
-### Component Value Props
-
-**Portfolio Heatmap**
-- "See AI readiness across all companies in one view"
-- Trade-off: Deep assessment vs coverage → We choose coverage with prioritisation
-
-**Intervention Prioritisation**
-- "Know which 3 companies need help first"
-- Trade-off: Equal attention vs focused → We choose focused on highest risk
-
-**Offer Pack Generation**
-- "Package AI literacy as standard value-add"
-- Trade-off: Custom vs templated → We choose templated with customisation hooks
-
-**Consistent Framework**
-- "Apply same lens across portfolio"
-- Trade-off: Bespoke vs comparable → We choose comparable with context
 
 ### Differentiation Matrix
 
@@ -172,49 +146,31 @@ Clear value propositions for each audience, differentiated from alternatives.
 | **Ad-hoc Consulting** | Different approach per company | Consistent framework across portfolio |
 | **Internal Reviews** | Time-intensive one-on-ones | Scalable assessment tool |
 | **Vendor Pitches** | Biased toward vendor solutions | Vendor-neutral literacy assessment |
-| **Generic Due Diligence** | Financial/operational focus only | AI literacy as strategic dimension |
-
-### Why Partners Choose Mindmaker
-
-**Emotional Jobs**
-- Reduce anxiety about missing AI risks
-- Increase confidence in portfolio value-add
-- Feel differentiated from other investors/consultants
-
-**Functional Jobs**
-- Rapidly assess AI readiness across portfolio
-- Identify co-delivery opportunities
-- Package scalable AI literacy support
-
-**Social Jobs**
-- Demonstrate value-add to LPs/clients
-- Show expertise in AI domain
-- Build repeatable practice capability
 
 ---
 
-## Unified Positioning Across Audiences
+## Unified Positioning
 
 ### What Binds All Three
 
-**Problem**: Leaders, teams, and portfolios all face an AI literacy gap, not an implementation gap
+**Problem**: Leaders use AI tools but get generic results. Teams can't align on AI decisions. Portfolios lack consistent AI readiness visibility.
 
-**Solution**: Mindmaker provides structured diagnostics that surface tensions, risks, and blind spots
+**Solution**: Mindmaker provides portable AI context (Memory Web + Export) and structured diagnostics that surface tensions, risks, and blind spots.
 
-**Differentiation**: We focus on mental models and decision quality, not tools or tactics
+**Differentiation**: We make every AI tool a leader already uses dramatically better — not by teaching prompt engineering, but by automating context.
 
-**Outcome**: Better decisions, less waste, more control
+**Outcome**: Personalized AI interactions, better decisions, less waste, more control.
 
 ### What Varies By Audience
 
 | Dimension | Leaders | Teams | Partners |
 |-----------|---------|-------|----------|
-| **Primary Need** | Personal clarity | Team alignment | Portfolio visibility |
-| **Time Commitment** | 10-15 minutes | 4 hours | 2 weeks |
-| **Output** | Personal diagnostic | Pilot charter | Heatmap + offer pack |
-| **Decision** | How to use AI daily | Which pilot to run | Where to intervene |
+| **Primary Need** | Portable AI context | Team alignment | Portfolio visibility |
+| **Time to Value** | 2 minutes | 4 hours | 2 weeks |
+| **Key Output** | Memory Web + Exports | Pilot charter | Heatmap + offer pack |
+| **Core Action** | Talk, export, use AI | Workshop, decide, commit | Assess, prioritize, intervene |
 | **Buyer** | Self-funded | Exec team sponsor | Partner/firm |
-| **Price Point** | $49 | $15K-$50K | $5K-$25K |
+| **Price Point** | Free / $49 diagnostic | $15K–$50K | $5K–$25K |
 
 ### Shared Anti-Positioning
 
@@ -222,12 +178,10 @@ Clear value propositions for each audience, differentiated from alternatives.
 - AI implementation consultants
 - Tool vendors or resellers
 - Generic executive education
-- Academic research or theory
-- AI enthusiast community
+- Another AI wrapper locked to one platform
 
 **We Are**:
-- AI literacy infrastructure
-- Decision quality enhancers
-- Cognitive frameworks for leadership
-- Applied to real business context
-- Focused on control and clarity
+- Portable AI context infrastructure
+- The layer that makes every AI tool better
+- Voice-first, zero-learning-curve, executive-grade
+- Focused on control, clarity, and personalization
