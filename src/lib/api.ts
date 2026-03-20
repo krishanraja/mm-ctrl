@@ -17,7 +17,7 @@ const TRANSCRIPTION_TIMEOUT = 30_000 // 30 seconds for transcription
 // Generic edge function invoker with error handling and timeout
 export async function invokeEdgeFunction<T>(
   functionName: string,
-  payload?: Record<string, unknown>,
+  payload?: Record<string, unknown> | FormData,
   timeoutMs: number = DEFAULT_TIMEOUT
 ): Promise<T> {
   const { data, error } = await withTimeout(

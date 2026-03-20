@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Mic, X, Loader2, MessageSquare, Send } from 'lucide-react';
 import { useDevice } from '@/hooks/useDevice';
 import { haptics } from '@/lib/haptics';
-import { invokeEdgeFunction } from '@/lib/api';
+import { api } from '@/lib/api';
 import { QUICK_VOICE_DURATION } from '@/core/constants';
 import { cn } from '@/lib/utils';
 
@@ -103,22 +103,16 @@ export function VoiceEntry({ onComplete, onCancel }: VoiceEntryProps) {
       const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
 
       // Send to backend for transcription using OpenAI Whisper
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'audio.webm');
-      formData.append('sessionId', `voice-entry-${Date.now()}-${Math.random().toString(36).substring(7)}`);
-      formData.append('moduleType', 'landing_voice');
-
-      const { data, error } = await invokeEdgeFunction<{ transcript: string; confidence?: number; duration_seconds?: number }>(
-        'voice-transcribe',
-        formData,
-        { retries: 2 }
+      const result = await api.transcribeAudio(
+        audioBlob,
+        `voice-entry-${Date.now()}-${Math.random().toString(36).substring(7)}`
       );
 
-      if (error || !data?.transcript) {
-        throw new Error(error || 'Transcription failed');
+      if (!result?.transcript) {
+        throw new Error('Transcription failed');
       }
 
-      const transcript = data.transcript.trim();
+      const transcript = result.transcript.trim();
 
       if (!transcript) {
         throw new Error('No speech detected. Please try again.');

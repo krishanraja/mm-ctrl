@@ -80,7 +80,15 @@ export function MobileMemoryDashboard() {
       setIsProcessing(true);
       try {
         const result = await extractFromTranscript(text);
-        if (result?.pending_verifications?.length > 0) setShowVerification(true);
+        if (result?.success === false) {
+          toast({
+            title: 'Processing failed',
+            description: result.error || 'Could not extract insights. Please try again.',
+            variant: 'destructive',
+          });
+        } else if (result?.pending_verifications?.length > 0) {
+          setShowVerification(true);
+        }
         await refresh();
       } catch (err) {
         console.error('Error processing:', err);
