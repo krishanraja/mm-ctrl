@@ -148,7 +148,7 @@ export const FactVerificationCard: React.FC<FactVerificationCardProps> = ({
             </button>
           </div>
           <h3 className="text-sm font-medium text-foreground mt-1">
-            Quick verification
+            Verify what I heard
           </h3>
         </div>
 

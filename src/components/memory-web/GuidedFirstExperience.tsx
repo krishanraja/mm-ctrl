@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mic,
@@ -40,6 +40,35 @@ const AREA_COLORS: Record<CaptureArea, string> = {
   goals: 'bg-graphite',
 };
 
+/**
+ * Auto-advances after a short delay when there are no facts to verify.
+ * Uses useEffect instead of onAnimationComplete which can fail to fire.
+ */
+function VerificationAutoAdvance({ onComplete }: { onComplete: () => void }) {
+  const called = useRef(false);
+  useEffect(() => {
+    if (called.current) return;
+    const timer = setTimeout(() => {
+      if (!called.current) {
+        called.current = true;
+        onComplete();
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      key="no-verify"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="text-center"
+    >
+      <p className="text-muted-foreground">Processing...</p>
+    </motion.div>
+  );
+}
+
 export function GuidedFirstExperience({ onComplete }: Props) {
   const {
     step,
@@ -64,6 +93,19 @@ export function GuidedFirstExperience({ onComplete }: Props) {
   const [copied, setCopied] = useState(false);
   const [inputMode, setInputMode] = useState<'voice' | 'text'>('voice');
   const [textInput, setTextInput] = useState('');
+
+  // Safety timeout: if stuck on 'processing' for >30s (e.g. edge function
+  // hangs or network failure), auto-advance to verification so the user isn't
+  // stranded on a spinner forever.
+  const processingTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => {
+    if (step === 'processing') {
+      processingTimerRef.current = setTimeout(() => {
+        advance();
+      }, 30_000);
+    }
+    return () => clearTimeout(processingTimerRef.current);
+  }, [step, advance]);
 
   const handleTranscript = useCallback(
     async (text: string) => {
@@ -504,15 +546,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
             />
           )}
           {step === 'verification' && pendingVerifications.length === 0 && (
-            <motion.div
-              key="no-verify"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              onAnimationComplete={handleVerificationComplete}
-              className="text-center"
-            >
-              <p className="text-muted-foreground">Processing...</p>
-            </motion.div>
+            <VerificationAutoAdvance onComplete={handleVerificationComplete} />
           )}
 
           {/* VALUE MOMENT — show what was built + first export */}
