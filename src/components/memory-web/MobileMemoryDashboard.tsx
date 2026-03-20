@@ -238,7 +238,7 @@ export function MobileMemoryDashboard() {
                   className="flex flex-col items-center gap-2 py-3"
                 >
                   <p className="text-xs text-foreground/60">
-                    {hasData ? 'Add more to your digital clone' : 'Start building your AI double'}
+                    {hasData ? 'Voice another thought' : 'Start your Memory Web'}
                   </p>
                   <motion.button
                     onClick={handleVoiceToggle}
@@ -517,7 +517,7 @@ export function MobileMemoryDashboard() {
                 >
                   <Brain className="h-10 w-10 text-muted-foreground/20 mx-auto" />
                   <p className="text-sm text-muted-foreground">
-                    Your Memory Web is empty. Start narrating to build your AI double.
+                    Your Memory Web is empty. Voice your first thought to begin.
                   </p>
                   <p className="text-xs text-muted-foreground/60">
                     Try: &quot;I&apos;m a [role] at [company]. My biggest challenge is...&quot;

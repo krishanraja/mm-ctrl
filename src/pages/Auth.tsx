@@ -20,7 +20,7 @@ export default function Auth() {
 
   if (isLoading) {
     return (
-      <div className="h-screen bg-background flex items-center justify-center">
+      <div className="h-screen-safe bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent" />
       </div>
     )
@@ -38,7 +38,7 @@ export default function Auth() {
         </button>
       </header>
 
-      <main className="flex-1 flex items-center justify-center px-4 sm:px-6 pb-8">
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide flex items-center justify-center px-4 sm:px-6 pb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,12 +54,12 @@ export default function Auth() {
           </div>
 
           <h2 className="text-xl font-semibold text-center text-foreground mb-1">
-            {isSignIn ? "Welcome back" : "Build your AI double"}
+            {isSignIn ? "Welcome back" : "Start thinking clearly"}
           </h2>
           <p className="text-sm text-muted-foreground text-center mb-6">
             {isSignIn
-              ? "Sign in to access your Memory Web"
-              : "Start building your portable digital clone in 2 minutes"}
+              ? "Sign in to your mind"
+              : "Voice your first thought in 2 minutes"}
           </p>
 
           <div className="flex gap-1 p-1 bg-secondary rounded-lg mb-6">

@@ -283,8 +283,8 @@ export function DesktopMemoryDashboard() {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={hasData
-                ? 'Add to your digital clone — narrate anything about your work, goals, or challenges...'
-                : 'Start building your AI double — tell me about your role, company, and goals...'}
+                ? 'Voice a thought — anything about your work, goals, or decisions...'
+                : 'Start here — tell me about your role, company, and goals...'}
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
             />
             <button
@@ -319,7 +319,7 @@ export function DesktopMemoryDashboard() {
                     <div className="flex items-center gap-2">
                       <Brain className="h-4 w-4 text-accent" />
                       <span className="text-xs font-semibold uppercase tracking-wider text-accent">
-                        AI Double Health
+                        Memory Web Health
                       </span>
                     </div>
                     <span className="text-3xl font-bold text-foreground">{stats?.health_score || 0}%</span>
@@ -504,11 +504,10 @@ export function DesktopMemoryDashboard() {
               >
                 <Download className="h-6 w-6 text-accent mx-auto mb-3" />
                 <h3 className="text-base font-bold text-foreground mb-1">
-                  Export Your Digital Clone
+                  Export Your Context
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                  Generate a formatted context file for ChatGPT, Claude, Gemini, or any LLM.
-                  Every conversation will understand who you are.
+                  One click to ChatGPT, Claude, Gemini, Cursor, or any AI tool.
                 </p>
                 <button
                   onClick={() => navigate('/context')}
@@ -530,8 +529,8 @@ export function DesktopMemoryDashboard() {
               <Brain className="h-16 w-16 text-muted-foreground/15 mx-auto" />
               <h2 className="text-lg font-bold text-foreground">Your Memory Web is empty</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Start by narrating about your role, company, goals, and challenges. Use the voice or text input above.
-                The more you share, the smarter your digital clone becomes.
+                Start by voicing your thoughts about your role, company, goals, and challenges. Use the voice or text input above.
+                The more you think out loud, the clearer everything gets.
               </p>
               <p className="text-xs text-muted-foreground/50">
                 Try: "I'm a VP of Engineering at a Series B startup. My biggest challenge is..."

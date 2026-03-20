@@ -46,16 +46,19 @@ export default function Booking() {
   const calendlyUrl = `https://calendly.com/mindmaker-ai/15min?email=${encodeURIComponent(email)}&a1=${encodeURIComponent(source)}`;
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 pb-6">
-      <div className="mb-4">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <header className="flex-shrink-0 flex items-center gap-4 px-4 py-4 border-b border-border">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="-ml-2">
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-      </div>
+        <div>
+          <h1 className="text-lg font-semibold text-foreground">{messaging.title}</h1>
+          <p className="text-xs text-muted-foreground">{messaging.subtitle}</p>
+        </div>
+      </header>
 
-      <h1 className="text-xl font-semibold text-foreground">{messaging.title}</h1>
-      <p className="text-sm text-muted-foreground mt-1">{messaging.subtitle}</p>
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4">
+        <div className="max-w-2xl mx-auto">
 
       {/* What to expect */}
       <Card className="border rounded-xl mt-4">
@@ -124,6 +127,8 @@ export default function Booking() {
           </Badge>
         </div>
       )}
+        </div>
+      </main>
     </div>
   );
 }

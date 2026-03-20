@@ -156,7 +156,7 @@ export const ConsentManager: React.FC<ConsentManagerProps> = ({
         </Button>
 
         <p className="text-xs text-muted-foreground text-center">
-          All data is encrypted and handled according to our privacy policy. We never share personally identifiable information without explicit consent.
+          Your data stays yours. Period.
         </p>
       </CardContent>
     </Card>

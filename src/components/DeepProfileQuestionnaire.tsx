@@ -557,7 +557,7 @@ export const DeepProfileQuestionnaire: React.FC<DeepProfileQuestionnaireProps> =
   return (
     <div className="bg-background fixed inset-0 flex flex-col overflow-hidden">
       {/* Safe area container - no outer scroll */}
-      <div className="flex-1 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header + Progress */}
         <div className="max-w-2xl mx-auto w-full shrink-0 py-2">
           {/* Brand Icon */}

@@ -415,8 +415,8 @@ export default function ContextExport() {
       </header>
 
       {/* Content — contained with internal scroll for preview */}
-      <main className="flex-1 overflow-hidden flex flex-col min-h-0 px-4 pb-2 gap-3">
-        <div className="flex-shrink-0">{selectorsContent}</div>
+      <main className="flex-1 min-h-0 overflow-hidden flex flex-col px-4 pb-2 gap-3">
+        <div className="flex-shrink-0 overflow-y-auto scrollbar-hide max-h-[45%]">{selectorsContent}</div>
         <div className="flex-1 min-h-0 overflow-hidden">{previewContent}</div>
       </main>
 

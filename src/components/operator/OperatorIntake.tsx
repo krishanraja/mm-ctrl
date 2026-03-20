@@ -715,7 +715,7 @@ export const OperatorIntake: React.FC<OperatorIntakeProps> = ({ onComplete, onBa
 
   return (
     <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex flex-col">
-      <div className="flex-1 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col px-3 sm:px-4 lg:px-6 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header + Progress */}
         <div className="max-w-2xl mx-auto w-full shrink-0 py-1.5">
             <div className="flex items-center justify-between mb-1.5">

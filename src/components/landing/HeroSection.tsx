@@ -12,31 +12,31 @@ const PILLARS = [
   {
     icon: Brain,
     title: "Memory Web",
-    description: "Every conversation builds a rich map of who you are, what you do, and how you think.",
+    description: "Your thoughts, organized. A living map of what you know, what you want, and how you think — portable to any AI.",
     color: "from-violet-500 to-purple-600",
     glow: "shadow-violet-500/20",
   },
   {
     icon: Zap,
-    title: "10X Skills",
-    description: "AI identifies your strengths to amplify and weaknesses to shore up — personalized to you.",
+    title: "Team Instructions",
+    description: "Your thinking, delegated. Turn your context into clear instructions for anyone on your team.",
     color: "from-amber-500 to-orange-600",
     glow: "shadow-amber-500/20",
   },
   {
     icon: MessageSquare,
-    title: "Master Prompts",
-    description: "Custom prompts that make any AI instantly understand your context, voice, and goals.",
+    title: "Context Export",
+    description: "Your context, everywhere. One click to ChatGPT, Claude, Cursor, or any AI tool.",
     color: "from-emerald-500 to-teal-600",
     glow: "shadow-emerald-500/20",
   },
 ]
 
 const JOURNEY_STEPS = [
-  "Talk naturally about your work",
-  "We extract facts, skills & patterns",
-  "Export to ChatGPT, Claude, or any AI",
-  "Every AI conversation gets 10x better",
+  "Voice a thought",
+  "It organizes itself",
+  "Export anywhere",
+  "Every decision gets clearer",
 ]
 
 /* ------------------------------------------------------------------ */
@@ -54,7 +54,7 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
       >
         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-medium text-accent">
           <Sparkles className="h-3 w-3" />
-          For leaders building their AI advantage
+          For leaders who think before they decide
         </span>
       </motion.div>
 
@@ -66,14 +66,13 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
         className="text-center mb-5"
       >
         <h1 className="text-3xl font-bold leading-[1.1] text-foreground mb-3">
-          Talk. We learn.{" "}
+          Think out loud.{" "}
           <span className="bg-gradient-to-r from-accent via-purple-400 to-accent bg-clip-text text-transparent">
-            Every AI gets smarter.
+            See what emerges.
           </span>
         </h1>
         <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-          Narrate your world and Mindmaker builds your personal Memory Web, identifies your 10X skills,
-          and generates master prompts — a portable digital clone you take to any AI.
+          Voice your thoughts. Mindmaker organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
         </p>
       </motion.div>
 
@@ -93,7 +92,7 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
           <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
         <p className="text-xs text-muted-foreground/60">
-          2 minutes to your first export
+          2 minutes to clarity
         </p>
       </motion.div>
     </div>
@@ -271,7 +270,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
         >
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-medium text-accent">
             <Sparkles className="h-3 w-3" />
-            For leaders building their AI advantage
+            For leaders who think before they decide
           </span>
         </motion.div>
 
@@ -282,14 +281,13 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
           className="text-center mb-4"
         >
           <h1 className="text-5xl lg:text-6xl font-bold leading-[1.1] text-foreground mb-3">
-            Talk. We learn.{" "}
+            Think out loud.{" "}
             <span className="bg-gradient-to-r from-accent via-purple-400 to-accent bg-clip-text text-transparent">
-              Every AI gets smarter.
+              See what emerges.
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Narrate your world and Mindmaker builds your personal Memory Web, identifies your 10X skills,
-            and generates master prompts — a portable digital clone you take to any AI.
+            Voice your thoughts. Mindmaker organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
           </p>
         </motion.div>
 
@@ -309,7 +307,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
           <p className="text-xs text-muted-foreground/60">
-            2 minutes to your first export. No credit card needed.
+            2 minutes to clarity. No credit card needed.
           </p>
         </motion.div>
 
@@ -465,7 +463,7 @@ export function HeroSection() {
       {/* Footer — always visible */}
       <footer className="relative z-10 px-5 sm:px-8 py-3 text-center flex-shrink-0">
         <p className="text-[10px] text-muted-foreground/30">
-          Your data is private. Export anytime. Delete anytime.
+          Private by design. Portable by default.
         </p>
       </footer>
     </div>

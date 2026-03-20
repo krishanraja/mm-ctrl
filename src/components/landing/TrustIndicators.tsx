@@ -4,9 +4,9 @@ import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const indicators = [
-  "20+ years executive coaching",
-  "Boardroom-ready insights",
-  "Actionable guidance, no fluff",
+  "Private & encrypted",
+  "Export to any AI",
+  "Delete anytime",
 ]
 
 export function TrustIndicators({ className }: { className?: string }) {

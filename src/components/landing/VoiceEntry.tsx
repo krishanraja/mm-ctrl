@@ -139,8 +139,8 @@ export function VoiceEntry({ onComplete, onCancel }: VoiceEntryProps) {
     <div className="h-[var(--mobile-vh)] flex flex-col items-center justify-center px-4 py-8 bg-background">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-foreground">Speak your biggest AI uncertainty</h2>
-          <p className="text-muted-foreground">30 seconds. Get one insight + one thing to do this week.</p>
+          <h2 className="text-2xl font-bold text-foreground">What's on your mind?</h2>
+          <p className="text-muted-foreground">Voice it. We'll organize it.</p>
         </div>
 
         {/* Recording Interface */}
@@ -150,7 +150,7 @@ export function VoiceEntry({ onComplete, onCancel }: VoiceEntryProps) {
               <textarea
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
-                placeholder="What's your biggest AI uncertainty right now?"
+                placeholder="What's on your mind right now?"
                 rows={4}
                 autoFocus
                 className={cn(

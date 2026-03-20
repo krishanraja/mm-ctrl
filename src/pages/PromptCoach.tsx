@@ -143,9 +143,9 @@ export default function PromptCoach() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border">
+      <header className="flex-shrink-0 bg-background/95 backdrop-blur border-b border-border">
         <div className="container mx-auto px-4 flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
             <Button
@@ -171,7 +171,7 @@ export default function PromptCoach() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 pb-24 max-w-2xl">
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide container mx-auto px-4 py-8 max-w-2xl">
         {!result && !isLoading && (
           <div className="space-y-6">
             {/* Hero */}

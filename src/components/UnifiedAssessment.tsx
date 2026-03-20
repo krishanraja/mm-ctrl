@@ -1039,7 +1039,7 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   return (
     <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex flex-col">
       {/* Safe area container - no scroll on outer container */}
-      <div className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header with Icon and Back Button */}
         <div className="flex items-center justify-between py-2 sm:py-3 shrink-0">
           <div className="flex items-center gap-3">

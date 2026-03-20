@@ -33,9 +33,9 @@ export function Sheet({ isOpen, onClose, title, height = 'medium', children }: S
   }, [isOpen]);
 
   const heightClasses = {
-    small: 'h-[40vh]',
-    medium: 'h-[60vh]',
-    large: 'h-[85vh]',
+    small: 'h-[40dvh]',
+    medium: 'h-[60dvh]',
+    large: 'h-[85dvh]',
   };
 
   return (
@@ -73,7 +73,7 @@ export function Sheet({ isOpen, onClose, title, height = 'medium', children }: S
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-4 py-4">{children}</div>
+            <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain px-4 py-4">{children}</div>
           </motion.div>
         </>
       )}

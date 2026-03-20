@@ -91,6 +91,8 @@
 /* === MOBILE VIEWPORT HANDLING === */
 :root {
   --mobile-vh: 100dvh;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @supports not (height: 100dvh) {
@@ -107,17 +109,26 @@
   min-height: var(--mobile-vh, 100vh);
 }
 
+.max-h-screen-safe {
+  max-height: var(--mobile-vh, 100vh);
+}
+
 /* Safe area padding for notched devices */
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .pt-safe {
-  padding-top: env(safe-area-inset-top, 0);
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .pb-safe-bottom {
   padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+}
+
+/* Bottom offset that accounts for safe area — used by FAB and fixed elements above BottomNav */
+.bottom-nav-clearance {
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px) + 0.75rem);
 }
 
 /* === SPLASH SCREEN ANIMATIONS === */

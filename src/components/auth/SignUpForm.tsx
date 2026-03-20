@@ -135,7 +135,7 @@ export function SignUpForm() {
         </Button>
 
         <p className="text-xs text-muted-foreground text-center">
-          By signing up, you agree to our Terms of Service and Privacy Policy.
+          Private. Always.
         </p>
       </form>
     </div>

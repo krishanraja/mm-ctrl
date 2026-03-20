@@ -54,18 +54,21 @@ export default function MissionHistory() {
   }, {});
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 pb-6">
-      <div className="mb-4 flex items-center justify-between">
-        <Button variant="ghost" onClick={() => navigate('/dashboard')} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <header className="flex-shrink-0 flex items-center gap-4 px-4 py-4 border-b border-border">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="-ml-2">
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-      </div>
+        <div>
+          <h1 className="text-lg font-semibold text-foreground">Mission History</h1>
+          <p className="text-xs text-muted-foreground">
+            {missions.length} mission{missions.length !== 1 ? 's' : ''} total
+          </p>
+        </div>
+      </header>
 
-      <h1 className="text-xl font-semibold text-foreground">Mission History</h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        {missions.length} mission{missions.length !== 1 ? 's' : ''} total
-      </p>
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4">
+        <div className="max-w-2xl mx-auto">
 
       {loading ? (
         <div className="space-y-3 mt-4">
@@ -154,6 +157,8 @@ export default function MissionHistory() {
           ))}
         </div>
       )}
+        </div>
+      </main>
     </div>
   );
 }

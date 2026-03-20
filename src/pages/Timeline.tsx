@@ -59,14 +59,16 @@ export default function Timeline() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 pt-6 pb-6">
-      <div className="mb-4">
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <header className="flex-shrink-0 px-4 pt-4 pb-2">
         <h1 className="text-xl font-semibold text-foreground">Timeline</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Your check-ins and decision captures will show up here (compounding over time).
         </p>
-      </div>
+      </header>
 
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide px-4 pb-4">
+        <div className="max-w-4xl mx-auto">
       {isLoading ? (
         <Card className="border rounded-xl">
           <CardContent className="p-4">
@@ -107,6 +109,8 @@ export default function Timeline() {
           ))}
         </div>
       )}
+        </div>
+      </main>
     </div>
   );
 }

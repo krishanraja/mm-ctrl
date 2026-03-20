@@ -78,20 +78,23 @@ export default function DecisionCapture() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 pb-6">
-      <div className="mb-4 flex items-center justify-between">
-        <Button variant="ghost" onClick={() => navigate('/today')} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <header className="flex-shrink-0 flex items-center gap-4 px-4 py-4 border-b border-border">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/today')} className="-ml-2">
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-      </div>
+        <div>
+          <h1 className="text-lg font-semibold text-foreground">Capture a decision</h1>
+          <p className="text-xs text-muted-foreground">
+            Speak the situation in under 60 seconds. Get 3 sharp questions.
+          </p>
+        </div>
+      </header>
 
-      <h1 className="text-xl font-semibold text-foreground">Capture a decision</h1>
-      <p className="text-sm text-muted-foreground mt-1">
-        Speak the situation in under 60 seconds. Get 3 sharp questions.
-      </p>
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4">
+        <div className="max-w-2xl mx-auto">
 
-      <Card className="border rounded-xl mt-4">
+      <Card className="border rounded-xl">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 shrink-0 rounded-lg bg-primary/10 p-2">
@@ -226,6 +229,9 @@ export default function DecisionCapture() {
           ) : null}
         </CardContent>
       </Card>
+
+        </div>
+      </main>
     </div>
   );
 }

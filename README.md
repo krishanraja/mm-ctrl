@@ -1,31 +1,31 @@
-# Mindmaker — Your Portable AI Double
+# Mindmaker — Clarity for Leaders
 
-> Talk. We learn. Every AI gets smarter.
+> Think out loud. See what emerges.
 
-Mindmaker builds a **Memory Web** about you — who you are, what you do, how you think — then exports that context to any AI tool you use. ChatGPT, Claude, Gemini, Cursor, any LLM. Every AI conversation becomes personalized from the first word.
+Mindmaker helps leaders voice their thoughts and organizes them into a **Memory Web** — your portable context that makes every AI smarter, and **Team Instructions** that make your team sharper.
 
-**For leaders building their AI advantage.**
+**For leaders who think before they decide.**
 
 ---
 
 ## How It Works
 
-1. **Talk naturally** about your work, goals, challenges
-2. **We extract** facts, skills, and patterns automatically
-3. **Export to any AI** — ChatGPT, Claude, Gemini, Cursor, Claude Code
-4. **Every AI conversation gets 10x better**
+1. **Voice a thought**
+2. **It organizes itself**
+3. **Export anywhere** — ChatGPT, Claude, Gemini, Cursor, Claude Code
+4. **Every decision gets clearer**
 
-2 minutes to your first export. Voice-first, text always available.
+2 minutes to clarity. Voice-first, text always available.
 
 ---
 
 ## Core Features
 
 ### Memory Web
-Every conversation builds a rich map of who you are, what you do, and how you think. Facts are categorized (identity, business, goals, challenges, preferences), verified by you, and encrypted at rest.
+Your thoughts, organized. A living map of what you know, what you want, and how you think. Facts are categorized, verified by you, and encrypted at rest.
 
-### Context Export — Portable AI Context
-Generate your personal context for **any** AI tool:
+### Context Export — Your Context, Everywhere
+One click to export your context to **any** AI tool:
 - **ChatGPT** — Custom instructions
 - **Claude** — Conversation context
 - **Gemini** — Formatted context
@@ -35,15 +35,15 @@ Generate your personal context for **any** AI tool:
 
 Export optimized for specific use cases: General Advisor, Meeting Prep, Decision Support, Code Review, Email Drafting, Strategic Planning.
 
-### AI Tools That Know You
-Four tools powered by your Memory Web:
-- **Decision Advisor** — Think through decisions with AI that knows your context
-- **Meeting Prep** — Contextual briefs for your next meeting
-- **Prompt Coach** — Sharpen your AI prompts with your context baked in
-- **Stream of Consciousness** — Just speak, we extract what matters
+### Thinking Tools
+Four tools that think with your context:
+- **Decision Advisor** — Think through a decision with full context
+- **Meeting Prep** — Walk in prepared
+- **Team Brief** — Draft instructions for your team
+- **Stream of Consciousness** — Speak freely. It organizes itself.
 
-### 10X Skills & Patterns
-AI identifies your strengths to amplify and blind spots to address — personalized from your Memory Web data. Pattern detection surfaces behaviors, preferences, and recurring themes.
+### Team Instructions
+Your thinking, delegated. Turn your context into clear instructions for anyone on your team. Drawn directly from your Memory Web.
 
 ### Missions & Progress
 Commit to action items from your diagnostic. Track progress through check-ins. Adaptive prompts adjust based on your momentum.

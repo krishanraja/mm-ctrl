@@ -228,11 +228,10 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 className="space-y-3"
               >
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                  Let's build your AI double
+                  Let's begin
                 </h1>
                 <p className="text-muted-foreground leading-relaxed">
-                  In about 3 minutes, you'll have a portable digital clone that makes
-                  every AI conversation dramatically better.
+                  Three questions. Three minutes. Your Memory Web starts here.
                 </p>
               </motion.div>
               <motion.button
@@ -258,13 +257,13 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               className="max-w-md space-y-6"
             >
               <h2 className="text-xl font-bold text-foreground text-center">
-                Here's what we'll build together
+                Here's what takes shape
               </h2>
               <div className="space-y-3">
                 {[
-                  { icon: Brain, title: 'Memory Web', desc: 'Facts about you, your work, your style', color: 'bg-primary' },
-                  { icon: Zap, title: '10X Skills Map', desc: 'Strengths to amplify, gaps to close', color: 'bg-accent' },
-                  { icon: MessageSquare, title: 'Master Prompts', desc: 'Custom prompts for ChatGPT, Claude, any AI', color: 'bg-graphite' },
+                  { icon: Brain, title: 'Memory Web', desc: 'The facts, context, and patterns behind your thinking', color: 'bg-primary' },
+                  { icon: Zap, title: 'Team Instructions', desc: 'Clear direction for your team, drawn from your context', color: 'bg-accent' },
+                  { icon: MessageSquare, title: 'Context Export', desc: 'Your thinking, portable to any AI', color: 'bg-graphite' },
                 ].map((item, idx) => (
                   <motion.div
                     key={item.title}
@@ -293,7 +292,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 className="text-center space-y-3 pt-2"
               >
                 <p className="text-xs text-muted-foreground">
-                  I'll ask you 3 questions. Talk naturally for 1-2 minutes each.
+                  Three questions. Speak naturally.
                 </p>
                 <button
                   onClick={() => advance()}
@@ -527,7 +526,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                   <img src={mindmakerIcon} alt="Mindmaker" className="w-8 h-8 object-contain" />
                 </div>
               </motion.div>
-              <p className="text-foreground font-medium">Extracting facts & patterns...</p>
+              <p className="text-foreground font-medium">Organizing your thoughts...</p>
               <p className="text-sm text-muted-foreground">Building your Memory Web</p>
             </motion.div>
           )}
@@ -562,10 +561,10 @@ export function GuidedFirstExperience({ onComplete }: Props) {
                 <Download className="h-7 w-7 text-white" />
               </div>
               <h2 className="text-xl font-bold text-foreground">
-                Your AI double knows {extractedFactCount} things about you
+                Your Memory Web has {extractedFactCount} insights
               </h2>
               <p className="text-sm text-muted-foreground">
-                Copy this into ChatGPT or Claude right now. Notice how much better the responses are.
+                Copy this into ChatGPT or Claude. See the difference context makes.
               </p>
               {exportResult?.content && (
                 <pre className="text-left text-xs text-foreground/70 bg-foreground/5 rounded-xl p-4 max-h-48 overflow-auto whitespace-pre-wrap font-mono border border-border">
@@ -610,9 +609,9 @@ export function GuidedFirstExperience({ onComplete }: Props) {
               >
                 <Check className="h-12 w-12 text-accent mx-auto" />
               </motion.div>
-              <h2 className="text-xl font-bold text-foreground">Your digital clone is live</h2>
+              <h2 className="text-xl font-bold text-foreground">Your Memory Web is live</h2>
               <p className="text-muted-foreground">
-                Come back anytime to narrate more. The more you share, the more powerful your AI context becomes.
+                Come back anytime to add more. The more you think out loud, the clearer everything gets.
               </p>
               <button
                 onClick={() => {

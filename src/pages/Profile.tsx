@@ -114,7 +114,7 @@ export default function Profile() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 overflow-hidden p-4 flex flex-col justify-center">
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4 flex flex-col justify-center">
         <ProfileContent />
       </main>
     </div>

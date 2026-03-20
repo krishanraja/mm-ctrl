@@ -9,28 +9,26 @@ export default function Progress() {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 pb-6">
-      <div className="mb-4 flex items-center justify-between">
-        <Button variant="ghost" onClick={() => navigate('/dashboard')} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+      <header className="flex-shrink-0 flex items-center gap-4 px-4 py-4 border-b border-border">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="-ml-2">
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-      </div>
+        <div>
+          <h1 className="text-lg font-semibold text-foreground">Your Progress</h1>
+          <p className="text-xs text-muted-foreground">
+            Track your AI leadership growth over time
+          </p>
+        </div>
+      </header>
 
-      <h1 className="text-xl font-semibold text-foreground">Your Progress</h1>
-      <p className="text-sm text-muted-foreground mt-1 mb-4">
-        Track your AI leadership growth over time
-      </p>
-
-      <ProgressChart />
-
-      <div className="mt-6">
-        <PeerBenchmark />
-      </div>
-
-      <div className="mt-6">
-        <AdaptivePrompts />
-      </div>
+      <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <ProgressChart />
+          <PeerBenchmark />
+          <AdaptivePrompts />
+        </div>
+      </main>
     </div>
   );
 }

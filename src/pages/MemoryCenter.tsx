@@ -31,7 +31,7 @@ export default function MemoryCenter() {
 
   const content = (
     <MemoryErrorBoundary>
-      <div className="space-y-4">
+      <div className="flex-1 min-h-0 flex flex-col space-y-4">
         {/* Stats bar */}
         {stats && (
           <motion.div
@@ -51,7 +51,7 @@ export default function MemoryCenter() {
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          className="flex-1 flex flex-col overflow-hidden"
+          className="flex-1 min-h-0 flex flex-col overflow-hidden"
         >
           <div className="flex items-center justify-between">
             <TabsList className="grid grid-cols-3 h-11">
@@ -154,7 +154,7 @@ export default function MemoryCenter() {
         </motion.div>
       </header>
 
-      <main className="flex-1 overflow-hidden px-4 py-2 flex flex-col min-h-0">
+      <main className="flex-1 min-h-0 overflow-hidden px-4 py-2 flex flex-col">
         {content}
       </main>
 
