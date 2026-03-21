@@ -6,11 +6,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
-import type { 
-  UserMemoryFact, 
-  PendingVerification, 
+import type {
+  UserMemoryFact,
+  PendingVerification,
   ExtractionResult,
-  MemoryContext 
+  MemoryContext,
+  MemorySourceType
 } from '@/types/memory';
 
 interface UseUserMemoryReturn {
@@ -22,7 +23,7 @@ interface UseUserMemoryReturn {
   error: string | null;
   
   // Actions
-  extractFromTranscript: (transcript: string, sessionId?: string) => Promise<ExtractionResult>;
+  extractFromTranscript: (transcript: string, sessionId?: string, sourceType?: MemorySourceType) => Promise<ExtractionResult>;
   verifyFact: (factId: string, newValue?: string) => Promise<boolean>;
   rejectFact: (factId: string) => Promise<boolean>;
   refreshMemory: () => Promise<void>;
@@ -79,8 +80,9 @@ export function useUserMemory(): UseUserMemoryReturn {
 
   // Extract facts from a transcript
   const extractFromTranscript = useCallback(async (
-    transcript: string, 
-    sessionId?: string
+    transcript: string,
+    sessionId?: string,
+    sourceType?: MemorySourceType
   ): Promise<ExtractionResult> => {
     setIsExtracting(true);
     setError(null);
@@ -89,7 +91,7 @@ export function useUserMemory(): UseUserMemoryReturn {
       const { data, error: extractError } = await supabase.functions.invoke(
         'extract-user-context',
         {
-          body: { transcript, session_id: sessionId },
+          body: { transcript, session_id: sessionId, source_type: sourceType },
         }
       );
 
