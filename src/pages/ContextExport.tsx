@@ -391,11 +391,11 @@ export default function ContextExport() {
     );
   }
 
-  // Mobile layout — no-scroll, immersive
+  // Mobile layout — scrollable
   return (
-    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="flex-shrink-0 px-4 pt-4 pb-2">
+      <header className="px-4 pt-4 pb-2">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -414,16 +414,12 @@ export default function ContextExport() {
         </motion.div>
       </header>
 
-      {/* Content — contained with internal scroll for preview */}
-      <main className="flex-1 min-h-0 overflow-hidden flex flex-col px-4 pb-2 gap-3">
-        <div className="flex-shrink-0 overflow-y-auto scrollbar-hide max-h-[45%]">{selectorsContent}</div>
-        <div className="flex-1 min-h-0 overflow-hidden">{previewContent}</div>
+      {/* Content — scrollable */}
+      <main className="px-4 pb-6 space-y-4">
+        {selectorsContent}
+        <div>{actionButtons}</div>
+        {previewContent}
       </main>
-
-      {/* Action buttons — fixed at bottom */}
-      <div className="flex-shrink-0 px-4 py-3 bg-background/95 backdrop-blur-lg border-t border-border">
-        {actionButtons}
-      </div>
     </div>
   );
 }
