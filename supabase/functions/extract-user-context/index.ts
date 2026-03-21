@@ -16,7 +16,7 @@ interface ExtractedFact {
   is_high_stakes: boolean;
 }
 
-const EXTRACTION_PROMPT = `You are an expert at extracting structured facts about business leaders from their voice transcripts.
+const EXTRACTION_PROMPT = `You are an expert at extracting structured facts about business leaders from their written or spoken input.
 
 Your job is to identify and extract key facts about the person speaking. Be precise and only extract facts that are explicitly stated or strongly implied.
 
@@ -52,7 +52,7 @@ serve(async (req) => {
   }
 
   try {
-    const { transcript, session_id } = await req.json();
+    const { transcript, session_id, source_type } = await req.json();
 
     if (!transcript || typeof transcript !== 'string') {
       return new Response(
@@ -103,7 +103,7 @@ serve(async (req) => {
         model: 'gpt-4o',
         messages: [
           { role: 'system', content: EXTRACTION_PROMPT },
-          { role: 'user', content: `Extract facts from this transcript:\n\n"${transcript}"` },
+          { role: 'user', content: `Extract facts from this ${source_type === 'markdown' ? 'document' : 'transcript'}:\n\n"${transcript}"` },
         ],
         response_format: { type: 'json_object' },
         temperature: 0.3,
@@ -334,7 +334,7 @@ Return a JSON object with a "results" array. Each entry has:
           confidence_score: fact.confidence_score,
           is_high_stakes: fact.is_high_stakes,
           verification_status: 'inferred',
-          source_type: 'voice',
+          source_type: source_type || 'voice',
           source_session_id: session_id || null,
         }));
 

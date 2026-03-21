@@ -1,16 +1,18 @@
 /**
  * ExportImportPanel Component
- * 
- * Panel for exporting memory to JSON/CSV and importing from JSON.
+ *
+ * Panel for exporting memory to JSON/CSV and importing from JSON or Markdown.
  */
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Upload, FileJson, FileSpreadsheet, Loader2, AlertCircle, Check, X } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useExportMemory, useImportMemory, useBulkDeleteMemory } from '@/hooks/useMemoryQueries';
+import { useExportMemory, useImportMemory, useBulkDeleteMemory, memoryKeys } from '@/hooks/useMemoryQueries';
+import { useUserMemory } from '@/hooks/useUserMemory';
 
 interface ExportImportPanelProps {
   className?: string;
@@ -20,19 +22,22 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
   className,
 }) => {
   const [importResult, setImportResult] = useState<{ imported: number; skipped: number } | null>(null);
+  const [extractionResult, setExtractionResult] = useState<{ extracted: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const queryClient = useQueryClient();
   const exportMemory = useExportMemory();
   const importMemory = useImportMemory();
   const bulkDelete = useBulkDeleteMemory();
+  const { extractFromTranscript, isExtracting } = useUserMemory();
 
   const handleExport = async (format: 'json' | 'csv') => {
     setError(null);
     try {
       const blob = await exportMemory.mutateAsync(format);
-      
+
       // Create download link
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -57,20 +62,34 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
 
     setError(null);
     setImportResult(null);
+    setExtractionResult(null);
 
     try {
       const text = await file.text();
-      const data = JSON.parse(text);
-      
-      // Handle both array format and object with memories array
-      const memories = Array.isArray(data) ? data : data.memories;
-      
-      if (!Array.isArray(memories)) {
-        throw new Error('Invalid file format: expected an array of memories');
-      }
 
-      const result = await importMemory.mutateAsync(memories);
-      setImportResult(result);
+      if (file.name.endsWith('.md')) {
+        // Markdown path: send to AI extraction
+        const result = await extractFromTranscript(text, undefined, 'markdown');
+        if (result.success) {
+          setExtractionResult({ extracted: result.facts_extracted || 0 });
+          queryClient.invalidateQueries({ queryKey: memoryKeys.lists() });
+        } else {
+          setError(result.error || 'Markdown extraction failed');
+        }
+      } else {
+        // JSON path: existing logic
+        const data = JSON.parse(text);
+
+        // Handle both array format and object with memories array
+        const memories = Array.isArray(data) ? data : data.memories;
+
+        if (!Array.isArray(memories)) {
+          throw new Error('Invalid file format: expected an array of memories');
+        }
+
+        const result = await importMemory.mutateAsync(memories);
+        setImportResult(result);
+      }
     } catch (err) {
       if (err instanceof SyntaxError) {
         setError('Invalid JSON file');
@@ -94,6 +113,8 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
       setError(err instanceof Error ? err.message : 'Delete failed');
     }
   };
+
+  const isImporting = importMemory.isPending || isExtracting;
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -120,7 +141,7 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Import result */}
+      {/* Import result (JSON) */}
       <AnimatePresence>
         {importResult && (
           <motion.div
@@ -137,6 +158,31 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
               </p>
               <button
                 onClick={() => setImportResult(null)}
+                className="ml-auto p-1 hover:bg-green-500/10 rounded"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Extraction result (Markdown) */}
+      <AnimatePresence>
+        {extractionResult && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="p-3 rounded-xl bg-green-500/10 border border-green-500/20"
+          >
+            <div className="flex items-center gap-2 text-green-600">
+              <Check className="w-4 h-4 flex-shrink-0" />
+              <p className="text-sm">
+                Extracted {extractionResult.extracted} memories from markdown
+              </p>
+              <button
+                onClick={() => setExtractionResult(null)}
                 className="ml-auto p-1 hover:bg-green-500/10 rounded"
               >
                 <X className="w-3 h-3" />
@@ -200,32 +246,32 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
             Import Memory
           </CardTitle>
           <CardDescription className="text-sm">
-            Import memories from a JSON file
+            Import memories from a JSON or Markdown file
           </CardDescription>
         </CardHeader>
         <CardContent>
           <input
             ref={fileInputRef}
             type="file"
-            accept=".json"
+            accept=".json,.md"
             onChange={handleFileChange}
             className="hidden"
           />
           <Button
             variant="outline"
             onClick={handleImportClick}
-            disabled={importMemory.isPending}
+            disabled={isImporting}
             className="w-full border-0 bg-secondary/50"
           >
-            {importMemory.isPending ? (
+            {isImporting ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
               <Upload className="w-4 h-4 mr-2" />
             )}
-            Choose JSON file
+            {isExtracting ? 'Extracting memories...' : 'Choose file (.json or .md)'}
           </Button>
           <p className="text-xs text-muted-foreground mt-2">
-            Duplicate entries (same fact_key) will be skipped.
+            JSON imports directly. Markdown files are parsed by AI to extract memories.
           </p>
         </CardContent>
       </Card>

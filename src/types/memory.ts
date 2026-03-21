@@ -7,7 +7,7 @@ export type FactCategory = 'identity' | 'business' | 'objective' | 'blocker' | '
 
 export type VerificationStatus = 'inferred' | 'verified' | 'corrected' | 'rejected';
 
-export type MemorySourceType = 'voice' | 'form' | 'linkedin' | 'calendar' | 'enrichment';
+export type MemorySourceType = 'voice' | 'form' | 'linkedin' | 'calendar' | 'enrichment' | 'markdown';
 
 export interface UserMemoryFact {
   id: string;
