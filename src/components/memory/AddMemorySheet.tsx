@@ -18,6 +18,7 @@ import { useCreateMemory } from '@/hooks/useMemoryQueries';
 import { useVoice } from '@/hooks/useVoice';
 import type { FactCategory } from '@/types/memory';
 import { haptics } from '@/lib/haptics';
+import { toast } from 'sonner';
 
 interface AddMemorySheetProps {
   isOpen: boolean;
@@ -71,6 +72,7 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
     onTranscript: (text) => {
       setValue(text);
       setMode('text');
+      toast.success('Transcription complete — review and save your memory');
     },
   });
 
@@ -181,13 +183,16 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
 
       // Clear draft on success
       localStorage.removeItem(DRAFT_KEY);
-      
+
       haptics?.success?.();
+      toast.success('Memory saved successfully');
       onSuccess?.();
       handleClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save memory');
+      const msg = err instanceof Error ? err.message : 'Failed to save memory';
+      setError(msg);
       haptics?.error?.();
+      toast.error(msg);
     }
   };
 

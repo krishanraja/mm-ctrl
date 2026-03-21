@@ -32,6 +32,8 @@ serve(async (req) => {
     whisperFormData.append('model', 'whisper-1');
     whisperFormData.append('language', 'en');
     whisperFormData.append('response_format', 'verbose_json');
+    whisperFormData.append('temperature', '0');
+    whisperFormData.append('prompt', 'The speaker is an executive or leader discussing leadership, team management, strategy, decisions, delegation, priorities, KPIs, OKRs, quarterly goals, direct reports, stakeholders, cross-functional collaboration, performance reviews, and business operations.');
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
