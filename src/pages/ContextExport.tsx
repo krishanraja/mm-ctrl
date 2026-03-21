@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
+import { BottomNav } from '@/components/memory-web/BottomNav';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 
 const FORMAT_OPTIONS: {
@@ -393,9 +394,9 @@ export default function ContextExport() {
 
   // Mobile layout — scrollable
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
       {/* Header */}
-      <header className="px-4 pt-4 pb-2">
+      <header className="flex-shrink-0 px-4 pt-4 pb-2">
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -415,11 +416,13 @@ export default function ContextExport() {
       </header>
 
       {/* Content — scrollable */}
-      <main className="px-4 pb-6 space-y-4">
+      <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 space-y-4">
         {selectorsContent}
         <div>{actionButtons}</div>
         {previewContent}
       </main>
+
+      <BottomNav />
     </div>
   );
 }
