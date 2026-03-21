@@ -27,8 +27,8 @@ import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
 import { FactVerificationCard } from '@/components/memory/FactVerificationCard';
+import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BottomNav } from './BottomNav';
-import { SwipeableCards } from '@/components/mobile/SwipeableCards';
 import { useToast } from '@/hooks/use-toast';
 import type { FactCategory, PatternType } from '@/types/memory';
 
@@ -38,14 +38,6 @@ function getGreeting() {
   if (hour < 17) return 'Good afternoon';
   return 'Good evening';
 }
-
-const CATEGORY_CONFIG: Record<FactCategory, { icon: typeof User; label: string; gradient: string }> = {
-  identity: { icon: User, label: 'Identity', gradient: 'from-violet-500 to-purple-600' },
-  business: { icon: Briefcase, label: 'Business', gradient: 'from-blue-500 to-indigo-600' },
-  objective: { icon: Target, label: 'Goals', gradient: 'from-emerald-500 to-teal-600' },
-  blocker: { icon: AlertTriangle, label: 'Challenges', gradient: 'from-red-500 to-orange-600' },
-  preference: { icon: Settings, label: 'Preferences', gradient: 'from-amber-500 to-yellow-600' },
-};
 
 const PATTERN_CONFIG: Record<PatternType, { icon: typeof TrendingUp; label: string; color: string }> = {
   strength: { icon: TrendingUp, label: 'Strength', color: 'text-emerald-400 bg-emerald-500/10' },
@@ -117,7 +109,6 @@ export function MobileMemoryDashboard() {
 
   const activeProcessing = isProcessing || isExtracting || isTranscribing;
 
-  // Show toast on voice error
   useEffect(() => {
     if (voiceError) {
       toast({
@@ -130,7 +121,6 @@ export function MobileMemoryDashboard() {
     }
   }, [voiceError, toast]);
 
-  // Safety timeout: warn if processing takes > 35s
   useEffect(() => {
     if (activeProcessing) {
       processingTimerRef.current = setTimeout(() => {
@@ -177,40 +167,73 @@ export function MobileMemoryDashboard() {
   const formatTime = (s: number) =>
     `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
-  const categoryDistribution = stats?.category_distribution || {};
   const hasData = facts.length > 0;
   const isVoiceExpanded = isRecording || activeProcessing || mode === 'text';
 
   return (
     <>
       <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-        {/* Header - compact single line */}
-        <header className="flex-shrink-0 px-5 pt-4 pb-1">
+        {/* Header */}
+        <header className="flex-shrink-0 px-5 pt-4 pb-1 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-baseline gap-2"
           >
             <h1 className="text-lg font-bold text-foreground">{getGreeting()},</h1>
-            <span className="text-lg font-bold text-accent capitalize">{firstName}</span>
+            <motion.span
+              className="text-lg font-bold text-accent capitalize"
+              animate={{
+                textShadow: [
+                  '0 0 8px rgba(16,185,129,0)',
+                  '0 0 12px rgba(16,185,129,0.3)',
+                  '0 0 8px rgba(16,185,129,0)',
+                ],
+              }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            >
+              {firstName}
+            </motion.span>
           </motion.div>
         </header>
 
-        {/* Health Score - compact inline bar */}
+        {/* Health Score bar */}
         {hasData && stats && (
-          <div className="flex-shrink-0 px-5 py-2">
+          <div className="flex-shrink-0 px-5 py-2 relative z-10">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex items-center gap-3"
             >
-              <Brain className="h-3.5 w-3.5 text-accent flex-shrink-0" />
+              <motion.div
+                animate={{
+                  boxShadow: [
+                    '0 0 4px rgba(16,185,129,0.2)',
+                    '0 0 8px rgba(139,92,246,0.3)',
+                    '0 0 4px rgba(16,185,129,0.2)',
+                  ],
+                }}
+                transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                className="rounded-full"
+              >
+                <Brain className="h-3.5 w-3.5 text-accent flex-shrink-0" />
+              </motion.div>
               <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-accent to-purple-500"
+                  className="h-full rounded-full"
+                  style={{
+                    background: 'linear-gradient(90deg, #10b981, #8b5cf6, #ec4899)',
+                    backgroundSize: '200% 100%',
+                  }}
                   initial={{ width: 0 }}
-                  animate={{ width: `${stats.health_score}%` }}
-                  transition={{ duration: 1, ease: 'easeOut' }}
+                  animate={{
+                    width: `${stats.health_score}%`,
+                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                  }}
+                  transition={{
+                    width: { duration: 1, ease: 'easeOut' },
+                    backgroundPosition: { repeat: Infinity, duration: 4, ease: 'easeInOut' },
+                  }}
                 />
               </div>
               <span className="text-xs font-bold text-foreground tabular-nums flex-shrink-0">
@@ -220,16 +243,81 @@ export function MobileMemoryDashboard() {
                 {stats.total_facts}f &middot; {stats.patterns_count}p
               </span>
               {delta && delta.new_facts > 0 && (
-                <span className="text-[10px] text-accent font-medium flex-shrink-0">
+                <motion.span
+                  className="text-[10px] text-accent font-medium flex-shrink-0"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                >
                   +{delta.new_facts}
-                </span>
+                </motion.span>
               )}
             </motion.div>
           </div>
         )}
 
+        {/* Main content area — Memory Web visualization as hero */}
+        {!isVoiceExpanded && (
+          <div className="flex-1 min-h-0 relative">
+            {/* The living memory web — always visible */}
+            <MemoryWebVisualization
+              facts={facts}
+              showEmptyState={!isLoading && !hasData && mode === 'idle'}
+            />
+
+            {/* Loading */}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  className="w-16 h-16 rounded-full"
+                  style={{
+                    background: 'conic-gradient(from 0deg, transparent, rgba(139,92,246,0.4), transparent)',
+                  }}
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+                />
+              </div>
+            )}
+
+            {/* Pattern pills overlay — bottom of web area */}
+            {hasData && patterns.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="absolute bottom-2 left-3 right-3 flex gap-1.5 overflow-x-auto scrollbar-hide pb-1"
+              >
+                {patterns.slice(0, 3).map((p) => {
+                  const config = PATTERN_CONFIG[p.pattern_type] || PATTERN_CONFIG.behavior;
+                  return (
+                    <motion.div
+                      key={p.id}
+                      whileTap={{ scale: 0.95 }}
+                      className={cn(
+                        'flex-shrink-0 px-2.5 py-1.5 rounded-full backdrop-blur-md',
+                        'border border-white/5 bg-background/70',
+                      )}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className={cn('text-[8px] px-1 py-0.5 rounded-full font-bold', config.color)}>
+                          {config.label}
+                        </span>
+                        <p className="text-[10px] text-foreground/70 max-w-[120px] truncate">
+                          {p.pattern_text}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )}
+          </div>
+        )}
+
         {/* Voice Input Area */}
-        <div className={cn('flex-shrink-0 px-5 overflow-hidden', isVoiceExpanded && 'flex-1')}>
+        <div className={cn(
+          'flex-shrink-0 px-5 overflow-hidden relative z-10',
+          isVoiceExpanded && 'flex-1',
+        )}>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -248,19 +336,34 @@ export function MobileMemoryDashboard() {
                   <p className="text-xs text-foreground/60">
                     {hasData ? 'Voice another thought' : 'Start your Memory Web'}
                   </p>
-                  <motion.button
-                    onClick={handleVoiceToggle}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={cn(
-                      'w-14 h-14 rounded-full',
-                      'bg-gradient-to-br from-accent to-accent/70',
-                      'flex items-center justify-center',
-                      'shadow-lg shadow-accent/20',
-                    )}
-                  >
-                    <Mic className="w-6 h-6 text-white" />
-                  </motion.button>
+
+                  {/* Animated mic button with glow rings */}
+                  <div className="relative">
+                    <motion.div
+                      className="absolute inset-0 rounded-full"
+                      animate={{
+                        boxShadow: [
+                          '0 0 0 0px rgba(16,185,129,0.2), 0 0 0 0px rgba(139,92,246,0.1)',
+                          '0 0 0 8px rgba(16,185,129,0.0), 0 0 0 16px rgba(139,92,246,0.0)',
+                        ],
+                      }}
+                      transition={{ repeat: Infinity, duration: 2, ease: 'easeOut' }}
+                    />
+                    <motion.button
+                      onClick={handleVoiceToggle}
+                      whileHover={{ scale: 1.08 }}
+                      whileTap={{ scale: 0.92 }}
+                      className={cn(
+                        'w-14 h-14 rounded-full relative',
+                        'bg-gradient-to-br from-accent to-accent/70',
+                        'flex items-center justify-center',
+                        'shadow-lg shadow-accent/25',
+                      )}
+                    >
+                      <Mic className="w-6 h-6 text-white" />
+                    </motion.button>
+                  </div>
+
                   <div className="flex items-center gap-3">
                     <p className="text-[10px] text-muted-foreground/50">Tap to narrate</p>
                     <span className="text-muted-foreground/20">|</span>
@@ -283,17 +386,45 @@ export function MobileMemoryDashboard() {
                   exit={{ opacity: 0 }}
                   className="flex flex-col items-center gap-4 py-6"
                 >
-                  <motion.button
-                    onClick={handleVoiceToggle}
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                    className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-lg shadow-red-500/25"
-                  >
-                    <MicOff className="w-8 h-8 text-white" />
-                  </motion.button>
+                  {/* Pulsing recording button with expanding rings */}
+                  <div className="relative">
+                    {[0, 1, 2].map((ring) => (
+                      <motion.div
+                        key={ring}
+                        className="absolute inset-0 rounded-full border border-red-400/20"
+                        animate={{
+                          scale: [1, 1.6 + ring * 0.3],
+                          opacity: [0.4, 0],
+                        }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.8,
+                          delay: ring * 0.4,
+                          ease: 'easeOut',
+                        }}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          left: 0,
+                          top: 0,
+                        }}
+                      />
+                    ))}
+                    <motion.button
+                      onClick={handleVoiceToggle}
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                      className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-lg shadow-red-500/30 relative"
+                    >
+                      <MicOff className="w-8 h-8 text-white" />
+                    </motion.button>
+                  </div>
+
                   <div className="text-2xl font-bold tabular-nums text-foreground">
                     {formatTime(duration)}
                   </div>
+
+                  {/* Animated waveform */}
                   <div className="flex items-center justify-center gap-0.5 h-6">
                     {Array.from({ length: 24 }).map((_, i) => (
                       <motion.div
@@ -304,7 +435,10 @@ export function MobileMemoryDashboard() {
                           duration: 0.4 + Math.random() * 0.4,
                           delay: i * 0.03,
                         }}
-                        className="w-0.5 bg-red-400 rounded-full"
+                        className="w-0.5 rounded-full"
+                        style={{
+                          background: `linear-gradient(to top, rgba(239,68,68,0.4), rgba(239,68,68,0.9))`,
+                        }}
                       />
                     ))}
                   </div>
@@ -368,17 +502,26 @@ export function MobileMemoryDashboard() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="flex flex-col items-center gap-4 py-8"
                 >
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-                    className="w-16 h-16 rounded-full bg-gradient-to-r from-accent via-purple-500 to-pink-500 p-[2px]"
-                  >
-                    <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-purple-400" />
-                    </div>
-                  </motion.div>
+                  {/* Multi-ring spinner */}
+                  <div className="relative w-16 h-16">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+                      className="absolute inset-0 rounded-full bg-gradient-to-r from-accent via-purple-500 to-pink-500 p-[2px]"
+                    >
+                      <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                        <Sparkles className="w-6 h-6 text-purple-400" />
+                      </div>
+                    </motion.div>
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+                      className="absolute -inset-2 rounded-full border border-accent/10 border-t-accent/30"
+                    />
+                  </div>
+
                   <p className="text-sm text-foreground font-medium">
-                    {isTranscribing ? 'Processing speech...' : 'Extracting facts & patterns...'}
+                    {isTranscribing ? 'Processing speech...' : 'Weaving into your memory web...'}
                   </p>
                   <button
                     onClick={handleCancelProcessing}
@@ -393,156 +536,29 @@ export function MobileMemoryDashboard() {
           </motion.div>
         </div>
 
-        {/* Swipeable Content Panel — hidden when voice is expanded */}
-        {!isVoiceExpanded && (
-          <>
-            {hasData && !isLoading && (
-              <div className="flex-1 min-h-0 overflow-hidden px-3">
-                <SwipeableCards className="h-full" cardClassName="px-2">
-                  {/* Panel 1: Memory Web */}
-                  <div className="h-full flex flex-col px-2 pt-1">
-                    <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                      <Brain className="h-3 w-3 text-accent" />
-                      Memory Web
-                    </h3>
-                    <div className="grid grid-cols-2 gap-2 flex-1">
-                      {(Object.entries(CATEGORY_CONFIG) as [FactCategory, typeof CATEGORY_CONFIG[FactCategory]][])
-                        .slice(0, 4)
-                        .map(([category, config]) => {
-                          const count = categoryDistribution[category] || 0;
-                          const Icon = config.icon;
-                          return (
-                            <motion.div
-                              key={category}
-                              whileTap={{ scale: 0.97 }}
-                              className="rounded-xl border border-border bg-card p-3 flex flex-col items-center justify-center gap-2"
-                            >
-                              <div className={cn('w-9 h-9 rounded-lg bg-gradient-to-br flex items-center justify-center', config.gradient)}>
-                                <Icon className="h-4 w-4 text-white" />
-                              </div>
-                              <div className="text-center">
-                                <p className="text-xs text-muted-foreground">{config.label}</p>
-                                <p className="text-lg font-bold text-foreground">{count}</p>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                    </div>
-                  </div>
-
-                  {/* Panel 2: Skills & Patterns */}
-                  <div className="h-full flex flex-col px-2 pt-1 overflow-hidden">
-                    <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                      <Zap className="h-3 w-3 text-amber-400" />
-                      Skills & Patterns
-                    </h3>
-                    <div className="flex-1 min-h-0 space-y-1.5 overflow-hidden">
-                      {patterns.slice(0, 4).map((p) => {
-                        const config = PATTERN_CONFIG[p.pattern_type] || PATTERN_CONFIG.behavior;
-                        return (
-                          <div key={p.id} className="rounded-xl border border-border bg-card p-2.5">
-                            <div className="flex items-start gap-2">
-                              <span className={cn('text-[9px] px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 mt-0.5', config.color)}>
-                                {config.label}
-                              </span>
-                              <p className="text-xs text-foreground leading-snug line-clamp-2">{p.pattern_text}</p>
-                            </div>
-                            <div className="flex items-center gap-3 mt-1 pl-0.5">
-                              <span className="text-[9px] text-muted-foreground">{Math.round(p.confidence * 100)}%</span>
-                              <span className="text-[9px] text-muted-foreground">{p.evidence_count} evidence</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {patterns.length === 0 && (
-                        <div className="flex-1 flex items-center justify-center">
-                          <p className="text-xs text-muted-foreground/50">No patterns detected yet</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Panel 3: Recent Facts */}
-                  <div className="h-full flex flex-col px-2 pt-1 overflow-hidden">
-                    <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                      Recent Facts
-                    </h3>
-                    <div className="flex-1 min-h-0 space-y-1 overflow-hidden">
-                      {facts.slice(0, 5).map((f) => (
-                        <div key={f.id} className="flex items-start gap-2 px-2.5 py-2 rounded-lg bg-card border border-border">
-                          <span className="text-[9px] font-semibold text-accent uppercase mt-0.5 flex-shrink-0 w-12">
-                            {f.fact_category.slice(0, 4)}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-medium text-foreground/80 truncate">{f.fact_label}</p>
-                            <p className="text-[10px] text-muted-foreground truncate">{f.fact_value}</p>
-                          </div>
-                          {f.verification_status === 'verified' && (
-                            <span className="text-[8px] px-1 py-0.5 rounded bg-emerald-500/10 text-emerald-400 flex-shrink-0">
-                              ✓
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Panel 4: Quick Actions */}
-                  <div className="h-full flex flex-col justify-center gap-3 px-2">
-                    <button
-                      onClick={() => navigate('/context')}
-                      className="w-full flex items-center justify-between px-4 py-4 rounded-xl bg-accent text-accent-foreground font-semibold text-sm shadow-lg shadow-accent/20"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Download className="h-4 w-4" />
-                        Export to Any AI
-                      </div>
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => navigate('/memory')}
-                      className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl bg-foreground/5 text-foreground font-medium text-sm"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Brain className="h-4 w-4 text-muted-foreground" />
-                        View Full Memory Web
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </button>
-                  </div>
-                </SwipeableCards>
-              </div>
-            )}
-
-            {/* Empty State */}
-            {!isLoading && !hasData && !activeProcessing && mode === 'idle' && (
-              <div className="flex-1 min-h-0 flex items-center justify-center px-5">
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-center space-y-3"
-                >
-                  <Brain className="h-10 w-10 text-muted-foreground/20 mx-auto" />
-                  <p className="text-sm text-muted-foreground">
-                    Your Memory Web is empty. Voice your first thought to begin.
-                  </p>
-                  <p className="text-xs text-muted-foreground/60">
-                    Try: &quot;I&apos;m a [role] at [company]. My biggest challenge is...&quot;
-                  </p>
-                </motion.div>
-              </div>
-            )}
-
-            {/* Loading */}
-            {isLoading && (
-              <div className="flex-1 min-h-0 flex flex-col justify-center gap-3 px-5">
-                <div className="h-16 bg-foreground/5 rounded-xl animate-pulse" />
-                <div className="h-16 bg-foreground/5 rounded-xl animate-pulse" />
-                <div className="h-16 bg-foreground/5 rounded-xl animate-pulse" />
-              </div>
-            )}
-          </>
+        {/* Quick actions — compact row above bottom nav when we have data */}
+        {hasData && !isVoiceExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="flex-shrink-0 px-4 py-2 flex gap-2 relative z-10"
+          >
+            <button
+              onClick={() => navigate('/context')}
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent/10 text-accent text-xs font-semibold"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export
+            </button>
+            <button
+              onClick={() => navigate('/memory')}
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-foreground/5 text-foreground/70 text-xs font-medium"
+            >
+              <Brain className="h-3.5 w-3.5" />
+              Memory Web
+            </button>
+          </motion.div>
         )}
 
         <BottomNav />
