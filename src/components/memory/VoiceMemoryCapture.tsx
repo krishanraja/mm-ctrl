@@ -8,6 +8,7 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Send, Loader2, Sparkles, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
 import { FactVerificationCard } from './FactVerificationCard';
@@ -62,23 +63,32 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
   }
 
   async function processInput(text: string) {
-    if (!text.trim()) return;
+    if (!text.trim()) {
+      toast.error('No speech detected — please try again');
+      return;
+    }
 
     setIsProcessing(true);
-    
+
     try {
       // Extract context from the transcript
       const result = await extractFromTranscript(text);
-      
+
       // Show verification card if we have pending verifications
       if (showVerification && result.pending_verifications?.length > 0) {
         setShowVerificationCard(true);
+        const count = result.pending_verifications.length;
+        toast.success(`Found ${count} fact${count > 1 ? 's' : ''} — please verify`);
+      } else if (result.success) {
+        toast.success('Memory saved');
+        onComplete?.(text);
       } else {
-        // No verification needed, complete immediately
+        toast.error('Couldn\'t extract any facts — please try again');
         onComplete?.(text);
       }
     } catch (err) {
       console.error('Error processing input:', err);
+      toast.error('Couldn\'t save memory — please try again');
     } finally {
       setIsProcessing(false);
     }
