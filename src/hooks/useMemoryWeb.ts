@@ -46,13 +46,25 @@ export function useMemoryWeb() {
     setIsLoading(true);
     try {
       // Fetch all current facts
-      const { data: factData } = await supabase
-        .from('user_memory')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_current', true)
-        .is('archived_at', null)
-        .order('created_at', { ascending: false });
+      // Try with archived_at filter first; if the column doesn't exist yet
+      // (migration not applied), fall back to querying without it.
+      let factData: unknown[] | null = null;
+      const baseQuery = () =>
+        supabase
+          .from('user_memory')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('is_current', true)
+          .order('created_at', { ascending: false });
+
+      const withArchived = await baseQuery().is('archived_at', null);
+      if (withArchived.error) {
+        // archived_at column likely missing — query without it
+        const fallback = await baseQuery();
+        factData = fallback.data;
+      } else {
+        factData = withArchived.data;
+      }
 
       const allFacts = ((factData || []) as unknown as MemoryWebFact[]).map((f) => ({
         ...f,
@@ -63,33 +75,33 @@ export function useMemoryWeb() {
       }));
       setFacts(allFacts);
 
-      // Fetch patterns
-      const { data: patternData } = await supabase
+      // Fetch patterns (table may not exist yet)
+      const patternResult = await supabase
         .from('user_patterns')
         .select('*')
         .eq('user_id', user.id)
         .neq('status', 'deprecated')
         .order('confidence', { ascending: false });
-      const allPatterns = (patternData || []) as unknown as UserPattern[];
-      setPatterns(allPatterns);
+      const allPatterns = (patternResult.data || []) as unknown as UserPattern[];
+      if (!patternResult.error) setPatterns(allPatterns);
 
-      // Fetch decisions
-      const { data: decisionData } = await supabase
+      // Fetch decisions (table may not exist yet)
+      const decisionResult = await supabase
         .from('user_decisions')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
         .order('created_at', { ascending: false });
-      const allDecisions = (decisionData || []) as unknown as UserDecision[];
-      setDecisions(allDecisions);
+      const allDecisions = (decisionResult.data || []) as unknown as UserDecision[];
+      if (!decisionResult.error) setDecisions(allDecisions);
 
-      // Fetch budget
-      const { data: budgetData } = await supabase
+      // Fetch budget (table may not exist yet)
+      const budgetResult = await supabase
         .from('user_memory_budget')
         .select('*')
         .eq('user_id', user.id)
         .single();
-      if (budgetData) setBudget(budgetData as unknown as MemoryBudget);
+      if (!budgetResult.error && budgetResult.data) setBudget(budgetResult.data as unknown as MemoryBudget);
 
       // Calculate stats
       const verified = allFacts.filter(

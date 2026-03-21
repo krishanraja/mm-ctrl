@@ -1,23 +1,26 @@
 /**
  * MemoryWebVisualization
  *
- * An animated, organic "neural web" that renders memory nodes as glowing orbs
+ * An interactive, animated "neural web" that renders memory nodes as glowing orbs
  * connected by luminous strands.  Each node's colour maps to its fact category
  * and pulses according to its temperature (hot = fast pulse, cold = slow).
+ *
+ * Tap a node to reveal its label, value and connections.
  */
 
-import React, { useMemo, useRef, useEffect, useState } from 'react';
+import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 import type { MemoryWebFact, FactCategory, Temperature } from '@/types/memory';
 
 // ── Colour palette per category ──────────────────────────────────────────────
-const CATEGORY_COLORS: Record<FactCategory, { fill: string; rgb: string }> = {
-  identity:   { fill: '#8b5cf6', rgb: '139,92,246' },
-  business:   { fill: '#3b82f6', rgb: '59,130,246' },
-  objective:  { fill: '#10b981', rgb: '16,185,129' },
-  blocker:    { fill: '#ef4444', rgb: '239,68,68'  },
-  preference: { fill: '#f59e0b', rgb: '245,158,11' },
+const CATEGORY_COLORS: Record<FactCategory, { fill: string; rgb: string; label: string }> = {
+  identity:   { fill: '#8b5cf6', rgb: '139,92,246', label: 'About You' },
+  business:   { fill: '#3b82f6', rgb: '59,130,246', label: 'Business' },
+  objective:  { fill: '#10b981', rgb: '16,185,129', label: 'Goals' },
+  blocker:    { fill: '#ef4444', rgb: '239,68,68',  label: 'Challenges' },
+  preference: { fill: '#f59e0b', rgb: '245,158,11', label: 'Preferences' },
 };
 
 const TEMP_PULSE: Record<Temperature, number> = { hot: 1.6, warm: 2.8, cold: 5 };
@@ -94,29 +97,57 @@ function layoutNodes(
   });
 }
 
+/**
+ * Build edges with semantic meaning:
+ * 1. Same-category connections (memories in same domain are related)
+ * 2. Plus nearest-neighbor cross-category links for visual cohesion
+ */
 function buildEdges(nodes: NodePosition[]): [number, number][] {
   if (nodes.length < 2) return [];
   const edges: [number, number][] = [];
   const edgeSet = new Set<string>();
   const key = (a: number, b: number) => `${Math.min(a, b)}-${Math.max(a, b)}`;
 
+  // Group nodes by category
+  const categoryGroups: Record<string, number[]> = {};
+  nodes.forEach((n, i) => {
+    const cat = n.fact.fact_category;
+    if (!categoryGroups[cat]) categoryGroups[cat] = [];
+    categoryGroups[cat].push(i);
+  });
+
+  // Connect nodes within the same category (semantic connections)
+  for (const indices of Object.values(categoryGroups)) {
+    for (let a = 0; a < indices.length; a++) {
+      for (let b = a + 1; b < indices.length; b++) {
+        const k = key(indices[a], indices[b]);
+        if (!edgeSet.has(k)) {
+          edgeSet.add(k);
+          edges.push([indices[a], indices[b]]);
+        }
+      }
+    }
+  }
+
+  // Add 1 nearest cross-category neighbor per node for visual cohesion
   for (let i = 0; i < nodes.length; i++) {
-    const dists = nodes
+    const nearest = nodes
       .map((n, j) => ({
         j,
         d: Math.hypot(n.x - nodes[i].x, n.y - nodes[i].y),
       }))
-      .filter(({ j }) => j !== i)
+      .filter(({ j }) => j !== i && nodes[j].fact.fact_category !== nodes[i].fact.fact_category)
       .sort((a, b) => a.d - b.d);
 
-    for (const { j } of dists.slice(0, 2)) {
-      const k = key(i, j);
+    if (nearest.length > 0) {
+      const k = key(i, nearest[0].j);
       if (!edgeSet.has(k)) {
         edgeSet.add(k);
-        edges.push([i, j]);
+        edges.push([i, nearest[0].j]);
       }
     }
   }
+
   return edges;
 }
 
@@ -158,6 +189,16 @@ function edgeMidpoint(a: NodePosition, b: NodePosition): { mx: number; my: numbe
   };
 }
 
+/** Get connected node indices for a given node index */
+function getConnectedIndices(nodeIndex: number, edges: [number, number][]): Set<number> {
+  const connected = new Set<number>();
+  for (const [a, b] of edges) {
+    if (a === nodeIndex) connected.add(b);
+    if (b === nodeIndex) connected.add(a);
+  }
+  return connected;
+}
+
 // ── Component ────────────────────────────────────────────────────────────────
 
 interface MemoryWebVisualizationProps {
@@ -175,6 +216,7 @@ export function MemoryWebVisualization({
 }: MemoryWebVisualizationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({ w: 360, h: 400 });
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -205,6 +247,53 @@ export function MemoryWebVisualization({
     [facts.length, dims.w, dims.h],
   );
 
+  // Connected nodes for the selected node
+  const connectedIndices = useMemo(() => {
+    if (selectedIndex === null) return new Set<number>();
+    return getConnectedIndices(selectedIndex, edges);
+  }, [selectedIndex, edges]);
+
+  const handleNodeClick = useCallback((index: number) => {
+    setSelectedIndex((prev) => (prev === index ? null : index));
+    if (onNodeTap) onNodeTap(nodes[index]?.fact);
+  }, [onNodeTap, nodes]);
+
+  const handleBackdropClick = useCallback(() => {
+    setSelectedIndex(null);
+  }, []);
+
+  // Clear selection when facts change
+  useEffect(() => { setSelectedIndex(null); }, [factIds]);
+
+  const isNodeHighlighted = (index: number) =>
+    selectedIndex === null || index === selectedIndex || connectedIndices.has(index);
+
+  const isEdgeHighlighted = (i: number, j: number) =>
+    selectedIndex === null ||
+    i === selectedIndex || j === selectedIndex;
+
+  // Active categories for legend
+  const activeCategories = useMemo(() => {
+    const cats = new Set<FactCategory>();
+    facts.forEach((f) => cats.add(f.fact_category));
+    return Array.from(cats);
+  }, [facts]);
+
+  // Tooltip position (keep card inside viewport)
+  const selectedNode = selectedIndex !== null ? nodes[selectedIndex] : null;
+  const tooltipPos = useMemo(() => {
+    if (!selectedNode) return { x: 0, y: 0 };
+    const cardW = 200;
+    const cardH = 80;
+    let tx = selectedNode.x - cardW / 2;
+    let ty = selectedNode.y - cardH - selectedNode.radius * 3 - 8;
+    // Clamp horizontal
+    tx = Math.max(8, Math.min(dims.w - cardW - 8, tx));
+    // If above would go off top, place below
+    if (ty < 8) ty = selectedNode.y + selectedNode.radius * 3 + 8;
+    return { x: tx, y: ty };
+  }, [selectedNode, dims.w]);
+
   return (
     <div
       ref={containerRef}
@@ -223,6 +312,7 @@ export function MemoryWebVisualization({
         height={dims.h}
         className="absolute inset-0"
         style={{ filter: 'url(#web-glow)' }}
+        onClick={handleBackdropClick}
       >
         <defs>
           <filter id="web-glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -260,14 +350,18 @@ export function MemoryWebVisualization({
           const a = nodes[i];
           const b = nodes[j];
           const { mx, my } = edgeMidpoint(a, b);
+          const highlighted = isEdgeHighlighted(i, j);
+          const sameCategory = a.fact.fact_category === b.fact.fact_category;
           const col = CATEGORY_COLORS[a.fact.fact_category] || CATEGORY_COLORS.identity;
+          const baseOpacity = sameCategory ? 0.25 : 0.1;
+
           return (
             <motion.path
               key={`edge-${a.fact.id}-${b.fact.id}`}
               d={`M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`}
               fill="none"
-              stroke={`rgba(${col.rgb},0.15)`}
-              strokeWidth={1}
+              stroke={`rgba(${col.rgb},${highlighted ? (selectedIndex !== null ? (sameCategory ? 0.5 : 0.2) : baseOpacity) : 0.03})`}
+              strokeWidth={highlighted && selectedIndex !== null ? (sameCategory ? 1.5 : 0.8) : 1}
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{ duration: 1.2, delay: idx * 0.05 }}
@@ -280,15 +374,39 @@ export function MemoryWebVisualization({
           const col = CATEGORY_COLORS[node.fact.fact_category] || CATEGORY_COLORS.identity;
           const temp = getTemp(node.fact);
           const pulseDur = TEMP_PULSE[temp];
+          const highlighted = isNodeHighlighted(i);
+          const isSelected = selectedIndex === i;
+          const isConnected = connectedIndices.has(i);
+          const dimmed = selectedIndex !== null && !highlighted;
+
           return (
             <motion.g
               key={node.fact.id}
               initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              animate={{ scale: 1, opacity: dimmed ? 0.15 : 1 }}
               transition={{ duration: 0.5, delay: i * 0.04, type: 'spring', stiffness: 200 }}
-              style={{ cursor: onNodeTap ? 'pointer' : 'default' }}
-              onClick={() => onNodeTap?.(node.fact)}
+              style={{ cursor: 'pointer' }}
+              onClick={(e) => { e.stopPropagation(); handleNodeClick(i); }}
             >
+              {/* Selection ring */}
+              {isSelected && (
+                <motion.circle
+                  cx={node.x}
+                  cy={node.y}
+                  r={node.radius * 4}
+                  fill="none"
+                  stroke={col.fill}
+                  strokeWidth={1}
+                  strokeDasharray="3 3"
+                  initial={{ r: node.radius * 2, opacity: 0 }}
+                  animate={{
+                    r: [node.radius * 3.5, node.radius * 4.5, node.radius * 3.5],
+                    opacity: [0.4, 0.6, 0.4],
+                    rotate: [0, 360],
+                  }}
+                  transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+                />
+              )}
               {/* Outer glow ring */}
               <motion.circle
                 cx={node.x}
@@ -296,8 +414,8 @@ export function MemoryWebVisualization({
                 r={node.radius * 2.5}
                 fill={`rgba(${col.rgb},0.08)`}
                 animate={{
-                  r: [node.radius * 2.2, node.radius * 3, node.radius * 2.2],
-                  opacity: [0.08, 0.15, 0.08],
+                  r: [node.radius * 2.2, node.radius * (isSelected ? 3.5 : 3), node.radius * 2.2],
+                  opacity: [0.08, isSelected ? 0.25 : 0.15, 0.08],
                 }}
                 transition={{ repeat: Infinity, duration: pulseDur, ease: 'easeInOut' }}
               />
@@ -309,7 +427,7 @@ export function MemoryWebVisualization({
                 fill={col.fill}
                 filter="url(#node-glow)"
                 animate={{
-                  r: [node.radius, node.radius * 1.15, node.radius],
+                  r: [node.radius, node.radius * (isSelected ? 1.3 : 1.15), node.radius],
                 }}
                 transition={{ repeat: Infinity, duration: pulseDur, ease: 'easeInOut' }}
               />
@@ -320,6 +438,34 @@ export function MemoryWebVisualization({
                 r={node.radius * 0.35}
                 fill="rgba(255,255,255,0.7)"
               />
+
+              {/* Tap target (larger invisible circle for easier tapping) */}
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={Math.max(node.radius * 3, 18)}
+                fill="transparent"
+              />
+
+              {/* Label on selected + connected nodes */}
+              {(isSelected || (selectedIndex !== null && isConnected)) && (
+                <motion.text
+                  x={node.x}
+                  y={node.y + node.radius + 14}
+                  textAnchor="middle"
+                  fill={isSelected ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.7)'}
+                  fontSize={isSelected ? 10 : 9}
+                  fontWeight={isSelected ? 600 : 400}
+                  initial={{ opacity: 0, y: node.y + node.radius + 8 }}
+                  animate={{ opacity: 1, y: node.y + node.radius + 14 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ pointerEvents: 'none' }}
+                >
+                  {node.fact.fact_label.length > 18
+                    ? node.fact.fact_label.slice(0, 16) + '…'
+                    : node.fact.fact_label}
+                </motion.text>
+              )}
             </motion.g>
           );
         })}
@@ -351,6 +497,79 @@ export function MemoryWebVisualization({
           }}
         />
       ))}
+
+      {/* Tooltip card for selected node */}
+      <AnimatePresence>
+        {selectedNode && (
+          <motion.div
+            key="tooltip"
+            initial={{ opacity: 0, scale: 0.9, y: 4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 4 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="absolute pointer-events-auto z-20"
+            style={{ left: tooltipPos.x, top: tooltipPos.y, maxWidth: 220 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="rounded-xl border border-white/10 bg-background/90 backdrop-blur-xl shadow-2xl px-3 py-2.5">
+              {/* Category badge + close */}
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span
+                  className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+                  style={{
+                    color: CATEGORY_COLORS[selectedNode.fact.fact_category].fill,
+                    backgroundColor: `rgba(${CATEGORY_COLORS[selectedNode.fact.fact_category].rgb},0.15)`,
+                  }}
+                >
+                  {CATEGORY_COLORS[selectedNode.fact.fact_category].label}
+                </span>
+                <button
+                  onClick={() => setSelectedIndex(null)}
+                  className="text-white/30 hover:text-white/60 transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+              {/* Fact label */}
+              <p className="text-xs font-semibold text-foreground leading-tight">
+                {selectedNode.fact.fact_label}
+              </p>
+              {/* Fact value */}
+              <p className="text-[11px] text-foreground/60 mt-0.5 leading-snug line-clamp-2">
+                {selectedNode.fact.fact_value}
+              </p>
+              {/* Connection count */}
+              {connectedIndices.size > 0 && (
+                <p className="text-[9px] text-foreground/30 mt-1.5">
+                  {connectedIndices.size} connected memor{connectedIndices.size === 1 ? 'y' : 'ies'}
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Category legend */}
+      {facts.length > 0 && activeCategories.length > 1 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+          className="absolute top-2 right-2 flex flex-col gap-1 pointer-events-none"
+        >
+          {activeCategories.map((cat) => (
+            <div key={cat} className="flex items-center gap-1.5">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: CATEGORY_COLORS[cat].fill }}
+              />
+              <span className="text-[9px] text-foreground/40">
+                {CATEGORY_COLORS[cat].label}
+              </span>
+            </div>
+          ))}
+        </motion.div>
+      )}
 
       {/* Empty state */}
       {showEmptyState && (
