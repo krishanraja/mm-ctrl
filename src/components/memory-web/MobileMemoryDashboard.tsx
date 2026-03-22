@@ -20,12 +20,14 @@ import {
   Shield,
   Eye,
   X,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
+import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { FactVerificationCard } from '@/components/memory/FactVerificationCard';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BottomNav } from './BottomNav';
@@ -60,6 +62,7 @@ export function MobileMemoryDashboard() {
     clearPendingVerifications,
   } = useUserMemory();
   const { toast } = useToast();
+  const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
 
   const [mode, setMode] = useState<'idle' | 'voice' | 'text'>('idle');
   const [textInput, setTextInput] = useState('');
@@ -172,6 +175,8 @@ export function MobileMemoryDashboard() {
 
   return (
     <>
+      {/* Hidden file input for markdown import */}
+      <input {...fileInputProps} />
       <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
         {/* Header */}
         <header className="flex-shrink-0 px-5 pt-4 pb-1 relative z-10">
@@ -373,6 +378,15 @@ export function MobileMemoryDashboard() {
                     >
                       <MessageSquare className="w-2.5 h-2.5" />
                       Type instead
+                    </button>
+                    <span className="text-muted-foreground/20">|</span>
+                    <button
+                      onClick={triggerImport}
+                      disabled={isImporting}
+                      className="flex items-center gap-1 text-[10px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                    >
+                      <FileText className="w-2.5 h-2.5" />
+                      {isImporting ? 'Importing...' : 'Import file'}
                     </button>
                   </div>
                 </motion.div>
