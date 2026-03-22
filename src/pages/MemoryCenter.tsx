@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Plus, Shield, Download, Upload } from 'lucide-react';
+import { Brain, Plus, Shield, Download, Upload, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,6 +10,13 @@ import { MemoryDetailSheet } from '@/components/memory/MemoryDetailSheet';
 import { AddMemorySheet } from '@/components/memory/AddMemorySheet';
 import { PrivacyControlsPanel } from '@/components/memory/PrivacyControlsPanel';
 import { ExportImportPanel } from '@/components/memory/ExportImportPanel';
+import { LLMImportWizard } from '@/components/memory/LLMImportWizard';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
@@ -25,6 +32,7 @@ export default function MemoryCenter() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
+  const [isLLMImportOpen, setIsLLMImportOpen] = useState(false);
 
   const handleEditMemory = (memory: UserMemoryFact) => {
     setSelectedMemory(memory);
@@ -75,16 +83,28 @@ export default function MemoryCenter() {
 
             {activeTab === 'memories' && (
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={triggerImport}
-                  disabled={isImporting}
-                  size="sm"
-                  className="border-0 bg-secondary/50"
-                >
-                  <Upload className="h-4 w-4 mr-1" />
-                  {isImporting ? 'Importing...' : 'Import'}
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-0 bg-secondary/50"
+                    >
+                      <Upload className="h-4 w-4 mr-1" />
+                      {isImporting ? 'Importing...' : 'Import'}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setIsLLMImportOpen(true)}>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Import from AI chat
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={triggerImport} disabled={isImporting}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Import from file
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button
                   onClick={() => setIsAddOpen(true)}
                   size="sm"
@@ -123,6 +143,11 @@ export default function MemoryCenter() {
       <AddMemorySheet
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
+      />
+
+      <LLMImportWizard
+        isOpen={isLLMImportOpen}
+        onClose={() => setIsLLMImportOpen(false)}
       />
     </MemoryErrorBoundary>
   );
