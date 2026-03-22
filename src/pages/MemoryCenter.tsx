@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Plus, Shield, Download } from 'lucide-react';
+import { Brain, Plus, Shield, Download, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +12,7 @@ import { PrivacyControlsPanel } from '@/components/memory/PrivacyControlsPanel';
 import { ExportImportPanel } from '@/components/memory/ExportImportPanel';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
+import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 import type { UserMemoryFact } from '@/types/memory';
@@ -23,6 +24,7 @@ export default function MemoryCenter() {
   const [selectedMemory, setSelectedMemory] = useState<UserMemoryFact | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
 
   const handleEditMemory = (memory: UserMemoryFact) => {
     setSelectedMemory(memory);
@@ -31,6 +33,8 @@ export default function MemoryCenter() {
 
   const content = (
     <MemoryErrorBoundary>
+      {/* Hidden file input for markdown import */}
+      <input {...fileInputProps} />
       <div className="flex-1 min-h-0 flex flex-col space-y-4">
         {/* Stats bar */}
         {stats && (
@@ -70,14 +74,26 @@ export default function MemoryCenter() {
             </TabsList>
 
             {activeTab === 'memories' && (
-              <Button
-                onClick={() => setIsAddOpen(true)}
-                size="sm"
-                className="border-0"
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={triggerImport}
+                  disabled={isImporting}
+                  size="sm"
+                  className="border-0 bg-secondary/50"
+                >
+                  <Upload className="h-4 w-4 mr-1" />
+                  {isImporting ? 'Importing...' : 'Import'}
+                </Button>
+                <Button
+                  onClick={() => setIsAddOpen(true)}
+                  size="sm"
+                  className="border-0"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </div>
             )}
           </div>
 

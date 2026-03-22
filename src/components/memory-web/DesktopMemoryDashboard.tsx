@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -11,6 +11,7 @@ import {
   Brain,
   Zap,
   Download,
+  Upload,
   Target,
   User,
   Briefcase,
@@ -22,12 +23,15 @@ import {
   ChevronDown,
   Copy,
   Check,
+  Loader2,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useVoice } from '@/hooks/useVoice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
+import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { DesktopSidebar } from './DesktopSidebar';
 import type {
   MemoryWebFact,
@@ -174,8 +178,35 @@ export function DesktopMemoryDashboard() {
     onTranscript: (transcript) => setInputText(transcript),
   });
 
+  const { triggerImport, handleFiles, isImporting, fileInputProps } = useMarkdownImport();
+
   const [inputText, setInputText] = useState('');
   const [quickExportCopied, setQuickExportCopied] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only leave if we're exiting the container (not entering a child)
+    if (e.currentTarget === e.target) {
+      setIsDragOver(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  }, [handleFiles]);
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
@@ -214,7 +245,66 @@ export function DesktopMemoryDashboard() {
   const otherPatterns = patterns.filter((p) => p.pattern_type !== 'strength' && p.pattern_type !== 'blindspot');
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen bg-background relative"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Hidden file input */}
+      <input {...fileInputProps} />
+
+      {/* Drag-and-drop overlay */}
+      <AnimatePresence>
+        {isDragOver && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            onDragOver={handleDragOver}
+            onDragLeave={(e) => { e.preventDefault(); setIsDragOver(false); }}
+            onDrop={handleDrop}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="flex flex-col items-center gap-4 p-12 rounded-3xl border-2 border-dashed border-accent/50 bg-accent/5"
+            >
+              <Upload className="h-12 w-12 text-accent" />
+              <div className="text-center">
+                <p className="text-lg font-semibold text-foreground">Drop your file to import</p>
+                <p className="text-sm text-muted-foreground mt-1">Supports .md and .txt files</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Importing overlay */}
+      <AnimatePresence>
+        {isImporting && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="flex flex-col items-center gap-4 p-12"
+            >
+              <Loader2 className="h-10 w-10 text-accent animate-spin" />
+              <div className="text-center">
+                <p className="text-lg font-semibold text-foreground">Extracting memories...</p>
+                <p className="text-sm text-muted-foreground mt-1">AI is reading your document</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <DesktopSidebar />
 
       <main className="ml-64 min-h-screen">
@@ -263,7 +353,7 @@ export function DesktopMemoryDashboard() {
             )}
           </div>
 
-          {/* Voice Input Bar */}
+          {/* Input Bar — Voice, Text, Import */}
           <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
             <button
               onClick={isRecording ? stopRecording : startRecording}
@@ -277,14 +367,23 @@ export function DesktopMemoryDashboard() {
             >
               <Mic className="h-4 w-4" />
             </button>
+            <button
+              onClick={triggerImport}
+              disabled={isImporting}
+              className="flex-shrink-0 p-2 rounded-lg transition-colors hover:bg-secondary text-muted-foreground hover:text-foreground"
+              title="Import markdown or text file"
+            >
+              <Upload className="h-4 w-4" />
+            </button>
+            <div className="w-px h-5 bg-border flex-shrink-0" />
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={hasData
-                ? 'Voice a thought — anything about your work, goals, or decisions...'
-                : 'Start here — tell me about your role, company, and goals...'}
+                ? 'Type a thought, or drop a markdown file anywhere...'
+                : 'Tell me about your role, company, and goals — or drop a .md file...'}
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
             />
             <button
@@ -524,17 +623,42 @@ export function DesktopMemoryDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center py-16 space-y-4"
+              className="text-center py-16 space-y-6"
             >
               <Brain className="h-16 w-16 text-muted-foreground/15 mx-auto" />
               <h2 className="text-lg font-bold text-foreground">Your Memory Web is empty</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Start by voicing your thoughts about your role, company, goals, and challenges. Use the voice or text input above.
-                The more you think out loud, the clearer everything gets.
+                Start by voicing your thoughts about your role, company, goals, and challenges. Use the input above.
+                The more you share, the smarter your AI context gets.
               </p>
               <p className="text-xs text-muted-foreground/50">
                 Try: "I'm a VP of Engineering at a Series B startup. My biggest challenge is..."
               </p>
+
+              {/* Import CTA */}
+              <div className="pt-2">
+                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                  <div className="h-px w-8 bg-border" />
+                  or jumpstart with existing notes
+                  <div className="h-px w-8 bg-border" />
+                </div>
+                <div>
+                  <button
+                    onClick={triggerImport}
+                    disabled={isImporting}
+                    className={cn(
+                      'inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all',
+                      'border border-accent/30 bg-accent/5 text-accent hover:bg-accent/10',
+                    )}
+                  >
+                    <FileText className="h-4 w-4" />
+                    Import a markdown file
+                  </button>
+                  <p className="text-xs text-muted-foreground/50 mt-2">
+                    Drop a .md or .txt file anywhere on this page
+                  </p>
+                </div>
+              </div>
             </motion.div>
           )}
         </div>
