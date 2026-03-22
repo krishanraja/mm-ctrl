@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -82,56 +83,36 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
-    // Call OpenAI for extraction
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    
-    if (!OPENAI_API_KEY) {
-      console.error('OPENAI_API_KEY not configured');
-      return new Response(
-        JSON.stringify({ error: 'AI service not configured', facts: [] }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: EXTRACTION_PROMPT },
-          { role: 'user', content: `Extract facts from this ${source_type === 'markdown' ? 'document' : 'transcript'}:\n\n"${transcript}"` },
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.3,
-        max_tokens: 2000,
-      }),
-    });
-
-    if (!openaiResponse.ok) {
-      const errorText = await openaiResponse.text();
-      console.error('OpenAI API error:', errorText);
-      return new Response(
-        JSON.stringify({ error: 'AI extraction failed', facts: [] }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const openaiData = await openaiResponse.json();
-    const content = openaiData.choices?.[0]?.message?.content;
-    
+    // Call LLM for extraction (with built-in fallback chain)
     let extractedFacts: ExtractedFact[] = [];
 
     try {
-      const parsed = JSON.parse(content);
-      extractedFacts = Array.isArray(parsed) ? parsed : (parsed.facts || []);
-    } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
+      const extractionResult = await callLLM(
+        {
+          messages: [
+            { role: 'system', content: EXTRACTION_PROMPT },
+            { role: 'user', content: `Extract facts from this ${source_type === 'markdown' ? 'document' : 'transcript'}:\n\n"${transcript}"` },
+          ],
+          task: 'analysis',
+          temperature: 0.3,
+          max_tokens: 2000,
+          json_output: true,
+        },
+        {
+          functionName: 'extract-user-context',
+          userId: userId,
+          useCache: false,
+        },
+      );
+
+      if (extractionResult.content) {
+        const parsed = JSON.parse(extractionResult.content);
+        extractedFacts = Array.isArray(parsed) ? parsed : (parsed.facts || []);
+      }
+    } catch (extractionError) {
+      console.error('LLM extraction failed:', extractionError);
       return new Response(
-        JSON.stringify({ error: 'Failed to parse extraction', facts: [] }),
+        JSON.stringify({ error: 'AI extraction failed', facts: [] }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -141,14 +122,8 @@ serve(async (req) => {
     // This catches hallucinations, misinterpretations, and temporal/negation errors.
     if (extractedFacts.length > 0) {
       try {
-        const validationResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'gpt-4o-mini',
+        const validationResult = await callLLM(
+          {
             messages: [
               {
                 role: 'system',
@@ -178,16 +153,20 @@ Return a JSON object with a "results" array. Each entry has:
                 content: `TRANSCRIPT:\n"${transcript}"\n\nEXTRACTED FACTS:\n${JSON.stringify(extractedFacts, null, 2)}`,
               },
             ],
-            response_format: { type: 'json_object' },
+            task: 'simple',
             temperature: 0.1,
             max_tokens: 2000,
-          }),
-        });
+            json_output: true,
+          },
+          {
+            functionName: 'extract-user-context',
+            userId: userId,
+            useCache: false,
+          },
+        );
 
-        if (validationResponse.ok) {
-          const validationData = await validationResponse.json();
-          const validationContent = validationData.choices?.[0]?.message?.content;
-          const validation = JSON.parse(validationContent);
+        if (validationResult.content) {
+          const validation = JSON.parse(validationResult.content);
           const results = validation.results || [];
 
           // Build a lookup map from validation results
@@ -223,8 +202,6 @@ Return a JSON object with a "results" array. Each entry has:
               }
               return fact;
             });
-        } else {
-          console.warn('Validation pass failed, proceeding with unvalidated facts');
         }
       } catch (validationError) {
         console.warn('Validation pass error (non-blocking):', validationError);
@@ -246,6 +223,7 @@ Return a JSON object with a "results" array. Each entry has:
       // === SEMANTIC DEDUPLICATION ===
       // Use embeddings to detect duplicate or contradictory facts even when
       // fact_key strings differ (e.g. "role" vs "job_title" for the same info).
+      const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
       let semanticDuplicates = new Map<string, { existingId: string; existingKey: string; similarity: number }>();
 
       // Only run embedding-based dedup for new facts (keys not already in DB)

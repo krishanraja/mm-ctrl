@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -103,10 +104,7 @@ serve(async (req) => {
       topPainPoints: profile.top_pain_points || [],
     };
 
-    // Generate recommendation using LLM
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-
+    // Generate recommendation using LLM (with built-in fallback chain)
     let generated = {
       recommendation: "Based on your business mix, I recommend X",
       reasoning: "This fits your current setup and addresses your pain points",
@@ -114,8 +112,7 @@ serve(async (req) => {
       alternative_suggestion: null as string | null,
     };
 
-    if (OPENAI_API_KEY || GEMINI_API_KEY) {
-      const userContent = `Operator Profile:
+    const userContent = `Operator Profile:
 - Business lines: ${JSON.stringify(context.businessLines)}
 - Inbox count: ${context.inboxCount}
 - Technical comfort: ${context.technicalComfort}/5
@@ -126,95 +123,33 @@ Question: ${finalQuestion}
 
 Give ONE clear recommendation. Reference their specific context.`;
 
-      // Try OpenAI first, then Gemini as fallback
-      let apiKey = OPENAI_API_KEY;
-      let apiUrl = "https://api.openai.com/v1/chat/completions";
-      let model = "gpt-4o-mini";
+    try {
+      const result = await callLLM(
+        {
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: userContent },
+          ],
+          task: 'simple',
+          temperature: 0.7,
+          json_output: true,
+        },
+        {
+          functionName: 'operator-decision-advisor',
+          userId: userId,
+          useCache: false,
+        },
+      );
 
-      // Try OpenAI first
-      if (OPENAI_API_KEY) {
-        try {
-          const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "gpt-4o-mini",
-              messages: [
-                { role: "system", content: SYSTEM_PROMPT },
-                { role: "user", content: userContent },
-              ],
-              temperature: 0.7,
-              response_format: { type: "json_object" },
-            }),
-          });
-
-          if (aiResp.ok) {
-            const data = await aiResp.json();
-            const content = data.choices?.[0]?.message?.content;
-            if (content) {
-              try {
-                const parsed = JSON.parse(content);
-                if (parsed.recommendation) generated.recommendation = parsed.recommendation.slice(0, 500);
-                if (parsed.reasoning) generated.reasoning = parsed.reasoning.slice(0, 1000);
-                if (parsed.risk_assessment) generated.risk_assessment = parsed.risk_assessment.slice(0, 300);
-                if (parsed.alternative_suggestion) generated.alternative_suggestion = parsed.alternative_suggestion.slice(0, 300);
-              } catch (e) {
-                console.warn("Failed to parse OpenAI response:", e);
-              }
-            }
-          }
-        } catch (e) {
-          console.warn("OpenAI call failed, trying Gemini:", e);
-          // Fall through to Gemini
-        }
+      if (result.content) {
+        const parsed = JSON.parse(result.content);
+        if (parsed.recommendation) generated.recommendation = parsed.recommendation.slice(0, 500);
+        if (parsed.reasoning) generated.reasoning = parsed.reasoning.slice(0, 1000);
+        if (parsed.risk_assessment) generated.risk_assessment = parsed.risk_assessment.slice(0, 300);
+        if (parsed.alternative_suggestion) generated.alternative_suggestion = parsed.alternative_suggestion.slice(0, 300);
       }
-
-      // Try Gemini as fallback
-      if (GEMINI_API_KEY && (!OPENAI_API_KEY || generated.recommendation === "Based on your business mix, I recommend X")) {
-        try {
-          const geminiResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: `${SYSTEM_PROMPT}\n\n${userContent}`
-                }]
-              }],
-              generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 1000,
-              }
-            }),
-          });
-
-          if (geminiResp.ok) {
-            const data = await geminiResp.json();
-            const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (content) {
-              try {
-                const jsonMatch = content.match(/\{[\s\S]*\}/);
-                if (jsonMatch) {
-                  const parsed = JSON.parse(jsonMatch[0]);
-                  if (parsed.recommendation) generated.recommendation = parsed.recommendation.slice(0, 500);
-                  if (parsed.reasoning) generated.reasoning = parsed.reasoning.slice(0, 1000);
-                  if (parsed.risk_assessment) generated.risk_assessment = parsed.risk_assessment.slice(0, 300);
-                  if (parsed.alternative_suggestion) generated.alternative_suggestion = parsed.alternative_suggestion.slice(0, 300);
-                }
-              } catch (e) {
-                console.warn("Failed to parse Gemini response:", e);
-              }
-            }
-          }
-        } catch (e) {
-          console.warn("Gemini call failed, using default:", e);
-        }
-      }
+    } catch (e) {
+      console.warn("LLM call failed, using default:", e);
     }
 
     // Store advisor session

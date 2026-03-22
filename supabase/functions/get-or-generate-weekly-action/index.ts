@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -87,50 +88,40 @@ serve(async (req) => {
       );
     }
 
-    // Generate new action using OpenAI
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-
+    // Generate new action
     let generated = {
       action_text: "Before your next AI-related decision, ask: 'What would have to be true for this to be worth it in 90 days?'",
       why_text: "It forces clarity on assumptions before money, vendors, or politics lock you in.",
     };
 
-    if (OPENAI_API_KEY && baseline_context) {
+    if (baseline_context) {
       const userContent = `Baseline context:\n${JSON.stringify(baseline_context).slice(0, 2000)}\n\nGenerate ONE action for this week.`;
 
       try {
-        const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
+        const result = await callLLM(
+          {
             messages: [
               { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: userContent },
             ],
+            task: "simple",
             temperature: 0.6,
-            response_format: { type: "json_object" },
-          }),
-        });
+            json_output: true,
+          },
+          { functionName: "get-or-generate-weekly-action" },
+        );
 
-        if (aiResp.ok) {
-          const data = await aiResp.json();
-          const content = data.choices?.[0]?.message?.content;
-          if (content) {
-            try {
-              const parsed = JSON.parse(content) as Record<string, unknown>;
-              if (typeof parsed.action_text === "string") generated.action_text = parsed.action_text.slice(0, 1000);
-              if (typeof parsed.why_text === "string") generated.why_text = parsed.why_text.slice(0, 2000);
-            } catch {
-              // fall back to deterministic copy
-            }
+        if (result.content) {
+          try {
+            const parsed = JSON.parse(result.content) as Record<string, unknown>;
+            if (typeof parsed.action_text === "string") generated.action_text = parsed.action_text.slice(0, 1000);
+            if (typeof parsed.why_text === "string") generated.why_text = parsed.why_text.slice(0, 2000);
+          } catch {
+            // fall back to deterministic copy
           }
         }
       } catch (err) {
-        console.warn("OpenAI API error (non-blocking):", err);
+        console.warn("LLM API error (non-blocking):", err);
       }
     }
 

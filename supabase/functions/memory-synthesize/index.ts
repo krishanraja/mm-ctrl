@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -60,26 +61,9 @@ Deno.serve(async (req) => {
       `[${f.id}] (${f.fact_category}) ${f.fact_value}`
     ).join("\n");
 
-    // Call OpenAI for pattern detection
-    const openaiKey = Deno.env.get("OPENAI_API_KEY");
-    if (!openaiKey) {
-      return new Response(
-        JSON.stringify({ error: "OpenAI API key not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${openaiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        temperature: 0.3,
-        max_tokens: 1500,
-        response_format: { type: "json_object" },
+    // Call LLM for pattern detection (with built-in fallback chain)
+    const result = await callLLM(
+      {
         messages: [
           {
             role: "system",
@@ -100,21 +84,23 @@ Be specific and actionable, not generic. Max 10 patterns.`,
             content: `Here are the facts:\n\n${factsSummary}`,
           },
         ],
-      }),
-    });
+        task: 'analysis',
+        temperature: 0.3,
+        max_tokens: 1500,
+        json_output: true,
+      },
+      {
+        functionName: 'memory-synthesize',
+        userId: userId,
+        useCache: false,
+      },
+    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+    if (!result.content) {
+      throw new Error("No content in LLM response");
     }
 
-    const aiResult = await response.json();
-    const content = aiResult.choices?.[0]?.message?.content;
-    if (!content) {
-      throw new Error("No content in OpenAI response");
-    }
-
-    const parsed = JSON.parse(content);
+    const parsed = JSON.parse(result.content);
     const detectedPatterns = parsed.patterns || [];
 
     let patternsNew = 0;

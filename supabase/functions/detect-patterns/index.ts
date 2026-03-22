@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,8 +16,6 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const openaiApiKey = Deno.env.get("OPENAI_API_KEY") ?? "";
-
     const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
     if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
       throw new Error("Database configuration error (unexpected project).");
@@ -69,64 +68,55 @@ serve(async (req) => {
       confidence_score: number;
     }> = [];
 
-    if (openaiApiKey) {
-      try {
-        const reflectionTexts = reflections
-          .map((r: any) => r.response_text)
-          .filter(Boolean)
-          .join("\n\n---\n\n");
+    try {
+      const reflectionTexts = reflections
+        .map((r: any) => r.response_text)
+        .filter(Boolean)
+        .join("\n\n---\n\n");
 
-        const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${openaiApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "system",
-                content: `Analyze these executive reflections and detect behavioral patterns. Return JSON array: [{pattern_type: "avoidance"|"strength"|"blind_spot", description: string, confidence_score: 0-1}]. Focus on recurring themes, decision-making patterns, and blind spots.`,
-              },
-              {
-                role: "user",
-                content: reflectionTexts,
-              },
-            ],
-            response_format: { type: "json_object" },
-          }),
+      const result = await callLLM(
+        {
+          messages: [
+            {
+              role: "system",
+              content: `Analyze these executive reflections and detect behavioral patterns. Return JSON array: [{pattern_type: "avoidance"|"strength"|"blind_spot", description: string, confidence_score: 0-1}]. Focus on recurring themes, decision-making patterns, and blind spots.`,
+            },
+            {
+              role: "user",
+              content: reflectionTexts,
+            },
+          ],
+          task: "simple",
+          json_output: true,
+        },
+        { functionName: "detect-patterns" },
+      );
+
+      const parsed = JSON.parse(result.content || "{}");
+      const detectedPatterns = parsed.patterns || [];
+
+      for (const pattern of detectedPatterns) {
+        // Find evidence reflections
+        const evidenceIds = reflections
+          .filter((r: any) => {
+            const themes = r.extracted_themes || [];
+            return themes.some((t: string) =>
+              pattern.description.toLowerCase().includes(t.toLowerCase()) ||
+              t.toLowerCase().includes(pattern.description.toLowerCase().split(" ")[0])
+            );
+          })
+          .map((r: any) => r.id)
+          .slice(0, 5);
+
+        patterns.push({
+          pattern_type: pattern.pattern_type || "blind_spot",
+          description: pattern.description,
+          evidence_reflection_ids: evidenceIds,
+          confidence_score: pattern.confidence_score || 0.7,
         });
-
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          const parsed = JSON.parse(aiData.choices[0]?.message?.content || "{}");
-          const detectedPatterns = parsed.patterns || [];
-
-          for (const pattern of detectedPatterns) {
-            // Find evidence reflections
-            const evidenceIds = reflections
-              .filter((r: any) => {
-                const themes = r.extracted_themes || [];
-                return themes.some((t: string) =>
-                  pattern.description.toLowerCase().includes(t.toLowerCase()) ||
-                  t.toLowerCase().includes(pattern.description.toLowerCase().split(" ")[0])
-                );
-              })
-              .map((r: any) => r.id)
-              .slice(0, 5);
-
-            patterns.push({
-              pattern_type: pattern.pattern_type || "blind_spot",
-              description: pattern.description,
-              evidence_reflection_ids: evidenceIds,
-              confidence_score: pattern.confidence_score || 0.7,
-            });
-          }
-        }
-      } catch (aiErr) {
-        console.warn("AI pattern detection failed (non-blocking):", aiErr);
       }
+    } catch (aiErr) {
+      console.warn("AI pattern detection failed (non-blocking):", aiErr);
     }
 
     // Store patterns (insert new ones, update existing)

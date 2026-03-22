@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,11 +21,6 @@ serve(async (req) => {
     }
 
     console.log(`Estimating ROI for session ${sessionId}`);
-
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY not configured');
-    }
 
     const prompt = `You are a pragmatic ROI analyst. Extract from this transcript:
 - hoursPerWeek: number (0 if not stated)
@@ -77,16 +73,9 @@ Return ONLY valid JSON in this exact format:
   }
 }`;
 
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
-        max_completion_tokens: 1500,
+    // Call LLM API
+    const result = await callLLM(
+      {
         messages: [
           {
             role: 'system',
@@ -96,18 +85,15 @@ Return ONLY valid JSON in this exact format:
             role: 'user',
             content: prompt
           }
-        ]
-      }),
-    });
+        ],
+        task: 'analysis',
+        max_tokens: 1500,
+        json_output: true,
+      },
+      { functionName: 'roi-estimate' },
+    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI Gateway error:', response.status, errorText);
-      throw new Error(`AI Gateway error: ${errorText}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    const content = result.content;
 
     if (!content) {
       throw new Error('No content in AI response');

@@ -157,7 +157,7 @@ serve(async (req) => {
     console.log('Sending request to OpenAI with', openAIMessages.length, 'messages');
 
     // Call OpenAI API with caching
-    const { callOpenAI } = await import('../_shared/openai-utils.ts');
+    const { callOpenAI } = await import('../_shared/llm-utils.ts');
     
     const aiResult = await callOpenAI(
       {

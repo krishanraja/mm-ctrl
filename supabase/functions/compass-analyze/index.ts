@@ -79,7 +79,7 @@ Return ONLY valid JSON (no markdown code blocks):
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
     
-    const { callOpenAI, selectModel } = await import('../_shared/openai-utils.ts');
+    const { callOpenAI, selectModel } = await import('../_shared/llm-utils.ts');
     
     const aiResult = await callOpenAI(
       {

@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -89,8 +90,6 @@ serve(async (req) => {
       });
     }
 
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-
     const fallbackGenerated: GeneratedDecision = {
       three_questions: [
         "What would have to be true for this to be a good decision in 90 days?",
@@ -102,43 +101,35 @@ serve(async (req) => {
     };
     let generated: GeneratedDecision = fallbackGenerated;
 
-    if (OPENAI_API_KEY) {
+    {
       const userContent = `Decision capture transcript:\n"${transcript}"\n\nContext (optional JSON):\n${context ? JSON.stringify(context).slice(0, 2000) : "null"}\n\nReturn boardroom-ready questions.`;
 
       try {
-        const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
+        const result = await callLLM(
+          {
             messages: [
               { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: userContent },
             ],
+            task: "simple",
             temperature: 0.7,
-            response_format: { type: "json_object" },
-          }),
-        });
+            json_output: true,
+          },
+          { functionName: "submit-decision-capture" },
+        );
 
-        if (aiResp.ok) {
-          const data = await aiResp.json();
-          const content = data.choices?.[0]?.message?.content;
-          if (content) {
-            try {
-              const parsed = JSON.parse(content);
-              if (parsed.three_questions && Array.isArray(parsed.three_questions)) {
-                generated = parsed;
-              }
-            } catch (e) {
-              console.warn("Failed to parse OpenAI response:", e);
+        if (result.content) {
+          try {
+            const parsed = JSON.parse(result.content);
+            if (parsed.three_questions && Array.isArray(parsed.three_questions)) {
+              generated = parsed;
             }
+          } catch (e) {
+            console.warn("Failed to parse LLM response:", e);
           }
         }
       } catch (e) {
-        console.warn("OpenAI API call failed, using fallback:", e);
+        console.warn("LLM API call failed, using fallback:", e);
       }
     }
           temperature: 0.5,

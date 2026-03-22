@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { callOpenAI, selectModel } from '../_shared/openai-utils.ts';
+import { callOpenAI, selectModel } from '../_shared/llm-utils.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

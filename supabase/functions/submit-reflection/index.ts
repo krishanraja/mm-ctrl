@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -15,8 +16,6 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const openaiApiKey = Deno.env.get("OPENAI_API_KEY") ?? "";
-
     const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
     if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
       throw new Error("Database configuration error (unexpected project).");
@@ -53,16 +52,10 @@ serve(async (req) => {
     let extractedThemes: string[] = [];
     let sentimentScore: number | null = null;
 
-    if (openaiApiKey && response_text) {
+    if (response_text) {
       try {
-        const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${openaiApiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
+        const result = await callLLM(
+          {
             messages: [
               {
                 role: "system",
@@ -73,16 +66,15 @@ serve(async (req) => {
                 content: response_text,
               },
             ],
-            response_format: { type: "json_object" },
-          }),
-        });
+            task: "simple",
+            json_output: true,
+          },
+          { functionName: "submit-reflection" },
+        );
 
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          const parsed = JSON.parse(aiData.choices[0]?.message?.content || "{}");
-          extractedThemes = parsed.themes || [];
-          sentimentScore = parsed.sentiment || null;
-        }
+        const parsed = JSON.parse(result.content || "{}");
+        extractedThemes = parsed.themes || [];
+        sentimentScore = parsed.sentiment || null;
       } catch (aiErr) {
         console.warn("AI theme extraction failed (non-blocking):", aiErr);
       }

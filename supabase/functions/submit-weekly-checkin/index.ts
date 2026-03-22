@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -161,13 +162,7 @@ serve(async (req) => {
       console.log(`[DEBUG-H2] User not authenticated - will generate insights but skip database storage`);
     }
 
-    // Generate insight/action - use OpenAI
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    
-    // #region agent log - H1: Check API key presence
-    console.log(`[DEBUG-H1] OPENAI_API_KEY present: ${!!OPENAI_API_KEY}`);
-    // #endregion
-
+    // Generate insight/action using LLM (with built-in fallback chain)
     let generated = {
       insight: "There's a specific tension in what you shared - let me process that for you.",
       action_text: "Please try again in a moment so I can give you a specific action for your situation.",
@@ -185,114 +180,38 @@ Analyze what they said and respond with specific, personalized insight and actio
 
     let aiSuccess = false;
 
-    // Plan A: Try OpenAI (primary)
-    if (OPENAI_API_KEY && !aiSuccess) {
-      // #region agent log - H3: Starting OpenAI call
-      console.log(`[DEBUG-H3] Starting OpenAI API call...`);
-      // #endregion
-      
-      try {
-        const aiResp = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages: [
-              { role: "system", content: SYSTEM_PROMPT },
-              { role: "user", content: userContent },
-            ],
-            temperature: 0.5,
-            max_tokens: 500,
-            response_format: { type: "json_object" },
-          }),
-        });
+    try {
+      const result = await callLLM(
+        {
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: userContent },
+          ],
+          task: 'complex',
+          temperature: 0.5,
+          max_tokens: 500,
+          json_output: true,
+        },
+        {
+          functionName: 'submit-weekly-checkin',
+          userId: userId,
+          supabase: supabase,
+          useCache: false,
+        },
+      );
 
-        // #region agent log - H3: AI response status
-        console.log(`[DEBUG-H3] OpenAI response: status=${aiResp.status}, ok=${aiResp.ok}`);
-        // #endregion
-
-        if (aiResp.ok) {
-          const data = await aiResp.json();
-          const content = data.choices?.[0]?.message?.content;
-          
-          // #region agent log - H4/H5: Check response structure
-          console.log(`[DEBUG-H4] OpenAI response has choices: ${!!data.choices}, choice count: ${data.choices?.length || 0}`);
-          console.log(`[DEBUG-H5] OpenAI content preview: ${content?.slice(0, 200) || 'NO CONTENT'}`);
-          // #endregion
-          
-          if (content) {
-            try {
-              generated = JSON.parse(content);
-              aiSuccess = true;
-              console.log(`[AI-PROVIDER] OpenAI gpt-4o SUCCESS`);
-              console.log(`[AI-INSIGHT] ${generated.insight?.slice(0, 100) || 'MISSING'}`);
-            } catch (parseErr) {
-              // #region agent log - H4: Parse error
-              console.log(`[DEBUG-H4] OpenAI JSON parse error: ${parseErr}`);
-              // #endregion
-            }
-          }
-        } else {
-          const errorText = await aiResp.text();
-          console.log(`[DEBUG-H3] OpenAI API error response: ${errorText.slice(0, 500)}`);
-        }
-      } catch (fetchErr) {
-        console.log(`[DEBUG-H3] Fetch error to OpenAI API: ${fetchErr}`);
+      if (result.content) {
+        generated = JSON.parse(result.content);
+        aiSuccess = true;
+        console.log(`[AI-PROVIDER] callLLM SUCCESS`);
+        console.log(`[AI-INSIGHT] ${generated.insight?.slice(0, 100) || 'MISSING'}`);
       }
+    } catch (llmErr) {
+      console.log(`[AI-PROVIDER] callLLM error: ${llmErr}`);
     }
 
-    // Plan B: Try Gemini as fallback (if OpenAI fails)
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (GEMINI_API_KEY && !aiSuccess) {
-      console.log(`[DEBUG-H3] OpenAI failed, trying Gemini as fallback...`);
-      
-      try {
-        const aiResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `${SYSTEM_PROMPT}\n\n${userContent}`
-              }]
-            }],
-            generationConfig: {
-              temperature: 0.5,
-              maxOutputTokens: 500,
-            }
-          }),
-        });
-
-        if (aiResp.ok) {
-          const data = await aiResp.json();
-          const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (content) {
-            try {
-              const jsonMatch = content.match(/\{[\s\S]*\}/);
-              if (jsonMatch) {
-                generated = JSON.parse(jsonMatch[0]);
-                aiSuccess = true;
-                console.log(`[AI-PROVIDER] Gemini SUCCESS (fallback)`);
-                console.log(`[AI-INSIGHT] ${generated.insight?.slice(0, 100) || 'MISSING'}`);
-              }
-            } catch (parseErr) {
-              console.log(`[DEBUG-H4] Gemini JSON parse error: ${parseErr}`);
-            }
-          }
-        }
-      } catch (fetchErr) {
-        console.log(`[DEBUG-H3] Fetch error to Gemini API: ${fetchErr}`);
-      }
-    }
-    
     if (!aiSuccess) {
-      console.log(`[AI-PROVIDER] NONE - using fallback response. OpenAI key present: ${!!OPENAI_API_KEY}`);
+      console.log(`[AI-PROVIDER] NONE - using fallback response`);
     }
 
     const week = isoWeekKey();

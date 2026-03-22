@@ -6,6 +6,8 @@ export interface MemoryContextOptions {
   maxTokens?: number;
   format?: "markdown" | "chatgpt" | "claude" | "gemini" | "cursor" | "claude-code";
   useCase?: "general" | "meeting" | "decision" | "code" | "email" | "strategy" | "delegation" | "board";
+  /** Optional query text for semantic ranking of facts via pgvector */
+  queryText?: string;
 }
 
 export interface MemoryContextResult {
@@ -250,19 +252,50 @@ export async function buildMemoryContext(
   const userName = nameFact?.fact_value || null;
 
   // Apply use case filter
-  const filtered = filterByUseCase(allFacts, patterns, decisions, useCase);
+  let filtered = filterByUseCase(allFacts, patterns, decisions, useCase);
+
+  // Semantic ranking: if queryText is provided and pgvector is available,
+  // re-rank facts by relevance to the query
+  if (options.queryText && filtered.facts.length > 5) {
+    try {
+      const { searchMemoryByEmbedding } = await import("./embeddings.ts");
+      const semanticResults = await searchMemoryByEmbedding(
+        supabase,
+        userId,
+        options.queryText,
+        filtered.facts.length, // get all, we just want the ranking
+        0.3, // low threshold — we still want category-filtered facts
+      );
+
+      if (semanticResults.length > 0) {
+        // Build a similarity map from semantic results
+        const similarityMap = new Map<string, number>();
+        for (const r of semanticResults) {
+          similarityMap.set(r.id, r.similarity);
+        }
+
+        // Re-sort facts: semantically relevant first, then unranked
+        filtered.facts.sort((a, b) => {
+          const simA = similarityMap.get(a.id) ?? 0;
+          const simB = similarityMap.get(b.id) ?? 0;
+          return simB - simA;
+        });
+      }
+    } catch (_err) {
+      // pgvector not available or embeddings not generated — fall through to default ordering
+    }
+  }
 
   // Build markdown
   let markdown = buildMarkdownContext(filtered.facts, filtered.patterns, filtered.decisions, userName);
 
-  // Enforce token budget — trim warm facts first
+  // Enforce token budget — trim least-relevant facts (end of list after semantic ranking)
   let tokenCount = estimateTokens(markdown);
-  if (tokenCount > maxTokens && warmFacts.length > 0) {
-    // Rebuild with fewer warm facts
-    const reducedWarm = warmFacts.slice(0, Math.floor(warmFacts.length / 2));
-    const reducedFacts = [...(hotFacts || []) as Fact[], ...reducedWarm];
-    const reducedFiltered = filterByUseCase(reducedFacts, filtered.patterns, filtered.decisions, useCase);
-    markdown = buildMarkdownContext(reducedFiltered.facts, reducedFiltered.patterns, reducedFiltered.decisions, userName);
+  if (tokenCount > maxTokens && filtered.facts.length > 5) {
+    // Trim the bottom half of facts (least relevant after semantic ranking, or warm facts)
+    const trimmedFacts = filtered.facts.slice(0, Math.ceil(filtered.facts.length / 2));
+    const trimmedFiltered = { facts: trimmedFacts, patterns: filtered.patterns, decisions: filtered.decisions };
+    markdown = buildMarkdownContext(trimmedFiltered.facts, trimmedFiltered.patterns, trimmedFiltered.decisions, userName);
     tokenCount = estimateTokens(markdown);
   }
 

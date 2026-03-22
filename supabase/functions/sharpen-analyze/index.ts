@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { callLLM } from "../_shared/llm-utils.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -74,73 +75,39 @@ serve(async (req) => {
 
     console.log('Sharpen analyze request received, input length:', userInput.length);
 
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not configured');
-    }
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
+    const aiResult = await callLLM(
+      {
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { 
-            role: 'user', 
+          {
+            role: 'user',
             content: `A leader shared this situation with you:
 
 "${userInput}"
 
-Analyze this and provide your coaching response. Remember to be warm, specific to their situation, and focus on ONE key insight that will help them think better about AI.` 
+Analyze this and provide your coaching response. Remember to be warm, specific to their situation, and focus on ONE key insight that will help them think better about AI.`
           }
         ],
+        task: 'chat',
         temperature: 0.7,
-        response_format: { type: 'json_object' },
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ 
-          error: 'Service is busy. Please try again in a moment.' 
-        }), {
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      
-      throw new Error(`AI gateway error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
-
-    if (!content) {
-      throw new Error('No response from AI');
-    }
+        json_output: true,
+      },
+      { functionName: 'sharpen-analyze' },
+    );
 
     console.log('AI response received');
 
     // Parse JSON from response
     let parsed;
     try {
-      // Try to extract JSON from the response
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      const jsonMatch = aiResult.content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsed = JSON.parse(jsonMatch[0]);
       } else {
         throw new Error('No JSON found in response');
       }
     } catch (parseError) {
-      console.error('Failed to parse AI response:', content);
-      // Return a graceful fallback
+      console.error('Failed to parse AI response:', aiResult.content);
       parsed = {
         whats_working: "You're already thinking about how AI could fit into your work - that's the first step most leaders skip.",
         whats_missing: "It would help to be more specific about what kind of help you were looking for. Were you wanting AI to analyze, suggest, or challenge your thinking?",

@@ -2,6 +2,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
+import { callLLM } from '../_shared/llm-utils.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -150,48 +151,73 @@ serve(async (req) => {
 
     const { assessmentData, contactData, deepProfileData } = requestBody;
 
-    console.log('🚀 AI Generate - Starting with Plan A (Vertex AI)');
+    console.log('🚀 AI Generate - Starting with multi-provider routing');
     console.log('📊 Deep Profile Data received:', !!deepProfileData);
 
     const prompt = buildPrompt(assessmentData, contactData, deepProfileData);
-    
-    // Plan A: Try Vertex AI (with service account)
-    const vertexResult = await tryVertexAI(prompt);
-    if (vertexResult.success) {
-      console.log('✅ Plan A (Vertex AI) succeeded');
+
+    try {
+      const aiResult = await callLLM(
+        {
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an AI leadership assessment analyzer trained on cognitive frameworks including A/B Framing, Dialectical Reasoning, Mental Contrasting (WOOP), Reflective Equilibrium, and First-Principles Thinking. Always return valid JSON and apply these frameworks to generate deeply personalized insights.',
+            },
+            { role: 'user', content: prompt },
+          ],
+          task: 'complex',
+          temperature: 0.7,
+          max_tokens: 4000,
+          json_output: true,
+        },
+        {
+          functionName: 'ai-generate',
+          supabase,
+        },
+      );
+
+      let data;
+      try {
+        data = JSON.parse(aiResult.content);
+      } catch {
+        const jsonMatch = aiResult.content.match(/```json\n([\s\S]*?)\n```/) || aiResult.content.match(/```\n([\s\S]*?)\n```/);
+        const jsonText = jsonMatch ? jsonMatch[1] : aiResult.content;
+        data = JSON.parse(jsonText);
+      }
+
+      data = sanitizeEnums(data);
+
+      if (!validateResponse(data)) {
+        console.warn('⚠️ Response validation failed, using fallback');
+        return new Response(JSON.stringify({
+          success: true,
+          source: 'fallback',
+          data: getFallbackContent(),
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      console.log(`✅ AI Generate succeeded via ${aiResult.provider}`);
       return new Response(JSON.stringify({
         success: true,
-        source: 'vertex-ai',
-        data: vertexResult.data
+        source: aiResult.provider,
+        data,
       }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-    }
-
-    // Plan B: Fall back to OpenAI
-    console.log('⚠️ Plan A failed, trying Plan B (OpenAI)');
-    const openaiResult = await tryOpenAI(prompt);
-    if (openaiResult.success) {
-      console.log('✅ Plan B (OpenAI) succeeded');
+    } catch (aiError) {
+      console.error('❌ All AI providers failed:', aiError);
       return new Response(JSON.stringify({
-        success: true,
-        source: 'openai',
-        data: openaiResult.data
+        success: false,
+        error: 'AI generation failed',
+        data: getFallbackContent(),
       }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    // Both failed
-    console.error('❌ Both Plan A and B failed');
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Both AI providers failed',
-      data: getFallbackContent()
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
 
   } catch (error) {
     console.error('Error in ai-generate:', error);
