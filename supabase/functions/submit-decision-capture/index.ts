@@ -34,21 +34,6 @@ type GeneratedDecision = {
   watchout: string;
 };
 
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((v) => typeof v === "string");
-}
-
-function coerceGeneratedDecision(value: unknown, fallback: GeneratedDecision): GeneratedDecision {
-  if (!value || typeof value !== "object") return fallback;
-  const v = value as Record<string, unknown>;
-
-  const three_questions = isStringArray(v.three_questions) ? v.three_questions.slice(0, 3) : fallback.three_questions;
-  const next_step = typeof v.next_step === "string" ? v.next_step : fallback.next_step;
-  const watchout = typeof v.watchout === "string" ? v.watchout : fallback.watchout;
-
-  return { three_questions, next_step, watchout };
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -130,26 +115,6 @@ serve(async (req) => {
         }
       } catch (e) {
         console.warn("LLM API call failed, using fallback:", e);
-      }
-    }
-          temperature: 0.5,
-        }),
-      });
-
-      if (aiResp.ok) {
-        const data = await aiResp.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (content) {
-          try {
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]) as unknown;
-              generated = coerceGeneratedDecision(parsed, fallbackGenerated);
-            }
-          } catch {
-            // fallback remains
-          }
-        }
       }
     }
 
