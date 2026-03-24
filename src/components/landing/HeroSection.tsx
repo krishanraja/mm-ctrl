@@ -72,7 +72,7 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
           </span>
         </h1>
         <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-          Voice your thoughts. Mindmaker organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
+          Voice your thoughts. CTRL organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
         </p>
       </motion.div>
 
@@ -287,7 +287,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Voice your thoughts. Mindmaker organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
+            Voice your thoughts. CTRL organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
           </p>
         </motion.div>
 

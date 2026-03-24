@@ -1,7 +1,7 @@
 {
-  "name": "Mindmaker for Leaders",
-  "short_name": "Mindmaker",
-  "description": "AI Literacy for Leaders - Know where you stand on AI",
+  "name": "CTRL for Leaders",
+  "short_name": "CTRL",
+  "description": "Build your portable AI double in 2 minutes. Every AI tool you use instantly knows your context, goals, and thinking style.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",

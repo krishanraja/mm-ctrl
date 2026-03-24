@@ -164,3 +164,10 @@ Key architectural and product decisions with rationale.
 **Rationale**: Ensures AI outputs are grounded in established reasoning frameworks, not generic advice
 **Trade-off**: Longer prompts and token usage vs higher quality, differentiated insights
 **Outcome**: ✅ Implemented - all AI-generated content applies frameworks
+
+## Decision 24: Rebrand from Mindmaker to CTRL
+**Date**: Mar 2026
+**Decision**: Rename the product from "Mindmaker" to "CTRL" across all user-facing surfaces
+**Rationale**: CTRL positions the product around decision speed and executive control over AI strategy, aligning with the core value proposition of helping leaders take command of their AI-era leadership
+**Trade-off**: Brand recognition reset vs stronger, more differentiated positioning
+**Outcome**: ✅ Implemented

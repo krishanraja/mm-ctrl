@@ -1,6 +1,6 @@
-# Mindmaker Email Templates for Supabase
+# CTRL Email Templates for Supabase
 
-These branded email templates are designed to match the Mindmaker dark theme and branding.
+These branded email templates are designed to match the CTRL dark theme and branding.
 
 ## Setup Instructions
 
@@ -13,11 +13,11 @@ For each email type, copy the corresponding HTML content:
 
 | Email Type | File | Subject Line |
 |------------|------|--------------|
-| Confirm sign up | `confirm-signup.html` | Confirm your email - Mindmaker |
-| Invite user | `invite-user.html` | You're invited to Mindmaker |
-| Magic link | `magic-link.html` | Sign in to Mindmaker |
-| Change email address | `change-email.html` | Confirm your new email - Mindmaker |
-| Reset password | `reset-password.html` | Reset your password - Mindmaker |
+| Confirm sign up | `confirm-signup.html` | Confirm your email - CTRL |
+| Invite user | `invite-user.html` | You're invited to CTRL |
+| Magic link | `magic-link.html` | Sign in to CTRL |
+| Change email address | `change-email.html` | Confirm your new email - CTRL |
+| Reset password | `reset-password.html` | Reset your password - CTRL |
 
 ### 3. Template Variables
 
@@ -43,7 +43,7 @@ Ensure `mindmaker-full-logo.png` is accessible at your site URL:
 - **Primary Text**: `#f2f2f2`
 - **Secondary Text**: `#999999`
 - **Muted Text**: `#666666`
-- **Accent (CTA)**: `#2db77a` (Mindmaker green)
+- **Accent (CTA)**: `#2db77a` (CTRL green)
 
 ### Typography
 - Font: System fonts (-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto)

@@ -1,21 +1,27 @@
-# Mindmaker — Clarity for Leaders
+# CTRL — Clarity for Leaders
 
 > Think out loud. See what emerges.
 
-Mindmaker helps leaders voice their thoughts and organizes them into a **Memory Web** — your portable context that makes every AI smarter, and **Team Instructions** that make your team sharper.
+CTRL helps leaders voice their thoughts and organizes them into a **Memory Web** — your portable context that makes every AI smarter, and **Team Instructions** that make your team sharper.
 
-**For leaders who think before they decide.**
+**Build your portable AI double in 2 minutes. Every AI tool you use instantly knows your context, goals, and thinking style.**
 
 ---
+
+## The Problem
+
+Every leader uses AI. But every AI conversation starts from zero. You re-explain who you are, what your company does, what you're working on — every single time. The advice stays generic. Decision speed suffers.
+
+CTRL eliminates that friction permanently.
 
 ## How It Works
 
 1. **Voice a thought**
 2. **It organizes itself**
 3. **Export anywhere** — ChatGPT, Claude, Gemini, Cursor, Claude Code
-4. **Every decision gets clearer**
+4. **Every decision gets faster**
 
-2 minutes to clarity. Voice-first, text always available.
+2 minutes to your first export. Voice-first, text always available.
 
 ---
 
@@ -152,4 +158,4 @@ Full documentation index: [project-documentation/README.md](./project-documentat
 
 ---
 
-*Built by [Krish Raja](https://mindmaker.ai) — Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*
+*Built by [Krish Raja](https://ctrl.ai) — Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*

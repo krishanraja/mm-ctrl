@@ -2,7 +2,7 @@
 
 Recurring bugs, architectural pain points, and solutions.
 
-**Last Updated:** 2026-02-25
+**Last Updated:** 2026-03-24
 
 ---
 

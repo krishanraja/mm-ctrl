@@ -1,6 +1,6 @@
 # Ideal Customer Profile
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-24
 
 ## Individual Senior Leaders
 
@@ -8,73 +8,80 @@
 
 ### Demographics
 - **Titles**: C-suite (CEO, COO, CFO, CTO), VPs, Senior Directors
-- **Company Size**: 50–5,000 employees (mid-market to enterprise)
+- **Company Size**: 50-5,000 employees (mid-market to enterprise)
 - **Industries**: Professional services, financial services, healthcare, technology, manufacturing
 - **Geography**: Global (English-speaking markets priority)
+- **AI Usage**: Already using at least one AI tool (ChatGPT, Claude, Gemini). Not starting from zero.
 
 ---
 
 ### Psychographics
-- **Mindset**: Pragmatic adopter — already using AI tools, but frustrated by generic results
-- **Time Constraints**: Extremely time-poor (need value in <2 minutes, not hours of courses)
-- **Learning Style**: Prefers doing over studying — talk, export, use
-- **Risk Profile**: Concerned about falling behind but wary of hype and vendor theatre
+
+- **Identity**: Sees themselves as a decisive leader. Speed is a point of pride. Hates being the bottleneck.
+- **AI Frustration**: Uses AI daily but knows the output is generic. Has felt the gap between what AI could do and what it actually does for them. Suspects the problem is context, not the tool.
+- **Time Relationship**: Guards their calendar ruthlessly. Will not sit through a course, a webinar, or a 30-minute onboarding flow. If it takes more than 2 minutes to show value, it is dead to them.
+- **Decision Style**: Makes 20+ consequential decisions per week. Relies on pattern recognition, trusted advisors, and gut. Knows AI could sharpen all three — if it actually knew their world.
+- **Competitive Awareness**: Watches peers and competitors closely. When a rival moves faster, they feel it personally. The idea that someone else's AI knows their context and theirs doesn't is deeply uncomfortable.
+- **Tech Posture**: Pragmatic adopter. Not an enthusiast. Not a skeptic. Judges tools by outcomes in the first 60 seconds. Will abandon anything that feels like setup.
 
 ---
 
 ### Pain Points
 
-**Context Pain (Primary — Memory Web solves this)**
-1. Re-explains themselves to AI tools every single conversation
-2. AI gives generic advice because it doesn't know their specific context
-3. Has tried custom instructions or system prompts but they're tedious to maintain
-4. Uses multiple AI tools (ChatGPT, Claude, Gemini) — context doesn't travel between them
-5. Knows AI could be more useful but doesn't have time to figure out prompt engineering
+**Decision Speed Pain (Primary — CTRL solves this)**
+1. Every AI conversation starts from zero. They re-explain who they are, what they do, and what matters — every single time.
+2. AI gives generic advice because it has no context. The output reads like it was written for anyone. It was.
+3. They use multiple AI tools. Context does not travel between them. Switching from ChatGPT to Claude means starting over.
+4. Custom instructions and system prompts exist, but maintaining them is tedious, manual, and never complete enough.
+5. They know AI should be making them faster. Instead, it is making them slower — because the setup cost erases the speed gain.
 
-**Literacy Pain (Secondary — Diagnostic solves this)**
-6. Can't distinguish AI substance from theatre
-7. Unable to challenge technical teams or vendors credibly
-8. Feels pressure to "do something" without clear direction
-9. Worried about competitors gaining advantage
-10. Lacks framework for AI-related decisions
+**Strategic Pain (Secondary — compounds over time)**
+6. Cannot distinguish real AI value from vendor theatre in proposals and pitches.
+7. Unable to challenge technical teams credibly on AI decisions.
+8. Feels pressure to "do something with AI" without a clear framework for what is worth doing.
+9. Suspects competitors are building AI advantages they cannot see.
+10. Making AI decisions without AI literacy — the equivalent of approving a budget in a language they do not speak.
 
 ---
 
 ### Jobs to Be Done
 
-**Immediate (Memory Web + Export)**
-- Make every AI tool instantly personalized — without prompt engineering
-- Stop re-explaining context in every AI conversation
-- Export portable context to ChatGPT, Claude, Gemini, Cursor in one click
-- Get AI-powered decision support and meeting prep that already knows their world
+**Immediate (First 2 Minutes)**
+- Build a portable AI double from voice input — no typing, no forms, no prompt engineering.
+- Export that context to ChatGPT, Claude, Gemini, or Cursor in one click.
+- Experience the difference between generic AI and AI that knows them. Immediately.
 
-**Ongoing (Memory Web flywheel)**
-- Build a richer AI context over time through natural conversation
-- Surface strengths to amplify and blind spots to address
-- Keep AI context current as goals, challenges, and context evolve
+**Week 1 (Speed Compounds)**
+- Stop re-explaining context in every AI conversation. Permanently.
+- Get decision support and meeting prep that already knows their priorities, their team, their constraints.
+- Use AI as a thinking partner that is actually informed — not a blank-slate chatbot.
 
-**Strategic (Diagnostic + Literacy)**
-- Develop personal AI literacy fast (not become an expert)
-- Gain language to challenge proposals and claims
-- Understand where AI creates real vs fake value in their context
-- Prepare for agent-driven workflow changes
+**Month 1+ (The Gap Widens)**
+- Build richer AI context over time through natural voice conversation. No maintenance burden.
+- Surface strengths to amplify and blind spots to address — patterns they cannot see themselves.
+- Stay current as goals, challenges, and context evolve. The AI double grows with them.
+
+**Strategic (Ongoing)**
+- Develop enough AI literacy to challenge any proposal or vendor pitch.
+- Know where AI creates real value in their specific context — not in general.
+- Lead AI conversations in their organization from a position of informed confidence.
 
 ---
 
 ### Buying Triggers
 
-**Context triggers (high intent)**
-- Just spent 10 minutes setting up context in ChatGPT and thought "there must be a better way"
-- Switched from ChatGPT to Claude and lost all context
-- Got generic AI advice on a decision and thought "this doesn't apply to me"
-- Saw a colleague getting dramatically better AI output and asked how
+**Decision-speed triggers (highest intent)**
+- Just spent 10 minutes re-explaining their role and priorities to ChatGPT before getting a mediocre answer. Thought: "There has to be a better way."
+- Switched from ChatGPT to Claude and lost all their context. Felt the friction of starting over.
+- Got AI advice on a real decision and immediately knew the output was generic. It did not account for anything specific to their situation.
+- Watched a peer or direct report get dramatically better AI output and asked how.
+- Realized they are spending more time setting up AI conversations than they save from the output.
 
-**Literacy triggers**
-- Board/investor pressure around AI strategy
-- Competitor AI announcements
-- Budget requests they don't fully understand
-- Pre-offsite preparation needs
-- Personal sense of falling behind
+**Strategic triggers (high intent)**
+- Board or investor asking pointed questions about AI strategy. Need to sound credible in 48 hours.
+- Competitor announced an AI initiative. Need to understand what is real and what is theatre.
+- Received an AI budget request they cannot evaluate. Do not have the language to push back or approve with confidence.
+- Preparing for an offsite or strategy session where AI will be a topic. Do not want to be the least informed person in the room.
 
 ---
 
@@ -82,41 +89,42 @@
 
 **Week 1**
 - Exported context to at least 2 AI tools
-- Noticed tangibly better AI responses from those tools
-- Added voice notes to build Memory Web
+- Noticed tangibly better AI responses — specific enough to describe the difference
+- Added voice input beyond initial onboarding
 
 **Month 1**
-- Uses Memory Web context across 3+ AI tools regularly
-- Decision Advisor or Meeting Prep used for real decisions
-- Can articulate 3–5 sharp questions for any AI proposal
+- Uses CTRL context across 3+ AI tools as standard workflow
+- Decision Advisor or Meeting Prep used for a real decision — not a test
+- Reports saving 5-10 minutes per AI conversation in context setup alone
 
 **Month 3**
-- Memory Web is rich enough that AI interactions feel like talking to an informed advisor
-- Leading AI literacy conversations in leadership team
-- Reduced time wasted on generic AI interactions
+- AI interactions feel like talking to an informed advisor, not a stranger
+- Leading AI conversations in leadership team with credibility
+- Has redirected or stopped at least one low-value AI initiative based on sharper judgment
 
 ---
 
 ## Anti-ICPs (Not Target Customers)
 
 ### Do Not Target
+
 1. **Early-stage startups** (<20 employees, pre-revenue)
-   - Reason: Insufficient budget, wrong stage
+   - Wrong stage. Insufficient budget. Decisions are fast already because the org is small.
 
 2. **Technical AI roles** (ML engineers, data scientists)
-   - Reason: Need implementation tools, not portable context
+   - They need implementation tools, not portable leader context. Different problem entirely.
 
 3. **General workforce** (individual contributors, junior managers)
-   - Reason: Wrong scope, different learning needs
+   - Wrong scope. Their decisions do not carry the same organizational weight. Different product needed.
 
-4. **AI enthusiasts/hobbyists**
-   - Reason: Want depth on models, not executive context tools
+4. **AI enthusiasts and hobbyists**
+   - They want depth on models and architectures. CTRL solves a workflow problem, not a curiosity.
 
-5. **Companies wanting implementation services**
-   - Reason: We provide literacy and context infrastructure, not implementation
+5. **Companies wanting AI implementation services**
+   - CTRL provides context infrastructure for leaders, not consulting or implementation.
 
-6. **Leaders who don't use AI tools at all**
-   - Reason: Need to be convinced to use AI first — wrong stage for us
+6. **Leaders who do not use AI tools at all yet**
+   - They need to be convinced to use AI first. We accelerate people who are already using it. Wrong sequence.
 
-7. **People looking for a single-platform solution**
-   - Reason: Our value is portability — if they only use one AI tool and are happy with it, we're not the best fit
+7. **Single-platform loyalists**
+   - If they only use one AI tool and are satisfied with it, portability is not a pain point. Our value is cross-tool context.

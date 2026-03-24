@@ -1,6 +1,6 @@
 # Replication Guide
 
-Step-by-step instructions to replicate Mindmaker from scratch.
+Step-by-step instructions to replicate CTRL from scratch.
 
 ---
 
