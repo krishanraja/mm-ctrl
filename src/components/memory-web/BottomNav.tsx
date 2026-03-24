@@ -1,29 +1,39 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Lightbulb, Brain, Download } from 'lucide-react';
+import { Home, Zap, Brain, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { path: '/dashboard', icon: Home, label: 'Home' },
-  { path: '/think', icon: Lightbulb, label: 'Think' },
-  { path: '/memory', icon: Brain, label: 'Memory' },
-  { path: '/context', icon: Download, label: 'Export' },
+  { path: '/dashboard', search: '', icon: Home, label: 'Home' },
+  { path: '/dashboard', search: '?view=edge', icon: Zap, label: 'Edge' },
+  { path: '/memory', search: '', icon: Brain, label: 'Memory' },
+  { path: '/context', search: '', icon: Download, label: 'Export' },
 ];
 
 export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [, setSearchParams] = useSearchParams();
 
   return (
     <nav className="flex-shrink-0 h-16 pb-safe bg-background/95 backdrop-blur-lg border-t border-white/[0.04] z-50">
       <div className="flex items-center justify-around h-full max-w-lg mx-auto px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const fullPath = item.path + item.search;
+          const isActive = item.search
+            ? location.pathname + location.search === fullPath
+            : location.pathname === item.path && !location.search;
           return (
             <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
+              key={item.label}
+              onClick={() => {
+                if (location.pathname === item.path) {
+                  setSearchParams(item.search ? new URLSearchParams(item.search) : {});
+                } else {
+                  navigate({ pathname: item.path, search: item.search });
+                }
+              }}
               className={cn(
                 'relative flex flex-col items-center justify-center gap-1 flex-1 h-full',
                 'transition-colors duration-200 min-h-[44px]',

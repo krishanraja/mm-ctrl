@@ -3,9 +3,11 @@
  * Processes Stripe payment events automatically instead of polling
  * 
  * Webhook events handled:
- * - checkout.session.completed: Unlock diagnostic when payment succeeds
+ * - checkout.session.completed: Unlock diagnostic or Edge Pro subscription
  * - payment_intent.succeeded: Alternative payment confirmation
  * - payment_intent.payment_failed: Handle failed payments
+ * - customer.subscription.updated: Handle subscription changes
+ * - customer.subscription.deleted: Handle subscription cancellation
  */
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
@@ -81,7 +83,28 @@ serve(async (req) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutCompleted(supabase, session);
+        // Route to appropriate handler based on mode
+        if (session.mode === 'subscription' && session.metadata?.product === 'edge_pro') {
+          await handleEdgeSubscriptionCreated(supabase, session);
+        } else {
+          await handleCheckoutCompleted(supabase, session);
+        }
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription;
+        if (subscription.metadata?.product === 'edge_pro') {
+          await handleEdgeSubscriptionUpdated(supabase, subscription);
+        }
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+        if (subscription.metadata?.product === 'edge_pro') {
+          await handleEdgeSubscriptionDeleted(supabase, subscription);
+        }
         break;
       }
 
@@ -188,9 +211,112 @@ async function handlePaymentFailed(supabase: any, paymentIntent: Stripe.PaymentI
   const assessmentId = paymentIntent.metadata?.assessment_id;
 
   console.log(`❌ Payment failed for assessment: ${assessmentId || 'unknown'}`);
-  
+
   // Could log to a payments_log table or send notification
   // For now, just log
+}
+
+// ============================================================
+// Edge Pro Subscription Handlers
+// ============================================================
+
+/**
+ * Handle Edge Pro subscription creation via checkout
+ */
+async function handleEdgeSubscriptionCreated(supabase: any, session: Stripe.Checkout.Session) {
+  const userId = session.metadata?.user_id;
+  if (!userId) {
+    console.warn('⚠️ Edge subscription checkout missing user_id');
+    return;
+  }
+
+  const subscriptionId = session.subscription as string;
+  console.log(`🔓 Activating Edge Pro for user: ${userId}, subscription: ${subscriptionId}`);
+
+  const { error } = await supabase
+    .from('edge_subscriptions')
+    .upsert({
+      user_id: userId,
+      stripe_customer_id: session.customer as string,
+      stripe_subscription_id: subscriptionId,
+      status: 'active',
+      current_period_start: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+
+  if (error) {
+    console.error('❌ Error activating Edge subscription:', error);
+    throw error;
+  }
+
+  console.log('✅ Edge Pro activated via webhook');
+}
+
+/**
+ * Handle Edge Pro subscription updates (renewals, payment issues)
+ */
+async function handleEdgeSubscriptionUpdated(supabase: any, subscription: Stripe.Subscription) {
+  const userId = subscription.metadata?.user_id;
+  if (!userId) {
+    console.warn('⚠️ Edge subscription update missing user_id');
+    return;
+  }
+
+  const statusMap: Record<string, string> = {
+    active: 'active',
+    past_due: 'past_due',
+    canceled: 'canceled',
+    unpaid: 'past_due',
+    incomplete: 'inactive',
+    incomplete_expired: 'inactive',
+    trialing: 'active',
+    paused: 'inactive',
+  };
+
+  const mappedStatus = statusMap[subscription.status] || 'inactive';
+
+  const { error } = await supabase
+    .from('edge_subscriptions')
+    .update({
+      status: mappedStatus,
+      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('❌ Error updating Edge subscription:', error);
+    throw error;
+  }
+
+  console.log(`✅ Edge subscription updated: ${mappedStatus}`);
+}
+
+/**
+ * Handle Edge Pro subscription deletion
+ */
+async function handleEdgeSubscriptionDeleted(supabase: any, subscription: Stripe.Subscription) {
+  const userId = subscription.metadata?.user_id;
+  if (!userId) {
+    console.warn('⚠️ Edge subscription deletion missing user_id');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('edge_subscriptions')
+    .update({
+      status: 'canceled',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('❌ Error canceling Edge subscription:', error);
+    throw error;
+  }
+
+  console.log(`✅ Edge subscription canceled for user: ${userId}`);
 }
 
 

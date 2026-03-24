@@ -6,7 +6,8 @@ const Landing = lazy(() => import('@/pages/Landing'))
 const Auth = lazy(() => import('@/pages/Auth'))
 const AuthCallback = lazy(() => import('@/pages/AuthCallback'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
-const Think = lazy(() => import('@/pages/Think'))
+// Think page redirected to Edge — kept for reference
+// const Think = lazy(() => import('@/pages/Think'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
 const ContextExport = lazy(() => import('@/pages/ContextExport'))
 const Settings = lazy(() => import('@/pages/Settings'))
@@ -51,7 +52,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/think',
-    element: <LazyWrapper><RequireAuth><Think /></RequireAuth></LazyWrapper>,
+    element: <Navigate to="/dashboard?view=edge" replace />,
   },
   {
     path: '/memory',

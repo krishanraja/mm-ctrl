@@ -387,6 +387,32 @@ Return a JSON object with a "results" array. Each entry has:
       const { data: pendingVerifications } = await supabase
         .rpc('get_pending_verifications', { p_user_id: userId });
 
+      // Trigger Edge profile re-synthesis in the background (non-blocking)
+      try {
+        const serviceClient = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+        );
+        // Check if user has an edge profile before triggering synthesis
+        const { data: edgeProfile } = await serviceClient
+          .from('edge_profiles')
+          .select('id')
+          .eq('user_id', userId)
+          .single();
+        if (edgeProfile) {
+          // Fire and forget — don't block the response
+          fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/synthesize-edge-profile`, {
+            method: 'POST',
+            headers: {
+              'Authorization': req.headers.get('Authorization')!,
+              'Content-Type': 'application/json',
+            },
+          }).catch(err => console.warn('Edge re-synthesis trigger failed (non-critical):', err));
+        }
+      } catch {
+        // Non-critical — don't fail the extraction
+      }
+
       return new Response(
         JSON.stringify({
           success: true,

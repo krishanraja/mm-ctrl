@@ -1,0 +1,111 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { SHARPEN_CAPABILITY_META } from '@/types/edge';
+import type { EdgeStrength, FeedbackType } from '@/types/edge';
+import { FeedbackButtons } from './FeedbackButtons';
+
+interface Props {
+  strength: EdgeStrength;
+  onFeedback: (type: FeedbackType, key: string) => void;
+  isPaid: boolean;
+}
+
+export function StrengthPill({ strength, onFeedback, isPaid }: Props) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <motion.div
+      layout
+      className="group rounded-xl overflow-hidden"
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      {/* Collapsed pill */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className={cn(
+          'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-left transition-colors',
+          'bg-gradient-to-r from-teal-500/10 to-emerald-500/10',
+          'hover:from-teal-500/15 hover:to-emerald-500/15',
+          expanded && 'rounded-b-none',
+        )}
+      >
+        <span className="text-sm font-medium text-foreground truncate">{strength.label}</span>
+        <div className="flex items-center gap-1 shrink-0">
+          <FeedbackButtons targetKey={strength.key} type="strength" onFeedback={onFeedback} />
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-muted-foreground transition-transform duration-200',
+              expanded && 'rotate-180',
+            )}
+          />
+        </div>
+      </button>
+
+      {/* Expanded content */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            className="overflow-hidden bg-gradient-to-b from-teal-500/5 to-transparent"
+          >
+            <div className="px-3 pb-3 space-y-3">
+              {/* Summary */}
+              <p className="text-xs text-muted-foreground leading-relaxed">{strength.summary}</p>
+
+              {/* Evidence tags */}
+              <div className="flex flex-wrap gap-1.5">
+                {strength.evidence.map((tag, i) => (
+                  <Badge
+                    key={i}
+                    variant="outline"
+                    className="text-[10px] px-2 py-0.5 bg-teal-500/5 border-teal-500/20 text-teal-600 dark:text-teal-400"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+
+              {/* Capability actions */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {strength.capabilities.map((cap) => {
+                  const meta = SHARPEN_CAPABILITY_META[cap];
+                  if (!meta) return null;
+                  return (
+                    <Button
+                      key={cap}
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs border-teal-500/20 text-teal-700 dark:text-teal-300 hover:bg-teal-500/10"
+                    >
+                      {meta.label}
+                    </Button>
+                  );
+                })}
+              </div>
+
+              {/* Dismiss */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFeedback('strength_reject', strength.key);
+                }}
+                className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-red-500 transition-colors pt-1"
+              >
+                <X className="h-3 w-3" />
+                Not accurate
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}

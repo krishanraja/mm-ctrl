@@ -5,6 +5,7 @@ import { WorkContextTab } from '@/components/settings/WorkContextTab'
 import { PrivacyDataTab } from '@/components/settings/PrivacyDataTab'
 import { NotificationsTab } from '@/components/settings/NotificationsTab'
 import { PreferencesTab } from '@/components/settings/PreferencesTab'
+import { EdgeProTab } from '@/components/settings/EdgeProTab'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -35,6 +36,7 @@ export default function Settings() {
             <TabsTrigger value="privacy" className="text-xs whitespace-nowrap">Privacy</TabsTrigger>
             <TabsTrigger value="notifications" className="text-xs whitespace-nowrap">Notifs</TabsTrigger>
             <TabsTrigger value="preferences" className="text-xs whitespace-nowrap">Prefs</TabsTrigger>
+            <TabsTrigger value="edge-pro" className="text-xs whitespace-nowrap">Edge Pro</TabsTrigger>
           </TabsList>
 
           <TabsContent value="account" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
@@ -55,6 +57,10 @@ export default function Settings() {
 
           <TabsContent value="preferences" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
             <PreferencesTab />
+          </TabsContent>
+
+          <TabsContent value="edge-pro" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
+            <EdgeProTab />
           </TabsContent>
         </Tabs>
       </div>

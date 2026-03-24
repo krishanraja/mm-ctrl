@@ -5,7 +5,7 @@ export interface MemoryContextOptions {
   topicFilter?: string;
   maxTokens?: number;
   format?: "markdown" | "chatgpt" | "claude" | "gemini" | "cursor" | "claude-code";
-  useCase?: "general" | "meeting" | "decision" | "code" | "email" | "strategy" | "delegation" | "board";
+  useCase?: "general" | "meeting" | "decision" | "code" | "email" | "strategy" | "delegation" | "board" | "edge";
 }
 
 export interface MemoryContextResult {
@@ -182,6 +182,9 @@ function filterByUseCase(
         patterns: patterns.filter(p => ["strength", "blindspot"].includes(p.pattern_type)),
         decisions,
       };
+    case "edge":
+      // All data for comprehensive strength/weakness synthesis
+      return { facts, patterns, decisions };
     default: // general
       return { facts, patterns, decisions };
   }
