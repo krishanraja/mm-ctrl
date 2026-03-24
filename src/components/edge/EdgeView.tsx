@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap,
@@ -25,7 +26,9 @@ import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
 import { EdgePaywall } from './EdgePaywall';
 import { DraftSheet } from './DraftSheet';
 import { ArtifactPreview } from './ArtifactPreview';
+import { FeedbackButtons } from './FeedbackButtons';
 import type {
+  FeedbackType,
   EdgeStrength,
   EdgeWeakness,
   CapabilityCardDef,
@@ -144,9 +147,11 @@ function EdgeOnboarding({ onComplete }: { onComplete: () => void }) {
 function EdgeProfileCard({
   strengths,
   weaknesses,
+  onFeedback,
 }: {
   strengths: EdgeStrength[];
   weaknesses: EdgeWeakness[];
+  onFeedback: (type: FeedbackType, key: string) => void;
 }) {
   return (
     <motion.div
@@ -166,13 +171,16 @@ function EdgeProfileCard({
           {strengths.map((s) => (
             <div
               key={s.key}
-              className="rounded-lg border border-emerald-500/10 bg-emerald-500/5 p-3"
+              className="group rounded-lg border border-emerald-500/10 bg-emerald-500/5 p-3"
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-foreground">{s.label}</span>
-                <span className="text-[10px] text-emerald-400 font-medium">
-                  {Math.round(s.confidence * 100)}%
-                </span>
+                <div className="flex items-center gap-2">
+                  <FeedbackButtons targetKey={s.key} type="strength" onFeedback={onFeedback} />
+                  <span className="text-[10px] text-emerald-400 font-medium">
+                    {Math.round(s.confidence * 100)}%
+                  </span>
+                </div>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">{s.summary}</p>
             </div>
@@ -197,13 +205,16 @@ function EdgeProfileCard({
           {weaknesses.map((w) => (
             <div
               key={w.key}
-              className="rounded-lg border border-amber-500/10 bg-amber-500/5 p-3"
+              className="group rounded-lg border border-amber-500/10 bg-amber-500/5 p-3"
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-foreground">{w.label}</span>
-                <span className="text-[10px] text-amber-400 font-medium">
-                  {Math.round(w.confidence * 100)}%
-                </span>
+                <div className="flex items-center gap-2">
+                  <FeedbackButtons targetKey={w.key} type="weakness" onFeedback={onFeedback} />
+                  <span className="text-[10px] text-amber-400 font-medium">
+                    {Math.round(w.confidence * 100)}%
+                  </span>
+                </div>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">{w.summary}</p>
             </div>
@@ -222,9 +233,11 @@ function EdgeProfileCard({
 function SmartProbeCard({
   prompt,
   impact,
+  onAddContext,
 }: {
   prompt: string;
   impact: string;
+  onAddContext: () => void;
 }) {
   return (
     <motion.div
@@ -240,7 +253,16 @@ function SmartProbeCard({
         </h3>
       </div>
       <p className="text-sm text-foreground font-medium mb-1">{prompt}</p>
-      <p className="text-xs text-muted-foreground">{impact}</p>
+      <p className="text-xs text-muted-foreground mb-3">{impact}</p>
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={onAddContext}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 text-xs font-medium hover:bg-purple-500/20 transition-colors"
+      >
+        <ChevronRight className="h-3 w-3" />
+        Add Context
+      </motion.button>
     </motion.div>
   );
 }
@@ -321,9 +343,11 @@ export default function EdgeView() {
     isLoading,
     isSynthesizing,
     synthesize,
+    submitFeedback,
   } = useEdge();
 
   const { hasAccess } = useEdgeSubscription();
+  const navigate = useNavigate();
 
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [paywallCapability, setPaywallCapability] = useState<string | undefined>();
@@ -438,11 +462,15 @@ export default function EdgeView() {
     <>
       <div className="space-y-6">
         {/* Profile Card: Strengths + Weaknesses */}
-        <EdgeProfileCard strengths={strengths} weaknesses={weaknesses} />
+        <EdgeProfileCard strengths={strengths} weaknesses={weaknesses} onFeedback={submitFeedback} />
 
         {/* Smart Probe: Top intelligence gap */}
         {topGap && (
-          <SmartProbeCard prompt={topGap.prompt} impact={topGap.impact} />
+          <SmartProbeCard
+            prompt={topGap.prompt}
+            impact={topGap.impact}
+            onAddContext={() => navigate('/dashboard')}
+          />
         )}
 
         {/* Capability Cards */}

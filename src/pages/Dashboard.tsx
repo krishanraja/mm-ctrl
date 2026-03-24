@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom"
 import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashboard"
 import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
 import { GuidedFirstExperience } from "@/components/memory-web/GuidedFirstExperience"
+import { BottomNav } from "@/components/memory-web/BottomNav"
 import { useDevice } from "@/hooks/useDevice"
 import { useGuidedCapture } from "@/hooks/useGuidedCapture"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -53,9 +54,14 @@ export default function Dashboard() {
   // Edge view
   if (activeView === 'edge') {
     return (
-      <React.Suspense fallback={<div className="h-screen-safe flex items-center justify-center">Loading...</div>}>
-        <EdgeViewLazy />
-      </React.Suspense>
+      <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+        <div className="flex-1 overflow-y-auto px-4 py-6">
+          <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
+            <EdgeViewLazy />
+          </React.Suspense>
+        </div>
+        {isMobile && <BottomNav />}
+      </div>
     )
   }
 
