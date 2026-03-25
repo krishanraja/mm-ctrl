@@ -36,7 +36,7 @@ const generateTensionTeaser = (data: Record<string, any>): { tension: string; in
   if (teamScore >= 4 && industryScore >= 4) {
     return {
       tension: "Ready for Acceleration",
-      insight: "Your foundation is strong. The next level requires connecting AI initiatives directly to growth KPIs—which only 12% of leaders do effectively."
+      insight: "Your foundation is strong. The next level requires connecting AI initiatives directly to growth KPIs, which only 12% of leaders do effectively."
     };
   }
   

@@ -2,7 +2,7 @@
 
 ## Context
 
-Mindmaker is a voice-first executive coaching platform using ~15 AI-powered Supabase Edge Functions. The current LLM strategy is **already sophisticated** — with cognitive framework training, chain-of-thought enforcement, quality guardrails, and multi-provider fallback. However, several architectural issues have accumulated: duplicate implementations, stale model choices, missing resilience patterns, and no observability. This plan addresses the highest-impact improvements while keeping the scope practical for a small team.
+Mindmaker is a voice-first executive coaching platform using ~15 AI-powered Supabase Edge Functions. The current LLM strategy is **already sophisticated**, with cognitive framework training, chain-of-thought enforcement, quality guardrails, and multi-provider fallback. However, several architectural issues have accumulated: duplicate implementations, stale model choices, missing resilience patterns, and no observability. This plan addresses the highest-impact improvements while keeping the scope practical for a small team.
 
 ---
 
@@ -17,10 +17,10 @@ Mindmaker is a voice-first executive coaching platform using ~15 AI-powered Supa
 
 | Task Tier | Model | Provider | Rationale |
 |-----------|-------|----------|-----------|
-| `simple` | `claude-haiku-4-5-20251001` | Anthropic | Fastest, cheapest — pattern detection, prompt coach, daily prompts |
-| `chat` | `gpt-4.1` | OpenAI | Strong conversational quality — assessment chat, sharpen |
-| `analysis` | `claude-sonnet-4-6` | Anthropic | Best at structured JSON output — weekly checkin, context extraction, team instructions |
-| `complex` | `claude-opus-4-6` | Anthropic | Deepest reasoning — ai-generate with cognitive frameworks, meeting prep |
+| `simple` | `claude-haiku-4-5-20251001` | Anthropic | Fastest, cheapest - pattern detection, prompt coach, daily prompts |
+| `chat` | `gpt-4.1` | OpenAI | Strong conversational quality - assessment chat, sharpen |
+| `analysis` | `claude-sonnet-4-6` | Anthropic | Best at structured JSON output - weekly checkin, context extraction, team instructions |
+| `complex` | `claude-opus-4-6` | Anthropic | Deepest reasoning - ai-generate with cognitive frameworks, meeting prep |
 | `transcription` | `whisper-1` | OpenAI | Best-in-class speech-to-text (keep as-is) |
 
 - Each provider has its own API call path (Anthropic Messages API, OpenAI Chat Completions)
@@ -35,7 +35,7 @@ Mindmaker is a voice-first executive coaching platform using ~15 AI-powered Supa
 - Keep `ai-cache.ts` as the single cache module (better interface, has `normalizePromptForCache`)
 - Migrate `ai_cache` table data to `ai_response_cache` (or unify table name)
 - Update `openai-utils.ts` (now `llm-utils.ts`) to use `ai-cache.ts` internally
-- Standardize TTL to 24 hours (7 days is too long for personalized coaching — user context changes)
+- Standardize TTL to 24 hours (7 days is too long for personalized coaching, since user context changes)
 - Delete duplicate hash function from `openai-utils.ts`
 
 **Files:**
@@ -43,7 +43,7 @@ Mindmaker is a voice-first executive coaching platform using ~15 AI-powered Supa
 - `supabase/functions/_shared/ai-cache.ts` → becomes single source of truth
 
 ### 1C. Consolidate Duplicate Rate Limiting
-**Why:** Two rate limiting files (`rate-limit.ts` and `rate-limiting.ts`) — the second one is never imported.
+**Why:** Two rate limiting files (`rate-limit.ts` and `rate-limiting.ts`). The second one is never imported.
 
 **Action:**
 - Delete `supabase/functions/_shared/rate-limiting.ts` (unused)
@@ -76,11 +76,11 @@ For OpenAI-primary tasks:    OpenAI → Anthropic → Gemini Flash
 - Remove ad-hoc fallback code from individual edge functions (ai-generate, submit-weekly-checkin, etc.)
 
 ### 2C. Use Anthropic's Native JSON Mode
-**Why:** Current approach uses OpenAI's `response_format: { type: 'json_object' }`. The Anthropic API doesn't have this — but Claude models follow JSON instructions in system prompts extremely reliably. For critical paths, use tool_use with a defined schema for guaranteed structured output.
+**Why:** Current approach uses OpenAI's `response_format: { type: 'json_object' }`. The Anthropic API doesn't have this, but Claude models follow JSON instructions in system prompts extremely reliably. For critical paths, use tool_use with a defined schema for guaranteed structured output.
 
 **Action:**
 - For simple JSON responses: instruct in system prompt (Claude follows this reliably)
-- For critical/complex schemas (assessment analysis, weekly checkin): use Anthropic `tool_use` with JSON schema definition — guarantees valid structure
+- For critical/complex schemas (assessment analysis, weekly checkin): use Anthropic `tool_use` with JSON schema definition, which guarantees valid structure
 - Keep the JSON extraction regex fallback for Gemini (already exists in ai-generate)
 
 ---
@@ -126,17 +126,17 @@ FROM llm_call_log GROUP BY 1, 2 ORDER BY 1 DESC;
 ## Priority 4: Memory & RAG Improvement (High Impact, Higher Effort)
 
 ### 4A. Add pgvector Embeddings for Memory Retrieval
-**Why:** Users accumulate 20+ facts. Category-based retrieval alone misses relevant context when the fact pool grows — e.g., a "delegation" question should surface the user's team structure facts, their stated blockers about letting go of control, AND their preference for async communication, even though these span 3 different categories.
+**Why:** Users accumulate 20+ facts. Category-based retrieval alone misses relevant context when the fact pool grows. For example, a "delegation" question should surface the user's team structure facts, their stated blockers about letting go of control, AND their preference for async communication, even though these span 3 different categories.
 
 **Action:**
 - Enable `pgvector` extension in Supabase (one SQL command)
 - Add `embedding vector(1536)` column to `user_memory` table
-- Generate embeddings on fact insert/update using OpenAI `text-embedding-3-small` ($0.02/1M tokens — negligible cost)
+- Generate embeddings on fact insert/update using OpenAI `text-embedding-3-small` ($0.02/1M tokens, negligible cost)
 - Create a `match_user_memory` RPC function for similarity search
 - Update `memory-context-builder.ts` to do **hybrid retrieval**:
-  1. Category filter (existing) — keeps use-case-aware filtering as first pass
-  2. Vector similarity ranking within the candidate set — surfaces the most relevant facts for the current query
-  3. Token budget trimming (existing) — now trims the least relevant facts instead of arbitrary warm facts
+  1. Category filter (existing) - keeps use-case-aware filtering as first pass
+  2. Vector similarity ranking within the candidate set - surfaces the most relevant facts for the current query
+  3. Token budget trimming (existing) - now trims the least relevant facts instead of arbitrary warm facts
 
 **Migration:**
 ```sql
@@ -157,10 +157,10 @@ $$ LANGUAGE sql;
 
 **Files:**
 - New migration: add vector column + index + RPC function
-- New utility: `supabase/functions/_shared/embeddings.ts` — wraps OpenAI embeddings API
-- `supabase/functions/_shared/memory-context-builder.ts` — add embedding-based ranking
-- `supabase/functions/extract-user-context/index.ts` — generate embeddings on fact creation
-- `supabase/functions/memory-crud/index.ts` — generate embeddings on fact update
+- New utility: `supabase/functions/_shared/embeddings.ts` - wraps OpenAI embeddings API
+- `supabase/functions/_shared/memory-context-builder.ts` - add embedding-based ranking
+- `supabase/functions/extract-user-context/index.ts` - generate embeddings on fact creation
+- `supabase/functions/memory-crud/index.ts` - generate embeddings on fact update
 - Backfill script: one-time migration to generate embeddings for existing facts
 
 ---
@@ -173,10 +173,10 @@ $$ LANGUAGE sql;
 **Action:**
 - Create `supabase/functions/_shared/prompts/` directory
 - Move system prompts from each edge function into named exports:
-  - `prompts/cognitive-frameworks.ts` — the COGNITIVE_FRAMEWORKS_ANCHOR
-  - `prompts/sharpen.ts` — SHARPEN_SYSTEM_PROMPT
-  - `prompts/weekly-checkin.ts` — weekly checkin system prompt
-  - `prompts/assessment-chat.ts` — assessment advisor prompt
+  - `prompts/cognitive-frameworks.ts` - the COGNITIVE_FRAMEWORKS_ANCHOR
+  - `prompts/sharpen.ts` - SHARPEN_SYSTEM_PROMPT
+  - `prompts/weekly-checkin.ts` - weekly checkin system prompt
+  - `prompts/assessment-chat.ts` - assessment advisor prompt
   - etc.
 - Edge functions import prompts instead of defining inline
 - Also move `src/data/sharpenSystemPrompt.ts` to shared location (currently duplicated between frontend and backend)
@@ -188,12 +188,12 @@ $$ LANGUAGE sql;
 
 ## What NOT to Change
 
-- **Quality guardrails** (`llm-quality-guardrails.ts`) — already excellent, keep as-is
-- **Cognitive framework training** — the 5-framework approach is well-designed
-- **Use-case-aware context building** (`memory-context-builder.ts`) — the 7-mode system is smart
-- **Token budget optimization** — the hot/warm/cold hierarchy works well
-- **Voice transcription** — Whisper-1 remains best for this use case
-- **Prompt normalization for cache** — already handles timestamps/UUIDs well
+- **Quality guardrails** (`llm-quality-guardrails.ts`) - already excellent, keep as-is
+- **Cognitive framework training** - the 5-framework approach is well-designed
+- **Use-case-aware context building** (`memory-context-builder.ts`) - the 7-mode system is smart
+- **Token budget optimization** - the hot/warm/cold hierarchy works well
+- **Voice transcription** - Whisper-1 remains best for this use case
+- **Prompt normalization for cache** - already handles timestamps/UUIDs well
 
 ---
 
@@ -204,7 +204,7 @@ $$ LANGUAGE sql;
 | **Phase 1** | 1B (consolidate cache), 1C (delete unused rate-limit), 2A (retry logic) | ~3 files changed |
 | **Phase 2** | 1A (multi-provider routing), 2B (standardize fallback), 2C (structured output) | ~15 files changed (openai-utils.ts → llm-utils.ts + all edge functions importing it) |
 | **Phase 3** | 3A (logging table), 3B (cost dashboard) | 1 migration + 1 file |
-| **Phase 4** | 4A (pgvector embeddings) — **promoted from Phase 5** since users have 20+ facts | 1 migration + 4 files + backfill script |
+| **Phase 4** | 4A (pgvector embeddings), **promoted from Phase 5** since users have 20+ facts | 1 migration + 4 files + backfill script |
 | **Phase 5** | 5A (centralize prompts) | ~15 files (move prompts, update imports) |
 
 ---
@@ -214,7 +214,7 @@ $$ LANGUAGE sql;
 - **Phase 1:** Deploy edge functions, trigger AI features, verify cache works with single implementation, verify retries on simulated failures
 - **Phase 2:** Test each AI feature with its routed model (Opus for ai-generate, Sonnet for analysis, GPT-4.1 for chat, Haiku for simple), verify JSON output quality, test fallback by temporarily disabling primary API key
 - **Phase 3:** Query `llm_call_log` after a day of usage, verify cost tracking accuracy
-- **Phase 4:** Compare memory retrieval relevance before/after embeddings with a test user who has 20+ facts — measure: are the top-5 returned facts more relevant to the query?
+- **Phase 4:** Compare memory retrieval relevance before/after embeddings with a test user who has 20+ facts. Measure: are the top-5 returned facts more relevant to the query?
 - **Phase 5:** Run all AI features, verify identical behavior with centralized prompts
 
 ---

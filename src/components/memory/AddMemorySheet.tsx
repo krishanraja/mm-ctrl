@@ -72,7 +72,7 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
     onTranscript: (text) => {
       setValue(text);
       setMode('text');
-      toast.success('Transcription complete — review and save your memory');
+      toast.success('Transcription complete. Review and save your memory');
     },
   });
 

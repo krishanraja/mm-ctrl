@@ -247,7 +247,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
             </motion.div>
           )}
 
-          {/* INTRO — explain the 3 things we build */}
+          {/* INTRO - explain the 3 things we build */}
           {step === 'prompt_intro' && (
             <motion.div
               key="intro"
@@ -305,7 +305,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
             </motion.div>
           )}
 
-          {/* PROMPT — show the question with context */}
+          {/* PROMPT - show the question with context */}
           {(step === 'prompt_identity' || step === 'prompt_work' || step === 'prompt_goals') && (
             <motion.div
               key={step}
@@ -548,7 +548,7 @@ export function GuidedFirstExperience({ onComplete }: Props) {
             <VerificationAutoAdvance onComplete={handleVerificationComplete} />
           )}
 
-          {/* VALUE MOMENT — show what was built + first export */}
+          {/* VALUE MOMENT - show what was built + first export */}
           {step === 'value_moment' && (
             <motion.div
               key="value"

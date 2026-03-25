@@ -20,7 +20,7 @@
 - **Identity**: Sees themselves as a decisive leader. Speed is a point of pride. Hates being the bottleneck.
 - **AI Frustration**: Uses AI daily but knows the output is generic. Has felt the gap between what AI could do and what it actually does for them. Suspects the problem is context, not the tool.
 - **Time Relationship**: Guards their calendar ruthlessly. Will not sit through a course, a webinar, or a 30-minute onboarding flow. If it takes more than 2 minutes to show value, it is dead to them.
-- **Decision Style**: Makes 20+ consequential decisions per week. Relies on pattern recognition, trusted advisors, and gut. Knows AI could sharpen all three — if it actually knew their world.
+- **Decision Style**: Makes 20+ consequential decisions per week. Relies on pattern recognition, trusted advisors, and gut. Knows AI could sharpen all three, if it actually knew their world.
 - **Competitive Awareness**: Watches peers and competitors closely. When a rival moves faster, they feel it personally. The idea that someone else's AI knows their context and theirs doesn't is deeply uncomfortable.
 - **Tech Posture**: Pragmatic adopter. Not an enthusiast. Not a skeptic. Judges tools by outcomes in the first 60 seconds. Will abandon anything that feels like setup.
 
@@ -28,42 +28,42 @@
 
 ### Pain Points
 
-**Decision Speed Pain (Primary — CTRL solves this)**
-1. Every AI conversation starts from zero. They re-explain who they are, what they do, and what matters — every single time.
+**Decision Speed Pain (Primary - CTRL solves this)**
+1. Every AI conversation starts from zero. They re-explain who they are, what they do, and what matters, every single time.
 2. AI gives generic advice because it has no context. The output reads like it was written for anyone. It was.
 3. They use multiple AI tools. Context does not travel between them. Switching from ChatGPT to Claude means starting over.
 4. Custom instructions and system prompts exist, but maintaining them is tedious, manual, and never complete enough.
-5. They know AI should be making them faster. Instead, it is making them slower — because the setup cost erases the speed gain.
+5. They know AI should be making them faster. Instead, it is making them slower, because the setup cost erases the speed gain.
 
-**Strategic Pain (Secondary — compounds over time)**
+**Strategic Pain (Secondary - compounds over time)**
 6. Cannot distinguish real AI value from vendor theatre in proposals and pitches.
 7. Unable to challenge technical teams credibly on AI decisions.
 8. Feels pressure to "do something with AI" without a clear framework for what is worth doing.
 9. Suspects competitors are building AI advantages they cannot see.
-10. Making AI decisions without AI literacy — the equivalent of approving a budget in a language they do not speak.
+10. Making AI decisions without AI literacy. The equivalent of approving a budget in a language they do not speak.
 
 ---
 
 ### Jobs to Be Done
 
 **Immediate (First 2 Minutes)**
-- Build a portable AI double from voice input — no typing, no forms, no prompt engineering.
+- Build a portable AI double from voice input. No typing, no forms, no prompt engineering.
 - Export that context to ChatGPT, Claude, Gemini, or Cursor in one click.
 - Experience the difference between generic AI and AI that knows them. Immediately.
 
 **Week 1 (Speed Compounds)**
 - Stop re-explaining context in every AI conversation. Permanently.
 - Get decision support and meeting prep that already knows their priorities, their team, their constraints.
-- Use AI as a thinking partner that is actually informed — not a blank-slate chatbot.
+- Use AI as a thinking partner that is actually informed, not a blank-slate chatbot.
 
 **Month 1+ (The Gap Widens)**
 - Build richer AI context over time through natural voice conversation. No maintenance burden.
-- Surface strengths to amplify and blind spots to address — patterns they cannot see themselves.
+- Surface strengths to amplify and blind spots to address. Patterns they cannot see themselves.
 - Stay current as goals, challenges, and context evolve. The AI double grows with them.
 
 **Strategic (Ongoing)**
 - Develop enough AI literacy to challenge any proposal or vendor pitch.
-- Know where AI creates real value in their specific context — not in general.
+- Know where AI creates real value in their specific context, not in general.
 - Lead AI conversations in their organization from a position of informed confidence.
 
 ---
@@ -89,12 +89,12 @@
 
 **Week 1**
 - Exported context to at least 2 AI tools
-- Noticed tangibly better AI responses — specific enough to describe the difference
+- Noticed tangibly better AI responses, specific enough to describe the difference
 - Added voice input beyond initial onboarding
 
 **Month 1**
 - Uses CTRL context across 3+ AI tools as standard workflow
-- Decision Advisor or Meeting Prep used for a real decision — not a test
+- Decision Advisor or Meeting Prep used for a real decision, not a test
 - Reports saving 5-10 minutes per AI conversation in context setup alone
 
 **Month 3**

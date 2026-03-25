@@ -272,7 +272,7 @@ Voice-first context extraction system that builds a persistent knowledge base ab
 
 ---
 
-## Context Export — Portable AI Context
+## Context Export: Portable AI Context
 
 ### Overview
 
@@ -326,18 +326,18 @@ The headline differentiator: export your Memory Web as formatted context to any 
 
 ### Overview
 
-Builds a leader's "digital double" in approximately 3 minutes through 3 guided voice questions. Designed to deliver immediate value — the user has an exportable AI context before reaching the dashboard.
+Builds a leader's "digital double" in approximately 3 minutes through 3 guided voice questions. Designed to deliver immediate value. The user has an exportable AI context before reaching the dashboard.
 
 ### Flow
 
-1. **Welcome** — "Let's build your AI double" (icon + CTA)
-2. **Intro** — Shows 3 pillars: Memory Web, 10X Skills Map, Master Prompts
-3. **Question 1: Identity** — "Tell me about yourself" (voice or text)
-4. **Question 2: Work** — "Tell me about your work" (voice or text)
-5. **Question 3: Goals** — "What are you working toward?" (voice or text)
-6. **Processing** — Transcription → Fact extraction → Memory Web building (animated)
-7. **Value Moment** — "Your AI double knows X things about you" + live preview of exportable context + copy to clipboard
-8. **Complete** — "Your digital clone is live" → Dashboard
+1. **Welcome** - "Let's build your AI double" (icon + CTA)
+2. **Intro** - Shows 3 pillars: Memory Web, 10X Skills Map, Master Prompts
+3. **Question 1: Identity** - "Tell me about yourself" (voice or text)
+4. **Question 2: Work** - "Tell me about your work" (voice or text)
+5. **Question 3: Goals** - "What are you working toward?" (voice or text)
+6. **Processing** - Transcription, fact extraction, Memory Web building (animated)
+7. **Value Moment** - "Your AI double knows X things about you" + live preview of exportable context + copy to clipboard
+8. **Complete** - "Your digital clone is live", redirects to Dashboard
 
 ### Key Design Decisions
 
@@ -346,7 +346,7 @@ Builds a leader's "digital double" in approximately 3 minutes through 3 guided v
 - Progress bars (3 areas) at top
 - Each question has area icon, title, prompt, hint
 - Fact verification step lets user accept/reject extracted facts
-- Value moment shows actual exportable context — proves immediate value
+- Value moment shows actual exportable context, proving immediate value
 
 ### Components
 - `GuidedFirstExperience.tsx` (orchestrator)
@@ -364,7 +364,7 @@ AI analyzes the Memory Web to surface patterns: strengths to amplify, blind spot
 
 | Type | Description | Dashboard Section |
 |------|-------------|-------------------|
-| **strength** | Strengths to 10X — capabilities to amplify | "Strengths to 10X" card |
+| **strength** | Strengths to 10X - capabilities to amplify | "Strengths to 10X" card |
 | **blind_spot** | Gaps or risks to address | "Blind Spots" card |
 | **preference** | Working style and approach preferences | "Behaviors & Preferences" card |
 | **behavior** | Recurring behavioral patterns | "Behaviors & Preferences" card |
@@ -435,7 +435,7 @@ The central hub showing the leader's AI double health, Memory Web coverage, patt
 
 **Voice Input Bar**
 - Mic button with live recording indicator
-- Text input: "Add to your digital clone — narrate anything about your work, goals, or challenges..."
+- Text input: "Add to your digital clone - narrate anything about your work, goals, or challenges..."
 - Persistent on dashboard for continuous Memory Web building
 
 **Quick Export**

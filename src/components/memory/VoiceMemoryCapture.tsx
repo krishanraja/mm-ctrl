@@ -64,7 +64,7 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
 
   async function processInput(text: string) {
     if (!text.trim()) {
-      toast.error('No speech detected — please try again');
+      toast.error('No speech detected. Please try again');
       return;
     }
 
@@ -78,17 +78,17 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
       if (showVerification && result.pending_verifications?.length > 0) {
         setShowVerificationCard(true);
         const count = result.pending_verifications.length;
-        toast.success(`Found ${count} fact${count > 1 ? 's' : ''} — please verify`);
+        toast.success(`Found ${count} fact${count > 1 ? 's' : ''}. Please verify`);
       } else if (result.success) {
         toast.success('Memory saved');
         onComplete?.(text);
       } else {
-        toast.error('Couldn\'t extract any facts — please try again');
+        toast.error('Couldn\'t extract any facts. Please try again');
         onComplete?.(text);
       }
     } catch (err) {
       console.error('Error processing input:', err);
-      toast.error('Couldn\'t save memory — please try again');
+      toast.error('Couldn\'t save memory. Please try again');
     } finally {
       setIsProcessing(false);
     }

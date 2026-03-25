@@ -1,8 +1,8 @@
-# CTRL — Clarity for Leaders
+# CTRL: Clarity for Leaders
 
 > Think out loud. See what emerges.
 
-CTRL helps leaders voice their thoughts and organizes them into a **Memory Web** — your portable context that makes every AI smarter, and **Team Instructions** that make your team sharper.
+CTRL helps leaders voice their thoughts and organizes them into a **Memory Web**, your portable context that makes every AI smarter, and **Team Instructions** that make your team sharper.
 
 **Build your portable AI double in 2 minutes. Every AI tool you use instantly knows your context, goals, and thinking style.**
 
@@ -10,7 +10,7 @@ CTRL helps leaders voice their thoughts and organizes them into a **Memory Web**
 
 ## The Problem
 
-Every leader uses AI. But every AI conversation starts from zero. You re-explain who you are, what your company does, what you're working on — every single time. The advice stays generic. Decision speed suffers.
+Every leader uses AI. But every AI conversation starts from zero. You re-explain who you are, what your company does, what you're working on, every single time. The advice stays generic. Decision speed suffers.
 
 CTRL eliminates that friction permanently.
 
@@ -18,7 +18,7 @@ CTRL eliminates that friction permanently.
 
 1. **Voice a thought**
 2. **It organizes itself**
-3. **Export anywhere** — ChatGPT, Claude, Gemini, Cursor, Claude Code
+3. **Export anywhere** - ChatGPT, Claude, Gemini, Cursor, Claude Code
 4. **Every decision gets faster**
 
 2 minutes to your first export. Voice-first, text always available.
@@ -30,23 +30,23 @@ CTRL eliminates that friction permanently.
 ### Memory Web
 Your thoughts, organized. A living map of what you know, what you want, and how you think. Facts are categorized, verified by you, and encrypted at rest.
 
-### Context Export — Your Context, Everywhere
+### Context Export: Your Context, Everywhere
 One click to export your context to **any** AI tool:
-- **ChatGPT** — Custom instructions
-- **Claude** — Conversation context
-- **Gemini** — Formatted context
-- **Cursor** — .cursorrules file
-- **Claude Code** — CLAUDE.md file
-- **Raw Markdown** — Use anywhere
+- **ChatGPT** - Custom instructions
+- **Claude** - Conversation context
+- **Gemini** - Formatted context
+- **Cursor** - .cursorrules file
+- **Claude Code** - CLAUDE.md file
+- **Raw Markdown** - Use anywhere
 
 Export optimized for specific use cases: General Advisor, Meeting Prep, Decision Support, Code Review, Email Drafting, Strategic Planning.
 
 ### Thinking Tools
 Four tools that think with your context:
-- **Decision Advisor** — Think through a decision with full context
-- **Meeting Prep** — Walk in prepared
-- **Team Brief** — Draft instructions for your team
-- **Stream of Consciousness** — Speak freely. It organizes itself.
+- **Decision Advisor** - Think through a decision with full context
+- **Meeting Prep** - Walk in prepared
+- **Team Brief** - Draft instructions for your team
+- **Stream of Consciousness** - Speak freely. It organizes itself.
 
 ### Team Instructions
 Your thinking, delegated. Turn your context into clear instructions for anyone on your team. Drawn directly from your Memory Web.
@@ -61,10 +61,10 @@ Commit to action items from your diagnostic. Track progress through check-ins. A
 
 ## Design Philosophy
 
-- **Apple-like quality** — Executive-grade, 10/10 visual polish
-- **Voice-first** — Talk naturally, we handle the structure
-- **Mobile-first** — Immersive, no-scroll experience on every page
-- **Light mode** — Warm off-white backgrounds, deep ink text, pure white cards
+- **Apple-like quality** - Executive-grade, 10/10 visual polish
+- **Voice-first** - Talk naturally, we handle the structure
+- **Mobile-first** - Immersive, no-scroll experience on every page
+- **Light mode** - Warm off-white backgrounds, deep ink text, pure white cards
 
 ---
 
@@ -158,4 +158,4 @@ Full documentation index: [project-documentation/README.md](./project-documentat
 
 ---
 
-*Built by [Krish Raja](https://ctrl.ai) — Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*
+*Built by [Krish Raja](https://ctrl.ai). Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*

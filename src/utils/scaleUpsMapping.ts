@@ -124,7 +124,7 @@ function mapAIFluency(
   } else {
     level = 'Building Foundations';
     score = 10 + (industryScore * 4); // 10-18
-    reasoning = `Your industry impact awareness (${industryScore}/5) indicates early-stage AI fluency. This is a strong foundation to build from—many executives are starting here.`;
+    reasoning = `Your industry impact awareness (${industryScore}/5) indicates early-stage AI fluency. This is a strong foundation to build from, and many executives are starting here.`;
     nextStep = 'Dedicate 30 minutes daily to AI news and complete an executive AI fundamentals course';
   }
   
@@ -162,7 +162,7 @@ function mapDelegationMastery(
     level = 'Active Explorer';
     score = 28 + (bizAccelScore * 4) + (hasDelegationPlan ? 8 : 0); // 36-48
     reasoning = `Your business acceleration rating (${bizAccelScore}/5) shows experimentation${hasDelegationPlan ? ', and you\'ve identified delegation targets' : ''}. Current time waste (${timeWaste}%) reveals opportunity to reclaim ${Math.min(30, timeWaste - 20)}+ hours monthly.`;
-    nextStep = 'Choose one repetitive task this week and fully delegate it to AI—measure the time saved';
+    nextStep = 'Choose one repetitive task this week and fully delegate it to AI and measure the time saved';
   } else {
     level = 'Building Foundations';
     score = 12 + (bizAccelScore * 3); // 12-24
@@ -245,7 +245,7 @@ function mapDecisionAgility(
     level = 'Confident Practitioner';
     score = 56 + (industryScore * 4) + (isAnalytical ? 6 : 0); // 62-74
     reasoning = `Your industry impact awareness (${industryScore}/5)${isAnalytical ? ' and analytical thinking style' : ''} show you leverage data effectively to accelerate decisions. You balance speed with informed judgment.`;
-    nextStep = 'Track decision cycle time for 3 key choices this month—identify where AI could compress timelines by 40%';
+    nextStep = 'Track decision cycle time for 3 key choices this month, then identify where AI could compress timelines by 40%';
   } else if (industryScore === 3 || hasDataNeeds) {
     level = 'Active Explorer';
     score = 32 + (industryScore * 4) + (hasDataNeeds ? 8 : 0); // 36-52

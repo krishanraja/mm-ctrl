@@ -39,7 +39,7 @@ export function DesktopSidebar() {
               key={item.label}
               onClick={() => {
                 if (location.pathname === item.path) {
-                  // Same pathname — use setSearchParams to update query without full navigate
+                  // Same pathname - use setSearchParams to update query without full navigate
                   setSearchParams(item.search ? new URLSearchParams(item.search) : {});
                 } else {
                   navigate({ pathname: item.path, search: item.search });

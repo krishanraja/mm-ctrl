@@ -120,7 +120,7 @@ function applyFormat(markdown: string, format: string): string {
       return `<context>\n${markdown}\n</context>\n\nUse the context above to personalize your responses. Reference specific facts when relevant. Be direct.`;
 
     case "gemini":
-      return `Context about me:\n\n${markdown}\n\nUse this context to give me personalized, specific responses. Don't repeat my context back to me — just use it.`;
+      return `Context about me:\n\n${markdown}\n\nUse this context to give me personalized, specific responses. Don't repeat my context back to me, just use it.`;
 
     case "cursor":
       return `# User Context\n\n${markdown}\n\n# Coding Preferences\n- Follow existing patterns in the codebase\n- Be concise in comments\n- Prefer simple solutions`;
@@ -258,7 +258,7 @@ export async function buildMemoryContext(
   // Build markdown
   let markdown = buildMarkdownContext(filtered.facts, filtered.patterns, filtered.decisions, userName);
 
-  // Enforce token budget — trim warm facts first
+  // Enforce token budget - trim warm facts first
   let tokenCount = estimateTokens(markdown);
   if (tokenCount > maxTokens && warmFacts.length > 0) {
     // Rebuild with fewer warm facts

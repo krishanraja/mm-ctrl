@@ -520,7 +520,7 @@ Only flag TRUE contradictions where both facts cannot be simultaneously true. Do
           .eq('user_id', userId)
           .single();
         if (edgeProfile) {
-          // Fire and forget — don't block the response
+          // Fire and forget - don't block the response
           fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/synthesize-edge-profile`, {
             method: 'POST',
             headers: {
@@ -530,7 +530,7 @@ Only flag TRUE contradictions where both facts cannot be simultaneously true. Do
           }).catch(err => console.warn('Edge re-synthesis trigger failed (non-critical):', err));
         }
       } catch {
-        // Non-critical — don't fail the extraction
+        // Non-critical - don't fail the extraction
       }
 
       return new Response(

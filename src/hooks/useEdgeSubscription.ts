@@ -23,7 +23,7 @@ export function useEdgeSubscription() {
 
       setSubscription(data as unknown as EdgeSubscription | null);
     } catch {
-      // No subscription found — that's fine
+      // No subscription found - that's fine
       setSubscription(null);
     } finally {
       setIsLoading(false);

@@ -42,7 +42,7 @@ Decision quality depends on **how we think**, not just **what we know**. By fine
 
 ---
 
-## Framework 1: A/B Framing – Reframing Decisions to Expose Bias
+## Framework 1: A/B Framing - Reframing Decisions to Expose Bias
 
 ### Theoretical Foundation
 
@@ -76,7 +76,7 @@ instead of success change your recommendation?"
 
 **Executive:** Our AI reports an 80% success rate for the new model deployment. I'm concerned we might be biased by that positive spin. Can you reframe those results?
 
-**AI Assistant:** Certainly. If we reframe in negative terms: "There is a 20% chance the deployment will fail to meet expectations." Same data, different frame. Under the 80%-success frame, we feel confident. Under the 20%-failure frame, we become more cautious. This doesn't change the data, but it balances optimism with caution—we might now develop contingency plans for that 20% risk. By considering both frames, our decision is now more robust.
+**AI Assistant:** Certainly. If we reframe in negative terms: "There is a 20% chance the deployment will fail to meet expectations." Same data, different frame. Under the 80%-success frame, we feel confident. Under the 20%-failure frame, we become more cautious. This doesn't change the data, but it balances optimism with caution. We might now develop contingency plans for that 20% risk. By considering both frames, our decision is now more robust.
 
 **Executive:** Seeing it both ways helps. The project still seems valuable, but now we'll address that failure risk proactively.
 
@@ -89,7 +89,7 @@ instead of success change your recommendation?"
 
 ---
 
-## Framework 2: Dialectical Tension – Considering Opposing Perspectives
+## Framework 2: Dialectical Tension - Considering Opposing Perspectives
 
 ### Theoretical Foundation
 
@@ -119,7 +119,7 @@ Train the model to:
 critic argue against our plan, and how might we counter those criticisms?"
 
 "Present one strong argument in favor of project X and one strong argument against it. 
-Then help me reconcile them—what's a balanced path forward?"
+Then help me reconcile them. What's a balanced path forward?"
 
 "Play devil's advocate on this recommendation. What am I missing? 
 What would a skeptic say?"
@@ -131,11 +131,11 @@ What would a skeptic say?"
 
 **AI Assistant:** 
 
-**Pro (Thesis):** The sprint could rapidly identify high-leverage AI opportunities and foster cross-functional confidence. Structured diagnostics can save leaders 5–10 hours per week by clarifying priorities. You'd get a measurable readiness baseline and ROI hypotheses for AI initiatives—a strategic advantage.
+**Pro (Thesis):** The sprint could rapidly identify high-leverage AI opportunities and foster cross-functional confidence. Structured diagnostics can save leaders 5-10 hours per week by clarifying priorities. You'd get a measurable readiness baseline and ROI hypotheses for AI initiatives, a strategic advantage.
 
 **Con (Antithesis):** A 30-day sprint demands significant time and focus. If you're not prepared to act on recommendations, outputs could join the "graveyard of stalled pilots." Additionally, if your team is already aligned, the sprint could be redundant or seen as hype.
 
-**Synthesis:** The sprint offers valuable benefits (clarity, time savings, alignment), but you must ensure follow-through. Perhaps proceed with the sprint while setting clear expectations: allocate resources to implement top recommendations and communicate that this is continuous capacity-building, not a one-off workshop. This way, you capitalize on advantages while addressing the main concern—post-sprint execution.
+**Synthesis:** The sprint offers valuable benefits (clarity, time savings, alignment), but you must ensure follow-through. Perhaps proceed with the sprint while setting clear expectations: allocate resources to implement top recommendations and communicate that this is continuous capacity-building, not a one-off workshop. This way, you capitalize on advantages while addressing the main concern: post-sprint execution.
 
 **Executive:** By hearing both sides, I'm convinced to do the sprint and take your precautions. I feel confident about the decision now.
 
@@ -148,7 +148,7 @@ What would a skeptic say?"
 
 ---
 
-## Framework 3: Mental Contrasting – Goals, Obstacles, and Realistic Planning
+## Framework 3: Mental Contrasting - Goals, Obstacles, and Realistic Planning
 
 ### Theoretical Foundation
 
@@ -201,7 +201,7 @@ or table it for now?"
 
 **Outcome:** If we succeed fully: machine downtime reduces by 40%, saving $5M annually. Smoother production schedule. Case study demonstrates AI ROI, boosting innovation reputation.
 
-**Obstacles:** Our equipment data is siloed and not all machines have IoT sensors—data integration is challenging. Plant managers might be skeptical of AI insights—change management hurdle. Our 6-person data science team might be stretched thin implementing a project at this scale.
+**Obstacles:** Our equipment data is siloed and not all machines have IoT sensors, so data integration is challenging. Plant managers might be skeptical of AI insights, which is a change management hurdle. Our 6-person data science team might be stretched thin implementing a project at this scale.
 
 **Assessment:** Success probability depends on mitigation. If we invest in sensors and augment the data team, technical hurdles are surmountable. Training workshops for plant staff address the human factor. Estimated success probability: 70%.
 
@@ -210,7 +210,7 @@ or table it for now?"
 - Phase 2: Hire vendor support for data team
 - Phase 3: Training sessions for plant managers
 
-**Executive:** With this clear-eyed view I'm still committed—and I'll brief the Board about needed investments. Mental contrasting prevented me from underestimating effort.
+**Executive:** With this clear-eyed view I'm still committed, and I'll brief the Board about needed investments. Mental contrasting prevented me from underestimating effort.
 
 ### Strategic Benefits
 
@@ -221,7 +221,7 @@ or table it for now?"
 
 ---
 
-## Framework 4: Reflective Equilibrium – Aligning Decisions with Principles
+## Framework 4: Reflective Equilibrium - Aligning Decisions with Principles
 
 ### Theoretical Foundation
 
@@ -271,7 +271,7 @@ Does it uphold them? Identify tensions and suggest resolution."
 2. Refine the principle: Reframe as enhancing work life (reducing email overload) rather than surveillance
 3. Policy tweak: "We respect privacy and use analytics only in aggregate form with consent"
 
-**Proposed equilibrium:** Implement with privacy by design—aggregated data, anonymity, employee consent. Revised decision: "Implement the AI in privacy-preserving way with employee consent."
+**Proposed equilibrium:** Implement with privacy by design: aggregated data, anonymity, employee consent. Revised decision: "Implement the AI in privacy-preserving way with employee consent."
 
 **Executive:** We'll proceed only with aggregate analysis and voluntary participation. This reflects our principles, not just the AI's suggestion.
 
@@ -284,7 +284,7 @@ Does it uphold them? Identify tensions and suggest resolution."
 
 ---
 
-## Framework 5: First-Principles Thinking – Fundamental Problem Solving
+## Framework 5: First-Principles Thinking - Fundamental Problem Solving
 
 ### Theoretical Foundation
 
@@ -318,7 +318,7 @@ What are the fundamental objectives and constraints, stripped of assumptions
 about current methods? What do we absolutely know? Is there a novel solution?"
 
 "Challenge my reasoning with 'Five Whys'. Why are we doing this? 
-Keep asking why until we reach basic truth—not industry norm."
+Keep asking why until we reach basic truth, not industry norm."
 ```
 
 ### Simulated Dialogue: First-Principles Thinking
@@ -337,7 +337,7 @@ Keep asking why until we reach basic truth—not industry norm."
 
 **Second Why:** Why is it keyword-based and not smarter?
 
-**Executive:** We've just used a basic search engine—it was standard approach and we lacked AI capability.
+**Executive:** We've just used a basic search engine. It was standard approach and we lacked AI capability.
 
 **Third Why:** Why did we lack AI capability?
 
@@ -357,7 +357,7 @@ Keep asking why until we reach basic truth—not industry norm."
 - Image-based search
 - Q&A interface guiding users
 
-**Executive:** We assumed a search bar because every site has one, but fundamentally it's about user intent. Let's explore natural language AI—it directly addresses intent in users' own terms. Much clearer than blindly following industry trend.
+**Executive:** We assumed a search bar because every site has one, but fundamentally it's about user intent. Let's explore natural language AI. It directly addresses intent in users' own terms. Much clearer than blindly following industry trend.
 
 ### Strategic Benefits
 
@@ -398,7 +398,7 @@ Fine-tuned LLM should be able to:
 
 ## Introduction: Beyond Pattern Matching to True Reasoning
 
-Traditional LLMs generate responses by predicting the most likely next token based on training data patterns. For simple tasks this works well. For complex reasoning—multi-step logic, novel problems, deep analysis—this approach fails dramatically.
+Traditional LLMs generate responses by predicting the most likely next token based on training data patterns. For simple tasks this works well. For complex reasoning (multi-step logic, novel problems, deep analysis), this approach fails dramatically.
 
 ### The Reasoning Challenge
 
@@ -422,7 +422,7 @@ Simply scaling model size doesn't fix this. The architecture itself must support
 
 ### Why CoT Works
 
-Human problem-solving is sequential. When we solve complex problems, we don't leap to answers—we work through steps:
+Human problem-solving is sequential. When we solve complex problems, we don't leap to answers. We work through steps:
 
 **Example: 24 × 17**
 
@@ -444,7 +444,7 @@ While powerful, CoT has limitations:
 
 ### Advanced Framework: Sketch-of-Thought (SoT)
 
-**Sketch-of-Thought** addresses verbosity by creating brief reasoning sketches—expert-level outlines using linguistic constraints and shorthand.
+**Sketch-of-Thought** addresses verbosity by creating brief reasoning sketches: expert-level outlines using linguistic constraints and shorthand.
 
 **Result:** 76% token reduction without accuracy loss.
 
@@ -701,7 +701,7 @@ Step 4: Valuation Check
 - Implication: Fairly valued to slightly undervalued given growth
 
 Step 5: Synthesis
-Given strong revenue growth, above-average margins, market leadership position, and fair valuation, the investment is attractive. Primary risk is customer concentration—recommend requiring customer diversification plans.
+Given strong revenue growth, above-average margins, market leadership position, and fair valuation, the investment is attractive. Primary risk is customer concentration, so we recommend requiring customer diversification plans.
 
 Recommendation: BUY (with concentration risk caveat)
 ```
@@ -799,7 +799,7 @@ LLMs don't "think." They **select tokens with highest statistical likelihood** b
 
 ### The "Hallucination" Paradox
 
-"Hallucinations" aren't bugs—they're features of how LLMs function. When a model generates plausible-sounding but false information with high confidence, it's doing exactly what it was trained to do: generate fluent, contextually relevant text.
+"Hallucinations" aren't bugs - they're features of how LLMs function. When a model generates plausible-sounding but false information with high confidence, it's doing exactly what it was trained to do: generate fluent, contextually relevant text.
 
 Worryingly: **New "reasoning" models (o1, o1-mini) hallucinate MORE frequently than predecessors.**
 
@@ -834,7 +834,7 @@ CMU + Microsoft study findings:
 - Users confident in their domain knowledge critically evaluate LLM outputs ✓
 - Users lacking domain expertise accept LLM suggestions uncritically ✗
 
-**Problem:** LLMs frequently assist people filling knowledge gaps in unfamiliar domains—exactly where critical thinking is weakest.
+**Problem:** LLMs frequently assist people filling knowledge gaps in unfamiliar domains, which is exactly where critical thinking is weakest.
 
 ### Limitation 4: Psychological Effects
 
@@ -916,7 +916,7 @@ Compare and contrast their responses. What's the same? What's different?
 Why might they diverge?"
 ```
 
-**Insight:** Divergence reveals where model training data or architecture makes a difference—highlighting areas of uncertainty.
+**Insight:** Divergence reveals where model training data or architecture makes a difference, highlighting areas of uncertainty.
 
 ### Practice 6: Explicit Confidence Calibration
 
@@ -1024,7 +1024,7 @@ Walk me through your reasoning, but also:
 
 ## Beyond Linear Reasoning: Advanced Cognitive Architectures
 
-Most LLM reasoning remains linear: one step follows the next. Advanced applications require **multi-dimensional thinking**—simultaneously holding multiple perspectives, exploring tensions, considering context from multiple angles.
+Most LLM reasoning remains linear: one step follows the next. Advanced applications require **multi-dimensional thinking**: simultaneously holding multiple perspectives, exploring tensions, considering context from multiple angles.
 
 ---
 
@@ -1233,7 +1233,7 @@ Emerging insight: The goal isn't "AI-first" but rather
 
 2. **Future Ancestor Workshops:** Participants embody their descendants 7 generations forward and "remember" back to now. What mattered? What helped? Roots thinking in deep time beyond anxiety.
 
-3. **Ecosystem Apprenticeships:** Weekly time in a local creek, forest, or garden—not to manage but to learn. Solutions aren't in our heads but in the wisdom of watersheds.
+3. **Ecosystem Apprenticeships:** Weekly time in a local creek, forest, or garden - not to manage but to learn. Solutions aren't in our heads but in the wisdom of watersheds.
 
 **Strategic value:** This isn't about finding solutions. It's about transforming the relationship between humans and Earth, enabling genuine transformation rather than compliance.
 
@@ -1676,7 +1676,7 @@ Outcome: Decision made with benefit of all five cognitive frameworks
 ```
 1. "Let's do WOOP on this initiative:
    Wish: [state goal]
-   Outcome: Imagine it succeeds fully—what does that look like?
+   Outcome: Imagine it succeeds fully - what does that look like?
    Obstacles: What real barriers exist?
    Plan: How do we overcome them or should we reconsider?
    Based on this analysis, should we commit?"
@@ -1769,7 +1769,7 @@ Outcome: Decision made with benefit of all five cognitive frameworks
 
 *Antithesis (Don't Acquire):* Capital constraints, integration risk, key person dependency, valuation may be high
 
-*Synthesis:* Acquire with contingencies—structure deal with earnouts tied to customer retention, retention bonuses for key people, integration plan with clear exit triggers if integration fails
+*Synthesis:* Acquire with contingencies: structure deal with earnouts tied to customer retention, retention bonuses for key people, integration plan with clear exit triggers if integration fails
 
 **Framework 4: First-Principles Thinking**
 
@@ -2091,13 +2091,13 @@ The goal is not to replace human thinking with AI, but to **augment and sharpen 
 
 When an executive can ask an AI thought partner:
 - "Help me apply first-principles thinking to this challenge"
-- "Give me a dialectical analysis—what's the strongest case against my position?"
+- "Give me a dialectical analysis - what's the strongest case against my position?"
 - "Walk me through mental contrasting on this goal"
 - "How does this decision align with our values?"
 
 ...that executive gains access to cognitive frameworks proven to improve judgment, unlock innovation, and build sustainable organizations.
 
-The LLMs trained on this material become true **thought partners**—not replacing human judgment but enabling **better judgment through better thinking.**
+The LLMs trained on this material become true **thought partners**, not replacing human judgment but enabling **better judgment through better thinking.**
 
 ---
 

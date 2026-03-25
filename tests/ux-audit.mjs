@@ -1,5 +1,5 @@
 /**
- * Puppeteer UX Audit — Mobile-first
+ * Puppeteer UX Audit - Mobile-first
  * Tests all pages for no-scroll compliance, page loads, favicon, and interactions.
  */
 
@@ -116,7 +116,7 @@ async function testPage(page, path, name) {
 // === Main ===
 (async () => {
   console.log('\n========================================');
-  console.log('  Mindmaker UX Audit — Mobile First');
+  console.log('  Mindmaker UX Audit - Mobile First');
   console.log('========================================');
 
   try { mkdirSync('tests/screenshots', { recursive: true }); } catch {}
@@ -173,7 +173,7 @@ async function testPage(page, path, name) {
     if (isOnboarding) {
       pass('Dashboard: Onboarding flow detected (first-time user)');
       await screenshot(page, 'dashboard-onboarding');
-      // Onboarding has its own no-scroll layout — verified by testPage above
+      // Onboarding has its own no-scroll layout - verified by testPage above
       // Mic button and bottom nav only appear after onboarding is complete
     } else {
       // Check mic button on main dashboard

@@ -12,7 +12,7 @@ const PILLARS = [
   {
     icon: Brain,
     title: "Memory Web",
-    description: "Your thoughts, organized. A living map of what you know, what you want, and how you think — portable to any AI.",
+    description: "Your thoughts, organized. A living map of what you know, what you want, and how you think, portable to any AI.",
     color: "from-violet-500 to-purple-600",
     glow: "shadow-violet-500/20",
   },
@@ -40,7 +40,7 @@ const JOURNEY_STEPS = [
 ]
 
 /* ------------------------------------------------------------------ */
-/*  Screen 1 — Hero                                                    */
+/*  Screen 1 - Hero                                                    */
 /* ------------------------------------------------------------------ */
 function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
   return (
@@ -72,7 +72,7 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
           </span>
         </h1>
         <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-          Voice your thoughts. CTRL organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
+          Voice your thoughts. CTRL organizes them into a Memory Web, your portable context that makes every AI smarter and instructions that make your team sharper.
         </p>
       </motion.div>
 
@@ -100,7 +100,7 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Screen 2 — Three Pillars                                           */
+/*  Screen 2 - Three Pillars                                           */
 /* ------------------------------------------------------------------ */
 function PillarsScreen() {
   return (
@@ -146,7 +146,7 @@ function PillarsScreen() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Screen 3 — How It Works + Export                                   */
+/*  Screen 3 - How It Works + Export                                   */
 /* ------------------------------------------------------------------ */
 function JourneyScreen({ onGetStarted }: { onGetStarted: () => void }) {
   const [activeStep, setActiveStep] = useState(0)
@@ -246,7 +246,7 @@ function JourneyScreen({ onGetStarted }: { onGetStarted: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Desktop Layout — viewport-contained, two-column                    */
+/*  Desktop Layout - viewport-contained, two-column                    */
 /* ------------------------------------------------------------------ */
 function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
   const [activeStep, setActiveStep] = useState(0)
@@ -287,7 +287,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             </span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Voice your thoughts. CTRL organizes them into a Memory Web — your portable context that makes every AI smarter, and instructions that make your team sharper.
+            Voice your thoughts. CTRL organizes them into a Memory Web, your portable context that makes every AI smarter and instructions that make your team sharper.
           </p>
         </motion.div>
 
@@ -313,7 +313,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
 
         {/* Two-column: Pillars + Journey */}
         <div className="grid grid-cols-2 gap-8">
-          {/* Left — Pillars */}
+          {/* Left - Pillars */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -348,7 +348,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             ))}
           </motion.div>
 
-          {/* Right — Journey + Export */}
+          {/* Right - Journey + Export */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -412,7 +412,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  HeroSection — entry point                                          */
+/*  HeroSection - entry point                                          */
 /* ------------------------------------------------------------------ */
 export function HeroSection() {
   const navigate = useNavigate()
@@ -425,7 +425,7 @@ export function HeroSection() {
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-purple-500/[0.03] pointer-events-none" />
 
-      {/* Header — always visible */}
+      {/* Header - always visible */}
       <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 py-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <img
@@ -446,7 +446,7 @@ export function HeroSection() {
 
       {/* Main content area */}
       {isMobile ? (
-        /* Mobile — swipeable 3-screen experience */
+        /* Mobile - swipeable 3-screen experience */
         <SwipeableCards
           className="relative z-10 flex-1 min-h-0"
           dotClassName="pb-1"
@@ -456,11 +456,11 @@ export function HeroSection() {
           <JourneyScreen onGetStarted={handleGetStarted} />
         </SwipeableCards>
       ) : (
-        /* Desktop — single viewport-contained layout */
+        /* Desktop - single viewport-contained layout */
         <DesktopLayout onGetStarted={handleGetStarted} />
       )}
 
-      {/* Footer — always visible */}
+      {/* Footer - always visible */}
       <footer className="relative z-10 px-5 sm:px-8 py-3 text-center flex-shrink-0">
         <p className="text-[10px] text-muted-foreground/30">
           Private by design. Portable by default.

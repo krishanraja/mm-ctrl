@@ -1,6 +1,6 @@
 /**
  * ContextExport Page
- * "Brief My AI" — export portable context for any AI tool.
+ * "Brief My AI" - export portable context for any AI tool.
  * Desktop: two-column (selectors left, preview right).
  * Mobile: stacked with sticky action buttons at bottom.
  */
@@ -392,7 +392,7 @@ export default function ContextExport() {
     );
   }
 
-  // Mobile layout — scrollable
+  // Mobile layout - scrollable
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
       {/* Header */}
@@ -415,7 +415,7 @@ export default function ContextExport() {
         </motion.div>
       </header>
 
-      {/* Content — scrollable */}
+      {/* Content - scrollable */}
       <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 space-y-4">
         {selectorsContent}
         <div>{actionButtons}</div>

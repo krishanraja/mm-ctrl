@@ -500,7 +500,7 @@ export const PeerBubbleChart: React.FC<PeerBubbleChartProps> = ({
           <div className="mt-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <p className="text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">{stats.peersAhead}</span> leaders ({Math.round((stats.peersAhead / stats.totalPeers) * 100)}%) 
-              are currently ahead—giving you clear targets to learn from and chase.
+              are currently ahead, giving you clear targets to learn from and chase.
             </p>
           </div>
         )}

@@ -16,11 +16,11 @@ Clear value propositions for each audience. Every claim ties back to one thing: 
 
 **CTRL**: Is a portable AI context platform
 
-**That**: Builds your AI double from two minutes of natural conversation, then exports your full context to any AI tool — so every interaction starts from depth, not from scratch
+**That**: Builds your AI double from two minutes of natural conversation, then exports your full context to any AI tool, so every interaction starts from depth, not from scratch
 
 **Unlike**: Custom GPTs (locked to one platform), manual system prompts (hours of work), or AI courses (theory, not speed)
 
-**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours — plus built-in thinking tools that already know your world and cut the path to decisions
+**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours, plus built-in thinking tools that already know your world and cut the path to decisions
 
 ### The Flywheel
 
@@ -31,7 +31,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 **Memory Web**
 - "Build a living knowledge base about yourself by just talking"
 - Every fact verified by you, encrypted at rest, fully portable
-- The foundation of decision speed — AI that knows your world before you ask
+- The foundation of decision speed. AI that knows your world before you ask.
 
 **Context Export (the killer feature)**
 - "One click. Every AI tool you use knows who you are."
@@ -45,7 +45,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - Faster from question to clarity than any conversation with a blank AI
 
 **Meeting Prep**
-- "Walk into every meeting already briefed — by AI that knows your priorities"
+- "Walk into every meeting already briefed, by AI that knows your priorities"
 - Contextual briefs generated from your Memory Web in seconds
 
 **Prompt Coach**
@@ -54,7 +54,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 **10X Skills & Patterns**
 - "AI surfaces your strengths to amplify and your blind spots to close"
-- Pattern detection from your Memory Web data — not generic assessments
+- Pattern detection from your Memory Web data, not generic assessments
 
 **AI Literacy Diagnostic**
 - "Know where you stand in 10 minutes. Not 10 hours of courses."
@@ -76,19 +76,19 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 **Emotional Jobs**
 - Stop feeling like AI is wasting your time
-- Feel the difference when AI actually knows you — it hits different
+- Feel the difference when AI actually knows you. It hits different.
 - Walk into every AI conversation with the confidence that the output will be relevant, specific, and fast
 - Stop watching other leaders pull ahead while you're still setting up context
 
 **Functional Jobs**
 - Make every AI conversation personalized in one click
-- Get from question to decision faster — with contextual support, not generic advice
+- Get from question to decision faster, with contextual support, not generic advice
 - Export context to any tool without prompt engineering skills
 - Reclaim the 30-60 minutes per day lost to AI context setup
 
 **Social Jobs**
 - Be the leader who uses AI at a level others notice
-- Share the approach with your team — not just the tool, the thinking
+- Share the approach with your team, not just the tool, the thinking
 - Walk into board conversations with AI fluency, not AI anxiety
 - Stay visibly ahead of leaders who use AI generically
 
@@ -104,7 +104,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 **CTRL**: Is a 4-hour executive bootcamp
 
-**That**: Aligns your team on AI decision criteria, surfaces hidden tensions, and produces a credible pilot charter — in one session
+**That**: Aligns your team on AI decision criteria, surfaces hidden tensions, and produces a credible pilot charter, all in one session
 
 **Unlike**: Generic offsite facilitators or vendor-driven "vision" sessions
 
@@ -122,7 +122,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - "Leave with a charter, not a slide deck. Decisions made, not deferred."
 
 **Provocation Report**
-- "Get the uncomfortable questions your board will ask — before they ask them"
+- "Get the uncomfortable questions your board will ask, before they ask them"
 
 ### Differentiation Matrix
 

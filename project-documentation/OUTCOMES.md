@@ -8,12 +8,12 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 
 ## Leader Outcomes
 
-### Immediate Outcomes (First Session — 2 Minutes)
+### Immediate Outcomes (First Session - 2 Minutes)
 
 **Portable AI Double Created**
 - AI double built from 3 guided voice questions. No typing. No forms.
 - Context exported to at least one AI tool (ChatGPT, Claude, Gemini, Cursor).
-- Leader experiences personalized AI output for the first time — and immediately feels the gap from what they had before.
+- Leader experiences personalized AI output for the first time, and immediately feels the gap from what they had before.
 
 **Decision Speed Unlocked**
 - The next AI conversation starts with context, not a blank page.
@@ -36,11 +36,11 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 
 **Decision Speed Compounding**
 - AI conversations that used to take 10 minutes of setup now take zero.
-- Decision Advisor or Meeting Prep used for at least one real decision — not a test.
+- Decision Advisor or Meeting Prep used for at least one real decision, not a test.
 - Leader starts reaching for AI first when facing a complex decision, because the output is actually useful now.
 
 **Memory Web Growth**
-- Added voice input beyond initial onboarding — context is deepening.
+- Added voice input beyond initial onboarding. Context is deepening.
 - Memory Web has 15+ verified facts across categories.
 - Pattern detection surfacing initial strengths and blind spots the leader had not articulated.
 - Context exports getting richer. Each AI tool gets a more complete picture.
@@ -68,10 +68,10 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 **Decision Speed as Standard**
 - Every AI tool the leader uses is personalized. Generic AI interactions are gone.
 - Time saved: 5-10 minutes of context setup eliminated per AI conversation.
-- AI is now a genuine thinking partner — informed, specific, and fast.
+- AI is now a genuine thinking partner: informed, specific, and fast.
 
 **Decision Quality Improvement**
-- Decision Advisor used for real strategic decisions — hiring, investment, priority calls.
+- Decision Advisor used for real strategic decisions: hiring, investment, priority calls.
 - Meeting Prep generating contextual briefs that surface relevant history and stakeholder dynamics.
 - Decisions are faster and sharper. The leader can articulate why.
 
@@ -97,13 +97,13 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 
 **Compounding AI Advantage**
 - Memory Web is rich, comprehensive, and current. It evolves as the leader evolves.
-- Every AI interaction feels like talking to an informed chief of staff — not a stranger.
+- Every AI interaction feels like talking to an informed chief of staff, not a stranger.
 - Pattern detection has surfaced actionable strengths and blind spots that changed how the leader operates.
 - The gap between this leader and peers using AI generically is now significant and widening.
 
 **Strategic Capability**
 - Leading AI conversations in leadership team and board meetings with earned credibility.
-- Contributing meaningfully to AI strategy — not just approving what others propose.
+- Contributing meaningfully to AI strategy, not just approving what others propose.
 - Mentoring direct reports on effective AI usage. Creating a multiplier effect.
 
 **Organizational Impact**
@@ -113,7 +113,7 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 
 **What Leaders Say:**
 - "AI used to be something my team did. Now it is how I think."
-- "I am making decisions in hours that used to take weeks. Not because I am rushing — because I have better input."
+- "I am making decisions in hours that used to take weeks. Not because I am rushing, but because I have better input."
 - "Three board members asked me to help them set up CTRL. That tells you everything."
 
 **Measurable:**
@@ -163,11 +163,11 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 
 ### Anti-Metrics (What We Do Not Measure)
 
-- **Number of facts stored** — Quality of context over quantity. A Memory Web with 30 sharp facts beats 300 generic ones.
-- **Time spent in CTRL** — We measure value delivered per second, not time on platform. The goal is speed, not engagement.
-- **Feature usage breadth** — Focused outcomes over feature bloat. Using one tool well beats touching every feature.
-- **Quiz scores** — The diagnostic is a mirror, not an exam. We do not gamify literacy.
-- **Daily active usage** — Leaders are busy. If CTRL makes them faster three times a week, that is a win. We do not need daily dopamine loops.
+- **Number of facts stored** - Quality of context over quantity. A Memory Web with 30 sharp facts beats 300 generic ones.
+- **Time spent in CTRL** - We measure value delivered per second, not time on platform. The goal is speed, not engagement.
+- **Feature usage breadth** - Focused outcomes over feature bloat. Using one tool well beats touching every feature.
+- **Quiz scores** - The diagnostic is a mirror, not an exam. We do not gamify literacy.
+- **Daily active usage** - Leaders are busy. If CTRL makes them faster three times a week, that is a win. We do not need daily dopamine loops.
 
 ---
 

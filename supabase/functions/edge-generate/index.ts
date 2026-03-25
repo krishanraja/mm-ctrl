@@ -210,7 +210,7 @@ Deno.serve(async (req) => {
       const allItems = [...(edgeProfile.strengths || []), ...(edgeProfile.weaknesses || [])];
       const target = allItems.find((item: any) => item.key === targetKey);
       if (target) {
-        targetContext = `\nTHIS IS FOR: ${target.label} — ${target.summary}`;
+        targetContext = `\nTHIS IS FOR: ${target.label} - ${target.summary}`;
       }
     }
 
@@ -230,7 +230,7 @@ ${memoryResult.context}
 ${targetContext}
 
 RULES:
-- Be specific to THIS leader's situation — use their actual company name, team details, goals, and constraints
+- Be specific to THIS leader's situation. Use their actual company name, team details, goals, and constraints
 - Do NOT fabricate data, metrics, or names not present in the context
 - If the context is sparse for certain sections, keep those sections brief rather than inventing details
 - Write in a professional tone appropriate for the artifact type
