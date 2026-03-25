@@ -27,6 +27,7 @@ import { useDevice } from '@/hooks/useDevice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
+import { AppHeader } from '@/components/memory-web/AppHeader';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 
 const FORMAT_OPTIONS: {
@@ -395,25 +396,21 @@ export default function ContextExport() {
   // Mobile layout - scrollable
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      {/* Header */}
-      <header className="flex-shrink-0 px-4 pt-4 pb-2">
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex items-center gap-2 mb-1">
-            <FileText className="h-5 w-5 text-accent" />
-            <h1 className="text-lg font-semibold text-foreground">
-              Export Context
-            </h1>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {exportResult
-              ? `${exportResult.token_count.toLocaleString()} tokens`
-              : 'Generate your portable context'}
-          </p>
-        </motion.div>
-      </header>
+      <AppHeader />
+
+      <div className="flex-shrink-0 px-4 pb-2">
+        <div className="flex items-center gap-2 mb-1">
+          <FileText className="h-5 w-5 text-accent" />
+          <h1 className="text-base font-semibold text-foreground">
+            Export Context
+          </h1>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {exportResult
+            ? `${exportResult.token_count.toLocaleString()} tokens`
+            : 'Generate your portable context'}
+        </p>
+      </div>
 
       {/* Content - scrollable */}
       <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 space-y-4">

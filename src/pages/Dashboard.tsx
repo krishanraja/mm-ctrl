@@ -6,6 +6,7 @@ import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDas
 import { GuidedFirstExperience } from "@/components/memory-web/GuidedFirstExperience"
 import { BottomNav } from "@/components/memory-web/BottomNav"
 import { DesktopSidebar } from "@/components/memory-web/DesktopSidebar"
+import { AppHeader } from "@/components/memory-web/AppHeader"
 import { useDevice } from "@/hooks/useDevice"
 import { useGuidedCapture } from "@/hooks/useGuidedCapture"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -57,7 +58,8 @@ export default function Dashboard() {
     if (isMobile) {
       return (
         <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-          <div className="flex-1 overflow-y-auto px-4 py-6">
+          <AppHeader />
+          <div className="flex-1 overflow-y-auto px-4 py-4">
             <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
               <EdgeViewLazy />
             </React.Suspense>

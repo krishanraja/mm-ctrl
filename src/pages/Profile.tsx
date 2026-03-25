@@ -21,6 +21,7 @@ import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
+import { AppHeader } from '@/components/memory-web/AppHeader';
 
 function ProfileContent() {
   const navigate = useNavigate();
@@ -179,18 +180,8 @@ export default function Profile() {
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      {/* Header */}
-      <header className="flex-shrink-0 flex items-center gap-4 px-4 py-3 border-b border-border">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 -ml-2 rounded-lg hover:bg-secondary transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        <h1 className="text-lg font-bold">Profile</h1>
-      </header>
+      <AppHeader showProfile={false} />
 
-      {/* Content */}
       <main className="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-4">
         <ProfileContent />
       </main>

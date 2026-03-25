@@ -18,13 +18,12 @@ export function DesktopSidebar() {
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-64 bg-background border-r border-border flex flex-col z-40">
-      <div className="px-6 py-5 border-b border-border">
-        <img
-          src="/mindmaker-full-logo.png"
-          alt="CTRL"
-          className="h-5 w-auto cursor-pointer"
-          onClick={() => navigate('/dashboard')}
-        />
+      <div
+        className="px-5 py-4 border-b border-border flex items-center gap-2.5 cursor-pointer hover:bg-secondary/30 transition-colors"
+        onClick={() => navigate('/dashboard')}
+      >
+        <img src="/mindmaker-favicon.png" alt="" className="h-7 w-7" />
+        <span className="text-base font-bold font-grotesk tracking-tight text-foreground">CTRL</span>
       </div>
 
       <nav className="flex-1 p-3 space-y-0.5">

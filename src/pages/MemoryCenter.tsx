@@ -16,6 +16,7 @@ import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
+import { AppHeader } from '@/components/memory-web/AppHeader';
 import type { UserMemoryFact } from '@/types/memory';
 
 export default function MemoryCenter() {
@@ -169,57 +170,44 @@ export default function MemoryCenter() {
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      <header className="flex-shrink-0 px-4 pt-4 pb-3">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-2.5"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
-                <Brain className="h-4.5 w-4.5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-foreground">Memory</h1>
-                <p className="text-[11px] text-muted-foreground leading-tight">
-                  Everything your AI knows about you
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => navigate('/profile')}
-              className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
-              aria-label="Profile"
-            >
-              <User className="h-4 w-4" />
-            </button>
-          </div>
+      <AppHeader />
 
-          {stats && (
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-accent text-xs font-medium">
-                <Brain className="h-3 w-3" />
-                {stats.total_facts} facts
+      <div className="flex-shrink-0 px-4 pb-2">
+        <div className="flex items-center gap-2.5 mb-2">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
+            <Brain className="h-4 w-4 text-white" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-foreground">Memory Browser</h1>
+            <p className="text-[10px] text-muted-foreground leading-tight">
+              Everything your AI knows about you
+            </p>
+          </div>
+        </div>
+
+        {stats && (
+          <div className="flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-accent text-xs font-medium">
+              <Brain className="h-3 w-3" />
+              {stats.total_facts} facts
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium">
+              <CheckCircle2 className="h-3 w-3" />
+              {stats.verified_rate}% verified
+            </span>
+            {(stats.temperature_distribution?.hot || 0) > 0 && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-500 text-xs font-medium">
+                <Flame className="h-3 w-3" />
+                {stats.temperature_distribution.hot} hot
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium">
-                <CheckCircle2 className="h-3 w-3" />
-                {stats.verified_rate}% verified
-              </span>
-              {(stats.temperature_distribution?.hot || 0) > 0 && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-500 text-xs font-medium">
-                  <Flame className="h-3 w-3" />
-                  {stats.temperature_distribution.hot} hot
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
-                <Thermometer className="h-3 w-3" />
-                {stats.temperature_distribution?.warm || 0} warm
-              </span>
-            </div>
-          )}
-        </motion.div>
-      </header>
+            )}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
+              <Thermometer className="h-3 w-3" />
+              {stats.temperature_distribution?.warm || 0} warm
+            </span>
+          </div>
+        )}
+      </div>
 
       <main className="flex-1 min-h-0 overflow-hidden px-4 py-2 flex flex-col">
         {content}
