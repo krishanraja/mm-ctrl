@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, X } from 'lucide-react';
+import { ChevronDown, Lock, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -12,9 +12,10 @@ interface Props {
   strength: EdgeStrength;
   onFeedback: (type: FeedbackType, key: string) => void;
   isPaid: boolean;
+  onAction: (capability: string, targetKey: string) => void;
 }
 
-export function StrengthPill({ strength, onFeedback, isPaid }: Props) {
+export function StrengthPill({ strength, onFeedback, isPaid, onAction }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -78,14 +79,30 @@ export function StrengthPill({ strength, onFeedback, isPaid }: Props) {
                 {strength.capabilities.map((cap) => {
                   const meta = SHARPEN_CAPABILITY_META[cap];
                   if (!meta) return null;
+                  const isFree = cap === 'lean_into';
+                  const isLocked = !isFree && !isPaid;
                   return (
                     <Button
                       key={cap}
                       variant="outline"
                       size="sm"
-                      className="h-7 text-xs border-teal-500/20 text-teal-700 dark:text-teal-300 hover:bg-teal-500/10"
+                      className={cn(
+                        'h-7 text-xs border-teal-500/20 text-teal-700 dark:text-teal-300 hover:bg-teal-500/10 gap-1.5',
+                        isFree && !isPaid && 'border-accent/30 text-accent',
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAction(cap, strength.key);
+                      }}
+                      disabled={isLocked}
                     >
+                      {isLocked && <Lock className="h-3 w-3" />}
                       {meta.label}
+                      {isFree && !isPaid && (
+                        <span className="text-[9px] bg-accent/20 text-accent px-1.5 py-0.5 rounded-full font-bold">
+                          FREE
+                        </span>
+                      )}
                     </Button>
                   );
                 })}

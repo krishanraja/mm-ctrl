@@ -87,11 +87,8 @@ export function GapPill({ weakness, onFeedback, isPaid, onAction }: Props) {
                       className="h-7 text-xs border-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 gap-1.5"
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (isPaid) {
-                          onAction(cap, weakness.key);
-                        }
+                        onAction(cap, weakness.key);
                       }}
-                      disabled={!isPaid}
                     >
                       {!isPaid && <Lock className="h-3 w-3" />}
                       {meta.label}

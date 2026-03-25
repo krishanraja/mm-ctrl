@@ -53,6 +53,7 @@ export function EdgeProfileCard({
                   strength={s}
                   onFeedback={onFeedback}
                   isPaid={isPaid}
+                  onAction={onAction}
                 />
               ))}
               {strengths.length === 0 && (
