@@ -5,6 +5,7 @@ import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashb
 import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
 import { GuidedFirstExperience } from "@/components/memory-web/GuidedFirstExperience"
 import { BottomNav } from "@/components/memory-web/BottomNav"
+import { DesktopSidebar } from "@/components/memory-web/DesktopSidebar"
 import { useDevice } from "@/hooks/useDevice"
 import { useGuidedCapture } from "@/hooks/useGuidedCapture"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -53,14 +54,28 @@ export default function Dashboard() {
 
   // Edge view
   if (activeView === 'edge') {
-    return (
-      <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-        <div className="flex-1 overflow-y-auto px-4 py-6">
-          <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
-            <EdgeViewLazy />
-          </React.Suspense>
+    if (isMobile) {
+      return (
+        <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+          <div className="flex-1 overflow-y-auto px-4 py-6">
+            <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
+              <EdgeViewLazy />
+            </React.Suspense>
+          </div>
+          <BottomNav />
         </div>
-        {isMobile && <BottomNav />}
+      )
+    }
+    return (
+      <div className="min-h-screen bg-background">
+        <DesktopSidebar />
+        <main className="ml-64 min-h-screen">
+          <div className="max-w-4xl mx-auto px-8 py-8">
+            <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
+              <EdgeViewLazy />
+            </React.Suspense>
+          </div>
+        </main>
       </div>
     )
   }

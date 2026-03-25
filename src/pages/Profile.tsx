@@ -19,7 +19,7 @@ import { useTheme } from '@/components/ui/theme-provider';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
-import { Sidebar } from '@/components/dashboard/desktop/Sidebar';
+import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 
 function ProfileContent() {
@@ -166,9 +166,9 @@ export default function Profile() {
   if (!isMobile) {
     return (
       <div className="min-h-screen bg-background">
-        <Sidebar />
-        <main className="ml-64 p-8">
-          <div className="max-w-md mx-auto">
+        <DesktopSidebar />
+        <main className="ml-64 min-h-screen">
+          <div className="max-w-md mx-auto px-8 py-8">
             <h1 className="text-2xl font-bold mb-6">Profile</h1>
             <ProfileContent />
           </div>
