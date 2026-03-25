@@ -1,19 +1,23 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap,
   Sparkles,
   PenTool,
   Layers,
+  TrendingUp,
+  AlertTriangle,
+  Brain,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { renderMarkdown } from '@/lib/renderMarkdown';
 import { useEdge } from '@/hooks/useEdge';
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
 import { EdgeProfileCard } from './EdgeProfileCard';
 import { SmartProbeCard } from './SmartProbeCard';
 import { EdgeOnboarding } from './EdgeOnboarding';
-import { EdgePaywall } from './EdgePaywall';
+import { EdgePaywall, SAMPLE_ARTIFACTS } from './EdgePaywall';
 import { DraftSheet } from './DraftSheet';
 import { ArtifactPreview } from './ArtifactPreview';
 import { SHARPEN_CAPABILITY_META, COVER_CAPABILITY_META } from '@/types/edge';
@@ -25,12 +29,25 @@ import type {
   IntelligenceGap,
 } from '@/types/edge';
 
+// ===== Pro teaser config =====
+
+const TEASER_KEYS = ['board_memo', 'strategy_doc', 'email', 'meeting_agenda', 'systemize'] as const;
+const TEASER_LABELS: Record<string, string> = {
+  board_memo: 'Board Memo',
+  strategy_doc: 'Strategy Doc',
+  email: 'Email Draft',
+  meeting_agenda: 'Meeting Agenda',
+  systemize: 'Leadership Framework',
+};
+
 // ===== Main EdgeView Component =====
 
 export default function EdgeView() {
   const {
+    profile,
     strengths,
     weaknesses,
+    intelligenceGaps,
     topGap,
     hasProfile,
     isLoading,
@@ -57,14 +74,23 @@ export default function EdgeView() {
   const [generatedTitle, setGeneratedTitle] = useState('');
   const [generatedActionId, setGeneratedActionId] = useState<string | null>(null);
 
+  // Pro teaser cycling state
+  const [teaserIndex, setTeaserIndex] = useState(0);
+
+  useEffect(() => {
+    if (hasAccess) return; // no teaser for paid users
+    const timer = setInterval(() => {
+      setTeaserIndex((prev) => (prev + 1) % TEASER_KEYS.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [hasAccess]);
+
   // Unified action handler for capabilities from pills
   const handleAction = useCallback(
     (capability: string, targetKey: string) => {
-      // Determine if this capability is free
       const isFreeCapability = capability === 'lean_into';
 
       if (!isFreeCapability && !hasAccess) {
-        // Look up the label for the paywall message
         const meta =
           SHARPEN_CAPABILITY_META[capability as SharpenCapability] ||
           COVER_CAPABILITY_META[capability as CoverCapability];
@@ -73,7 +99,6 @@ export default function EdgeView() {
         return;
       }
 
-      // Determine action type based on which capability set it belongs to
       const isSharpen = capability in SHARPEN_CAPABILITY_META;
       setActiveCapability(capability as EdgeCapability);
       setActiveTargetKey(targetKey);
@@ -96,7 +121,6 @@ export default function EdgeView() {
 
   const handleSmartProbeAction = useCallback(
     (gap: IntelligenceGap) => {
-      // Route based on resolution type
       switch (gap.resolution) {
         case 'voice_capture':
         case 'quick_confirm':
@@ -175,20 +199,63 @@ export default function EdgeView() {
     return <EdgeOnboarding onComplete={synthesize} />;
   }
 
+  // Current teaser sample
+  const teaserKey = TEASER_KEYS[teaserIndex];
+  const teaserContent = SAMPLE_ARTIFACTS[teaserKey] || '';
+  const teaserLabel = TEASER_LABELS[teaserKey] || '';
+
   // Full Edge view
   return (
     <>
-      <div className="space-y-6">
-        {/* Section header */}
+      <div className="space-y-5">
+        {/* Hero summary card */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2"
+          className="rounded-2xl border border-border bg-gradient-to-br from-accent/5 via-card to-purple-500/5 p-4 sm:p-5"
         >
-          <div className="p-1.5 rounded-lg bg-accent/10">
-            <Zap className="h-4 w-4 text-accent" />
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg shadow-accent/20">
+              <Zap className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Your Edge</h2>
+              <p className="text-xs text-muted-foreground">Based on your Memory Web</p>
+            </div>
           </div>
-          <h2 className="text-sm font-bold text-foreground">Your Edge Profile</h2>
+
+          {/* Stat chips */}
+          <div className="flex flex-wrap gap-2">
+            <motion.span
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 200, delay: 0.05 }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-500 text-xs font-medium"
+            >
+              <TrendingUp className="h-3 w-3" />
+              {strengths.length} strength{strengths.length !== 1 ? 's' : ''}
+            </motion.span>
+            <motion.span
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium"
+            >
+              <AlertTriangle className="h-3 w-3" />
+              {weaknesses.length} gap{weaknesses.length !== 1 ? 's' : ''}
+            </motion.span>
+            {intelligenceGaps.length > 0 && (
+              <motion.span
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 200, delay: 0.15 }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-500 text-xs font-medium"
+              >
+                <Brain className="h-3 w-3" />
+                {intelligenceGaps.length} intel gap{intelligenceGaps.length !== 1 ? 's' : ''}
+              </motion.span>
+            )}
+          </div>
         </motion.div>
 
         {/* Profile Card: Expandable Strengths + Weaknesses pills */}
@@ -199,6 +266,62 @@ export default function EdgeView() {
           isPaid={hasAccess}
           onAction={handleAction}
         />
+
+        {/* Ambient Pro teaser — free users only */}
+        {!hasAccess && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="rounded-2xl border border-accent/10 bg-card p-4 space-y-3"
+          >
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-accent" />
+              <h3 className="text-sm font-semibold text-foreground">What Edge Pro generates</h3>
+            </div>
+
+            {/* Cycling blurred artifact preview */}
+            <div className="relative rounded-xl border border-border overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={teaserKey}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="p-3 max-h-24 overflow-hidden text-xs"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(teaserContent) }}
+                />
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+              <div className="absolute bottom-0 inset-x-0 h-12 backdrop-blur-[2px] bg-background/40" />
+            </div>
+
+            {/* Label + soft CTA */}
+            <div className="flex items-center justify-between">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={teaserKey}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-xs text-muted-foreground font-medium"
+                >
+                  {teaserLabel}
+                </motion.span>
+              </AnimatePresence>
+              <button
+                onClick={() => {
+                  setPaywallCapability(teaserLabel);
+                  setPaywallOpen(true);
+                }}
+                className="text-xs text-accent hover:underline font-medium"
+              >
+                Unlock with Edge Pro &rarr;
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Smart Probe: Top intelligence gap with resolution-specific action */}
         {topGap && (
