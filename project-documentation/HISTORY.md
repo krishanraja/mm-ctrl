@@ -120,7 +120,7 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 ---
 
 ### Phase 5: Memory Web & Portable AI Context + CTRL Rebrand
-**Period**: February–March 2026
+**Period**: February-March 2026
 **Positioning**: "Clarity for Leaders" (rebranded from Mindmaker to CTRL)
 
 **Trigger**: Recognition that the real value isn't the diagnostic. It's making every AI tool a leader uses dramatically better through portable context.

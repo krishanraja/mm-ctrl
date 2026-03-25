@@ -372,7 +372,7 @@ AI analyzes the Memory Web to surface patterns: strengths to amplify, blind spot
 
 ### Features
 
-- Confidence scoring (0–1) on each pattern
+- Confidence scoring (0-1) on each pattern
 - Patterns derived from Memory Web facts
 - Auto-updated as Memory Web grows
 - Up to 4 patterns displayed per section on dashboard
