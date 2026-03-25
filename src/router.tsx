@@ -6,7 +6,7 @@ const Landing = lazy(() => import('@/pages/Landing'))
 const Auth = lazy(() => import('@/pages/Auth'))
 const AuthCallback = lazy(() => import('@/pages/AuthCallback'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
-// Think page redirected to Edge — kept for reference
+// Think page redirected to Edge - kept for reference
 // const Think = lazy(() => import('@/pages/Think'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
 const ContextExport = lazy(() => import('@/pages/ContextExport'))

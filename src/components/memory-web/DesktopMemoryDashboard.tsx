@@ -353,7 +353,7 @@ export function DesktopMemoryDashboard() {
             )}
           </div>
 
-          {/* Input Bar — Voice, Text, Import */}
+          {/* Input Bar - Voice, Text, Import */}
           <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
             <button
               onClick={isRecording ? stopRecording : startRecording}
@@ -383,7 +383,7 @@ export function DesktopMemoryDashboard() {
               onKeyDown={handleKeyDown}
               placeholder={hasData
                 ? 'Type a thought, or drop a markdown file anywhere...'
-                : 'Tell me about your role, company, and goals — or drop a .md file...'}
+                : 'Tell me about your role, company, and goals - or drop a .md file...'}
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
             />
             <button

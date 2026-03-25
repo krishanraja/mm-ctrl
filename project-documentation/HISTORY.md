@@ -120,10 +120,10 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 ---
 
 ### Phase 5: Memory Web & Portable AI Context + CTRL Rebrand
-**Period**: February–March 2026
+**Period**: February-March 2026
 **Positioning**: "Clarity for Leaders" (rebranded from Mindmaker to CTRL)
 
-**Trigger**: Recognition that the real value isn't the diagnostic — it's making every AI tool a leader uses dramatically better through portable context.
+**Trigger**: Recognition that the real value isn't the diagnostic. It's making every AI tool a leader uses dramatically better through portable context.
 
 **Key Features Added**:
 - **Memory Web**: Voice-first context extraction building a living knowledge base
@@ -147,7 +147,7 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 **Key Copy/Positioning**:
 - Headline: "Talk. We learn. Every AI gets smarter."
 - Subheadline: "Narrate your world and CTRL builds your personal Memory Web"
-- CTA: "Get Started Free — 2 minutes to your first export"
+- CTA: "Get Started Free - 2 minutes to your first export"
 
 **Outcomes**:
 - Product shifted from assessment tool to context platform
@@ -197,11 +197,11 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 ### Pivot 8: From AI Tool to AI Infrastructure
 **Before**: CTRL as another AI tool to learn
 **After**: CTRL as the layer that makes every AI tool you already use better
-**Rationale**: Leaders don't want another tool — they want their existing tools to work better
+**Rationale**: Leaders don't want another tool. They want their existing tools to work better.
 
 ### Pivot 9: From Mindmaker to CTRL
-**Before**: "Mindmaker" — broad, abstract name suggesting AI mindset
-**After**: "CTRL" — sharp, action-oriented name positioning around decision speed for leaders
+**Before**: "Mindmaker" - broad, abstract name suggesting AI mindset
+**After**: "CTRL" - sharp, action-oriented name positioning around decision speed for leaders
 **Rationale**: The rebrand to CTRL reflects the product's core value: giving leaders clarity and control over decisions in an AI-augmented world. "Clarity for Leaders" as tagline.
 
 ---
@@ -228,4 +228,4 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 | 2.1 | Jan 2025 | AI Literacy repositioning, unified architecture |
 | 3.0 | Jan 2026 | Complete rebuild with Apple-like design system |
 | 4.0 | Feb-Mar 2026 | Memory Web, Context Export, Portable AI Double |
-| 4.1 | Mar 2026 | Rebrand from Mindmaker to CTRL — "Clarity for Leaders" |
+| 4.1 | Mar 2026 | Rebrand from Mindmaker to CTRL: "Clarity for Leaders" |

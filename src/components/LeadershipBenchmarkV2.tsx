@@ -650,7 +650,7 @@ export const LeadershipBenchmarkV2: React.FC<LeadershipBenchmarkV2Props> = ({
             return (
               <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
                 Your pattern: Strong {strongLabel} ({Math.round(strongest.score_numeric)}/100) but weaker {weakLabel} ({Math.round(weakest.score_numeric)}/100). 
-                This gap creates tension—{strongest.score_numeric > 70 ? 'you envision possibilities but struggle to execute systematically' : 'you have foundation but lack strategic integration'}. 
+                This gap creates tension, and {strongest.score_numeric > 70 ? 'you envision possibilities but struggle to execute systematically' : 'you have foundation but lack strategic integration'}. 
                 Strengthening {weakLabel} will amplify your existing strength in {strongLabel}.
               </p>
             );
@@ -777,7 +777,7 @@ function generateQuickWins(
       },
       decision_velocity: {
         title: `Accelerate Decisions: Cut ${dimLabel} Time by 40%`,
-        impact: `With ${dimLabel} at ${score}/100, you're spending 2-3x longer on decisions than peers. Use AI to pre-analyze options before meetings—generate tradeoff matrices and stakeholder impact assessments. For ${role}s at ${size} companies, this typically saves 6-10 hours weekly.`
+        impact: `With ${dimLabel} at ${score}/100, you're spending 2-3x longer on decisions than peers. Use AI to pre-analyze options before meetings. Generate tradeoff matrices and stakeholder impact assessments. For ${role}s at ${size} companies, this typically saves 6-10 hours weekly.`
       },
       experimentation_cadence: {
         title: `Launch Your First AI Pilot This Month`,
@@ -789,7 +789,7 @@ function generateQuickWins(
       },
       alignment_communication: {
         title: `Fix Stakeholder Misalignment in 1 Week`,
-        impact: `With ${dimLabel} at ${score}/100, you're losing momentum to communication friction. Build AI-powered templates for stakeholder updates at ${company}—address their specific priorities using their language. Reduce alignment meetings by 30% and accelerate approvals.`
+        impact: `With ${dimLabel} at ${score}/100, you're losing momentum to communication friction. Build AI-powered templates for stakeholder updates at ${company} to address their specific priorities using their language. Reduce alignment meetings by 30% and accelerate approvals.`
       },
       risk_governance: {
         title: `Prevent Future AI Crises: Draft Policy Today`,
@@ -813,7 +813,7 @@ function generateQuickWins(
     const riskWinMap: Record<string, { title: string; impact: string }> = {
       skills_gap: {
         title: 'Close Your Team\'s AI Skills Gap Fast',
-        impact: `As ${role}, your team's capability gaps are slowing adoption. Focus training on the 3 tools most relevant to ${industry}—most teams see 50%+ proficiency within 3 weeks of targeted upskilling.`
+        impact: `As ${role}, your team's capability gaps are slowing adoption. Focus training on the 3 tools most relevant to ${industry}. Most teams see 50%+ proficiency within 3 weeks of targeted upskilling.`
       },
       shadow_ai: {
         title: 'Discover & Secure Hidden AI Tools',

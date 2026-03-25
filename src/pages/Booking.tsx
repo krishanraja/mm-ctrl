@@ -16,7 +16,7 @@ const SOURCE_MESSAGES: Record<string, { title: string; subtitle: string }> = {
   'mission-help': {
     title: 'Get Unstuck',
     subtitle:
-      "You've been working on your mission — let's troubleshoot what's blocking you.",
+      "You've been working on your mission. Let's troubleshoot what's blocking you.",
   },
   'high-performer': {
     title: 'Accelerate Your Growth',

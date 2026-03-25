@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
 
     if (dimensionScores?.length) {
       const dimLines = dimensionScores.map(
-        (d: any) => `- ${d.dimension_key}: ${d.score}/100 (${d.tier})${d.explanation ? ` — ${d.explanation}` : ""}`,
+        (d: any) => `- ${d.dimension_key}: ${d.score}/100 (${d.tier})${d.explanation ? ` - ${d.explanation}` : ""}`,
       );
       supplementary.push(`## Assessment Dimension Scores\n${dimLines.join("\n")}`);
     }
@@ -166,7 +166,7 @@ RULES:
 - Map each to 1-3 relevant capabilities from the lists above
 - Weaknesses should be prioritized by impact on the leader's stated objectives
 - Do NOT include any strength/weakness the user has explicitly rejected
-- Be specific to THIS leader — no generic advice
+- Be specific to THIS leader. No generic advice
 
 OUTPUT FORMAT (respond in valid JSON):
 {
@@ -283,7 +283,7 @@ OUTPUT FORMAT (respond in valid JSON):
 });
 
 /**
- * Compute intelligence gaps — what data is missing for a 10/10 profile
+ * Compute intelligence gaps - what data is missing for a 10/10 profile
  */
 function computeIntelligenceGaps(
   memoryResult: { factCount: number; patternCount: number; context: string },
@@ -310,7 +310,7 @@ function computeIntelligenceGaps(
     {
       keyword: "business context",
       category: "fact_gap",
-      prompt: "Tell me about your company — what does it do, how big is the team, what stage are you at?",
+      prompt: "Tell me about your company: what does it do, how big is the team, what stage are you at?",
       impact: "Would make generated artifacts much more specific to your situation",
     },
     {
@@ -328,7 +328,7 @@ function computeIntelligenceGaps(
     {
       keyword: "preferences",
       category: "fact_gap",
-      prompt: "How do you prefer to communicate — direct or diplomatic? Fast or thorough?",
+      prompt: "How do you prefer to communicate: direct or diplomatic? Fast or thorough?",
       impact: "Would tune drafted artifacts to match your voice",
     },
   ];

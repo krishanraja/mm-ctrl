@@ -102,11 +102,11 @@ As LLM adoption accelerates, a concerning paradox emerges: **increased AI usage 
 
 #### How LLMs Actually Work
 
-LLMs don't "reason"—they **select tokens with highest statistical likelihood** based on training data.
+LLMs don't "reason" - they **select tokens with highest statistical likelihood** based on training data.
 
 **Key Insight:** When multiple valid responses exist, non-deterministic outputs result. Statistically significant representation in training data becomes the model's "truth."
 
-Example: When asked to imagine a "King," the vast majority of people imagine a European male (reflecting training data bias), not Arabian, African, or chess piece—demonstrating statistical token prediction.
+Example: When asked to imagine a "King," the vast majority of people imagine a European male (reflecting training data bias), not Arabian, African, or chess piece, demonstrating statistical token prediction.
 
 ### 4. ADVANCING BEYOND LIMITATIONS: DIALECTICAL REASONING SYSTEMS
 
@@ -120,7 +120,7 @@ Recent work in dialectical reasoning (AERIS framework) shows LLMs can move beyon
 
 **Key Capability:** Transforms questions themselves rather than just answering them
 
-**Example—Climate Crisis:**
+**Example - Climate Crisis:**
 - Standard approach: Lists renewable energy, carbon capture, etc.
 - AERIS approach: "The climate crisis isn't happening *to us*; it's happening *as us*. How do we transform our relationship with Earth?"
 - Result: Generates practices (Carbon Confession Circles, Future Ancestor Workshops, Ecosystem Apprenticeships) rather than technical solutions
@@ -329,11 +329,11 @@ When executives can interact with AI thought partners that understand:
 
 ...they gain access to **cognitive frameworks proven to improve judgment and unlock innovation.**
 
-The LLMs trained on this material become true **thought partners**—not replacing human judgment but enabling **better judgment through better thinking.**
+The LLMs trained on this material become true **thought partners**, not replacing human judgment but enabling **better judgment through better thinking.**
 
 ### The Core Principle
 
-> *"AI literacy is about compounding leadership performance—using AI to think better, faster, and more creatively as a leader, while maintaining human judgment as the final decision authority."*
+> *"AI literacy is about compounding leadership performance: using AI to think better, faster, and more creatively as a leader, while maintaining human judgment as the final decision authority."*
 
 This requires:
 - Explicit reasoning structures (not just pattern matching)
@@ -342,7 +342,7 @@ This requires:
 - Continuous learning (not static deployment)
 - Human values (not algorithmic optimization)
 
-When these elements combine, organizations develop the **"human operating system"** for the AI era—shared language of reasoning, clear judgment under uncertainty, and opportunity recognition that converts AI potential into measurable value.
+When these elements combine, organizations develop the **"human operating system"** for the AI era: shared language of reasoning, clear judgment under uncertainty, and opportunity recognition that converts AI potential into measurable value.
 
 ---
 

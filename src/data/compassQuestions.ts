@@ -13,7 +13,7 @@ export const COMPASS_QUESTIONS: CompassDimension[] = [
     name: 'Priority Problem Identification',
     question: 'If you could wave a magic wand and have AI solve one problem in your business tomorrow, what would it be?',
     timeLimit: 15,
-    example: 'e.g., "Our sales team drowns in admin work—if AI could handle CRM updates and follow-ups, they would have 10 more hours a week to sell."'
+    example: 'e.g., "Our sales team drowns in admin work. If AI could handle CRM updates and follow-ups, they would have 10 more hours a week to sell."'
   },
   {
     id: 'team_alignment',

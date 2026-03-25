@@ -75,14 +75,14 @@
 
 ### Describing the Product
 ```
-CTRL — Clarity for Leaders
+CTRL: Clarity for Leaders
 
 [One-sentence outcome tied to decision speed]
 
 How It Works:
-1. [Step 1 — voice input]
-2. [Step 2 — context built]
-3. [Step 3 — export everywhere]
+1. [Step 1 - voice input]
+2. [Step 2 - context built]
+3. [Step 3 - export everywhere]
 
 Result: [Specific measurable improvement]
 ```
@@ -90,14 +90,14 @@ Result: [Specific measurable improvement]
 ### Value Props
 ```
 Problem: [Specific decision-speed pain point]
-Without CTRL: [What happens — slow, generic, repeated]
-With CTRL: [What changes — fast, personalized, portable]
+Without CTRL: [What happens - slow, generic, repeated]
+With CTRL: [What changes - fast, personalized, portable]
 ```
 
 ### Social Proof
 ```
 "[Specific result tied to speed or decision quality]"
-— [Role], [Company context]
+- [Role], [Company context]
 ```
 
 ---
@@ -130,18 +130,18 @@ With CTRL: [What changes — fast, personalized, portable]
 
 ## Terminology Standards
 
-**AI Double** — Not "AI assistant", "AI clone", "digital twin"
-**Memory Web** — Not "knowledge base", "context store", "profile"
-**Context Export** — Not "integration", "sync", "connection"
-**Voice Input** — Not "voice note", "recording", "dictation"
-**Decision Advisor** — Not "chatbot", "recommendation engine"
+**AI Double** - Not "AI assistant", "AI clone", "digital twin"
+**Memory Web** - Not "knowledge base", "context store", "profile"
+**Context Export** - Not "integration", "sync", "connection"
+**Voice Input** - Not "voice note", "recording", "dictation"
+**Decision Advisor** - Not "chatbot", "recommendation engine"
 
 ---
 
 ## Email/Communication Style
 
 ### Subject Lines
-- Speed + Specificity: "Your AI double is ready — export to Claude now"
+- Speed + Specificity: "Your AI double is ready - export to Claude now"
 - Outcome-focused: "3 decisions, half the time"
 - No clickbait: No "You won't believe...", "The secret to..."
 - No FOMO: No "Last chance", "Only X spots"
@@ -176,27 +176,27 @@ ctrl.ai
 
 ### Post Structure
 ```
-[Hook — a decision-speed insight or counterintuitive truth]
+[Hook - a decision-speed insight or counterintuitive truth]
 
-[Context — 2-3 sentences max]
+[Context - 2-3 sentences max]
 
-[Takeaway — what this means for leaders]
+[Takeaway - what this means for leaders]
 
-[CTA if appropriate — never forced]
+[CTA if appropriate - never forced]
 ```
 
 ---
 
 ## Brand Don'ts
 
-- **Don't oversell** — Let speed and outcomes speak.
-- **Don't use FOMO** — No artificial urgency. The urgency is real.
-- **Don't be cute** — No puns. No clever wordplay. Clarity over cleverness.
-- **Don't apologize** — Confident in value. No hedging.
-- **Don't use emojis** — Professional always.
-- **Don't use exclamation marks** — One per page max. Calm confidence.
-- **Don't say "AI-powered"** — Everything is AI-powered now. Say what it does.
-- **Don't lead with features** — Lead with the decision-speed outcome.
+- **Don't oversell** - Let speed and outcomes speak.
+- **Don't use FOMO** - No artificial urgency. The urgency is real.
+- **Don't be cute** - No puns. No clever wordplay. Clarity over cleverness.
+- **Don't apologize** - Confident in value. No hedging.
+- **Don't use emojis** - Professional always.
+- **Don't use exclamation marks** - One per page max. Calm confidence.
+- **Don't say "AI-powered"** - Everything is AI-powered now. Say what it does.
+- **Don't lead with features** - Lead with the decision-speed outcome.
 
 ---
 
@@ -215,7 +215,7 @@ ctrl.ai
 
 ### Photography
 - Real people, not stock photos
-- Leaders in motion — deciding, speaking, leading
+- Leaders in motion - deciding, speaking, leading
 - Business context, not generic offices
 - Krish headshot for founder/trust sections
 

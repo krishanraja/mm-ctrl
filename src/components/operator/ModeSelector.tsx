@@ -16,7 +16,7 @@ export function ModeSelector({ onSelectLeader, onSelectOperator }: ModeSelectorP
           How do you want to use AI?
         </h2>
         <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
-          Two paths, both designed for leaders who need real results—not theory
+          Two paths, both designed for leaders who need real results, not theory
         </p>
       </div>
 
@@ -95,7 +95,7 @@ export function ModeSelector({ onSelectLeader, onSelectOperator }: ModeSelectorP
               </div>
               
               <p className="text-muted-foreground text-sm sm:text-base mb-3 sm:mb-6 flex-1">
-                One clear decision per week. Personalized to your business mix. No fluff—just your next move.
+                One clear decision per week. Personalized to your business mix. No fluff, just your next move.
               </p>
 
               <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-6 flex-shrink-0">

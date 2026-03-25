@@ -68,7 +68,7 @@ Return ONLY valid JSON (no markdown code blocks):
     "stakeholder_engagement": 42
   },
   "tier": "Establishing",
-  "tierDescription": "Emerging Leader—Building awareness, ready to start experimenting.",
+  "tierDescription": "Emerging Leader - Building awareness, ready to start experimenting.",
   "focusAreas": ["Identify one high-value AI use case this month", "Run team AI workshop to build excitement", "Craft simple AI story for next board meeting"],
   "quickWins": ["This week: Try ChatGPT for one daily task", "This month: Host 30-min AI demo with team"]
 }`;

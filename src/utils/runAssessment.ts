@@ -227,7 +227,7 @@ function generateDefaultTensions(dimensionScores: any[], contactData?: any): any
   if (highest.score - lowest.score >= 20) {
     tensions.push({
       key: secondLowest.key || 'contrast',
-      summary: `You scored ${highest.score}/100 in ${formatDimensionName(highest.key)} but only ${lowest.score}/100 in ${formatDimensionName(lowest.key)}. This ${highest.score - lowest.score}-point gap means you have vision without execution capability—or capability without direction. Pick one to fix first.`
+      summary: `You scored ${highest.score}/100 in ${formatDimensionName(highest.key)} but only ${lowest.score}/100 in ${formatDimensionName(lowest.key)}. This ${highest.score - lowest.score}-point gap means you have vision without execution capability, or capability without direction. Pick one to fix first.`
     });
   } else {
     tensions.push({
@@ -240,7 +240,7 @@ function generateDefaultTensions(dimensionScores: any[], contactData?: any): any
   if (sortedScores.length > 2 && secondLowest.score < 60) {
     tensions.push({
       key: secondLowest.key || 'secondary',
-      summary: `Your ${secondLowest.score}/100 in ${formatDimensionName(secondLowest.key)} compounds your ${formatDimensionName(lowest.key)} gap. Fixing one without the other won't move the needle. Start with ${formatDimensionName(lowest.score < secondLowest.score ? lowest.key : secondLowest.key)}—it's the bottleneck.`
+      summary: `Your ${secondLowest.score}/100 in ${formatDimensionName(secondLowest.key)} compounds your ${formatDimensionName(lowest.key)} gap. Fixing one without the other won't move the needle. Start with ${formatDimensionName(lowest.score < secondLowest.score ? lowest.key : secondLowest.key)}. It's the bottleneck.`
     });
   }
   

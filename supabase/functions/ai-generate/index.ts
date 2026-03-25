@@ -265,7 +265,7 @@ function buildPrompt(assessmentData: any, contactData: any, deepProfileData?: an
   const assessmentContext = Object.entries(assessmentData)
     .map(([category, answer]) => {
       const { score, interpretation } = interpretResponse(category, answer as string);
-      return `- ${category}: ${score}/5 — ${interpretation}`;
+      return `- ${category}: ${score}/5 - ${interpretation}`;
     })
     .join('\n');
 
@@ -336,7 +336,7 @@ TIME WASTE ANALYSIS (PAIN POINT - ADDRESS DIRECTLY):
 - Examples of waste: ${Array.isArray(timeWaste.examples) ? timeWaste.examples.join('; ') : (deepProfileData.timeWasteExamples || 'Not specified')}
 
 TASKS THEY WANT TO DELEGATE (CREATE PROMPTS FOR THESE):
-${Array.isArray(delegateTasks) && delegateTasks.length > 0 ? delegateTasks.map((t: string) => `- "${t}" — CREATE A PROMPT THAT AUTOMATES THIS`).join('\n') : '- Not specified'}
+${Array.isArray(delegateTasks) && delegateTasks.length > 0 ? delegateTasks.map((t: string) => `- "${t}" - CREATE A PROMPT THAT AUTOMATES THIS`).join('\n') : '- Not specified'}
 
 BIGGEST CHALLENGE (THIS IS THE #1 PAIN - ADDRESS FIRST):
 "${deepProfileData.biggestChallenge || 'Not specified'}"
@@ -363,7 +363,7 @@ You are a world-class AI leadership advisor operating at McKinsey partner-level 
 1. SPECIFICITY: Reference their exact role, company, scores, and challenges. No generic advice.
 2. TENSION REVELATION: Surface contradictions they haven't seen. Make them say "I never thought of it that way."
 3. ACTIONABLE PRECISION: Every recommendation includes WHO does WHAT by WHEN.
-4. STRATEGIC FRAMING: Connect AI to growth, competitive advantage, and value creation—not just "efficiency."
+4. STRATEGIC FRAMING: Connect AI to growth, competitive advantage, and value creation, not just "efficiency."
 5. COGNITIVE FRAMEWORKS: Apply A/B Framing, Dialectical Reasoning, Mental Contrasting, Reflective Equilibrium, and First-Principles Thinking.
 
 ${profileContext}
@@ -466,7 +466,7 @@ Before generating, verify each output passes these tests:
   ],
   
   "firstMoves": [
-    "Move 1: [WHO] [ACTION] [WHEN] — addresses their biggest challenge: '${deepProfileData?.biggestChallenge || 'key priority'}'",
+    "Move 1: [WHO] [ACTION] [WHEN] - addresses their biggest challenge: '${deepProfileData?.biggestChallenge || 'key priority'}'",
     "Move 2: [SPECIFIC ACTION] addressing their lowest score dimension",
     "Move 3: [SPECIFIC ACTION] that leverages their highest score as an advantage"
   ]
@@ -800,12 +800,12 @@ function getFallbackContent() {
     yourNextMove: "You will identify and delegate 3 recurring decisions to your direct report by Friday to reclaim 4+ hours weekly. First step: List the 5 approvals you handled most this week and pick the easiest to hand off today.",
     dimensionScores: [
       { key: "ai_fluency", score: 63, label: "Establishing", summary: "Your 63/100 in AI Fluency means you can discuss AI strategically but may miss practical implementation gaps. Competitors at 80+ are already automating your manual work." },
-      { key: "decision_velocity", score: 71, label: "Advancing", summary: "Your 71/100 in Decision Velocity is a real advantage—you can greenlight pilots faster than committee-bound peers. Leverage this by launching one AI experiment this week." },
+      { key: "decision_velocity", score: 71, label: "Advancing", summary: "Your 71/100 in Decision Velocity is a real advantage. You can greenlight pilots faster than committee-bound peers. Leverage this by launching one AI experiment this week." },
       { key: "delegation_augmentation", score: 54, label: "Establishing", summary: "Your 54/100 in Delegation is your biggest gap. You're doing work your direct reports or AI should own. This is costing you 5-10 hours of strategic time weekly." }
     ],
     tensions: [
-      { key: "velocity_vs_delegation", summary: "Your 71/100 in Decision Velocity is undercut by your 54/100 in Delegation. You can decide fast, but you're deciding on things you shouldn't touch. You're a fast engine pulling a heavy load—lighten it." },
-      { key: "fluency_vs_execution", summary: "Your 63/100 AI Fluency shows you understand AI's potential, but your 54/100 Delegation means that knowledge isn't translating to team capability. You're the only one who 'gets it'—that's a single point of failure." }
+      { key: "velocity_vs_delegation", summary: "Your 71/100 in Decision Velocity is undercut by your 54/100 in Delegation. You can decide fast, but you're deciding on things you shouldn't touch. You're a fast engine pulling a heavy load. Lighten it." },
+      { key: "fluency_vs_execution", summary: "Your 63/100 AI Fluency shows you understand AI's potential, but your 54/100 Delegation means that knowledge isn't translating to team capability. You're the only one who 'gets it,' and that's a single point of failure." }
     ],
     risks: [
       { key: "shadow_ai", level: "medium", description: "Your delegation and governance gaps mean your team is likely using AI tools without your oversight. Expect a data handling question or compliance flag within 60 days. Audit tool usage this week." },
@@ -834,7 +834,7 @@ function getFallbackContent() {
         title: "Time Reclaim Prompts",
         description: "Automate the tasks eating your calendar",
         whatItsFor: "Immediate time savings on recurring work",
-        whenToUse: "Daily—before any task you've done more than twice",
+        whenToUse: "Daily, before any task you've done more than twice",
         howToUse: "Use directly in ChatGPT or Claude",
         prompts: [
           "I spend [X hours/week] on [TASK]. Break it into steps and tell me which ones AI can handle. Be specific about which tool for each step.",

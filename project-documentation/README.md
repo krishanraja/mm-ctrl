@@ -5,7 +5,7 @@
 This folder contains all technical and strategic documentation for the CTRL portable AI context platform.
 
 **Last Updated:** 2026-03-24
-**Current Version:** v4.1 (CTRL rebrand — Clarity for Leaders)
+**Current Version:** v4.1 (CTRL rebrand: Clarity for Leaders)
 
 ---
 
@@ -40,7 +40,7 @@ This folder contains all technical and strategic documentation for the CTRL port
 
 ## Quick Start for Sales Agents
 
-1. Read [SALES_BRIEF.md](./SALES_BRIEF.md) — everything you need in one page
+1. Read [SALES_BRIEF.md](./SALES_BRIEF.md) - everything you need in one page
 2. Review [VALUE_PROP.md](./VALUE_PROP.md) for differentiation and positioning
 3. Check [ICP.md](./ICP.md) for who to target (and who NOT to target)
 4. See [BRANDING.md](./BRANDING.md) for voice and tone in emails
@@ -81,7 +81,7 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 
 ### Product Positioning
 - **Tagline**: "Clarity for Leaders"
-- **Core Value**: Decision speed for leaders — portable AI context that makes every AI tool personalized
+- **Core Value**: Decision speed for leaders. Portable AI context that makes every AI tool personalized
 - **Time to Value**: 2 minutes to first export
 
 ### Design Philosophy
@@ -136,7 +136,7 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 | Field | Value |
 |-------|-------|
 | Documentation last updated | 2026-03-24 |
-| Current product version | v4.1 (CTRL rebrand — Clarity for Leaders) |
+| Current product version | v4.1 (CTRL rebrand: Clarity for Leaders) |
 | Architecture version | Single DB-based architecture |
 | Design system version | v3.0 (Light mode, Apple-like) |
 | AI primary model | OpenAI GPT-4o |

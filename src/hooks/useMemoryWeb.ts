@@ -59,7 +59,7 @@ export function useMemoryWeb() {
 
       const withArchived = await baseQuery().is('archived_at', null);
       if (withArchived.error) {
-        // archived_at column likely missing — query without it
+        // archived_at column likely missing - query without it
         const fallback = await baseQuery();
         factData = fallback.data;
       } else {

@@ -17,7 +17,7 @@ export type CaptureArea = 'identity' | 'work' | 'goals';
 const GUIDED_PROMPTS: Record<CaptureArea, { title: string; prompt: string; hint: string }> = {
   identity: {
     title: "Who You Are",
-    prompt: "Tell me about yourself — your role, your company, and what you're known for.",
+    prompt: "Tell me about yourself: your role, your company, and what you're known for.",
     hint: "Example: \"I'm a VP of Product at a 200-person fintech startup. I'm known for building consensus across engineering and design teams.\"",
   },
   work: {
@@ -28,7 +28,7 @@ const GUIDED_PROMPTS: Record<CaptureArea, { title: string; prompt: string; hint:
   goals: {
     title: "Where You're Headed",
     prompt: "What does success look like for you in the next 90 days? What's in your way?",
-    hint: "Example: \"I need to ship our v2 product, hire a senior engineer, and reduce customer churn by 15%. My biggest blocker is bandwidth — I'm in meetings 6 hours a day.\"",
+    hint: "Example: \"I need to ship our v2 product, hire a senior engineer, and reduce customer churn by 15%. My biggest blocker is bandwidth. I'm in meetings 6 hours a day.\"",
   },
 };
 

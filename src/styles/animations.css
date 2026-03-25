@@ -138,7 +138,7 @@
 
 /* ── Memory Web ambient effects ────────────────────────────────────────── */
 
-/* Breathing glow — used on hero elements */
+/* Breathing glow - used on hero elements */
 @keyframes breathe {
   0%, 100% {
     box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
@@ -154,7 +154,7 @@
   animation: breathe 4s ease-in-out infinite;
 }
 
-/* Orbit ring — subtle rotating ring for the web centre */
+/* Orbit ring - subtle rotating ring for the web centre */
 @keyframes orbit {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -200,7 +200,7 @@
   animation: float 6s ease-in-out infinite;
 }
 
-/* Node arrival — spring-like pop-in for new memory nodes */
+/* Node arrival - spring-like pop-in for new memory nodes */
 @keyframes nodeArrive {
   0% {
     transform: scale(0) rotate(-45deg);

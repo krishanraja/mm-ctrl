@@ -126,7 +126,7 @@
   padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
 }
 
-/* Bottom offset that accounts for safe area — used by FAB and fixed elements above BottomNav */
+/* Bottom offset that accounts for safe area - used by FAB and fixed elements above BottomNav */
 .bottom-nav-clearance {
   bottom: calc(4rem + env(safe-area-inset-bottom, 0px) + 0.75rem);
 }

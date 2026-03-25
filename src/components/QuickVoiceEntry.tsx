@@ -419,7 +419,7 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
                 Here's what I learned
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                From 30 seconds of your thinking—personalized to your context
+                From 30 seconds of your thinking, personalized to your context
               </p>
             </div>
 

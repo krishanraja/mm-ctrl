@@ -277,7 +277,7 @@ export default function EdgeView() {
           onAction={handleAction}
         />
 
-        {/* Ambient Pro teaser — free users only */}
+        {/* Ambient Pro teaser - free users only */}
         {!hasAccess && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}

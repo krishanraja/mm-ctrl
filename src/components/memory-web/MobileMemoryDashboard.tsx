@@ -269,10 +269,10 @@ export function MobileMemoryDashboard() {
           </div>
         )}
 
-        {/* Main content area — Memory Web visualization as hero */}
+        {/* Main content area - Memory Web visualization as hero */}
         {!isVoiceExpanded && (
           <div className="flex-1 min-h-0 relative">
-            {/* The living memory web — always visible */}
+            {/* The living memory web - always visible */}
             <MemoryWebVisualization
               facts={facts}
               showEmptyState={!isLoading && !hasData && mode === 'idle'}
@@ -292,7 +292,7 @@ export function MobileMemoryDashboard() {
               </div>
             )}
 
-            {/* Pattern pills overlay — bottom of web area */}
+            {/* Pattern pills overlay - bottom of web area */}
             {hasData && patterns.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -559,7 +559,7 @@ export function MobileMemoryDashboard() {
           </motion.div>
         </div>
 
-        {/* Quick actions — compact row above bottom nav when we have data */}
+        {/* Quick actions - compact row above bottom nav when we have data */}
         {hasData && !isVoiceExpanded && (
           <motion.div
             initial={{ opacity: 0 }}
