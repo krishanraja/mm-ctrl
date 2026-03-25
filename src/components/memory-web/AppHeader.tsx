@@ -1,0 +1,28 @@
+import { useNavigate } from 'react-router-dom';
+import { User } from 'lucide-react';
+
+/**
+ * Shared app header: small favicon icon + "CTRL" text in top-left.
+ * Used on all authenticated mobile pages.
+ */
+export function AppHeader({ showProfile = true }: { showProfile?: boolean }) {
+  const navigate = useNavigate();
+
+  return (
+    <header className="flex-shrink-0 flex items-center justify-between px-5 pt-4 pb-2">
+      <div className="flex items-center gap-2">
+        <img src="/mindmaker-favicon.png" alt="" className="h-6 w-6" />
+        <span className="text-sm font-bold font-grotesk tracking-tight text-foreground">CTRL</span>
+      </div>
+      {showProfile && (
+        <button
+          onClick={() => navigate('/profile')}
+          className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
+          aria-label="Profile"
+        >
+          <User className="h-4 w-4" />
+        </button>
+      )}
+    </header>
+  );
+}

@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { BottomNav } from '@/components/memory-web/BottomNav'
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar'
+import { AppHeader } from '@/components/memory-web/AppHeader'
 import { useDevice } from '@/hooks/useDevice'
 
 function SettingsTabs() {
@@ -72,17 +73,10 @@ export default function Settings() {
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      <div className="flex-shrink-0 px-4 pt-4 pb-2">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-xl font-bold">Settings</h1>
-        </div>
+      <AppHeader />
+
+      <div className="flex-shrink-0 px-4 pb-2">
+        <h1 className="text-base font-bold">Settings</h1>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col min-h-0 px-4">

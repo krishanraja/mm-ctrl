@@ -31,6 +31,7 @@ import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { FactVerificationCard } from '@/components/memory/FactVerificationCard';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BottomNav } from './BottomNav';
+import { AppHeader } from './AppHeader';
 import { useToast } from '@/hooks/use-toast';
 import type { FactCategory, PatternType } from '@/types/memory';
 
@@ -179,37 +180,7 @@ export function MobileMemoryDashboard() {
       <input {...fileInputProps} />
       <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
         {/* Header */}
-        <header className="flex-shrink-0 px-5 pt-4 pb-1 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between"
-          >
-            <div className="flex items-baseline gap-2">
-              <h1 className="text-lg font-bold text-foreground">{getGreeting()},</h1>
-              <motion.span
-                className="text-lg font-bold text-accent capitalize"
-                animate={{
-                  textShadow: [
-                    '0 0 8px rgba(16,185,129,0)',
-                    '0 0 12px rgba(16,185,129,0.3)',
-                    '0 0 8px rgba(16,185,129,0)',
-                  ],
-                }}
-                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-              >
-                {firstName}
-              </motion.span>
-            </div>
-            <button
-              onClick={() => navigate('/profile')}
-              className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
-              aria-label="Profile"
-            >
-              <User className="h-4 w-4" />
-            </button>
-          </motion.div>
-        </header>
+        <AppHeader />
 
         {/* Health Score bar */}
         {hasData && stats && (

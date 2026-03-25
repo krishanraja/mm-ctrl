@@ -40,36 +40,66 @@ const JOURNEY_STEPS = [
 ]
 
 /* ------------------------------------------------------------------ */
+/*  Logo Lockup - MINDMAKER icon + "CTRL" text                         */
+/* ------------------------------------------------------------------ */
+function HeroLogo({ size = "large" }: { size?: "large" | "small" }) {
+  const isLarge = size === "large"
+  return (
+    <div className="flex flex-col items-center gap-1">
+      {/* Small MINDMAKER label with icon */}
+      <div className="flex items-center gap-1.5">
+        <img
+          src="/mindmaker-favicon.png"
+          alt=""
+          className={isLarge ? "h-4 w-4" : "h-3 w-3"}
+        />
+        <span
+          className={cn(
+            "font-grotesk font-semibold uppercase tracking-[0.2em] text-foreground/70",
+            isLarge ? "text-[10px]" : "text-[8px]"
+          )}
+        >
+          Mindmaker
+        </span>
+      </div>
+      {/* Large CTRL logo */}
+      <img
+        src="/mindmaker-full-logo.png"
+        alt="CTRL"
+        className={cn(
+          "w-auto",
+          isLarge ? "h-16 sm:h-20" : "h-10"
+        )}
+      />
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  Screen 1 - Hero                                                    */
 /* ------------------------------------------------------------------ */
 function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <div className="h-full flex flex-col items-center justify-center px-5">
-      {/* Logo */}
+      {/* Logo lockup */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
         className="mb-6"
       >
-        <img
-          src="/mindmaker-full-logo.png"
-          alt="CTRL"
-          className="h-16 w-auto"
-        />
+        <HeroLogo size="large" />
       </motion.div>
 
-      {/* Headline */}
-      <motion.div
+      {/* Subtitle */}
+      <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="text-center mb-5"
+        transition={{ duration: 0.6, delay: 0.15 }}
+        className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed text-center mb-5"
       >
-        <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-          Your portable memory for every AI conversation, meeting, and decision.
-        </p>
-      </motion.div>
+        Your portable memory for every AI conversation, meeting, and decision.
+      </motion.p>
 
       {/* CTA */}
       <motion.div
@@ -254,32 +284,40 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
   }, [])
 
   return (
-    <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 py-6 overflow-hidden">
+    <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 py-6 overflow-hidden relative z-10">
       <div className="w-full max-w-5xl">
-        {/* Logo */}
+        {/* Logo lockup - centered */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
           className="flex justify-center mb-6"
         >
-          <img
-            src="/mindmaker-full-logo.png"
-            alt="CTRL"
-            className="h-20 lg:h-24 w-auto"
-          />
+          <div className="flex flex-col items-center gap-2">
+            {/* MINDMAKER label with icon */}
+            <div className="flex items-center gap-2">
+              <img src="/mindmaker-favicon.png" alt="" className="h-5 w-5" />
+              <span className="text-xs font-grotesk font-semibold uppercase tracking-[0.2em] text-foreground/70">
+                Mindmaker
+              </span>
+            </div>
+            {/* Large CTRL logo */}
+            <img
+              src="/mindmaker-full-logo.png"
+              alt="CTRL"
+              className="h-20 lg:h-28 w-auto"
+            />
+          </div>
         </motion.div>
 
-        <motion.div
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-center mb-6"
+          className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed text-center mb-6"
         >
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Your portable memory for every AI conversation, meeting, and decision.
-          </p>
-        </motion.div>
+          Your portable memory for every AI conversation, meeting, and decision.
+        </motion.p>
 
         {/* CTA */}
         <motion.div
@@ -411,17 +449,28 @@ export function HeroSection() {
   const handleGetStarted = () => navigate('/auth')
 
   return (
-    <div className="relative h-screen-safe overflow-hidden flex flex-col bg-background">
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-purple-500/[0.03] pointer-events-none" />
+    <div className="relative h-screen-safe overflow-hidden flex flex-col bg-black">
+      {/* Background video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none"
+      >
+        <source src="/Mindmaker for Leaders - background video.mp4" type="video/mp4" />
+      </video>
 
-      {/* Header - sign in only (logo is the hero) */}
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+
+      {/* Header - sign in only */}
       <header className="relative z-10 flex items-center justify-end px-5 sm:px-8 py-4 flex-shrink-0">
         <Button
           onClick={() => navigate('/auth')}
           variant="outline"
           size="sm"
-          className="text-sm border-border/60 hover:bg-secondary/50"
+          className="text-sm border-white/20 text-white/80 hover:bg-white/10 hover:text-white bg-transparent"
         >
           Sign In
         </Button>
@@ -445,7 +494,7 @@ export function HeroSection() {
 
       {/* Footer - always visible */}
       <footer className="relative z-10 px-5 sm:px-8 py-3 text-center flex-shrink-0">
-        <p className="text-[10px] text-muted-foreground/30">
+        <p className="text-[10px] text-white/20">
           Private by design. Portable by default.
         </p>
       </footer>
