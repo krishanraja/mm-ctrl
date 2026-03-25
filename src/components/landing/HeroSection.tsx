@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { SwipeableCards } from "@/components/mobile/SwipeableCards"
+import { CtrlLogo } from "./CtrlLogo"
 
 const PILLARS = [
   {
@@ -55,20 +56,18 @@ function HeroLogo({ size = "large" }: { size?: "large" | "small" }) {
         />
         <span
           className={cn(
-            "font-grotesk font-semibold uppercase tracking-[0.2em] text-foreground/70",
+            "font-grotesk font-semibold uppercase tracking-[0.2em] text-white/70",
             isLarge ? "text-[10px]" : "text-[8px]"
           )}
         >
           Mindmaker
         </span>
       </div>
-      {/* Large CTRL logo */}
-      <img
-        src="/mindmaker-full-logo.png"
-        alt="CTRL"
+      {/* Large CTRL product logo */}
+      <CtrlLogo
         className={cn(
           "w-auto",
-          isLarge ? "h-16 sm:h-20" : "h-10"
+          isLarge ? "h-14 sm:h-[72px]" : "h-8"
         )}
       />
     </div>
@@ -297,16 +296,12 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             {/* MINDMAKER label with icon */}
             <div className="flex items-center gap-2">
               <img src="/mindmaker-favicon.png" alt="" className="h-5 w-5" />
-              <span className="text-xs font-grotesk font-semibold uppercase tracking-[0.2em] text-foreground/70">
+              <span className="text-xs font-grotesk font-semibold uppercase tracking-[0.2em] text-white/70">
                 Mindmaker
               </span>
             </div>
-            {/* Large CTRL logo */}
-            <img
-              src="/mindmaker-full-logo.png"
-              alt="CTRL"
-              className="h-20 lg:h-28 w-auto"
-            />
+            {/* Large CTRL product logo */}
+            <CtrlLogo className="h-20 lg:h-28 w-auto" />
           </div>
         </motion.div>
 
