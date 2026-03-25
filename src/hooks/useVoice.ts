@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { api } from '@/lib/api'
+import { uploadVoiceRecordingToStorage } from '@/utils/supabaseStorage'
 
 interface UseVoiceOptions {
   maxDuration?: number // in seconds
@@ -53,11 +54,12 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
       setDuration(0)
       chunksRef.current = []
 
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          sampleRate: 44100,
+          autoGainControl: true,
+          sampleRate: 16000,
         }
       })
       streamRef.current = stream
@@ -87,6 +89,12 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
           // Transcribe using Whisper API
           const result = await api.transcribeAudio(audioBlob)
           setTranscript(result.transcript)
+
+          // Retain raw audio in Supabase Storage (fire-and-forget)
+          const sessionId = crypto.randomUUID()
+          uploadVoiceRecordingToStorage(audioBlob, sessionId, 'voice-capture')
+            .catch(err => console.warn('Audio storage failed (non-blocking):', err))
+
           if (onTranscript) {
             await onTranscript(result.transcript)
           }

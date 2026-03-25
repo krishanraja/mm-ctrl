@@ -9,6 +9,7 @@ import { EdgeProTab } from '@/components/settings/EdgeProTab'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { BottomNav } from '@/components/memory-web/BottomNav'
 
 export default function Settings() {
   const navigate = useNavigate()
@@ -64,6 +65,8 @@ export default function Settings() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <BottomNav />
     </div>
   )
 }

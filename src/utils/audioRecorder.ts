@@ -8,7 +8,7 @@ export class AudioRecorder {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          sampleRate: 24000,
+          sampleRate: 16000,
           channelCount: 1,
           echoCancellation: true,
           noiseSuppression: true,

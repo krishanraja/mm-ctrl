@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Brain, Plus, Shield, Download, Upload, CheckCircle2, Flame, Thermometer } from 'lucide-react';
+import { Brain, Plus, Shield, Download, Upload, CheckCircle2, Flame, Thermometer, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +19,7 @@ import { BottomNav } from '@/components/memory-web/BottomNav';
 import type { UserMemoryFact } from '@/types/memory';
 
 export default function MemoryCenter() {
+  const navigate = useNavigate();
   const { isMobile } = useDevice();
   const { stats } = useMemoryWeb();
   const [activeTab, setActiveTab] = useState('memories');
@@ -173,16 +175,25 @@ export default function MemoryCenter() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-2.5"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
-              <Brain className="h-4.5 w-4.5 text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
+                <Brain className="h-4.5 w-4.5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Memory</h1>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Everything your AI knows about you
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-foreground">Memory</h1>
-              <p className="text-[11px] text-muted-foreground leading-tight">
-                Everything your AI knows about you
-              </p>
-            </div>
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
+              aria-label="Profile"
+            >
+              <User className="h-4 w-4" />
+            </button>
           </div>
 
           {stats && (

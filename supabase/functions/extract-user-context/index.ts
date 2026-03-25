@@ -231,7 +231,127 @@ Return a JSON object with a "results" array. Each entry has:
       }
     }
 
-    // If user is authenticated, store facts in database
+    // === CONTRADICTION DETECTION ===
+    // Before storing, check if any new facts contradict existing facts.
+    // Uses a lightweight LLM check for facts in the same category.
+    if (userId && extractedFacts.length > 0) {
+      try {
+        const supabaseForContradictions = createClient(supabaseUrl, supabaseServiceKey, {
+          auth: { persistSession: false },
+        });
+        const { data: existingForContradiction } = await supabaseForContradictions
+          .from('user_memory')
+          .select('fact_key, fact_value, fact_category')
+          .eq('user_id', userId)
+          .eq('is_current', true)
+          .eq('verification_status', 'inferred');
+
+        if (existingForContradiction && existingForContradiction.length > 0) {
+          // Group existing facts by category for efficient comparison
+          const existingByCategory = new Map<string, { fact_key: string; fact_value: string }[]>();
+          for (const f of existingForContradiction) {
+            const list = existingByCategory.get(f.fact_category) || [];
+            list.push({ fact_key: f.fact_key, fact_value: f.fact_value });
+            existingByCategory.set(f.fact_category, list);
+          }
+
+          // Check each new fact against existing facts in the same category
+          const potentialContradictions: { newFact: string; newValue: string; existingFact: string; existingValue: string }[] = [];
+          for (const fact of extractedFacts) {
+            const sameCategoryFacts = existingByCategory.get(fact.fact_category);
+            if (!sameCategoryFacts || sameCategoryFacts.length === 0) continue;
+
+            for (const existing of sameCategoryFacts) {
+              // Skip if same key (will be handled by dedup)
+              if (existing.fact_key === fact.fact_key) continue;
+
+              // Quick heuristic: check if values directly contradict
+              // (e.g., "delegates heavily" vs "micromanages")
+              potentialContradictions.push({
+                newFact: `${fact.fact_key}: ${fact.fact_value}`,
+                newValue: fact.fact_value,
+                existingFact: `${existing.fact_key}: ${existing.fact_value}`,
+                existingValue: existing.fact_value,
+              });
+            }
+          }
+
+          // If there are potential contradictions, use LLM to verify
+          if (potentialContradictions.length > 0 && potentialContradictions.length <= 20) {
+            const contradictionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: [
+                  {
+                    role: 'system',
+                    content: `You detect contradictions between pairs of facts about a person. For each pair, determine if they contradict each other.
+
+Return a JSON object with a "contradictions" array. Each entry has:
+- new_fact: string (the new fact)
+- existing_fact: string (the existing fact)
+- is_contradiction: boolean
+- explanation: string (brief reason, only if contradiction)
+
+Only flag TRUE contradictions where both facts cannot be simultaneously true. Do NOT flag:
+- Facts that are simply different topics
+- Facts that complement each other
+- Facts where one is more specific than the other`,
+                  },
+                  {
+                    role: 'user',
+                    content: `Check these fact pairs for contradictions:\n${JSON.stringify(potentialContradictions.slice(0, 20), null, 2)}`,
+                  },
+                ],
+                response_format: { type: 'json_object' },
+                temperature: 0.1,
+                max_tokens: 1500,
+              }),
+            });
+
+            if (contradictionResponse.ok) {
+              const contradictionData = await contradictionResponse.json();
+              const contradictionContent = contradictionData.choices?.[0]?.message?.content;
+              const parsed = JSON.parse(contradictionContent);
+              const contradictions = (parsed.contradictions || []).filter(
+                (c: { is_contradiction: boolean }) => c.is_contradiction
+              );
+
+              if (contradictions.length > 0) {
+                console.log(`Found ${contradictions.length} contradictions:`);
+                for (const c of contradictions) {
+                  console.log(`  "${c.new_fact}" contradicts "${c.existing_fact}": ${c.explanation}`);
+                }
+                // For now, flag contradicting new facts by reducing confidence
+                // and marking them as high_stakes so user can verify
+                const contradictingNewFacts = new Set(
+                  contradictions.map((c: { new_fact: string }) => c.new_fact.split(':')[0].trim())
+                );
+                extractedFacts = extractedFacts.map(fact => {
+                  if (contradictingNewFacts.has(fact.fact_key)) {
+                    console.log(`Flagging "${fact.fact_key}" as high-stakes due to contradiction`);
+                    return {
+                      ...fact,
+                      confidence_score: Math.max(fact.confidence_score - 0.2, 0.3),
+                      is_high_stakes: true,
+                    };
+                  }
+                  return fact;
+                });
+              }
+            }
+          }
+        }
+      } catch (contradictionError) {
+        console.warn('Contradiction detection error (non-blocking):', contradictionError);
+      }
+    }
+
+    // Store facts in database
     if (userId && extractedFacts.length > 0) {
       // Fetch existing facts (key + value + metadata for semantic comparison)
       const { data: existingFacts } = await supabase

@@ -9,6 +9,7 @@ import {
   TrendingUp,
   AlertTriangle,
   Brain,
+  User,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { renderMarkdown } from '@/lib/renderMarkdown';
@@ -214,14 +215,23 @@ export default function EdgeView() {
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl border border-border bg-gradient-to-br from-accent/5 via-card to-purple-500/5 p-4 sm:p-5"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg shadow-accent/20">
-              <Zap className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center shadow-lg shadow-accent/20">
+                <Zap className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Your Edge</h2>
+                <p className="text-xs text-muted-foreground">Based on your Memory Web</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-foreground">Your Edge</h2>
-              <p className="text-xs text-muted-foreground">Based on your Memory Web</p>
-            </div>
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-white/20 transition-colors"
+              aria-label="Profile"
+            >
+              <User className="h-4 w-4" />
+            </button>
           </div>
 
           {/* Stat chips */}
