@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Brain, Zap, MessageSquare, ArrowRight, Sparkles, Download } from "lucide-react"
+import { Brain, Zap, MessageSquare, ArrowRight, Download } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -45,17 +45,18 @@ const JOURNEY_STEPS = [
 function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <div className="h-full flex flex-col items-center justify-center px-5">
-      {/* Badge */}
+      {/* Logo */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-5"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        className="mb-6"
       >
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-medium text-accent">
-          <Sparkles className="h-3 w-3" />
-          For leaders who think before they decide
-        </span>
+        <img
+          src="/mindmaker-full-logo.png"
+          alt="CTRL"
+          className="h-16 w-auto"
+        />
       </motion.div>
 
       {/* Headline */}
@@ -65,14 +66,8 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="text-center mb-5"
       >
-        <h1 className="text-3xl font-bold leading-[1.1] text-foreground mb-3">
-          Think out loud.{" "}
-          <span className="bg-gradient-to-r from-accent via-purple-400 to-accent bg-clip-text text-transparent">
-            See what emerges.
-          </span>
-        </h1>
         <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-          Voice your thoughts. CTRL organizes them into a Memory Web, your portable context that makes every AI smarter and instructions that make your team sharper.
+          Your portable memory for every AI conversation, meeting, and decision.
         </p>
       </motion.div>
 
@@ -261,33 +256,28 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 py-6 overflow-hidden">
       <div className="w-full max-w-5xl">
-        {/* Badge + Headline */}
+        {/* Logo */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center mb-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex justify-center mb-6"
         >
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-medium text-accent">
-            <Sparkles className="h-3 w-3" />
-            For leaders who think before they decide
-          </span>
+          <img
+            src="/mindmaker-full-logo.png"
+            alt="CTRL"
+            className="h-20 lg:h-24 w-auto"
+          />
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-center mb-4"
+          className="text-center mb-6"
         >
-          <h1 className="text-5xl lg:text-6xl font-bold leading-[1.1] text-foreground mb-3">
-            Think out loud.{" "}
-            <span className="bg-gradient-to-r from-accent via-purple-400 to-accent bg-clip-text text-transparent">
-              See what emerges.
-            </span>
-          </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Voice your thoughts. CTRL organizes them into a Memory Web, your portable context that makes every AI smarter and instructions that make your team sharper.
+            Your portable memory for every AI conversation, meeting, and decision.
           </p>
         </motion.div>
 
@@ -307,7 +297,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
           <p className="text-xs text-muted-foreground/60">
-            2 minutes to clarity. No credit card needed.
+            No credit card needed.
           </p>
         </motion.div>
 
@@ -425,15 +415,8 @@ export function HeroSection() {
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-purple-500/[0.03] pointer-events-none" />
 
-      {/* Header - always visible */}
-      <header className="relative z-10 flex items-center justify-between px-5 sm:px-8 py-4 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <img
-            src="/mindmaker-full-logo.png"
-            alt="Mindmaker"
-            className="h-5 sm:h-6 w-auto"
-          />
-        </div>
+      {/* Header - sign in only (logo is the hero) */}
+      <header className="relative z-10 flex items-center justify-end px-5 sm:px-8 py-4 flex-shrink-0">
         <Button
           onClick={() => navigate('/auth')}
           variant="outline"

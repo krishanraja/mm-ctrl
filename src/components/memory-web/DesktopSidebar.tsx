@@ -1,6 +1,7 @@
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { Home, Zap, Brain, Download, Settings } from 'lucide-react';
+import { Home, Zap, Brain, Download, Settings, LogOut, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 const navItems = [
   { path: '/dashboard', search: '', icon: Home, label: 'Home' },
@@ -13,14 +14,16 @@ export function DesktopSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [, setSearchParams] = useSearchParams();
+  const { signOut } = useAuth();
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-64 bg-background border-r border-border flex flex-col z-40">
       <div className="px-6 py-5 border-b border-border">
         <img
           src="/mindmaker-full-logo.png"
-          alt="Mindmaker"
-          className="h-5 w-auto"
+          alt="CTRL"
+          className="h-5 w-auto cursor-pointer"
+          onClick={() => navigate('/dashboard')}
         />
       </div>
 
@@ -39,7 +42,6 @@ export function DesktopSidebar() {
               key={item.label}
               onClick={() => {
                 if (location.pathname === item.path) {
-                  // Same pathname - use setSearchParams to update query without full navigate
                   setSearchParams(item.search ? new URLSearchParams(item.search) : {});
                 } else {
                   navigate({ pathname: item.path, search: item.search });
@@ -65,7 +67,20 @@ export function DesktopSidebar() {
         })}
       </nav>
 
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-border space-y-0.5">
+        <button
+          onClick={() => navigate('/profile')}
+          className={cn(
+            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium',
+            'transition-colors duration-150',
+            location.pathname === '/profile'
+              ? 'bg-accent/10 text-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
+          )}
+        >
+          <User className="h-[18px] w-[18px]" />
+          Profile
+        </button>
         <button
           onClick={() => navigate('/settings')}
           className={cn(
@@ -78,6 +93,17 @@ export function DesktopSidebar() {
         >
           <Settings className="h-[18px] w-[18px]" />
           Settings
+        </button>
+        <button
+          onClick={signOut}
+          className={cn(
+            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium',
+            'transition-colors duration-150',
+            'text-muted-foreground hover:text-destructive hover:bg-destructive/10',
+          )}
+        >
+          <LogOut className="h-[18px] w-[18px]" />
+          Sign Out
         </button>
       </div>
     </aside>

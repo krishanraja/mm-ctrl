@@ -33,6 +33,7 @@ import { useVoice } from '@/hooks/useVoice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { DesktopSidebar } from './DesktopSidebar';
+import { MemoryWebVisualization } from './MemoryWebVisualization';
 import type {
   MemoryWebFact,
   Temperature,
@@ -475,6 +476,24 @@ export function DesktopMemoryDashboard() {
                   </div>
                 </motion.div>
               </div>
+
+              {/* Memory Web Visualization */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="rounded-2xl border border-border bg-card overflow-hidden"
+              >
+                <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Memory Web
+                  </h3>
+                  <span className="text-[10px] text-muted-foreground/50">Click a node to explore</span>
+                </div>
+                <div className="h-[320px] relative">
+                  <MemoryWebVisualization facts={facts} />
+                </div>
+              </motion.div>
 
               {/* Skills & Patterns Section */}
               {patterns.length > 0 && (
