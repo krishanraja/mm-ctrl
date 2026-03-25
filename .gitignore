@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Supabase temp files
-supabase/.temp/
+supabase/.temp/.mcp.json
