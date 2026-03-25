@@ -23,8 +23,63 @@ serve(async (req) => {
     }
 
     console.log(`Transcribing audio for session ${sessionId}, module ${moduleType}`);
-    
+
     const startTime = Date.now();
+
+    // Build a contextual Whisper prompt using the user's known facts (if available)
+    let whisperPrompt = 'The speaker is an executive or leader discussing leadership, team management, strategy, decisions, delegation, priorities, KPIs, OKRs, quarterly goals, direct reports, stakeholders, cross-functional collaboration, performance reviews, and business operations.';
+
+    // Try to enrich prompt with user's identity/business facts for better accuracy
+    try {
+      const authHeader = req.headers.get('Authorization');
+      if (authHeader) {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+        const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+        if (supabaseUrl && supabaseAnonKey) {
+          const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+            global: { headers: { Authorization: authHeader } },
+            auth: { persistSession: false },
+          });
+          const { data: userData } = await supabaseAuth.auth.getUser();
+          if (userData?.user?.id) {
+            const supabaseService = createClient(
+              supabaseUrl,
+              Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+              { auth: { persistSession: false } },
+            );
+            const { data: facts } = await supabaseService
+              .from('user_memory')
+              .select('fact_key, fact_value')
+              .eq('user_id', userData.user.id)
+              .eq('is_current', true)
+              .in('fact_category', ['identity', 'business'])
+              .order('confidence_score', { ascending: false })
+              .limit(5);
+
+            if (facts && facts.length > 0) {
+              const contextParts: string[] = [];
+              for (const f of facts) {
+                if (f.fact_key === 'role' || f.fact_key === 'title' || f.fact_key === 'job_title') {
+                  contextParts.push(`Their role is ${f.fact_value}`);
+                } else if (f.fact_key === 'company_name' || f.fact_key === 'company') {
+                  contextParts.push(`They work at ${f.fact_value}`);
+                } else if (f.fact_key === 'industry' || f.fact_key === 'vertical') {
+                  contextParts.push(`in the ${f.fact_value} industry`);
+                } else if (f.fact_key === 'team_size') {
+                  contextParts.push(`managing a team of ${f.fact_value}`);
+                }
+              }
+              if (contextParts.length > 0) {
+                whisperPrompt += ' ' + contextParts.join('. ') + '.';
+                console.log('Enriched Whisper prompt with user context');
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to enrich Whisper prompt (non-blocking):', e);
+    }
 
     // Send to OpenAI Whisper API with verbose_json for real confidence scores
     const whisperFormData = new FormData();
@@ -33,7 +88,7 @@ serve(async (req) => {
     whisperFormData.append('language', 'en');
     whisperFormData.append('response_format', 'verbose_json');
     whisperFormData.append('temperature', '0');
-    whisperFormData.append('prompt', 'The speaker is an executive or leader discussing leadership, team management, strategy, decisions, delegation, priorities, KPIs, OKRs, quarterly goals, direct reports, stakeholders, cross-functional collaboration, performance reviews, and business operations.');
+    whisperFormData.append('prompt', whisperPrompt);
 
     const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',

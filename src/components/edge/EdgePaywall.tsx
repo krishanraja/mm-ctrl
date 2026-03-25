@@ -36,7 +36,7 @@ interface EdgePaywallProps {
 }
 
 // Sample artifacts shown as blurred previews to demonstrate value
-const SAMPLE_ARTIFACTS: Record<string, string> = {
+export const SAMPLE_ARTIFACTS: Record<string, string> = {
   board_memo: `## Executive Summary\n\nOur product portfolio delivered **23% revenue growth** this quarter, exceeding the board-approved target by 4 points.\n\n### Key Decisions Required\n\n- Approve $2.4M expansion into enterprise segment\n- Ratify the revised go-to-market timeline for Q4\n- Review updated risk framework for international markets`,
   strategy_doc: `## Strategic Direction: Q4 2026\n\n### Market Position\n\nWe hold **second position** in the mid-market segment with 18% share. The gap to leader has narrowed from 12 to 7 points.\n\n### Priority Initiatives\n\n1. Accelerate enterprise pipeline with dedicated BDR team\n2. Launch self-serve tier to capture SMB demand\n3. Expand partner ecosystem from 12 to 25 integrations`,
   email: `**Subject: Alignment on Q4 Priorities**\n\nHi team,\n\nFollowing our strategy review, I want to share three priorities I'd like us to rally around for Q4.\n\n1. **Customer retention** — we need to move NRR from 108% to 115%\n2. **Pipeline velocity** — cut average deal cycle from 47 to 35 days\n3. **Team capacity** — backfill the two open roles by end of October`,

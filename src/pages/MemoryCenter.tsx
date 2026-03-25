@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Brain, Plus, Shield, Download, Upload } from 'lucide-react';
+import { Brain, Plus, Shield, Download, Upload, CheckCircle2, Flame, Thermometer, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +19,7 @@ import { BottomNav } from '@/components/memory-web/BottomNav';
 import type { UserMemoryFact } from '@/types/memory';
 
 export default function MemoryCenter() {
+  const navigate = useNavigate();
   const { isMobile } = useDevice();
   const { stats } = useMemoryWeb();
   const [activeTab, setActiveTab] = useState('memories');
@@ -36,21 +38,6 @@ export default function MemoryCenter() {
       {/* Hidden file input for markdown import */}
       <input {...fileInputProps} />
       <div className="flex-1 min-h-0 flex flex-col space-y-4">
-        {/* Stats bar */}
-        {stats && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-4 text-sm text-muted-foreground"
-          >
-            <span>{stats.total_facts} facts</span>
-            <span className="text-foreground/10">|</span>
-            <span>{stats.verified_rate}% verified</span>
-            <span className="text-foreground/10">|</span>
-            <span>{stats.temperature_distribution?.hot || 0} hot, {stats.temperature_distribution?.warm || 0} warm</span>
-          </motion.div>
-        )}
-
         {/* Tabs */}
         <Tabs
           value={activeTab}
@@ -136,15 +123,42 @@ export default function MemoryCenter() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6"
+              className="mb-6 space-y-3"
             >
-              <div className="flex items-center gap-3 mb-1">
-                <Brain className="h-6 w-6 text-accent" />
-                <h1 className="text-2xl font-semibold">Memory Browser</h1>
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
+                  <Brain className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold">Memory Browser</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Everything your AI knows about you
+                  </p>
+                </div>
               </div>
-              <p className="text-muted-foreground">
-                View, verify, edit, and manage everything your AI knows about you.
-              </p>
+
+              {stats && (
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/10 text-accent text-sm font-medium">
+                    <Brain className="h-3.5 w-3.5" />
+                    {stats.total_facts} facts
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-sm font-medium">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    {stats.verified_rate}% verified
+                  </span>
+                  {(stats.temperature_distribution?.hot || 0) > 0 && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-500 text-sm font-medium">
+                      <Flame className="h-3.5 w-3.5" />
+                      {stats.temperature_distribution.hot} hot
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-500 text-sm font-medium">
+                    <Thermometer className="h-3.5 w-3.5" />
+                    {stats.temperature_distribution?.warm || 0} warm
+                  </span>
+                </div>
+              )}
             </motion.div>
             {content}
           </div>
@@ -155,18 +169,55 @@ export default function MemoryCenter() {
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      <header className="flex-shrink-0 px-4 pt-4 pb-2">
+      <header className="flex-shrink-0 px-4 pt-4 pb-3">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
+          className="space-y-2.5"
         >
-          <div className="flex items-center gap-2 mb-1">
-            <Brain className="h-5 w-5 text-accent" />
-            <h1 className="text-xl font-semibold">Memory</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
+                <Brain className="h-4.5 w-4.5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Memory</h1>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Everything your AI knows about you
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate('/profile')}
+              className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
+              aria-label="Profile"
+            >
+              <User className="h-4 w-4" />
+            </button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Everything your AI knows about you
-          </p>
+
+          {stats && (
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-accent text-xs font-medium">
+                <Brain className="h-3 w-3" />
+                {stats.total_facts} facts
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium">
+                <CheckCircle2 className="h-3 w-3" />
+                {stats.verified_rate}% verified
+              </span>
+              {(stats.temperature_distribution?.hot || 0) > 0 && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-500 text-xs font-medium">
+                  <Flame className="h-3 w-3" />
+                  {stats.temperature_distribution.hot} hot
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
+                <Thermometer className="h-3 w-3" />
+                {stats.temperature_distribution?.warm || 0} warm
+              </span>
+            </div>
+          )}
         </motion.div>
       </header>
 
