@@ -1,8 +1,8 @@
 # Value Propositions
 
-Clear value propositions for each audience, differentiated from alternatives.
+Clear value propositions for each audience. Every claim ties back to one thing: decision speed.
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-24
 
 ---
 
@@ -10,73 +10,87 @@ Clear value propositions for each audience, differentiated from alternatives.
 
 ### Core Value Proposition
 
-**For**: Senior leaders who use AI tools daily but get generic results because the AI doesn't know them
+**For**: Senior leaders who use AI daily but lose time because every AI conversation starts from zero
 
-**Who**: Are time-poor, skeptical of hype, and tired of re-explaining their context every time they open ChatGPT or Claude
+**Who**: Are making dozens of decisions per week and cannot afford to re-explain their world to AI every single time
 
-**Mindmaker**: Is a portable AI context platform
+**CTRL**: Is a portable AI context platform
 
-**That**: Builds a Memory Web about you from natural conversation, then exports your context to any AI tool — so every interaction is personalized from the first word
+**That**: Builds your AI double from two minutes of natural conversation, then exports your full context to any AI tool — so every interaction starts from depth, not from scratch
 
-**Unlike**: Custom GPTs (locked to one platform), manual system prompts (time-consuming), or AI training courses (theoretical)
+**Unlike**: Custom GPTs (locked to one platform), manual system prompts (hours of work), or AI courses (theory, not speed)
 
-**We**: Give you a digital double in 2 minutes that makes ChatGPT, Claude, Gemini, and every other AI tool dramatically better — plus built-in thinking tools that already know your world
+**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours — plus built-in thinking tools that already know your world and cut the path to decisions
 
 ### The Flywheel
 
-The more you use Mindmaker, the richer your Memory Web becomes. The richer your Memory Web, the better every AI tool works for you. The better your AI tools work, the more you use them. This is the compounding AI advantage.
+The more you use CTRL, the richer your Memory Web becomes. The richer your Memory Web, the faster every AI tool gets you to a decision. The faster you decide, the more you use AI with confidence. Decision speed compounds. This is not incremental improvement. This is a structural advantage.
 
 ### Component Value Props
 
 **Memory Web**
 - "Build a living knowledge base about yourself by just talking"
 - Every fact verified by you, encrypted at rest, fully portable
+- The foundation of decision speed — AI that knows your world before you ask
 
 **Context Export (the killer feature)**
 - "One click. Every AI tool you use knows who you are."
 - Works across ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown
 - Optimized for 6 use cases: meetings, decisions, email, strategy, code, general
+- This is the moment generic AI becomes your AI
 
-**AI Tools That Know You**
-- "Decision support, meeting prep, and prompt coaching that already know your context"
-- No setup required — they read your Memory Web automatically
+**Decision Advisor**
+- "Ask a hard question. Get an answer that knows your context."
+- No setup. No preamble. It reads your Memory Web and meets you where you are.
+- Faster from question to clarity than any conversation with a blank AI
+
+**Meeting Prep**
+- "Walk into every meeting already briefed — by AI that knows your priorities"
+- Contextual briefs generated from your Memory Web in seconds
+
+**Prompt Coach**
+- "Stop guessing what to type. CTRL makes your AI prompts sharp."
+- Turns vague questions into precise, context-rich prompts automatically
 
 **10X Skills & Patterns**
-- "AI surfaces your strengths to amplify and your blind spots to address"
-- Pattern detection from your Memory Web data
+- "AI surfaces your strengths to amplify and your blind spots to close"
+- Pattern detection from your Memory Web data — not generic assessments
 
 **AI Literacy Diagnostic**
-- "Know where you stand in 10 minutes, not 10 hours of courses"
+- "Know where you stand in 10 minutes. Not 10 hours of courses."
 - Surfaces tensions, risk signals, and organizational scenarios specific to you
 
 ### Differentiation Matrix
 
-| Alternative | What They Offer | What We Offer Instead |
+| Alternative | What They Offer | What CTRL Offers Instead |
 |-------------|----------------|----------------------|
-| **ChatGPT Custom Instructions** | Manual context writing, locked to OpenAI | Auto-extracted context, portable to any AI |
+| **ChatGPT Custom Instructions** | Manual context writing, locked to OpenAI, static | Auto-extracted context, portable to any AI, living |
 | **Claude Projects** | Document upload for one workspace | Living Memory Web that works everywhere |
-| **Writing System Prompts by Hand** | Hours of prompt engineering | 2 minutes of talking, structure extracted automatically |
-| **Custom GPTs** | One-off bots for specific tasks | Universal context that makes every AI interaction better |
-| **AI Training Courses** | Hours of education | Immediate infrastructure (2 min to first export) |
-| **AI Consultants** | $15K+ engagement, creates dependency | Self-serve, leader owns their data, no dependency |
-| **Doing Nothing** | Re-explain yourself to AI every single time | Set it once, works everywhere, gets better over time |
+| **Writing System Prompts by Hand** | Hours of prompt engineering per tool | 2 minutes of talking. Structure extracted automatically. Works across all tools. |
+| **Custom GPTs** | One-off bots for specific tasks | Universal context that accelerates every AI interaction |
+| **AI Training Courses** | Hours of education before any value | Immediate infrastructure. 2 minutes to first export. |
+| **AI Consultants** | $15K+ engagement, creates dependency | Self-serve. Leader owns their data. No dependency. No delay. |
+| **Doing Nothing** | Re-explain yourself to AI every time. Decisions slow. | Set it once. Works everywhere. Gets better over time. Decisions accelerate. |
 
-### Why Leaders Choose Mindmaker
+### Why Leaders Choose CTRL
 
 **Emotional Jobs**
-- Stop re-explaining yourself to AI tools every day
-- Feel like AI actually "gets" you
-- Confidence that you're getting the best possible AI output
+- Stop feeling like AI is wasting your time
+- Feel the difference when AI actually knows you — it hits different
+- Walk into every AI conversation with the confidence that the output will be relevant, specific, and fast
+- Stop watching other leaders pull ahead while you're still setting up context
 
 **Functional Jobs**
 - Make every AI conversation personalized in one click
-- Get contextual decision support, meeting prep, and prompt coaching
+- Get from question to decision faster — with contextual support, not generic advice
 - Export context to any tool without prompt engineering skills
+- Reclaim the 30-60 minutes per day lost to AI context setup
 
 **Social Jobs**
-- Demonstrate sophisticated AI usage to peers and board
-- Share approach with team (not just the tool, the thinking)
-- Stay ahead of leaders who use AI generically
+- Be the leader who uses AI at a level others notice
+- Share the approach with your team — not just the tool, the thinking
+- Walk into board conversations with AI fluency, not AI anxiety
+- Stay visibly ahead of leaders who use AI generically
 
 ---
 
@@ -84,41 +98,41 @@ The more you use Mindmaker, the richer your Memory Web becomes. The richer your 
 
 ### Core Value Proposition
 
-**For**: Leadership teams facing AI investment decisions without shared mental models
+**For**: Leadership teams facing AI decisions without shared frameworks
 
-**Who**: Waste time in unproductive AI debates and risk misaligned pilots
+**Who**: Lose weeks to circular AI debates and misaligned pilots because the team has no common ground
 
-**Mindmaker**: Is a 4-hour executive bootcamp
+**CTRL**: Is a 4-hour executive bootcamp
 
-**That**: Aligns your team on AI decision criteria, surfaces hidden tensions, and produces a credible pilot charter
+**That**: Aligns your team on AI decision criteria, surfaces hidden tensions, and produces a credible pilot charter — in one session
 
 **Unlike**: Generic offsite facilitators or vendor-driven "vision" sessions
 
-**We**: Give you a structured process that produces alignment, not decks
+**We**: Give you a structured sprint that produces alignment and commitments, not decks and wish lists. Your team leaves deciding faster together.
 
 ### Component Value Props
 
 **Pre-Work Assessment**
-- "Start the workshop already knowing where tensions hide"
+- "Start the workshop already knowing where tensions hide and where speed is being lost"
 
 **7-Segment Structure**
-- "Cover cognitive baseline to pilot charter in one session"
+- "Cover cognitive baseline to pilot charter in one session. No filler."
 
 **Pilot Charter Output**
-- "Leave with a charter, not a wish list"
+- "Leave with a charter, not a slide deck. Decisions made, not deferred."
 
 **Provocation Report**
-- "Get the uncomfortable questions boards will ask"
+- "Get the uncomfortable questions your board will ask — before they ask them"
 
 ### Differentiation Matrix
 
-| Alternative | What They Offer | What We Offer Instead |
+| Alternative | What They Offer | What CTRL Offers Instead |
 |-------------|----------------|----------------------|
-| **Strategy Consulting Firms** | 3-month projects, 200-slide decks | 4-hour workshop, 20-page charter |
-| **Generic Offsite Facilitators** | Team building and brainstorming | AI-specific frameworks and decisions |
-| **AI Vendors** | Product demos and "vision" pitches | Vendor-neutral literacy and criteria |
-| **Internal Planning Meetings** | Circular debates with no resolution | Structured process with outputs |
-| **AI Training Providers** | Multi-day training programs | Focused strategy sprint with pilot |
+| **Strategy Consulting Firms** | 3-month projects, 200-slide decks | 4-hour sprint, 20-page charter, decisions made that day |
+| **Generic Offsite Facilitators** | Team building and brainstorming | AI-specific decision frameworks that accelerate post-session |
+| **AI Vendors** | Product demos and "vision" pitches | Vendor-neutral clarity. Your decisions, not their roadmap. |
+| **Internal Planning Meetings** | Circular debates with no resolution | Structured process. Tensions surfaced. Commitments made. |
+| **AI Training Providers** | Multi-day programs before any output | Focused strategy sprint. Pilot charter in hand by end of day. |
 
 ---
 
@@ -128,24 +142,24 @@ The more you use Mindmaker, the richer your Memory Web becomes. The richer your 
 
 **For**: VCs, PE firms, and consultants managing portfolios of companies
 
-**Who**: Lack consistent view of AI readiness and don't know where to intervene first
+**Who**: Lack consistent visibility into where AI decision speed is being lost across the portfolio
 
-**Mindmaker**: Is a portfolio assessment platform
+**CTRL**: Is a portfolio assessment platform
 
-**That**: Maps AI literacy across companies, prioritizes interventions, and packages value-add offerings
+**That**: Maps AI readiness across companies, identifies where leadership decision speed is suffering, and prioritizes interventions that unlock velocity
 
 **Unlike**: Ad-hoc assessments or generic portfolio reviews
 
-**We**: Give you a repeatable framework that demonstrates value-add and identifies co-delivery opportunities
+**We**: Give you a repeatable framework that demonstrates value-add and shows exactly where to intervene for maximum impact on portfolio decision quality
 
 ### Differentiation Matrix
 
-| Alternative | What They Offer | What We Offer Instead |
+| Alternative | What They Offer | What CTRL Offers Instead |
 |-------------|----------------|----------------------|
-| **Portfolio Surveys** | Self-reported data with no validation | Structured diagnostic with benchmarking |
-| **Ad-hoc Consulting** | Different approach per company | Consistent framework across portfolio |
-| **Internal Reviews** | Time-intensive one-on-ones | Scalable assessment tool |
-| **Vendor Pitches** | Biased toward vendor solutions | Vendor-neutral literacy assessment |
+| **Portfolio Surveys** | Self-reported data with no validation | Structured diagnostic with benchmarking against decision speed metrics |
+| **Ad-hoc Consulting** | Different approach per company | Consistent framework. Comparable results. Portfolio-wide visibility. |
+| **Internal Reviews** | Time-intensive one-on-ones | Scalable assessment. Results in days, not months. |
+| **Vendor Pitches** | Biased toward vendor solutions | Vendor-neutral literacy assessment focused on leadership decision quality |
 
 ---
 
@@ -153,24 +167,24 @@ The more you use Mindmaker, the richer your Memory Web becomes. The richer your 
 
 ### What Binds All Three
 
-**Problem**: Leaders use AI tools but get generic results. Teams can't align on AI decisions. Portfolios lack consistent AI readiness visibility.
+**Problem**: Leaders use AI but every conversation starts from zero. This kills decision speed. Teams can't align on AI decisions. Portfolios lack visibility into where velocity is being lost.
 
-**Solution**: Mindmaker provides portable AI context (Memory Web + Export) and structured diagnostics that surface tensions, risks, and blind spots.
+**Solution**: CTRL provides portable AI context (Memory Web + Export) and structured thinking tools that eliminate the zero-context tax and accelerate the path from question to decision.
 
-**Differentiation**: We make every AI tool a leader already uses dramatically better — not by teaching prompt engineering, but by automating context.
+**Differentiation**: We don't teach AI. We don't implement AI. We make every AI tool a leader already uses dramatically faster to value by automating context.
 
-**Outcome**: Personalized AI interactions, better decisions, less waste, more control.
+**Outcome**: Faster decisions. Sharper AI output. Less waste. More control. Compounding advantage over time.
 
 ### What Varies By Audience
 
 | Dimension | Leaders | Teams | Partners |
 |-----------|---------|-------|----------|
-| **Primary Need** | Portable AI context | Team alignment | Portfolio visibility |
+| **Primary Need** | Decision speed via portable AI context | Team alignment on AI decisions | Portfolio-wide decision velocity visibility |
 | **Time to Value** | 2 minutes | 4 hours | 2 weeks |
 | **Key Output** | Memory Web + Exports | Pilot charter | Heatmap + offer pack |
-| **Core Action** | Talk, export, use AI | Workshop, decide, commit | Assess, prioritize, intervene |
+| **Core Action** | Talk, export, decide faster | Workshop, align, commit | Assess, prioritize, intervene |
 | **Buyer** | Self-funded | Exec team sponsor | Partner/firm |
-| **Price Point** | Free / $49 diagnostic | $15K–$50K | $5K–$25K |
+| **Price Point** | Free / $49 diagnostic | $15K-$50K | $5K-$25K |
 
 ### Shared Anti-Positioning
 
@@ -181,7 +195,7 @@ The more you use Mindmaker, the richer your Memory Web becomes. The richer your 
 - Another AI wrapper locked to one platform
 
 **We Are**:
-- Portable AI context infrastructure
-- The layer that makes every AI tool better
+- The decision-speed layer for leaders who use AI
+- Portable AI context infrastructure that works everywhere
 - Voice-first, zero-learning-curve, executive-grade
-- Focused on control, clarity, and personalization
+- Focused on one thing: leaders deciding faster with AI

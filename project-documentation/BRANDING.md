@@ -1,103 +1,103 @@
 # Branding
 
-**Last Updated:** 2025-11-25
+**Last Updated:** 2026-03-24
 
 ---
 
 ## Brand Voice
 
-**Professional but not corporate**  
-**Confident but not arrogant**  
-**Direct but not cold**  
-**Expert but not academic**
+**Professional but not corporate**
+**Confident but not arrogant**
+**Direct but not cold**
+**Sharp but not aggressive**
 
 ---
 
 ## Tone Attributes
 
 ### What We Are
-✅ **Practical** - Real work, not theory  
-✅ **Confident** - We've done this  
-✅ **Direct** - No fluff, clear value  
-✅ **Empowering** - You can do this  
-✅ **Operator-led** - Built from experience
+- **Direct** - Short sentences. Clear value. No filler.
+- **Confident** - We know what this solves. We built it.
+- **Practical** - Real decisions, not theory.
+- **Urgent** - Speed matters. Every slow decision has a cost.
+- **Operator-led** - Built by a leader, for leaders.
 
 ### What We're Not
-❌ **Salesy** - No hype or pressure  
-❌ **Academic** - No jargon or theory  
-❌ **Corporate** - No buzzwords  
-❌ **Casual** - Not a friend, a guide  
-❌ **Apologetic** - We know what works
+- **Salesy** - No hype, no pressure, no countdown timers.
+- **Academic** - No jargon, no frameworks for the sake of frameworks.
+- **Corporate** - No buzzwords, no committee-speak.
+- **Casual** - Not a friend. A sharp tool.
+- **Apologetic** - We know what this does. We don't hedge.
 
 ---
 
 ## Messaging Pillars
 
-### 1. Cut Through Hype
-"No vendor theatre. No generic training. Real work only."
+### 1. Decision Speed
+"Leaders are paid to decide. CTRL makes every decision faster."
 
-### 2. Build, Don't Buy
-"We don't sell AI tools. We teach you to build."
+### 2. Portable AI Context
+"Your context follows you across every AI tool. Build it once. Use it everywhere."
 
-### 3. Proof Over Theory
-"Working systems in 30 days, not strategy decks."
+### 3. Two Minutes to Value
+"Answer three voice questions. Get a portable AI double. No setup. No prompt engineering."
 
-### 4. Independence
-"Success = you don't need us anymore."
+### 4. The Compound Advantage
+"Every conversation makes your AI context richer. The gap between you and leaders using AI generically widens every day."
 
-### 5. Operator Experience
-"Krish built $100M+ with AI. He teaches what works."
+### 5. Operator Credibility
+"Krish built $100M+ with AI. CTRL is the tool he wished existed."
 
 ---
 
 ## Copy Guidelines
 
 ### Headlines
-- **Start with outcome** - "Build 3-5 AI systems in 30 days"
-- **Be specific** - "60 minutes" not "quick session"
-- **Use verbs** - "Build", "Deploy", "Learn", not "Transformation"
-- **Avoid buzzwords** - No "synergy", "paradigm", "holistic"
+- **Start with speed** - "Make sharper decisions in half the time"
+- **Be specific** - "2 minutes" not "quick setup"
+- **Use verbs** - "Decide", "Export", "Build", not "Transformation"
+- **Avoid buzzwords** - No "synergy", "paradigm", "holistic", "leverage"
 
 ### Body Copy
-- **Short sentences** - 15-20 words max
-- **Active voice** - "You build systems" not "Systems are built"
-- **Concrete examples** - "Save 10 hours/week" not "Increase efficiency"
-- **Second person** - "You", "Your", not "One" or "Organizations"
+- **Short sentences** - 15 words max where possible.
+- **Active voice** - "You export your context" not "Context is exported"
+- **Concrete outcomes** - "Save 10 minutes per AI conversation" not "Increase efficiency"
+- **Second person** - "You", "Your". Never "One" or "Organizations".
 
 ### CTAs
-- **Action-oriented** - "Book Your Session" not "Learn More"
-- **Value-focused** - "Reserve My Spot" not "Submit"
-- **Specific** - "Book Your Initial Consult" not "Get Started"
+- **Action-oriented** - "Build Your AI Double" not "Learn More"
+- **Speed-focused** - "Start in 2 Minutes" not "Get Started"
+- **Specific** - "Export to ChatGPT Now" not "Try It"
 
 ---
 
 ## Content Patterns
 
-### Describing Programs
+### Describing the Product
 ```
-[Program Name]
-[Duration] • [Format]
-[One-sentence outcome]
+CTRL — Clarity for Leaders
 
-What's Included:
-- [Concrete deliverable 1]
-- [Concrete deliverable 2]
-- [Concrete deliverable 3]
+[One-sentence outcome tied to decision speed]
 
-Who It's For: [Specific role/situation]
+How It Works:
+1. [Step 1 — voice input]
+2. [Step 2 — context built]
+3. [Step 3 — export everywhere]
+
+Result: [Specific measurable improvement]
 ```
 
 ### Value Props
 ```
-Problem: [Specific pain point]
-Solution: [Concrete approach]
-Proof: [Measurable outcome]
+Problem: [Specific decision-speed pain point]
+Without CTRL: [What happens — slow, generic, repeated]
+With CTRL: [What changes — fast, personalized, portable]
 ```
 
 ### Social Proof
 ```
-"[Specific result]"
-- [Role], [Context]
+"[Specific result tied to speed or decision quality]"
+— [Role], [Company context]
 ```
 
 ---
@@ -105,14 +105,14 @@ Proof: [Measurable outcome]
 ## Word Choices
 
 ### Use These
-- Build (not develop)
-- Systems (not solutions)
-- Working (not functional)
-- Deploy (not implement)
-- Literacy (not knowledge)
-- Session (not meeting)
-- Sprint (not program)
-- Friction (not inefficiency)
+- Decide (not evaluate)
+- Context (not data)
+- Export (not integrate)
+- Portable (not cross-platform)
+- Sharp (not optimized)
+- Speed (not efficiency)
+- AI double (not AI assistant)
+- Voice (not input)
 
 ### Avoid These
 - Transformation
@@ -120,90 +120,90 @@ Proof: [Measurable outcome]
 - Synergy
 - Leverage
 - Ecosystem
-- Journey (unless literally referring to customer journey)
+- Journey
 - Innovative
 - Revolutionary
+- Solution
+- Empower
 
 ---
 
 ## Terminology Standards
 
-**Initial Consult** - Not "consultation", "discovery call", "intro call"  
-**Builder Session** - Not "coaching session", "workshop"  
-**Builder Sprint** - Not "program", "bootcamp", "course"  
-**Leadership Lab** - Not "workshop", "seminar", "training"  
-**Partner Program** - Not "partnership", "collaboration"
-
-**Hold** - Not "deposit", "fee", "payment"  
-**Refundable** - Always specify this for the $50  
-**Deducted** - Not "applied", "credited"
+**AI Double** — Not "AI assistant", "AI clone", "digital twin"
+**Memory Web** — Not "knowledge base", "context store", "profile"
+**Context Export** — Not "integration", "sync", "connection"
+**Voice Input** — Not "voice note", "recording", "dictation"
+**Decision Advisor** — Not "chatbot", "recommendation engine"
 
 ---
 
 ## Email/Communication Style
 
 ### Subject Lines
-- Specific + Action: "Your Builder Session - Nov 30 at 2pm"
-- Outcome-focused: "3 Systems Built - Next Steps"
-- No clickbait: Avoid "You won't believe...", "The secret to..."
+- Speed + Specificity: "Your AI double is ready — export to Claude now"
+- Outcome-focused: "3 decisions, half the time"
+- No clickbait: No "You won't believe...", "The secret to..."
+- No FOMO: No "Last chance", "Only X spots"
 
 ### Email Body
 ```
 [Name],
 
-[Outcome/context in 1 sentence]
+[One sentence: the speed problem or the outcome]
 
-[Details in 2-3 short paragraphs]
+[2-3 short paragraphs: what CTRL does, why it matters now, proof]
 
-[Clear next action]
+[Clear single next action]
 
-Thanks,
 Krish
 ```
 
 ### Signature
 ```
 Krish Raja
-Founder, Mindmaker
-mindmaker.ai
+Founder, CTRL
+ctrl.ai
 ```
 
 ---
 
 ## Social Media Voice
 
-**LinkedIn:** Professional, insights-driven, operator perspective  
-**Twitter:** Direct, punchy, data-driven  
-**Email:** Personal, helpful, focused
+**LinkedIn:** Professional, operator perspective, decision-speed insights
+**Twitter:** Punchy, data-driven, contrarian takes on AI adoption
+**Email:** Personal, direct, one clear action
 
 ### Post Structure
 ```
-[Hook - surprising insight or question]
+[Hook — a decision-speed insight or counterintuitive truth]
 
-[Context - 2-3 sentences]
+[Context — 2-3 sentences max]
 
-[Takeaway - what this means]
+[Takeaway — what this means for leaders]
 
-[Call to action if appropriate]
+[CTA if appropriate — never forced]
 ```
 
 ---
 
 ## Brand Don'ts
 
-❌ **Don't oversell** - Let outcomes speak  
-❌ **Don't use FOMO** - No artificial urgency  
-❌ **Don't be cute** - No puns, no clever wordplay  
-❌ **Don't apologize** - Confident in value  
-❌ **Don't use emojis** - Except sparingly in casual contexts  
-❌ **Don't use exclamation marks** - One per page max
+- **Don't oversell** — Let speed and outcomes speak.
+- **Don't use FOMO** — No artificial urgency. The urgency is real.
+- **Don't be cute** — No puns. No clever wordplay. Clarity over cleverness.
+- **Don't apologize** — Confident in value. No hedging.
+- **Don't use emojis** — Professional always.
+- **Don't use exclamation marks** — One per page max. Calm confidence.
+- **Don't say "AI-powered"** — Everything is AI-powered now. Say what it does.
+- **Don't lead with features** — Lead with the decision-speed outcome.
 
 ---
 
 ## Visual Brand Elements
 
 ### Logo Usage
-- Mindmaker icon (standalone)
+- CTRL icon (standalone)
 - Full wordmark (with text)
 - Use on Ink or white backgrounds
 - Minimum size: 120px width
@@ -211,11 +211,11 @@ mindmaker.ai
 ### Color Application
 - **Mint:** Sparingly, for highlights and CTAs
 - **Ink:** Primary for text and structure
-- **White space:** Generous, never cramped
+- **White space:** Generous. Never cramped. Speed feels clean.
 
 ### Photography
 - Real people, not stock photos
-- Candid, not posed
+- Leaders in motion — deciding, speaking, leading
 - Business context, not generic offices
 - Krish headshot for founder/trust sections
 

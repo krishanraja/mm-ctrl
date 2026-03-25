@@ -1,11 +1,11 @@
-# Mindmaker Project Documentation
+# CTRL Project Documentation
 
 **Master Index**
 
-This folder contains all technical and strategic documentation for the Mindmaker portable AI context platform.
+This folder contains all technical and strategic documentation for the CTRL portable AI context platform.
 
-**Last Updated:** 2026-03-20
-**Current Version:** v4.0 (Memory Web, Context Export, Portable AI Double)
+**Last Updated:** 2026-03-24
+**Current Version:** v4.1 (CTRL rebrand — Clarity for Leaders)
 
 ---
 
@@ -77,11 +77,11 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 
 ---
 
-## Current State (v4.0)
+## Current State (v4.1)
 
 ### Product Positioning
-- **Tagline**: "Talk. We learn. Every AI gets smarter."
-- **Core Value**: Portable AI context that makes every AI tool personalized
+- **Tagline**: "Clarity for Leaders"
+- **Core Value**: Decision speed for leaders — portable AI context that makes every AI tool personalized
 - **Time to Value**: 2 minutes to first export
 
 ### Design Philosophy
@@ -135,8 +135,8 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 
 | Field | Value |
 |-------|-------|
-| Documentation last updated | 2026-03-20 |
-| Current product version | v4.0 (Memory Web, Context Export, AI Double) |
+| Documentation last updated | 2026-03-24 |
+| Current product version | v4.1 (CTRL rebrand — Clarity for Leaders) |
 | Architecture version | Single DB-based architecture |
 | Design system version | v3.0 (Light mode, Apple-like) |
 | AI primary model | OpenAI GPT-4o |

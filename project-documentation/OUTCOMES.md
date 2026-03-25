@@ -1,219 +1,174 @@
 # User Outcomes
 
-Expected outcomes and success metrics for each audience.
+Expected outcomes and success metrics for CTRL users. Every outcome ties back to decision speed.
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-24
 
 ---
 
-## Leaders Tool Outcomes
+## Leader Outcomes
 
 ### Immediate Outcomes (First Session — 2 Minutes)
 
-**Portable AI Context**
-- Memory Web built from 3 guided voice questions
-- Context exported to at least one AI tool (ChatGPT, Claude, Gemini)
-- Immediate experience of personalized AI responses vs generic ones
+**Portable AI Double Created**
+- AI double built from 3 guided voice questions. No typing. No forms.
+- Context exported to at least one AI tool (ChatGPT, Claude, Gemini, Cursor).
+- Leader experiences personalized AI output for the first time — and immediately feels the gap from what they had before.
+
+**Decision Speed Unlocked**
+- The next AI conversation starts with context, not a blank page.
+- First real decision gets sharper input because the AI knows their role, priorities, and constraints.
+- The cost of switching between AI tools drops to zero.
 
 **Cognitive Shift**
-- "I didn't know I could make AI this useful this fast"
-- Realizes the gap between generic AI and context-aware AI
-- Sees the value of portable context across tools
+- "I just talked for two minutes and now Claude knows my entire world."
+- "Why was I typing system prompts by hand?"
+- "This is what AI was supposed to feel like."
 
-**Measurable**:
+**Measurable:**
 - 100% have exportable context within 2 minutes
 - 90%+ report noticeably better AI responses after first export
-- 3+ AI tools receiving context within first week
+- 80%+ export to a second AI tool within 24 hours
+
+---
 
 ### 7-Day Outcomes
 
-**Memory Web Growth**
-- Added voice notes beyond initial onboarding
-- Memory Web has 15+ verified facts across categories
-- Pattern detection surfacing initial strengths and blind spots
-- Context exports getting richer as Memory Web grows
+**Decision Speed Compounding**
+- AI conversations that used to take 10 minutes of setup now take zero.
+- Decision Advisor or Meeting Prep used for at least one real decision — not a test.
+- Leader starts reaching for AI first when facing a complex decision, because the output is actually useful now.
 
-**Tool Adoption**
-- Used at least one built-in AI tool (Decision Advisor, Meeting Prep, Prompt Coach)
-- Exported context to 2+ AI tools
-- Experienced the difference between context-aware and generic AI interactions
+**Memory Web Growth**
+- Added voice input beyond initial onboarding — context is deepening.
+- Memory Web has 15+ verified facts across categories.
+- Pattern detection surfacing initial strengths and blind spots the leader had not articulated.
+- Context exports getting richer. Each AI tool gets a more complete picture.
 
 **Behavioral Change**
-- Stopped writing manual system prompts — uses Mindmaker export instead
-- Started narrating context updates when work changes
-- Using AI for real decisions, not just experimentation
+- Stopped writing manual system prompts. CTRL export replaced them.
+- Started narrating context updates when priorities or challenges shift.
+- Using AI for real decisions weekly, not occasional experiments.
 
-**Measurable**:
-- 70%+ have used built-in AI tools
+**What Leaders Say:**
+- "I used to dread switching to a new AI tool. Now I just export and go."
+- "My meeting prep brief knew things about my team dynamics that I forgot to mention."
+- "I made a hiring decision faster this week because the Decision Advisor already knew my team structure."
+
+**Measurable:**
+- 70%+ have used built-in AI tools (Decision Advisor, Meeting Prep, Prompt Coach)
 - 60%+ exported to 2+ platforms
-- 50%+ added voice notes beyond onboarding
+- 50%+ added voice input beyond onboarding
+- 40%+ report making at least one decision faster due to CTRL context
+
+---
 
 ### 30-Day Outcomes
 
-**AI Interaction Quality**
-- Every AI tool the leader uses is personalized
-- Quality of AI output dramatically improved across all tools
-- Time saved: no more re-explaining context (5-10 min per conversation eliminated)
+**Decision Speed as Standard**
+- Every AI tool the leader uses is personalized. Generic AI interactions are gone.
+- Time saved: 5-10 minutes of context setup eliminated per AI conversation.
+- AI is now a genuine thinking partner — informed, specific, and fast.
 
-**Decision Quality**
-- Decision Advisor used for real strategic decisions
-- Meeting Prep generating useful contextual briefs
-- Better AI-informed decisions due to richer context
+**Decision Quality Improvement**
+- Decision Advisor used for real strategic decisions — hiring, investment, priority calls.
+- Meeting Prep generating contextual briefs that surface relevant history and stakeholder dynamics.
+- Decisions are faster and sharper. The leader can articulate why.
 
-**AI Literacy**
-- Can articulate 3-5 sharp questions for any AI proposal
-- Using AI as thinking partner for analysis/decisions weekly
-- Reduced spend on low-ROI AI initiatives
+**AI Literacy Gained**
+- Can ask 3-5 sharp questions about any AI proposal or vendor pitch.
+- Using AI as a weekly thinking partner for analysis and strategic decisions.
+- Has redirected or reduced spend on at least one low-ROI AI initiative.
 
-**Measurable**:
-- 80%+ using context export as standard workflow
+**What Leaders Say:**
+- "My CFO asked how I prepared that board memo so fast. I just smiled."
+- "I killed an AI project this week that would have wasted six months. I knew the right questions to ask."
+- "I cannot go back to using AI without context. It would be like losing my phone."
+
+**Measurable:**
+- 80%+ using context export as standard workflow (not optional, not experimental)
 - 70%+ report "AI is dramatically more useful now"
-- 60%+ challenged or redirected an AI initiative
+- 60%+ challenged or redirected an AI initiative with sharper judgment
+- 50%+ report saving 30+ minutes per week on AI-related context setup
+
+---
 
 ### 90-Day Outcomes
 
 **Compounding AI Advantage**
-- Memory Web is rich, comprehensive, and current
-- Every AI interaction feels like talking to an informed advisor
-- Pattern detection has surfaced actionable strengths and blind spots
-- Leader has a genuine AI advantage over peers using tools generically
+- Memory Web is rich, comprehensive, and current. It evolves as the leader evolves.
+- Every AI interaction feels like talking to an informed chief of staff — not a stranger.
+- Pattern detection has surfaced actionable strengths and blind spots that changed how the leader operates.
+- The gap between this leader and peers using AI generically is now significant and widening.
 
 **Strategic Capability**
-- Leading AI literacy conversations in leadership team
-- Contributing meaningfully to board AI discussions
-- Mentoring direct reports on effective AI usage
+- Leading AI conversations in leadership team and board meetings with earned credibility.
+- Contributing meaningfully to AI strategy — not just approving what others propose.
+- Mentoring direct reports on effective AI usage. Creating a multiplier effect.
 
 **Organizational Impact**
-- Team members asking sharper AI questions
-- Reduced "AI theatre" projects
-- More realistic AI pilot scoping
+- Team members asking sharper AI questions because they see the leader modeling it.
+- Fewer "AI theatre" projects. More focused, outcome-driven AI initiatives.
+- Faster organizational decision cycles because the leader is faster.
 
-**Measurable**:
-- 50%+ led AI discussion in leadership meeting
-- 40%+ initiated workflow redesign conversation
-- 30%+ report competitive advantage gained
+**What Leaders Say:**
+- "AI used to be something my team did. Now it is how I think."
+- "I am making decisions in hours that used to take weeks. Not because I am rushing — because I have better input."
+- "Three board members asked me to help them set up CTRL. That tells you everything."
 
----
-
-## Teams Tool Outcomes
-
-### Immediate Outcomes (Workshop Day)
-
-**Team Alignment**
-- Shared language for AI decisions
-- Visible tensions surfaced and discussed
-- Consensus on top 3 priorities
-
-**Decision Framework**
-- Clear criteria for AI investment evaluation
-- Agreed risk tolerance levels
-- Defined success metrics
-
-**Pilot Charter**
-- Specific pilot defined with resources allocated
-- Success/failure criteria documented
-- 90-day timeline with milestones
-- Governance model agreed
-
-**Measurable**:
-- 100% of teams exit with completed pilot charter
-- 85%+ report "team is aligned"
-- 80%+ report "surfaced hidden disagreements"
-
-### 30-Day Outcomes
-
-**Execution Progress**
-- Pilot initiated with resources deployed
-- First checkpoint meeting completed
-- Early results measured against charter
-
-**Measurable**:
-- 75%+ of pilots launched within 30 days
-- 60%+ report faster AI decision-making
-- 50%+ report improved psychological safety
-
-### 90-Day Outcomes
-
-**Pilot Results**
-- Clear success or failure determination
-- Lessons documented and shared
-- Next pilot or scale decision made
-
-**Measurable**:
-- 70%+ of pilots complete with clear go/no-go decision
-- 60%+ establish repeatable pilot process
-- 50%+ report improved board/investor confidence
+**Measurable:**
+- 50%+ led an AI discussion in a leadership or board meeting
+- 40%+ initiated a workflow redesign conversation based on AI-informed insight
+- 30%+ report measurable competitive advantage gained
+- 20%+ have referred CTRL to another senior leader
 
 ---
 
-## Partners Tool Outcomes
+## Cross-Outcome Success Indicators
 
-### Immediate Outcomes (Assessment Complete)
+### Qualitative Indicators (What Leaders Actually Say)
 
-**Portfolio Visibility**
-- Complete AI readiness heatmap across portfolio
-- Clear prioritization of intervention opportunities
-- Risk flags for most vulnerable companies
+**Speed and Context**
+- "I talked for two minutes and now every AI tool knows me."
+- "I exported to Claude and it was like briefing a new advisor who already read my entire file."
+- "I stopped writing system prompts. CTRL does it better and keeps it current."
+- "My AI conversations went from generic to genuinely useful overnight."
 
-**Measurable**:
-- 100% of portfolio assessed within 2 weeks
-- 90%+ report "clear intervention priorities"
-
-### 30-Day Outcomes
-
-**Portfolio Interventions**
-- Top 3 priority companies engaged
-- AI literacy workshops scheduled or delivered
-
-**Measurable**:
-- 75%+ of top priorities engaged
-- 60%+ launch portfolio-wide program
-
-### 90-Day Outcomes
-
-**Portfolio Impact**
-- Measurable AI literacy improvement across companies
-- AI literacy as standard value-add offering
-
-**Measurable**:
-- 60%+ of portfolio shows measurable improvement
-- 50%+ generate revenue from AI literacy services
-
----
-
-## Cross-Tool Success Indicators
-
-### Qualitative Indicators (what leaders say)
-
-**Memory Web + Export**
-- "I can't believe how much better ChatGPT is now"
-- "I exported to Claude and it was like talking to someone who knows me"
-- "I stopped writing system prompts — Mindmaker does it better"
-- "My AI conversations went from generic to genuinely useful"
-
-**AI Literacy**
-- "I can now challenge AI proposals"
-- "My team has a shared framework"
-- "I know which questions to ask"
-- "We stopped a bad AI project early"
+**Decisions and Judgment**
+- "I made a better call on that acquisition because the Decision Advisor already knew our risk profile."
+- "I can now challenge AI proposals without faking it."
+- "We stopped a bad AI project early. That alone paid for a year of CTRL."
+- "I know which questions to ask. That changed everything."
 
 ### Quantitative Indicators
 
 **Engagement Metrics**
 - Onboarding completion rate >80%
 - Context export within first session >90%
-- Weekly Memory Web updates >50%
+- Weekly voice input updates >50%
 - Multi-platform export >60%
 
+**Decision Speed Metrics**
+- AI conversation setup time: reduced from 5-10 min to 0
+- Time to first useful AI output per session: reduced by 70%+
+- Decision cycle time reduction: 20-40% (user-reported)
+- AI tool switching cost: eliminated
+
 **Impact Metrics**
-- AI interaction quality improvement (user-reported)
-- Time saved per AI conversation (context setup eliminated)
-- AI spend efficiency improvement
-- Decision cycle time reduction
+- AI interaction quality improvement (user-reported): 80%+ rate "significantly better"
+- AI spend efficiency: reduction in low-ROI AI initiatives
+- Leadership AI confidence: self-reported improvement in ability to lead AI conversations
 
-### Anti-Metrics (What We Don't Measure)
+---
 
-- Number of facts stored (quality over quantity)
-- Time spent in tool (value delivered per second, not time on platform)
-- Quiz scores as end goal (diagnostic, not exam)
-- Feature usage breadth (focused outcomes over feature bloat)
+### Anti-Metrics (What We Do Not Measure)
+
+- **Number of facts stored** — Quality of context over quantity. A Memory Web with 30 sharp facts beats 300 generic ones.
+- **Time spent in CTRL** — We measure value delivered per second, not time on platform. The goal is speed, not engagement.
+- **Feature usage breadth** — Focused outcomes over feature bloat. Using one tool well beats touching every feature.
+- **Quiz scores** — The diagnostic is a mirror, not an exam. We do not gamify literacy.
+- **Daily active usage** — Leaders are busy. If CTRL makes them faster three times a week, that is a win. We do not need daily dopamine loops.
+
+---
+
+**End of OUTCOMES**

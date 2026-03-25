@@ -1,6 +1,6 @@
 # Visual Guidelines
 
-**Last Updated:** 2026-01-16
+**Last Updated:** 2026-03-24
 
 ---
 
@@ -349,7 +349,7 @@ CTAs:          group-hover:animate-pulse (on icon)
 - Ink/foreground for neutral
 
 ### Logos
-- Mindmaker icon: standalone mark
+- CTRL icon: standalone mark
 - Wordmark: full logo with text
 - Krish headshot: circular crop, 192px diameter
 - Always on appropriate contrast background

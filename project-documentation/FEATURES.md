@@ -1,8 +1,8 @@
 # Features
 
-Complete feature inventory across all three Mindmaker tools.
+Complete feature inventory across all three CTRL tools.
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-24
 
 ---
 
