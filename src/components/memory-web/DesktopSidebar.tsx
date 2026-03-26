@@ -24,7 +24,7 @@ export function DesktopSidebar() {
         onClick={() => navigate('/dashboard')}
       >
         <img src="/mindmaker-favicon.png" alt="" className="h-7 w-7" />
-        <CtrlLogo className="h-4 w-auto" />
+        <CtrlLogo className="h-4 w-auto translate-x-0.5" />
       </div>
 
       <nav className="flex-1 p-3 space-y-0.5">

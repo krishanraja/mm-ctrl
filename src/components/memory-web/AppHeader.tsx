@@ -13,7 +13,7 @@ export function AppHeader({ showProfile = true }: { showProfile?: boolean }) {
     <header className="flex-shrink-0 flex items-center justify-between px-5 pt-4 pb-2">
       <div className="flex items-center gap-2">
         <img src="/mindmaker-favicon.png" alt="" className="h-6 w-6" />
-        <CtrlLogo className="h-3.5 w-auto" />
+        <CtrlLogo className="h-3.5 w-auto translate-x-0.5" />
       </div>
       {showProfile && (
         <button
