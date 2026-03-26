@@ -2,6 +2,7 @@ import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Home, Zap, Brain, Download, Settings, LogOut, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { CtrlLogo } from '@/components/landing/CtrlLogo';
 
 const navItems = [
   { path: '/dashboard', search: '', icon: Home, label: 'Home' },
@@ -23,7 +24,7 @@ export function DesktopSidebar() {
         onClick={() => navigate('/dashboard')}
       >
         <img src="/mindmaker-favicon.png" alt="" className="h-7 w-7" />
-        <span className="text-base font-bold font-grotesk tracking-tight text-foreground">CTRL</span>
+        <CtrlLogo className="h-4 w-auto" />
       </div>
 
       <nav className="flex-1 p-3 space-y-0.5">

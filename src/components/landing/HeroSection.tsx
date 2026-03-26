@@ -46,28 +46,18 @@ const JOURNEY_STEPS = [
 function HeroLogo({ size = "large" }: { size?: "large" | "small" }) {
   const isLarge = size === "large"
   return (
-    <div className="flex flex-col items-center gap-1">
-      {/* Small MINDMAKER label with icon */}
-      <div className="flex items-center gap-1.5">
-        <img
-          src="/mindmaker-favicon.png"
-          alt=""
-          className={isLarge ? "h-4 w-4" : "h-3 w-3"}
-        />
-        <span
-          className={cn(
-            "font-grotesk font-semibold uppercase tracking-[0.2em] text-white/70",
-            isLarge ? "text-[10px]" : "text-[8px]"
-          )}
-        >
-          Mindmaker
-        </span>
-      </div>
-      {/* Large CTRL product logo */}
+    <div className={cn("flex flex-col items-center", isLarge ? "gap-3" : "gap-2")}>
+      {/* Mindmaker brand logo (real image asset) */}
+      <img
+        src="/mindmaker-full-logo.png"
+        alt="Mindmaker"
+        className={isLarge ? "h-5 w-auto" : "h-3 w-auto"}
+      />
+      {/* CTRL product logo - 20% smaller than before */}
       <CtrlLogo
         className={cn(
           "w-auto",
-          isLarge ? "h-14 sm:h-[72px]" : "h-8"
+          isLarge ? "h-11 sm:h-14" : "h-6"
         )}
       />
     </div>
@@ -292,16 +282,11 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
           transition={{ duration: 0.6 }}
           className="flex justify-center mb-6"
         >
-          <div className="flex flex-col items-center gap-2">
-            {/* MINDMAKER label with icon */}
-            <div className="flex items-center gap-2">
-              <img src="/mindmaker-favicon.png" alt="" className="h-5 w-5" />
-              <span className="text-xs font-grotesk font-semibold uppercase tracking-[0.2em] text-white/70">
-                Mindmaker
-              </span>
-            </div>
-            {/* Large CTRL product logo */}
-            <CtrlLogo className="h-20 lg:h-28 w-auto" />
+          <div className="flex flex-col items-center gap-4">
+            {/* Mindmaker brand logo (real image asset) */}
+            <img src="/mindmaker-full-logo.png" alt="Mindmaker" className="h-6 w-auto" />
+            {/* CTRL product logo - 20% smaller */}
+            <CtrlLogo className="h-16 lg:h-[88px] w-auto" />
           </div>
         </motion.div>
 

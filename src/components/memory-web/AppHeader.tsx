@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
+import { CtrlLogo } from '@/components/landing/CtrlLogo';
 
 /**
- * Shared app header: small favicon icon + "CTRL" text in top-left.
+ * Shared app header: small favicon icon + CTRL logo in top-left.
  * Used on all authenticated mobile pages.
  */
 export function AppHeader({ showProfile = true }: { showProfile?: boolean }) {
@@ -12,7 +13,7 @@ export function AppHeader({ showProfile = true }: { showProfile?: boolean }) {
     <header className="flex-shrink-0 flex items-center justify-between px-5 pt-4 pb-2">
       <div className="flex items-center gap-2">
         <img src="/mindmaker-favicon.png" alt="" className="h-6 w-6" />
-        <span className="text-sm font-bold font-grotesk tracking-tight text-foreground">CTRL</span>
+        <CtrlLogo className="h-3.5 w-auto" />
       </div>
       {showProfile && (
         <button
