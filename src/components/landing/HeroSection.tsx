@@ -46,18 +46,18 @@ const JOURNEY_STEPS = [
 function HeroLogo({ size = "large" }: { size?: "large" | "small" }) {
   const isLarge = size === "large"
   return (
-    <div className={cn("flex flex-col items-center", isLarge ? "gap-3" : "gap-2")}>
-      {/* Mindmaker brand logo (real image asset) */}
+    <div className={cn("flex flex-col items-center", isLarge ? "gap-4" : "gap-2")}>
+      {/* Mindmaker brand logo - nudged right ~4px to optically center over CTRL */}
       <img
         src="/mindmaker-full-logo.png"
         alt="Mindmaker"
-        className={isLarge ? "h-5 w-auto" : "h-3 w-auto"}
+        className={cn("w-auto translate-x-1", isLarge ? "h-4" : "h-2.5")}
       />
-      {/* CTRL product logo - 20% smaller than before */}
+      {/* CTRL product logo */}
       <CtrlLogo
         className={cn(
           "w-auto",
-          isLarge ? "h-11 sm:h-14" : "h-6"
+          isLarge ? "h-9 sm:h-11" : "h-5"
         )}
       />
     </div>
@@ -282,11 +282,11 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
           transition={{ duration: 0.6 }}
           className="flex justify-center mb-6"
         >
-          <div className="flex flex-col items-center gap-4">
-            {/* Mindmaker brand logo (real image asset) */}
-            <img src="/mindmaker-full-logo.png" alt="Mindmaker" className="h-6 w-auto" />
-            {/* CTRL product logo - 20% smaller */}
-            <CtrlLogo className="h-16 lg:h-[88px] w-auto" />
+          <div className="flex flex-col items-center gap-5">
+            {/* Mindmaker brand logo - nudged right to optically center */}
+            <img src="/mindmaker-full-logo.png" alt="Mindmaker" className="h-4 lg:h-5 w-auto translate-x-1" />
+            {/* CTRL product logo */}
+            <CtrlLogo className="h-12 lg:h-16 w-auto" />
           </div>
         </motion.div>
 
@@ -296,7 +296,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed text-center mb-6"
         >
-          Your portable memory for every AI conversation, meeting, and decision.
+          Your portable memory for every AI conversation and decision.
         </motion.p>
 
         {/* CTA */}
