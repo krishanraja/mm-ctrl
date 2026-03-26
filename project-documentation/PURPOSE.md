@@ -14,6 +14,7 @@ It **is**:
 - A voice-first platform that builds a Memory Web from natural conversation
 - A portable context system that exports to ChatGPT, Claude, Gemini, Cursor, and any LLM
 - Built-in thinking tools (Decision Advisor, Meeting Prep, Prompt Coach) that already know the leader's world
+- Self-contained — no integrations with Slack, email, calendar, or any other tool. Your context comes from what you choose to share, nothing else.
 - A diagnostic engine that maps how leaders think, decide, and interact with AI
 - A pattern detection system that surfaces strengths to amplify and blind spots to close
 - Infrastructure for faster decisions, not another AI tool
@@ -24,6 +25,7 @@ It is **not**:
 - A ChatGPT wrapper or quiz product
 - Generic leadership coaching with AI branding
 - A prompt tricks collection or hype session
+- A tool that reads your email, calendar, or Slack
 - Locked to any single AI provider
 
 ## Core Problem Statement

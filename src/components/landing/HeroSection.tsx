@@ -1,13 +1,14 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Brain, Zap, MessageSquare, ArrowRight, Download } from "lucide-react"
+import { Brain, Zap, MessageSquare, ArrowRight, Download, Shield } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { SwipeableCards } from "@/components/mobile/SwipeableCards"
 import { CtrlLogo } from "./CtrlLogo"
+import { TrustIndicators } from "./TrustIndicators"
 
 const PILLARS = [
   {
@@ -87,7 +88,7 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
         transition={{ duration: 0.6, delay: 0.15 }}
         className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed text-center mb-5"
       >
-        Your portable memory for every AI conversation, meeting, and decision.
+        Your portable memory for every AI conversation and decision. No plugins. No permissions. Just you.
       </motion.p>
 
       {/* CTA */}
@@ -107,6 +108,10 @@ function HeroScreen({ onGetStarted }: { onGetStarted: () => void }) {
         </Button>
         <p className="text-xs text-muted-foreground/60">
           2 minutes to clarity
+        </p>
+        <p className="text-xs text-muted-foreground/60 flex items-center gap-1.5">
+          <Shield className="h-3 w-3" />
+          No integrations. Your data stays yours.
         </p>
       </motion.div>
     </div>
@@ -296,7 +301,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed text-center mb-6"
         >
-          Your portable memory for every AI conversation and decision.
+          Your portable memory for every AI conversation and decision. No plugins. No permissions. Just you.
         </motion.p>
 
         {/* CTA */}
@@ -314,9 +319,25 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             Get Started Free
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
-          <p className="text-xs text-muted-foreground/60">
-            No credit card needed.
-          </p>
+          <div className="flex flex-col items-start gap-1">
+            <p className="text-xs text-muted-foreground/60">
+              No credit card needed.
+            </p>
+            <p className="text-xs text-muted-foreground/60 flex items-center gap-1.5">
+              <Shield className="h-3 w-3" />
+              No integrations. Your data stays yours.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Trust indicators */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="flex justify-center mb-8"
+        >
+          <TrustIndicators />
         </motion.div>
 
         {/* Two-column: Pillars + Journey */}
@@ -474,8 +495,8 @@ export function HeroSection() {
 
       {/* Footer - always visible */}
       <footer className="relative z-10 px-5 sm:px-8 py-3 text-center flex-shrink-0">
-        <p className="text-[10px] text-white/20">
-          Private by design. Portable by default.
+        <p className="text-xs text-white/40">
+          Self-contained. No Slack. No email. No calendar. Just your voice and your context.
         </p>
       </footer>
     </div>

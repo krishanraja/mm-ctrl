@@ -70,6 +70,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 | **Custom GPTs** | One-off bots for specific tasks | Universal context that accelerates every AI interaction |
 | **AI Training Courses** | Hours of education before any value | Immediate infrastructure. 2 minutes to first export. |
 | **AI Consultants** | $15K+ engagement, creates dependency | Self-serve. Leader owns their data. No dependency. No delay. |
+| **AI Context Tools (Notion AI, Mem, Rewind)** | Connect to Slack, email, calendar — require enterprise approvals, read your whole computer | Self-contained. You talk to it. No integrations. No permissions. No IT review needed. |
 | **Doing Nothing** | Re-explain yourself to AI every time. Decisions slow. | Set it once. Works everywhere. Gets better over time. Decisions accelerate. |
 
 ### Why Leaders Choose CTRL
@@ -197,5 +198,6 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 **We Are**:
 - The decision-speed layer for leaders who use AI
 - Portable AI context infrastructure that works everywhere
+- Self-contained — no integrations, no plugins, no enterprise security reviews
 - Voice-first, zero-learning-curve, executive-grade
 - Focused on one thing: leaders deciding faster with AI
