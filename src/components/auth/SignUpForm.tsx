@@ -135,7 +135,7 @@ export function SignUpForm() {
         </Button>
 
         <p className="text-xs text-muted-foreground text-center">
-          Private. Always.
+          Self-contained. No integrations. Your data stays yours.
         </p>
       </form>
     </div>

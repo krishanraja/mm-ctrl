@@ -48,6 +48,9 @@
 ### 5. Operator Credibility
 "Krish built $100M+ with AI. CTRL is the tool he wished existed."
 
+### 6. Self-Contained Privacy
+"No plugins. No integrations. No enterprise security reviews. CTRL is self-contained — you talk to it, and your data stays yours."
+
 ---
 
 ## Copy Guidelines
@@ -110,6 +113,8 @@ With CTRL: [What changes - fast, personalized, portable]
 - Export (not integrate)
 - Portable (not cross-platform)
 - Sharp (not optimized)
+- Self-contained (not standalone)
+- Private (not secure — too corporate)
 - Speed (not efficiency)
 - AI double (not AI assistant)
 - Voice (not input)
@@ -135,6 +140,7 @@ With CTRL: [What changes - fast, personalized, portable]
 **Context Export** - Not "integration", "sync", "connection"
 **Voice Input** - Not "voice note", "recording", "dictation"
 **Decision Advisor** - Not "chatbot", "recommendation engine"
+**Self-Contained** - Not "standalone app", "offline tool", "isolated"
 
 ---
 

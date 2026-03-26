@@ -4,7 +4,8 @@ import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const indicators = [
-  "Private & encrypted",
+  "No integrations needed",
+  "Encrypted at rest",
   "Export to any AI",
   "Delete anytime",
 ]

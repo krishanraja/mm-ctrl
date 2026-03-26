@@ -166,6 +166,9 @@ Somewhere, a leader in your space is making AI-assisted decisions in seconds bec
 ### The "Infrastructure, Not Education" Angle
 You don't need another AI course. You don't need to learn prompt engineering. You need infrastructure that makes every AI tool you already use work like it was built for you. CTRL is that infrastructure. Two minutes. One click. Done.
 
+### The "No Integrations" Angle
+Most AI context tools want access to your Slack, email, calendar, and browser. That means enterprise security reviews, IT approvals, and someone else reading your data. CTRL takes a different approach: you just talk to it. No integrations. No plugins. No permissions. Your context is built from what you choose to share — nothing else. The most private AI double you can build.
+
 ---
 
 ## Objection Handling
@@ -177,7 +180,7 @@ Good. CTRL makes them dramatically better. Right now, those tools start every co
 Three questions. Two minutes. Voice. That's it. Faster than writing custom instructions in ChatGPT for one tool, and this works across all of them. The time investment is trivial. The time savings compound daily.
 
 **"What about data privacy?"**
-All data encrypted at rest (AES-256-GCM). You control what's stored, what's exported, and what's deleted. Your context never trains any AI model. You own your data completely.
+CTRL is self-contained. It doesn't connect to your Slack, email, calendar, or any other tool. No enterprise security approvals needed. No background scanning. You talk to it — that's it. All data encrypted at rest (AES-256-GCM). You control what's stored, what's exported, and what's deleted. Your context never trains any AI model. You own your data completely.
 
 **"We already have an AI strategy"**
 CTRL isn't a strategy. It's infrastructure. It makes whatever AI strategy you have execute faster by giving every leader on your team personalized AI from day one. Strategy is the plan. CTRL is the accelerant.
