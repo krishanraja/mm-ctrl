@@ -53,10 +53,10 @@ function HeroLogo({ size = "large" }: { size?: "large" | "small" }) {
         alt="Mindmaker"
         className={cn("w-auto translate-x-1", isLarge ? "h-4" : "h-2.5")}
       />
-      {/* CTRL product logo */}
+      {/* CTRL product logo - nudged right for optical balance */}
       <CtrlLogo
         className={cn(
-          "w-auto",
+          "w-auto translate-x-1",
           isLarge ? "h-9 sm:h-11" : "h-5"
         )}
       />
@@ -286,7 +286,7 @@ function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
             {/* Mindmaker brand logo - nudged right to optically center */}
             <img src="/mindmaker-full-logo.png" alt="Mindmaker" className="h-4 lg:h-5 w-auto translate-x-1" />
             {/* CTRL product logo */}
-            <CtrlLogo className="h-12 lg:h-16 w-auto" />
+            <CtrlLogo className="h-12 lg:h-16 w-auto translate-x-1" />
           </div>
         </motion.div>
 
