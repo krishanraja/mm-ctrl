@@ -8,7 +8,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const DIAGNOSTIC_PRICE_ID = "price_1SV9YlHGqJqsGEJLtNzC23S4";
+const DIAGNOSTIC_PRICE_ID = "price_1THBLwHGqJqsGEJLXF8hX9v4";
 const DEEP_CONTEXT_PRICE_ID = "price_1SojAqHGqJqsGEJLDEd6BqMG"; // TODO: Replace with actual Stripe price ID
 const BUNDLE_PRICE_ID = "price_1SojArHGqJqsGEJLtmmGW7p3"; // TODO: Replace with actual Stripe price ID for bundle
 
