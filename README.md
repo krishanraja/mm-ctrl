@@ -2,7 +2,7 @@
 
 > Think out loud. See what emerges.
 
-CTRL helps leaders voice their thoughts and organizes them into a **Memory Web**, your portable context that makes every AI smarter, and **Team Instructions** that make your team sharper.
+CTRL helps leaders voice their thoughts and organizes them into a **Memory Web** (your portable context that makes every AI smarter), an **Edge** profile (your leadership strengths amplified, weaknesses covered), and **Context Exports** that make every AI tool you use instantly personal.
 
 **Build your portable AI double in 2 minutes. Every AI tool you use instantly knows your context, goals, and thinking style.**
 
@@ -30,6 +30,14 @@ CTRL eliminates that friction permanently.
 ### Memory Web
 Your thoughts, organized. A living map of what you know, what you want, and how you think. Facts are categorized, verified by you, and encrypted at rest.
 
+### Edge: Leadership Amplifier
+Your strengths sharpened, your weaknesses covered. Edge synthesizes your Memory Web and assessment data into a leadership profile, then offers AI-powered capabilities:
+- **Sharpen** strengths: Systemize, Teach, Lean Into
+- **Cover** weaknesses: Board Memos, Strategy Docs, Emails, Meeting Agendas, Templates
+- Interactive strength/weakness pills with feedback loops
+- Intelligence gap detection with guided resolution
+- Pro tier with premium artifact generation
+
 ### Context Export: Your Context, Everywhere
 One click to export your context to **any** AI tool:
 - **ChatGPT** - Custom instructions
@@ -48,14 +56,11 @@ Four tools that think with your context:
 - **Team Brief** - Draft instructions for your team
 - **Stream of Consciousness** - Speak freely. It organizes itself.
 
-### Team Instructions
-Your thinking, delegated. Turn your context into clear instructions for anyone on your team. Drawn directly from your Memory Web.
+### AI Literacy Diagnostic
+10-minute assessment covering Strategic Vision, Experimentation Culture, Delegation & Automation, Data & Decision Quality, Team Capability, and Governance. Surfaces tensions, risk signals, and organizational scenarios.
 
 ### Missions & Progress
 Commit to action items from your diagnostic. Track progress through check-ins. Adaptive prompts adjust based on your momentum.
-
-### AI Literacy Diagnostic
-10-minute assessment covering Strategic Vision, Experimentation Culture, Delegation & Automation, Data & Decision Quality, Team Capability, and Governance. Surfaces tensions, risk signals, and organizational scenarios.
 
 ---
 
@@ -75,46 +80,92 @@ Commit to action items from your diagnostic. Track progress through check-ins. A
 | Frontend | React 18, TypeScript, Vite, Framer Motion |
 | Styling | Tailwind CSS, shadcn/ui |
 | State | React Context, TanStack Query |
-| Backend | Supabase (PostgreSQL, 45+ Edge Functions) |
-| AI | OpenAI GPT-4o (primary), Vertex AI Gemini (fallback) |
+| Backend | Supabase (PostgreSQL, 53 Edge Functions, Deno runtime) |
+| AI Primary | Vertex AI (Gemini 2.0 Flash) via Google Cloud service account |
+| AI Fallback | OpenAI GPT-4o |
 | Voice | OpenAI Whisper |
 | Auth | Supabase Auth (Email + Google OAuth) |
-| Payments | Stripe |
+| Payments | Stripe (Edge Pro subscription) |
 | Email | Resend |
-| Hosting | Vercel (frontend), Supabase (backend) |
+| Hosting | Vercel (frontend), Supabase Cloud (backend) |
 
 ---
 
 ## Architecture
 
+The app uses a **unified dashboard** architecture. The Dashboard page (`/dashboard`) is the primary hub, rendering either the Memory Web view (default) or the Edge view (`?view=edge`). Desktop uses a persistent sidebar; mobile uses a bottom navigation bar.
+
+### Active Routes
+
+| Route | Page | Auth | Notes |
+|-------|------|------|-------|
+| `/` | Landing | No | Video background hero, CTRL branding |
+| `/auth` | Auth | No | Email + Google OAuth |
+| `/auth/callback` | Auth Callback | No | OAuth redirect handler |
+| `/booking` | Booking | No | External booking page |
+| `/dashboard` | Dashboard (Memory Web) | Yes | Default view - Memory Web with guided first experience |
+| `/dashboard?view=edge` | Dashboard (Edge) | Yes | Edge leadership amplifier |
+| `/memory` | Memory Center | Yes | Detailed memory management |
+| `/context` | Context Export | Yes | Export to AI tools |
+| `/settings` | Settings | Yes | User preferences |
+| `/profile` | Profile | Yes | User profile |
+
+Legacy routes (`/today`, `/voice`, `/pulse`, `/diagnostic`, `/think`) redirect to `/dashboard`.
+
+### Navigation Structure
+
+**Desktop:** Fixed left sidebar (264px) with CTRL logo, nav items (Home, Edge, Memory Web, Export to AI), settings, and sign out.
+
+**Mobile:** Bottom navigation bar with 4 tabs: Home, Edge, Memory, Export.
+
+### Directory Structure
+
 ```
 src/
-├── components/        # UI components
-│   ├── ui/           # shadcn/ui primitives
-│   ├── auth/         # Authentication
-│   ├── voice/        # Voice capture
-│   ├── memory-web/   # Memory Web dashboard
-│   ├── onboarding/   # Guided first experience
-│   └── ai-chat/      # AI interaction
-├── hooks/            # 30+ custom React hooks
-├── pages/            # 20 lazy-loaded pages
-├── contexts/         # Auth, Theme, AppState
-├── types/            # TypeScript types
-├── utils/            # Utilities
-└── integrations/     # External service clients
+├── components/
+│   ├── ui/              # shadcn/ui primitives
+│   ├── auth/            # Authentication (AuthProvider, RequireAuth)
+│   ├── landing/         # Landing page (HeroSection, CtrlLogo, TrustIndicators)
+│   ├── dashboard/       # Dashboard hub
+│   │   ├── desktop/     # DesktopDashboard, Sidebar, Panel
+│   │   └── mobile/      # MobileDashboard, BottomNav, VoiceFAB, sheets
+│   ├── memory-web/      # Memory Web views (desktop + mobile dashboards, sidebar, guided experience)
+│   ├── edge/            # Edge leadership amplifier (EdgeView, EdgeProfileCard, paywall, pills)
+│   ├── voice/           # Voice capture components
+│   ├── memory/          # Memory management components
+│   ├── onboarding/      # Guided first experience
+│   ├── missions/        # Missions tracking
+│   ├── sharpen/         # Sharpen tool (voice input, insights)
+│   ├── ai-chat/         # AI interaction
+│   ├── diagnostic/      # Assessment components
+│   ├── team-instructions/ # Team instruction generation
+│   └── pulse/           # Strategic Pulse
+├── hooks/               # 32 custom React hooks
+├── pages/               # 23 page components (many are legacy redirects)
+├── contexts/            # Auth, Theme, AppState
+├── types/               # TypeScript types (including edge.ts)
+├── utils/               # Utilities
+├── router.tsx           # React Router v6 with createBrowserRouter
+└── integrations/        # External service clients (Supabase)
 
 supabase/
-├── functions/        # 45+ edge functions
+├── functions/           # 53 edge functions (Deno runtime)
+│   ├── _shared/         # Shared utilities (rate limiting, AI cache, context builders, etc.)
+│   ├── ai-generate/     # Central AI function (Vertex primary, OpenAI fallback)
 │   ├── voice-transcribe/
 │   ├── extract-user-context/
 │   ├── memory-crud/
 │   ├── memory-export/
-│   ├── ai-generate/
+│   ├── edge-generate/   # Edge artifact generation
+│   ├── synthesize-edge-profile/  # Edge profile synthesis
+│   ├── create-edge-subscription/ # Edge Pro payments
 │   ├── detect-patterns/
 │   ├── submit-decision-capture/
 │   ├── generate-meeting-prep/
 │   ├── prompt-coach/
-│   └── ...
+│   └── ... (53 total)
+├── migrations/          # PostgreSQL migrations
+├── email-templates/     # Auth email templates
 └── config.toml
 ```
 
@@ -128,16 +179,25 @@ npm install
 
 # Start development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
 ```
 
-Requires Node.js 18+. Environment variables configured in Supabase dashboard for edge function secrets.
+Requires **Node.js >=22 <24**. Environment variables configured in Supabase dashboard for edge function secrets.
 
 ---
 
 ## Documentation
 
+Detailed documentation lives in `project-documentation/`:
+
 | Document | Purpose |
 |----------|---------|
+| [README.md](./project-documentation/README.md) | Documentation index and quick start |
 | [SALES_BRIEF.md](./project-documentation/SALES_BRIEF.md) | Sales-ready product overview |
 | [FEATURES.md](./project-documentation/FEATURES.md) | Complete feature inventory |
 | [VALUE_PROP.md](./project-documentation/VALUE_PROP.md) | Value propositions by audience |
@@ -145,16 +205,16 @@ Requires Node.js 18+. Environment variables configured in Supabase dashboard for
 | [ICP.md](./project-documentation/ICP.md) | Ideal customer profile |
 | [ARCHITECTURE.md](./project-documentation/ARCHITECTURE.md) | System architecture |
 | [BRANDING.md](./project-documentation/BRANDING.md) | Brand voice and guidelines |
+| [DESIGN_SYSTEM.md](./project-documentation/DESIGN_SYSTEM.md) | Design tokens, components, patterns |
 | [MASTER_INSTRUCTIONS.md](./project-documentation/MASTER_INSTRUCTIONS.md) | AI development guidelines |
-
-Full documentation index: [project-documentation/README.md](./project-documentation/README.md)
 
 ---
 
 ## Deployment
 
-- **Frontend**: Auto-deploys to Vercel on push
-- **Edge Functions**: Auto-deploys to Supabase on push to `supabase/functions/`
+- **Frontend**: Auto-deploys to Vercel on push to main
+- **Edge Functions**: Deployed via Supabase CLI (`supabase functions deploy`)
+- **Database**: Migrations applied via `supabase db push`
 
 ---
 

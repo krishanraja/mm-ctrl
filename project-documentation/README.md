@@ -4,8 +4,8 @@
 
 This folder contains all technical and strategic documentation for the CTRL portable AI context platform.
 
-**Last Updated:** 2026-03-24
-**Current Version:** v4.1 (CTRL rebrand: Clarity for Leaders)
+**Last Updated:** 2026-04-01
+**Current Version:** v4.2 (Unified dashboard + Edge leadership amplifier)
 
 ---
 
@@ -94,15 +94,19 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 - React 18 + TypeScript + Vite
 - Framer Motion for animations
 - Tailwind CSS + shadcn/ui components
-- Supabase (PostgreSQL + 45+ Edge Functions)
-- OpenAI GPT-4o (primary) + Vertex AI Gemini (fallback)
+- Supabase (PostgreSQL + 53 Edge Functions, Deno runtime)
+- Vertex AI Gemini 2.0 Flash (primary) + OpenAI GPT-4o (fallback)
 - OpenAI Whisper for voice transcription
-- 20 lazy-loaded pages, 30+ custom hooks
+- Unified dashboard architecture (Memory Web + Edge views)
+- Desktop sidebar + mobile bottom nav navigation
+- 32 custom hooks, lazy-loaded pages
 - Memory encryption (AES-256-GCM)
 - Google OAuth + Email auth
+- Node.js >=22 <24
 
 ### Core Features
-- **Memory Web**: Voice-first context extraction with encrypted storage
+- **Memory Web**: Voice-first context extraction with encrypted storage (default dashboard view)
+- **Edge**: Leadership amplifier - strengths sharpened, weaknesses covered with AI artifacts (Pro tier available)
 - **Context Export**: One-click export to ChatGPT, Claude, Gemini, Cursor, Claude Code
 - **Guided First Experience**: 3-question onboarding delivering export in 2 minutes
 - **Pattern Detection**: 10X skills, blind spots, behavioral preferences
@@ -135,12 +139,13 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 
 | Field | Value |
 |-------|-------|
-| Documentation last updated | 2026-03-24 |
-| Current product version | v4.1 (CTRL rebrand: Clarity for Leaders) |
-| Architecture version | Single DB-based architecture |
+| Documentation last updated | 2026-04-01 |
+| Current product version | v4.2 (Unified dashboard + Edge) |
+| Architecture version | Unified dashboard (Memory Web + Edge views) |
 | Design system version | v3.0 (Light mode, Apple-like) |
-| AI primary model | OpenAI GPT-4o |
-| AI fallback model | Vertex AI (Gemini 2.0 Flash) |
-| Edge functions | 45+ |
-| Pages | 20 (lazy-loaded) |
-| Custom hooks | 30+ |
+| AI primary model | Vertex AI (Gemini 2.0 Flash) |
+| AI fallback model | OpenAI GPT-4o |
+| Edge functions | 53 |
+| Active routes | 10 (+ legacy redirects) |
+| Custom hooks | 32 |
+| Node.js requirement | >=22 <24 |
