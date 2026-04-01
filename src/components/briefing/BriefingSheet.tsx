@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useBriefingContext } from "@/contexts/BriefingContext";
 import { useSubmitFeedback } from "@/hooks/useBriefing";
+import { useWatchlist } from "@/hooks/useWatchlist";
 import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
 import type { PlaybackSpeed, FrameworkTag } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
@@ -31,6 +32,7 @@ export function BriefingSheet() {
   } = useBriefingContext();
 
   const { submitFeedback } = useSubmitFeedback();
+  const { watchedCompanies, watchCompany } = useWatchlist();
   const scrollRef = useRef<HTMLDivElement>(null);
   const segmentRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -184,6 +186,8 @@ export function BriefingSheet() {
                     index={index}
                     isActive={index === playback.currentSegmentIndex}
                     onFeedback={(reaction) => handleFeedback(index, reaction)}
+                    onWatchCompany={watchCompany}
+                    watchedCompanies={watchedCompanies}
                   />
                 </div>
               ))}

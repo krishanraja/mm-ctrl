@@ -38,6 +38,7 @@ interface UserContext {
   weaknesses: string[];
   activeMissions: string[];
   recentDecisions: string[];
+  watchingCompanies: string[];
 }
 
 interface BriefingSegment {
@@ -67,8 +68,11 @@ Format each as: "[CATEGORY] headline text"
 Return ONLY a JSON array of 12-15 items:
 [{"title": "[SIGNAL] headline here", "source": "Publication Name"}]`;
 
-async function fetchWithPerplexity(apiKey: string): Promise<NewsHeadline[]> {
+async function fetchWithPerplexity(apiKey: string, watchingCompanies: string[] = []): Promise<NewsHeadline[]> {
   const today = new Date().toISOString().split("T")[0];
+  const watchExtra = watchingCompanies.length > 0
+    ? ` Also specifically search for recent news about: ${watchingCompanies.join(", ")}.`
+    : "";
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: {
@@ -81,7 +85,7 @@ async function fetchWithPerplexity(apiKey: string): Promise<NewsHeadline[]> {
         { role: "system", content: PERPLEXITY_SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Search for the most important AI and business news from the past 7 days (today is ${today}). Find 12-15 headlines a business leader would care about. Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.`,
+          content: `Search for the most important AI and business news from the past 7 days (today is ${today}). Find 12-15 headlines a business leader would care about. Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.${watchExtra}`,
         },
       ],
       temperature: 0.2,
@@ -287,6 +291,7 @@ async function getUserContext(
     weaknesses: [],
     activeMissions: [],
     recentDecisions: [],
+    watchingCompanies: [],
   };
 
   // User memory facts
@@ -365,6 +370,24 @@ async function getUserContext(
     console.warn("Failed to fetch missions:", e);
   }
 
+  // Watching companies (watchlist)
+  try {
+    const { data: watchlist } = await supabase
+      .from("user_memory")
+      .select("fact_value")
+      .eq("user_id", userId)
+      .eq("fact_key", "watching_company")
+      .eq("is_current", true);
+
+    if (watchlist) {
+      ctx.watchingCompanies = watchlist.map(
+        (w: { fact_value: string }) => w.fact_value
+      );
+    }
+  } catch (e) {
+    console.warn("Failed to fetch watchlist:", e);
+  }
+
   return ctx;
 }
 
@@ -389,6 +412,9 @@ async function generateBriefingScript(
       : null,
     userCtx.activeMissions.length
       ? `Currently working on: ${userCtx.activeMissions.join("; ")}`
+      : null,
+    userCtx.watchingCompanies.length
+      ? `Companies they are watching closely (prioritise news about these): ${userCtx.watchingCompanies.join(", ")}`
       : null,
   ]
     .filter(Boolean)
@@ -529,7 +555,7 @@ serve(async (req) => {
 
     if (perplexityKey) {
       try {
-        headlines = await fetchWithPerplexity(perplexityKey);
+        headlines = await fetchWithPerplexity(perplexityKey, userCtx.watchingCompanies);
         console.log(`Perplexity: ${headlines.length} headlines`);
       } catch (e) {
         console.error("Perplexity failed:", e);
