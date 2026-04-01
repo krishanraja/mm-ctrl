@@ -336,7 +336,7 @@ export function DesktopMemoryDashboard() {
       <DesktopSidebar />
 
       <main className="ml-64 min-h-screen">
-        <div className="max-w-5xl mx-auto px-8 py-8 space-y-8">
+        <div className="max-w-7xl mx-auto px-8 py-8 space-y-6">
           {/* Header Row */}
           <div className="flex items-start justify-between">
             <div>
@@ -482,93 +482,96 @@ export function DesktopMemoryDashboard() {
 
           {!isLoading && hasData && (
             <>
-              {/* Top Stats Row */}
-              <div className="grid grid-cols-4 gap-4">
-                {/* Clone Health */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="col-span-2 rounded-2xl bg-gradient-to-br from-accent/10 via-purple-500/5 to-transparent border border-accent/20 p-5"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <Brain className="h-4 w-4 text-accent" />
-                      <span className="text-xs font-semibold uppercase tracking-wider text-accent">
-                        Memory Web Health
-                      </span>
-                    </div>
-                    <span className="text-3xl font-bold text-foreground">{stats?.health_score || 0}%</span>
-                  </div>
-                  <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-accent to-purple-500"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${stats?.health_score || 0}%` }}
-                      transition={{ duration: 1.2, ease: 'easeOut' }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-6 mt-3 text-xs text-muted-foreground">
-                    <span>{stats?.total_facts || 0} facts</span>
-                    <span>{stats?.verified_count || 0} verified</span>
-                    <span>{stats?.patterns_count || 0} patterns</span>
-                    <span>{stats?.decisions_count || 0} decisions</span>
-                  </div>
-                </motion.div>
-
-                {/* Category breakdown */}
+              {/* Main Dashboard Grid: Viz + Stats side by side */}
+              <div className="grid grid-cols-3 gap-6">
+                {/* Memory Web Visualization - takes 2/3 */}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="col-span-2 rounded-2xl border border-border bg-card p-5"
+                  className="col-span-2 rounded-2xl border border-border bg-card overflow-hidden"
                 >
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    Memory Web Coverage
-                  </h3>
-                  <div className="space-y-2.5">
-                    {(Object.entries(stats?.category_distribution || {}) as [FactCategory, number][])
-                      .sort((a, b) => b[1] - a[1])
-                      .map(([cat, count]) => {
-                        const config = CATEGORY_CONFIG[cat];
-                        if (!config) return null;
-                        const max = Math.max(...Object.values(stats?.category_distribution || { x: 1 }));
-                        const pct = max > 0 ? (count / max) * 100 : 0;
-                        return (
-                          <div key={cat} className="flex items-center gap-3">
-                            <span className="text-xs text-muted-foreground w-20">{config.label}</span>
-                            <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                              <motion.div
-                                className={cn('h-full rounded-full bg-gradient-to-r', config.gradient)}
-                                initial={{ width: 0 }}
-                                animate={{ width: `${pct}%` }}
-                                transition={{ duration: 0.8 }}
-                              />
-                            </div>
-                            <span className="text-xs font-bold text-foreground w-6 text-right">{count}</span>
-                          </div>
-                        );
-                      })}
+                  <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Memory Web
+                    </h3>
+                    <span className="text-[10px] text-muted-foreground/50">Click a node to explore</span>
+                  </div>
+                  <div className="h-[420px] relative">
+                    <MemoryWebVisualization facts={facts} />
                   </div>
                 </motion.div>
-              </div>
 
-              {/* Memory Web Visualization */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="rounded-2xl border border-border bg-card overflow-hidden"
-              >
-                <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Memory Web
-                  </h3>
-                  <span className="text-[10px] text-muted-foreground/50">Click a node to explore</span>
+                {/* Stats Column - takes 1/3 */}
+                <div className="space-y-4">
+                  {/* Clone Health */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl bg-gradient-to-br from-accent/10 via-purple-500/5 to-transparent border border-accent/20 p-5"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Brain className="h-4 w-4 text-accent" />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                          Health
+                        </span>
+                      </div>
+                      <span className="text-3xl font-bold text-foreground">{stats?.health_score || 0}%</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-accent to-purple-500"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${stats?.health_score || 0}%` }}
+                        transition={{ duration: 1.2, ease: 'easeOut' }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3 text-xs text-muted-foreground">
+                      <span>{stats?.total_facts || 0} facts</span>
+                      <span>{stats?.verified_count || 0} verified</span>
+                      <span>{stats?.patterns_count || 0} patterns</span>
+                      <span>{stats?.decisions_count || 0} decisions</span>
+                    </div>
+                  </motion.div>
+
+                  {/* Category breakdown */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="rounded-2xl border border-border bg-card p-5"
+                  >
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      Coverage
+                    </h3>
+                    <div className="space-y-2.5">
+                      {(Object.entries(stats?.category_distribution || {}) as [FactCategory, number][])
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([cat, count]) => {
+                          const config = CATEGORY_CONFIG[cat];
+                          if (!config) return null;
+                          const max = Math.max(...Object.values(stats?.category_distribution || { x: 1 }));
+                          const pct = max > 0 ? (count / max) * 100 : 0;
+                          return (
+                            <div key={cat} className="flex items-center gap-3">
+                              <span className="text-xs text-muted-foreground w-20">{config.label}</span>
+                              <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
+                                <motion.div
+                                  className={cn('h-full rounded-full bg-gradient-to-r', config.gradient)}
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${pct}%` }}
+                                  transition={{ duration: 0.8 }}
+                                />
+                              </div>
+                              <span className="text-xs font-bold text-foreground w-6 text-right">{count}</span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </motion.div>
                 </div>
-                <div className="h-[320px] relative">
-                  <MemoryWebVisualization facts={facts} />
-                </div>
-              </motion.div>
+              </div>
 
               {/* Skills & Patterns Section */}
               {patterns.length > 0 && (
@@ -667,8 +670,8 @@ export function DesktopMemoryDashboard() {
                   </h2>
                   <span className="text-xs text-muted-foreground">{facts.length} total</span>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {facts.slice(0, 12).map((fact) => (
+                <div className="grid grid-cols-3 gap-3">
+                  {facts.slice(0, 18).map((fact) => (
                     <FactCard
                       key={fact.id}
                       fact={fact}
@@ -678,7 +681,7 @@ export function DesktopMemoryDashboard() {
                     />
                   ))}
                 </div>
-                {facts.length > 12 && (
+                {facts.length > 18 && (
                   <button
                     onClick={() => navigate('/memory')}
                     className="w-full mt-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
