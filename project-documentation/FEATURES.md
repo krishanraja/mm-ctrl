@@ -2,7 +2,7 @@
 
 Complete feature inventory across all three CTRL tools.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-01
 
 ---
 
@@ -108,7 +108,146 @@ Complete feature inventory across all three CTRL tools.
 
 ---
 
-## Mobile Dashboard Experience
+## Edge: Leadership Amplifier
+
+A major new feature that synthesizes the user's Memory Web and assessment data into an actionable leadership profile.
+
+### Overview
+
+Edge analyzes everything CTRL knows about a leader and surfaces:
+- **Strengths** to sharpen (with interactive pills and confidence scores)
+- **Weaknesses** to cover (with AI-generated artifacts)
+- **Intelligence gaps** to fill (guided resolution prompts)
+
+### Components (11 files in `src/components/edge/`)
+
+**EdgeView** (`EdgeView.tsx`) - Main view orchestrator
+- Loads edge profile via `useEdge` hook
+- Shows onboarding for first-time users (`EdgeOnboarding`)
+- Displays strength/weakness pills with feedback loops
+- Pro teaser cards for paid capabilities
+- Intelligence gap cards with resolution prompts
+
+**EdgeProfileCard** (`EdgeProfileCard.tsx`)
+- Summary card showing profile synthesis state
+- Re-synthesize button
+- Last synthesized timestamp
+
+**StrengthPill / GapPill** (`StrengthPill.tsx`, `GapPill.tsx`)
+- Interactive pill components for strengths and intelligence gaps
+- Tap to expand details
+- Confidence scores and evidence
+
+**EdgePaywall** (`EdgePaywall.tsx`)
+- Pro tier upgrade wall
+- Sample artifact previews (Board Memo, Strategy Doc, Email, Meeting Agenda, Framework)
+- Stripe subscription integration via `useEdgeSubscription`
+
+**DraftSheet / ArtifactPreview** (`DraftSheet.tsx`, `ArtifactPreview.tsx`)
+- Bottom sheet for artifact generation
+- Real-time generation progress
+- Markdown rendering of generated content
+
+**SmartProbeCard** (`SmartProbeCard.tsx`)
+- Guided intelligence gap resolution
+- Voice capture or text input
+- Resolution types: voice_capture, diagnostic, md_upload, quick_confirm
+
+### Capabilities
+
+**Sharpen (amplify strengths):**
+| Capability | Description |
+|-----------|-------------|
+| `systemize` | Turn instinct into repeatable frameworks |
+| `teach` | Create docs to share how you think |
+| `lean_into` | Find missions that leverage the strength |
+
+**Cover (compensate for weaknesses):**
+| Capability | Description |
+|-----------|-------------|
+| `board_memo` | Draft polished board memos |
+| `strategy_doc` | Build strategy documents with context |
+| `email` | Draft emails in your communication style |
+| `meeting_agenda` | Prepare meeting agendas with context |
+| `template` | Pre-filled templates with your facts |
+
+### Data Architecture
+
+**Tables:**
+- `edge_profiles` - Synthesized strength/weakness profiles
+- `edge_actions` - Generated artifacts and their metadata
+- `edge_feedback` - User feedback on strength/weakness accuracy
+- `edge_subscriptions` - Stripe subscription state for Pro tier
+
+**Edge Functions:**
+- `synthesize-edge-profile` - AI synthesis of user data into edge profile
+- `edge-generate` - Generate artifacts (memos, docs, emails, etc.)
+- `create-edge-subscription` - Stripe subscription creation
+- `deliver-edge-artifact` - Email delivery of artifacts
+
+**Hooks:**
+- `useEdge` - Profile data, synthesis trigger, feedback submission
+- `useEdgeSubscription` - Subscription state and access checks
+
+### Free vs Pro
+
+**Free:**
+- Full strength/weakness profile
+- Intelligence gap detection
+- Feedback loops
+- Limited artifact previews (samples only)
+
+**Pro (Stripe subscription):**
+- Unlimited artifact generation
+- Email delivery
+- All capability types
+
+---
+
+## Unified Dashboard (`/dashboard`)
+
+The Dashboard is the main authenticated hub, rendering either the **Memory Web** view (default) or the **Edge** view (`?view=edge`).
+
+### Navigation
+
+**Desktop** (`memory-web/DesktopSidebar.tsx`):
+- Fixed left sidebar (264px)
+- CTRL logo + Mindmaker icon
+- 4 nav items: Home, Edge, Memory Web, Export to AI
+- Settings + Sign Out at bottom
+
+**Mobile** (`memory-web/BottomNav.tsx`):
+- Fixed bottom nav bar with 4 tabs: Home, Edge, Memory, Export
+- AppHeader at top
+- Backdrop blur effect
+
+### Memory Web View (Default)
+
+**Desktop** (`DesktopMemoryDashboard.tsx`):
+- Sidebar + main content area (max-w-4xl)
+- Memory Web visualization, health metrics, category chart
+- Intelligence panel, recent facts feed, pattern insights
+
+**Mobile** (`MobileMemoryDashboard.tsx`):
+- Full viewport height
+- Scrollable content area
+- Voice-first interaction via floating action button
+
+**Guided First Experience** (`GuidedFirstExperience.tsx`):
+- Shown to new users (no existing memory facts)
+- 3-question onboarding flow
+- Delivers first context export in 2 minutes
+- Voice or text input
+
+### Edge View
+
+Shows the Edge leadership amplifier (see Edge section above for details).
+
+### Legacy Dashboard Components
+
+The following components still exist but are now part of legacy dashboard views or used in specific contexts:
+
+**Mobile Dashboard Experience
 
 ### Dashboard Page (`/dashboard`)
 
@@ -143,52 +282,25 @@ Complete feature inventory across all three CTRL tools.
 - Quick access to voice input
 - Animated state changes
 
-### Today Page (`/today`)
+**Legacy Pages (Now Redirected to Dashboard):**
 
-**Layout**
-- Fixed header (title + subtitle)
-- Scrollable content area
-- No-scroll pattern on mobile
+The following pages still exist as files but now redirect to `/dashboard`:
 
-**Weekly Action** (`WeeklyAction.tsx`)
-- Current week's focus action
-- Progress tracking
-- Completion status
-- Context from assessment
+- `/today` → `/dashboard` (was daily focus view with Weekly Action + Daily Provocation)
+- `/voice` → `/dashboard` (was standalone voice recorder)
+- `/pulse` → `/dashboard` (was strategic pulse dashboard)
+- `/diagnostic` → `/dashboard` (was assessment entry point)
+- `/think` → `/dashboard?view=edge` (redirects to Edge view)
 
-**Daily Provocation** (`DailyProvocation.tsx`)
-- Daily thought-provoking question
-- Tied to user's tensions
-- Encourages reflection
-- Rotates daily
+**Legacy Components (still used in dashboard context):**
 
-### Voice Page (`/voice`)
+**WeeklyActionCard / DailyProvocationCard** (`dashboard/WeeklyActionCard.tsx`, `dashboard/DailyProvocationCard.tsx`)
+- Used in desktop dashboard grid
+- Weekly focus action + daily reflection prompts
 
-**Layout**
-- Fixed header with back button
-- Centered voice recorder
-- Large mic icon
-- Countdown timer
-- Start/Stop button
-
-**Voice Recorder** (`VoiceRecorder.tsx`)
-- OpenAI Whisper integration
-- Real-time transcription
-- Visual feedback during recording
-- Auto-stop on silence
-
-### Pulse Page (`/pulse`)
-
-**Strategic Pulse** (`StrategicPulse.tsx`)
-- Baseline assessment summary
-- Tensions overview
-- Risk signals display
-- Trend indicators
-
-**Layout**
-- Fixed header
-- Scrollable content
-- Card-based sections
+**StrategicPulse** (`pulse/StrategicPulse.tsx`)
+- Strategic pulse summary (baseline, tensions, risks)
+- Integrated into mobile dashboard sheets
 
 ### Sheet Component (`Sheet.tsx`)
 

@@ -2,7 +2,7 @@
 
 Complete system architecture and data flow documentation.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-01
 
 ---
 
@@ -31,20 +31,60 @@ Complete system architecture and data flow documentation.
 src/
 ├── components/
 │   ├── ui/                    # shadcn components (DO NOT EDIT)
-│   ├── auth/                  # Authentication flows (RequireAuth)
+│   ├── auth/                  # Authentication flows (AuthProvider, RequireAuth)
 │   ├── voice/                 # Voice assessment components
 │   ├── landing/               # Landing page components
-│   │   └── HeroSection.tsx    # Landing page hero
-│   ├── dashboard/
+│   │   ├── HeroSection.tsx    # Landing page hero with video background
+│   │   ├── CtrlLogo.tsx       # CTRL product logo SVG
+│   │   └── TrustIndicators.tsx
+│   ├── dashboard/             # Dashboard hub (renders Memory Web or Edge)
+│   │   ├── DashboardProvider.tsx  # Dashboard data context
+│   │   ├── HeroStatusCard.tsx
+│   │   ├── WeeklyActionCard.tsx
+│   │   ├── DailyProvocationCard.tsx
+│   │   ├── PatternInsight.tsx
+│   │   ├── desktop/
+│   │   │   ├── DesktopDashboard.tsx  # Sidebar + content grid
+│   │   │   ├── Sidebar.tsx           # Legacy sidebar (pre-Memory Web)
+│   │   │   └── Panel.tsx
 │   │   └── mobile/
 │   │       ├── MobileDashboard.tsx
 │   │       ├── BottomNav.tsx
 │   │       ├── VoiceButton.tsx
+│   │       ├── VoiceFAB.tsx
 │   │       ├── Sheet.tsx
 │   │       ├── HeroStatusCard.tsx
-│   │       └── PriorityCardStack.tsx
+│   │       ├── PriorityCardStack.tsx
+│   │       ├── ActionQueueSheet.tsx
+│   │       └── StrategicPulseSheet.tsx
+│   ├── memory-web/            # Memory Web dashboard (primary dashboard view)
+│   │   ├── MobileMemoryDashboard.tsx
+│   │   ├── DesktopMemoryDashboard.tsx
+│   │   ├── DesktopSidebar.tsx     # Primary desktop nav (Home, Edge, Memory Web, Export)
+│   │   ├── BottomNav.tsx          # Primary mobile nav (Home, Edge, Memory, Export)
+│   │   ├── AppHeader.tsx
+│   │   ├── GuidedFirstExperience.tsx  # Onboarding for new users
+│   │   ├── MemoryWebVisualization.tsx
+│   │   ├── MemoryHealthViz.tsx
+│   │   ├── MemoryPulseBar.tsx
+│   │   ├── CategoryChart.tsx
+│   │   ├── IntelligencePanel.tsx
+│   │   ├── RecentFactsFeed.tsx
+│   │   ├── PatternInsightCard.tsx
+│   │   └── GettingSmarterBanner.tsx
+│   ├── edge/                  # Edge: Leadership Amplifier (new feature)
+│   │   ├── EdgeView.tsx           # Main Edge view (strengths/weaknesses/gaps)
+│   │   ├── EdgeProfileCard.tsx    # Profile summary card
+│   │   ├── EdgeOnboarding.tsx     # First-time Edge experience
+│   │   ├── EdgePaywall.tsx        # Pro tier paywall with sample artifacts
+│   │   ├── StrengthPill.tsx       # Interactive strength pills
+│   │   ├── GapPill.tsx            # Intelligence gap pills
+│   │   ├── SmartProbeCard.tsx     # Guided gap resolution
+│   │   ├── DraftSheet.tsx         # Artifact preview/generation sheet
+│   │   ├── ArtifactPreview.tsx    # Generated artifact display
+│   │   ├── FeedbackButtons.tsx    # Strength/weakness feedback
+│   │   └── SendToInboxButton.tsx  # Email delivery
 │   ├── action/                # Weekly action components
-│   │   └── WeeklyAction.tsx
 │   ├── ai-chat/               # AI chat components
 │   ├── analytics/             # Analytics components
 │   ├── diagnostic/            # Diagnostic-specific components
@@ -74,6 +114,11 @@ src/
 │   │   └── StrategicPulse.tsx
 │   ├── settings/              # Settings components
 │   ├── sharpen/               # Sharpen analysis components
+│   │   ├── CopyablePrompt.tsx
+│   │   ├── InsightCard.tsx
+│   │   ├── LoadingState.tsx
+│   │   └── VoiceInput.tsx
+│   ├── team-instructions/     # Team instruction generation
 │   ├── UnifiedAssessment.tsx  # Quiz + voice assessment orchestrator
 │   ├── UnifiedResults.tsx     # Results page with tabs
 │   ├── LeadershipBenchmarkV2.tsx  # Overview tab
@@ -91,18 +136,26 @@ src/
 ├── contexts/
 │   ├── AppStateContext.tsx    # Global app state management
 │   └── AssessmentContext.tsx  # Assessment flow state
-├── hooks/
+├── hooks/                     # 32 custom hooks
 │   ├── useStructuredAssessment.ts
 │   ├── useRealtimeAssessment.ts
 │   ├── useAILiteracyAssessment.ts
 │   ├── useUserState.ts
 │   ├── useAuth.ts
 │   ├── useDevice.ts
-│   ├── useMemoryQueries.ts   # Memory Center queries
-│   ├── useUserMemory.ts      # Memory state management
-│   ├── useMissions.ts        # Missions system
-│   ├── useCheckIns.ts        # Check-in system
-│   ├── useProgress.ts        # Progress tracking
+│   ├── useEdge.ts             # Edge profile data + synthesis
+│   ├── useEdgeSubscription.ts # Edge Pro subscription state
+│   ├── useMemoryQueries.ts    # Memory Center queries
+│   ├── useMemoryWeb.ts        # Memory Web dashboard data
+│   ├── useMemoryExport.ts     # Context export logic
+│   ├── useUserMemory.ts       # Memory state management
+│   ├── useGuidedCapture.ts    # Onboarding guided capture flow
+│   ├── useMarkdownImport.ts   # Markdown file import
+│   ├── useMissions.ts         # Missions system
+│   ├── useCheckIns.ts         # Check-in system
+│   ├── useProgress.ts         # Progress tracking
+│   ├── useDecisions.ts        # Decision capture
+│   ├── useTeamInstructions.ts # Team instruction generation
 │   ├── useTodaysTension.ts
 │   ├── useGenerationProgress.ts
 │   ├── useExecutiveInsights.ts
@@ -131,6 +184,7 @@ src/
 │   ├── profile.ts             # Profile types
 │   ├── voice.ts               # Voice assessment types
 │   ├── diagnostic.ts          # Diagnostic types
+│   ├── edge.ts                # Edge types (strengths, weaknesses, capabilities, subscriptions)
 │   ├── memory.ts              # Memory system types
 │   ├── memory-settings.ts     # Memory privacy settings types
 │   ├── missions.ts            # Missions system types
@@ -143,25 +197,28 @@ src/
 │   └── supabase/
 │       ├── client.ts          # Supabase client
 │       └── types.ts           # Generated DB types (READ-ONLY)
-├── pages/
-│   ├── Landing.tsx            # Main landing page (/)
+├── pages/                     # 23 page files (many are legacy, now redirected)
+│   ├── Landing.tsx            # Landing page (/)
 │   ├── Auth.tsx               # Authentication (/auth)
-│   ├── Diagnostic.tsx         # Assessment flow (/diagnostic)
-│   ├── Dashboard.tsx          # Main dashboard (/dashboard)
-│   ├── Voice.tsx              # Voice recording (/voice)
-│   ├── Pulse.tsx              # Strategic pulse (/pulse)
-│   ├── Today.tsx              # Today page (/today)
-│   ├── Profile.tsx            # User profile (/profile)
+│   ├── AuthCallback.tsx       # OAuth callback (/auth/callback)
+│   ├── Dashboard.tsx          # **Main hub** (/dashboard) - renders Memory Web or Edge view
 │   ├── MemoryCenter.tsx       # Memory Center (/memory)
-│   ├── WeeklyCheckin.tsx      # Weekly check-in (/check-in)
-│   ├── MissionCheckIn.tsx     # Mission check-in (/mission-check-in)
-│   ├── MissionHistory.tsx     # Mission history (/missions/history)
-│   ├── Progress.tsx           # Progress tracking (/progress)
+│   ├── ContextExport.tsx      # Context Export (/context)
+│   ├── Settings.tsx           # User settings (/settings)
+│   ├── Profile.tsx            # User profile (/profile)
 │   ├── Booking.tsx            # Workshop booking (/booking)
+│   ├── Diagnostic.tsx         # Assessment flow (legacy, redirects to /dashboard)
+│   ├── Voice.tsx              # Voice recording (legacy, redirects to /dashboard)
+│   ├── Pulse.tsx              # Strategic pulse (legacy, redirects to /dashboard)
+│   ├── Today.tsx              # Today page (legacy, redirects to /dashboard)
+│   ├── Think.tsx              # Think page (legacy, redirects to /dashboard?view=edge)
+│   ├── WeeklyCheckin.tsx      # Weekly check-in
+│   ├── MissionCheckIn.tsx     # Mission check-in
+│   ├── MissionHistory.tsx     # Mission history
+│   ├── Progress.tsx           # Progress tracking
 │   ├── Baseline.tsx           # Baseline assessment
 │   ├── DecisionCapture.tsx    # Decision capture
 │   ├── PromptCoach.tsx        # Prompt coaching
-│   ├── Settings.tsx           # User settings
 │   ├── Timeline.tsx           # Assessment timeline
 │   └── NotFound.tsx           # 404 page
 ├── styles/                    # Design tokens & styles
@@ -192,27 +249,39 @@ src/
 
 ### Routing
 
-Using React Router v6 with `createBrowserRouter` and lazy loading:
+Using React Router v6 with `createBrowserRouter` and lazy loading (defined in `src/router.tsx`).
 
-| Route | Page | Auth Required |
-|-------|------|---------------|
-| `/` | Landing | No |
-| `/auth` | Auth | No |
-| `/diagnostic` | Diagnostic | No |
-| `/dashboard` | Dashboard | Yes |
-| `/voice` | Voice | No |
-| `/pulse` | Pulse | Yes |
-| `/today` | Today | Yes |
-| `/profile` | Profile | Yes |
-| `/memory` | MemoryCenter | Yes |
-| `/check-in` | WeeklyCheckin | Yes |
-| `/mission-check-in` | MissionCheckIn | No |
-| `/missions/history` | MissionHistory | Yes |
-| `/progress` | Progress | Yes |
-| `/booking` | Booking | No |
-| `*` | Redirect to `/` | No |
+**Active Routes:**
 
-All pages are lazy-loaded with `React.lazy()` and wrapped in `<Suspense>` boundaries.
+| Route | Page | Auth | Notes |
+|-------|------|------|-------|
+| `/` | Landing | No | Video background hero, CTRL branding |
+| `/auth` | Auth | No | Email + Google OAuth |
+| `/auth/callback` | AuthCallback | No | OAuth redirect handler |
+| `/booking` | Booking | No | External booking |
+| `/dashboard` | Dashboard (Memory Web) | Yes | Default view - Memory Web with guided first experience |
+| `/dashboard?view=edge` | Dashboard (Edge) | Yes | Edge leadership amplifier |
+| `/memory` | MemoryCenter | Yes | Detailed memory management |
+| `/context` | ContextExport | Yes | Export to AI tools |
+| `/settings` | Settings | Yes | User preferences |
+| `/profile` | Profile | Yes | User profile |
+
+**Legacy Redirects (all redirect to `/dashboard`):**
+
+| Route | Redirects To |
+|-------|-------------|
+| `/today` | `/dashboard` |
+| `/pulse` | `/dashboard` |
+| `/voice` | `/dashboard` |
+| `/diagnostic` | `/dashboard` |
+| `/think` | `/dashboard?view=edge` |
+| `*` | `/` |
+
+All active pages are lazy-loaded with `React.lazy()` and wrapped in `<Suspense>` boundaries.
+
+**Navigation:**
+- **Desktop**: Fixed left sidebar (264px) - `memory-web/DesktopSidebar.tsx` with CTRL logo, 4 nav items (Home, Edge, Memory Web, Export to AI), settings, sign out
+- **Mobile**: Bottom nav bar - `memory-web/BottomNav.tsx` with 4 tabs (Home, Edge, Memory, Export)
 
 ---
 
@@ -345,27 +414,50 @@ All pages are lazy-loaded with `React.lazy()` and wrapped in `<Suspense>` bounda
 - Clear CTAs
 - Trust indicators below
 
-### Dashboard (`/dashboard`)
+### Dashboard (`/dashboard`) - Main Hub
 
-**Mobile:**
-- Fixed header with user name
-- Hero status card (tier, percentile)
-- Priority card stack
-- Bottom navigation
-- Floating voice button
+The Dashboard is the primary authenticated view. It renders one of two views based on the `view` query parameter:
 
-### Today Page (`/today`)
+**Default (Memory Web view):**
+- Desktop: `DesktopMemoryDashboard` with `DesktopSidebar` (264px fixed left)
+- Mobile: `MobileMemoryDashboard` with `BottomNav` (4 tabs) and `AppHeader`
+- First-time users see `GuidedFirstExperience` (3-question onboarding delivering first export in 2 minutes)
+- Returning users see Memory Web visualization, health metrics, recent facts feed, pattern insights
 
-**No-Scroll Pattern:**
-```tsx
-<div className="h-[var(--mobile-vh)] overflow-hidden flex flex-col">
-  <div className="flex-shrink-0 px-6 pt-6 pb-4">
-    {/* Header */}
-  </div>
-  <div className="flex-1 overflow-y-auto px-6 pb-safe-bottom">
-    {/* Scrollable content */}
-  </div>
-</div>
+**Edge view (`?view=edge`):**
+- Lazy-loaded `EdgeView` component
+- Same sidebar/nav shell as Memory Web
+- Shows leadership profile: strengths (interactive pills), weaknesses, intelligence gaps
+- Pro tier paywall for premium artifact generation (board memos, strategy docs, emails)
+- Feedback loops for strength/weakness confirmation
+
+**Desktop Layout:**
+```
+┌──────────┬──────────────────────┐
+│ Sidebar  │                      │
+│ (264px)  │   Main Content       │
+│          │   (max-w-4xl)        │
+│ Home     │                      │
+│ Edge     │                      │
+│ Memory   │                      │
+│ Export   │                      │
+│          │                      │
+│ Settings │                      │
+│ Sign Out │                      │
+└──────────┴──────────────────────┘
+```
+
+**Mobile Layout:**
+```
+┌─────────────────┐
+│ AppHeader       │
+├─────────────────┤
+│                 │
+│ Content (scroll)│
+│                 │
+├─────────────────┤
+│ BottomNav (4)   │
+└─────────────────┘
 ```
 
 ### Memory Center (`/memory`)
@@ -377,23 +469,12 @@ All pages are lazy-loaded with `React.lazy()` and wrapped in `<Suspense>` bounda
 - Export/import panel
 - Error boundary wrapper
 
-### Missions (`/mission-check-in`, `/missions/history`)
+### Context Export (`/context`)
 
 **Features:**
-- First Move commitment flow
-- Periodic check-in reflections
-- AI-generated responses to reflections
-- Mission history with status tracking
-
-### Voice Page (`/voice`)
-
-- Fixed header with back button
-- Centered voice recorder
-- Large mic icon, countdown timer
-
-### Pulse Page (`/pulse`)
-
-- Baseline card, tensions cards, risk signals cards
+- One-click export to 6 AI tools (ChatGPT, Claude, Gemini, Cursor, Claude Code, Raw Markdown)
+- Use case-specific formatting (General Advisor, Meeting Prep, Decision Support, etc.)
+- Copy to clipboard or download
 
 ---
 
@@ -569,7 +650,7 @@ index_participant_data
 
 **Location**: `supabase/functions/`
 
-**Total**: 45 edge functions + shared module directory
+**Total**: 53 edge functions + shared module directory
 
 #### Core Assessment Functions
 
@@ -643,9 +724,33 @@ index_participant_data
 44. **submit-decision-capture** - Capture decision data
 45. **submit-weekly-checkin** - Submit weekly check-in
 
+#### Edge Functions (Leadership Amplifier)
+
+46. **synthesize-edge-profile** - Synthesize strengths/weaknesses from Memory Web + assessment data
+47. **edge-generate** - Generate Edge artifacts (board memos, strategy docs, emails, frameworks)
+48. **create-edge-subscription** - Create Edge Pro Stripe subscription
+49. **deliver-edge-artifact** - Deliver generated artifact via email
+
+#### Memory Lifecycle Functions
+
+50. **memory-lifecycle** - Memory fact aging and cleanup
+51. **memory-synthesize** - Memory pattern synthesis
+52. **memory-settings** - Memory privacy and budget settings
+
+#### Additional Functions
+
+53. **enrich-company-context** - Enrich company data for contextual AI responses
+
 **Shared Modules** (`supabase/functions/_shared/`):
 - `context-builder.ts`: Builds LLM context from diagnostic data
+- `memory-context-builder.ts`: Builds Memory Web context for AI
 - `openai-utils.ts`: OpenAI API wrapper utilities
+- `ai-cache.ts`: AI response caching layer
+- `rate-limiting.ts` / `rate-limit.ts`: Request rate limiting
+- `llm-quality-guardrails.ts`: LLM output validation
+- `storage-utils.ts`: File storage utilities
+- `validate-database.ts`: Database validation helpers
+- `email-utils.ts`: Email sending utilities
 - `llm-quality-guardrails.ts`: Output validation and filtering
 - `ai-cache.ts`: AI response caching layer
 - `rate-limit.ts` / `rate-limiting.ts`: Rate limiting middleware
