@@ -178,7 +178,7 @@ export function DesktopMemoryDashboard() {
     submitInput,
   } = useMemoryWeb();
   const { exportResult, isExporting, generateExport, copyToClipboard } = useMemoryExport();
-  const { briefing: todaysBriefing, loading: briefingLoading } = useTodaysBriefing();
+  const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
 
@@ -197,7 +197,8 @@ export function DesktopMemoryDashboard() {
   const handleGenerateBriefing = async () => {
     const briefingId = await generate();
     if (briefingId) {
-      setSheetOpen(true);
+      // Refetch to get the briefing data, then show the card
+      await refetchBriefing();
     }
   };
 
@@ -445,15 +446,30 @@ export function DesktopMemoryDashboard() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">Your Daily Briefing</p>
-                  <p className="text-xs text-muted-foreground">Personalised AI news, in your voice</p>
+                  <p className="text-xs text-muted-foreground">
+                    {generating
+                      ? phase === 'scanning' ? 'Scanning today\'s news...'
+                        : phase === 'personalising' ? 'Finding what matters to you...'
+                        : 'Preparing your briefing...'
+                      : 'Personalised AI news, in your voice'}
+                  </p>
                 </div>
               </div>
               <button
                 onClick={handleGenerateBriefing}
                 disabled={generating}
-                className="px-4 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50"
+                className="relative px-4 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors disabled:opacity-70 min-w-[140px]"
               >
-                {generating ? (phase === 'scanning' ? 'Scanning news...' : phase === 'personalising' ? 'Personalising...' : 'Preparing...') : 'Generate Briefing'}
+                {generating ? (
+                  <span className="flex items-center gap-2">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                      className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full"
+                    />
+                    {phase === 'scanning' ? 'Scanning...' : phase === 'personalising' ? 'Curating...' : 'Preparing...'}
+                  </span>
+                ) : 'Generate Briefing'}
               </button>
             </motion.div>
           )}

@@ -68,7 +68,7 @@ export function MobileMemoryDashboard() {
   } = useUserMemory();
   const { toast } = useToast();
   const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
-  const { briefing: todaysBriefing, loading: briefingLoading } = useTodaysBriefing();
+  const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
 
   // Sync briefing into context

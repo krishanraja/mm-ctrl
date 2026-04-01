@@ -1,10 +1,12 @@
 import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check } from "lucide-react";
+import { Radio, Play, Check, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Briefing } from "@/types/briefing";
+import { usePollAudio } from "@/hooks/useBriefing";
+import { useBriefingContext } from "@/contexts/BriefingContext";
 
 interface BriefingCardProps {
   briefing: Briefing;
@@ -13,17 +15,28 @@ interface BriefingCardProps {
 }
 
 export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProps) {
+  // Poll for audio if not yet available
+  const { audioUrl, polling } = usePollAudio(
+    briefing.audio_url ? null : briefing.id
+  );
+  const { setBriefing } = useBriefingContext();
+
+  // Update briefing with audio URL when it arrives
+  React.useEffect(() => {
+    if (audioUrl && !briefing.audio_url) {
+      setBriefing({ ...briefing, audio_url: audioUrl });
+    }
+  }, [audioUrl, briefing, setBriefing]);
+
+  const hasAudio = !!(briefing.audio_url || audioUrl);
+
   // Collapse to minimal row if already listened
   if (hasListened) {
     return (
-      <motion.div
-        initial={{ opacity: 1, height: "auto" }}
-        animate={{ opacity: 0.6, height: "auto" }}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-muted/50"
-      >
-        <Check className="w-4 h-4 text-muted-foreground" />
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
+        <Check className="w-3.5 h-3.5 text-muted-foreground" />
         <span className="text-xs text-muted-foreground">Briefing heard</span>
-      </motion.div>
+      </div>
     );
   }
 
@@ -37,40 +50,48 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+      <Card className="overflow-hidden">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Radio className="w-4 h-4 text-accent" />
               </div>
-              <CardTitle className="text-base">Your Briefing</CardTitle>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-sm font-semibold">Your Briefing</p>
+                  <Badge variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
+                    {durationMin} min
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground mb-1">
+                  {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
+                </p>
+                <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+              </div>
             </div>
-            <Badge variant="secondary" className="text-xs font-normal">
-              {durationMin} min
-            </Badge>
+
+            <Button
+              variant="default"
+              size="sm"
+              disabled={!hasAudio && polling}
+              className="flex-shrink-0 bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3"
+              onClick={onPlay}
+            >
+              {!hasAudio && polling ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <>
+                  <Play className="w-3 h-3 fill-current mr-1" />
+                  Listen
+                </>
+              )}
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">
-              {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
-            </p>
-            <p className="text-sm leading-relaxed line-clamp-2">{teaser}</p>
-          </div>
-          <Button
-            variant="default"
-            size="sm"
-            className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-            onClick={onPlay}
-          >
-            <Play className="w-3 h-3 mr-2 fill-current" />
-            Listen Now
-          </Button>
         </CardContent>
       </Card>
     </motion.div>

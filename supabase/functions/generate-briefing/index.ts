@@ -584,26 +584,38 @@ serve(async (req) => {
 
     console.log(`Briefing created: ${briefing.id}`);
 
-    // 5. Trigger audio synthesis (fire and forget)
+    // 5. Trigger audio synthesis (awaited so client gets audio URL)
+    let audioUrl: string | null = null;
+    let audioDuration: number | null = null;
     try {
       const synthUrl = `${supabaseUrl}/functions/v1/synthesize-briefing`;
-      fetch(synthUrl, {
+      const synthResp = await fetch(synthUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${supabaseServiceKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ briefing_id: briefing.id }),
-      }).catch((e) => console.error("Synthesis trigger failed:", e));
+      });
+      if (synthResp.ok) {
+        const synthData = await synthResp.json();
+        audioUrl = synthData.audio_url || null;
+        audioDuration = synthData.duration_seconds || null;
+        console.log("Audio synthesized:", audioUrl ? "OK" : "no URL");
+      } else {
+        console.error("Synthesis returned:", synthResp.status);
+      }
     } catch (e) {
-      console.warn("Could not trigger synthesis:", e);
+      console.warn("Could not synthesize audio:", e);
     }
 
     return new Response(
       JSON.stringify({
         briefing_id: briefing.id,
         already_exists: false,
-        has_audio: false,
+        has_audio: !!audioUrl,
+        audio_url: audioUrl,
+        audio_duration_seconds: audioDuration,
         segment_count: segments.length,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
