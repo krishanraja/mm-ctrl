@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -34,6 +34,10 @@ import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { DesktopSidebar } from './DesktopSidebar';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
+import { BriefingCard } from '@/components/dashboard/BriefingCard';
+import { BriefingSheet } from '@/components/briefing/BriefingSheet';
+import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
+import { useBriefingContext } from '@/contexts/BriefingContext';
 import type {
   MemoryWebFact,
   Temperature,
@@ -174,6 +178,28 @@ export function DesktopMemoryDashboard() {
     submitInput,
   } = useMemoryWeb();
   const { exportResult, isExporting, generateExport, copyToClipboard } = useMemoryExport();
+  const { briefing: todaysBriefing, loading: briefingLoading } = useTodaysBriefing();
+  const { setBriefing, setSheetOpen, playback } = useBriefingContext();
+  const { generate, generating, phase } = useGenerateBriefing();
+
+  // Sync briefing into context
+  useEffect(() => {
+    if (todaysBriefing) setBriefing(todaysBriefing);
+  }, [todaysBriefing, setBriefing]);
+
+  const handlePlayBriefing = () => {
+    if (todaysBriefing) {
+      setBriefing(todaysBriefing);
+      setSheetOpen(true);
+    }
+  };
+
+  const handleGenerateBriefing = async () => {
+    const briefingId = await generate();
+    if (briefingId) {
+      setSheetOpen(true);
+    }
+  };
 
   const { isRecording, startRecording, stopRecording } = useVoice({
     onTranscript: (transcript) => setInputText(transcript),
@@ -398,6 +424,39 @@ export function DesktopMemoryDashboard() {
               <Send className="h-4 w-4" />
             </button>
           </div>
+
+          {/* Briefing Card */}
+          {todaysBriefing && !briefingLoading && (
+            <BriefingCard
+              briefing={todaysBriefing}
+              hasListened={playback.hasListened}
+              onPlay={handlePlayBriefing}
+            />
+          )}
+          {!todaysBriefing && !briefingLoading && hasData && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Your Daily Briefing</p>
+                  <p className="text-xs text-muted-foreground">Personalised AI news, in your voice</p>
+                </div>
+              </div>
+              <button
+                onClick={handleGenerateBriefing}
+                disabled={generating}
+                className="px-4 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50"
+              >
+                {generating ? (phase === 'scanning' ? 'Scanning news...' : phase === 'personalising' ? 'Personalising...' : 'Preparing...') : 'Generate Briefing'}
+              </button>
+            </motion.div>
+          )}
 
           {isLoading && (
             <div className="flex items-center justify-center py-12">
@@ -682,6 +741,9 @@ export function DesktopMemoryDashboard() {
           )}
         </div>
       </main>
+
+      {/* Briefing Sheet (shared between mobile and desktop) */}
+      <BriefingSheet />
     </div>
   );
 }

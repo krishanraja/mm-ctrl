@@ -33,6 +33,10 @@ import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BottomNav } from './BottomNav';
 import { AppHeader } from './AppHeader';
 import { useToast } from '@/hooks/use-toast';
+import { BriefingCard } from '@/components/dashboard/BriefingCard';
+import { BriefingSheet, MiniPlayer } from '@/components/briefing';
+import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
+import { useBriefingContext } from '@/contexts/BriefingContext';
 import type { FactCategory, PatternType } from '@/types/memory';
 
 function getGreeting() {
@@ -64,6 +68,20 @@ export function MobileMemoryDashboard() {
   } = useUserMemory();
   const { toast } = useToast();
   const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
+  const { briefing: todaysBriefing, loading: briefingLoading } = useTodaysBriefing();
+  const { setBriefing, setSheetOpen, playback } = useBriefingContext();
+
+  // Sync briefing into context
+  useEffect(() => {
+    if (todaysBriefing) setBriefing(todaysBriefing);
+  }, [todaysBriefing, setBriefing]);
+
+  const handlePlayBriefing = () => {
+    if (todaysBriefing) {
+      setBriefing(todaysBriefing);
+      setSheetOpen(true);
+    }
+  };
 
   const [mode, setMode] = useState<'idle' | 'voice' | 'text'>('idle');
   const [textInput, setTextInput] = useState('');
@@ -181,6 +199,17 @@ export function MobileMemoryDashboard() {
       <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
         {/* Header */}
         <AppHeader />
+
+        {/* Briefing Card */}
+        {todaysBriefing && !briefingLoading && (
+          <div className="flex-shrink-0 px-4 pt-2">
+            <BriefingCard
+              briefing={todaysBriefing}
+              hasListened={playback.hasListened}
+              onPlay={handlePlayBriefing}
+            />
+          </div>
+        )}
 
         {/* Health Score bar */}
         {hasData && stats && (
@@ -555,6 +584,7 @@ export function MobileMemoryDashboard() {
           </motion.div>
         )}
 
+        <MiniPlayer />
         <BottomNav />
       </div>
 
@@ -569,6 +599,7 @@ export function MobileMemoryDashboard() {
           />
         )}
       </AnimatePresence>
+      <BriefingSheet />
     </>
   );
 }
