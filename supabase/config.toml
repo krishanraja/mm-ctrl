@@ -73,3 +73,10 @@ verify_jwt = false
 
 [functions.resend-webhook]
 verify_jwt = false
+
+# === BRIEFING FUNCTIONS ===
+[functions.generate-briefing]
+verify_jwt = true
+
+[functions.synthesize-briefing]
+verify_jwt = true

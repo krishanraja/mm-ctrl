@@ -1,0 +1,196 @@
+import React, { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Play, Pause } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useBriefingContext } from "@/contexts/BriefingContext";
+import { useSubmitFeedback } from "@/hooks/useBriefing";
+import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
+import type { PlaybackSpeed, FrameworkTag } from "@/types/briefing";
+import { haptics } from "@/lib/haptics";
+import { SegmentCard } from "./SegmentCard";
+
+const SPEEDS: PlaybackSpeed[] = [1, 1.25, 1.5, 2];
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+export function BriefingSheet() {
+  const {
+    briefing,
+    playback,
+    isSheetOpen,
+    setSheetOpen,
+    togglePlay,
+    seek,
+    setSpeed,
+    play,
+  } = useBriefingContext();
+
+  const { submitFeedback } = useSubmitFeedback();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const segmentRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Auto-scroll to current segment
+  useEffect(() => {
+    const el = segmentRefs.current[playback.currentSegmentIndex];
+    if (el && scrollRef.current) {
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [playback.currentSegmentIndex]);
+
+  // Auto-play on open if not already playing
+  useEffect(() => {
+    if (isSheetOpen && briefing?.audio_url && !playback.isPlaying && !playback.hasListened) {
+      const timer = setTimeout(() => play(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isSheetOpen, briefing?.audio_url, playback.isPlaying, playback.hasListened, play]);
+
+  const handleSpeedToggle = () => {
+    const currentIdx = SPEEDS.indexOf(playback.speed);
+    const next = SPEEDS[(currentIdx + 1) % SPEEDS.length];
+    setSpeed(next);
+    haptics.light();
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    seek(pct * playback.duration);
+  };
+
+  const handleFeedback = (segmentIndex: number, reaction: "useful" | "not_useful") => {
+    if (briefing) {
+      submitFeedback(briefing.id, segmentIndex, reaction);
+      haptics.light();
+    }
+  };
+
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
+  const progress = playback.duration > 0
+    ? (playback.currentTime / playback.duration) * 100
+    : 0;
+
+  return (
+    <AnimatePresence>
+      {isSheetOpen && briefing && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSheetOpen(false)}
+            className="fixed inset-0 z-40 bg-black/50"
+          />
+
+          {/* Sheet */}
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 35, stiffness: 400, mass: 0.8 }}
+            className="fixed bottom-0 left-0 right-0 z-50 h-[85dvh] bg-background rounded-t-2xl border-t border-border shadow-2xl flex flex-col"
+          >
+            {/* Handle */}
+            <div className="flex items-center justify-center pt-2 pb-1">
+              <div className="w-12 h-1 bg-muted-foreground/30 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                  {today}
+                </p>
+                <h2 className="text-lg font-semibold text-foreground">
+                  Your Briefing
+                </h2>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setSheetOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Player controls (fixed) */}
+            <div className="px-4 py-4 border-b border-border flex-shrink-0">
+              {/* Play button + speed */}
+              <div className="flex items-center justify-center gap-4 mb-3">
+                <button
+                  onClick={handleSpeedToggle}
+                  className="px-2 py-1 rounded-md bg-muted text-xs font-medium text-muted-foreground hover:bg-muted/80 transition-colors min-w-[40px]"
+                >
+                  {playback.speed}x
+                </button>
+
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={togglePlay}
+                  className="w-14 h-14 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-lg shadow-accent/25"
+                >
+                  {playback.isPlaying ? (
+                    <Pause className="w-6 h-6 fill-current" />
+                  ) : (
+                    <Play className="w-6 h-6 fill-current ml-0.5" />
+                  )}
+                </motion.button>
+
+                <div className="min-w-[40px]" /> {/* Spacer for symmetry */}
+              </div>
+
+              {/* Progress bar */}
+              <div
+                className="w-full h-2 bg-muted rounded-full cursor-pointer relative group"
+                onClick={handleProgressClick}
+              >
+                <div
+                  className="h-full bg-accent rounded-full transition-all duration-100"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+
+              {/* Timestamp */}
+              <div className="flex justify-between mt-1">
+                <span className="text-xs text-muted-foreground">
+                  {formatTime(playback.currentTime)}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {formatTime(playback.duration)}
+                </span>
+              </div>
+            </div>
+
+            {/* Segment cards (scrollable) */}
+            <div
+              ref={scrollRef}
+              className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain px-4 py-4 space-y-3"
+            >
+              {briefing.segments.map((segment, index) => (
+                <div
+                  key={index}
+                  ref={(el) => { segmentRefs.current[index] = el; }}
+                >
+                  <SegmentCard
+                    segment={segment}
+                    index={index}
+                    isActive={index === playback.currentSegmentIndex}
+                    onFeedback={(reaction) => handleFeedback(index, reaction)}
+                  />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
