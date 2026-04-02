@@ -4,7 +4,7 @@ import type { Briefing, BriefingFeedback } from '@/types/briefing';
 
 const GENERATE_TIMEOUT = 30_000; // 30s for news fetch + GPT-4o
 const POLL_INTERVAL = 3_000;
-const MAX_POLLS = 20; // 20 * 3s = 60s max
+const MAX_POLLS = 40; // 40 * 3s = 120s max
 
 /**
  * Fetch today's briefing for the current user
@@ -84,15 +84,6 @@ export function useGenerateBriefing() {
 
       const briefingId = data?.briefing_id || null;
 
-      // Trigger audio synthesis from the client (fire-and-forget).
-      // The edge function no longer awaits synthesis, so the client kicks it off
-      // and usePollAudio picks up the result when ready.
-      if (briefingId && !data?.has_audio) {
-        supabase.functions.invoke('synthesize-briefing', {
-          body: { briefing_id: briefingId },
-        }).catch((e) => console.warn('Synthesis trigger failed:', e));
-      }
-
       setPhase('idle');
       return briefingId;
     } catch (err) {
@@ -139,7 +130,9 @@ export function useSubmitFeedback() {
 }
 
 /**
- * Poll for audio readiness with a cap to prevent infinite polling
+ * Poll for audio readiness while also triggering synthesis.
+ * Uses both the synthesis response and DB polling in parallel;
+ * whichever finds the audio_url first wins.
  */
 export function usePollAudio(briefingId: string | null) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -147,24 +140,54 @@ export function usePollAudio(briefingId: string | null) {
   const [exhausted, setExhausted] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollCountRef = useRef(0);
+  const resolvedRef = useRef(false);
+  const synthTriggeredRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!briefingId) {
-      setPolling(false);
-      return;
+  const cleanup = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
+  }, []);
 
+  const resolve = useCallback((url: string) => {
+    if (resolvedRef.current) return;
+    resolvedRef.current = true;
+    setAudioUrl(url);
+    setPolling(false);
+    cleanup();
+  }, [cleanup]);
+
+  const startPollingAndSynthesis = useCallback((id: string) => {
+    resolvedRef.current = false;
     setPolling(true);
     setExhausted(false);
+    setAudioUrl(null);
     pollCountRef.current = 0;
 
+    // Path 1: Trigger synthesis and use its response directly
+    if (synthTriggeredRef.current !== id) {
+      synthTriggeredRef.current = id;
+      supabase.functions
+        .invoke('synthesize-briefing', { body: { briefing_id: id } })
+        .then(({ data, error }) => {
+          if (resolvedRef.current) return;
+          if (!error && data?.audio_url) {
+            resolve(data.audio_url);
+          }
+        })
+        .catch((e) => console.warn('Synthesis trigger failed:', e));
+    }
+
+    // Path 2: Poll DB as backup
     const poll = async () => {
+      if (resolvedRef.current) return;
       pollCountRef.current += 1;
 
       if (pollCountRef.current > MAX_POLLS) {
         setPolling(false);
         setExhausted(true);
-        if (intervalRef.current) clearInterval(intervalRef.current);
+        cleanup();
         return;
       }
 
@@ -172,13 +195,11 @@ export function usePollAudio(briefingId: string | null) {
         const { data } = await supabase
           .from('briefings')
           .select('audio_url')
-          .eq('id', briefingId)
+          .eq('id', id)
           .maybeSingle();
 
         if (data?.audio_url) {
-          setAudioUrl(data.audio_url);
-          setPolling(false);
-          if (intervalRef.current) clearInterval(intervalRef.current);
+          resolve(data.audio_url);
         }
       } catch (e) {
         console.warn('Poll error:', e);
@@ -187,11 +208,24 @@ export function usePollAudio(briefingId: string | null) {
 
     poll();
     intervalRef.current = setInterval(poll, POLL_INTERVAL);
+  }, [cleanup, resolve]);
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [briefingId]);
+  useEffect(() => {
+    if (!briefingId) {
+      setPolling(false);
+      cleanup();
+      return;
+    }
 
-  return { audioUrl, polling, exhausted };
+    startPollingAndSynthesis(briefingId);
+    return cleanup;
+  }, [briefingId, startPollingAndSynthesis, cleanup]);
+
+  const retry = useCallback(() => {
+    if (!briefingId) return;
+    synthTriggeredRef.current = null;
+    startPollingAndSynthesis(briefingId);
+  }, [briefingId, startPollingAndSynthesis]);
+
+  return { audioUrl, polling, exhausted, retry };
 }
