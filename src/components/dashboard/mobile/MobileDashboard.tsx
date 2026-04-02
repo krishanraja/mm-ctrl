@@ -4,10 +4,14 @@ import { useDashboard } from "../DashboardProvider"
 import { HeroStatusCard } from "../HeroStatusCard"
 import { WeeklyActionCard } from "../WeeklyActionCard"
 import { DailyProvocationCard } from "../DailyProvocationCard"
+import { BriefingCard } from "../BriefingCard"
 import { BottomNav } from "./BottomNav"
 import { VoiceFAB } from "./VoiceFAB"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { MissionsDashboard } from "@/components/missions/MissionsDashboard"
+import { useTodaysBriefing } from "@/hooks/useBriefing"
+import { useBriefingContext } from "@/contexts/BriefingContext"
+import { BriefingSheet, MiniPlayer } from "@/components/briefing"
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -20,6 +24,20 @@ export function MobileDashboard() {
   const { data, loading } = useDashboard()
   const { user } = useAuth()
   const firstName = user?.email?.split('@')[0] || 'there'
+  const { briefing, loading: briefingLoading } = useTodaysBriefing()
+  const { setBriefing, setSheetOpen, playback } = useBriefingContext()
+
+  // Sync briefing into context
+  React.useEffect(() => {
+    if (briefing) setBriefing(briefing)
+  }, [briefing, setBriefing])
+
+  const handlePlayBriefing = () => {
+    if (briefing) {
+      setBriefing(briefing)
+      setSheetOpen(true)
+    }
+  }
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
@@ -52,6 +70,13 @@ export function MobileDashboard() {
           ) : (
             <>
               {data.baseline && <HeroStatusCard baseline={data.baseline} />}
+              {briefing && !briefingLoading && (
+                <BriefingCard
+                  briefing={briefing}
+                  hasListened={playback.hasListened}
+                  onPlay={handlePlayBriefing}
+                />
+              )}
               <MissionsDashboard />
               {data.weeklyAction && <WeeklyActionCard action={data.weeklyAction} />}
               {data.dailyProvocation && <DailyProvocationCard provocation={data.dailyProvocation} />}
@@ -61,8 +86,10 @@ export function MobileDashboard() {
       </main>
 
       {/* Navigation */}
+      <MiniPlayer />
       <BottomNav />
       <VoiceFAB />
+      <BriefingSheet />
     </div>
   )
 }
