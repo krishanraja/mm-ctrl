@@ -80,3 +80,10 @@ verify_jwt = true
 
 [functions.synthesize-briefing]
 verify_jwt = true
+
+# === COMPLIANCE FUNCTIONS ===
+[functions.delete-account]
+verify_jwt = true
+
+[functions.cleanup-expired-data]
+verify_jwt = false

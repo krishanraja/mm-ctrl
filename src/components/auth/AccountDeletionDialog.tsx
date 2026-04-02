@@ -99,48 +99,24 @@ export const AccountDeletionDialog: React.FC<AccountDeletionDialogProps> = ({ ch
     setStep('deleting');
 
     try {
-      // Delete user data in order (respecting foreign keys)
-      // Note: In production, this should be a server-side function for security
-      
-      // 1. Delete assessment-related data
-      const { data: assessments } = await supabase
-        .from('leader_assessments')
-        .select('id')
-        .eq('owner_user_id', userId);
-      
-      if (assessments?.length) {
-        const assessmentIds = assessments.map(a => a.id);
-        
-        await Promise.all([
-          supabase.from('leader_dimension_scores').delete().in('assessment_id', assessmentIds),
-          supabase.from('leader_risk_signals').delete().in('assessment_id', assessmentIds),
-          supabase.from('leader_tensions').delete().in('assessment_id', assessmentIds),
-          supabase.from('leader_org_scenarios').delete().in('assessment_id', assessmentIds),
-          supabase.from('leader_first_moves').delete().in('assessment_id', assessmentIds),
-          supabase.from('leader_prompt_sets').delete().in('assessment_id', assessmentIds),
-        ]);
-        
-        await supabase.from('leader_assessments').delete().eq('owner_user_id', userId);
-      }
+      // Server-side deletion via edge function (GDPR Art. 17 compliant)
+      const { data, error: fnError } = await supabase.functions.invoke('delete-account', {
+        body: { confirmEmail: confirmEmail },
+      });
 
-      // 2. Delete other user data
-      await Promise.all([
-        supabase.from('weekly_checkins').delete().eq('user_id', userId),
-        supabase.from('ai_conversations').delete().eq('user_id', userId),
-        supabase.from('conversation_sessions').delete().eq('user_id', userId),
-        supabase.from('notification_preferences').delete().eq('user_id', userId),
-        supabase.from('leaders').delete().eq('user_id', userId),
-      ]);
+      if (fnError) throw fnError;
+      if (data?.error) throw new Error(data.error);
 
-      // 3. Clear local storage
+      // Clear local storage
       clearPersistedAssessmentId();
       localStorage.removeItem('mindmaker_quiz_progress');
-      
-      // 4. Sign out (this will also clear auth state)
+      localStorage.removeItem('mm_privacy_consent');
+
+      // Sign out (this will also clear auth state)
       await signOut();
 
       setStep('done');
-      
+
       // Redirect after short delay
       setTimeout(() => {
         window.location.href = '/';
