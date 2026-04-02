@@ -128,7 +128,7 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
                           <div key={i} className="flex items-start gap-2">
                             <span
                               className={cn(
-                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border flex-shrink-0 mt-0.5",
+                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border flex-shrink-0 mt-0.5 min-w-[80px] text-center",
                                 tagConfig?.className || "bg-muted text-muted-foreground border-border"
                               )}
                             >
