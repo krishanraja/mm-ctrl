@@ -38,6 +38,7 @@ interface UserContext {
   weaknesses: string[];
   activeMissions: string[];
   recentDecisions: string[];
+  confirmedPatterns: string[];
   watchingCompanies: string[];
 }
 
@@ -68,10 +69,16 @@ Format each as: "[CATEGORY] headline text"
 Return ONLY a JSON array of 12-15 items:
 [{"title": "[SIGNAL] headline here", "source": "Publication Name"}]`;
 
-async function fetchWithPerplexity(apiKey: string, watchingCompanies: string[] = []): Promise<NewsHeadline[]> {
+async function fetchWithPerplexity(apiKey: string, userCtx: UserContext): Promise<NewsHeadline[]> {
   const today = new Date().toISOString().split("T")[0];
-  const watchExtra = watchingCompanies.length > 0
-    ? ` Also specifically search for recent news about: ${watchingCompanies.join(", ")}.`
+  const watchExtra = userCtx.watchingCompanies.length > 0
+    ? ` Also specifically search for recent news about: ${userCtx.watchingCompanies.join(", ")}.`
+    : "";
+  const industryExtra = userCtx.industry
+    ? ` Pay special attention to news affecting the ${userCtx.industry} industry.`
+    : "";
+  const missionExtra = userCtx.activeMissions.length > 0
+    ? ` This leader is actively working on: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these priorities.`
     : "";
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
@@ -85,7 +92,7 @@ async function fetchWithPerplexity(apiKey: string, watchingCompanies: string[] =
         { role: "system", content: PERPLEXITY_SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Search for the most important AI and business news from the past 7 days (today is ${today}). Find 12-15 headlines a business leader would care about. Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.${watchExtra}`,
+          content: `Search for the most important AI and business news from the past 7 days (today is ${today}). Find 12-15 headlines a business leader would care about.${industryExtra}${missionExtra}${watchExtra} Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.`,
         },
       ],
       temperature: 0.2,
@@ -124,7 +131,7 @@ function formatSource(hostname: string): string {
   );
 }
 
-async function fetchBraveNews(apiKey: string): Promise<string[]> {
+async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<string[]> {
   const queries = [
     '"AI" AND ("pricing" OR "API" OR "launch" OR "release")',
     '"AI" AND ("enterprise" OR "business" OR "CEO" OR "CTO")',
@@ -132,6 +139,16 @@ async function fetchBraveNews(apiKey: string): Promise<string[]> {
     '"GPT" OR "Claude" OR "Gemini" OR "Llama"',
     '"AI" AND ("deploy" OR "production" OR "ROI" OR "cost")',
   ];
+
+  // Add industry-specific query if available
+  if (userCtx.industry) {
+    queries.push(`"AI" AND "${userCtx.industry}" AND ("impact" OR "disruption" OR "adoption")`);
+  }
+
+  // Add company-specific query for watched companies
+  if (userCtx.watchingCompanies.length > 0) {
+    queries.push(userCtx.watchingCompanies.slice(0, 3).map(c => `"${c}"`).join(" OR "));
+  }
 
   const allResults: Array<{
     title: string;
@@ -267,12 +284,12 @@ function parseLLMJson(content: string): NewsHeadline[] {
 const STATIC_FALLBACK: NewsHeadline[] = [
   { title: "[SIGNAL] Claude 4 outperforms GPT-5 on coding benchmarks, build-vs-buy math shifts again", source: "The Verge" },
   { title: "[DECISION TRIGGER] OpenAI cuts API pricing 40%, time to reevaluate your LLM vendor costs", source: "TechCrunch" },
-  { title: "[KRISH'S TAKE] 80% of companies using AI does not equal 80% using it well. Most run demos, not systems", source: "Mindmaker" },
+  { title: "[KRISH'S TAKE] 80% of companies using AI does not equal 80% using it well. Most run demos, not systems", source: "Analysis" },
   { title: "[SIGNAL] AI agents now handle 60% of tier-1 support tickets at companies that deployed them", source: "Forbes" },
   { title: "[NOISE] Another AI startup raises $200M to build the future of work. Wake me when they ship", source: "TechCrunch" },
   { title: "[DECISION TRIGGER] Google drops Gemini API prices by 35%, your vendor spreadsheet needs updating", source: "Bloomberg" },
   { title: "[SIGNAL] One-person businesses generating $1M+ revenue using AI for sales, support, and fulfilment", source: "WSJ" },
-  { title: "[KRISH'S TAKE] If your AI strategy is a slide deck, it is not a strategy. Ship something this week", source: "Mindmaker" },
+  { title: "[KRISH'S TAKE] If your AI strategy is a slide deck, it is not a strategy. Ship something this week", source: "Analysis" },
 ];
 
 // ── User Context ───────────────────────────────────────────────────
@@ -291,6 +308,7 @@ async function getUserContext(
     weaknesses: [],
     activeMissions: [],
     recentDecisions: [],
+    confirmedPatterns: [],
     watchingCompanies: [],
   };
 
@@ -388,6 +406,46 @@ async function getUserContext(
     console.warn("Failed to fetch watchlist:", e);
   }
 
+  // Active decisions on their desk
+  try {
+    const { data: decisions } = await supabase
+      .from("user_decisions")
+      .select("decision_text")
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    if (decisions) {
+      ctx.recentDecisions = decisions.map(
+        (d: { decision_text: string }) => d.decision_text
+      );
+    }
+  } catch (e) {
+    console.warn("Failed to fetch decisions:", e);
+  }
+
+  // Confirmed behavioral patterns and blind spots
+  try {
+    const { data: patterns } = await supabase
+      .from("user_patterns")
+      .select("pattern_type, pattern_text")
+      .eq("user_id", userId)
+      .in("status", ["confirmed", "emerging"])
+      .gte("confidence", 0.6)
+      .order("confidence", { ascending: false })
+      .limit(5);
+
+    if (patterns) {
+      ctx.confirmedPatterns = patterns.map(
+        (p: { pattern_type: string; pattern_text: string }) =>
+          `[${p.pattern_type}] ${p.pattern_text}`
+      );
+    }
+  } catch (e) {
+    console.warn("Failed to fetch patterns:", e);
+  }
+
   return ctx;
 }
 
@@ -413,6 +471,12 @@ async function generateBriefingScript(
     userCtx.activeMissions.length
       ? `Currently working on: ${userCtx.activeMissions.join("; ")}`
       : null,
+    userCtx.recentDecisions.length
+      ? `Active decisions on their desk: ${userCtx.recentDecisions.join("; ")}`
+      : null,
+    userCtx.confirmedPatterns.length
+      ? `Behavioral patterns & blind spots: ${userCtx.confirmedPatterns.join("; ")}`
+      : null,
     userCtx.watchingCompanies.length
       ? `Companies they are watching closely (prioritise news about these): ${userCtx.watchingCompanies.join(", ")}`
       : null,
@@ -435,30 +499,41 @@ async function generateBriefingScript(
       messages: [
         {
           role: "system",
-          content: `You are a sharp, knowledgeable AI advisor creating a personalised daily news briefing for a business leader. Your tone is conversational, warm but direct. Like a trusted friend who works in AI every day.
+          content: `You are a sharp, knowledgeable AI advisor creating a personalised daily news briefing for a business leader. Your tone is conversational, warm but direct. Like a trusted friend who works in AI every day and knows this leader's world deeply.
+
+CRITICAL RULES:
+- Never mention "Mindmaker", "CTRL", or any platform name. You are a trusted advisor, not a product.
+- Address the leader as the person they are - the ${userCtx.role} of ${userCtx.company || "their company"}. Speak TO them about THEIR business, THEIR decisions, THEIR blind spots.
+- The briefing is about their world, not about AI tools they subscribe to.
+- Use first name only. Never "as a Mindmaker user" or "your CTRL briefing" or similar.
 
 You will:
 1. Select 5-8 headlines from the list that are MOST relevant to this specific leader's context
-2. For each, explain WHY it matters to them specifically (not generic "this is important")
-3. Apply framework nudges naturally:
+2. REWRITE each selected headline through this leader's lens. Do not pass through generic news titles. Frame it from their perspective - what changed for THEM, what decision this creates for THEM, what they should notice given their role and priorities. Keep under 15 words. Examples:
+   - Generic: "OpenAI cuts API pricing 40%"
+   - For a SaaS CEO: "Your LLM costs just dropped - OpenAI cut API pricing 40%"
+   - For a marketing VP: "Your AI content pipeline just got 40% cheaper"
+   The headline should make the leader immediately see why they care.
+3. For each, explain WHY it matters to them specifically (not generic "this is important"). Reference their active decisions, missions, blind spots, or industry where relevant.
+4. Apply framework nudges naturally:
    - "Worth pressure-testing this against..." (dialectical tension)
    - "The question is whether this changes your assumptions about..." (first-principles)
    - "Before your next [meeting/quarter/decision], consider..." (mental contrasting)
    Never name frameworks explicitly. Just apply the thinking.
-4. Generate a conversational briefing script they'll hear as audio
+5. Generate a conversational briefing script they'll hear as audio
 
 Output JSON:
 {
   "segments": [
     {
-      "headline": "Clean headline without [TAG]",
+      "headline": "Rewritten headline connecting the news to THIS leader's world (under 15 words)",
       "analysis": "2-4 sentences: why this matters to THEM + framework nudge",
       "framework_tag": "signal|noise|decision_trigger|krishs_take",
       "source": "Source Name",
       "relevance_reason": "One sentence: why selected for this leader"
     }
   ],
-  "script": "The full audio script, conversational, ~800 words, 3-5 min spoken. Start with 'Good morning, [name].' End with a single actionable takeaway."
+  "script": "The full audio script, conversational, ~800 words, 3-5 min spoken. Start with 'Good morning, ${userCtx.name.split(" ")[0]}.' Speak to them as the leader of ${userCtx.company || "their company"}. Ground every insight in their specific context - their role, their industry, their active decisions, their blind spots. End with a single actionable takeaway tied to something they are working on."
 }`,
         },
         {
@@ -555,7 +630,7 @@ serve(async (req) => {
 
     if (perplexityKey) {
       try {
-        headlines = await fetchWithPerplexity(perplexityKey, userCtx.watchingCompanies);
+        headlines = await fetchWithPerplexity(perplexityKey, userCtx);
         console.log(`Perplexity: ${headlines.length} headlines`);
       } catch (e) {
         console.error("Perplexity failed:", e);
@@ -564,7 +639,7 @@ serve(async (req) => {
 
     if (headlines.length === 0 && braveKey && openaiKey) {
       try {
-        const raw = await fetchBraveNews(braveKey);
+        const raw = await fetchBraveNews(braveKey, userCtx);
         if (raw.length > 0) {
           headlines = await curateWithOpenAI(raw, openaiKey);
           console.log(`Brave+OpenAI: ${headlines.length} headlines`);
