@@ -70,6 +70,7 @@ export function MobileMemoryDashboard() {
   const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
   const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
+  const { generate, generating, phase } = useGenerateBriefing();
 
   // Sync briefing into context
   useEffect(() => {
@@ -80,6 +81,13 @@ export function MobileMemoryDashboard() {
     if (todaysBriefing) {
       setBriefing(todaysBriefing);
       setSheetOpen(true);
+    }
+  };
+
+  const handleGenerateBriefing = async () => {
+    const briefingId = await generate();
+    if (briefingId) {
+      await refetchBriefing();
     }
   };
 
@@ -208,6 +216,47 @@ export function MobileMemoryDashboard() {
               hasListened={playback.hasListened}
               onPlay={handlePlayBriefing}
             />
+          </div>
+        )}
+        {!todaysBriefing && !briefingLoading && hasData && (
+          <div className="flex-shrink-0 px-4 pt-2">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl border border-accent/20 bg-accent/5 p-4 flex items-center justify-between gap-3"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Your Daily Briefing</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {generating
+                      ? phase === 'scanning' ? 'Scanning today\'s news...'
+                        : phase === 'personalising' ? 'Finding what matters to you...'
+                        : 'Preparing your briefing...'
+                      : 'Personalised AI news, in your voice'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleGenerateBriefing}
+                disabled={generating}
+                className="flex-shrink-0 px-3 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-colors disabled:opacity-70"
+              >
+                {generating ? (
+                  <span className="flex items-center gap-1.5">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                      className="w-3.5 h-3.5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full"
+                    />
+                    {phase === 'scanning' ? 'Scanning...' : phase === 'personalising' ? 'Curating...' : 'Preparing...'}
+                  </span>
+                ) : 'Generate'}
+              </button>
+            </motion.div>
           </div>
         )}
 
