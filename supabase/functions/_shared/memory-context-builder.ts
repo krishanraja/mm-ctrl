@@ -5,7 +5,8 @@ export interface MemoryContextOptions {
   topicFilter?: string;
   maxTokens?: number;
   format?: "markdown" | "chatgpt" | "claude" | "gemini" | "cursor" | "claude-code";
-  useCase?: "general" | "meeting" | "decision" | "code" | "email" | "strategy" | "delegation" | "board" | "edge";
+  useCase?: "general" | "meeting" | "decision" | "code" | "email" | "strategy" | "delegation" | "board" | "edge"
+    | "writing_persona" | "strength_framework" | "delegation_playbook" | "strategic_advisor" | "decision_journal";
 }
 
 export interface MemoryContextResult {
@@ -111,16 +112,66 @@ function buildMarkdownContext(
   return sections.join("\n\n");
 }
 
-function applyFormat(markdown: string, format: string): string {
+function getUseCasePreamble(useCase: string): { heading: string; instructions: string } | null {
+  switch (useCase) {
+    case "writing_persona":
+      return {
+        heading: "My Writing Voice & Communication Style",
+        instructions:
+          "Use this as my writing voice and communication style. Match my tone, vocabulary, and structure when drafting anything on my behalf. Do not default to generic business language.",
+      };
+    case "strength_framework":
+      return {
+        heading: "Framework I Use Instinctively",
+        instructions:
+          "This is a framework I use instinctively. Help me apply it consistently and suggest where it fits. Reference it when making recommendations.",
+      };
+    case "delegation_playbook":
+      return {
+        heading: "My Delegation Style & Team Context",
+        instructions:
+          "Use this to help me delegate effectively. Reference my team context, priorities, and working style when suggesting how to hand off work.",
+      };
+    case "strategic_advisor":
+      return {
+        heading: "Strategic Context for Advisory",
+        instructions:
+          "Act as a strategic advisor who deeply understands my business context. Reference my objectives, constraints, and patterns when giving advice.",
+      };
+    case "decision_journal":
+      return {
+        heading: "Decision Context & Patterns",
+        instructions:
+          "Use this to help me make better decisions. Reference my past decisions, known patterns, and blind spots. Challenge me when I repeat past mistakes.",
+      };
+    default:
+      return null;
+  }
+}
+
+function applyFormat(markdown: string, format: string, useCase: string = "general"): string {
+  const preamble = getUseCasePreamble(useCase);
+
   switch (format) {
-    case "chatgpt":
-      return `# What to know about me\n\n${markdown}\n\n# How to respond to me\n- Be direct and specific, not generic\n- Reference my context when relevant\n- Challenge my blind spots when you see them\n- Prioritize actionable advice over theory`;
+    case "chatgpt": {
+      const heading = preamble?.heading || "What to know about me";
+      const instructions = preamble?.instructions
+        || "Be direct and specific, not generic\n- Reference my context when relevant\n- Challenge my blind spots when you see them\n- Prioritize actionable advice over theory";
+      return `# ${heading}\n\n${markdown}\n\n# How to respond to me\n- ${instructions}`;
+    }
 
-    case "claude":
-      return `<context>\n${markdown}\n</context>\n\nUse the context above to personalize your responses. Reference specific facts when relevant. Be direct.`;
+    case "claude": {
+      const instruction = preamble?.instructions
+        || "Use the context above to personalize your responses. Reference specific facts when relevant. Be direct.";
+      return `<context>\n${preamble?.heading ? `# ${preamble.heading}\n\n` : ""}${markdown}\n</context>\n\n${instruction}`;
+    }
 
-    case "gemini":
-      return `Context about me:\n\n${markdown}\n\nUse this context to give me personalized, specific responses. Don't repeat my context back to me, just use it.`;
+    case "gemini": {
+      const prefix = preamble?.heading || "Context about me";
+      const instruction = preamble?.instructions
+        || "Use this context to give me personalized, specific responses. Don't repeat my context back to me, just use it.";
+      return `${prefix}:\n\n${markdown}\n\n${instruction}`;
+    }
 
     case "cursor":
       return `# User Context\n\n${markdown}\n\n# Coding Preferences\n- Follow existing patterns in the codebase\n- Be concise in comments\n- Prefer simple solutions`;
@@ -129,7 +180,7 @@ function applyFormat(markdown: string, format: string): string {
       return `# User Context\n\n${markdown}\n\n# Working Rules\n- Reference this context when making decisions\n- Be direct and specific\n- Don't ask questions you can answer from context`;
 
     default:
-      return markdown;
+      return preamble ? `# ${preamble.heading}\n\n${markdown}\n\n---\n${preamble.instructions}` : markdown;
   }
 }
 
@@ -180,6 +231,36 @@ function filterByUseCase(
       return {
         facts: facts.filter(f => ["business", "objective", "blocker"].includes(f.fact_category)),
         patterns: patterns.filter(p => ["strength", "blindspot"].includes(p.pattern_type)),
+        decisions,
+      };
+    case "writing_persona":
+      return {
+        facts: facts.filter(f => ["identity", "preference"].includes(f.fact_category)),
+        patterns: patterns.filter(p => ["preference", "behavior"].includes(p.pattern_type)),
+        decisions: [],
+      };
+    case "strength_framework":
+      return {
+        facts,
+        patterns: patterns.filter(p => ["strength", "behavior"].includes(p.pattern_type)),
+        decisions,
+      };
+    case "delegation_playbook":
+      return {
+        facts: facts.filter(f => ["identity", "business", "objective"].includes(f.fact_category)),
+        patterns: patterns.filter(p => p.pattern_type === "behavior"),
+        decisions,
+      };
+    case "strategic_advisor":
+      return {
+        facts: facts.filter(f => ["objective", "blocker", "business"].includes(f.fact_category)),
+        patterns,
+        decisions,
+      };
+    case "decision_journal":
+      return {
+        facts: facts.filter(f => ["objective", "blocker"].includes(f.fact_category)),
+        patterns,
         decisions,
       };
     case "edge":
@@ -270,7 +351,7 @@ export async function buildMemoryContext(
   }
 
   // Apply format template
-  const context = applyFormat(markdown, format);
+  const context = applyFormat(markdown, format, useCase);
   const finalTokenCount = estimateTokens(context);
 
   return {

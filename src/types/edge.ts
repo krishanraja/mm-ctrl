@@ -127,6 +127,20 @@ export interface SuggestedAction {
   timeContext?: string;
 }
 
+// ===== Export Recommendation Types =====
+
+export interface ExportRecommendation {
+  useCase: import('./memory').ExportUseCase;
+  label: string;
+  description: string;
+  iconName: string;
+  source: 'strength' | 'weakness';
+  sourceLabel: string;
+  confidence: number;
+  badgeText: string;
+  badgeVariant: 'teal' | 'amber';
+}
+
 // ===== Edge Generation Request/Response =====
 
 export interface EdgeGenerateRequest {

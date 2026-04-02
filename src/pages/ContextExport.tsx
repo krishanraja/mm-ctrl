@@ -21,14 +21,32 @@ import {
   Target,
   Mail,
   TrendingUp,
+  PenTool,
+  Layers,
+  GitBranch,
+  Compass,
+  BookOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
+import { useExportRecommendations } from '@/hooks/useExportRecommendations';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 import { AppHeader } from '@/components/memory-web/AppHeader';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
+import type { ExportRecommendation } from '@/types/edge';
+
+const ICON_MAP: Record<string, typeof Bot> = {
+  PenTool,
+  Layers,
+  GitBranch,
+  Compass,
+  BookOpen,
+  Users,
+  TrendingUp,
+  Target,
+};
 
 const FORMAT_OPTIONS: {
   value: ExportFormat;
@@ -124,6 +142,7 @@ const USE_CASE_OPTIONS: {
 export default function ContextExport() {
   const { isMobile } = useDevice();
   const { exportResult, isExporting: isGenerating, generateExport } = useMemoryExport();
+  const { recommendations, hasRecommendations } = useExportRecommendations();
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('claude');
   const [selectedUseCase, setSelectedUseCase] = useState<ExportUseCase>('general');
   const [copied, setCopied] = useState(false);
@@ -200,10 +219,82 @@ export default function ContextExport() {
         </div>
       </div>
 
+      {/* Recommended for You */}
+      {hasRecommendations && (
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="h-3.5 w-3.5 text-accent" />
+            <h2 className="text-sm font-semibold text-foreground">
+              Recommended for You
+            </h2>
+          </div>
+          <p className="text-[11px] text-muted-foreground mb-2.5">
+            Based on your profile
+          </p>
+          <div className="flex flex-col gap-2">
+            {recommendations.map((rec: ExportRecommendation, i: number) => {
+              const Icon = ICON_MAP[rec.iconName] || Bot;
+              const isSelected = selectedUseCase === rec.useCase;
+              return (
+                <motion.button
+                  key={rec.useCase}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => setSelectedUseCase(rec.useCase)}
+                  className={cn(
+                    'flex items-start gap-3 p-3 rounded-lg text-left transition-all border',
+                    isSelected
+                      ? 'border-accent bg-accent/10'
+                      : 'border-border bg-card hover:border-accent/30'
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      'h-4 w-4 mt-0.5 flex-shrink-0',
+                      isSelected ? 'text-accent' : 'text-muted-foreground'
+                    )}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span
+                        className={cn(
+                          'text-sm font-medium',
+                          isSelected ? 'text-accent' : 'text-foreground'
+                        )}
+                      >
+                        {rec.label}
+                      </span>
+                      <span
+                        className={cn(
+                          'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium',
+                          rec.badgeVariant === 'teal'
+                            ? 'bg-emerald-500/10 text-emerald-600'
+                            : 'bg-amber-500/10 text-amber-600'
+                        )}
+                      >
+                        {rec.badgeText}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                      {rec.description}
+                    </p>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
+
       {/* Use Case Selector */}
       <div>
         <h2 className="text-sm font-semibold text-foreground mb-3">
-          Use Case
+          {hasRecommendations ? 'All Use Cases' : 'Use Case'}
         </h2>
         <div className={cn(
           'grid gap-2',
