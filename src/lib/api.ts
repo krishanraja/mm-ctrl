@@ -12,7 +12,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 }
 
 const DEFAULT_TIMEOUT = 15_000 // 15 seconds for general edge functions
-const TRANSCRIPTION_TIMEOUT = 30_000 // 30 seconds for transcription
+const TRANSCRIPTION_TIMEOUT = 45_000 // 45 seconds for transcription (covers Whisper 15s + Gemini 12s + overhead)
 
 // Generic edge function invoker with error handling and timeout
 export async function invokeEdgeFunction<T>(
@@ -27,8 +27,16 @@ export async function invokeEdgeFunction<T>(
   )
 
   if (error) {
-    console.error(`Edge function ${functionName} error:`, error)
-    throw new Error(error.message || `Failed to call ${functionName}`)
+    // Supabase puts the actual response in error.context for FunctionsHttpError
+    let detail = error.message || `Failed to call ${functionName}`
+    try {
+      if (error.context && typeof error.context.json === 'function') {
+        const body = await error.context.json()
+        detail = body?.error || detail
+      }
+    } catch { /* response not parseable */ }
+    console.error(`Edge function ${functionName} error:`, detail)
+    throw new Error(detail)
   }
 
   return data as T
@@ -103,7 +111,7 @@ export const api = {
   },
 
   // ============================================
-  // Voice Transcription (OpenAI Whisper)
+  // Voice Transcription (Whisper -> Gemini -> fallback)
   // ============================================
   async transcribeAudio(audioBlob: Blob, sessionId?: string) {
     const formData = new FormData()
@@ -118,13 +126,28 @@ export const api = {
     )
 
     if (error) {
-      throw new Error(error.message || 'Transcription failed')
+      // Parse the actual error from the edge function response body
+      let errorDetail = error.message || 'Transcription failed'
+      let fallbackAvailable = false
+      try {
+        if (error.context && typeof error.context.json === 'function') {
+          const body = await error.context.json()
+          errorDetail = body?.error || errorDetail
+          fallbackAvailable = body?.fallback_available === true
+        }
+      } catch { /* response not parseable */ }
+
+      console.error('voice-transcribe error:', errorDetail)
+      const err = new Error(errorDetail) as Error & { fallbackAvailable?: boolean }
+      err.fallbackAvailable = fallbackAvailable
+      throw err
     }
 
-    return data as { 
+    return data as {
       transcript: string
       confidence?: number
-      duration_seconds?: number 
+      duration_seconds?: number
+      provider?: string
     }
   },
 

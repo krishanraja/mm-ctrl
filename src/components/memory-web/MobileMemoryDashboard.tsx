@@ -141,9 +141,17 @@ export function MobileMemoryDashboard() {
 
   useEffect(() => {
     if (voiceError) {
+      const msg = voiceError.message || '';
+      const friendly = msg.includes('timed out')
+        ? 'Transcription took too long. Try a shorter recording.'
+        : msg.includes('unavailable') || msg.includes('API key')
+        ? 'Voice transcription is temporarily unavailable.'
+        : msg.includes('All transcription providers')
+        ? 'Could not transcribe audio. Please try again.'
+        : msg || 'Something went wrong. Please try again.';
       toast({
         title: 'Transcription failed',
-        description: voiceError.message || 'Something went wrong. Please try again.',
+        description: friendly,
         variant: 'destructive',
       });
       setIsProcessing(false);
@@ -223,7 +231,7 @@ export function MobileMemoryDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-accent/20 bg-accent/5 p-4 flex items-center justify-between gap-3"
+              className="rounded-2xl border border-accent/20 bg-accent/5 p-3 flex items-center justify-between gap-3"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
@@ -268,7 +276,7 @@ export function MobileMemoryDashboard() {
 
         {/* Health Score bar */}
         {hasData && stats && (
-          <div className="flex-shrink-0 px-5 py-2 relative z-10">
+          <div className="flex-shrink-0 px-5 py-1.5 relative z-10">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -326,7 +334,7 @@ export function MobileMemoryDashboard() {
 
         {/* Main content area - Memory Web visualization as hero */}
         {!isVoiceExpanded && (
-          <div className="flex-1 min-h-0 relative">
+          <div className="flex-1 min-h-[280px] relative">
             {/* The living memory web - always visible */}
             <MemoryWebVisualization
               facts={facts}
@@ -400,7 +408,7 @@ export function MobileMemoryDashboard() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center gap-2 py-3"
+                  className="flex flex-col items-center gap-2 py-2"
                 >
                   <p className="text-xs text-foreground/60">
                     {hasData ? 'Voice another thought' : 'Start your Memory Web'}
@@ -423,13 +431,13 @@ export function MobileMemoryDashboard() {
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.92 }}
                       className={cn(
-                        'w-14 h-14 rounded-full relative',
+                        'w-12 h-12 rounded-full relative',
                         'bg-gradient-to-br from-accent to-accent/70',
                         'flex items-center justify-center',
                         'shadow-lg shadow-accent/25',
                       )}
                     >
-                      <Mic className="w-6 h-6 text-white" />
+                      <Mic className="w-5 h-5 text-white" />
                     </motion.button>
                   </div>
 

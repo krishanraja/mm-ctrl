@@ -1,11 +1,89 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const WHISPER_TIMEOUT = 15_000;
+const GEMINI_TIMEOUT = 12_000;
+const ENRICHMENT_TIMEOUT = 5_000;
+
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** Enrich the Whisper prompt with user context from memory (non-blocking). */
+async function enrichWhisperPrompt(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader) return null;
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+  if (!supabaseUrl || !supabaseAnonKey) return null;
+
+  const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } },
+    auth: { persistSession: false },
+  });
+  const { data: userData } = await supabaseAuth.auth.getUser();
+  if (!userData?.user?.id) return null;
+
+  const supabaseService = createClient(
+    supabaseUrl,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    { auth: { persistSession: false } },
+  );
+  const { data: facts } = await supabaseService
+    .from('user_memory')
+    .select('fact_key, fact_value')
+    .eq('user_id', userData.user.id)
+    .eq('is_current', true)
+    .in('fact_category', ['identity', 'business'])
+    .order('confidence_score', { ascending: false })
+    .limit(5);
+
+  if (!facts || facts.length === 0) return null;
+
+  const contextParts: string[] = [];
+  for (const f of facts) {
+    if (f.fact_key === 'role' || f.fact_key === 'title' || f.fact_key === 'job_title') {
+      contextParts.push(`Their role is ${f.fact_value}`);
+    } else if (f.fact_key === 'company_name' || f.fact_key === 'company') {
+      contextParts.push(`They work at ${f.fact_value}`);
+    } else if (f.fact_key === 'industry' || f.fact_key === 'vertical') {
+      contextParts.push(`in the ${f.fact_value} industry`);
+    } else if (f.fact_key === 'team_size') {
+      contextParts.push(`managing a team of ${f.fact_value}`);
+    }
+  }
+
+  if (contextParts.length === 0) return null;
+  console.log('Enriched Whisper prompt with user context');
+  return contextParts.join('. ') + '.';
+}
+
+/** Compute confidence from Whisper segment-level scores. */
+function computeWhisperConfidence(segments: Array<{ avg_logprob: number; no_speech_prob?: number }>): number {
+  if (!segments || segments.length === 0) return 0.95;
+  const segmentProbs = segments.map((seg) => {
+    const prob = Math.exp(seg.avg_logprob);
+    const noSpeechPenalty = seg.no_speech_prob ? (1 - seg.no_speech_prob * 0.5) : 1;
+    return prob * noSpeechPenalty;
+  });
+  let confidence = segmentProbs.reduce((a, b) => a + b, 0) / segmentProbs.length;
+  confidence = Math.max(0, Math.min(1, confidence));
+  return Math.round(confidence * 100) / 100;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -23,131 +101,155 @@ serve(async (req) => {
     }
 
     console.log(`Transcribing audio for session ${sessionId}, module ${moduleType}`);
-
     const startTime = Date.now();
 
-    // Build a contextual Whisper prompt using the user's known facts (if available)
-    let whisperPrompt = 'The speaker is an executive or leader discussing leadership, team management, strategy, decisions, delegation, priorities, KPIs, OKRs, quarterly goals, direct reports, stakeholders, cross-functional collaboration, performance reviews, and business operations.';
+    // Validate that at least one transcription provider is available
+    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
-    // Try to enrich prompt with user's identity/business facts for better accuracy
-    try {
-      const authHeader = req.headers.get('Authorization');
-      if (authHeader) {
-        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-        const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
-        if (supabaseUrl && supabaseAnonKey) {
-          const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-            global: { headers: { Authorization: authHeader } },
-            auth: { persistSession: false },
-          });
-          const { data: userData } = await supabaseAuth.auth.getUser();
-          if (userData?.user?.id) {
-            const supabaseService = createClient(
-              supabaseUrl,
-              Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-              { auth: { persistSession: false } },
-            );
-            const { data: facts } = await supabaseService
-              .from('user_memory')
-              .select('fact_key, fact_value')
-              .eq('user_id', userData.user.id)
-              .eq('is_current', true)
-              .in('fact_category', ['identity', 'business'])
-              .order('confidence_score', { ascending: false })
-              .limit(5);
-
-            if (facts && facts.length > 0) {
-              const contextParts: string[] = [];
-              for (const f of facts) {
-                if (f.fact_key === 'role' || f.fact_key === 'title' || f.fact_key === 'job_title') {
-                  contextParts.push(`Their role is ${f.fact_value}`);
-                } else if (f.fact_key === 'company_name' || f.fact_key === 'company') {
-                  contextParts.push(`They work at ${f.fact_value}`);
-                } else if (f.fact_key === 'industry' || f.fact_key === 'vertical') {
-                  contextParts.push(`in the ${f.fact_value} industry`);
-                } else if (f.fact_key === 'team_size') {
-                  contextParts.push(`managing a team of ${f.fact_value}`);
-                }
-              }
-              if (contextParts.length > 0) {
-                whisperPrompt += ' ' + contextParts.join('. ') + '.';
-                console.log('Enriched Whisper prompt with user context');
-              }
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to enrich Whisper prompt (non-blocking):', e);
-    }
-
-    // Send to OpenAI Whisper API with verbose_json for real confidence scores
-    const whisperFormData = new FormData();
-    whisperFormData.append('file', audioBlob, 'audio.webm');
-    whisperFormData.append('model', 'whisper-1');
-    whisperFormData.append('language', 'en');
-    whisperFormData.append('response_format', 'verbose_json');
-    whisperFormData.append('temperature', '0');
-    whisperFormData.append('prompt', whisperPrompt);
-
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-      },
-      body: whisperFormData
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Whisper API error:', errorText);
-      throw new Error(`Whisper API error: ${errorText}`);
-    }
-
-    const whisperResult = await response.json();
-    const text = whisperResult.text;
-    const duration = (Date.now() - startTime) / 1000;
-
-    // Compute real confidence from segment-level scores returned by Whisper.
-    // Each segment has avg_logprob; we convert to probability and average.
-    let confidence = 0.95; // fallback
-    if (whisperResult.segments && whisperResult.segments.length > 0) {
-      const segmentProbs = whisperResult.segments.map(
-        (seg: { avg_logprob: number; no_speech_prob?: number }) => {
-          // avg_logprob is negative; exp() gives probability 0-1
-          const prob = Math.exp(seg.avg_logprob);
-          // Penalize segments with high no-speech probability
-          const noSpeechPenalty = seg.no_speech_prob ? (1 - seg.no_speech_prob * 0.5) : 1;
-          return prob * noSpeechPenalty;
-        }
+    if (!OPENAI_API_KEY && !GEMINI_API_KEY) {
+      console.error('CRITICAL: No transcription API keys configured');
+      return new Response(
+        JSON.stringify({ error: 'Transcription service unavailable', provider: 'none', fallback_available: true }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
-      confidence = segmentProbs.reduce((a: number, b: number) => a + b, 0) / segmentProbs.length;
-      // Clamp to [0, 1]
-      confidence = Math.max(0, Math.min(1, confidence));
-      confidence = Math.round(confidence * 100) / 100;
     }
 
-    console.log(`Transcription complete in ${duration}s: "${text.substring(0, 100)}..."`);
+    // Build contextual Whisper prompt - race enrichment against a timeout so it never blocks the pipeline
+    const basePrompt = 'The speaker is an executive or leader discussing leadership, team management, strategy, decisions, delegation, priorities, KPIs, OKRs, quarterly goals, direct reports, stakeholders, cross-functional collaboration, performance reviews, and business operations.';
 
-    // Log instrumentation
+    const enrichedSuffix = await Promise.race([
+      enrichWhisperPrompt(req).catch((e) => {
+        console.warn('Context enrichment failed (non-blocking):', e);
+        return null;
+      }),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), ENRICHMENT_TIMEOUT)),
+    ]);
+
+    const whisperPrompt = enrichedSuffix ? `${basePrompt} ${enrichedSuffix}` : basePrompt;
+
+    // ========================================
+    // TIER 1: OpenAI Whisper
+    // ========================================
+    let result: { text: string; confidence: number; provider: string } | null = null;
+
+    if (OPENAI_API_KEY) {
+      try {
+        const whisperFormData = new FormData();
+        whisperFormData.append('file', audioBlob, 'audio.webm');
+        whisperFormData.append('model', 'whisper-1');
+        whisperFormData.append('language', 'en');
+        whisperFormData.append('response_format', 'verbose_json');
+        whisperFormData.append('temperature', '0');
+        whisperFormData.append('prompt', whisperPrompt);
+
+        const response = await fetchWithTimeout(
+          'https://api.openai.com/v1/audio/transcriptions',
+          {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}` },
+            body: whisperFormData,
+          },
+          WHISPER_TIMEOUT
+        );
+
+        if (response.ok) {
+          const whisperResult = await response.json();
+          const confidence = computeWhisperConfidence(whisperResult.segments);
+          result = { text: whisperResult.text, confidence, provider: 'whisper' };
+          console.log(`[AI-PROVIDER] Whisper SUCCESS`);
+        } else {
+          const errorText = await response.text();
+          console.warn(`[AI-PROVIDER] Whisper HTTP ${response.status}: ${errorText.slice(0, 200)}`);
+        }
+      } catch (err) {
+        const reason = err.name === 'AbortError' ? 'timeout' : err.message;
+        console.warn(`[AI-PROVIDER] Whisper failed (${reason})`);
+      }
+    } else {
+      console.log('[AI-PROVIDER] Whisper skipped (no OPENAI_API_KEY)');
+    }
+
+    // ========================================
+    // TIER 2: Gemini Flash (multimodal audio)
+    // ========================================
+    if (!result && GEMINI_API_KEY) {
+      console.log('[AI-PROVIDER] Trying Gemini Flash audio fallback...');
+      try {
+        // Convert audio blob to base64 for Gemini inlineData
+        const audioArrayBuffer = await (audioBlob as Blob).arrayBuffer();
+        const audioBytes = new Uint8Array(audioArrayBuffer);
+        const b64Audio = base64Encode(audioBytes);
+        const mimeType = (audioBlob as Blob).type || 'audio/webm';
+
+        const geminiResp = await fetchWithTimeout(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { inlineData: { mimeType, data: b64Audio } },
+                  { text: 'Transcribe this audio recording exactly as spoken. Return ONLY the transcribed text, nothing else. Do not add commentary, timestamps, or labels.' },
+                ],
+              }],
+              generationConfig: { temperature: 0, maxOutputTokens: 2000 },
+            }),
+          },
+          GEMINI_TIMEOUT
+        );
+
+        if (geminiResp.ok) {
+          const data = await geminiResp.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text && text.trim().length > 0) {
+            result = { text: text.trim(), confidence: 0.75, provider: 'gemini' };
+            console.log(`[AI-PROVIDER] Gemini Flash SUCCESS (fallback)`);
+          } else {
+            console.warn('[AI-PROVIDER] Gemini returned empty transcript');
+          }
+        } else {
+          const errorText = await geminiResp.text();
+          console.warn(`[AI-PROVIDER] Gemini HTTP ${geminiResp.status}: ${errorText.slice(0, 200)}`);
+        }
+      } catch (err) {
+        const reason = err.name === 'AbortError' ? 'timeout' : err.message;
+        console.warn(`[AI-PROVIDER] Gemini failed (${reason})`);
+      }
+    }
+
+    // ========================================
+    // ALL PROVIDERS FAILED
+    // ========================================
+    if (!result) {
+      console.error('[AI-PROVIDER] ALL transcription providers failed');
+      return new Response(
+        JSON.stringify({
+          error: 'All transcription providers failed. Please try again.',
+          provider: 'none',
+          fallback_available: true,
+        }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const duration = (Date.now() - startTime) / 1000;
+    console.log(`Transcription complete in ${duration}s via ${result.provider}: "${result.text.substring(0, 100)}..."`);
+
+    // Log instrumentation (non-blocking)
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    
-    // Validate we're using the correct database (Mindmaker AI, ID: bkyuxvschuwngtcdhsyg)
+
     const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
     let skipInstrumentation = false;
     if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      console.warn(`⚠️ Database validation: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Skipping instrumentation.`);
+      console.warn(`Database validation: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID}). Skipping instrumentation.`);
       skipInstrumentation = true;
-    } else {
-      console.log(`✅ Database validated: Using Mindmaker AI (${EXPECTED_PROJECT_ID})`);
     }
-    
+
     if (!skipInstrumentation) {
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-      // Some callers provide non-UUID session identifiers (e.g. deep-profile quick inputs).
-      // We must not fail transcription for instrumentation logging issues.
       const sessionIdStr = String(sessionId);
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionIdStr);
       const moduleName = moduleType ? String(moduleType) : null;
@@ -159,25 +261,27 @@ serve(async (req) => {
           module_name: moduleName,
           metadata: {
             duration_seconds: duration,
-            transcript_length: text.length,
-            confidence,
+            transcript_length: result.text.length,
+            confidence: result.confidence,
+            provider: result.provider,
             session_id_raw: isUuid ? null : sessionIdStr,
           }
         });
         if (instrumentationError) {
-          console.warn('⚠️ Instrumentation insert failed (non-blocking):', instrumentationError.message);
+          console.warn('Instrumentation insert failed (non-blocking):', instrumentationError.message);
         }
       } catch (e) {
-        console.warn('⚠️ Instrumentation insert threw (non-blocking):', e);
+        console.warn('Instrumentation insert threw (non-blocking):', e);
       }
     }
 
     return new Response(
       JSON.stringify({
-        transcript: text,
-        confidence,
+        transcript: result.text,
+        confidence: result.confidence,
         duration_seconds: duration,
-        needs_clarification: confidence < 0.5
+        needs_clarification: result.confidence < 0.5,
+        provider: result.provider,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -186,7 +290,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in voice-transcribe:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message, fallback_available: true }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
