@@ -32,6 +32,11 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
 
+  // Web Speech API fallback: accumulates transcript in parallel during recording
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const speechRecognitionRef = useRef<any>(null)
+  const webSpeechTranscriptRef = useRef<string>('')
+
   // Cleanup function
   const cleanup = useCallback(() => {
     if (timerRef.current) {
@@ -42,6 +47,11 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
       streamRef.current.getTracks().forEach(track => track.stop())
       streamRef.current = null
     }
+    if (speechRecognitionRef.current) {
+      try { speechRecognitionRef.current.stop() } catch { /* already stopped */ }
+      speechRecognitionRef.current = null
+    }
+    webSpeechTranscriptRef.current = ''
     mediaRecorderRef.current = null
     chunksRef.current = []
   }, [])
@@ -53,6 +63,7 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
       setTranscript(null)
       setDuration(0)
       chunksRef.current = []
+      webSpeechTranscriptRef.current = ''
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -65,8 +76,8 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
       streamRef.current = stream
 
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm') 
-          ? 'audio/webm' 
+        mimeType: MediaRecorder.isTypeSupported('audio/webm')
+          ? 'audio/webm'
           : 'audio/mp4'
       })
       mediaRecorderRef.current = mediaRecorder
@@ -81,14 +92,24 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
         setIsRecording(false)
         setIsProcessing(true)
 
+        // Stop Web Speech API recognition
+        if (speechRecognitionRef.current) {
+          try { speechRecognitionRef.current.stop() } catch { /* already stopped */ }
+          speechRecognitionRef.current = null
+        }
+
         try {
-          const audioBlob = new Blob(chunksRef.current, { 
-            type: mediaRecorder.mimeType 
+          const audioBlob = new Blob(chunksRef.current, {
+            type: mediaRecorder.mimeType
           })
 
-          // Transcribe using Whisper API
+          // Transcribe via edge function (Whisper -> Gemini failover)
           const result = await api.transcribeAudio(audioBlob)
           setTranscript(result.transcript)
+
+          if (result.provider) {
+            console.log(`[VOICE] Transcribed via ${result.provider}`)
+          }
 
           // Retain raw audio in Supabase Storage (fire-and-forget)
           const sessionId = crypto.randomUUID()
@@ -99,8 +120,18 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
             await onTranscript(result.transcript)
           }
         } catch (err) {
-          console.error('Transcription error:', err)
-          setError(err as Error)
+          // TIER 3: If edge function failed entirely, try the Web Speech API fallback
+          const fallbackText = webSpeechTranscriptRef.current.trim()
+          if (fallbackText.length > 5) {
+            console.warn('[VOICE] Edge function failed, using Web Speech API fallback transcript')
+            setTranscript(fallbackText)
+            if (onTranscript) {
+              await onTranscript(fallbackText)
+            }
+          } else {
+            console.error('Transcription error:', err)
+            setError(err as Error)
+          }
         } finally {
           setIsProcessing(false)
           cleanup()
@@ -109,6 +140,40 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
 
       mediaRecorder.start(1000) // Collect data every second
       setIsRecording(true)
+
+      // Start parallel Web Speech API recognition as client-side fallback
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const w = window as any
+        const SpeechRecognitionAPI = w.SpeechRecognition || w.webkitSpeechRecognition
+        if (SpeechRecognitionAPI) {
+          const recognition = new SpeechRecognitionAPI()
+          recognition.continuous = true
+          recognition.interimResults = false // only final results
+          recognition.lang = 'en-US'
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          recognition.onresult = (event: any) => {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              if (event.results[i].isFinal) {
+                webSpeechTranscriptRef.current += event.results[i][0].transcript + ' '
+              }
+            }
+          }
+          recognition.onerror = () => { /* non-blocking fallback */ }
+          recognition.onend = () => {
+            // Restart if still recording (Web Speech API auto-stops after silence)
+            if (mediaRecorderRef.current?.state === 'recording' && speechRecognitionRef.current) {
+              try { speechRecognitionRef.current.start() } catch { /* ignore */ }
+            }
+          }
+
+          speechRecognitionRef.current = recognition
+          recognition.start()
+        }
+      } catch {
+        // Web Speech API not available - no fallback, but edge function still works
+      }
 
       // Start duration timer
       timerRef.current = setInterval(() => {

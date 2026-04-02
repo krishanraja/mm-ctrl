@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check } from "lucide-react";
+import { Radio, Play, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import type { Briefing, BriefingSegment } from "@/types/briefing";
+import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
 import { usePollAudio } from "@/hooks/useBriefing";
 import { useBriefingContext } from "@/contexts/BriefingContext";
 
@@ -50,6 +52,7 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
     briefing.audio_url ? null : briefing.id
   );
   const { setBriefing } = useBriefingContext();
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (audioUrl && !briefing.audio_url) {
@@ -83,28 +86,71 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
       <Card className="overflow-hidden">
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3 flex-1 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Radio className="w-4 h-4 text-accent" />
+              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Radio className="w-3.5 h-3.5 text-accent" />
               </div>
-              <div className="min-w-0 flex-1">
+              <div
+                className="min-w-0 flex-1 cursor-pointer"
+                onClick={() => setExpanded((prev) => !prev)}
+              >
                 <div className="flex items-center gap-2 mb-0.5">
                   <p className="text-sm font-semibold">Your Briefing</p>
                   <Badge variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
                     {durationMin} min
                   </Badge>
+                  <motion.div
+                    animate={{ rotate: expanded ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                  </motion.div>
                 </div>
                 <p className="text-xs text-muted-foreground mb-1">
                   {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
                 </p>
-                {/* Rotate through headlines while audio loads, static teaser once ready */}
-                {waitingForAudio && briefing.segments?.length > 0 ? (
-                  <RotatingHeadlines segments={briefing.segments} />
-                ) : (
-                  <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
-                )}
+
+                <AnimatePresence mode="wait">
+                  {expanded ? (
+                    <motion.div
+                      key="expanded"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="space-y-1.5 mt-1 overflow-hidden"
+                    >
+                      {briefing.segments?.map((seg, i) => {
+                        const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
+                        return (
+                          <div key={i} className="flex items-start gap-2">
+                            <span
+                              className={cn(
+                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border flex-shrink-0 mt-0.5",
+                                tagConfig?.className || "bg-muted text-muted-foreground border-border"
+                              )}
+                            >
+                              {tagConfig?.label || seg.framework_tag}
+                            </span>
+                            <p className="text-xs text-muted-foreground leading-snug">
+                              {seg.headline}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </motion.div>
+                  ) : (
+                    <motion.div key="collapsed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      {waitingForAudio && briefing.segments?.length > 0 ? (
+                        <RotatingHeadlines segments={briefing.segments} />
+                      ) : (
+                        <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
