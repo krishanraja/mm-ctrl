@@ -80,7 +80,14 @@ export type PatternType = 'preference' | 'anti_preference' | 'behavior' | 'blind
 
 export type ExportFormat = 'chatgpt' | 'claude' | 'gemini' | 'cursor' | 'claude-code' | 'markdown';
 
-export type ExportUseCase = 'general' | 'meeting' | 'decision' | 'code' | 'email' | 'strategy' | 'delegation' | 'board';
+export type ExportUseCase =
+  | 'general' | 'meeting' | 'decision' | 'code' | 'email' | 'strategy'
+  | 'delegation' | 'board'
+  | 'writing_persona'
+  | 'strength_framework'
+  | 'delegation_playbook'
+  | 'strategic_advisor'
+  | 'decision_journal';
 
 export interface MemoryWebFact {
   id: string;
