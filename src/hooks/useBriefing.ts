@@ -2,6 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Briefing, BriefingFeedback } from '@/types/briefing';
 
+const GENERATE_TIMEOUT = 30_000; // 30s for news fetch + GPT-4o
+const POLL_INTERVAL = 3_000;
+const MAX_POLLS = 20; // 20 * 3s = 60s max
+
 /**
  * Fetch today's briefing for the current user
  */
@@ -61,19 +65,36 @@ export function useGenerateBriefing() {
       setError(null);
       setPhase('scanning');
 
-      // Phase timing for UX
       const phaseTimer = setTimeout(() => setPhase('personalising'), 3000);
       const phaseTimer2 = setTimeout(() => setPhase('preparing'), 7000);
 
-      const { data, error: genErr } = await supabase.functions.invoke('generate-briefing');
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Briefing generation timed out. Please try again.')), GENERATE_TIMEOUT)
+      );
+
+      const { data, error: genErr } = await Promise.race([
+        supabase.functions.invoke('generate-briefing'),
+        timeout,
+      ]);
 
       clearTimeout(phaseTimer);
       clearTimeout(phaseTimer2);
 
       if (genErr) throw genErr;
 
+      const briefingId = data?.briefing_id || null;
+
+      // Trigger audio synthesis from the client (fire-and-forget).
+      // The edge function no longer awaits synthesis, so the client kicks it off
+      // and usePollAudio picks up the result when ready.
+      if (briefingId && !data?.has_audio) {
+        supabase.functions.invoke('synthesize-briefing', {
+          body: { briefing_id: briefingId },
+        }).catch((e) => console.warn('Synthesis trigger failed:', e));
+      }
+
       setPhase('idle');
-      return data?.briefing_id || null;
+      return briefingId;
     } catch (err) {
       console.error('Generate briefing failed:', err);
       setError((err as Error).message);
@@ -118,40 +139,59 @@ export function useSubmitFeedback() {
 }
 
 /**
- * Poll for audio readiness (when briefing was just generated)
+ * Poll for audio readiness with a cap to prevent infinite polling
  */
 export function usePollAudio(briefingId: string | null) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [polling, setPolling] = useState(false);
+  const [exhausted, setExhausted] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollCountRef = useRef(0);
 
   useEffect(() => {
-    if (!briefingId) return;
+    if (!briefingId) {
+      setPolling(false);
+      return;
+    }
 
     setPolling(true);
+    setExhausted(false);
+    pollCountRef.current = 0;
 
     const poll = async () => {
-      const { data } = await supabase
-        .from('briefings')
-        .select('audio_url')
-        .eq('id', briefingId)
-        .maybeSingle();
+      pollCountRef.current += 1;
 
-      if (data?.audio_url) {
-        setAudioUrl(data.audio_url);
+      if (pollCountRef.current > MAX_POLLS) {
         setPolling(false);
+        setExhausted(true);
         if (intervalRef.current) clearInterval(intervalRef.current);
+        return;
+      }
+
+      try {
+        const { data } = await supabase
+          .from('briefings')
+          .select('audio_url')
+          .eq('id', briefingId)
+          .maybeSingle();
+
+        if (data?.audio_url) {
+          setAudioUrl(data.audio_url);
+          setPolling(false);
+          if (intervalRef.current) clearInterval(intervalRef.current);
+        }
+      } catch (e) {
+        console.warn('Poll error:', e);
       }
     };
 
-    // Poll every 3 seconds
     poll();
-    intervalRef.current = setInterval(poll, 3000);
+    intervalRef.current = setInterval(poll, POLL_INTERVAL);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [briefingId]);
 
-  return { audioUrl, polling };
+  return { audioUrl, polling, exhausted };
 }

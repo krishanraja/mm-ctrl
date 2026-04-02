@@ -243,18 +243,24 @@ export function MobileMemoryDashboard() {
               <button
                 onClick={handleGenerateBriefing}
                 disabled={generating}
-                className="flex-shrink-0 px-3 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-colors disabled:opacity-70"
+                className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-colors overflow-hidden"
               >
-                {generating ? (
-                  <span className="flex items-center gap-1.5">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                      className="w-3.5 h-3.5 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full"
-                    />
-                    {phase === 'scanning' ? 'Scanning...' : phase === 'personalising' ? 'Curating...' : 'Preparing...'}
-                  </span>
-                ) : 'Generate'}
+                {generating && (
+                  <motion.div
+                    className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 15, ease: "linear" }}
+                    style={{ transformOrigin: "left" }}
+                  />
+                )}
+                <span className="relative z-10">
+                  {generating
+                    ? phase === 'scanning' ? 'Scanning...'
+                      : phase === 'personalising' ? 'Curating...'
+                      : 'Preparing...'
+                    : 'Generate'}
+                </span>
               </button>
             </motion.div>
           </div>

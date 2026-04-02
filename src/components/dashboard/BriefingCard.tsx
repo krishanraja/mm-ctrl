@@ -1,12 +1,43 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
-import type { Briefing } from "@/types/briefing";
+import { Radio, Play, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { Briefing, BriefingSegment } from "@/types/briefing";
 import { usePollAudio } from "@/hooks/useBriefing";
 import { useBriefingContext } from "@/contexts/BriefingContext";
+
+function RotatingHeadlines({ segments }: { segments: BriefingSegment[] }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (segments.length <= 1) return;
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % segments.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [segments.length]);
+
+  const headline = segments[index]?.headline;
+  if (!headline) return null;
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.p
+        key={index}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.25 }}
+        className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80"
+      >
+        {headline}
+      </motion.p>
+    </AnimatePresence>
+  );
+}
 
 interface BriefingCardProps {
   briefing: Briefing;
@@ -15,22 +46,20 @@ interface BriefingCardProps {
 }
 
 export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProps) {
-  // Poll for audio if not yet available
-  const { audioUrl, polling } = usePollAudio(
+  const { audioUrl, polling, exhausted } = usePollAudio(
     briefing.audio_url ? null : briefing.id
   );
   const { setBriefing } = useBriefingContext();
 
-  // Update briefing with audio URL when it arrives
-  React.useEffect(() => {
+  useEffect(() => {
     if (audioUrl && !briefing.audio_url) {
       setBriefing({ ...briefing, audio_url: audioUrl });
     }
   }, [audioUrl, briefing, setBriefing]);
 
   const hasAudio = !!(briefing.audio_url || audioUrl);
+  const waitingForAudio = !hasAudio && (polling || !exhausted);
 
-  // Collapse to minimal row if already listened
   if (hasListened) {
     return (
       <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
@@ -45,7 +74,6 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
     ? Math.ceil(briefing.audio_duration_seconds / 60)
     : 3;
 
-  // Teaser: first segment headline
   const teaser = briefing.segments?.[0]?.headline || "Your personalised news briefing is ready";
 
   return (
@@ -71,26 +99,46 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
                 <p className="text-xs text-muted-foreground mb-1">
                   {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
                 </p>
-                <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+                {/* Rotate through headlines while audio loads, static teaser once ready */}
+                {waitingForAudio && briefing.segments?.length > 0 ? (
+                  <RotatingHeadlines segments={briefing.segments} />
+                ) : (
+                  <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+                )}
               </div>
             </div>
 
-            <Button
-              variant="default"
-              size="sm"
-              disabled={!hasAudio && polling}
-              className="flex-shrink-0 bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3"
-              onClick={onPlay}
-            >
-              {!hasAudio && polling ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <>
-                  <Play className="w-3 h-3 fill-current mr-1" />
-                  Listen
-                </>
-              )}
-            </Button>
+            {hasAudio ? (
+              <Button
+                variant="default"
+                size="sm"
+                className="flex-shrink-0 bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3"
+                onClick={onPlay}
+              >
+                <Play className="w-3 h-3 fill-current mr-1" />
+                Listen
+              </Button>
+            ) : exhausted ? (
+              <span className="flex-shrink-0 text-[11px] text-muted-foreground py-2">
+                Retry later
+              </span>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                disabled
+                className="relative flex-shrink-0 bg-accent text-accent-foreground h-8 w-[72px] overflow-hidden"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-accent-foreground/15"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 45, ease: "linear" }}
+                  style={{ transformOrigin: "left" }}
+                />
+                <span className="relative z-10 text-xs">Audio...</span>
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

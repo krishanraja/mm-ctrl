@@ -458,18 +458,24 @@ export function DesktopMemoryDashboard() {
               <button
                 onClick={handleGenerateBriefing}
                 disabled={generating}
-                className="relative px-4 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors disabled:opacity-70 min-w-[140px]"
+                className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden"
               >
-                {generating ? (
-                  <span className="flex items-center gap-2">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                      className="w-4 h-4 border-2 border-accent-foreground/30 border-t-accent-foreground rounded-full"
-                    />
-                    {phase === 'scanning' ? 'Scanning...' : phase === 'personalising' ? 'Curating...' : 'Preparing...'}
-                  </span>
-                ) : 'Generate Briefing'}
+                {generating && (
+                  <motion.div
+                    className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 15, ease: "linear" }}
+                    style={{ transformOrigin: "left" }}
+                  />
+                )}
+                <span className="relative z-10">
+                  {generating
+                    ? phase === 'scanning' ? 'Scanning...'
+                      : phase === 'personalising' ? 'Curating...'
+                      : 'Preparing...'
+                    : 'Generate Briefing'}
+                </span>
               </button>
             </motion.div>
           )}

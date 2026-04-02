@@ -610,38 +610,14 @@ serve(async (req) => {
 
     console.log(`Briefing created: ${briefing.id}`);
 
-    // 5. Trigger audio synthesis (awaited so client gets audio URL)
-    let audioUrl: string | null = null;
-    let audioDuration: number | null = null;
-    try {
-      const synthUrl = `${supabaseUrl}/functions/v1/synthesize-briefing`;
-      const synthResp = await fetch(synthUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${supabaseServiceKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ briefing_id: briefing.id }),
-      });
-      if (synthResp.ok) {
-        const synthData = await synthResp.json();
-        audioUrl = synthData.audio_url || null;
-        audioDuration = synthData.duration_seconds || null;
-        console.log("Audio synthesized:", audioUrl ? "OK" : "no URL");
-      } else {
-        console.error("Synthesis returned:", synthResp.status);
-      }
-    } catch (e) {
-      console.warn("Could not synthesize audio:", e);
-    }
-
+    // 5. Return immediately — client will trigger audio synthesis separately.
+    //    This keeps the edge function fast (~5-15s) instead of blocking on
+    //    ElevenLabs TTS + storage upload (~30-60s extra).
     return new Response(
       JSON.stringify({
         briefing_id: briefing.id,
         already_exists: false,
-        has_audio: !!audioUrl,
-        audio_url: audioUrl,
-        audio_duration_seconds: audioDuration,
+        has_audio: false,
         segment_count: segments.length,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
