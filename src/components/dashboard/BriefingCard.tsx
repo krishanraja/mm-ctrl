@@ -48,7 +48,7 @@ interface BriefingCardProps {
 }
 
 export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProps) {
-  const { audioUrl, polling, exhausted } = usePollAudio(
+  const { audioUrl, polling, exhausted, retry } = usePollAudio(
     briefing.audio_url ? null : briefing.id
   );
   const { setBriefing } = useBriefingContext();
@@ -165,9 +165,14 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
                 Listen
               </Button>
             ) : exhausted ? (
-              <span className="flex-shrink-0 text-[11px] text-muted-foreground py-2">
-                Retry later
-              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-shrink-0 h-8 px-3 text-[11px]"
+                onClick={retry}
+              >
+                Retry
+              </Button>
             ) : (
               <Button
                 variant="default"
@@ -176,11 +181,9 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
                 className="relative flex-shrink-0 bg-accent text-accent-foreground h-8 w-[72px] overflow-hidden"
               >
                 <motion.div
-                  className="absolute inset-0 bg-accent-foreground/15"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 45, ease: "linear" }}
-                  style={{ transformOrigin: "left" }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-accent-foreground/15 to-transparent"
+                  animate={{ x: ["-100%", "100%"] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
                 />
                 <span className="relative z-10 text-xs">Audio...</span>
               </Button>
