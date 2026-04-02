@@ -11,6 +11,7 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
 const ContextExport = lazy(() => import('@/pages/ContextExport'))
 const Settings = lazy(() => import('@/pages/Settings'))
+const Compliance = lazy(() => import('@/pages/Compliance'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Booking = lazy(() => import('@/pages/Booking'))
 
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
   {
     path: '/settings',
     element: <LazyWrapper><RequireAuth><Settings /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/compliance',
+    element: <LazyWrapper><RequireAuth><Compliance /></RequireAuth></LazyWrapper>,
   },
   {
     path: '/profile',

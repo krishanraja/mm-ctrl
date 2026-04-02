@@ -124,26 +124,26 @@ export function PrivacyDataTab() {
   return (
     <div className="space-y-6">
       {/* User Memory */}
-      <div className="bg-gray-900 p-6 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">User Memory</h3>
-        <p className="text-sm text-gray-400 mb-6">
+      <div className="bg-card p-6 rounded-lg border border-border">
+        <h3 className="text-lg font-semibold mb-2 text-foreground">User Memory</h3>
+        <p className="text-sm text-muted-foreground mb-6">
           These facts were extracted from your conversations. You can delete any incorrect information.
         </p>
 
         {isLoading ? (
-          <p className="text-center text-gray-500 py-8">Loading...</p>
+          <p className="text-center text-muted-foreground py-8">Loading...</p>
         ) : facts.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No facts captured yet</p>
+          <p className="text-muted-foreground text-center py-8">No facts captured yet</p>
         ) : (
           <div className="space-y-3">
             {facts.map((fact) => (
-              <div key={fact.id} className="flex items-start justify-between bg-gray-800 p-4 rounded">
+              <div key={fact.id} className="flex items-start justify-between bg-secondary p-4 rounded">
                 <div className="flex items-start gap-3 flex-1">
                   <span className="text-2xl">{getCategoryIcon(fact.category)}</span>
                   <div className="flex-1">
-                    <div className="font-medium text-white">{fact.fact_text}</div>
-                    <div className="text-sm text-gray-500 mt-1">
-                      {fact.category} • Confidence: {Math.round((fact.confidence || 0) * 100)}%
+                    <div className="font-medium text-foreground">{fact.fact_text}</div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {fact.category} - Confidence: {Math.round((fact.confidence || 0) * 100)}%
                     </div>
                   </div>
                 </div>
@@ -151,7 +151,7 @@ export function PrivacyDataTab() {
                   variant="ghost"
                   size="icon"
                   onClick={() => handleDelete(fact.id)}
-                  className="text-red-400 hover:text-red-300 hover:bg-red-950/20"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -162,9 +162,9 @@ export function PrivacyDataTab() {
       </div>
 
       {/* Data Export */}
-      <div className="bg-gray-900 p-6 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Data Export</h3>
-        <p className="text-sm text-gray-400 mb-4">
+      <div className="bg-card p-6 rounded-lg border border-border">
+        <h3 className="text-lg font-semibold mb-2 text-foreground">Data Export</h3>
+        <p className="text-sm text-muted-foreground mb-4">
           Download all your profile and memory data in JSON format
         </p>
         <Button variant="outline" onClick={handleExportData}>
@@ -173,9 +173,9 @@ export function PrivacyDataTab() {
       </div>
 
       {/* Account Deletion */}
-      <div className="bg-gray-900 p-6 rounded-lg border border-red-900/50">
-        <h3 className="text-lg font-semibold mb-2 text-red-400">Danger Zone</h3>
-        <p className="text-sm text-gray-400 mb-4">
+      <div className="bg-card p-6 rounded-lg border border-destructive/30">
+        <h3 className="text-lg font-semibold mb-2 text-destructive">Danger Zone</h3>
+        <p className="text-sm text-muted-foreground mb-4">
           Permanently delete your account and all data. This action cannot be undone.
         </p>
         <Button variant="destructive">

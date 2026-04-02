@@ -1,5 +1,5 @@
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { Home, Zap, Brain, Download, Settings, LogOut, User } from 'lucide-react';
+import { Home, Zap, Brain, Download, Settings, Shield, LogOut, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { CtrlLogo } from '@/components/landing/CtrlLogo';
@@ -80,6 +80,19 @@ export function DesktopSidebar() {
         >
           <User className="h-[18px] w-[18px]" />
           Profile
+        </button>
+        <button
+          onClick={() => navigate('/compliance')}
+          className={cn(
+            'w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium',
+            'transition-colors duration-150',
+            location.pathname === '/compliance'
+              ? 'bg-accent/10 text-accent'
+              : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
+          )}
+        >
+          <Shield className="h-[18px] w-[18px]" />
+          Compliance
         </button>
         <button
           onClick={() => navigate('/settings')}

@@ -1,0 +1,74 @@
+/**
+ * Cleanup Expired Data Edge Function
+ *
+ * Enforces data retention policies by cleaning up expired records.
+ * Designed to be called via Supabase cron or external scheduler.
+ *
+ * Compliance: GDPR Art. 5(1)(e) - storage limitation principle
+ */
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
+
+    const results: Record<string, any> = {};
+
+    // 1. Clean up expired memories via existing DB function
+    const { data: memoryCleanup, error: memoryError } = await supabase
+      .rpc('cleanup_expired_memories');
+
+    results.expired_memories = memoryError
+      ? { error: memoryError.message }
+      : { cleaned: memoryCleanup };
+
+    // 2. Clean up expired AI cache entries (older than 7 days)
+    const cacheExpiry = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { count: cacheCount, error: cacheError } = await supabase
+      .from('ai_cache')
+      .delete()
+      .lt('expires_at', cacheExpiry)
+      .select('*', { count: 'exact', head: true });
+
+    results.expired_cache = cacheError
+      ? { error: cacheError.message }
+      : { cleaned: cacheCount || 0 };
+
+    // 3. Log cleanup to audit
+    await supabase.from('data_audit_log').insert({
+      action_type: 'DELETE',
+      table_name: 'RETENTION_CLEANUP',
+      metadata: {
+        results,
+        run_at: new Date().toISOString(),
+        trigger: 'scheduled',
+      },
+    }).catch(() => {});
+
+    return new Response(
+      JSON.stringify({ success: true, results }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+
+  } catch (error) {
+    console.error('Cleanup error:', error);
+    return new Response(
+      JSON.stringify({ error: 'Cleanup failed', details: String(error) }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+});

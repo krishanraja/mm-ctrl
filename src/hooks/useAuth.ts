@@ -34,9 +34,6 @@ export function useAuth(): UseAuthReturn {
   // Subscribe to auth state changes
   useEffect(() => {
     const unsubscribe = authMachine.subscribe((ctx) => {
-      // #region agent log
-      fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useAuth.ts:stateChange',message:'Auth state changed',data:{state:ctx.state,userId:ctx.userId},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      // #endregion
       setAuthContext(ctx);
     });
     return unsubscribe;

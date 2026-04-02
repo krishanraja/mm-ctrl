@@ -59,6 +59,8 @@ export const ConsentManager: React.FC<ConsentManagerProps> = ({
     }
 
     setLoading(true);
+    const previousConsent = initialConsent || defaultConsent;
+
     try {
       const { error } = await supabase
         .from('index_participant_data')
@@ -66,6 +68,16 @@ export const ConsentManager: React.FC<ConsentManagerProps> = ({
         .eq(participantId ? 'id' : 'user_id', participantId || userId!);
 
       if (error) throw error;
+
+      // Log consent change to audit trail (non-blocking, GDPR Art. 7)
+      supabase.from('consent_audit').insert({
+        user_id: userId || null,
+        changed_at: new Date().toISOString(),
+        previous_value: previousConsent,
+        new_value: consent,
+        ip_address: 'client',
+        user_agent: navigator.userAgent,
+      } as any).catch(() => {});
 
       toast({
         title: "Consent Updated",
