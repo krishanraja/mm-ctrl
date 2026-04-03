@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Plus, Shield, Download, Upload, CheckCircle2, Flame, Thermometer, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -11,9 +11,12 @@ import { MemoryDetailSheet } from '@/components/memory/MemoryDetailSheet';
 import { AddMemorySheet } from '@/components/memory/AddMemorySheet';
 import { PrivacyControlsPanel } from '@/components/memory/PrivacyControlsPanel';
 import { ExportImportPanel } from '@/components/memory/ExportImportPanel';
+import { VerificationBanner } from '@/components/memory/VerificationBanner';
+import { VerificationSwipeStack } from '@/components/memory/VerificationSwipeStack';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
+import { useVerificationFlow } from '@/hooks/useVerificationFlow';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 import { AppHeader } from '@/components/memory-web/AppHeader';
@@ -23,6 +26,18 @@ export default function MemoryCenter() {
   const navigate = useNavigate();
   const { isMobile } = useDevice();
   const { stats } = useMemoryWeb();
+  const {
+    isFlowOpen,
+    pendingFacts,
+    unverifiedCount,
+    verifiedRate,
+    openFlow,
+    closeFlow,
+    verifyFact,
+    rejectFact,
+    quickVerify,
+    refreshPending,
+  } = useVerificationFlow();
   const [activeTab, setActiveTab] = useState('memories');
   const [selectedMemory, setSelectedMemory] = useState<UserMemoryFact | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -39,6 +54,15 @@ export default function MemoryCenter() {
       {/* Hidden file input for markdown import */}
       <input {...fileInputProps} />
       <div className="flex-1 min-h-0 flex flex-col space-y-4">
+        {/* Verification banner */}
+        {unverifiedCount > 0 && (
+          <VerificationBanner
+            unverifiedCount={unverifiedCount}
+            verifiedRate={verifiedRate}
+            onStartVerification={openFlow}
+          />
+        )}
+
         {/* Tabs */}
         <Tabs
           value={activeTab}
@@ -89,6 +113,7 @@ export default function MemoryCenter() {
             <MemoryList
               onEditMemory={handleEditMemory}
               onAddMemory={() => setIsAddOpen(true)}
+              onQuickVerify={quickVerify}
             />
           </TabsContent>
 
@@ -112,6 +137,21 @@ export default function MemoryCenter() {
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
       />
+
+      <AnimatePresence>
+        {isFlowOpen && pendingFacts.length > 0 && (
+          <VerificationSwipeStack
+            facts={pendingFacts}
+            onVerify={verifyFact}
+            onReject={rejectFact}
+            onDismiss={closeFlow}
+            onComplete={closeFlow}
+            unverifiedCount={unverifiedCount}
+            verifiedRate={verifiedRate}
+            onContinue={refreshPending}
+          />
+        )}
+      </AnimatePresence>
     </MemoryErrorBoundary>
   );
 
@@ -144,10 +184,16 @@ export default function MemoryCenter() {
                     <Brain className="h-3.5 w-3.5" />
                     {stats.total_facts} facts
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-sm font-medium">
+                  <motion.button
+                    onClick={openFlow}
+                    whileTap={{ scale: 0.95 }}
+                    animate={stats.verified_rate === 0 ? { opacity: [1, 0.7, 1] } : undefined}
+                    transition={stats.verified_rate === 0 ? { repeat: Infinity, duration: 2 } : undefined}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-sm font-medium cursor-pointer hover:bg-emerald-500/20 transition-colors"
+                  >
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     {stats.verified_rate}% verified
-                  </span>
+                  </motion.button>
                   {(stats.temperature_distribution?.hot || 0) > 0 && (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-500 text-sm font-medium">
                       <Flame className="h-3.5 w-3.5" />
@@ -191,10 +237,16 @@ export default function MemoryCenter() {
               <Brain className="h-3 w-3" />
               {stats.total_facts} facts
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium">
+            <motion.button
+              onClick={openFlow}
+              whileTap={{ scale: 0.95 }}
+              animate={stats.verified_rate === 0 ? { opacity: [1, 0.7, 1] } : undefined}
+              transition={stats.verified_rate === 0 ? { repeat: Infinity, duration: 2 } : undefined}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium cursor-pointer hover:bg-emerald-500/20 transition-colors"
+            >
               <CheckCircle2 className="h-3 w-3" />
               {stats.verified_rate}% verified
-            </span>
+            </motion.button>
             {(stats.temperature_distribution?.hot || 0) > 0 && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-500 text-xs font-medium">
                 <Flame className="h-3 w-3" />
