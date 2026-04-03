@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -159,6 +160,23 @@ serve(async (req) => {
     const isAuthenticated = !userErr && userId;
     if (!isAuthenticated) {
       console.log(`[DEBUG-H2] User not authenticated - will generate insights but skip database storage`);
+    }
+
+    // Rate limiting: 20 requests per minute
+    const rateLimitId = userId || req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || 'unknown';
+    const rateLimitResult = checkRateLimit(rateLimitId, { maxRequests: 20, windowMs: 60_000 });
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000)),
+          },
+        }
+      );
     }
 
     // Generate insight/action - use OpenAI

@@ -208,9 +208,13 @@ class AuthMachine {
    */
   subscribe(callback: AuthStateCallback): () => void {
     this.listeners.add(callback);
-    
+
     // Immediately call with current state
-    callback(this.context);
+    try {
+      callback(this.context);
+    } catch (error) {
+      console.error('Auth subscriber error:', error);
+    }
 
     // Return unsubscribe function
     return () => {
@@ -398,9 +402,5 @@ class AuthMachine {
 export const authMachine = new AuthMachine();
 
 // Initialize on import (async, but doesn't block)
-authMachine.initialize().then((ctx) => {
-  // #region agent log
-  fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'authMachine.ts:init',message:'AuthMachine initialized',data:{state:ctx.state,userId:ctx.userId,isAnonymous:ctx.isAnonymous},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-  // #endregion
-}).catch(console.error);
+authMachine.initialize().catch(console.error);
 

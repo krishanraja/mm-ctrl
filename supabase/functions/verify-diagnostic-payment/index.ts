@@ -1,6 +1,13 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
+
+const InputSchema = z.object({
+  assessment_id: z.string().min(1, "assessment_id is required"),
+  session_id: z.string().min(1, "session_id is required"),
+});
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -36,15 +43,39 @@ serve(async (req) => {
   try {
     console.log('🔍 Verifying diagnostic payment');
 
-    const { assessment_id, session_id } = await req.json();
+    const body = await req.json();
+    const parsed = InputSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const { assessment_id, session_id } = parsed.data;
 
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
-    
+
     if (!user?.email) {
       throw new Error("User not authenticated");
+    }
+
+    // Rate limiting: 10 requests per minute
+    const rateLimitResult = checkRateLimit(user.id, { maxRequests: 10, windowMs: 60_000 });
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000)),
+          },
+        }
+      );
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {

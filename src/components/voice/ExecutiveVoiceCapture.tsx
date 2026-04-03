@@ -13,8 +13,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, X, Loader2, RotateCcw, MessageSquare, Send } from 'lucide-react';
-import { AudioRecorder } from '@/utils/audioRecorder';
 import { supabase } from '@/integrations/supabase/client';
+import { useAudioCapture } from '@/hooks/useAudioCapture';
 import { classifyVoiceIntent, VoiceIntent } from '@/utils/classifyVoiceIntent';
 import { composeExecutiveResponse, StructuredResponse } from '@/utils/decisionResponseComposer';
 import { HandOffCard } from '@/components/HandOffCard';
@@ -43,50 +43,58 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
   const [retryCount, setRetryCount] = useState(0);
   const [inputMode, setInputMode] = useState<InputMode>('voice');
   const [textInput, setTextInput] = useState('');
-  
-  const recorderRef = useRef<AudioRecorder | null>(null);
+
+  const {
+    startRecording: startCapture,
+    stopRecording: stopCapture,
+    error: captureError,
+    clearError: clearCaptureError,
+  } = useAudioCapture();
+
   // Mounted guard to prevent state updates on unmounted component
   const isMountedRef = useRef(true);
   // Store last audio blob for retry
   const lastAudioBlobRef = useRef<Blob | null>(null);
-  
+
   const MAX_RETRIES = 2;
 
   // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true;
-    
+
     return () => {
       isMountedRef.current = false;
-      if (recorderRef.current?.isRecording()) {
-        recorderRef.current.stop();
-      }
     };
   }, []);
+
+  // Sync capture errors to component error state
+  useEffect(() => {
+    if (captureError) {
+      setError(captureError);
+      setState('error');
+    }
+  }, [captureError]);
 
   const startRecording = useCallback(async () => {
     try {
       setError(null);
-      recorderRef.current = new AudioRecorder();
-      
-      await recorderRef.current.start(async (audioBlob) => {
+      clearCaptureError();
+
+      await startCapture(async (audioBlob) => {
         setState('transcribing');
         await processAudio(audioBlob);
       });
 
       setState('recording');
-    } catch (err) {
-      console.error('Error starting recording:', err);
-      setError('Could not access microphone. Please check permissions.');
+    } catch {
+      // Error state is set by the hook via captureError effect
       setState('error');
     }
-  }, []);
+  }, [startCapture, clearCaptureError]);
 
   const stopRecording = useCallback(() => {
-    if (recorderRef.current?.isRecording()) {
-      recorderRef.current.stop();
-    }
-  }, []);
+    stopCapture();
+  }, [stopCapture]);
 
   const processAudio = async (audioBlob: Blob, isRetry = false) => {
     // Store blob for potential retry

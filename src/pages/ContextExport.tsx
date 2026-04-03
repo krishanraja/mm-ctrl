@@ -26,14 +26,19 @@ import {
   GitBranch,
   Compass,
   BookOpen,
+  ThumbsUp,
+  ThumbsDown,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDevice } from '@/hooks/useDevice';
+import { useAuth } from '@/hooks/useAuth';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useExportRecommendations } from '@/hooks/useExportRecommendations';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 import { AppHeader } from '@/components/memory-web/AppHeader';
+import { supabase } from '@/integrations/supabase/client';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 import type { ExportRecommendation } from '@/types/edge';
 
@@ -143,13 +148,42 @@ export default function ContextExport() {
   const { isMobile } = useDevice();
   const { exportResult, isExporting: isGenerating, generateExport } = useMemoryExport();
   const { recommendations, hasRecommendations } = useExportRecommendations();
+  const { userId, email } = useAuth();
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('claude');
   const [selectedUseCase, setSelectedUseCase] = useState<ExportUseCase>('general');
   const [copied, setCopied] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState<'positive' | 'negative' | null>(null);
 
   const activeFormatOption = FORMAT_OPTIONS.find(
     (f) => f.value === selectedFormat
   );
+
+  const triggerFeedbackPrompt = useCallback(() => {
+    setFeedbackSubmitted(null);
+    setShowFeedback(true);
+  }, []);
+
+  const submitExportFeedback = useCallback(async (rating: 'positive' | 'negative') => {
+    setFeedbackSubmitted(rating);
+    try {
+      await supabase.from('feedback' as any).insert({
+        user_id: userId,
+        user_email: email,
+        feedback_text: JSON.stringify({
+          type: 'export_rating',
+          export_target: selectedFormat,
+          use_case: selectedUseCase,
+          rating,
+        }),
+        page_context: 'context-export-rating',
+        user_agent: navigator.userAgent,
+      });
+    } catch {
+      // Non-blocking; silently fail
+    }
+    setTimeout(() => setShowFeedback(false), 1800);
+  }, [userId, email, selectedFormat, selectedUseCase]);
 
   // Generate export when format or use case changes
   useEffect(() => {
@@ -162,10 +196,11 @@ export default function ContextExport() {
       await navigator.clipboard.writeText(exportResult.content);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => triggerFeedbackPrompt(), 2200);
     } catch {
       console.error('Failed to copy to clipboard');
     }
-  }, [exportResult?.content]);
+  }, [exportResult?.content, triggerFeedbackPrompt]);
 
   const handleDownload = useCallback(() => {
     if (!exportResult?.content) return;
@@ -185,7 +220,8 @@ export default function ContextExport() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [exportResult?.content, selectedFormat]);
+    setTimeout(() => triggerFeedbackPrompt(), 500);
+  }, [exportResult?.content, selectedFormat, triggerFeedbackPrompt]);
 
   // Shared content for both layouts
   const selectorsContent = (
@@ -444,6 +480,59 @@ export default function ContextExport() {
     </div>
   );
 
+  const feedbackCard = (
+    <AnimatePresence>
+      {showFeedback && (
+        <motion.div
+          initial={{ opacity: 0, y: 8, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -4, scale: 0.97 }}
+          transition={{ duration: 0.25 }}
+          className="rounded-lg border border-border bg-card px-4 py-3 shadow-sm"
+        >
+          {feedbackSubmitted ? (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm text-muted-foreground text-center"
+            >
+              Thanks for the feedback!
+            </motion.p>
+          ) : (
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-foreground/80">
+                Did this export improve your AI conversation?
+              </p>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <button
+                  onClick={() => submitExportFeedback('positive')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
+                >
+                  <ThumbsUp className="h-3.5 w-3.5" />
+                  Yes
+                </button>
+                <button
+                  onClick={() => submitExportFeedback('negative')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary transition-colors"
+                >
+                  <ThumbsDown className="h-3.5 w-3.5" />
+                  Not really
+                </button>
+                <button
+                  onClick={() => setShowFeedback(false)}
+                  className="ml-1 p-1 rounded-md text-muted-foreground/60 hover:text-muted-foreground hover:bg-secondary/50 transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   // Desktop layout
   if (!isMobile) {
     return (
@@ -473,6 +562,7 @@ export default function ContextExport() {
               <div className="w-[420px] flex-shrink-0 space-y-6">
                 {selectorsContent}
                 <div className="pt-2">{actionButtons}</div>
+                <div className="pt-2">{feedbackCard}</div>
               </div>
 
               {/* Right: Preview */}
@@ -507,6 +597,7 @@ export default function ContextExport() {
       <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 space-y-4">
         {selectorsContent}
         <div>{actionButtons}</div>
+        {feedbackCard}
         {previewContent}
       </main>
 

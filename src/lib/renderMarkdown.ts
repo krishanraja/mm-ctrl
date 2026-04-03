@@ -1,9 +1,22 @@
 /**
+ * Escape HTML entities to prevent XSS when rendering markdown as innerHTML.
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
  * Simple markdown → HTML renderer for Edge artifacts.
  * Handles headings, bold, italic, lists, and paragraphs.
+ * Input is sanitized to prevent XSS from AI-generated content.
  */
 export function renderMarkdown(md: string): string {
-  const html = md
+  const html = escapeHtml(md)
     // Headings
     .replace(/^### (.+)$/gm, '<h3 class="text-base font-semibold text-foreground mt-4 mb-1">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="text-lg font-bold text-foreground mt-5 mb-2">$1</h2>')

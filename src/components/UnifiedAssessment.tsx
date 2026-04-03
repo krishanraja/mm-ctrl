@@ -1,26 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket, Mail, Lock, Save, Sparkles, Brain } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { supabase } from '@/integrations/supabase/client';
-// Toast removed - using inline UI feedback instead
 import { useStructuredAssessment } from '@/hooks/useStructuredAssessment';
 import { ProgressScreen } from './ui/progress-screen';
-import LLMInsightEngine from './ai-chat/LLMInsightEngine';
-import { ContactData } from './ContactCollectionForm';
 import { DeepProfileQuestionnaire, DeepProfileData } from './DeepProfileQuestionnaire';
 import { SingleScrollResults } from './SingleScrollResults';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
 import { persistAssessmentId, linkAssessmentToUser, getPersistedAssessmentId } from '@/utils/assessmentPersistence';
-import { useNavigate } from 'react-router-dom';
+import { SaveResultsPrompt } from './assessment/SaveResultsPrompt';
+import { DeepProfileOptIn } from './assessment/DeepProfileOptIn';
+import { AssessmentHeader } from './assessment/AssessmentHeader';
+import { AssessmentProgressCard } from './assessment/AssessmentProgressCard';
+import { AssessmentQuestionCard } from './assessment/AssessmentQuestionCard';
 
 
 interface Message {
@@ -47,7 +39,6 @@ interface UnifiedAssessmentProps {
 }
 
 export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete, onBack, userMode = 'leader' }) => {
-  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInitialized, setIsInitialized] = useState(true); // Fix Issue 9: Show questions immediately
   const sessionInitRef = useRef<Promise<string | null>>(null); // Track session creation promise
@@ -807,170 +798,28 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   // Save Results Prompt - shown after diagnostic completion
   if (currentScreen === 'save-results-prompt') {
     return (
-      <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center px-4">
-        <Card className="max-w-md w-full shadow-lg border rounded-xl">
-          <CardContent className="p-5 sm:p-8">
-            {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-                <Save className="h-6 w-6 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground mb-2">
-                Save your results
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Create an account so you never have to take this diagnostic again.
-              </p>
-            </div>
-
-            {/* Auth Form */}
-            <form onSubmit={handleSaveResults} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="auth-name" className="text-sm font-medium">
-                  Your name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="auth-name"
-                    type="text"
-                    placeholder="Jane Smith"
-                    value={authFullName}
-                    onChange={(e) => setAuthFullName(e.target.value)}
-                    className="pl-10 rounded-lg"
-                    required
-                    autoFocus
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="auth-email" className="text-sm font-medium">
-                  Work email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="auth-email"
-                    type="email"
-                    placeholder="you@company.com"
-                    value={authEmail}
-                    onChange={(e) => {
-                      setAuthEmail(e.target.value);
-                      // Real-time validation
-                      if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
-                        setAuthError('Please enter a valid email address');
-                      } else if (authError && e.target.value) {
-                        setAuthError(null);
-                      }
-                    }}
-                    onBlur={(e) => {
-                      // Validate on blur
-                      if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
-                        setAuthError('Please enter a valid email address');
-                      }
-                    }}
-                    className="pl-10 rounded-lg"
-                    required
-                  />
-                  {authError && authError.includes('email') && (
-                    <p className="text-xs text-destructive mt-1">Please enter a valid email address (e.g., you@company.com)</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="auth-password" className="text-sm font-medium">
-                  Create password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="auth-password"
-                    type="password"
-                    placeholder="At least 6 characters"
-                    value={authPassword}
-                    onChange={(e) => setAuthPassword(e.target.value)}
-                    className="pl-10 rounded-lg"
-                    minLength={6}
-                    required
-                  />
-                </div>
-              </div>
-
-              {authError && (
-                <p className="text-sm text-destructive">{authError}</p>
-              )}
-
-              <Button 
-                type="submit"
-                variant="cta" 
-                size="lg"
-                className="w-full rounded-xl min-h-[48px]"
-                disabled={isAuthLoading || !authEmail || !authPassword || !authFullName}
-              >
-                {isAuthLoading ? 'Creating account...' : 'Save & continue'}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </form>
-
-            <button 
-              type="button"
-              className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-3 mt-3"
-              onClick={handleSkipSave}
-            >
-              Skip for now
-            </button>
-
-            <p className="text-xs text-muted-foreground text-center mt-4">
-              Your data is private. We'll never share it.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <SaveResultsPrompt
+        authFullName={authFullName}
+        setAuthFullName={setAuthFullName}
+        authEmail={authEmail}
+        setAuthEmail={setAuthEmail}
+        authPassword={authPassword}
+        setAuthPassword={setAuthPassword}
+        authError={authError}
+        setAuthError={setAuthError}
+        isAuthLoading={isAuthLoading}
+        onSubmit={handleSaveResults}
+        onSkip={handleSkipSave}
+      />
     );
   }
 
   if (currentScreen === 'deep-profile-optin') {
     return (
-      <div className="bg-background fixed inset-0 flex items-center justify-center px-4 overflow-hidden">
-        <Card className="max-w-md w-full shadow-lg border rounded-xl">
-          <CardContent className="p-5 sm:p-8">
-            {/* Minimal Header */}
-            <div className="text-center mb-5">
-              <div className="inline-flex items-center gap-2 text-primary text-sm mb-3">
-                <Zap className="h-4 w-4" />
-                <span>10x personalization</span>
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
-                Quick personalization?
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                10 more questions = prompts tailored to your exact workflow.
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="space-y-3">
-              <Button 
-                variant="cta" 
-                size="lg"
-                className="w-full rounded-xl min-h-[48px]"
-                onClick={handleStartDeepProfile}
-              >
-                Yes, personalize it
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-              <button 
-                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={handleSkipDeepProfile}
-              >
-                Skip for now
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <DeepProfileOptIn
+        onStart={handleStartDeepProfile}
+        onSkip={handleSkipDeepProfile}
+      />
     );
   }
 
@@ -1041,115 +890,28 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       {/* Safe area container - no scroll on outer container */}
       <div className="flex-1 min-h-0 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header with Icon and Back Button */}
-        <div className="flex items-center justify-between py-2 sm:py-3 shrink-0">
-          <div className="flex items-center gap-3">
-            {onBack && progressData.currentQuestion > 1 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBackWithConfirmation}
-                className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
-              >
-                ← Back
-              </Button>
-            )}
-            <img 
-              src="/mindmaker-favicon.png" 
-              alt="Mindmaker" 
-              className="h-6 sm:h-7 w-auto"
-            />
-          </div>
-          <p className="text-xs sm:text-sm text-muted-foreground text-right flex-1 ml-3">
-            AI Leadership Benchmark
-          </p>
-        </div>
+        <AssessmentHeader
+          onBack={onBack ? handleBackWithConfirmation : undefined}
+          showBackButton={progressData.currentQuestion > 1}
+        />
 
         <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full min-h-0 overflow-hidden">
           {/* Compact Progress Section */}
-          <Card className="mb-2 sm:mb-3 shadow-sm border rounded-xl shrink-0">
-            <CardContent className="p-2.5 sm:p-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xs sm:text-sm font-semibold text-foreground">Benchmark Progress</h2>
-                  {progressData.currentQuestion > 1 && (
-                    <Badge variant="secondary" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20 px-1.5 py-0 text-[10px]">
-                      <Brain className="h-2.5 w-2.5 animate-pulse" />
-                      Learning
-                    </Badge>
-                  )}
-                </div>
-                <Badge variant="outline" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20 px-2 py-0.5 whitespace-nowrap">
-                  <Clock className="h-3 w-3" />
-                  <span className="text-xs">{progressData.currentQuestion}/{totalQuestions}</span>
-                </Badge>
-              </div>
-              
-              <Progress value={progressData.progressPercentage} className="h-1.5 mb-1.5" />
-              
-              <div className="flex justify-between text-[10px] sm:text-xs text-muted-foreground">
-                <span>Phase: {progressData.phase}</span>
-                <span>
-                  {progressData.isComplete || progressData.estimatedTimeRemaining === 0 
-                    ? 'Almost done' 
-                    : `${Math.round(progressData.estimatedTimeRemaining * 10) / 10} min remaining`}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
+          <AssessmentProgressCard
+            progressData={progressData}
+            totalQuestions={totalQuestions}
+          />
 
           {/* Current Question - Fills remaining space with internal scroll only */}
           {currentQuestion && (
-            <Card className="shadow-sm border rounded-xl flex-1 flex flex-col min-h-0 overflow-hidden">
-              <CardContent className="p-3 sm:p-4 flex flex-col flex-1 min-h-0 overflow-hidden">
-                <div className="mb-2 shrink-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm sm:text-base font-semibold text-foreground leading-tight">
-                      Question {currentQuestion.id} of {totalQuestions}
-                    </h3>
-                    {progressData.completedAnswers > 0 && (
-                      <span className="text-[10px] text-primary flex items-center gap-1">
-                        <Sparkles className="h-3 w-3 animate-pulse" />
-                        <span className="hidden sm:inline">Personalizing...</span>
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    {currentQuestion.question}
-                  </p>
-                </div>
-                
-                {/* Answer options with internal scroll if needed */}
-                <div className="flex-1 overflow-y-auto min-h-0 space-y-2 pr-1">
-                  <h4 className="font-medium text-foreground mb-1 text-xs shrink-0">
-                    Select your answer:
-                  </h4>
-                  {isProcessingAnswer && currentQuestion.id === totalQuestions ? (
-                    <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
-                      <div className="h-4 w-4 mr-2 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span className="flex items-center gap-2">
-                        Processing your responses...
-                        <Brain className="h-4 w-4 text-primary animate-pulse" />
-                      </span>
-                    </div>
-                  ) : (
-                    currentQuestion.options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="w-full h-auto text-left justify-start hover:bg-primary/10 transition-colors rounded-xl p-2.5 sm:p-3 min-h-[42px] disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={() => handleOptionSelect(option)}
-                        aria-label={`Select option: ${option}`}
-                        disabled={isProcessingAnswer || assessmentState.isComplete || (currentQuestion && currentQuestion.id === totalQuestions && progressData.completedAnswers >= totalQuestions)}
-                      >
-                        <ArrowRight className="h-3.5 w-3.5 mr-2 flex-shrink-0 text-primary" />
-                        <span className="text-xs sm:text-sm text-foreground leading-relaxed text-left">{option}</span>
-                      </Button>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <AssessmentQuestionCard
+              currentQuestion={currentQuestion}
+              totalQuestions={totalQuestions}
+              completedAnswers={progressData.completedAnswers}
+              isProcessingAnswer={isProcessingAnswer}
+              isComplete={assessmentState.isComplete}
+              onOptionSelect={handleOptionSelect}
+            />
           )}
         </div>
       </div>

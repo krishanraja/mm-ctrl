@@ -1,4 +1,5 @@
 import React from 'react';
+import { errorTracker } from '@/lib/errorTracking';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -7,6 +8,8 @@ interface ErrorBoundaryState {
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
+  /** Optional name for tracking which boundary caught the error */
+  name?: string;
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -20,7 +23,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    errorTracker.capture(error, {
+      component: this.props.name ?? 'ErrorBoundary',
+      action: 'componentDidCatch',
+      extra: { componentStack: errorInfo.componentStack },
+    });
   }
 
   render() {

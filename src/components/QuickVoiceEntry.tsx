@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { validateEmail } from '@/utils/formValidation';
 import { useAuth } from '@/hooks/useAuth';
-import { AudioRecorder } from '@/utils/audioRecorder';
+import { useAudioCapture } from '@/hooks/useAudioCapture';
 import mindmakerIcon from '@/assets/mindmaker-icon.png';
 
 interface QuickVoiceEntryProps {
@@ -39,65 +39,38 @@ const CircularMicButton = forwardRef<{ stopRecording: () => void }, CircularMicB
   hideTimer = false,
   onStopRecording
 }, ref) => {
-  const [isRecording, setIsRecording] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const recorderRef = useRef<AudioRecorder | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const {
+    startRecording: startCapture,
+    stopRecording: stopCapture,
+    isRecording,
+    duration: elapsedTime,
+    error,
+    clearError,
+  } = useAudioCapture({ maxDuration });
 
   const stopRecording = useCallback(() => {
-    if (recorderRef.current) {
-      recorderRef.current.stop();
-      setIsRecording(false);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      setElapsedTime(0);
-      if (onStopRecording) {
-        onStopRecording();
-      }
+    stopCapture();
+    if (onStopRecording) {
+      onStopRecording();
     }
-  }, [onStopRecording]);
+  }, [stopCapture, onStopRecording]);
 
   // Expose stopRecording method via ref
   useImperativeHandle(ref, () => ({
     stopRecording
   }), [stopRecording]);
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (recorderRef.current?.isRecording()) recorderRef.current.stop();
-    };
-  }, []);
-
   const startRecording = async () => {
     try {
-      setError(null);
-      recorderRef.current = new AudioRecorder();
-      
-      await recorderRef.current.start(async (audioBlob) => {
+      clearError();
+      await startCapture(async (audioBlob) => {
         setIsTranscribing(true);
         await transcribeAudio(audioBlob);
       });
-
-      setIsRecording(true);
-      setElapsedTime(0);
-
-      timerRef.current = setInterval(() => {
-        setElapsedTime((prev) => {
-          if (prev >= maxDuration) {
-            stopRecording();
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    } catch (err) {
-      console.error('Error starting recording:', err);
-      setError('Could not access microphone. Click "Or type your answer instead" below.');
+    } catch {
+      // error state is set by the hook; override with component-specific message
+      // (the hook already sets a generic message, but we want a more specific one)
     }
   };
 
@@ -203,10 +176,6 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
     setIsProcessing(true);
     setError(null);
 
-    // #region agent log
-    fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:start',message:'Starting quick entry submission',data:{transcriptLength:transcript.trim().length,transcriptPreview:transcript.trim().slice(0,100)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H5'})}).catch(()=>{});
-    // #endregion
-
     try {
       // Ensure user is authenticated (anonymous sign-in if needed)
       const { data: sessionData } = await supabase.auth.getSession();
@@ -241,12 +210,6 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
 
       const { data, error: fnError } = await Promise.race([functionPromise, timeoutPromise]) as any;
 
-      // #region agent log (wrapped to prevent console errors)
-      if (import.meta.env.DEV) {
-        fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:response',message:'Edge function response received',data:{hasData:!!data,hasError:!!fnError,fnError:fnError?.message||null,dataKeys:data?Object.keys(data):[],insight:data?.insight?.slice(0,50),action_text:data?.action_text?.slice(0,50),errorField:data?.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3-H5'})}).catch(()=>{});
-      }
-      // #endregion
-
       if (fnError) {
         // Provide user-friendly error messages
         if (fnError.message?.includes('timeout') || fnError.message?.includes('timed out')) {
@@ -266,19 +229,8 @@ export const QuickVoiceEntry: React.FC<QuickVoiceEntryProps> = ({
         why: data?.why_text || "Generic advice is useless. You deserve something tailored to what you actually said.",
       };
 
-      // #region agent log (wrapped to prevent console errors)
-      if (import.meta.env.DEV) {
-        fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:success',message:'Entry result created',data:{usedDefaultInsight:!data?.insight,usedDefaultAction:!data?.action_text,insightPreview:entryResult.insight.slice(0,50)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-      }
-      // #endregion
-
       setResult(entryResult);
     } catch (err) {
-      // #region agent log (wrapped to prevent console errors)
-      if (import.meta.env.DEV) {
-        fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'QuickVoiceEntry.tsx:handleSubmit:catch',message:'Quick entry failed - entering catch block',data:{errorMessage:err instanceof Error?err.message:String(err),errorName:err instanceof Error?err.name:'unknown'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H4'})}).catch(()=>{});
-      }
-      // #endregion
       console.error('Quick entry failed:', err);
       
       // Show user-friendly error message
