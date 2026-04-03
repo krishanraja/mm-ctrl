@@ -239,7 +239,7 @@ export function MobileMemoryDashboard() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-foreground">Your Daily Briefing</p>
-                  <p className="text-xs text-muted-foreground truncate">
+                  <p className="text-xs text-muted-foreground">
                     {generating
                       ? phase === 'scanning' ? 'Scanning today\'s news...'
                         : phase === 'personalising' ? 'Finding what matters to you...'

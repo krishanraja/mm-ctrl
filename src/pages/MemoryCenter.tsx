@@ -45,17 +45,17 @@ export default function MemoryCenter() {
           onValueChange={setActiveTab}
           className="flex-1 min-h-0 flex flex-col overflow-hidden"
         >
-          <div className="flex items-center justify-between">
-            <TabsList className="grid grid-cols-3 h-11">
-              <TabsTrigger value="memories" className="text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <TabsList className="h-11">
+              <TabsTrigger value="memories" className="text-sm px-3">
                 <Brain className="h-4 w-4 mr-1.5 hidden sm:inline" />
                 All Facts
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="text-sm">
+              <TabsTrigger value="privacy" className="text-sm px-3">
                 <Shield className="h-4 w-4 mr-1.5 hidden sm:inline" />
                 Privacy
               </TabsTrigger>
-              <TabsTrigger value="data" className="text-sm">
+              <TabsTrigger value="data" className="text-sm px-3">
                 <Download className="h-4 w-4 mr-1.5 hidden sm:inline" />
                 Data
               </TabsTrigger>
@@ -70,16 +70,16 @@ export default function MemoryCenter() {
                   size="sm"
                   className="border-0 bg-secondary/50"
                 >
-                  <Upload className="h-4 w-4 mr-1" />
-                  {isImporting ? 'Importing...' : 'Import'}
+                  <Upload className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import'}</span>
                 </Button>
                 <Button
                   onClick={() => setIsAddOpen(true)}
                   size="sm"
                   className="border-0"
                 >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add
+                  <Plus className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Add</span>
                 </Button>
               </div>
             )}
