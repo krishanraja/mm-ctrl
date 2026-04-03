@@ -33,7 +33,7 @@ function RotatingHeadlines({ segments }: { segments: BriefingSegment[] }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.25 }}
-        className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80"
+        className="text-xs leading-relaxed line-clamp-2 text-muted-foreground/80"
       >
         {headline}
       </motion.p>
@@ -146,7 +146,7 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
                       {waitingForAudio && briefing.segments?.length > 0 ? (
                         <RotatingHeadlines segments={briefing.segments} />
                       ) : (
-                        <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+                        <p className="text-xs leading-relaxed line-clamp-2 text-muted-foreground/80">{teaser}</p>
                       )}
                     </motion.div>
                   )}

@@ -101,6 +101,13 @@ export function SegmentCard({
           {segment.analysis}
         </p>
 
+        {/* Relevance reason */}
+        {segment.relevance_reason && (
+          <p className="text-[11px] text-accent/80 italic leading-relaxed">
+            {segment.relevance_reason}
+          </p>
+        )}
+
         {/* Actions row */}
         <div className="flex items-center gap-2 pt-1">
           {/* Feedback buttons */}
