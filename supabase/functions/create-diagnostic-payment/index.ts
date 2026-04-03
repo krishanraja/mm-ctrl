@@ -2,6 +2,12 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+
+const InputSchema = z.object({
+  assessment_id: z.string().min(1, "assessment_id is required"),
+  upgrade_type: z.enum(["full_diagnostic", "deep_context", "bundle"]).default("full_diagnostic"),
+});
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -57,6 +63,13 @@ serve(async (req) => {
 
     // Rate limiting: 10 payment sessions per hour per user (using actual user ID)
     const requestBody = await req.json();
+    const parsed = InputSchema.safeParse(requestBody);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: parsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     const userId = user.id; // Use actual user ID from authentication
     
     // Initialize Supabase client with service role for rate limiting
@@ -88,7 +101,7 @@ serve(async (req) => {
 
     console.log('💳 Creating payment session');
 
-    const { assessment_id, upgrade_type = 'full_diagnostic' } = requestBody;
+    const { assessment_id, upgrade_type } = parsed.data;
     
     // Determine price ID based on upgrade type
     let priceId: string;

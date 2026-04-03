@@ -2,6 +2,12 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+
+const FormFieldsSchema = z.object({
+  sessionId: z.string().min(1, "sessionId is required"),
+  moduleType: z.string().nullable().optional(),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -93,12 +99,26 @@ serve(async (req) => {
   try {
     const formData = await req.formData();
     const audioBlob = formData.get('audio');
-    const sessionId = formData.get('sessionId');
-    const moduleType = formData.get('moduleType');
 
-    if (!audioBlob || !sessionId) {
-      throw new Error('Audio and sessionId are required');
+    if (!audioBlob || !(audioBlob instanceof Blob)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: { fieldErrors: { audio: ["Audio file is required"] } } }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+
+    const fieldsParsed = FormFieldsSchema.safeParse({
+      sessionId: formData.get('sessionId'),
+      moduleType: formData.get('moduleType'),
+    });
+    if (!fieldsParsed.success) {
+      return new Response(
+        JSON.stringify({ error: "Invalid input", details: fieldsParsed.error.flatten() }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const sessionId = fieldsParsed.data.sessionId;
+    const moduleType = fieldsParsed.data.moduleType ?? null;
 
     console.log(`Transcribing audio for session ${sessionId}, module ${moduleType}`);
     const startTime = Date.now();

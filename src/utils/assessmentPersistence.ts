@@ -148,10 +148,6 @@ export function migrateUrlAssessmentId(): void {
     const urlParams = new URLSearchParams(window.location.search);
     const fromUrl = urlParams.get('a');
     
-    // #region agent log
-    fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'assessmentPersistence.ts:migrate',message:'URL migration check',data:{hasUrlParam:!!fromUrl,currentUrl:window.location.href},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-    // #endregion
-    
     if (fromUrl) {
       // Migrate to localStorage
       localStorage.setItem(ASSESSMENT_ID_KEY, fromUrl);

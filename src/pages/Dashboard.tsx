@@ -1,6 +1,6 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
 import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashboard"
 import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
 import { GuidedFirstExperience } from "@/components/memory-web/GuidedFirstExperience"
@@ -20,36 +20,36 @@ export default function Dashboard() {
   const { isFirstTime, completeOnboarding } = useGuidedCapture()
   const { user } = useAuth()
   const [searchParams] = useSearchParams()
-  const [checkingDb, setCheckingDb] = useState(() => {
-    return !localStorage.getItem('mindmaker_onboarded')
-  })
-  const [hasExistingFacts, setHasExistingFacts] = useState(false)
 
   // Determine which view to show: Memory or Edge
   const activeView: EdgeView = (searchParams.get('view') as EdgeView) || 'memory'
 
-  useEffect(() => {
-    if (!checkingDb || !user) return
+  const alreadyOnboarded = !!localStorage.getItem('mindmaker_onboarded')
 
-    supabase
-      .from('user_memory')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_current', true)
-      .then(({ count }) => {
-        if (count && count > 0) {
-          localStorage.setItem('mindmaker_onboarded', 'true')
-          setHasExistingFacts(true)
-        }
-        setCheckingDb(false)
-      })
-  }, [checkingDb, user])
+  const { data: hasExistingFacts, isLoading: checkingDb } = useQuery({
+    queryKey: ['memory', 'onboarding-check', user?.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('user_memory')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user!.id)
+        .eq('is_current', true)
+
+      if (count && count > 0) {
+        localStorage.setItem('mindmaker_onboarded', 'true')
+        return true
+      }
+      return false
+    },
+    enabled: !!user && !alreadyOnboarded,
+    staleTime: 1000 * 60 * 5,
+  })
 
   if (checkingDb) {
     return <div className="h-screen-safe flex items-center justify-center">Loading...</div>
   }
 
-  if (isFirstTime && !hasExistingFacts) {
+  if (isFirstTime && !hasExistingFacts && !alreadyOnboarded) {
     return <GuidedFirstExperience onComplete={completeOnboarding} />
   }
 

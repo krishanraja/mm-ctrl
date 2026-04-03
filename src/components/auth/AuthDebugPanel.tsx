@@ -38,12 +38,6 @@ export const AuthDebugPanel: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
 
-  // #region agent log
-  React.useEffect(() => {
-    fetch('http://127.0.0.1:7248/ingest/509738c9-126a-4942-ae64-8468ded388e5',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AuthDebugPanel.tsx:mount',message:'AuthDebugPanel mounted',data:{isDev,state,userId,hasSession},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-  }, []);
-  // #endregion
-
   // Only render in development
   if (!isDev) return null;
 

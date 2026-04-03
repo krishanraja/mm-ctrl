@@ -15,6 +15,49 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+
+const CreateMemorySchema = z.object({
+  fact_key: z.string().min(1, "fact_key is required"),
+  fact_category: z.string().min(1, "fact_category is required"),
+  fact_label: z.string().min(1, "fact_label is required"),
+  fact_value: z.string().min(1, "fact_value is required"),
+  fact_context: z.string().optional(),
+  source_type: z.string().default("manual"),
+  confidence_score: z.number().min(0).max(1).default(1.0),
+  is_high_stakes: z.boolean().default(false),
+});
+
+const UpdateMemorySchema = z.object({
+  fact_value: z.string().optional(),
+  fact_context: z.string().optional(),
+  fact_label: z.string().optional(),
+  verification_status: z.enum(["verified", "inferred", "corrected", "disputed"]).optional(),
+});
+
+const BulkDeleteSchema = z.object({
+  ids: z.array(z.string().uuid()).optional(),
+  category: z.string().optional(),
+  source: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  delete_all: z.boolean().optional(),
+});
+
+const ImportMemoryItemSchema = z.object({
+  fact_key: z.string().min(1),
+  fact_category: z.string().min(1),
+  fact_label: z.string().min(1),
+  fact_value: z.string().min(1),
+  fact_context: z.string().optional(),
+  confidence_score: z.number().min(0).max(1).optional(),
+  is_high_stakes: z.boolean().optional(),
+  verification_status: z.string().optional(),
+});
+
+const ImportSchema = z.object({
+  memories: z.array(ImportMemoryItemSchema),
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -141,14 +184,14 @@ serve(async (req) => {
         }
 
         const body = await req.json();
-        const { fact_key, fact_category, fact_label, fact_value, fact_context, source_type = 'manual', confidence_score = 1.0, is_high_stakes = false } = body;
-
-        if (!fact_key || !fact_category || !fact_label || !fact_value) {
+        const parsed = CreateMemorySchema.safeParse(body);
+        if (!parsed.success) {
           return new Response(
-            JSON.stringify({ error: 'Missing required fields: fact_key, fact_category, fact_label, fact_value' }),
+            JSON.stringify({ error: 'Invalid input', details: parsed.error.flatten() }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
+        const { fact_key, fact_category, fact_label, fact_value, fact_context, source_type, confidence_score, is_high_stakes } = parsed.data;
 
         // Check user's privacy settings
         const { data: settings } = await supabase
@@ -304,7 +347,14 @@ serve(async (req) => {
         }
 
         const body = await req.json();
-        const { fact_value, fact_context, fact_label, verification_status } = body;
+        const parsed = UpdateMemorySchema.safeParse(body);
+        if (!parsed.success) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid input', details: parsed.error.flatten() }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        const { fact_value, fact_context, fact_label, verification_status } = parsed.data;
 
         // Verify ownership
         const { data: existing } = await supabase
@@ -398,7 +448,14 @@ serve(async (req) => {
         }
 
         const body = await req.json();
-        const { ids, category, source, start_date, end_date, delete_all } = body;
+        const parsed = BulkDeleteSchema.safeParse(body);
+        if (!parsed.success) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid input', details: parsed.error.flatten() }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        const { ids, category, source, start_date, end_date, delete_all } = parsed.data;
 
         let query = supabase
           .from('user_memory')
@@ -513,14 +570,14 @@ serve(async (req) => {
         }
 
         const body = await req.json();
-        const { memories } = body;
-
-        if (!Array.isArray(memories)) {
+        const parsed = ImportSchema.safeParse(body);
+        if (!parsed.success) {
           return new Response(
-            JSON.stringify({ error: 'Invalid import format: memories must be an array' }),
+            JSON.stringify({ error: 'Invalid input', details: parsed.error.flatten() }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
+        const { memories } = parsed.data;
 
         let imported = 0;
         let skipped = 0;
