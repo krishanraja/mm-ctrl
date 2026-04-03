@@ -3,6 +3,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 const FormFieldsSchema = z.object({
   sessionId: z.string().min(1, "sessionId is required"),
@@ -119,6 +120,23 @@ serve(async (req) => {
     }
     const sessionId = fieldsParsed.data.sessionId;
     const moduleType = fieldsParsed.data.moduleType ?? null;
+
+    // Rate limiting: 10 requests per minute (expensive Whisper API calls)
+    const rateLimitId = sessionId || req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || 'unknown';
+    const rateLimitResult = checkRateLimit(rateLimitId, { maxRequests: 10, windowMs: 60_000 });
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
 
     console.log(`Transcribing audio for session ${sessionId}, module ${moduleType}`);
     const startTime = Date.now();

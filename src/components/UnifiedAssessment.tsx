@@ -1,19 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { User, ArrowRight, CheckCircle, Target, Clock, Zap, Rocket, Mail, Lock, Save, Sparkles, Brain } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { supabase } from '@/integrations/supabase/client';
-// Toast removed - using inline UI feedback instead
 import { useStructuredAssessment } from '@/hooks/useStructuredAssessment';
 import { ProgressScreen } from './ui/progress-screen';
-import LLMInsightEngine from './ai-chat/LLMInsightEngine';
-import { ContactData } from './ContactCollectionForm';
 import { DeepProfileQuestionnaire, DeepProfileData } from './DeepProfileQuestionnaire';
 import { SingleScrollResults } from './SingleScrollResults';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
@@ -21,6 +9,11 @@ import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
 import { persistAssessmentId, linkAssessmentToUser, getPersistedAssessmentId } from '@/utils/assessmentPersistence';
 import { useNavigate } from 'react-router-dom';
+import { SaveResultsPrompt } from './assessment/SaveResultsPrompt';
+import { DeepProfileOptIn } from './assessment/DeepProfileOptIn';
+import { AssessmentHeader } from './assessment/AssessmentHeader';
+import { AssessmentProgressCard } from './assessment/AssessmentProgressCard';
+import { AssessmentQuestionCard } from './assessment/AssessmentQuestionCard';
 
 
 interface Message {
@@ -807,170 +800,28 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
   // Save Results Prompt - shown after diagnostic completion
   if (currentScreen === 'save-results-prompt') {
     return (
-      <div className="bg-background h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center px-4">
-        <Card className="max-w-md w-full shadow-lg border rounded-xl">
-          <CardContent className="p-5 sm:p-8">
-            {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
-                <Save className="h-6 w-6 text-primary" />
-              </div>
-              <h2 className="text-xl font-semibold text-foreground mb-2">
-                Save your results
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Create an account so you never have to take this diagnostic again.
-              </p>
-            </div>
-
-            {/* Auth Form */}
-            <form onSubmit={handleSaveResults} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="auth-name" className="text-sm font-medium">
-                  Your name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="auth-name"
-                    type="text"
-                    placeholder="Jane Smith"
-                    value={authFullName}
-                    onChange={(e) => setAuthFullName(e.target.value)}
-                    className="pl-10 rounded-lg"
-                    required
-                    autoFocus
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="auth-email" className="text-sm font-medium">
-                  Work email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="auth-email"
-                    type="email"
-                    placeholder="you@company.com"
-                    value={authEmail}
-                    onChange={(e) => {
-                      setAuthEmail(e.target.value);
-                      // Real-time validation
-                      if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
-                        setAuthError('Please enter a valid email address');
-                      } else if (authError && e.target.value) {
-                        setAuthError(null);
-                      }
-                    }}
-                    onBlur={(e) => {
-                      // Validate on blur
-                      if (e.target.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)) {
-                        setAuthError('Please enter a valid email address');
-                      }
-                    }}
-                    className="pl-10 rounded-lg"
-                    required
-                  />
-                  {authError && authError.includes('email') && (
-                    <p className="text-xs text-destructive mt-1">Please enter a valid email address (e.g., you@company.com)</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="auth-password" className="text-sm font-medium">
-                  Create password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="auth-password"
-                    type="password"
-                    placeholder="At least 6 characters"
-                    value={authPassword}
-                    onChange={(e) => setAuthPassword(e.target.value)}
-                    className="pl-10 rounded-lg"
-                    minLength={6}
-                    required
-                  />
-                </div>
-              </div>
-
-              {authError && (
-                <p className="text-sm text-destructive">{authError}</p>
-              )}
-
-              <Button 
-                type="submit"
-                variant="cta" 
-                size="lg"
-                className="w-full rounded-xl min-h-[48px]"
-                disabled={isAuthLoading || !authEmail || !authPassword || !authFullName}
-              >
-                {isAuthLoading ? 'Creating account...' : 'Save & continue'}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </form>
-
-            <button 
-              type="button"
-              className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-3 mt-3"
-              onClick={handleSkipSave}
-            >
-              Skip for now
-            </button>
-
-            <p className="text-xs text-muted-foreground text-center mt-4">
-              Your data is private. We'll never share it.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <SaveResultsPrompt
+        authFullName={authFullName}
+        setAuthFullName={setAuthFullName}
+        authEmail={authEmail}
+        setAuthEmail={setAuthEmail}
+        authPassword={authPassword}
+        setAuthPassword={setAuthPassword}
+        authError={authError}
+        setAuthError={setAuthError}
+        isAuthLoading={isAuthLoading}
+        onSubmit={handleSaveResults}
+        onSkip={handleSkipSave}
+      />
     );
   }
 
   if (currentScreen === 'deep-profile-optin') {
     return (
-      <div className="bg-background fixed inset-0 flex items-center justify-center px-4 overflow-hidden">
-        <Card className="max-w-md w-full shadow-lg border rounded-xl">
-          <CardContent className="p-5 sm:p-8">
-            {/* Minimal Header */}
-            <div className="text-center mb-5">
-              <div className="inline-flex items-center gap-2 text-primary text-sm mb-3">
-                <Zap className="h-4 w-4" />
-                <span>10x personalization</span>
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
-                Quick personalization?
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                10 more questions = prompts tailored to your exact workflow.
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="space-y-3">
-              <Button 
-                variant="cta" 
-                size="lg"
-                className="w-full rounded-xl min-h-[48px]"
-                onClick={handleStartDeepProfile}
-              >
-                Yes, personalize it
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-              <button 
-                className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={handleSkipDeepProfile}
-              >
-                Skip for now
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <DeepProfileOptIn
+        onStart={handleStartDeepProfile}
+        onSkip={handleSkipDeepProfile}
+      />
     );
   }
 

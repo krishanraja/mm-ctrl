@@ -8,6 +8,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { errorTracker } from '@/lib/errorTracking';
+
+// Install global error handlers for uncaught errors and unhandled promise rejections
+errorTracker.install();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

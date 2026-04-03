@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { checkRateLimit, RATE_LIMITS } from '../_shared/rate-limit.ts';
+import { checkRateLimit as checkBurstLimit } from "../_shared/rateLimit.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const InputSchema = z.object({
@@ -58,6 +59,22 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: "User not authenticated" }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Burst rate limiting: 5 requests per minute (payment endpoints)
+    const burstLimitResult = checkBurstLimit(user.id, { maxRequests: 5, windowMs: 60_000 });
+    if (!burstLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil((burstLimitResult.resetAt - Date.now()) / 1000)),
+          },
+        }
       );
     }
 

@@ -16,6 +16,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 const CreateMemorySchema = z.object({
   fact_key: z.string().min(1, "fact_key is required"),
@@ -167,6 +168,22 @@ serve(async (req) => {
     }
 
     const userId = userData.user.id;
+
+    // Rate limiting: 60 requests per minute (CRUD operations)
+    const rateLimitResult = checkRateLimit(userId, { maxRequests: 60, windowMs: 60_000 });
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Retry-After": String(Math.ceil((rateLimitResult.resetAt - Date.now()) / 1000)),
+          },
+        }
+      );
+    }
 
     // Service role client for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
