@@ -20,6 +20,7 @@ import { staggerContainer, slideUp } from '@/lib/motion';
 interface MemoryListProps {
   onEditMemory: (memory: UserMemoryFact) => void;
   onAddMemory: () => void;
+  onQuickVerify?: (id: string) => void;
 }
 
 const CATEGORIES: { value: FactCategory | 'all'; label: string }[] = [
@@ -41,6 +42,7 @@ const SOURCES: { value: string | 'all'; label: string }[] = [
 export const MemoryList: React.FC<MemoryListProps> = ({
   onEditMemory,
   onAddMemory,
+  onQuickVerify,
 }) => {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<FactCategory | 'all'>('all');
@@ -252,6 +254,7 @@ export const MemoryList: React.FC<MemoryListProps> = ({
                   memory={memory}
                   onEdit={onEditMemory}
                   onDelete={handleDelete}
+                  onQuickVerify={onQuickVerify}
                   isDeleting={deletingId === memory.id}
                 />
               ))}

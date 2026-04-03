@@ -5,17 +5,19 @@
  * Mobile-first design with touch-friendly targets.
  */
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Pencil, Trash2, Check, AlertCircle, User, Building, Target, AlertTriangle, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { haptics } from '@/lib/haptics';
 import type { UserMemoryFact, FactCategory } from '@/types/memory';
 
 interface MemoryItemCardProps {
   memory: UserMemoryFact;
   onEdit: (memory: UserMemoryFact) => void;
   onDelete: (id: string) => void;
+  onQuickVerify?: (id: string) => void;
   isDeleting?: boolean;
 }
 
@@ -46,8 +48,21 @@ export const MemoryItemCard: React.FC<MemoryItemCardProps> = ({
   memory,
   onEdit,
   onDelete,
+  onQuickVerify,
   isDeleting = false,
 }) => {
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [showFlash, setShowFlash] = useState(false);
+
+  const handleQuickVerify = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!onQuickVerify || isVerifying) return;
+    setIsVerifying(true);
+    setShowFlash(true);
+    const result = await onQuickVerify(memory.id);
+    setIsVerifying(false);
+    setTimeout(() => setShowFlash(false), 600);
+  };
   const CategoryIcon = categoryIcons[memory.fact_category] || User;
   const categoryColor = categoryColors[memory.fact_category] || categoryColors.identity;
   const verificationBadge = verificationBadges[memory.verification_status] || verificationBadges.inferred;
@@ -72,11 +87,24 @@ export const MemoryItemCard: React.FC<MemoryItemCardProps> = ({
       exit={{ opacity: 0, x: -100 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "bg-card border border-border rounded-2xl p-4",
+        "bg-card border border-border rounded-2xl p-4 relative overflow-hidden",
         "hover:shadow-md transition-shadow duration-200",
         isDeleting && "pointer-events-none"
       )}
     >
+      {/* Quick-verify green flash */}
+      <AnimatePresence>
+        {showFlash && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.15 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 bg-emerald-500 rounded-2xl pointer-events-none z-10"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -95,6 +123,23 @@ export const MemoryItemCard: React.FC<MemoryItemCardProps> = ({
         
         {/* Quick actions */}
         <div className="flex items-center gap-1 flex-shrink-0">
+          {memory.verification_status === 'inferred' && onQuickVerify && (
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              onClick={handleQuickVerify}
+              disabled={isVerifying}
+              className={cn(
+                "p-2 rounded-lg min-h-[44px] min-w-[44px]",
+                "flex items-center justify-center",
+                "hover:bg-emerald-500/10 transition-colors",
+                "text-emerald-500 hover:text-emerald-600",
+                isVerifying && "opacity-50"
+              )}
+              aria-label="Quick verify"
+            >
+              <Check className="w-4 h-4" />
+            </motion.button>
+          )}
           <button
             onClick={() => onEdit(memory)}
             className={cn(

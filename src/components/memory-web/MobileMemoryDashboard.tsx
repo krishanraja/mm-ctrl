@@ -21,6 +21,7 @@ import {
   Eye,
   X,
   FileText,
+  CheckCircle2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -29,6 +30,8 @@ import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
 import { FactVerificationCard } from '@/components/memory/FactVerificationCard';
+import { VerificationSwipeStack } from '@/components/memory/VerificationSwipeStack';
+import { useVerificationFlow } from '@/hooks/useVerificationFlow';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BottomNav } from './BottomNav';
 import { AppHeader } from './AppHeader';
@@ -68,6 +71,17 @@ export function MobileMemoryDashboard() {
   } = useUserMemory();
   const { toast } = useToast();
   const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
+  const {
+    isFlowOpen: isVerifyFlowOpen,
+    pendingFacts: verifyPendingFacts,
+    unverifiedCount,
+    verifiedRate,
+    openFlow: openVerifyFlow,
+    closeFlow: closeVerifyFlow,
+    verifyFact: flowVerifyFact,
+    rejectFact: flowRejectFact,
+    refreshPending,
+  } = useVerificationFlow();
   const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
@@ -630,6 +644,15 @@ export function MobileMemoryDashboard() {
             transition={{ delay: 0.4 }}
             className="flex-shrink-0 px-4 py-2 flex gap-2 relative z-10"
           >
+            {unverifiedCount > 0 && (
+              <button
+                onClick={openVerifyFlow}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs font-semibold"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Verify ({unverifiedCount})
+              </button>
+            )}
             <button
               onClick={() => navigate('/context')}
               className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent/10 text-accent text-xs font-semibold"
@@ -659,6 +682,21 @@ export function MobileMemoryDashboard() {
             onReject={rejectFact}
             onDismiss={() => { setShowVerification(false); clearPendingVerifications(); }}
             onComplete={() => { setShowVerification(false); refresh(); }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isVerifyFlowOpen && verifyPendingFacts.length > 0 && (
+          <VerificationSwipeStack
+            facts={verifyPendingFacts}
+            onVerify={flowVerifyFact}
+            onReject={flowRejectFact}
+            onDismiss={closeVerifyFlow}
+            onComplete={closeVerifyFlow}
+            unverifiedCount={unverifiedCount}
+            verifiedRate={verifiedRate}
+            onContinue={refreshPending}
           />
         )}
       </AnimatePresence>
