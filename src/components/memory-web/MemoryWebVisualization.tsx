@@ -11,8 +11,9 @@
 import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { X } from 'lucide-react';
+import { X, Minimize2 } from 'lucide-react';
 import type { MemoryWebFact, FactCategory, Temperature } from '@/types/memory';
+import { useZoomPan } from '@/hooks/useZoomPan';
 
 // ── Colour palette per category ──────────────────────────────────────────────
 const CATEGORY_COLORS: Record<FactCategory, { fill: string; rgb: string; label: string }> = {
@@ -247,6 +248,13 @@ export function MemoryWebVisualization({
     [facts.length, dims.w, dims.h],
   );
 
+  // Zoom & pan
+  const {
+    scale, translateX, translateY,
+    svgTransform, domTransformStyle,
+    svgToScreen, isZoomed, resetZoom, wasGesture,
+  } = useZoomPan({ containerRef, dims });
+
   // Connected nodes for the selected node
   const connectedIndices = useMemo(() => {
     if (selectedIndex === null) return new Set<number>();
@@ -254,13 +262,15 @@ export function MemoryWebVisualization({
   }, [selectedIndex, edges]);
 
   const handleNodeClick = useCallback((index: number) => {
+    if (wasGesture()) return;
     setSelectedIndex((prev) => (prev === index ? null : index));
     if (onNodeTap) onNodeTap(nodes[index]?.fact);
-  }, [onNodeTap, nodes]);
+  }, [onNodeTap, nodes, wasGesture]);
 
   const handleBackdropClick = useCallback(() => {
+    if (wasGesture()) return;
     setSelectedIndex(null);
-  }, []);
+  }, [wasGesture]);
 
   // Clear selection when facts change
   useEffect(() => { setSelectedIndex(null); }, [factIds]);
@@ -279,25 +289,28 @@ export function MemoryWebVisualization({
     return Array.from(cats);
   }, [facts]);
 
-  // Tooltip position (keep card inside viewport)
+  // Tooltip position (keep card inside viewport, accounting for zoom)
   const selectedNode = selectedIndex !== null ? nodes[selectedIndex] : null;
   const tooltipPos = useMemo(() => {
     if (!selectedNode) return { x: 0, y: 0 };
+    const screen = svgToScreen(selectedNode.x, selectedNode.y);
+    const scaledRadius = selectedNode.radius * scale;
     const cardW = 200;
     const cardH = 80;
-    let tx = selectedNode.x - cardW / 2;
-    let ty = selectedNode.y - cardH - selectedNode.radius * 3 - 8;
+    let tx = screen.x - cardW / 2;
+    let ty = screen.y - cardH - scaledRadius * 3 - 8;
     // Clamp horizontal
     tx = Math.max(8, Math.min(dims.w - cardW - 8, tx));
     // If above would go off top, place below
-    if (ty < 8) ty = selectedNode.y + selectedNode.radius * 3 + 8;
+    if (ty < 8) ty = screen.y + scaledRadius * 3 + 8;
     return { x: tx, y: ty };
-  }, [selectedNode, dims.w]);
+  }, [selectedNode, dims.w, svgToScreen, scale]);
 
   return (
     <div
       ref={containerRef}
       className={cn('relative w-full h-full overflow-hidden', className)}
+      style={{ touchAction: 'none' }}
     >
       {/* Radial gradient background glow */}
       <div
@@ -331,6 +344,7 @@ export function MemoryWebVisualization({
           </filter>
         </defs>
 
+        <g transform={svgTransform} style={isZoomed ? { cursor: 'grab' } : undefined}>
         {/* Concentric orbit rings */}
         {[0.25, 0.55, 0.82].map((ring) => (
           <circle
@@ -469,8 +483,11 @@ export function MemoryWebVisualization({
             </motion.g>
           );
         })}
+        </g>
       </svg>
 
+      {/* Zoomable overlay (particles + centre core) */}
+      <div className="absolute inset-0 pointer-events-none" style={domTransformStyle}>
       {/* Floating ambient particles */}
       {particles.map((p) => (
         <motion.div
@@ -497,6 +514,24 @@ export function MemoryWebVisualization({
           }}
         />
       ))}
+
+      {/* Centre core */}
+      {facts.length > 0 && (
+        <div className="absolute pointer-events-none" style={{ left: cx - 12, top: cy - 12 }}>
+          <motion.div
+            className="w-6 h-6 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, rgba(16,185,129,0.3) 60%, transparent 100%)',
+            }}
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.5, 0.8, 0.5],
+            }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
+      </div>{/* end zoomable overlay */}
 
       {/* Tooltip card for selected node */}
       <AnimatePresence>
@@ -602,22 +637,22 @@ export function MemoryWebVisualization({
         </div>
       )}
 
-      {/* Centre core */}
-      {facts.length > 0 && (
-        <div className="absolute pointer-events-none" style={{ left: cx - 12, top: cy - 12 }}>
-          <motion.div
-            className="w-6 h-6 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, rgba(16,185,129,0.3) 60%, transparent 100%)',
-            }}
-            animate={{
-              scale: [1, 1.4, 1],
-              opacity: [0.5, 0.8, 0.5],
-            }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-          />
-        </div>
-      )}
+      {/* Reset zoom button */}
+      <AnimatePresence>
+        {isZoomed && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+            onClick={resetZoom}
+            className="absolute bottom-2 left-2 z-20 flex items-center gap-1 rounded-full bg-background/80 backdrop-blur-sm border border-white/10 px-2 py-1 text-[10px] text-foreground/60 hover:text-foreground/90 transition-colors pointer-events-auto"
+          >
+            <Minimize2 className="w-3 h-3" />
+            Reset
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
