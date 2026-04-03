@@ -1,39 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FirstMoveSelector } from '@/components/missions/FirstMoveSelector';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { 
-  ChevronDown, 
-  TrendingUp, 
-  AlertTriangle, 
-  Lightbulb, 
-  Users, 
-  Sparkles,
-  Target,
+import {
   ArrowRight,
-  Shield,
   MessageSquare,
-  Zap,
-  Copy,
-  Check,
-  BarChart3,
-  Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import mindmakerLogo from '@/assets/mindmaker-logo.png';
 import { ContactData } from './ContactCollectionForm';
 import { DeepProfileData } from './DeepProfileQuestionnaire';
 import { aggregateLeaderResults } from '@/utils/aggregateLeaderResults';
-import { ConsentManager } from './ConsentManager';
-import { BenchmarkComparison } from './BenchmarkComparison';
-import { TensionCard } from '@/components/ui/tension-card';
-import { RiskSignalCard } from '@/components/ui/risk-signal-card';
-import { UnlockResultsForm, UnlockFormData } from './UnlockResultsForm';
+import { UnlockFormData } from './UnlockResultsForm';
 import { ArrowRightCircle } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import {
+  ResultsScoreCard,
+  ResultsKeyInsights,
+  ResultsDimensionScores,
+  ResultsRiskPreview,
+  ResultsLockedGate,
+  ResultsUnlockedSections,
+} from './results';
 
 interface SingleScrollResultsProps {
   assessmentData: any;
@@ -46,63 +32,6 @@ interface SingleScrollResultsProps {
 
 // Use the same type from aggregateLeaderResults
 import { AggregatedLeaderResults } from '@/utils/aggregateLeaderResults';
-
-const getTierColor = (tier: string) => {
-  switch (tier?.toLowerCase()) {
-    case 'leading': 
-    case 'ai-orchestrator':
-      return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30';
-    case 'advancing': 
-    case 'ai-confident':
-      return 'bg-blue-500/10 text-blue-600 border-blue-500/30';
-    case 'establishing': 
-    case 'ai-aware':
-      return 'bg-amber-500/10 text-amber-600 border-amber-500/30';
-    case 'emerging': 
-    case 'ai-emerging':
-      return 'bg-slate-500/10 text-slate-600 border-slate-500/30';
-    default: return 'bg-primary/10 text-primary border-primary/30';
-  }
-};
-
-const getRiskColor = (level: string) => {
-  switch (level?.toLowerCase()) {
-    case 'high': return 'bg-red-500/10 text-red-600 border-red-500/30';
-    case 'medium': return 'bg-amber-500/10 text-amber-600 border-amber-500/30';
-    case 'low': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30';
-    default: return 'bg-slate-500/10 text-slate-600 border-slate-500/30';
-  }
-};
-
-// Dynamic gradient based on tier and score
-const getScoreCardGradient = (tier: string, score: number) => {
-  const tierLower = tier?.toLowerCase() || '';
-  if (score >= 80 || tierLower.includes('orchestrator') || tierLower.includes('leading')) {
-    return 'from-emerald-500/20 via-emerald-400/10 to-transparent';
-  }
-  if (score >= 60 || tierLower.includes('confident') || tierLower.includes('advancing')) {
-    return 'from-blue-500/20 via-blue-400/10 to-transparent';
-  }
-  if (score >= 40 || tierLower.includes('aware') || tierLower.includes('establishing')) {
-    return 'from-amber-500/20 via-amber-400/10 to-transparent';
-  }
-  return 'from-slate-500/20 via-slate-400/10 to-transparent';
-};
-
-// Glow color based on tier
-const getScoreGlowColor = (tier: string, score: number) => {
-  const tierLower = tier?.toLowerCase() || '';
-  if (score >= 80 || tierLower.includes('orchestrator') || tierLower.includes('leading')) {
-    return 'text-emerald-600 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]';
-  }
-  if (score >= 60 || tierLower.includes('confident') || tierLower.includes('advancing')) {
-    return 'text-blue-600 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]';
-  }
-  if (score >= 40 || tierLower.includes('aware') || tierLower.includes('establishing')) {
-    return 'text-amber-600 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]';
-  }
-  return 'text-foreground';
-};
 
 export const SingleScrollResults: React.FC<SingleScrollResultsProps> = ({
   assessmentData,

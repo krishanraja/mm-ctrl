@@ -892,115 +892,28 @@ export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete
       {/* Safe area container - no scroll on outer container */}
       <div className="flex-1 min-h-0 flex flex-col px-3 sm:px-6 lg:px-8 pt-safe-top pb-safe-bottom overflow-hidden">
         {/* Brand Header with Icon and Back Button */}
-        <div className="flex items-center justify-between py-2 sm:py-3 shrink-0">
-          <div className="flex items-center gap-3">
-            {onBack && progressData.currentQuestion > 1 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBackWithConfirmation}
-                className="h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
-              >
-                ← Back
-              </Button>
-            )}
-            <img 
-              src="/mindmaker-favicon.png" 
-              alt="Mindmaker" 
-              className="h-6 sm:h-7 w-auto"
-            />
-          </div>
-          <p className="text-xs sm:text-sm text-muted-foreground text-right flex-1 ml-3">
-            AI Leadership Benchmark
-          </p>
-        </div>
+        <AssessmentHeader
+          onBack={onBack ? handleBackWithConfirmation : undefined}
+          showBackButton={progressData.currentQuestion > 1}
+        />
 
         <div className="flex-1 flex flex-col max-w-3xl mx-auto w-full min-h-0 overflow-hidden">
           {/* Compact Progress Section */}
-          <Card className="mb-2 sm:mb-3 shadow-sm border rounded-xl shrink-0">
-            <CardContent className="p-2.5 sm:p-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xs sm:text-sm font-semibold text-foreground">Benchmark Progress</h2>
-                  {progressData.currentQuestion > 1 && (
-                    <Badge variant="secondary" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20 px-1.5 py-0 text-[10px]">
-                      <Brain className="h-2.5 w-2.5 animate-pulse" />
-                      Learning
-                    </Badge>
-                  )}
-                </div>
-                <Badge variant="outline" className="flex items-center gap-1 bg-primary/10 text-primary border-primary/20 px-2 py-0.5 whitespace-nowrap">
-                  <Clock className="h-3 w-3" />
-                  <span className="text-xs">{progressData.currentQuestion}/{totalQuestions}</span>
-                </Badge>
-              </div>
-              
-              <Progress value={progressData.progressPercentage} className="h-1.5 mb-1.5" />
-              
-              <div className="flex justify-between text-[10px] sm:text-xs text-muted-foreground">
-                <span>Phase: {progressData.phase}</span>
-                <span>
-                  {progressData.isComplete || progressData.estimatedTimeRemaining === 0 
-                    ? 'Almost done' 
-                    : `${Math.round(progressData.estimatedTimeRemaining * 10) / 10} min remaining`}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
+          <AssessmentProgressCard
+            progressData={progressData}
+            totalQuestions={totalQuestions}
+          />
 
           {/* Current Question - Fills remaining space with internal scroll only */}
           {currentQuestion && (
-            <Card className="shadow-sm border rounded-xl flex-1 flex flex-col min-h-0 overflow-hidden">
-              <CardContent className="p-3 sm:p-4 flex flex-col flex-1 min-h-0 overflow-hidden">
-                <div className="mb-2 shrink-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-sm sm:text-base font-semibold text-foreground leading-tight">
-                      Question {currentQuestion.id} of {totalQuestions}
-                    </h3>
-                    {progressData.completedAnswers > 0 && (
-                      <span className="text-[10px] text-primary flex items-center gap-1">
-                        <Sparkles className="h-3 w-3 animate-pulse" />
-                        <span className="hidden sm:inline">Personalizing...</span>
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    {currentQuestion.question}
-                  </p>
-                </div>
-                
-                {/* Answer options with internal scroll if needed */}
-                <div className="flex-1 overflow-y-auto min-h-0 space-y-2 pr-1">
-                  <h4 className="font-medium text-foreground mb-1 text-xs shrink-0">
-                    Select your answer:
-                  </h4>
-                  {isProcessingAnswer && currentQuestion.id === totalQuestions ? (
-                    <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
-                      <div className="h-4 w-4 mr-2 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span className="flex items-center gap-2">
-                        Processing your responses...
-                        <Brain className="h-4 w-4 text-primary animate-pulse" />
-                      </span>
-                    </div>
-                  ) : (
-                    currentQuestion.options.map((option, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="w-full h-auto text-left justify-start hover:bg-primary/10 transition-colors rounded-xl p-2.5 sm:p-3 min-h-[42px] disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={() => handleOptionSelect(option)}
-                        aria-label={`Select option: ${option}`}
-                        disabled={isProcessingAnswer || assessmentState.isComplete || (currentQuestion && currentQuestion.id === totalQuestions && progressData.completedAnswers >= totalQuestions)}
-                      >
-                        <ArrowRight className="h-3.5 w-3.5 mr-2 flex-shrink-0 text-primary" />
-                        <span className="text-xs sm:text-sm text-foreground leading-relaxed text-left">{option}</span>
-                      </Button>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <AssessmentQuestionCard
+              currentQuestion={currentQuestion}
+              totalQuestions={totalQuestions}
+              completedAnswers={progressData.completedAnswers}
+              isProcessingAnswer={isProcessingAnswer}
+              isComplete={assessmentState.isComplete}
+              onOptionSelect={handleOptionSelect}
+            />
           )}
         </div>
       </div>
