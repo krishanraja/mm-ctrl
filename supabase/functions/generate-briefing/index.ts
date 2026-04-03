@@ -52,34 +52,67 @@ interface BriefingSegment {
 
 // ── News Fetching ──────────────────────────────────────────────────
 
-const PERPLEXITY_SYSTEM_PROMPT = `You are an AI news curator for busy executives. Search for today's most important AI and business news.
+function buildPerplexityPrompt(userCtx: UserContext): string {
+  const parts = [
+    `You are a sharp news curator for a specific business leader.`,
+  ];
+
+  if (userCtx.role && userCtx.company) {
+    parts.push(`This person is the ${userCtx.role} of ${userCtx.company}.`);
+  } else if (userCtx.role) {
+    parts.push(`This person is a ${userCtx.role}.`);
+  }
+  if (userCtx.industry) {
+    parts.push(`Their industry: ${userCtx.industry}.`);
+  }
+  if (userCtx.activeMissions.length > 0) {
+    parts.push(`They are actively working on: ${userCtx.activeMissions.slice(0, 3).join("; ")}.`);
+  }
+  if (userCtx.watchingCompanies.length > 0) {
+    parts.push(`Companies they track closely: ${userCtx.watchingCompanies.join(", ")}.`);
+  }
+
+  parts.push(`
+Search for the most important news from the past 7 days that THIS leader would care about. Mix:
+- News directly relevant to their industry and role
+- AI/technology developments that affect their business
+- Competitive moves from companies they watch
+- Macro business trends that impact their decisions
 
 For each headline, assign ONE category:
-SIGNAL: Actually matters for business leaders. Real impact, real decisions.
-NOISE: Hype to ignore. Include 1-2 to show you're filtering.
-DECISION TRIGGER: Something changed that requires action or a decision.
-KRISH'S TAKE: Sharp, slightly cynical opinion/analysis.
+SIGNAL: Actually matters for this leader. Real impact, real decisions.
+NOISE: Hype to ignore. Include 1-2 to show you are filtering.
+DECISION TRIGGER: Something changed that requires action or a decision from them.
+KRISH'S TAKE: Sharp, slightly cynical opinion/analysis relevant to their world.
 
-Focus on: model releases, pricing changes, deployment stories, tool launches, competitive moves.
-Skip: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless major).
+Skip: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless directly relevant).
 
 Format each as: "[CATEGORY] headline text"
 8-18 words per headline. Present tense. Specific.
 
 Return ONLY a JSON array of 12-15 items:
-[{"title": "[SIGNAL] headline here", "source": "Publication Name"}]`;
+[{"title": "[SIGNAL] headline here", "source": "Publication Name"}]`);
+
+  return parts.join(" ");
+}
 
 async function fetchWithPerplexity(apiKey: string, userCtx: UserContext): Promise<NewsHeadline[]> {
   const today = new Date().toISOString().split("T")[0];
-  const watchExtra = userCtx.watchingCompanies.length > 0
-    ? ` Also specifically search for recent news about: ${userCtx.watchingCompanies.join(", ")}.`
-    : "";
-  const industryExtra = userCtx.industry
-    ? ` Pay special attention to news affecting the ${userCtx.industry} industry.`
-    : "";
-  const missionExtra = userCtx.activeMissions.length > 0
-    ? ` This leader is actively working on: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these priorities.`
-    : "";
+
+  const contextParts: string[] = [];
+  if (userCtx.industry) {
+    contextParts.push(`Focus heavily on the ${userCtx.industry} industry.`);
+  }
+  if (userCtx.activeMissions.length > 0) {
+    contextParts.push(`Their current priorities: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these.`);
+  }
+  if (userCtx.watchingCompanies.length > 0) {
+    contextParts.push(`Search specifically for recent news about: ${userCtx.watchingCompanies.join(", ")}.`);
+  }
+  if (userCtx.recentDecisions.length > 0) {
+    contextParts.push(`Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join("; ")}. Surface news that informs these.`);
+  }
+
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: {
@@ -89,10 +122,10 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext): Promis
     body: JSON.stringify({
       model: "sonar",
       messages: [
-        { role: "system", content: PERPLEXITY_SYSTEM_PROMPT },
+        { role: "system", content: buildPerplexityPrompt(userCtx) },
         {
           role: "user",
-          content: `Search for the most important AI and business news from the past 7 days (today is ${today}). Find 12-15 headlines a business leader would care about.${industryExtra}${missionExtra}${watchExtra} Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.`,
+          content: `Today is ${today}. Find 12-15 headlines from the past 7 days that this leader needs to see. ${contextParts.join(" ")} Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.`,
         },
       ],
       temperature: 0.2,
@@ -132,22 +165,34 @@ function formatSource(hostname: string): string {
 }
 
 async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<string[]> {
-  const queries = [
-    '"AI" AND ("pricing" OR "API" OR "launch" OR "release")',
-    '"AI" AND ("enterprise" OR "business" OR "CEO" OR "CTO")',
-    '"AI agent" OR "AI workflow" OR "AI automation"',
-    '"GPT" OR "Claude" OR "Gemini" OR "Llama"',
-    '"AI" AND ("deploy" OR "production" OR "ROI" OR "cost")',
-  ];
+  const queries: string[] = [];
 
-  // Add industry-specific query if available
+  // Industry-specific queries first (highest relevance)
   if (userCtx.industry) {
-    queries.push(`"AI" AND "${userCtx.industry}" AND ("impact" OR "disruption" OR "adoption")`);
+    queries.push(`"${userCtx.industry}" AND ("trend" OR "growth" OR "disruption" OR "news")`);
+    queries.push(`"AI" AND "${userCtx.industry}" AND ("impact" OR "adoption" OR "launch")`);
   }
 
-  // Add company-specific query for watched companies
+  // Watched companies (high relevance)
   if (userCtx.watchingCompanies.length > 0) {
     queries.push(userCtx.watchingCompanies.slice(0, 3).map(c => `"${c}"`).join(" OR "));
+  }
+
+  // Mission-relevant queries
+  for (const mission of userCtx.activeMissions.slice(0, 2)) {
+    const keywords = mission.split(/\s+/).filter(w => w.length > 3).slice(0, 3).join(" ");
+    if (keywords) queries.push(keywords);
+  }
+
+  // General AI/business queries (baseline)
+  queries.push(
+    '"AI" AND ("pricing" OR "API" OR "launch" OR "release")',
+    '"AI" AND ("enterprise" OR "business" OR "deploy" OR "ROI")',
+  );
+
+  // Role-specific query
+  if (userCtx.role) {
+    queries.push(`"${userCtx.role}" AND ("leadership" OR "strategy" OR "AI")`);
   }
 
   const allResults: Array<{
@@ -623,6 +668,18 @@ serve(async (req) => {
     // 1. Get user context
     console.log("Fetching user context...");
     const userCtx = await getUserContext(supabase, user.id);
+
+    console.log("User context populated:", {
+      hasName: userCtx.name !== "there",
+      hasRole: userCtx.role !== "executive",
+      hasCompany: !!userCtx.company,
+      hasIndustry: !!userCtx.industry,
+      strengths: userCtx.strengths.length,
+      missions: userCtx.activeMissions.length,
+      watchlist: userCtx.watchingCompanies.length,
+      decisions: userCtx.recentDecisions.length,
+      patterns: userCtx.confirmedPatterns.length,
+    });
 
     // 2. Fetch news
     console.log("Fetching news...");
