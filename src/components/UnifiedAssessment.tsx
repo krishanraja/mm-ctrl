@@ -8,7 +8,6 @@ import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { useAssessment } from '@/contexts/AssessmentContext';
 import { convertQuizToV2Format } from '@/utils/convertQuizToV2Format';
 import { persistAssessmentId, linkAssessmentToUser, getPersistedAssessmentId } from '@/utils/assessmentPersistence';
-import { useNavigate } from 'react-router-dom';
 import { SaveResultsPrompt } from './assessment/SaveResultsPrompt';
 import { DeepProfileOptIn } from './assessment/DeepProfileOptIn';
 import { AssessmentHeader } from './assessment/AssessmentHeader';
@@ -40,7 +39,6 @@ interface UnifiedAssessmentProps {
 }
 
 export const UnifiedAssessment: React.FC<UnifiedAssessmentProps> = ({ onComplete, onBack, userMode = 'leader' }) => {
-  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isInitialized, setIsInitialized] = useState(true); // Fix Issue 9: Show questions immediately
   const sessionInitRef = useRef<Promise<string | null>>(null); // Track session creation promise
