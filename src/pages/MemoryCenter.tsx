@@ -139,7 +139,7 @@ export default function MemoryCenter() {
       />
 
       <AnimatePresence>
-        {isFlowOpen && pendingFacts.length > 0 && (
+        {isFlowOpen && (
           <VerificationSwipeStack
             facts={pendingFacts}
             onVerify={verifyFact}

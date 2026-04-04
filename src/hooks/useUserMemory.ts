@@ -40,10 +40,11 @@ export function useUserMemory(): UseUserMemoryReturn {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch user's memory on mount and when user changes
-  const refreshMemory = useCallback(async () => {
+  // Returns the pending verifications array so callers can snapshot it.
+  const refreshMemory = useCallback(async (): Promise<PendingVerification[]> => {
     if (!user?.id) {
       setMemory([]);
-      return;
+      return [];
     }
 
     setIsLoading(true);
@@ -64,11 +65,14 @@ export function useUserMemory(): UseUserMemoryReturn {
       // Also fetch pending verifications
       const { data: pending } = await supabase
         .rpc('get_pending_verifications', { p_user_id: user.id });
-      
-      setPendingVerifications((pending as PendingVerification[]) || []);
+
+      const pendingList = (pending as PendingVerification[]) || [];
+      setPendingVerifications(pendingList);
+      return pendingList;
     } catch (err) {
       console.error('Error fetching memory:', err);
       setError('Failed to load your profile data');
+      return [];
     } finally {
       setIsLoading(false);
     }
@@ -138,11 +142,8 @@ export function useUserMemory(): UseUserMemoryReturn {
 
       if (verifyError) throw verifyError;
 
-      // Remove from pending verifications
+      // Remove from pending verifications (local update only; full refresh on flow close)
       setPendingVerifications(prev => prev.filter(p => p.id !== factId));
-      
-      // Refresh memory
-      await refreshMemory();
 
       return true;
     } catch (err) {
@@ -150,7 +151,7 @@ export function useUserMemory(): UseUserMemoryReturn {
       setError('Failed to save verification');
       return false;
     }
-  }, [refreshMemory]);
+  }, []);
 
   // Reject a fact (mark as incorrect)
   const rejectFact = useCallback(async (factId: string): Promise<boolean> => {
@@ -164,11 +165,8 @@ export function useUserMemory(): UseUserMemoryReturn {
 
       if (rejectError) throw rejectError;
 
-      // Remove from pending verifications
+      // Remove from pending verifications (local update only; full refresh on flow close)
       setPendingVerifications(prev => prev.filter(p => p.id !== factId));
-      
-      // Refresh memory
-      await refreshMemory();
 
       return true;
     } catch (err) {
@@ -176,7 +174,7 @@ export function useUserMemory(): UseUserMemoryReturn {
       setError('Failed to reject fact');
       return false;
     }
-  }, [refreshMemory]);
+  }, []);
 
   // Get formatted memory context for LLM
   const getMemoryContext = useCallback((): MemoryContext => {

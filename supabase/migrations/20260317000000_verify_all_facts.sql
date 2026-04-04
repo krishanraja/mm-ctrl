@@ -27,6 +27,6 @@ BEGIN
     AND um.is_current = true
     AND um.verification_status = 'inferred'
   ORDER BY um.is_high_stakes DESC, um.confidence_score DESC
-  LIMIT 15;
+  LIMIT 50;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

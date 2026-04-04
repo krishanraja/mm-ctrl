@@ -40,31 +40,35 @@ export function useVerificationFlow(): UseVerificationFlowReturn {
   } = useUserMemory();
   const {
     stats,
+    facts: allFacts,
     verifyFact: directVerify,
     refresh: refreshWeb,
   } = useMemoryWeb();
 
   const [isFlowOpen, setIsFlowOpen] = useState(false);
+  const [snapshotFacts, setSnapshotFacts] = useState<PendingVerification[]>([]);
 
+  // Count only truly inferred facts (not rejected or other statuses)
   const unverifiedCount = useMemo(() => {
-    if (!stats) return 0;
-    const verified = Math.round((stats.verified_rate / 100) * stats.total_facts);
-    return stats.total_facts - verified;
-  }, [stats]);
+    return allFacts.filter(f => f.verification_status === 'inferred').length;
+  }, [allFacts]);
 
   const verifiedRate = stats?.verified_rate ?? 0;
 
   const openFlow = useCallback(async () => {
     haptics.light();
-    await refreshMemory();
+    const pending = await refreshMemory();
+    setSnapshotFacts(pending);
     setIsFlowOpen(true);
   }, [refreshMemory]);
 
   const closeFlow = useCallback(() => {
     setIsFlowOpen(false);
+    setSnapshotFacts([]);
     refreshWeb();
+    refreshMemory();
     queryClient.invalidateQueries({ queryKey: memoryKeys.lists() });
-  }, [refreshWeb, queryClient]);
+  }, [refreshWeb, refreshMemory, queryClient]);
 
   const verifyFact = useCallback(
     async (factId: string, newValue?: string): Promise<boolean> => {
@@ -103,12 +107,13 @@ export function useVerificationFlow(): UseVerificationFlowReturn {
   );
 
   const refreshPending = useCallback(async () => {
-    await refreshMemory();
+    const pending = await refreshMemory();
+    setSnapshotFacts(pending);
   }, [refreshMemory]);
 
   return {
     isFlowOpen,
-    pendingFacts: pendingVerifications,
+    pendingFacts: snapshotFacts,
     isLoading: false,
     unverifiedCount,
     verifiedRate,
