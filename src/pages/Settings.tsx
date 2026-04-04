@@ -17,13 +17,13 @@ import { useDevice } from '@/hooks/useDevice'
 function SettingsTabs() {
   return (
     <Tabs defaultValue="work" className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <TabsList className="flex-shrink-0 flex overflow-x-auto scrollbar-hide w-full bg-secondary">
-        <TabsTrigger value="account" className="text-xs whitespace-nowrap">Account</TabsTrigger>
-        <TabsTrigger value="work" className="text-xs whitespace-nowrap">Work</TabsTrigger>
-        <TabsTrigger value="privacy" className="text-xs whitespace-nowrap">Privacy</TabsTrigger>
-        <TabsTrigger value="notifications" className="text-xs whitespace-nowrap">Notifications</TabsTrigger>
-        <TabsTrigger value="preferences" className="text-xs whitespace-nowrap">Preferences</TabsTrigger>
-        <TabsTrigger value="edge-pro" className="text-xs whitespace-nowrap">Edge Pro</TabsTrigger>
+      <TabsList className="flex-shrink-0 flex flex-nowrap overflow-x-auto scrollbar-hide w-full bg-secondary px-1 gap-0.5">
+        <TabsTrigger value="account" className="text-xs whitespace-nowrap flex-shrink-0">Account</TabsTrigger>
+        <TabsTrigger value="work" className="text-xs whitespace-nowrap flex-shrink-0">Work</TabsTrigger>
+        <TabsTrigger value="privacy" className="text-xs whitespace-nowrap flex-shrink-0">Privacy</TabsTrigger>
+        <TabsTrigger value="notifications" className="text-xs whitespace-nowrap flex-shrink-0">Notifications</TabsTrigger>
+        <TabsTrigger value="preferences" className="text-xs whitespace-nowrap flex-shrink-0">Preferences</TabsTrigger>
+        <TabsTrigger value="edge-pro" className="text-xs whitespace-nowrap flex-shrink-0">Edge Pro</TabsTrigger>
       </TabsList>
 
       <TabsContent value="account" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">

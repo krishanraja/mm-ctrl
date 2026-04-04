@@ -89,7 +89,7 @@ serve(async (req) => {
       console.error('OPENAI_API_KEY not configured');
       return new Response(
         JSON.stringify({ error: 'AI service not configured', facts: [] }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -116,7 +116,7 @@ serve(async (req) => {
       console.error('OpenAI API error:', errorText);
       return new Response(
         JSON.stringify({ error: 'AI extraction failed', facts: [] }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

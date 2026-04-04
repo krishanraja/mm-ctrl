@@ -37,7 +37,7 @@ npm run build
 
 ## Deployed Site Status (Current)
 
-**URL:** https://leaders.themindmaker.ai
+**URL:** https://ctrl.themindmaker.ai
 
 **Browser Diagnostic Results:**
 ```javascript
@@ -105,7 +105,7 @@ After deployment, verify the following in browser DevTools:
 3. **Wait for Vercel deployment** (check Vercel dashboard)
 
 4. **Hard refresh deployed site:**
-   - Open https://leaders.themindmaker.ai
+   - Open https://ctrl.themindmaker.ai
    - Press Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
    - Or clear browser cache
 

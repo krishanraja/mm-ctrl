@@ -2,7 +2,7 @@
 
 **Date**: 2025-01-27  
 **Auditor**: AI UX Audit System (10/10 Cynical, High-Standards ICP Perspective)  
-**Environments Tested**: Deployed (leaders.themindmaker.ai), Local (port 5173)  
+**Environments Tested**: Deployed (ctrl.themindmaker.ai), Local (port 5173)  
 **Status**: In Progress
 
 ---

@@ -73,7 +73,12 @@ export function WorkContextTab() {
   }
 
   if (!profile) {
-    return <div className="text-center py-8 text-gray-400">No profile found</div>
+    return (
+      <div className="text-center py-12 space-y-3">
+        <p className="text-muted-foreground">Your work profile has not been set up yet.</p>
+        <p className="text-sm text-muted-foreground/70">Start by sharing context about your role on the Dashboard; your profile will build automatically.</p>
+      </div>
+    )
   }
 
   return (

@@ -100,6 +100,8 @@ export function SwipeableCards({
           {pages.map((_, idx) => (
             <button
               key={idx}
+              aria-label={`Go to slide ${idx + 1} of ${totalPages}`}
+              aria-current={idx === currentIndex ? 'step' : undefined}
               onClick={() => {
                 setDirection(idx > currentIndex ? 1 : -1);
                 setCurrentIndex(idx);

@@ -220,13 +220,17 @@ export function useMemoryWeb() {
   );
 
   const submitInput = useCallback(
-    async (text: string) => {
-      if (!user?.id) return;
+    async (text: string): Promise<{ success: boolean; error?: string }> => {
+      if (!user?.id) return { success: false, error: 'Not authenticated' };
       try {
-        await supabase.functions.invoke('extract-user-context', { body: { transcript: text } });
+        const { data, error: fnError } = await supabase.functions.invoke('extract-user-context', { body: { transcript: text } });
+        if (fnError) throw fnError;
         await refresh();
+        const factCount = data?.stored_count ?? data?.pending_verifications?.length ?? 0;
+        return { success: true, error: factCount === 0 ? 'No facts could be extracted. Try being more specific.' : undefined };
       } catch (err) {
         console.error('Failed to submit input:', err);
+        return { success: false, error: 'Could not process your input. Please try again.' };
       }
     },
     [user?.id, refresh],

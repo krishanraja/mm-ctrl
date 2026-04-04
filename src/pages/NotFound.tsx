@@ -1,54 +1,40 @@
-import { useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Home, ArrowLeft } from "lucide-react";
-import mindmakerLogo from "@/assets/mindmaker-logo.png";
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Home, ArrowLeft } from 'lucide-react';
 
-const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
+export default function NotFound() {
+  const navigate = useNavigate();
 
   return (
-    <div className="h-[var(--mobile-vh)] overflow-hidden flex items-center justify-center bg-background px-4">
-      <Card className="max-w-md w-full shadow-sm border rounded-xl max-h-full overflow-y-auto">
-        <CardContent className="p-8 text-center">
-          <img 
-            src={mindmakerLogo} 
-            alt="Mindmaker" 
-            className="w-32 h-auto mx-auto mb-6"
-          />
-          <h1 className="text-6xl font-bold text-primary mb-4">404</h1>
-          <p className="text-xl text-foreground mb-2">Page not found</p>
-          <p className="text-muted-foreground mb-8">
-            The page you're looking for doesn't exist or has been moved.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button 
-              variant="outline" 
-              onClick={() => window.history.back()}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Go Back
-            </Button>
-            <Link to="/">
-              <Button className="gap-2 w-full sm:w-auto">
-                <Home className="h-4 w-4" />
-                Return Home
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="h-screen-safe bg-background flex flex-col items-center justify-center px-6 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="max-w-sm space-y-6"
+      >
+        <p className="text-6xl font-bold text-accent">404</p>
+        <h1 className="text-xl font-semibold text-foreground">Page not found</h1>
+        <p className="text-sm text-muted-foreground">
+          The page you are looking for does not exist or has been moved.
+        </p>
+        <div className="flex gap-3 justify-center pt-2">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg border border-border text-foreground hover:bg-secondary transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Go back
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            Home
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
-};
-
-export default NotFound;
+}
