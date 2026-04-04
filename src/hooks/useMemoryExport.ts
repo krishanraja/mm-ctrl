@@ -5,10 +5,12 @@ import type { ExportFormat, ExportUseCase, MemoryExportResult } from '@/types/me
 export function useMemoryExport() {
   const [exportResult, setExportResult] = useState<MemoryExportResult | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [customTitle, setCustomTitle] = useState<string | null>(null);
 
   const generateExport = useCallback(
     async (format: ExportFormat = 'markdown', useCase: ExportUseCase = 'general', maxTokens: number = 4000) => {
       setIsExporting(true);
+      setCustomTitle(null);
       try {
         const { data, error } = await supabase.functions.invoke('memory-export', {
           body: { format, useCase, maxTokens },
@@ -25,6 +27,35 @@ export function useMemoryExport() {
         return result;
       } catch (err) {
         console.error('Export failed:', err);
+        return null;
+      } finally {
+        setIsExporting(false);
+      }
+    },
+    [],
+  );
+
+  const generateCustomExport = useCallback(
+    async (transcript: string, format: ExportFormat = 'markdown') => {
+      setIsExporting(true);
+      setCustomTitle(null);
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-custom-export', {
+          body: { transcript, format },
+        });
+        if (error) throw error;
+        const result: MemoryExportResult = {
+          format,
+          use_case: 'general',
+          content: data?.context || '',
+          token_count: data?.tokenCount || 0,
+          last_updated: data?.lastUpdated || new Date().toISOString(),
+        };
+        setExportResult(result);
+        setCustomTitle(data?.title || null);
+        return result;
+      } catch (err) {
+        console.error('Custom export failed:', err);
         return null;
       } finally {
         setIsExporting(false);
@@ -57,5 +88,5 @@ export function useMemoryExport() {
     [exportResult],
   );
 
-  return { exportResult, isExporting, generateExport, copyToClipboard, downloadAsFile };
+  return { exportResult, isExporting, generateExport, generateCustomExport, customTitle, copyToClipboard, downloadAsFile };
 }
