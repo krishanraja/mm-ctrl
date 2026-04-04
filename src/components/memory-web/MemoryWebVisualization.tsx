@@ -253,7 +253,7 @@ export function MemoryWebVisualization({
     scale, translateX, translateY,
     svgTransform, domTransformStyle,
     svgToScreen, isZoomed, resetZoom, wasGesture,
-  } = useZoomPan({ containerRef, dims });
+  } = useZoomPan({ containerRef, dims, initialScale: 1.5 });
 
   // Connected nodes for the selected node
   const connectedIndices = useMemo(() => {
