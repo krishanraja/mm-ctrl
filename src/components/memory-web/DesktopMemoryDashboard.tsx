@@ -29,6 +29,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
+import { useToast } from '@/hooks/use-toast';
 import { useVoice } from '@/hooks/useVoice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
@@ -208,7 +209,9 @@ export function DesktopMemoryDashboard() {
 
   const { triggerImport, handleFiles, isImporting, fileInputProps } = useMarkdownImport();
 
+  const { toast } = useToast();
   const [inputText, setInputText] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [quickExportCopied, setQuickExportCopied] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -246,10 +249,23 @@ export function DesktopMemoryDashboard() {
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || '';
   const hasData = facts.length > 0;
 
-  const handleSubmit = () => {
-    if (!inputText.trim()) return;
-    submitInput(inputText.trim());
+  const handleSubmit = async () => {
+    if (!inputText.trim() || isSubmitting) return;
+    const text = inputText.trim();
     setInputText('');
+    setIsSubmitting(true);
+    try {
+      const result = await submitInput(text);
+      if (result?.success) {
+        toast({ title: 'Processed', description: result.error || 'Your input has been added to your Memory Web.' });
+      } else {
+        toast({ title: 'Processing failed', description: result?.error || 'Please try again.', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Something went wrong', description: 'Could not process your input. Please try again.', variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -416,13 +432,14 @@ export function DesktopMemoryDashboard() {
             />
             <button
               onClick={handleSubmit}
-              disabled={!inputText.trim()}
+              disabled={!inputText.trim() || isSubmitting}
               className={cn(
                 'flex-shrink-0 p-2 rounded-lg transition-colors',
+                isSubmitting ? 'text-accent animate-pulse cursor-wait' :
                 inputText.trim() ? 'text-accent hover:bg-accent/10' : 'text-muted-foreground/40 cursor-not-allowed',
               )}
             >
-              <Send className="h-4 w-4" />
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </button>
           </div>
 

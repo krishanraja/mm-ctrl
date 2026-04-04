@@ -64,7 +64,7 @@ The video background is not visible on the deployed site due to **THREE CRITICAL
 ```
 
 **Network Requests:**
-- ✅ Video file loads successfully: `GET https://leaders.themindmaker.ai/Mindmaker%20for%20Leaders%20-%20background%20video.mp4`
+- ✅ Video file loads successfully: `GET https://ctrl.themindmaker.ai/Mindmaker%20for%20Leaders%20-%20background%20video.mp4`
 - ✅ No 404 errors
 - ✅ Video readyState: 4 (fully loaded)
 
@@ -78,7 +78,7 @@ The video background is not visible on the deployed site due to **THREE CRITICAL
 
 ### Root Cause #1: DEPLOYMENT DESYNC (Pattern 1)
 
-**Location:** Deployed bundle at `https://leaders.themindmaker.ai`
+**Location:** Deployed bundle at `https://ctrl.themindmaker.ai`
 
 **Evidence:**
 - Deployed video has `opacity: 0.2` (old code)

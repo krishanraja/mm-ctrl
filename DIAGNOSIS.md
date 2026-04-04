@@ -27,7 +27,7 @@ All issues stem from **architectural design decisions** made early in developmen
 > "ideally the splash screen is the first thing a user sees and then loads this"
 
 ### Observable Behavior
-1. User navigates to `leaders.themindmaker.ai`
+1. User navigates to `ctrl.themindmaker.ai`
 2. Landing page briefly flashes/renders
 3. Splash screen appears overtop
 4. Splash completes (2.5s)
