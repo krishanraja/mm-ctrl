@@ -139,6 +139,85 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext): Promis
   return parseLLMJson(content);
 }
 
+async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<NewsHeadline[]> {
+  const queries: string[] = [];
+
+  // Primary query: industry + role
+  if (userCtx.industry) {
+    queries.push(`${userCtx.industry} industry news trends`);
+  }
+  if (userCtx.industry) {
+    queries.push(`AI ${userCtx.industry} business impact`);
+  }
+
+  // Watched companies
+  if (userCtx.watchingCompanies.length > 0) {
+    queries.push(userCtx.watchingCompanies.slice(0, 3).join(" OR ") + " news");
+  }
+
+  // Mission-relevant
+  for (const mission of userCtx.activeMissions.slice(0, 2)) {
+    const keywords = mission.split(/\s+/).filter(w => w.length > 3).slice(0, 3).join(" ");
+    if (keywords) queries.push(keywords);
+  }
+
+  // Fallback general query
+  if (queries.length === 0) {
+    queries.push("AI business enterprise technology news");
+  }
+
+  const allResults: Array<{ title: string; url: string; content: string }> = [];
+
+  for (const query of queries) {
+    try {
+      const response = await fetch("https://api.tavily.com/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          api_key: apiKey,
+          query,
+          search_depth: "advanced",
+          topic: "news",
+          days: 7,
+          max_results: 10,
+          include_answer: false,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.results) allResults.push(...data.results);
+      }
+    } catch (e) {
+      console.warn(`Tavily query failed: ${query}`, e);
+    }
+  }
+
+  if (allResults.length === 0) throw new Error("No Tavily results");
+
+  // Deduplicate and format as NewsHeadline[]
+  const seen = new Set<string>();
+  const headlines: NewsHeadline[] = [];
+
+  for (const r of allResults) {
+    if (!r.title || !r.url) continue;
+    const key = r.title.toLowerCase().substring(0, 50);
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    let source = "Web";
+    try {
+      const hostname = new URL(r.url).hostname.replace(/^www\./, "");
+      source = formatSource(hostname);
+    } catch { /* use default */ }
+
+    headlines.push({ title: r.title, source });
+    if (headlines.length >= 25) break;
+  }
+
+  return headlines;
+}
+
 const SOURCE_MAP: Record<string, string> = {
   "bloomberg.com": "Bloomberg",
   "ft.com": "Financial Times",
@@ -619,6 +698,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const perplexityKey = Deno.env.get("PERPLEXITY_API_KEY");
     const braveKey = Deno.env.get("BRAVE_SEARCH_API");
+    const tavilyKey = Deno.env.get("TAVILY_API_KEY");
     const openaiKey = Deno.env.get("OPENAI_API_KEY");
 
     if (!openaiKey) throw new Error("OPENAI_API_KEY not configured");
@@ -691,6 +771,21 @@ serve(async (req) => {
         console.log(`Perplexity: ${headlines.length} headlines`);
       } catch (e) {
         console.error("Perplexity failed:", e);
+      }
+    }
+
+    if (headlines.length === 0 && tavilyKey) {
+      try {
+        const tavilyRaw = await fetchWithTavily(tavilyKey, userCtx);
+        if (tavilyRaw.length > 0 && openaiKey) {
+          headlines = await curateWithOpenAI(
+            tavilyRaw.map(h => `${h.title} (${h.source})`),
+            openaiKey
+          );
+          console.log(`Tavily+OpenAI: ${headlines.length} headlines`);
+        }
+      } catch (e) {
+        console.error("Tavily failed:", e);
       }
     }
 
