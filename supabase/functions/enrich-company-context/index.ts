@@ -16,6 +16,8 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const apolloApiKey = Deno.env.get('APOLLO_API_KEY');
+    const jinaApiKey = Deno.env.get('JINA_API_KEY');
+    const tavilyApiKey = Deno.env.get('TAVILY_API_KEY');
 
     if (!apolloApiKey) {
       console.warn('⚠️ APOLLO_API_KEY not configured, skipping Apollo.io enrichment');
@@ -106,34 +108,97 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Step 2: Website scraping (simple text extraction)
+    // Step 2: Website content extraction (Jina Reader primary, regex fallback)
     if (website_url) {
+      // Try Jina Reader first for clean markdown extraction
+      if (jinaApiKey) {
+        try {
+          const jinaResponse = await fetch(`https://r.jina.ai/${website_url}`, {
+            headers: {
+              'Authorization': `Bearer ${jinaApiKey}`,
+              'Accept': 'application/json',
+              'X-Return-Format': 'markdown',
+            },
+          });
+
+          if (jinaResponse.ok) {
+            const jinaData = await jinaResponse.json();
+            if (jinaData.data?.content) {
+              websiteContent = jinaData.data.content.substring(0, 10000);
+              console.log('✅ Jina Reader content extracted:', websiteContent.length, 'chars');
+            }
+          } else {
+            console.warn('⚠️ Jina Reader failed:', jinaResponse.status);
+          }
+        } catch (error) {
+          console.error('❌ Jina Reader error:', error);
+        }
+      }
+
+      // Fallback: basic HTML text extraction
+      if (!websiteContent) {
+        try {
+          const websiteResponse = await fetch(website_url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; MindmakerBot/1.0)',
+            },
+          });
+
+          if (websiteResponse.ok) {
+            const html = await websiteResponse.text();
+            const textContent = html
+              .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+              .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+              .replace(/<[^>]+>/g, ' ')
+              .replace(/\s+/g, ' ')
+              .trim()
+              .substring(0, 10000);
+
+            websiteContent = textContent;
+            console.log('✅ Website content extracted (fallback):', websiteContent.length, 'chars');
+          } else {
+            console.warn('⚠️ Website fetch failed:', websiteResponse.status);
+          }
+        } catch (error) {
+          console.error('❌ Website scraping error:', error);
+        }
+      }
+    }
+
+    // Step 2.5: Recent company news via Tavily
+    let recentNews: Array<{ title: string; url: string; snippet: string; published_date: string | null }> = [];
+    if (tavilyApiKey && company_name) {
       try {
-        const websiteResponse = await fetch(website_url, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; MindmakerBot/1.0)',
-          },
+        const tavilyResponse = await fetch('https://api.tavily.com/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            api_key: tavilyApiKey,
+            query: `${company_name} company news`,
+            search_depth: 'basic',
+            topic: 'news',
+            days: 30,
+            max_results: 5,
+            include_answer: false,
+          }),
         });
 
-        if (websiteResponse.ok) {
-          const html = await websiteResponse.text();
-          // Simple text extraction: remove HTML tags and extract text
-          const textContent = html
-            .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-            .replace(/<[^>]+>/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .substring(0, 10000); // Limit to 10k chars
-
-          websiteContent = textContent;
-          console.log('✅ Website content extracted:', websiteContent.length, 'chars');
+        if (tavilyResponse.ok) {
+          const tavilyData = await tavilyResponse.json();
+          if (tavilyData.results) {
+            recentNews = tavilyData.results.map((r: any) => ({
+              title: r.title || '',
+              url: r.url || '',
+              snippet: (r.content || '').substring(0, 300),
+              published_date: r.published_date || null,
+            }));
+            console.log('✅ Tavily company news:', recentNews.length, 'articles');
+          }
         } else {
-          console.warn('⚠️ Website fetch failed:', websiteResponse.status);
+          console.warn('⚠️ Tavily API error:', tavilyResponse.status);
         }
       } catch (error) {
-        console.error('❌ Website scraping error:', error);
-        // Continue without website content
+        console.error('❌ Tavily news search error:', error);
       }
     }
 
@@ -150,9 +215,11 @@ Deno.serve(async (req) => {
 
     // Determine enrichment status
     let enrichmentStatus: 'pending' | 'partial' | 'complete' = 'pending';
-    if (apolloData && Object.keys(apolloData).length > 0) {
-      enrichmentStatus = websiteContent || boardDeckContent.length > 0 ? 'complete' : 'partial';
-    } else if (websiteContent || boardDeckContent.length > 0) {
+    const hasApollo = apolloData && Object.keys(apolloData).length > 0;
+    const hasContent = websiteContent || boardDeckContent.length > 0 || recentNews.length > 0;
+    if (hasApollo) {
+      enrichmentStatus = hasContent ? 'complete' : 'partial';
+    } else if (hasContent) {
       enrichmentStatus = 'partial';
     }
 
@@ -166,6 +233,7 @@ Deno.serve(async (req) => {
       website_content: websiteContent,
       board_deck_urls: board_deck_urls.length > 0 ? board_deck_urls : [],
       board_deck_content: boardDeckContent,
+      recent_news: recentNews.length > 0 ? recentNews : [],
       enrichment_status: enrichmentStatus,
       updated_at: new Date().toISOString(),
     };
@@ -213,6 +281,7 @@ Deno.serve(async (req) => {
         apollo_data: apolloData,
         website_summary: websiteContent ? websiteContent.substring(0, 500) + '...' : null,
         board_deck_count: board_deck_urls.length,
+        recent_news_count: recentNews.length,
         enrichment_status: enrichmentStatus,
       }),
       {
