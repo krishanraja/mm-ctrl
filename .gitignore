@@ -25,3 +25,10 @@ dist-ssr
 
 # Supabase temp files
 supabase/.temp/
+
+# Test/QA artifacts
+*.png
+!public/**/*.png
+!src/**/*.png
+.playwright-mcp/
+.claude/
