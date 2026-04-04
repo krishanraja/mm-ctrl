@@ -1,8 +1,8 @@
 /**
- * ContextExport Page
- * "Brief My AI" - export portable context for any AI tool.
- * Desktop: two-column (selectors left, preview right).
- * Mobile: stacked with sticky action buttons at bottom.
+ * ContextExport Page - Multi-step wizard
+ * Step 1: "What do you need?" - preset or voice-driven custom export
+ * Step 2: "Where will you use it?" - pick AI platform
+ * Step 3: "Your export is ready" - copy/download + platform-specific guide
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -29,19 +29,33 @@ import {
   ThumbsUp,
   ThumbsDown,
   X,
+  ArrowLeft,
+  ArrowRight,
+  Mic,
+  Lock,
+  ChevronDown,
+  ChevronUp,
+  Settings,
+  User,
+  Clipboard,
+  FolderOpen,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDevice } from '@/hooks/useDevice';
 import { useAuth } from '@/hooks/useAuth';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useExportRecommendations } from '@/hooks/useExportRecommendations';
+import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
+import { useVoice } from '@/hooks/useVoice';
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 import { AppHeader } from '@/components/memory-web/AppHeader';
 import { supabase } from '@/integrations/supabase/client';
+import { PLATFORM_GUIDES } from '@/lib/platform-guides';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 import type { ExportRecommendation } from '@/types/edge';
 
+// Icon lookup for dynamic recommendation icons
 const ICON_MAP: Record<string, typeof Bot> = {
   PenTool,
   Layers,
@@ -51,53 +65,28 @@ const ICON_MAP: Record<string, typeof Bot> = {
   Users,
   TrendingUp,
   Target,
+  Settings,
+  User,
+  Clipboard,
+  FolderOpen,
+  FileText,
+  Check,
+  Download,
+  MessageSquare,
 };
 
 const FORMAT_OPTIONS: {
   value: ExportFormat;
   label: string;
   icon: typeof Bot;
-  instruction: string;
+  description: string;
 }[] = [
-  {
-    value: 'chatgpt',
-    label: 'ChatGPT',
-    icon: Bot,
-    instruction:
-      'Go to Settings > Personalization > Custom Instructions. Paste this into "What would you like ChatGPT to know about you?"',
-  },
-  {
-    value: 'claude',
-    label: 'Claude',
-    icon: Sparkles,
-    instruction:
-      'Start a new conversation. Paste this at the beginning of your first message.',
-  },
-  {
-    value: 'gemini',
-    label: 'Gemini',
-    icon: MessageSquare,
-    instruction:
-      'In a new chat, paste this as your first message with the prefix "Context about me:"',
-  },
-  {
-    value: 'cursor',
-    label: 'Cursor',
-    icon: Code2,
-    instruction: 'Save this as .cursorrules in your project root.',
-  },
-  {
-    value: 'claude-code',
-    label: 'Claude Code',
-    icon: Terminal,
-    instruction: 'Save this as CLAUDE.md in your project root.',
-  },
-  {
-    value: 'markdown',
-    label: 'Raw Markdown',
-    icon: FileText,
-    instruction: 'Use this anywhere that accepts markdown.',
-  },
+  { value: 'chatgpt', label: 'ChatGPT', icon: Bot, description: 'Custom Instructions' },
+  { value: 'claude', label: 'Claude', icon: Sparkles, description: 'Conversation context' },
+  { value: 'gemini', label: 'Gemini', icon: MessageSquare, description: 'Chat context' },
+  { value: 'cursor', label: 'Cursor', icon: Code2, description: '.cursorrules file' },
+  { value: 'claude-code', label: 'Claude Code', icon: Terminal, description: 'CLAUDE.md file' },
+  { value: 'markdown', label: 'Raw Markdown', icon: FileText, description: 'Universal format' },
 ];
 
 const USE_CASE_OPTIONS: {
@@ -106,63 +95,128 @@ const USE_CASE_OPTIONS: {
   icon: typeof Target;
   description: string;
 }[] = [
-  {
-    value: 'general',
-    label: 'General Advisor',
-    icon: Bot,
-    description: 'All-purpose context for any AI conversation',
-  },
-  {
-    value: 'meeting',
-    label: 'Meeting Prep',
-    icon: Users,
-    description: 'Context optimized for preparing for meetings',
-  },
-  {
-    value: 'decision',
-    label: 'Decision Support',
-    icon: Target,
-    description: 'Focus on goals, blockers, and decision history',
-  },
-  {
-    value: 'code',
-    label: 'Code Review',
-    icon: Code2,
-    description: 'Technical preferences and project context',
-  },
-  {
-    value: 'email',
-    label: 'Email Drafting',
-    icon: Mail,
-    description: 'Communication style and relationship context',
-  },
-  {
-    value: 'strategy',
-    label: 'Strategic Planning',
-    icon: TrendingUp,
-    description: 'Business context, objectives, and patterns',
-  },
+  { value: 'general', label: 'General Advisor', icon: Bot, description: 'All-purpose context for any AI conversation' },
+  { value: 'meeting', label: 'Meeting Prep', icon: Users, description: 'Context optimized for preparing for meetings' },
+  { value: 'decision', label: 'Decision Support', icon: Target, description: 'Focus on goals, blockers, and decision history' },
+  { value: 'code', label: 'Code Review', icon: Code2, description: 'Technical preferences and project context' },
+  { value: 'email', label: 'Email Drafting', icon: Mail, description: 'Communication style and relationship context' },
+  { value: 'strategy', label: 'Strategic Planning', icon: TrendingUp, description: 'Business context, objectives, and patterns' },
 ];
+
+type WizardStep = 1 | 2 | 3;
+
+const stepSlide = {
+  initial: (direction: number) => ({ x: direction > 0 ? 80 : -80, opacity: 0 }),
+  animate: { x: 0, opacity: 1 },
+  exit: (direction: number) => ({ x: direction > 0 ? -80 : 80, opacity: 0 }),
+};
 
 export default function ContextExport() {
   const { isMobile } = useDevice();
-  const { exportResult, isExporting: isGenerating, generateExport } = useMemoryExport();
+  const {
+    exportResult,
+    isExporting: isGenerating,
+    generateExport,
+    generateCustomExport,
+    customTitle,
+  } = useMemoryExport();
   const { recommendations, hasRecommendations } = useExportRecommendations();
+  const { hasAccess: isPaidUser, subscribe } = useEdgeSubscription();
   const { userId, email } = useAuth();
-  const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('claude');
-  const [selectedUseCase, setSelectedUseCase] = useState<ExportUseCase>('general');
+
+  const [step, setStep] = useState<WizardStep>(1);
+  const [direction, setDirection] = useState(1);
+  const [selectedFormat, setSelectedFormat] = useState<ExportFormat | null>(null);
+  const [selectedUseCase, setSelectedUseCase] = useState<ExportUseCase | null>(null);
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [customTranscript, setCustomTranscript] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<'positive' | 'negative' | null>(null);
+  const [showRawContent, setShowRawContent] = useState(false);
 
-  const activeFormatOption = FORMAT_OPTIONS.find(
-    (f) => f.value === selectedFormat
-  );
+  // Voice recording for custom export
+  const {
+    isRecording,
+    isProcessing: isTranscribing,
+    duration,
+    transcript: voiceTranscript,
+    error: voiceError,
+    startRecording,
+    stopRecording,
+    resetRecording,
+  } = useVoice({ maxDuration: 60 });
 
-  const triggerFeedbackPrompt = useCallback(() => {
-    setFeedbackSubmitted(null);
-    setShowFeedback(true);
-  }, []);
+  // When voice transcript arrives, save it and advance
+  useEffect(() => {
+    if (voiceTranscript && isCustomMode) {
+      setCustomTranscript(voiceTranscript);
+    }
+  }, [voiceTranscript, isCustomMode]);
+
+  const goToStep = useCallback((target: WizardStep) => {
+    setDirection(target > step ? 1 : -1);
+    setStep(target);
+  }, [step]);
+
+  const handleUseCaseSelect = useCallback((useCase: ExportUseCase) => {
+    setSelectedUseCase(useCase);
+    setIsCustomMode(false);
+    setCustomTranscript(null);
+    goToStep(2);
+  }, [goToStep]);
+
+  const handleCustomVoiceConfirm = useCallback(() => {
+    if (customTranscript) {
+      setIsCustomMode(true);
+      setSelectedUseCase(null);
+      goToStep(2);
+    }
+  }, [customTranscript, goToStep]);
+
+  const handleFormatSelect = useCallback((format: ExportFormat) => {
+    setSelectedFormat(format);
+    // Auto-generate and advance
+    if (isCustomMode && customTranscript) {
+      generateCustomExport(customTranscript, format);
+    } else if (selectedUseCase) {
+      generateExport(format, selectedUseCase);
+    }
+    goToStep(3);
+  }, [isCustomMode, customTranscript, selectedUseCase, generateCustomExport, generateExport, goToStep]);
+
+  const handleCopy = useCallback(async () => {
+    if (!exportResult?.content) return;
+    try {
+      await navigator.clipboard.writeText(exportResult.content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => {
+        setFeedbackSubmitted(null);
+        setShowFeedback(true);
+      }, 2200);
+    } catch {
+      console.error('Failed to copy to clipboard');
+    }
+  }, [exportResult?.content]);
+
+  const handleDownload = useCallback(() => {
+    if (!exportResult?.content || !selectedFormat) return;
+    const guide = PLATFORM_GUIDES[selectedFormat];
+    const blob = new Blob([exportResult.content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = guide.filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setTimeout(() => {
+      setFeedbackSubmitted(null);
+      setShowFeedback(true);
+    }, 500);
+  }, [exportResult?.content, selectedFormat]);
 
   const submitExportFeedback = useCallback(async (rating: 'positive' | 'negative') => {
     setFeedbackSubmitted(rating);
@@ -173,400 +227,560 @@ export default function ContextExport() {
         feedback_text: JSON.stringify({
           type: 'export_rating',
           export_target: selectedFormat,
-          use_case: selectedUseCase,
+          use_case: isCustomMode ? 'custom_voice' : selectedUseCase,
           rating,
         }),
-        page_context: 'context-export-rating',
+        page_context: 'context-export-wizard',
         user_agent: navigator.userAgent,
       });
     } catch {
-      // Non-blocking; silently fail
+      // Non-blocking
     }
     setTimeout(() => setShowFeedback(false), 1800);
-  }, [userId, email, selectedFormat, selectedUseCase]);
+  }, [userId, email, selectedFormat, selectedUseCase, isCustomMode]);
 
-  // Generate export when format or use case changes
-  useEffect(() => {
-    generateExport(selectedFormat, selectedUseCase);
-  }, [selectedFormat, selectedUseCase, generateExport]);
+  const handleStartOver = useCallback(() => {
+    setStep(1);
+    setDirection(-1);
+    setSelectedFormat(null);
+    setSelectedUseCase(null);
+    setIsCustomMode(false);
+    setCustomTranscript(null);
+    setShowRawContent(false);
+    setShowFeedback(false);
+    setFeedbackSubmitted(null);
+    resetRecording();
+  }, [resetRecording]);
 
-  const handleCopy = useCallback(async () => {
-    if (!exportResult?.content) return;
-    try {
-      await navigator.clipboard.writeText(exportResult.content);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      setTimeout(() => triggerFeedbackPrompt(), 2200);
-    } catch {
-      console.error('Failed to copy to clipboard');
-    }
-  }, [exportResult?.content, triggerFeedbackPrompt]);
+  // ─── Step Indicator ─────────────────────────────────────────────
+  const stepIndicator = (
+    <div className="flex items-center justify-center gap-2 py-3">
+      {[1, 2, 3].map((s) => (
+        <button
+          key={s}
+          onClick={() => s < step ? goToStep(s as WizardStep) : undefined}
+          disabled={s > step}
+          className={cn(
+            'h-2 rounded-full transition-all duration-300',
+            s === step
+              ? 'w-8 bg-accent'
+              : s < step
+              ? 'w-2 bg-accent/40 cursor-pointer hover:bg-accent/60'
+              : 'w-2 bg-border'
+          )}
+          aria-label={`Step ${s}`}
+        />
+      ))}
+    </div>
+  );
 
-  const handleDownload = useCallback(() => {
-    if (!exportResult?.content) return;
-    const filename =
-      selectedFormat === 'cursor'
-        ? '.cursorrules'
-        : selectedFormat === 'claude-code'
-        ? 'CLAUDE.md'
-        : `mindmaker-context-${selectedFormat}.md`;
-
-    const blob = new Blob([exportResult.content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setTimeout(() => triggerFeedbackPrompt(), 500);
-  }, [exportResult?.content, selectedFormat, triggerFeedbackPrompt]);
-
-  // Shared content for both layouts
-  const selectorsContent = (
-    <div className="space-y-6">
-      {/* Format Selector */}
+  // ─── Step 1: What do you need? ──────────────────────────────────
+  const step1Content = (
+    <motion.div
+      key="step1"
+      custom={direction}
+      variants={stepSlide}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      className="space-y-5"
+    >
       <div>
-        <h2 className="text-sm font-semibold text-foreground mb-3">
-          Export Format
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {FORMAT_OPTIONS.map((option) => {
-            const Icon = option.icon;
-            const isSelected = selectedFormat === option.value;
-            return (
-              <button
-                key={option.value}
-                onClick={() => setSelectedFormat(option.value)}
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all border',
-                  isSelected
-                    ? 'border-accent bg-accent/10 text-accent'
-                    : 'border-border bg-card text-muted-foreground hover:text-foreground hover:border-accent/30'
+        <h2 className="text-lg font-semibold text-foreground">What do you need?</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Pick a preset or describe your task with voice
+        </p>
+      </div>
+
+      {/* Voice input card */}
+      <div className={cn(
+        'rounded-xl border p-4',
+        isPaidUser
+          ? 'border-accent/20 bg-accent/5'
+          : 'border-border bg-card'
+      )}>
+        <div className="flex items-start gap-3">
+          <div className={cn(
+            'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center',
+            isPaidUser ? 'bg-accent/10' : 'bg-secondary'
+          )}>
+            {isPaidUser ? (
+              <Mic className="h-5 w-5 text-accent" />
+            ) : (
+              <Lock className="h-4 w-4 text-muted-foreground" />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">Custom via Voice</span>
+              {!isPaidUser && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent">
+                  Pro
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+              Describe what you need to get done and we will generate a custom AI skill for you
+            </p>
+
+            {isPaidUser ? (
+              <div className="mt-3">
+                {!isRecording && !isTranscribing && !customTranscript && (
+                  <button
+                    onClick={startRecording}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-accent bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+                  >
+                    <Mic className="h-4 w-4" />
+                    Start recording
+                  </button>
                 )}
-                title={option.instruction}
+
+                {isRecording && (
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={stopRecording}
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 transition-colors"
+                    >
+                      <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                      Stop ({duration}s)
+                    </button>
+                  </div>
+                )}
+
+                {isTranscribing && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-3 h-3 border border-accent/30 border-t-accent rounded-full animate-spin" />
+                    Transcribing...
+                  </div>
+                )}
+
+                {customTranscript && (
+                  <div className="space-y-2">
+                    <div className="rounded-lg bg-secondary/50 border border-border p-3">
+                      <p className="text-xs text-foreground/80 leading-relaxed">
+                        "{customTranscript}"
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleCustomVoiceConfirm}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-accent text-white hover:bg-accent/90 transition-colors"
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                        Use this
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCustomTranscript(null);
+                          resetRecording();
+                        }}
+                        className="px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Re-record
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {voiceError && (
+                  <p className="text-xs text-red-500 mt-1">{voiceError.message}</p>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={async () => {
+                  const url = await subscribe();
+                  if (url) window.location.href = url;
+                }}
+                className="mt-2 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-accent/30 text-accent hover:bg-accent/10 transition-colors"
               >
-                <Icon className="h-4 w-4" />
-                {option.label}
+                <Sparkles className="h-3 w-3" />
+                Upgrade to Pro
               </button>
-            );
-          })}
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Recommended for You */}
+      {/* Recommended presets */}
       {hasRecommendations && (
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="flex items-center gap-2 mb-3">
+        <div>
+          <div className="flex items-center gap-2 mb-2.5">
             <Sparkles className="h-3.5 w-3.5 text-accent" />
-            <h2 className="text-sm font-semibold text-foreground">
-              Recommended for You
-            </h2>
+            <h3 className="text-sm font-semibold text-foreground">Recommended for You</h3>
           </div>
-          <p className="text-[11px] text-muted-foreground mb-2.5">
-            Based on your profile
-          </p>
           <div className="flex flex-col gap-2">
             {recommendations.map((rec: ExportRecommendation, i: number) => {
               const Icon = ICON_MAP[rec.iconName] || Bot;
-              const isSelected = selectedUseCase === rec.useCase;
               return (
                 <motion.button
                   key={rec.useCase}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  onClick={() => setSelectedUseCase(rec.useCase)}
-                  className={cn(
-                    'flex items-start gap-3 p-3 rounded-lg text-left transition-all border',
-                    isSelected
-                      ? 'border-accent bg-accent/10'
-                      : 'border-border bg-card hover:border-accent/30'
-                  )}
+                  onClick={() => handleUseCaseSelect(rec.useCase)}
+                  className="flex items-start gap-3 p-3 rounded-lg text-left transition-all border border-border bg-card hover:border-accent/30"
                 >
-                  <Icon
-                    className={cn(
-                      'h-4 w-4 mt-0.5 flex-shrink-0',
-                      isSelected ? 'text-accent' : 'text-muted-foreground'
-                    )}
-                  />
+                  <Icon className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className={cn(
-                          'text-sm font-medium',
-                          isSelected ? 'text-accent' : 'text-foreground'
-                        )}
-                      >
-                        {rec.label}
-                      </span>
-                      <span
-                        className={cn(
-                          'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium',
-                          rec.badgeVariant === 'teal'
-                            ? 'bg-emerald-500/10 text-emerald-600'
-                            : 'bg-amber-500/10 text-amber-600'
-                        )}
-                      >
+                      <span className="text-sm font-medium text-foreground">{rec.label}</span>
+                      <span className={cn(
+                        'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium',
+                        rec.badgeVariant === 'teal'
+                          ? 'bg-emerald-500/10 text-emerald-600'
+                          : 'bg-amber-500/10 text-amber-600'
+                      )}>
                         {rec.badgeText}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
-                      {rec.description}
-                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{rec.description}</p>
                   </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground/40 mt-0.5 flex-shrink-0" />
                 </motion.button>
               );
             })}
           </div>
-        </motion.div>
+        </div>
       )}
 
-      {/* Use Case Selector */}
+      {/* All presets */}
       <div>
-        <h2 className="text-sm font-semibold text-foreground mb-3">
+        <h3 className="text-sm font-semibold text-foreground mb-2.5">
           {hasRecommendations ? 'All Use Cases' : 'Use Case'}
-        </h2>
-        <div className={cn(
-          'grid gap-2',
-          isMobile ? 'grid-cols-2' : 'grid-cols-2'
-        )}>
+        </h3>
+        <div className="grid grid-cols-2 gap-2">
           {USE_CASE_OPTIONS.map((option) => {
             const Icon = option.icon;
-            const isSelected = selectedUseCase === option.value;
             return (
               <button
                 key={option.value}
-                onClick={() => setSelectedUseCase(option.value)}
-                className={cn(
-                  'flex flex-col items-start gap-1.5 p-3 rounded-lg text-left transition-all border',
-                  isSelected
-                    ? 'border-accent bg-accent/10'
-                    : 'border-border bg-card hover:border-accent/30'
-                )}
+                onClick={() => handleUseCaseSelect(option.value)}
+                className="flex flex-col items-start gap-1.5 p-3 rounded-lg text-left transition-all border border-border bg-card hover:border-accent/30"
               >
                 <div className="flex items-center gap-2">
-                  <Icon
-                    className={cn(
-                      'h-4 w-4',
-                      isSelected ? 'text-accent' : 'text-muted-foreground'
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      'text-sm font-medium',
-                      isSelected ? 'text-accent' : 'text-foreground'
-                    )}
-                  >
-                    {option.label}
-                  </span>
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium text-foreground">{option.label}</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-snug">
-                  {option.description}
-                </p>
+                <p className="text-[11px] text-muted-foreground leading-snug">{option.description}</p>
               </button>
             );
           })}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 
-  const previewContent = (
-    <div className="space-y-3">
-      {/* Instruction banner */}
-      {activeFormatOption && (
-        <motion.div
-          key={selectedFormat}
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-lg bg-accent/5 border border-accent/10 px-4 py-2.5"
+  // ─── Step 2: Where will you use it? ─────────────────────────────
+  const step2Content = (
+    <motion.div
+      key="step2"
+      custom={direction}
+      variants={stepSlide}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      className="space-y-5"
+    >
+      <div>
+        <button
+          onClick={() => goToStep(1)}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3"
         >
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            {activeFormatOption.instruction}
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </button>
+        <h2 className="text-lg font-semibold text-foreground">Where will you use it?</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Pick the AI tool you want to use this with
+        </p>
+      </div>
+
+      <div className="grid gap-2">
+        {FORMAT_OPTIONS.map((option) => {
+          const Icon = option.icon;
+          return (
+            <button
+              key={option.value}
+              onClick={() => handleFormatSelect(option.value)}
+              className="flex items-center gap-3 p-4 rounded-lg text-left transition-all border border-border bg-card hover:border-accent/30"
+            >
+              <div className="w-10 h-10 rounded-lg bg-secondary/50 flex items-center justify-center flex-shrink-0">
+                <Icon className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-medium text-foreground">{option.label}</span>
+                <p className="text-xs text-muted-foreground mt-0.5">{option.description}</p>
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+
+  // ─── Step 3: Your export is ready ───────────────────────────────
+  const guide = selectedFormat ? PLATFORM_GUIDES[selectedFormat] : null;
+  const useCaseLabel = isCustomMode
+    ? (customTitle || 'Custom Task')
+    : USE_CASE_OPTIONS.find((o) => o.value === selectedUseCase)?.label || 'General';
+
+  const step3Content = (
+    <motion.div
+      key="step3"
+      custom={direction}
+      variants={stepSlide}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      className="space-y-5"
+    >
+      <div>
+        <button
+          onClick={() => goToStep(2)}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </button>
+        <h2 className="text-lg font-semibold text-foreground">
+          {isGenerating ? 'Generating...' : 'Your export is ready'}
+        </h2>
+        {exportResult && !isGenerating && (
+          <p className="text-sm text-muted-foreground mt-1">
+            {exportResult.token_count.toLocaleString()} tokens for {guide?.label || 'export'}
           </p>
-        </motion.div>
+        )}
+      </div>
+
+      {/* Loading state */}
+      {isGenerating && (
+        <div className="flex flex-col items-center justify-center py-12 gap-3">
+          <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground">
+            {isCustomMode ? 'Creating your custom AI skill...' : 'Building your context...'}
+          </p>
+        </div>
       )}
 
-      {/* Preview area */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-secondary/30">
-          <span className="text-xs font-medium text-muted-foreground">
-            Preview
-          </span>
-          {isGenerating && (
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 border border-accent/30 border-t-accent rounded-full animate-spin" />
-              <span className="text-xs text-muted-foreground">
-                Generating...
-              </span>
+      {/* Result */}
+      {exportResult && !isGenerating && (
+        <>
+          {/* Summary card */}
+          <div className="rounded-xl border border-accent/20 bg-accent/5 p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                <Check className="h-5 w-5 text-accent" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground">{useCaseLabel}</p>
+                <p className="text-xs text-muted-foreground">
+                  {exportResult.token_count.toLocaleString()} tokens - formatted for {guide?.label}
+                </p>
+              </div>
             </div>
-          )}
-        </div>
-        <div className={cn(
-          'p-4 overflow-y-auto scrollbar-hide overscroll-contain',
-          isMobile ? 'flex-1 min-h-0' : 'max-h-[600px]'
-        )}>
-          {exportResult?.content ? (
-            <pre className="text-xs text-foreground/90 whitespace-pre-wrap font-mono leading-relaxed">
-              {exportResult.content}
-            </pre>
-          ) : (
-            <div className="flex items-center justify-center py-16 text-muted-foreground text-sm">
-              {isGenerating
-                ? 'Generating your context...'
-                : 'Select a format and use case to generate your portable context.'}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+          </div>
 
-  const actionButtons = (
-    <div className="flex items-center gap-3">
-      <button
-        onClick={handleCopy}
-        disabled={!exportResult?.content || isGenerating}
-        className={cn(
-          'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all',
-          'border border-accent bg-accent/10 text-accent hover:bg-accent/20',
-          'disabled:opacity-40 disabled:cursor-not-allowed'
-        )}
-      >
-        <AnimatePresence mode="wait">
-          {copied ? (
-            <motion.span
-              key="check"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="flex items-center gap-2"
+          {/* Action buttons */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleCopy}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all',
+                'bg-accent text-white hover:bg-accent/90'
+              )}
             >
-              <Check className="h-4 w-4 text-emerald-400" />
-              Copied!
-            </motion.span>
-          ) : (
-            <motion.span
-              key="copy"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="flex items-center gap-2"
+              <AnimatePresence mode="wait">
+                {copied ? (
+                  <motion.span
+                    key="check"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="copy"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copy to Clipboard
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+            <button
+              onClick={handleDownload}
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border border-border bg-card text-foreground hover:bg-secondary"
             >
-              <Copy className="h-4 w-4" />
-              Copy to Clipboard
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </button>
-      <button
-        onClick={handleDownload}
-        disabled={!exportResult?.content || isGenerating}
-        className={cn(
-          'flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all',
-          'border border-border bg-card text-foreground hover:bg-secondary',
-          'disabled:opacity-40 disabled:cursor-not-allowed'
-        )}
-      >
-        <Download className="h-4 w-4" />
-        {!isMobile && 'Download .md'}
-      </button>
-    </div>
-  );
+              <Download className="h-4 w-4" />
+              {!isMobile && 'Download'}
+            </button>
+          </div>
 
-  const feedbackCard = (
-    <AnimatePresence>
-      {showFeedback && (
-        <motion.div
-          initial={{ opacity: 0, y: 8, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -4, scale: 0.97 }}
-          transition={{ duration: 0.25 }}
-          className="rounded-lg border border-border bg-card px-4 py-3 shadow-sm"
-        >
-          {feedbackSubmitted ? (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-sm text-muted-foreground text-center"
-            >
-              Thanks for the feedback!
-            </motion.p>
-          ) : (
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm text-foreground/80">
-                Did this export improve your AI conversation?
-              </p>
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <button
-                  onClick={() => submitExportFeedback('positive')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
-                >
-                  <ThumbsUp className="h-3.5 w-3.5" />
-                  Yes
-                </button>
-                <button
-                  onClick={() => submitExportFeedback('negative')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary transition-colors"
-                >
-                  <ThumbsDown className="h-3.5 w-3.5" />
-                  Not really
-                </button>
-                <button
-                  onClick={() => setShowFeedback(false)}
-                  className="ml-1 p-1 rounded-md text-muted-foreground/60 hover:text-muted-foreground hover:bg-secondary/50 transition-colors"
-                  aria-label="Dismiss"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
+          {/* Platform-specific guide */}
+          {guide && (
+            <div className="rounded-xl border border-border bg-card overflow-hidden">
+              <div className="px-4 py-3 border-b border-border bg-secondary/30">
+                <h3 className="text-sm font-medium text-foreground">How to set it up</h3>
+              </div>
+              <div className="p-4 space-y-3">
+                {guide.steps.map((s) => {
+                  const StepIcon = ICON_MAP[s.iconName] || Check;
+                  return (
+                    <div key={s.step} className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-xs font-semibold text-accent">{s.step}</span>
+                      </div>
+                      <div className="flex items-start gap-2 flex-1">
+                        <StepIcon className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-foreground/80 leading-relaxed">{s.text}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+                {isMobile && guide.mobileNote && (
+                  <div className="mt-3 rounded-lg bg-amber-500/5 border border-amber-500/10 p-3">
+                    <p className="text-xs text-amber-700 leading-relaxed">{guide.mobileNote}</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
-        </motion.div>
+
+          {/* Expandable raw content */}
+          <button
+            onClick={() => setShowRawContent(!showRawContent)}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+          >
+            {showRawContent ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {showRawContent ? 'Hide raw content' : 'View raw content'}
+          </button>
+          {showRawContent && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="rounded-xl border border-border bg-card overflow-hidden"
+            >
+              <div className={cn(
+                'p-4 overflow-y-auto scrollbar-hide',
+                isMobile ? 'max-h-[300px]' : 'max-h-[500px]'
+              )}>
+                <pre className="text-xs text-foreground/90 whitespace-pre-wrap font-mono leading-relaxed">
+                  {exportResult.content}
+                </pre>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Feedback */}
+          <AnimatePresence>
+            {showFeedback && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                transition={{ duration: 0.25 }}
+                className="rounded-lg border border-border bg-card px-4 py-3 shadow-sm"
+              >
+                {feedbackSubmitted ? (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-sm text-muted-foreground text-center"
+                  >
+                    Thanks for the feedback!
+                  </motion.p>
+                ) : (
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm text-foreground/80">Was this useful?</p>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <button
+                        onClick={() => submitExportFeedback('positive')}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
+                      >
+                        <ThumbsUp className="h-3.5 w-3.5" />
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => submitExportFeedback('negative')}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary transition-colors"
+                      >
+                        <ThumbsDown className="h-3.5 w-3.5" />
+                        Not really
+                      </button>
+                      <button
+                        onClick={() => setShowFeedback(false)}
+                        className="ml-1 p-1 rounded-md text-muted-foreground/60 hover:text-muted-foreground hover:bg-secondary/50 transition-colors"
+                        aria-label="Dismiss"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Start over */}
+          <div className="pt-2">
+            <button
+              onClick={handleStartOver}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Start over
+            </button>
+          </div>
+        </>
       )}
+    </motion.div>
+  );
+
+  // ─── Wizard content ─────────────────────────────────────────────
+  const wizardContent = (
+    <AnimatePresence mode="wait" custom={direction}>
+      {step === 1 && step1Content}
+      {step === 2 && step2Content}
+      {step === 3 && step3Content}
     </AnimatePresence>
   );
 
-  // Desktop layout
+  // ─── Desktop layout ─────────────────────────────────────────────
   if (!isMobile) {
     return (
       <div className="min-h-screen bg-background">
         <DesktopSidebar />
         <main className="ml-64 min-h-screen">
-          <div className="max-w-6xl mx-auto px-8 py-10">
+          <div className="max-w-2xl mx-auto px-8 py-10">
             {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
+              className="mb-2"
             >
-              <h1 className="text-2xl font-semibold text-foreground">
-                What Your AI Knows About You
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1.5">
-                {exportResult
-                  ? `${exportResult.token_count.toLocaleString()} tokens | Last updated ${new Date(exportResult.last_updated).toLocaleDateString()}`
-                  : 'Generate your portable context for any AI tool'}
+              <h1 className="text-2xl font-semibold text-foreground">Export to AI</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Make any AI tool understand you
               </p>
             </motion.div>
 
-            {/* Two-column layout */}
-            <div className="flex gap-8">
-              {/* Left: Selectors */}
-              <div className="w-[420px] flex-shrink-0 space-y-6">
-                {selectorsContent}
-                <div className="pt-2">{actionButtons}</div>
-                <div className="pt-2">{feedbackCard}</div>
-              </div>
+            {stepIndicator}
 
-              {/* Right: Preview */}
-              <div className="flex-1 min-w-0">{previewContent}</div>
+            <div className="mt-4">
+              {wizardContent}
             </div>
           </div>
         </main>
@@ -574,31 +788,21 @@ export default function ContextExport() {
     );
   }
 
-  // Mobile layout - scrollable
+  // ─── Mobile layout ──────────────────────────────────────────────
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
       <AppHeader />
 
-      <div className="flex-shrink-0 px-4 pb-2">
+      <div className="flex-shrink-0 px-4 pb-1">
         <div className="flex items-center gap-2 mb-1">
           <FileText className="h-5 w-5 text-accent" />
-          <h1 className="text-base font-semibold text-foreground">
-            Export Context
-          </h1>
+          <h1 className="text-base font-semibold text-foreground">Export to AI</h1>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {exportResult
-            ? `${exportResult.token_count.toLocaleString()} tokens`
-            : 'Generate your portable context'}
-        </p>
+        {stepIndicator}
       </div>
 
-      {/* Content - scrollable */}
-      <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20 space-y-4">
-        {selectorsContent}
-        <div>{actionButtons}</div>
-        {feedbackCard}
-        {previewContent}
+      <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20">
+        {wizardContent}
       </main>
 
       <BottomNav />
