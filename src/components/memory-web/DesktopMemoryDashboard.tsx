@@ -336,7 +336,7 @@ export function DesktopMemoryDashboard() {
       <DesktopSidebar />
 
       <main className="ml-64 min-h-screen">
-        <div className="max-w-7xl mx-auto px-8 py-8 space-y-6">
+        <div className="max-w-[1440px] mx-auto px-6 py-6 space-y-5">
           {/* Header Row */}
           <div className="flex items-start justify-between">
             <div>
@@ -489,13 +489,13 @@ export function DesktopMemoryDashboard() {
           {!isLoading && hasData && (
             <>
               {/* Main Dashboard Grid: Viz + Stats side by side */}
-              <div className="grid grid-cols-3 gap-6">
-                {/* Memory Web Visualization - takes 2/3 */}
+              <div className="grid grid-cols-4 gap-5">
+                {/* Memory Web Visualization - takes 3/4 */}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="col-span-2 rounded-2xl border border-border bg-card overflow-hidden"
+                  className="col-span-3 rounded-2xl border border-border bg-card overflow-hidden"
                 >
                   <div className="px-5 py-3 border-b border-border flex items-center justify-between">
                     <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -503,7 +503,7 @@ export function DesktopMemoryDashboard() {
                     </h3>
                     <span className="text-[10px] text-muted-foreground/50">Click a node to explore</span>
                   </div>
-                  <div className="h-[420px] relative">
+                  <div className="h-[calc(100vh-320px)] min-h-[420px] max-h-[700px] relative">
                     <MemoryWebVisualization facts={facts} />
                   </div>
                 </motion.div>
