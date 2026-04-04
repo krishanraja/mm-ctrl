@@ -5,6 +5,7 @@ interface UseZoomPanOptions {
   dims: { w: number; h: number };
   minScale?: number;
   maxScale?: number;
+  initialScale?: number;
 }
 
 interface ZoomPanResult {
@@ -39,14 +40,17 @@ export function useZoomPan({
   dims,
   minScale = 1,
   maxScale = 3,
+  initialScale = 1,
 }: UseZoomPanOptions): ZoomPanResult {
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(initialScale);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
 
+  const initialScaleRef = useRef(initialScale);
+
   // Refs for gesture tracking (avoid re-renders during gestures)
-  const scaleRef = useRef(1);
+  const scaleRef = useRef(initialScale);
   const txRef = useRef(0);
   const tyRef = useRef(0);
   const isPanningRef = useRef(false);
@@ -100,7 +104,7 @@ export function useZoomPan({
 
   const resetZoom = useCallback(() => {
     setIsResetting(true);
-    scaleRef.current = 1;
+    scaleRef.current = initialScaleRef.current;
     txRef.current = 0;
     tyRef.current = 0;
     flushState();
@@ -113,7 +117,7 @@ export function useZoomPan({
 
   // Reset zoom on dims change
   useEffect(() => {
-    scaleRef.current = 1;
+    scaleRef.current = initialScaleRef.current;
     txRef.current = 0;
     tyRef.current = 0;
     flushState();
@@ -293,7 +297,7 @@ export function useZoomPan({
     svgTransform,
     domTransformStyle,
     svgToScreen,
-    isZoomed: scale > 1.02,
+    isZoomed: scale > initialScaleRef.current + 0.02,
     resetZoom,
     wasGesture,
   };
