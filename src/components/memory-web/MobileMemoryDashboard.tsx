@@ -687,7 +687,7 @@ export function MobileMemoryDashboard() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {isVerifyFlowOpen && verifyPendingFacts.length > 0 && (
+        {isVerifyFlowOpen && (
           <VerificationSwipeStack
             facts={verifyPendingFacts}
             onVerify={flowVerifyFact}

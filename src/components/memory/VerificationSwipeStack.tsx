@@ -46,7 +46,7 @@ const swipeVariants = {
     x: direction === 'right' ? 400 : direction === 'left' ? -400 : 0,
     opacity: 0,
     rotate: direction === 'right' ? 12 : direction === 'left' ? -12 : 0,
-    transition: { type: 'spring', stiffness: 200, damping: 25 },
+    transition: { type: 'tween', duration: 0.25, ease: 'easeIn' },
   }),
 };
 
@@ -121,7 +121,7 @@ function SwipeCard({ fact, onSwipeRight, onSwipeLeft, onEdit, isProcessing }: Sw
     <motion.div
       style={{ x, rotate }}
       drag={isProcessing ? false : 'x'}
-      dragConstraints={{ left: 0, right: 0 }}
+      dragConstraints={{ left: -300, right: 300 }}
       dragElastic={0.2}
       onDragEnd={handleDragEnd}
       whileDrag={{ scale: 1.02, zIndex: 10 }}
@@ -215,6 +215,7 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
+  const [isExiting, setIsExiting] = useState(false);
 
   const currentFact = facts[currentIndex];
   const nextFact = facts[currentIndex + 1];
@@ -230,36 +231,32 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
   }, [currentIndex, facts.length]);
 
   const handleSwipeRight = useCallback(async () => {
-    if (!currentFact || isProcessing) return;
+    if (!currentFact || isProcessing || isExiting) return;
     setIsProcessing(true);
     const factId = currentFact.id;
     setExitDirection('right');
-    // Advance immediately so the exit animation fires right away
-    advanceOrComplete();
-    // API call runs in the background - card is already animating off
+    setIsExiting(true);
     try {
       const result = await onVerify(factId);
       if (result) setVerifiedCount((prev) => prev + 1);
     } finally {
       setIsProcessing(false);
     }
-  }, [currentFact, isProcessing, onVerify, advanceOrComplete]);
+  }, [currentFact, isProcessing, isExiting, onVerify]);
 
   const handleSwipeLeft = useCallback(async () => {
-    if (!currentFact || isProcessing) return;
+    if (!currentFact || isProcessing || isExiting) return;
     setIsProcessing(true);
     const factId = currentFact.id;
     setExitDirection('left');
-    // Advance immediately so the exit animation fires right away
-    advanceOrComplete();
-    // API call runs in the background - card is already animating off
+    setIsExiting(true);
     try {
       const result = await onReject(factId);
       if (result) setRejectedCount((prev) => prev + 1);
     } finally {
       setIsProcessing(false);
     }
-  }, [currentFact, isProcessing, onReject, advanceOrComplete]);
+  }, [currentFact, isProcessing, isExiting, onReject]);
 
   const handleEdit = useCallback(() => {
     if (!currentFact) return;
@@ -275,16 +272,14 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
     setEditingId(null);
     setEditValue('');
     setExitDirection('right');
-    // Advance immediately so the exit animation fires right away
-    advanceOrComplete();
-    // API call runs in the background
+    setIsExiting(true);
     try {
       const result = await onVerify(factId, value);
       if (result) setVerifiedCount((prev) => prev + 1);
     } finally {
       setIsProcessing(false);
     }
-  }, [currentFact, editValue, onVerify, advanceOrComplete]);
+  }, [currentFact, editValue, onVerify]);
 
   const handleCancelEdit = useCallback(() => {
     setEditingId(null);
@@ -378,7 +373,16 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
             </motion.div>
           )}
 
-          <AnimatePresence mode="popLayout" initial={false} custom={exitDirection}>
+          <AnimatePresence
+            mode="popLayout"
+            initial={false}
+            custom={exitDirection}
+            onExitComplete={() => {
+              setIsExiting(false);
+              advanceOrComplete();
+              setExitDirection(null);
+            }}
+          >
             {editingId === currentFact.id ? (
               /* Edit mode */
               <motion.div
@@ -451,7 +455,7 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
                   </div>
                 </div>
               </motion.div>
-            ) : (
+            ) : !isExiting ? (
               /* Swipe card - direct child of AnimatePresence for proper exit animations */
               <SwipeCard
                 key={currentFact.id}
@@ -461,7 +465,7 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
                 onEdit={handleEdit}
                 isProcessing={isProcessing}
               />
-            )}
+            ) : null}
           </AnimatePresence>
         </div>
 
