@@ -104,12 +104,14 @@ export function useZoomPan({
 
   const resetZoom = useCallback(() => {
     setIsResetting(true);
-    scaleRef.current = initialScaleRef.current;
-    txRef.current = 0;
-    tyRef.current = 0;
+    const s = initialScaleRef.current;
+    scaleRef.current = s;
+    // Center the zoom so the middle of the container stays in view
+    txRef.current = -dims.w * (s - 1) / 2;
+    tyRef.current = -dims.h * (s - 1) / 2;
     flushState();
     setTimeout(() => setIsResetting(false), 300);
-  }, [flushState]);
+  }, [dims.w, dims.h, flushState]);
 
   const wasGesture = useCallback(() => {
     return pointerMovedRef.current > 5 || Date.now() - gestureEndTimeRef.current < 100;
@@ -117,9 +119,10 @@ export function useZoomPan({
 
   // Reset zoom on dims change
   useEffect(() => {
-    scaleRef.current = initialScaleRef.current;
-    txRef.current = 0;
-    tyRef.current = 0;
+    const s = initialScaleRef.current;
+    scaleRef.current = s;
+    txRef.current = -dims.w * (s - 1) / 2;
+    tyRef.current = -dims.h * (s - 1) / 2;
     flushState();
   }, [dims.w, dims.h, flushState]);
 
