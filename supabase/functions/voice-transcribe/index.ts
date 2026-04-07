@@ -18,6 +18,7 @@ const corsHeaders = {
 const WHISPER_TIMEOUT = 15_000;
 const GEMINI_TIMEOUT = 12_000;
 const ENRICHMENT_TIMEOUT = 5_000;
+const REFINEMENT_TIMEOUT = 3_000;
 
 async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
   const controller = new AbortController();
@@ -26,6 +27,81 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
     return await fetch(url, { ...options, signal: controller.signal });
   } finally {
     clearTimeout(timer);
+  }
+}
+
+const FILLER_PATTERN = /\b(um|uh|erm|ah|like|you know|I mean|basically|literally|so yeah|uh huh|sort of|kind of)\b/i;
+const DUPLICATE_WORD_PATTERN = /\b(\w+)\s+\1\b/i;
+
+/** Determine whether a transcript would benefit from LLM refinement. */
+function shouldRefineTranscript(text: string, confidence: number): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+
+  const wordCount = trimmed.split(/\s+/).length;
+  if (wordCount <= 5) return false;
+
+  // High confidence + no obvious issues → skip
+  if (confidence >= 0.92 && !FILLER_PATTERN.test(trimmed) && !DUPLICATE_WORD_PATTERN.test(trimmed)) {
+    return false;
+  }
+
+  return true;
+}
+
+/** Use GPT-4o-mini to clean up a raw voice transcript (filler words, stutters, grammar). */
+async function refineTranscript(rawText: string, userContext: string | null): Promise<string | null> {
+  const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+  if (!OPENAI_API_KEY) return null;
+
+  const systemPrompt = `You clean up voice transcriptions. Fix ONLY:
+- Filler words (um, uh, erm, ah, like, you know, I mean, basically, so, sort of, kind of)
+- Duplicate/stuttered words
+- False starts and self-corrections (keep the corrected version)
+- Broken grammar from speech patterns
+- Obviously misheard words based on context
+
+Do NOT: change meaning, add information, remove intentional emphasis, summarize, or over-formalize.
+If the transcript is already clean, return it unchanged.
+${userContext ? `\nSpeaker context: ${userContext}` : ''}
+Return ONLY the cleaned text. No explanations, no quotes.`;
+
+  try {
+    const response = await fetchWithTimeout(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: rawText },
+          ],
+          temperature: 0,
+          max_tokens: Math.max(500, Math.ceil(rawText.length / 2)),
+        }),
+      },
+      REFINEMENT_TIMEOUT,
+    );
+
+    if (!response.ok) {
+      console.warn(`[REFINE] HTTP ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    const refined = data.choices?.[0]?.message?.content?.trim();
+    if (!refined || refined.length === 0) return null;
+
+    return refined;
+  } catch (err) {
+    const reason = err.name === 'AbortError' ? 'timeout' : err.message;
+    console.warn(`[REFINE] Failed (${reason})`);
+    return null;
   }
 }
 
@@ -275,6 +351,42 @@ serve(async (req) => {
     const duration = (Date.now() - startTime) / 1000;
     console.log(`Transcription complete in ${duration}s via ${result.provider}: "${result.text.substring(0, 100)}..."`);
 
+    // ========================================
+    // TRANSCRIPT REFINEMENT (GPT-4o-mini)
+    // ========================================
+    let refinedText: string | null = null;
+    let refinementApplied = false;
+    let refinementSkipReason: string | null = null;
+    let refinementLatencyMs = 0;
+
+    if (!shouldRefineTranscript(result.text, result.confidence)) {
+      const wordCount = result.text.trim().split(/\s+/).length;
+      refinementSkipReason = wordCount <= 5 ? 'short_transcript' : 'high_confidence_clean';
+      console.log(`[REFINE] Skipped (${refinementSkipReason})`);
+    } else {
+      const refineStart = Date.now();
+      refinedText = await Promise.race([
+        refineTranscript(result.text, enrichedSuffix).catch((e) => {
+          console.warn('[REFINE] Refinement failed (non-blocking):', e);
+          return null;
+        }),
+        new Promise<null>((resolve) => setTimeout(() => {
+          console.warn('[REFINE] Timed out');
+          resolve(null);
+        }, REFINEMENT_TIMEOUT)),
+      ]);
+      refinementLatencyMs = Date.now() - refineStart;
+
+      if (refinedText) {
+        refinementApplied = true;
+        console.log(`[REFINE] GPT-4o-mini SUCCESS (${refinementLatencyMs}ms, ${result.text.length}→${refinedText.length} chars)`);
+      } else {
+        refinementSkipReason = 'refinement_failed';
+      }
+    }
+
+    const finalTranscript = refinedText || result.text;
+
     // Log instrumentation (non-blocking)
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -303,6 +415,9 @@ serve(async (req) => {
             confidence: result.confidence,
             provider: result.provider,
             session_id_raw: isUuid ? null : sessionIdStr,
+            refined: refinementApplied,
+            refinement_latency_ms: refinementLatencyMs,
+            refinement_skipped_reason: refinementSkipReason,
           }
         });
         if (instrumentationError) {
@@ -315,7 +430,9 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        transcript: result.text,
+        transcript: finalTranscript,
+        raw_transcript: result.text,
+        refined: refinementApplied,
         confidence: result.confidence,
         duration_seconds: duration,
         needs_clarification: result.confidence < 0.5,

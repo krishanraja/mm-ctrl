@@ -145,6 +145,8 @@ export const api = {
 
     return data as {
       transcript: string
+      raw_transcript?: string
+      refined?: boolean
       confidence?: number
       duration_seconds?: number
       provider?: string
