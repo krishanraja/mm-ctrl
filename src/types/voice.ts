@@ -78,6 +78,8 @@ export interface RoiEstimate {
 
 export interface TranscriptionResult {
   transcript: string;
+  raw_transcript?: string;
+  refined?: boolean;
   confidence: number;
   duration_seconds: number;
   needs_clarification: boolean;
