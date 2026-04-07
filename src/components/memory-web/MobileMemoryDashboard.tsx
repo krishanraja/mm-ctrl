@@ -9,7 +9,6 @@ import {
   Sparkles,
   Brain,
   Zap,
-  Download,
   ChevronRight,
   User,
   Briefcase,
@@ -637,36 +636,20 @@ export function MobileMemoryDashboard() {
           </motion.div>
         </div>
 
-        {/* Quick actions - compact row above bottom nav when we have data */}
-        {hasData && !isVoiceExpanded && (
+        {/* Verify action - shown only when there are pending verifications */}
+        {hasData && !isVoiceExpanded && unverifiedCount > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="flex-shrink-0 px-4 py-2 flex gap-2 relative z-10"
+            className="flex-shrink-0 px-4 py-2 relative z-10"
           >
-            {unverifiedCount > 0 && (
-              <button
-                onClick={openVerifyFlow}
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs font-semibold"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                Verify ({unverifiedCount})
-              </button>
-            )}
             <button
-              onClick={() => navigate('/context')}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-accent/10 text-accent text-xs font-semibold"
+              onClick={openVerifyFlow}
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs font-semibold"
             >
-              <Download className="h-3.5 w-3.5" />
-              Export
-            </button>
-            <button
-              onClick={() => navigate('/memory')}
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-foreground/5 text-foreground/70 text-xs font-medium"
-            >
-              <Brain className="h-3.5 w-3.5" />
-              Memory Web
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Verify ({unverifiedCount})
             </button>
           </motion.div>
         )}
