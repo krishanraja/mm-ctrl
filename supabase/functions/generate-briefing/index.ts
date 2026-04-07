@@ -28,6 +28,10 @@ interface NewsHeadline {
   source: string;
 }
 
+type BriefingType = 'default' | 'macro_trends' | 'vendor_landscape' | 'competitive_intel' | 'boardroom_prep' | 'team_update' | 'custom_voice';
+
+const PRO_ONLY_TYPES: BriefingType[] = ['vendor_landscape', 'competitive_intel', 'boardroom_prep', 'custom_voice'];
+
 interface UserContext {
   name: string;
   role: string;
@@ -40,6 +44,8 @@ interface UserContext {
   recentDecisions: string[];
   confirmedPatterns: string[];
   watchingCompanies: string[];
+  learningStyle: string;
+  feedbackPreferences: { preferredTags: string[]; preferredSources: string[] };
 }
 
 interface BriefingSegment {
@@ -52,9 +58,9 @@ interface BriefingSegment {
 
 // ── News Fetching ──────────────────────────────────────────────────
 
-function buildPerplexityPrompt(userCtx: UserContext): string {
+function buildPerplexityPrompt(userCtx: UserContext, briefingType: BriefingType, customContext?: string): string {
   const parts = [
-    `You are a sharp news curator for a specific business leader.`,
+    `You are an elite news curator. You find the stories that make busy leaders stop scrolling.`,
   ];
 
   if (userCtx.role && userCtx.company) {
@@ -66,37 +72,57 @@ function buildPerplexityPrompt(userCtx: UserContext): string {
     parts.push(`Their industry: ${userCtx.industry}.`);
   }
   if (userCtx.activeMissions.length > 0) {
-    parts.push(`They are actively working on: ${userCtx.activeMissions.slice(0, 3).join("; ")}.`);
+    parts.push(`Active priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}.`);
   }
   if (userCtx.watchingCompanies.length > 0) {
-    parts.push(`Companies they track closely: ${userCtx.watchingCompanies.join(", ")}.`);
+    parts.push(`Companies they track: ${userCtx.watchingCompanies.join(", ")}.`);
   }
 
+  // Type-specific search shaping
+  const typeInstructions = buildTypeSearchInstructions(briefingType, customContext, userCtx);
+
   parts.push(`
-Search for the most important news from the past 7 days that THIS leader would care about. Mix:
-- News directly relevant to their industry and role
-- AI/technology developments that affect their business
-- Competitive moves from companies they watch
-- Macro business trends that impact their decisions
+${typeInstructions}
 
-For each headline, assign ONE category:
-SIGNAL: Actually matters for this leader. Real impact, real decisions.
-NOISE: Hype to ignore. Include 1-2 to show you are filtering.
-DECISION TRIGGER: Something changed that requires action or a decision from them.
-KRISH'S TAKE: Sharp, slightly cynical opinion/analysis relevant to their world.
+QUALITY BAR: Only include stories where a busy leader would say "I'm glad someone told me this." Prefer last-48-hour news. Every headline must pass this test: does it change a decision, reveal a competitive shift, or surface a number worth knowing?
 
-Skip: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless directly relevant).
+For each headline, assign ONE tag:
+SIGNAL: Changes the math on a decision this leader faces.
+DECISION TRIGGER: Something shifted that demands action or reassessment.
+KRISH'S TAKE: A sharp, slightly cynical observation that reframes conventional wisdom.
 
-Format each as: "[CATEGORY] headline text"
-8-18 words per headline. Present tense. Specific.
+Do NOT include NOISE items. Do NOT include: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless they shift competitive dynamics).
 
-Return ONLY a JSON array of 12-15 items:
+8-18 words per headline. Present tense. Specific numbers when available.
+
+Return ONLY a JSON array of 8-10 items:
 [{"title": "[SIGNAL] headline here", "source": "Publication Name"}]`);
 
   return parts.join(" ");
 }
 
-async function fetchWithPerplexity(apiKey: string, userCtx: UserContext): Promise<NewsHeadline[]> {
+function buildTypeSearchInstructions(briefingType: BriefingType, customContext: string | undefined, userCtx: UserContext): string {
+  switch (briefingType) {
+    case 'macro_trends':
+      return `Focus on: macro-economic shifts affecting AI adoption, analyst reports on market sizing, regulatory changes with real business impact, industry-wide adoption milestones with real numbers. Think board-level trends, not product launches.`;
+    case 'vendor_landscape':
+      return `Focus on: AI product launches and pricing changes, vendor comparison data, feature releases from major platforms, API pricing shifts, new entrants worth evaluating. Frame through the lens of build-vs-buy decisions in ${userCtx.industry || 'their industry'}.`;
+    case 'competitive_intel':
+      return `Focus heavily on: ${userCtx.watchingCompanies.length > 0 ? userCtx.watchingCompanies.join(', ') : 'major players in ' + (userCtx.industry || 'AI')}. Find their latest moves, hiring patterns, product launches, partnerships, and strategic pivots. Also surface moves by their direct competitors.`;
+    case 'boardroom_prep':
+      return `Focus on: stories a board member would ask about. Macro AI trends with hard numbers, industry benchmarks, leadership moves at major companies, regulatory shifts, and data points that support strategic narratives. Everything should be quotable in a presentation.`;
+    case 'team_update':
+      return `Focus on: practical AI developments that affect day-to-day operations. New tools, workflow improvements, productivity gains with real numbers, team-level adoption stories, and training/upskilling developments.`;
+    case 'custom_voice':
+      return customContext
+        ? `The leader specifically asked for: "${customContext}". Tailor your search to find news and insights directly relevant to this request. Interpret their intent and find the most useful stories for their specific situation.`
+        : `Search for high-impact AI and business news relevant to this leader's role and industry.`;
+    default:
+      return `Search for the most important AI and business news from the past 48 hours that THIS leader needs to know. Prioritize: deals/launches that shift competitive dynamics, AI adoption milestones with real numbers, leadership moves at companies that matter, and stories of leaders doing noteworthy things in AI.`;
+  }
+}
+
+async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefingType: BriefingType = 'default', customContext?: string): Promise<NewsHeadline[]> {
   const today = new Date().toISOString().split("T")[0];
 
   const contextParts: string[] = [];
@@ -122,10 +148,10 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext): Promis
     body: JSON.stringify({
       model: "sonar",
       messages: [
-        { role: "system", content: buildPerplexityPrompt(userCtx) },
+        { role: "system", content: buildPerplexityPrompt(userCtx, briefingType, customContext) },
         {
           role: "user",
-          content: `Today is ${today}. Find 12-15 headlines from the past 7 days that this leader needs to see. ${contextParts.join(" ")} Curate with [SIGNAL], [NOISE], [DECISION TRIGGER], and [KRISH'S TAKE] tags.`,
+          content: `Today is ${today}. Find 8-10 high-signal headlines from the past 48 hours (fall back to 7 days if needed). ${contextParts.join(" ")} Tag each [SIGNAL], [DECISION TRIGGER], or [KRISH'S TAKE]. No filler. Only stories worth interrupting someone for.`,
         },
       ],
       temperature: 0.2,
@@ -416,6 +442,72 @@ const STATIC_FALLBACK: NewsHeadline[] = [
   { title: "[KRISH'S TAKE] If your AI strategy is a slide deck, it is not a strategy. Ship something this week", source: "Analysis" },
 ];
 
+// ── Second-Pass Curation ──────────────────────────────────────────
+
+async function curateHeadlines(
+  headlines: NewsHeadline[],
+  userCtx: UserContext,
+  openaiKey: string,
+  briefingType: BriefingType,
+  customContext?: string,
+): Promise<NewsHeadline[]> {
+  if (headlines.length <= 8) return headlines;
+
+  const typeHint = briefingType !== 'default'
+    ? `This is a "${briefingType}" briefing${customContext ? `: "${customContext}"` : ''}. Prioritize stories that serve this specific angle.`
+    : '';
+
+  const feedbackHint = userCtx.feedbackPreferences.preferredTags.length > 0
+    ? `This leader tends to find ${userCtx.feedbackPreferences.preferredTags.join(', ')} stories most useful.${userCtx.feedbackPreferences.preferredSources.length > 0 ? ` Stories from ${userCtx.feedbackPreferences.preferredSources.join(', ')} resonate.` : ''} Lean toward these.`
+    : '';
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${openaiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `You are a ruthless news editor. Your job: cut the weak stories and keep only what would make a busy ${userCtx.role || 'executive'} stop what they are doing to listen. ${typeHint} ${feedbackHint}
+
+Rules:
+- Deduplicate similar stories (keep the strongest angle)
+- Kill anything incremental ("Company X hires Y" unless Y is a massive name)
+- Kill anything that is just commentary without new information
+- Rank by: does this change a decision, reveal a shift, or surface a must-know number?
+- Return the top 6-8, ordered by impact
+
+Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
+        },
+        {
+          role: "user",
+          content: headlines.map((h, i) => `${i + 1}. ${h.title} (${h.source})`).join("\n"),
+        },
+      ],
+      temperature: 0.1,
+    }),
+  });
+
+  if (!response.ok) {
+    console.warn("Second-pass curation failed, using original headlines");
+    return headlines.slice(0, 8);
+  }
+
+  const data = await response.json();
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) return headlines.slice(0, 8);
+
+  try {
+    return parseLLMJson(content);
+  } catch {
+    return headlines.slice(0, 8);
+  }
+}
+
 // ── User Context ───────────────────────────────────────────────────
 
 async function getUserContext(
@@ -434,6 +526,8 @@ async function getUserContext(
     recentDecisions: [],
     confirmedPatterns: [],
     watchingCompanies: [],
+    learningStyle: "",
+    feedbackPreferences: { preferredTags: [], preferredSources: [] },
   };
 
   // User memory facts
@@ -570,15 +664,120 @@ async function getUserContext(
     console.warn("Failed to fetch patterns:", e);
   }
 
+  // Learning style (for cohort-specific tone)
+  try {
+    const { data: session } = await supabase
+      .from("voice_sessions")
+      .select("compass_tier")
+      .eq("user_id", userId)
+      .not("compass_tier", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (session?.compass_tier) {
+      ctx.learningStyle = session.compass_tier;
+    }
+  } catch (e) {
+    console.warn("Failed to fetch learning style:", e);
+  }
+
+  // Feedback loop: what stories has this leader found useful?
+  try {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: feedback } = await supabase
+      .from("briefing_feedback")
+      .select("reaction, briefing_id")
+      .gte("created_at", sevenDaysAgo)
+      .eq("reaction", "useful");
+
+    if (feedback && feedback.length > 0) {
+      // Get the briefing IDs for this user's feedback
+      const briefingIds = [...new Set(feedback.map((f: { briefing_id: string }) => f.briefing_id))];
+      const { data: briefings } = await supabase
+        .from("briefings")
+        .select("id, segments")
+        .eq("user_id", userId)
+        .in("id", briefingIds);
+
+      if (briefings) {
+        const tagCounts: Record<string, number> = {};
+        const sourceCounts: Record<string, number> = {};
+
+        for (const b of briefings) {
+          const segments = b.segments as Array<{ framework_tag: string; source: string }>;
+          if (!Array.isArray(segments)) continue;
+          for (const seg of segments) {
+            tagCounts[seg.framework_tag] = (tagCounts[seg.framework_tag] || 0) + 1;
+            sourceCounts[seg.source] = (sourceCounts[seg.source] || 0) + 1;
+          }
+        }
+
+        ctx.feedbackPreferences.preferredTags = Object.entries(tagCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([tag]) => tag);
+        ctx.feedbackPreferences.preferredSources = Object.entries(sourceCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([source]) => source);
+      }
+    }
+  } catch (e) {
+    console.warn("Failed to fetch feedback preferences:", e);
+  }
+
   return ctx;
 }
 
 // ── Personalisation + Script Generation ────────────────────────────
 
+function buildCohortToneDirective(learningStyle: string): string {
+  switch (learningStyle.toLowerCase()) {
+    case 'leading':
+    case 'strategic_visionary':
+      return 'This leader thinks in market maps and competitive dynamics. Lead with implications, not descriptions. "This shifts the calculus on..." works better than "This happened."';
+    case 'advancing':
+    case 'pragmatic_executor':
+      return 'This leader wants to know what changed and what to do about it. Be concrete. "Your move: ..." or "This means your team should..." Hit the action before the analysis.';
+    case 'establishing':
+    case 'analytical_optimizer':
+      return 'This leader responds to numbers. Lead with the data point. "40% drop", "$2B market", "3x faster". Then explain what the number means for their specific situation.';
+    case 'emerging':
+    case 'collaborative_builder':
+      return 'This leader thinks about team and organizational impact. Frame through "this affects how your team...", "your org should watch...", "the people implication is..."';
+    default:
+      return 'Lead with what changed, then why it matters to them specifically.';
+  }
+}
+
+function buildBriefingPurposeBlock(briefingType: BriefingType, customContext?: string): string {
+  switch (briefingType) {
+    case 'macro_trends':
+      return 'PURPOSE: This briefing is for big-picture strategic thinking. Frame everything as: what trend is shifting, how fast, and what it means for their positioning. Think quarterly strategy review, not daily news.';
+    case 'vendor_landscape':
+      return 'PURPOSE: This briefing prepares the leader for vendor conversations. Frame everything as: what changed in the tool/platform landscape, pricing shifts, capability gaps closing, and build-vs-buy implications.';
+    case 'competitive_intel':
+      return 'PURPOSE: This briefing is competitive intelligence. Frame everything as: what did their competitors or watchlist companies do, what does it signal about market direction, and where does it create an opening or threat.';
+    case 'boardroom_prep':
+      return 'PURPOSE: This briefing prepares the leader for a board or executive presentation. Frame everything as: what would a board member ask about, what data points tell the story, and what is the "so what" for the business.';
+    case 'team_update':
+      return 'PURPOSE: This briefing is for team communication. Frame everything as: what does the team need to know, what practical tools or changes affect their work, and what should they start/stop doing.';
+    case 'custom_voice':
+      return customContext
+        ? `PURPOSE: The leader specifically asked for: "${customContext}". Shape every story through this lens. Make every insight directly useful for their stated need.`
+        : '';
+    default:
+      return '';
+  }
+}
+
 async function generateBriefingScript(
   headlines: NewsHeadline[],
   userCtx: UserContext,
-  openaiKey: string
+  openaiKey: string,
+  briefingType: BriefingType = 'default',
+  customContext?: string,
 ): Promise<{ segments: BriefingSegment[]; script: string }> {
   const contextBlock = [
     `Name: ${userCtx.name}`,
@@ -599,10 +798,10 @@ async function generateBriefingScript(
       ? `Active decisions on their desk: ${userCtx.recentDecisions.join("; ")}`
       : null,
     userCtx.confirmedPatterns.length
-      ? `Behavioral patterns & blind spots: ${userCtx.confirmedPatterns.join("; ")}`
+      ? `Behavioral patterns: ${userCtx.confirmedPatterns.join("; ")}`
       : null,
     userCtx.watchingCompanies.length
-      ? `Companies they are watching closely (prioritise news about these): ${userCtx.watchingCompanies.join(", ")}`
+      ? `Companies they watch: ${userCtx.watchingCompanies.join(", ")}`
       : null,
   ]
     .filter(Boolean)
@@ -611,6 +810,10 @@ async function generateBriefingScript(
   const headlinesBlock = headlines
     .map((h, i) => `${i + 1}. ${h.title} (${h.source})`)
     .join("\n");
+
+  const cohortDirective = buildCohortToneDirective(userCtx.learningStyle);
+  const purposeBlock = buildBriefingPurposeBlock(briefingType, customContext);
+  const firstName = userCtx.name.split(" ")[0];
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -623,49 +826,64 @@ async function generateBriefingScript(
       messages: [
         {
           role: "system",
-          content: `You are a sharp, knowledgeable AI advisor creating a personalised daily news briefing for a business leader. Your tone is conversational, warm but direct. Like a trusted friend who works in AI every day and knows this leader's world deeply.
+          content: `You are briefing a peer, not presenting to an audience. Think: sharp friend who read everything so they don't have to.
+
+YOUR VOICE:
+- Short sentences. Vary rhythm. One long, then two short, then a half-sentence opinion.
+- Drop opinions between stories, not just at the end. "That is a bigger deal than it sounds." or "Worth watching, but not worth panicking over."
+- Transitions ARE insights, not connectors. Never say "moving on to", "in other news", "additionally", "furthermore", "let's dive in", or "let's take a look at".
+- The bridge between stories should be a thought: "Which brings up something related..." or just jump straight in.
+
+${cohortDirective}
+
+${purposeBlock}
 
 CRITICAL RULES:
-- Never mention "Mindmaker", "CTRL", or any platform name. You are a trusted advisor, not a product.
-- Address the leader as the person they are - the ${userCtx.role} of ${userCtx.company || "their company"}. Speak TO them about THEIR business, THEIR decisions, THEIR blind spots.
-- The briefing is about their world, not about AI tools they subscribe to.
-- Use first name only. Never "as a Mindmaker user" or "your CTRL briefing" or similar.
+- Never mention "Mindmaker", "CTRL", or any platform/product name. You are a trusted advisor.
+- Use first name only: "${firstName}". Never "as a Mindmaker user" or similar.
+- No em dashes. Use commas, semicolons, or periods instead.
+- No filler phrases: "it's worth noting", "interestingly", "it remains to be seen", "this is significant because"
+- Show, don't tell. Instead of "This is important because...", just explain the impact directly.
 
-You will:
-1. Select 5-8 headlines from the list that are MOST relevant to this specific leader's context
-2. REWRITE each selected headline through this leader's lens. Do not pass through generic news titles. Frame it from their perspective - what changed for THEM, what decision this creates for THEM, what they should notice given their role and priorities. Keep under 15 words. Examples:
+YOU WILL:
+1. Select 3-5 headlines (NOT 5-8) that are MOST impactful for this specific leader
+2. REWRITE each headline through their lens. Not generic news. Frame from THEIR perspective:
    - Generic: "OpenAI cuts API pricing 40%"
-   - For a SaaS CEO: "Your LLM costs just dropped - OpenAI cut API pricing 40%"
-   - For a marketing VP: "Your AI content pipeline just got 40% cheaper"
-   The headline should make the leader immediately see why they care.
-3. For each, explain WHY it matters to them specifically (not generic "this is important"). Reference their active decisions, missions, blind spots, or industry where relevant.
-4. Apply framework nudges naturally:
-   - "Worth pressure-testing this against..." (dialectical tension)
-   - "The question is whether this changes your assumptions about..." (first-principles)
-   - "Before your next [meeting/quarter/decision], consider..." (mental contrasting)
-   Never name frameworks explicitly. Just apply the thinking.
-5. Generate a conversational briefing script they'll hear as audio
+   - For a SaaS CEO: "Your LLM costs just dropped 40%"
+   - For a marketing VP: "Your AI content pipeline just got cheaper"
+3. For each story, explain impact in 2-3 sentences. Reference their decisions, missions, or blind spots.
+4. Apply framework nudges naturally (never name the framework):
+   - "Worth pressure-testing this against..."
+   - "The question is whether this changes your assumptions about..."
+   - "Before your next [meeting/quarter], consider..."
 
-Output JSON:
+OUTPUT JSON:
 {
   "segments": [
     {
-      "headline": "Rewritten headline connecting the news to THIS leader's world (under 15 words)",
-      "analysis": "2-4 sentences: why this matters to THEM + framework nudge",
-      "framework_tag": "signal|noise|decision_trigger|krishs_take",
+      "headline": "Rewritten headline, under 15 words, from THEIR perspective",
+      "analysis": "2-3 sentences: specific impact on THEM + one framework nudge",
+      "framework_tag": "signal|decision_trigger|krishs_take",
       "source": "Source Name",
-      "relevance_reason": "One sentence: why selected for this leader"
+      "relevance_reason": "One sentence: why this was selected for THIS leader"
     }
   ],
-  "script": "The full audio script, conversational, ~800 words, 3-5 min spoken. Start with 'Good morning, ${userCtx.name.split(" ")[0]}.' Speak to them as the leader of ${userCtx.company || "their company"}. Ground every insight in their specific context - their role, their industry, their active decisions, their blind spots. End with a single actionable takeaway tied to something they are working on."
-}`,
+  "script": "The audio script. 500-600 words max. Structure below."
+}
+
+SCRIPT STRUCTURE (this is what they hear):
+1. COLD OPEN (1 sentence, no greeting): "${firstName}, [one punchy hook]." Examples: "${firstName}, three things before your first meeting." or "${firstName}, one number to know this morning: [stat]."
+2. 3-5 STORIES: Each gets 80-120 words. One sentence: what happened. Two sentences: why it changes something for THEM. One sentence: reframe or decision nudge.
+3. CLOSER (1-2 sentences): "The one thing from today worth acting on: [specific action tied to their active decision or mission]."
+
+Total: 500-600 words. 3-4 minutes spoken. Every sentence earns its place.`,
         },
         {
           role: "user",
-          content: `LEADER CONTEXT:\n${contextBlock}\n\nTODAY'S HEADLINES:\n${headlinesBlock}\n\nGenerate a personalised briefing. Select 5-8 most relevant headlines. Write the script as if you're personally briefing this leader over coffee.`,
+          content: `LEADER CONTEXT:\n${contextBlock}\n\nTODAY'S HEADLINES:\n${headlinesBlock}\n\nBuild a ${briefingType === 'default' ? 'daily' : briefingType.replace(/_/g, ' ')} briefing. Select 3-5 stories. Write the script as if you are personally briefing this leader. Tight, sharp, zero filler.`,
         },
       ],
-      temperature: 0.4,
+      temperature: 0.5,
       response_format: { type: "json_object" },
     }),
   });
@@ -680,9 +898,16 @@ Output JSON:
   if (!content) throw new Error("No content from GPT-4o");
 
   const parsed = JSON.parse(content);
+
+  // Post-process: strip em dashes and forbidden filler
+  let script = parsed.script || "";
+  script = script.replace(/\u2014/g, ";").replace(/\u2013/g, "-");
+  script = script.replace(/\b(Additionally|Furthermore|Moreover|Interestingly|It's worth noting|It remains to be seen)\b/gi, "");
+  script = script.replace(/\s{2,}/g, " ").trim();
+
   return {
     segments: parsed.segments || [],
-    script: parsed.script || "",
+    script,
   };
 }
 
@@ -724,25 +949,68 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
+    // Parse request body for briefing type
+    let briefingType: BriefingType = 'default';
+    let customContext: string | undefined;
+    let voiceNoteUrl: string | undefined;
+
+    try {
+      const body = await req.json();
+      if (body.briefing_type && typeof body.briefing_type === 'string') {
+        briefingType = body.briefing_type as BriefingType;
+      }
+      if (body.custom_context && typeof body.custom_context === 'string') {
+        customContext = body.custom_context;
+      }
+      if (body.voice_note_url && typeof body.voice_note_url === 'string') {
+        voiceNoteUrl = body.voice_note_url;
+      }
+    } catch {
+      // No body or invalid JSON - use defaults
+    }
+
+    const isProOnly = PRO_ONLY_TYPES.includes(briefingType);
+
+    // Server-side subscription check for pro-only types
+    if (isProOnly) {
+      const { data: sub } = await supabase
+        .from("edge_subscriptions")
+        .select("status")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (!sub) {
+        return new Response(
+          JSON.stringify({ error: "Edge Pro subscription required for this briefing type" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     const today = new Date().toISOString().split("T")[0];
 
-    // Check if briefing already exists today
-    const { data: existing } = await supabase
-      .from("briefings")
-      .select("id, audio_url")
-      .eq("user_id", user.id)
-      .eq("briefing_date", today)
-      .maybeSingle();
+    // Check if this specific briefing type already exists today
+    // (custom_voice allows multiples, others are one per day)
+    if (briefingType !== 'custom_voice') {
+      const { data: existing } = await supabase
+        .from("briefings")
+        .select("id, audio_url")
+        .eq("user_id", user.id)
+        .eq("briefing_date", today)
+        .eq("briefing_type", briefingType)
+        .maybeSingle();
 
-    if (existing) {
-      return new Response(
-        JSON.stringify({
-          briefing_id: existing.id,
-          already_exists: true,
-          has_audio: !!existing.audio_url,
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      if (existing) {
+        return new Response(
+          JSON.stringify({
+            briefing_id: existing.id,
+            already_exists: true,
+            has_audio: !!existing.audio_url,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // 1. Get user context
@@ -759,15 +1027,17 @@ serve(async (req) => {
       watchlist: userCtx.watchingCompanies.length,
       decisions: userCtx.recentDecisions.length,
       patterns: userCtx.confirmedPatterns.length,
+      learningStyle: userCtx.learningStyle,
+      briefingType,
     });
 
-    // 2. Fetch news
-    console.log("Fetching news...");
+    // 2. Fetch news (shaped by briefing type)
+    console.log(`Fetching news for ${briefingType} briefing...`);
     let headlines: NewsHeadline[] = [];
 
     if (perplexityKey) {
       try {
-        headlines = await fetchWithPerplexity(perplexityKey, userCtx);
+        headlines = await fetchWithPerplexity(perplexityKey, userCtx, briefingType, customContext);
         console.log(`Perplexity: ${headlines.length} headlines`);
       } catch (e) {
         console.error("Perplexity failed:", e);
@@ -806,12 +1076,19 @@ serve(async (req) => {
       headlines = STATIC_FALLBACK;
     }
 
+    // 2.5 Second-pass curation: deduplicate, rank, keep top 6-8
+    console.log("Running second-pass curation...");
+    headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext);
+    console.log(`After curation: ${headlines.length} headlines`);
+
     // 3. Generate personalised briefing
     console.log("Generating personalised briefing...");
     const { segments, script } = await generateBriefingScript(
       headlines,
       userCtx,
-      openaiKey
+      openaiKey,
+      briefingType,
+      customContext,
     );
 
     if (!script || segments.length === 0) {
@@ -824,28 +1101,31 @@ serve(async (req) => {
       .insert({
         user_id: user.id,
         briefing_date: today,
+        briefing_type: briefingType,
         script_text: script,
         segments,
         context_snapshot: userCtx,
         news_sources: headlines,
         generation_model: "gpt-4o",
+        custom_context: customContext || null,
+        voice_note_url: voiceNoteUrl || null,
+        is_pro_only: isProOnly,
       })
       .select("id")
       .single();
 
     if (insertError) throw insertError;
 
-    console.log(`Briefing created: ${briefing.id}`);
+    console.log(`Briefing created: ${briefing.id} (type: ${briefingType})`);
 
-    // 5. Return immediately — client will trigger audio synthesis separately.
-    //    This keeps the edge function fast (~5-15s) instead of blocking on
-    //    ElevenLabs TTS + storage upload (~30-60s extra).
+    // 5. Return immediately - client triggers audio synthesis separately
     return new Response(
       JSON.stringify({
         briefing_id: briefing.id,
         already_exists: false,
         has_audio: false,
         segment_count: segments.length,
+        briefing_type: briefingType,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

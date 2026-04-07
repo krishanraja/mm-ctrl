@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check, ChevronDown } from "lucide-react";
+import { Radio, Play, Check, ChevronDown, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Briefing, BriefingSegment } from "@/types/briefing";
-import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
+import { FRAMEWORK_TAG_CONFIG, BRIEFING_TYPES } from "@/types/briefing";
 import { usePollAudio } from "@/hooks/useBriefing";
 import { useBriefingContext } from "@/contexts/BriefingContext";
 
@@ -45,9 +45,17 @@ interface BriefingCardProps {
   briefing: Briefing;
   hasListened: boolean;
   onPlay: () => void;
+  onCustomBriefing?: () => void;
+  customBriefingCount?: number;
 }
 
-export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProps) {
+export function BriefingCard({
+  briefing,
+  hasListened,
+  onPlay,
+  onCustomBriefing,
+  customBriefingCount = 0,
+}: BriefingCardProps) {
   const { audioUrl, polling, exhausted, retry } = usePollAudio(
     briefing.audio_url ? null : briefing.id
   );
@@ -63,19 +71,13 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
   const hasAudio = !!(briefing.audio_url || audioUrl);
   const waitingForAudio = !hasAudio && (polling || !exhausted);
 
-  if (hasListened) {
-    return (
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50">
-        <Check className="w-3.5 h-3.5 text-muted-foreground" />
-        <span className="text-xs text-muted-foreground">Briefing heard</span>
-      </div>
-    );
-  }
-
   const segmentCount = briefing.segments?.length || 0;
   const durationMin = briefing.audio_duration_seconds
     ? Math.ceil(briefing.audio_duration_seconds / 60)
     : 3;
+
+  const briefingTypeConfig = BRIEFING_TYPES.find(t => t.type === (briefing.briefing_type || 'default'));
+  const briefingLabel = briefingTypeConfig?.label || "Your Briefing";
 
   const teaser = briefing.segments?.[0]?.headline || "Your personalised news briefing is ready";
 
@@ -97,10 +99,13 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
                 onClick={() => setExpanded((prev) => !prev)}
               >
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-sm font-semibold">Your Briefing</p>
+                  <p className="text-sm font-semibold">{briefingLabel}</p>
                   <Badge variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
                     {durationMin} min
                   </Badge>
+                  {hasListened && (
+                    <Check className="w-3 h-3 text-emerald-500" />
+                  )}
                   <motion.div
                     animate={{ rotate: expanded ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -154,41 +159,61 @@ export function BriefingCard({ briefing, hasListened, onPlay }: BriefingCardProp
               </div>
             </div>
 
-            {hasAudio ? (
-              <Button
-                variant="default"
-                size="sm"
-                className="flex-shrink-0 bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3"
-                onClick={onPlay}
-              >
-                <Play className="w-3 h-3 fill-current mr-1" />
-                Listen
-              </Button>
-            ) : exhausted ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-shrink-0 h-8 px-3 text-[11px]"
-                onClick={retry}
-              >
-                Retry
-              </Button>
-            ) : (
-              <Button
-                variant="default"
-                size="sm"
-                disabled
-                className="relative flex-shrink-0 bg-accent text-accent-foreground h-8 w-[72px] overflow-hidden"
-              >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-accent-foreground/15 to-transparent"
-                  animate={{ x: ["-100%", "100%"] }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                />
-                <span className="relative z-10 text-xs">Audio...</span>
-              </Button>
-            )}
+            <div className="flex flex-col gap-1.5 flex-shrink-0">
+              {hasAudio ? (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 h-8 px-3"
+                  onClick={onPlay}
+                >
+                  <Play className="w-3 h-3 fill-current mr-1" />
+                  Listen
+                </Button>
+              ) : exhausted ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-3 text-[11px]"
+                  onClick={retry}
+                >
+                  Retry
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  size="sm"
+                  disabled
+                  className="relative bg-accent text-accent-foreground h-8 w-[72px] overflow-hidden"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-accent-foreground/15 to-transparent"
+                    animate={{ x: ["-100%", "100%"] }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                  />
+                  <span className="relative z-10 text-xs">Audio...</span>
+                </Button>
+              )}
+            </div>
           </div>
+
+          {/* Bottom row: Custom Briefing button + custom briefing count */}
+          {onCustomBriefing && (
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+              <button
+                onClick={onCustomBriefing}
+                className="flex items-center gap-1.5 text-[11px] font-medium text-accent hover:text-accent/80 transition-colors"
+              >
+                <Sparkles className="w-3 h-3" />
+                Custom Briefing
+              </button>
+              {customBriefingCount > 0 && (
+                <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  +{customBriefingCount} custom
+                </span>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </motion.div>

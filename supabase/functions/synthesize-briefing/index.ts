@@ -66,9 +66,9 @@ serve(async (req) => {
         text: briefing.script_text,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
-          stability: 0.5,
+          stability: 0.4,
           similarity_boost: 0.75,
-          style: 0.3,
+          style: 0.45,
           use_speaker_boost: true,
         },
       }),
@@ -86,12 +86,12 @@ serve(async (req) => {
 
     console.log(`Audio generated: ${audioBytes.length} bytes`);
 
-    // Estimate duration (~150 words/min for TTS, script is ~800 words)
+    // Estimate duration (~150 words/min for TTS)
     const wordCount = briefing.script_text.split(/\s+/).length;
     const estimatedDuration = Math.round((wordCount / 150) * 60);
 
-    // Upload to Supabase Storage
-    const storagePath = `${briefing.user_id}/${briefing.briefing_date}.mp3`;
+    // Upload to Supabase Storage (include briefing ID for uniqueness across types)
+    const storagePath = `${briefing.user_id}/${briefing.briefing_date}-${briefing.id.substring(0, 8)}.mp3`;
 
     // Ensure bucket exists (ignore error if already exists)
     await supabase.storage.createBucket("ctrl-briefings", {

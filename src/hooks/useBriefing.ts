@@ -1,20 +1,22 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { Briefing, BriefingFeedback } from '@/types/briefing';
+import type { Briefing, BriefingFeedback, BriefingType } from '@/types/briefing';
 
 const GENERATE_TIMEOUT = 30_000; // 30s for news fetch + GPT-4o
 const POLL_INTERVAL = 3_000;
 const MAX_POLLS = 40; // 40 * 3s = 120s max
 
 /**
- * Fetch today's briefing for the current user
+ * Fetch today's briefings for the current user.
+ * Returns all briefings for today (default + custom types).
  */
 export function useTodaysBriefing() {
-  const [briefing, setBriefing] = useState<Briefing | null>(null);
+  const [briefings, setBriefings] = useState<Briefing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const autoGenerateTriggered = useRef(false);
 
-  const fetchBriefing = useCallback(async () => {
+  const fetchBriefings = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -32,12 +34,12 @@ export function useTodaysBriefing() {
         .select('*')
         .eq('user_id', user.id)
         .eq('briefing_date', today)
-        .maybeSingle();
+        .order('created_at', { ascending: false });
 
       if (fetchErr) throw fetchErr;
-      setBriefing(data as Briefing | null);
+      setBriefings((data as Briefing[]) || []);
     } catch (err) {
-      console.error('Failed to fetch briefing:', err);
+      console.error('Failed to fetch briefings:', err);
       setError((err as Error).message);
     } finally {
       setLoading(false);
@@ -45,21 +47,69 @@ export function useTodaysBriefing() {
   }, []);
 
   useEffect(() => {
-    fetchBriefing();
-  }, [fetchBriefing]);
+    fetchBriefings();
+  }, [fetchBriefings]);
 
-  return { briefing, loading, error, refetch: fetchBriefing };
+  // Convenience: the default briefing
+  const defaultBriefing = briefings.find(b => (b.briefing_type || 'default') === 'default') || null;
+  const customBriefings = briefings.filter(b => (b.briefing_type || 'default') !== 'default');
+
+  // Back-compat: single briefing alias
+  const briefing = defaultBriefing;
+
+  return {
+    briefing,
+    briefings,
+    defaultBriefing,
+    customBriefings,
+    loading,
+    error,
+    refetch: fetchBriefings,
+    autoGenerateTriggered,
+  };
 }
 
 /**
- * Generate a briefing on demand
+ * Auto-generate the default briefing on page load if none exists today.
+ */
+export function useAutoGenerateBriefing(
+  defaultBriefing: Briefing | null,
+  briefingLoading: boolean,
+  hasData: boolean,
+  refetch: () => Promise<void>,
+) {
+  const { generate, generating, phase } = useGenerateBriefing();
+  const triggered = useRef(false);
+
+  useEffect(() => {
+    if (briefingLoading || triggered.current) return;
+    if (defaultBriefing) return; // already exists
+    if (!hasData) return; // user has no profile data yet
+
+    triggered.current = true;
+    (async () => {
+      const id = await generate();
+      if (id) {
+        await refetch();
+      }
+    })();
+  }, [briefingLoading, defaultBriefing, hasData, generate, refetch]);
+
+  return { generating, phase };
+}
+
+/**
+ * Generate a briefing on demand (supports custom types)
  */
 export function useGenerateBriefing() {
   const [generating, setGenerating] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'scanning' | 'personalising' | 'preparing'>('idle');
   const [error, setError] = useState<string | null>(null);
 
-  const generate = useCallback(async (): Promise<string | null> => {
+  const generate = useCallback(async (
+    briefingType?: BriefingType,
+    customContext?: string,
+  ): Promise<string | null> => {
     try {
       setGenerating(true);
       setError(null);
@@ -72,8 +122,14 @@ export function useGenerateBriefing() {
         setTimeout(() => reject(new Error('Briefing generation timed out. Please try again.')), GENERATE_TIMEOUT)
       );
 
+      const body: Record<string, string> = {};
+      if (briefingType) body.briefing_type = briefingType;
+      if (customContext) body.custom_context = customContext;
+
       const { data, error: genErr } = await Promise.race([
-        supabase.functions.invoke('generate-briefing'),
+        supabase.functions.invoke('generate-briefing', {
+          body: Object.keys(body).length > 0 ? body : undefined,
+        }),
         timeout,
       ]);
 
