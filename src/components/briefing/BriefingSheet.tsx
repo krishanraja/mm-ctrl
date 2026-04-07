@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useBriefingContext } from "@/contexts/BriefingContext";
 import { useSubmitFeedback } from "@/hooks/useBriefing";
 import { useWatchlist } from "@/hooks/useWatchlist";
-import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
+import { FRAMEWORK_TAG_CONFIG, BRIEFING_TYPES } from "@/types/briefing";
 import type { PlaybackSpeed, FrameworkTag } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
 import { SegmentCard } from "./SegmentCard";
@@ -115,8 +115,16 @@ export function BriefingSheet() {
                   {today}
                 </p>
                 <h2 className="text-lg font-semibold text-foreground">
-                  Your Briefing
+                  {(() => {
+                    const typeConfig = BRIEFING_TYPES.find(t => t.type === (briefing.briefing_type || 'default'));
+                    return typeConfig?.type === 'default' ? 'Your Briefing' : typeConfig?.label || 'Your Briefing';
+                  })()}
                 </h2>
+                {briefing.custom_context && (
+                  <p className="text-[10px] text-muted-foreground/70 italic mt-0.5 line-clamp-1">
+                    {briefing.custom_context}
+                  </p>
+                )}
               </div>
               <Button variant="ghost" size="icon" onClick={() => setSheetOpen(false)}>
                 <X className="h-4 w-4" />

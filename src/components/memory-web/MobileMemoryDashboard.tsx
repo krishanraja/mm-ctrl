@@ -37,9 +37,10 @@ import { BottomNav } from './BottomNav';
 import { AppHeader } from './AppHeader';
 import { useToast } from '@/hooks/use-toast';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
-import { BriefingSheet, MiniPlayer } from '@/components/briefing';
-import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
+import { BriefingSheet, MiniPlayer, CustomBriefingSheet } from '@/components/briefing';
+import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
+import type { BriefingType } from '@/types/briefing';
 import type { FactCategory, PatternType } from '@/types/memory';
 
 function getGreeting() {
@@ -82,9 +83,16 @@ export function MobileMemoryDashboard() {
     rejectFact: flowRejectFact,
     refreshPending,
   } = useVerificationFlow();
-  const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
+  const { briefing: todaysBriefing, customBriefings, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
+  const [customSheetOpen, setCustomSheetOpen] = useState(false);
+
+  // Auto-generate default briefing on load (hasData defined below after hooks)
+  const hasDataForBriefing = facts.length > 0;
+  const { generating: autoGenerating, phase: autoPhase } = useAutoGenerateBriefing(
+    todaysBriefing, briefingLoading, hasDataForBriefing, refetchBriefing
+  );
 
   // Sync briefing into context
   useEffect(() => {
@@ -98,9 +106,10 @@ export function MobileMemoryDashboard() {
     }
   };
 
-  const handleGenerateBriefing = async () => {
-    const briefingId = await generate();
+  const handleCustomGenerate = async (briefingType: BriefingType, customContext?: string) => {
+    const briefingId = await generate(briefingType, customContext);
     if (briefingId) {
+      setCustomSheetOpen(false);
       await refetchBriefing();
     }
   };
@@ -237,10 +246,12 @@ export function MobileMemoryDashboard() {
               briefing={todaysBriefing}
               hasListened={playback.hasListened}
               onPlay={handlePlayBriefing}
+              onCustomBriefing={() => setCustomSheetOpen(true)}
+              customBriefingCount={customBriefings.length}
             />
           </div>
         )}
-        {!todaysBriefing && !briefingLoading && hasData && (
+        {!todaysBriefing && !briefingLoading && hasData && (autoGenerating || generating) && (
           <div className="flex-shrink-0 px-4 pt-2">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -249,41 +260,31 @@ export function MobileMemoryDashboard() {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-accent" />
+                  <Sparkles className="w-4 h-4 text-accent animate-pulse" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">Your Daily Briefing</p>
+                  <p className="text-sm font-semibold text-foreground">Preparing your briefing</p>
                   <p className="text-xs text-muted-foreground">
-                    {generating
-                      ? phase === 'scanning' ? 'Scanning today\'s news...'
-                        : phase === 'personalising' ? 'Finding what matters to you...'
-                        : 'Preparing your briefing...'
-                      : 'Personalised AI news, in your voice'}
+                    {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
+                      : (autoPhase || phase) === 'personalising' ? 'Finding what matters to you...'
+                      : 'Almost ready...'}
                   </p>
                 </div>
               </div>
-              <button
-                onClick={handleGenerateBriefing}
-                disabled={generating}
-                className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-colors overflow-hidden"
-              >
-                {generating && (
-                  <motion.div
-                    className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 15, ease: "linear" }}
-                    style={{ transformOrigin: "left" }}
-                  />
-                )}
+              <div className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold overflow-hidden">
+                <motion.div
+                  className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 15, ease: "linear" }}
+                  style={{ transformOrigin: "left" }}
+                />
                 <span className="relative z-10">
-                  {generating
-                    ? phase === 'scanning' ? 'Scanning...'
-                      : phase === 'personalising' ? 'Curating...'
-                      : 'Preparing...'
-                    : 'Generate'}
+                  {(autoPhase || phase) === 'scanning' ? 'Scanning...'
+                    : (autoPhase || phase) === 'personalising' ? 'Curating...'
+                    : 'Preparing...'}
                 </span>
-              </button>
+              </div>
             </motion.div>
           </div>
         )}
@@ -701,6 +702,12 @@ export function MobileMemoryDashboard() {
         )}
       </AnimatePresence>
       <BriefingSheet />
+      <CustomBriefingSheet
+        isOpen={customSheetOpen}
+        onClose={() => setCustomSheetOpen(false)}
+        onGenerate={handleCustomGenerate}
+        isGenerating={generating}
+      />
     </>
   );
 }

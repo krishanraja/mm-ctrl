@@ -5,6 +5,68 @@
 
 export type FrameworkTag = 'signal' | 'noise' | 'decision_trigger' | 'krishs_take';
 
+export type BriefingType =
+  | 'default'
+  | 'macro_trends'
+  | 'vendor_landscape'
+  | 'competitive_intel'
+  | 'boardroom_prep'
+  | 'team_update'
+  | 'custom_voice';
+
+export interface BriefingTypeConfig {
+  type: BriefingType;
+  label: string;
+  description: string;
+  icon: string; // Lucide icon name
+  isProOnly: boolean;
+}
+
+export const BRIEFING_TYPES: BriefingTypeConfig[] = [
+  {
+    type: 'default',
+    label: "Today's Must-Know",
+    description: 'The most important AI and business news for your world',
+    icon: 'Radio',
+    isProOnly: false,
+  },
+  {
+    type: 'macro_trends',
+    label: 'Macro Trends',
+    description: 'Big-picture shifts in AI, markets, and regulation',
+    icon: 'TrendingUp',
+    isProOnly: false,
+  },
+  {
+    type: 'vendor_landscape',
+    label: 'Vendor Landscape',
+    description: 'Product launches, pricing changes, and vendor moves',
+    icon: 'Layers',
+    isProOnly: true,
+  },
+  {
+    type: 'competitive_intel',
+    label: 'Competitive Intel',
+    description: 'What your watchlist companies are doing right now',
+    icon: 'Target',
+    isProOnly: true,
+  },
+  {
+    type: 'boardroom_prep',
+    label: 'Boardroom Prep',
+    description: 'Trends and data points for executive presentations',
+    icon: 'Briefcase',
+    isProOnly: true,
+  },
+  {
+    type: 'custom_voice',
+    label: 'Custom',
+    description: 'Describe what you need and we will build it',
+    icon: 'Mic',
+    isProOnly: true,
+  },
+];
+
 export interface BriefingSegment {
   headline: string;
   analysis: string;
@@ -17,6 +79,7 @@ export interface Briefing {
   id: string;
   user_id: string;
   briefing_date: string;
+  briefing_type: BriefingType;
   script_text: string;
   segments: BriefingSegment[];
   audio_url: string | null;
@@ -24,6 +87,9 @@ export interface Briefing {
   context_snapshot: Record<string, unknown> | null;
   news_sources: Record<string, unknown> | null;
   generation_model: string;
+  custom_context: string | null;
+  voice_note_url: string | null;
+  is_pro_only: boolean;
   created_at: string;
 }
 

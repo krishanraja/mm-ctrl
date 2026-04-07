@@ -12,6 +12,7 @@ const Settings = lazy(() => import('@/pages/Settings'))
 const Compliance = lazy(() => import('@/pages/Compliance'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const Booking = lazy(() => import('@/pages/Booking'))
+const BriefingPage = lazy(() => import('@/pages/BriefingPage'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 function LoadingPage() {
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
   {
     path: '/context',
     element: <LazyWrapper><RequireAuth><ContextExport /></RequireAuth></LazyWrapper>,
+  },
+  {
+    path: '/briefing',
+    element: <LazyWrapper><RequireAuth><BriefingPage /></RequireAuth></LazyWrapper>,
   },
   {
     path: '/settings',
