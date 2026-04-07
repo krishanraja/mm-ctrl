@@ -44,6 +44,9 @@ interface UserContext {
   recentDecisions: string[];
   confirmedPatterns: string[];
   watchingCompanies: string[];
+  objectives: string[];
+  blockers: string[];
+  preferences: string[];
   learningStyle: string;
   feedbackPreferences: { preferredTags: string[]; preferredSources: string[] };
 }
@@ -117,8 +120,28 @@ function buildTypeSearchInstructions(briefingType: BriefingType, customContext: 
       return customContext
         ? `The leader specifically asked for: "${customContext}". Tailor your search to find news and insights directly relevant to this request. Interpret their intent and find the most useful stories for their specific situation.`
         : `Search for high-impact AI and business news relevant to this leader's role and industry.`;
-    default:
-      return `Search for the most important AI and business news from the past 48 hours that THIS leader needs to know. Prioritize: deals/launches that shift competitive dynamics, AI adoption milestones with real numbers, leadership moves at companies that matter, and stories of leaders doing noteworthy things in AI.`;
+    default: {
+      const parts: string[] = [];
+      if (userCtx.industry && userCtx.role) {
+        parts.push(`Search for news that a ${userCtx.role} in ${userCtx.industry} needs to know from the past 48 hours.`);
+      } else if (userCtx.industry) {
+        parts.push(`Search for the most important ${userCtx.industry} industry news from the past 48 hours.`);
+      } else {
+        parts.push(`Search for the most important business and technology news from the past 48 hours.`);
+      }
+      if (userCtx.company) {
+        parts.push(`Include news affecting ${userCtx.company} and its competitive landscape.`);
+      }
+      if (userCtx.objectives?.length > 0) {
+        parts.push(`Their strategic goals: ${userCtx.objectives.slice(0, 2).join("; ")}. Prioritize news that advances or threatens these.`);
+      }
+      if (userCtx.activeMissions.length > 0) {
+        parts.push(`Active priorities: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these.`);
+      }
+      parts.push(`Prioritize: ${userCtx.industry || 'sector'} developments, competitive shifts${userCtx.company ? ` affecting ${userCtx.company}` : ''}, technology that changes how ${userCtx.role || 'leader'}s operate, and deals or launches with real numbers.`);
+      parts.push(`Also include significant AI developments, but only when they concretely affect this leader's world.`);
+      return parts.join(" ");
+    }
   }
 }
 
@@ -137,6 +160,15 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
   }
   if (userCtx.recentDecisions.length > 0) {
     contextParts.push(`Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join("; ")}. Surface news that informs these.`);
+  }
+  if (userCtx.objectives?.length > 0) {
+    contextParts.push(`Their strategic goals: ${userCtx.objectives.slice(0, 3).join("; ")}. Prioritize news that advances or threatens these.`);
+  }
+  if (userCtx.blockers?.length > 0) {
+    contextParts.push(`Challenges they face: ${userCtx.blockers.slice(0, 2).join("; ")}. Surface solutions or shifts relevant to these.`);
+  }
+  if (userCtx.role) {
+    contextParts.push(`Frame news through the lens of a ${userCtx.role}.`);
   }
 
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
@@ -189,7 +221,7 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
 
   // Fallback general query
   if (queries.length === 0) {
-    queries.push("AI business enterprise technology news");
+    queries.push(`${userCtx.industry || 'business'} ${userCtx.role || 'leadership'} news trends`);
   }
 
   const allResults: Array<{ title: string; url: string; content: string }> = [];
@@ -289,15 +321,24 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
     if (keywords) queries.push(keywords);
   }
 
-  // General AI/business queries (baseline)
-  queries.push(
-    '"AI" AND ("pricing" OR "API" OR "launch" OR "release")',
-    '"AI" AND ("enterprise" OR "business" OR "deploy" OR "ROI")',
-  );
+  // Objective-derived queries
+  for (const obj of (userCtx.objectives || []).slice(0, 2)) {
+    const keywords = obj.split(/\s+/).filter(w => w.length > 3).slice(0, 3).join(" ");
+    if (keywords) queries.push(keywords);
+  }
 
-  // Role-specific query
+  // General AI queries (only if we lack user-specific queries, and contextualized to industry)
+  if (queries.length < 3) {
+    if (userCtx.industry) {
+      queries.push(`"AI" AND "${userCtx.industry}" AND ("pricing" OR "launch" OR "release")`);
+    } else {
+      queries.push('"AI" AND ("pricing" OR "API" OR "launch" OR "release")');
+    }
+  }
+
+  // Role-specific query (contextualized with industry)
   if (userCtx.role) {
-    queries.push(`"${userCtx.role}" AND ("leadership" OR "strategy" OR "AI")`);
+    queries.push(`"${userCtx.role}" AND "${userCtx.industry || 'business'}" AND ("trends" OR "strategy" OR "innovation")`);
   }
 
   const allResults: Array<{
@@ -353,9 +394,21 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
 
 async function curateWithOpenAI(
   rawTitles: string[],
-  apiKey: string
+  apiKey: string,
+  userCtx: UserContext
 ): Promise<NewsHeadline[]> {
   const today = new Date().toISOString().split("T")[0];
+
+  const contextLines: string[] = [];
+  if (userCtx.role) contextLines.push(`Role: ${userCtx.role}`);
+  if (userCtx.company) contextLines.push(`Company: ${userCtx.company}`);
+  if (userCtx.industry) contextLines.push(`Industry: ${userCtx.industry}`);
+  if (userCtx.activeMissions.length > 0) contextLines.push(`Current priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}`);
+  if (userCtx.objectives?.length > 0) contextLines.push(`Goals: ${userCtx.objectives.slice(0, 2).join("; ")}`);
+  if (userCtx.recentDecisions.length > 0) contextLines.push(`Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join("; ")}`);
+
+  const leaderDesc = `${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''}`;
+
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -367,11 +420,17 @@ async function curateWithOpenAI(
       messages: [
         {
           role: "system",
-          content: `You are an AI news curator. Rewrite raw headlines through a cynical, experienced operator's lens. Assign each: SIGNAL, NOISE, DECISION TRIGGER, or KRISH'S TAKE. Return JSON: [{"title": "[TAG] headline", "source": "Source"}]. Select 10-15. Skip governance, geopolitics.`,
+          content: `You are a news curator for a specific leader.
+${contextLines.join("\n")}
+
+Rewrite raw headlines through a cynical, experienced operator's lens. Assign each: SIGNAL, DECISION TRIGGER, or KRISH'S TAKE.
+PRIORITIZE stories that directly affect their industry, role, or active priorities.
+DEPRIORITIZE generic AI news unless it specifically changes something for this leader.
+Return JSON: [{"title": "[TAG] headline", "source": "Source"}]. Select 10-15. Skip governance, geopolitics.`,
         },
         {
           role: "user",
-          content: `Today: ${today}. Pick 10-15 most relevant for a business leader.\n\n${rawTitles.map((h, i) => `${i + 1}. ${h}`).join("\n")}`,
+          content: `Today: ${today}. Pick 10-15 most relevant for this ${leaderDesc}. Rank by direct relevance to their situation.\n\n${rawTitles.map((h, i) => `${i + 1}. ${h}`).join("\n")}`,
         },
       ],
       temperature: 0.2,
@@ -472,14 +531,18 @@ async function curateHeadlines(
       messages: [
         {
           role: "system",
-          content: `You are a ruthless news editor. Your job: cut the weak stories and keep only what would make a busy ${userCtx.role || 'executive'} stop what they are doing to listen. ${typeHint} ${feedbackHint}
+          content: `You are a ruthless news editor. Your job: cut the weak stories and keep only what would make a busy ${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''} stop what they are doing to listen. ${typeHint} ${feedbackHint}
+${userCtx.activeMissions.length > 0 ? `Their active priorities: ${userCtx.activeMissions.slice(0, 3).join('; ')}. Stories touching these priorities should rank higher.` : ''}
+${userCtx.recentDecisions.length > 0 ? `Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join('; ')}. News informing these decisions is high-priority.` : ''}
+${(userCtx.objectives?.length || 0) > 0 ? `Strategic goals: ${userCtx.objectives.slice(0, 2).join('; ')}.` : ''}
 
 Rules:
 - Deduplicate similar stories (keep the strongest angle)
 - Kill anything incremental ("Company X hires Y" unless Y is a massive name)
 - Kill anything that is just commentary without new information
-- Rank by: does this change a decision, reveal a shift, or surface a must-know number?
-- Return the top 6-8, ordered by impact
+- Kill generic AI news that does not concretely affect this leader's industry or decisions
+- Rank by: does this change a decision, reveal a shift, or surface a must-know number for THIS specific leader?
+- Return the top 6-8, ordered by impact to this leader
 
 Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
         },
@@ -526,6 +589,9 @@ async function getUserContext(
     recentDecisions: [],
     confirmedPatterns: [],
     watchingCompanies: [],
+    objectives: [],
+    blockers: [],
+    preferences: [],
     learningStyle: "",
     feedbackPreferences: { preferredTags: [], preferredSources: [] },
   };
@@ -534,12 +600,12 @@ async function getUserContext(
   try {
     const { data: facts } = await supabase
       .from("user_memory")
-      .select("fact_key, fact_value")
+      .select("fact_key, fact_value, fact_category")
       .eq("user_id", userId)
       .eq("is_current", true)
-      .in("fact_category", ["identity", "business"])
+      .in("fact_category", ["identity", "business", "objective", "blocker", "preference"])
       .order("confidence_score", { ascending: false })
-      .limit(20);
+      .limit(40);
 
     if (facts) {
       for (const f of facts) {
@@ -560,6 +626,9 @@ async function getUserContext(
         if (f.fact_key === "industry" || f.fact_key === "vertical")
           ctx.industry = f.fact_value;
         if (f.fact_key === "team_size") ctx.teamSize = f.fact_value;
+        if (f.fact_category === "objective") ctx.objectives.push(f.fact_value);
+        if (f.fact_category === "blocker") ctx.blockers.push(f.fact_value);
+        if (f.fact_category === "preference") ctx.preferences.push(f.fact_value);
       }
     }
   } catch (e) {
@@ -802,6 +871,12 @@ async function generateBriefingScript(
       : null,
     userCtx.watchingCompanies.length
       ? `Companies they watch: ${userCtx.watchingCompanies.join(", ")}`
+      : null,
+    userCtx.objectives?.length
+      ? `Strategic goals: ${userCtx.objectives.join("; ")}`
+      : null,
+    userCtx.blockers?.length
+      ? `Challenges they face: ${userCtx.blockers.join("; ")}`
       : null,
   ]
     .filter(Boolean)
@@ -1050,7 +1125,8 @@ serve(async (req) => {
         if (tavilyRaw.length > 0 && openaiKey) {
           headlines = await curateWithOpenAI(
             tavilyRaw.map(h => `${h.title} (${h.source})`),
-            openaiKey
+            openaiKey,
+            userCtx
           );
           console.log(`Tavily+OpenAI: ${headlines.length} headlines`);
         }
@@ -1063,7 +1139,7 @@ serve(async (req) => {
       try {
         const raw = await fetchBraveNews(braveKey, userCtx);
         if (raw.length > 0) {
-          headlines = await curateWithOpenAI(raw, openaiKey);
+          headlines = await curateWithOpenAI(raw, openaiKey, userCtx);
           console.log(`Brave+OpenAI: ${headlines.length} headlines`);
         }
       } catch (e) {
