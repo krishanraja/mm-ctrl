@@ -654,9 +654,12 @@ export function MobileMemoryDashboard() {
           </motion.div>
         )}
 
+        {/* Spacer for fixed bottom nav */}
+        <div className="flex-shrink-0 h-20" />
+
         <MiniPlayer />
-        <BottomNav />
       </div>
+      <BottomNav />
 
       <AnimatePresence>
         {showVerification && pendingVerifications.length > 0 && (
