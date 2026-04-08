@@ -270,7 +270,7 @@ export function MobileMemoryDashboard() {
                   </p>
                 </div>
               </div>
-              <div className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold overflow-hidden">
+              <div className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold overflow-hidden text-center">
                 <motion.div
                   className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
                   initial={{ scaleX: 0 }}

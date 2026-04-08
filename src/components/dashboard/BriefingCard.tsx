@@ -130,18 +130,18 @@ export function BriefingCard({
                       {briefing.segments?.map((seg, i) => {
                         const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
                         return (
-                          <div key={i} className="flex items-start gap-2">
+                          <div key={i} className="leading-snug">
                             <span
                               className={cn(
-                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border flex-shrink-0 mt-0.5 min-w-[80px] text-center",
+                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
                                 tagConfig?.className || "bg-muted text-muted-foreground border-border"
                               )}
                             >
                               {tagConfig?.label || seg.framework_tag}
                             </span>
-                            <p className="text-xs text-muted-foreground leading-snug">
+                            <span className="text-xs text-muted-foreground">
                               {seg.headline}
-                            </p>
+                            </span>
                           </div>
                         );
                       })}
