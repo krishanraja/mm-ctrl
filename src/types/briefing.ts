@@ -26,7 +26,7 @@ export interface BriefingTypeConfig {
 export const BRIEFING_TYPES: BriefingTypeConfig[] = [
   {
     type: 'default',
-    label: "Today's Must-Know",
+    label: "Daily Brief",
     description: 'The most important AI and business news for your world',
     icon: 'Radio',
     isProOnly: false,

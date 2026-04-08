@@ -88,17 +88,17 @@ export function BriefingCard({
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
       <Card className="overflow-hidden">
-        <CardContent className="p-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3 flex-1 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Radio className="w-3.5 h-3.5 text-accent" />
+        <CardContent className="p-2.5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2 flex-1 min-w-0">
+              <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Radio className="w-3 h-3 text-accent" />
               </div>
               <div
                 className="min-w-0 flex-1 cursor-pointer"
                 onClick={() => setExpanded((prev) => !prev)}
               >
-                <div className="flex items-center gap-2 mb-0.5">
+                <div className="flex items-center gap-1.5 mb-0.5">
                   <p className="text-sm font-semibold">{briefingLabel}</p>
                   <Badge variant="secondary" className="text-[10px] font-normal px-2 py-0.5 whitespace-nowrap">
                     {durationMin} min

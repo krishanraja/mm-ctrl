@@ -83,6 +83,18 @@ function buildPerplexityPrompt(userCtx: UserContext, briefingType: BriefingType,
   if (userCtx.watchingCompanies.length > 0) {
     parts.push(`Companies they track: ${userCtx.watchingCompanies.join(", ")}.`);
   }
+  if (userCtx.objectives.length > 0) {
+    parts.push(`Their strategic objectives: ${userCtx.objectives.slice(0, 4).join("; ")}.`);
+  }
+  if (userCtx.blockers.length > 0) {
+    parts.push(`Challenges they face: ${userCtx.blockers.slice(0, 3).join("; ")}.`);
+  }
+  if (userCtx.preferences.length > 0) {
+    parts.push(`Tools and methods they use: ${userCtx.preferences.slice(0, 4).join(", ")}.`);
+  }
+  if (userCtx.recentDecisions.length > 0) {
+    parts.push(`Active decisions on their desk: ${userCtx.recentDecisions.slice(0, 3).join("; ")}.`);
+  }
 
   // Type-specific search shaping
   const typeInstructions = buildTypeSearchInstructions(briefingType, customContext, userCtx);
@@ -90,14 +102,23 @@ function buildPerplexityPrompt(userCtx: UserContext, briefingType: BriefingType,
   parts.push(`
 ${typeInstructions}
 
-QUALITY BAR: Only include stories where a busy leader would say "I'm glad someone told me this." Prefer last-48-hour news. Every headline must pass this test: does it change a decision, reveal a competitive shift, or surface a number worth knowing?
+QUALITY BAR: Only include stories where THIS SPECIFIC leader would say "that changes something for me." Prefer last-48-hour news. Every headline must pass this test: does it change one of their decisions, affect one of their priorities, or surface a number relevant to their specific situation?
+
+RELEVANCE TEST - every story MUST connect to at least one of these (from the leader's actual profile):
+${userCtx.objectives.length > 0 ? `- Their objectives: ${userCtx.objectives.slice(0, 4).join("; ")}` : ''}
+${userCtx.activeMissions.length > 0 ? `- Their priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}` : ''}
+${userCtx.recentDecisions.length > 0 ? `- Their active decisions: ${userCtx.recentDecisions.slice(0, 3).join("; ")}` : ''}
+${userCtx.watchingCompanies.length > 0 ? `- Their watchlist: ${userCtx.watchingCompanies.join(", ")}` : ''}
+${userCtx.preferences.length > 0 ? `- Their tools/methods: ${userCtx.preferences.slice(0, 4).join(", ")}` : ''}
+${userCtx.blockers.length > 0 ? `- Their challenges: ${userCtx.blockers.slice(0, 3).join("; ")}` : ''}
+If a story does not clearly connect to ANY of the above, DO NOT include it, no matter how trendy or popular the topic is.
 
 For each headline, assign ONE tag:
 SIGNAL: Changes the math on a decision this leader faces.
 DECISION TRIGGER: Something shifted that demands action or reassessment.
 KRISH'S TAKE: A sharp, slightly cynical observation that reframes conventional wisdom.
 
-Do NOT include NOISE items. Do NOT include: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless they shift competitive dynamics).
+Do NOT include NOISE items. Do NOT include: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless they shift competitive dynamics). Do NOT include stories about topics unrelated to this leader's objectives, decisions, tools, or watchlist, no matter how trendy in general tech news.
 
 8-18 words per headline. Present tense. Specific numbers when available.
 
@@ -126,28 +147,81 @@ function buildTypeSearchInstructions(briefingType: BriefingType, customContext: 
         ? `The leader specifically asked for: "${customContext}". Tailor your search to find news and insights directly relevant to this request. Interpret their intent and find the most useful stories for their specific situation.`
         : `Search for high-impact AI and business news relevant to this leader's role and industry.`;
     default: {
+      const searchTopics = buildPersonalizedSearchTopics(userCtx);
       const parts: string[] = [];
-      if (userCtx.industry && userCtx.role) {
-        parts.push(`Search for news that a ${userCtx.role} in ${userCtx.industry} needs to know from the past 48 hours.`);
-      } else if (userCtx.industry) {
-        parts.push(`Search for the most important ${userCtx.industry} industry news from the past 48 hours.`);
+
+      if (searchTopics.length >= 3) {
+        // Rich profile: drive the search with specific topics from the user's actual situation
+        parts.push(`SEARCH FOR NEWS ON THESE SPECIFIC TOPICS (derived from this leader's actual priorities, tools, and decisions):`);
+        searchTopics.forEach((topic, i) => {
+          parts.push(`${i + 1}. ${topic}`);
+        });
+        parts.push(`\nPrioritize stories that directly connect to the topics above. Every headline should make this specific person say "that changes something for me." If a story doesn't connect to at least one of the above topics, it is probably not relevant enough to include.`);
+        if (userCtx.company) {
+          parts.push(`Also include news directly affecting ${userCtx.company} and its competitive landscape.`);
+        }
+        if (userCtx.industry) {
+          parts.push(`Frame all results through the lens of ${userCtx.industry}.`);
+        }
       } else {
-        parts.push(`Search for the most important business and technology news from the past 48 hours.`);
+        // Sparse profile: fall back to role/industry search
+        if (userCtx.industry && userCtx.role) {
+          parts.push(`Search for news that a ${userCtx.role} in ${userCtx.industry} needs to know from the past 48 hours.`);
+        } else if (userCtx.industry) {
+          parts.push(`Search for the most important ${userCtx.industry} industry news from the past 48 hours.`);
+        } else {
+          parts.push(`Search for the most important business and technology news from the past 48 hours.`);
+        }
+        if (userCtx.company) {
+          parts.push(`Include news affecting ${userCtx.company} and its competitive landscape.`);
+        }
+        if (userCtx.objectives?.length > 0) {
+          parts.push(`Their strategic goals: ${userCtx.objectives.slice(0, 2).join("; ")}. Prioritize news that advances or threatens these.`);
+        }
+        if (userCtx.activeMissions.length > 0) {
+          parts.push(`Active priorities: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these.`);
+        }
+        parts.push(`Prioritize: ${userCtx.industry || 'sector'} developments, competitive shifts${userCtx.company ? ` affecting ${userCtx.company}` : ''}, technology that changes how ${userCtx.role || 'leader'}s operate, and deals or launches with real numbers.`);
       }
-      if (userCtx.company) {
-        parts.push(`Include news affecting ${userCtx.company} and its competitive landscape.`);
-      }
-      if (userCtx.objectives?.length > 0) {
-        parts.push(`Their strategic goals: ${userCtx.objectives.slice(0, 2).join("; ")}. Prioritize news that advances or threatens these.`);
-      }
-      if (userCtx.activeMissions.length > 0) {
-        parts.push(`Active priorities: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these.`);
-      }
-      parts.push(`Prioritize: ${userCtx.industry || 'sector'} developments, competitive shifts${userCtx.company ? ` affecting ${userCtx.company}` : ''}, technology that changes how ${userCtx.role || 'leader'}s operate, and deals or launches with real numbers.`);
-      parts.push(`Also include significant AI developments, but only when they concretely affect this leader's world.`);
-      return parts.join(" ");
+      return parts.join("\n");
     }
   }
+}
+
+function buildPersonalizedSearchTopics(userCtx: UserContext): string[] {
+  const topics: string[] = [];
+
+  // From objectives: each becomes a concrete search topic
+  for (const obj of userCtx.objectives.slice(0, 4)) {
+    topics.push(obj);
+  }
+
+  // From blockers: solution-seeking searches
+  for (const blocker of userCtx.blockers.slice(0, 2)) {
+    topics.push(blocker);
+  }
+
+  // From preferences (tools, methods): search for updates on tools they actually use
+  for (const pref of userCtx.preferences.slice(0, 3)) {
+    topics.push(`${pref} news updates`);
+  }
+
+  // From watching companies: competitive intelligence
+  for (const company of userCtx.watchingCompanies.slice(0, 4)) {
+    topics.push(`${company} latest news strategy`);
+  }
+
+  // From active decisions: decision-relevant context
+  for (const decision of userCtx.recentDecisions.slice(0, 2)) {
+    topics.push(decision);
+  }
+
+  // From active missions: mission-relevant news
+  for (const mission of userCtx.activeMissions.slice(0, 2)) {
+    topics.push(mission);
+  }
+
+  return topics.slice(0, 12);
 }
 
 async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefingType: BriefingType = 'default', customContext?: string): Promise<NewsHeadline[]> {
@@ -1204,18 +1278,23 @@ serve(async (req) => {
     console.log("Fetching user context...");
     const userCtx = await getUserContext(supabase, user.id);
 
+    const searchTopics = buildPersonalizedSearchTopics(userCtx);
     console.log("User context populated:", {
-      hasName: userCtx.name !== "there",
-      hasRole: userCtx.role !== "executive",
-      hasCompany: !!userCtx.company,
-      hasIndustry: !!userCtx.industry,
+      name: userCtx.name,
+      role: userCtx.role,
+      company: userCtx.company,
+      industry: userCtx.industry,
+      objectives: userCtx.objectives.slice(0, 4),
+      blockers: userCtx.blockers.slice(0, 3),
+      preferences: userCtx.preferences.slice(0, 4),
+      missions: userCtx.activeMissions,
+      watchlist: userCtx.watchingCompanies,
+      decisions: userCtx.recentDecisions.slice(0, 3),
       strengths: userCtx.strengths.length,
-      missions: userCtx.activeMissions.length,
-      watchlist: userCtx.watchingCompanies.length,
-      decisions: userCtx.recentDecisions.length,
       patterns: userCtx.confirmedPatterns.length,
       learningStyle: userCtx.learningStyle,
       briefingType,
+      searchTopics,
     });
 
     // 2. Fetch news (shaped by briefing type)
