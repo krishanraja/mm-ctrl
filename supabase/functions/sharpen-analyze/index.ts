@@ -1,5 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { selectOptimalModel } from "../_shared/model-router.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -79,6 +81,15 @@ serve(async (req) => {
       throw new Error('OPENAI_API_KEY is not configured');
     }
 
+    // Dynamic model selection via Artificial Analysis benchmarks
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false } }
+    );
+    const modelSelection = await selectOptimalModel('coaching_analysis', supabase);
+    console.log(`Sharpen model: ${modelSelection.model} (${modelSelection.reasoning})`);
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -86,7 +97,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: modelSelection.model,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { 

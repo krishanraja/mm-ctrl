@@ -12,6 +12,7 @@ export type BriefingType =
   | 'competitive_intel'
   | 'boardroom_prep'
   | 'team_update'
+  | 'ai_landscape'
   | 'custom_voice';
 
 export interface BriefingTypeConfig {
@@ -56,6 +57,13 @@ export const BRIEFING_TYPES: BriefingTypeConfig[] = [
     label: 'Boardroom Prep',
     description: 'Trends and data points for executive presentations',
     icon: 'Briefcase',
+    isProOnly: true,
+  },
+  {
+    type: 'ai_landscape',
+    label: 'AI Model Landscape',
+    description: 'Live benchmark data on the AI models that matter for your work',
+    icon: 'BarChart3',
     isProOnly: true,
   },
   {

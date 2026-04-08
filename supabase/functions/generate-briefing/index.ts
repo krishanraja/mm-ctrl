@@ -14,6 +14,9 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { selectOptimalModel } from "../_shared/model-router.ts";
+import { getModelBenchmarks } from "../_shared/aa-cache.ts";
+import type { AAModel } from "../_shared/aa-types.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,9 +31,9 @@ interface NewsHeadline {
   source: string;
 }
 
-type BriefingType = 'default' | 'macro_trends' | 'vendor_landscape' | 'competitive_intel' | 'boardroom_prep' | 'team_update' | 'custom_voice';
+type BriefingType = 'default' | 'macro_trends' | 'vendor_landscape' | 'competitive_intel' | 'boardroom_prep' | 'team_update' | 'ai_landscape' | 'custom_voice';
 
-const PRO_ONLY_TYPES: BriefingType[] = ['vendor_landscape', 'competitive_intel', 'boardroom_prep', 'custom_voice'];
+const PRO_ONLY_TYPES: BriefingType[] = ['vendor_landscape', 'competitive_intel', 'boardroom_prep', 'ai_landscape', 'custom_voice'];
 
 interface UserContext {
   name: string;
@@ -116,6 +119,8 @@ function buildTypeSearchInstructions(briefingType: BriefingType, customContext: 
       return `Focus on: stories a board member would ask about. Macro AI trends with hard numbers, industry benchmarks, leadership moves at major companies, regulatory shifts, and data points that support strategic narratives. Everything should be quotable in a presentation.`;
     case 'team_update':
       return `Focus on: practical AI developments that affect day-to-day operations. New tools, workflow improvements, productivity gains with real numbers, team-level adoption stories, and training/upskilling developments.`;
+    case 'ai_landscape':
+      return `Focus on: AI model benchmark changes, new model releases, pricing shifts across LLM providers, capability improvements in coding/reasoning/speed, and build-vs-buy implications for ${userCtx.industry || 'their industry'}. Use the provided benchmark data as the primary source; supplement with recent news about model releases.`;
     case 'custom_voice':
       return customContext
         ? `The leader specifically asked for: "${customContext}". Tailor your search to find news and insights directly relevant to this request. Interpret their intent and find the most useful stories for their specific situation.`
@@ -395,7 +400,8 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
 async function curateWithOpenAI(
   rawTitles: string[],
   apiKey: string,
-  userCtx: UserContext
+  userCtx: UserContext,
+  modelOverride?: string
 ): Promise<NewsHeadline[]> {
   const today = new Date().toISOString().split("T")[0];
 
@@ -416,7 +422,7 @@ async function curateWithOpenAI(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: modelOverride || "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -509,6 +515,7 @@ async function curateHeadlines(
   openaiKey: string,
   briefingType: BriefingType,
   customContext?: string,
+  modelOverride?: string,
 ): Promise<NewsHeadline[]> {
   if (headlines.length <= 8) return headlines;
 
@@ -527,7 +534,7 @@ async function curateHeadlines(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: modelOverride || "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -832,6 +839,8 @@ function buildBriefingPurposeBlock(briefingType: BriefingType, customContext?: s
       return 'PURPOSE: This briefing prepares the leader for a board or executive presentation. Frame everything as: what would a board member ask about, what data points tell the story, and what is the "so what" for the business.';
     case 'team_update':
       return 'PURPOSE: This briefing is for team communication. Frame everything as: what does the team need to know, what practical tools or changes affect their work, and what should they start/stop doing.';
+    case 'ai_landscape':
+      return 'PURPOSE: This briefing uses live AI model benchmark data. Frame everything as: which models matter for their specific use cases, pricing changes that affect ROI, and capability shifts that change build-vs-buy decisions. Lead with what changed and why it matters to them.';
     case 'custom_voice':
       return customContext
         ? `PURPOSE: The leader specifically asked for: "${customContext}". Shape every story through this lens. Make every insight directly useful for their stated need.`
@@ -847,6 +856,7 @@ async function generateBriefingScript(
   openaiKey: string,
   briefingType: BriefingType = 'default',
   customContext?: string,
+  modelOverride?: string,
 ): Promise<{ segments: BriefingSegment[]; script: string }> {
   const contextBlock = [
     `Name: ${userCtx.name}`,
@@ -897,7 +907,7 @@ async function generateBriefingScript(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: modelOverride || "gpt-4o",
       messages: [
         {
           role: "system",
@@ -984,6 +994,101 @@ Total: 500-600 words. 3-4 minutes spoken. Every sentence earns its place.`,
     segments: parsed.segments || [],
     script,
   };
+}
+
+// ── AI Landscape Headline Generator ────────────────────────────────
+
+function generateAILandscapeHeadlines(models: AAModel[], userCtx: UserContext): NewsHeadline[] {
+  const headlines: NewsHeadline[] = [];
+  const ranked = models
+    .filter((m) => m.artificial_analysis_intelligence_index != null)
+    .sort((a, b) => (b.artificial_analysis_intelligence_index ?? 0) - (a.artificial_analysis_intelligence_index ?? 0));
+
+  if (ranked.length === 0) return headlines;
+
+  // Top model insight
+  const top = ranked[0];
+  headlines.push({
+    title: `[SIGNAL] ${top.name} by ${top.model_creator?.name || 'Unknown'} leads intelligence benchmarks at ${top.artificial_analysis_intelligence_index} - ${top.price_1m_blended_3_to_1 != null ? `$${top.price_1m_blended_3_to_1.toFixed(2)}/1M tokens` : 'pricing TBD'}`,
+    source: "Artificial Analysis",
+  });
+
+  // Best value model (high quality, low cost)
+  const valueModels = ranked
+    .filter((m) => (m.price_1m_blended_3_to_1 ?? 999) < 2.0 && (m.artificial_analysis_intelligence_index ?? 0) > 60)
+    .sort((a, b) => (a.price_1m_blended_3_to_1 ?? 999) - (b.price_1m_blended_3_to_1 ?? 999));
+  if (valueModels.length > 0) {
+    const best = valueModels[0];
+    headlines.push({
+      title: `[DECISION TRIGGER] ${best.name} scores ${best.artificial_analysis_intelligence_index} on intelligence at just $${best.price_1m_blended_3_to_1?.toFixed(2)}/1M tokens - strongest value play right now`,
+      source: "Artificial Analysis",
+    });
+  }
+
+  // Coding leader
+  const codingRanked = models
+    .filter((m) => m.artificial_analysis_coding_index != null)
+    .sort((a, b) => (b.artificial_analysis_coding_index ?? 0) - (a.artificial_analysis_coding_index ?? 0));
+  if (codingRanked.length > 0) {
+    const codingTop = codingRanked[0];
+    headlines.push({
+      title: `[SIGNAL] ${codingTop.name} dominates coding benchmarks at ${codingTop.artificial_analysis_coding_index} - ${userCtx.role?.toLowerCase().includes('cto') || userCtx.industry?.toLowerCase().includes('tech') ? 'directly relevant to your engineering stack decisions' : 'matters if your team builds with AI'}`,
+      source: "Artificial Analysis",
+    });
+  }
+
+  // Speed leader
+  const speedRanked = models
+    .filter((m) => m.median_output_tokens_per_second != null && m.median_output_tokens_per_second > 0)
+    .sort((a, b) => (b.median_output_tokens_per_second ?? 0) - (a.median_output_tokens_per_second ?? 0));
+  if (speedRanked.length > 0) {
+    const fastest = speedRanked[0];
+    headlines.push({
+      title: `[SIGNAL] ${fastest.name} outputs ${fastest.median_output_tokens_per_second?.toFixed(0)} tokens/sec - fastest in class for real-time applications`,
+      source: "Artificial Analysis",
+    });
+  }
+
+  // Price compression trend
+  const affordableHighQuality = ranked.filter(
+    (m) => (m.artificial_analysis_intelligence_index ?? 0) > 70 && (m.price_1m_blended_3_to_1 ?? 999) < 1.5
+  );
+  if (affordableHighQuality.length >= 3) {
+    headlines.push({
+      title: `[KRISH'S TAKE] ${affordableHighQuality.length} models now score above 70 on intelligence at under $1.50/1M tokens. The cost barrier to high-quality AI is collapsing.`,
+      source: "Analysis",
+    });
+  }
+
+  // Provider diversity
+  const providers = new Set(ranked.slice(0, 10).map((m) => m.model_creator?.name).filter(Boolean));
+  if (providers.size >= 4) {
+    headlines.push({
+      title: `[SIGNAL] Top 10 models span ${providers.size} providers (${[...providers].slice(0, 4).join(', ')}${providers.size > 4 ? ' and more' : ''}) - vendor lock-in risk is dropping`,
+      source: "Artificial Analysis",
+    });
+  }
+
+  // Math/reasoning leader
+  const mathRanked = models
+    .filter((m) => m.artificial_analysis_math_index != null)
+    .sort((a, b) => (b.artificial_analysis_math_index ?? 0) - (a.artificial_analysis_math_index ?? 0));
+  if (mathRanked.length > 0 && mathRanked[0].artificial_analysis_math_index !== top.artificial_analysis_math_index) {
+    headlines.push({
+      title: `[SIGNAL] ${mathRanked[0].name} leads math and reasoning benchmarks at ${mathRanked[0].artificial_analysis_math_index} - different leader than overall intelligence`,
+      source: "Artificial Analysis",
+    });
+  }
+
+  // Personalized insight based on user context
+  if (userCtx.objectives?.length > 0) {
+    headlines.push({
+      title: `[KRISH'S TAKE] Given your objective "${userCtx.objectives[0]}", the model landscape suggests ${ranked.length > 5 ? 'strong optionality' : 'limited but improving choices'} across providers. The quality-to-cost ratio has never been better for leaders investing in AI.`,
+      source: "Analysis",
+    });
+  }
+
+  return headlines.slice(0, 10);
 }
 
 // ── Main Handler ───────────────────────────────────────────────────
@@ -1088,6 +1193,13 @@ serve(async (req) => {
       }
     }
 
+    // 0. Resolve model selections via dynamic routing (or fallback)
+    const scriptModelSelection = await selectOptimalModel("briefing_script", supabase);
+    const curationModelSelection = await selectOptimalModel("briefing_curation", supabase);
+    const resolvedScriptModel = scriptModelSelection.model;
+    const resolvedCurationModel = curationModelSelection.model;
+    console.log(`Model routing: script=${resolvedScriptModel}, curation=${resolvedCurationModel}`);
+
     // 1. Get user context
     console.log("Fetching user context...");
     const userCtx = await getUserContext(supabase, user.id);
@@ -1110,6 +1222,19 @@ serve(async (req) => {
     console.log(`Fetching news for ${briefingType} briefing...`);
     let headlines: NewsHeadline[] = [];
 
+    // AI Landscape briefing: generate synthetic headlines from live benchmark data
+    if (briefingType === 'ai_landscape') {
+      try {
+        const aaModels = await getModelBenchmarks(supabase);
+        if (aaModels.length > 0) {
+          headlines = generateAILandscapeHeadlines(aaModels, userCtx);
+          console.log(`AI Landscape: ${headlines.length} synthetic headlines from benchmark data`);
+        }
+      } catch (e) {
+        console.error("AI Landscape data fetch failed:", e);
+      }
+    }
+
     if (perplexityKey) {
       try {
         headlines = await fetchWithPerplexity(perplexityKey, userCtx, briefingType, customContext);
@@ -1126,7 +1251,8 @@ serve(async (req) => {
           headlines = await curateWithOpenAI(
             tavilyRaw.map(h => `${h.title} (${h.source})`),
             openaiKey,
-            userCtx
+            userCtx,
+            resolvedCurationModel
           );
           console.log(`Tavily+OpenAI: ${headlines.length} headlines`);
         }
@@ -1139,7 +1265,7 @@ serve(async (req) => {
       try {
         const raw = await fetchBraveNews(braveKey, userCtx);
         if (raw.length > 0) {
-          headlines = await curateWithOpenAI(raw, openaiKey, userCtx);
+          headlines = await curateWithOpenAI(raw, openaiKey, userCtx, resolvedCurationModel);
           console.log(`Brave+OpenAI: ${headlines.length} headlines`);
         }
       } catch (e) {
@@ -1154,7 +1280,7 @@ serve(async (req) => {
 
     // 2.5 Second-pass curation: deduplicate, rank, keep top 6-8
     console.log("Running second-pass curation...");
-    headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext);
+    headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
     console.log(`After curation: ${headlines.length} headlines`);
 
     // 3. Generate personalised briefing
@@ -1165,6 +1291,7 @@ serve(async (req) => {
       openaiKey,
       briefingType,
       customContext,
+      resolvedScriptModel,
     );
 
     if (!script || segments.length === 0) {
@@ -1182,7 +1309,7 @@ serve(async (req) => {
         segments,
         context_snapshot: userCtx,
         news_sources: headlines,
-        generation_model: "gpt-4o",
+        generation_model: resolvedScriptModel,
         custom_context: customContext || null,
         voice_note_url: voiceNoteUrl || null,
         is_pro_only: isProOnly,

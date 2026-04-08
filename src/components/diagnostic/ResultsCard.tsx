@@ -4,16 +4,22 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Trophy, TrendingUp } from "lucide-react"
+import { BenchmarkInsightCard } from "./BenchmarkInsightCard"
+import { useAssessmentBenchmarks } from "@/hooks/useAssessmentBenchmarks"
+import type { DiagnosticData, DiagnosticScores } from "@/types/diagnostic"
 
 interface ResultsCardProps {
   score: number
   tier: string
   percentile: number
   onContinue?: () => void
+  diagnosticData?: DiagnosticData | null
+  diagnosticScores?: DiagnosticScores | null
 }
 
-export function ResultsCard({ score, tier, percentile, onContinue }: ResultsCardProps) {
+export function ResultsCard({ score, tier, percentile, onContinue, diagnosticData, diagnosticScores }: ResultsCardProps) {
   const navigate = useNavigate()
+  const { enrichment } = useAssessmentBenchmarks(diagnosticData ?? null, diagnosticScores ?? null)
 
   const handleContinue = () => {
     if (onContinue) {
@@ -73,6 +79,9 @@ export function ResultsCard({ score, tier, percentile, onContinue }: ResultsCard
           </Button>
         </CardContent>
       </Card>
+
+      {/* AI Model Landscape benchmark insights */}
+      {enrichment && <BenchmarkInsightCard enrichment={enrichment} />}
     </motion.div>
   )
 }

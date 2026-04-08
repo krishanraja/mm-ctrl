@@ -52,6 +52,7 @@ import { BottomNav } from '@/components/memory-web/BottomNav';
 import { AppHeader } from '@/components/memory-web/AppHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { PLATFORM_GUIDES } from '@/lib/platform-guides';
+import { ModelRecommendationCard } from '@/components/export/ModelRecommendationCard';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 import type { ExportRecommendation } from '@/types/edge';
 
@@ -584,6 +585,12 @@ export default function ContextExport() {
               </div>
             </div>
           </div>
+
+          {/* AI model recommendation based on live benchmarks */}
+          <ModelRecommendationCard
+            useCase={selectedUseCase}
+            platform={selectedFormat}
+          />
 
           {/* Action buttons */}
           <div className="flex items-center gap-3">
