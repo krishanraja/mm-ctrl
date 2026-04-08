@@ -82,7 +82,7 @@ export function SegmentCard({
         isActive && "border-l-2 border-l-accent shadow-sm"
       )}
     >
-      <CardContent className="p-4 space-y-2">
+      <CardContent className="p-3 space-y-2">
         {/* Framework tag */}
         {tagConfig && (
           <Badge
@@ -109,7 +109,7 @@ export function SegmentCard({
         )}
 
         {/* Actions row */}
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex items-center gap-2 pt-1 overflow-x-auto">
           {/* Feedback buttons */}
           <button
             onClick={() => handleFeedback("useful")}

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Play, Pause } from "lucide-react";
+import { X, Play, Pause, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useBriefingContext } from "@/contexts/BriefingContext";
-import { useSubmitFeedback } from "@/hooks/useBriefing";
+import { useSubmitFeedback, useGenerateBriefing } from "@/hooks/useBriefing";
+import { supabase } from "@/integrations/supabase/client";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { FRAMEWORK_TAG_CONFIG, BRIEFING_TYPES } from "@/types/briefing";
 import type { PlaybackSpeed, FrameworkTag } from "@/types/briefing";
@@ -22,6 +23,7 @@ function formatTime(seconds: number): string {
 export function BriefingSheet() {
   const {
     briefing,
+    setBriefing,
     playback,
     isSheetOpen,
     setSheetOpen,
@@ -32,6 +34,7 @@ export function BriefingSheet() {
   } = useBriefingContext();
 
   const { submitFeedback } = useSubmitFeedback();
+  const { regenerate, generating: regenerating } = useGenerateBriefing();
   const { watchedCompanies, watchCompany } = useWatchlist();
   const scrollRef = useRef<HTMLDivElement>(null);
   const segmentRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -63,6 +66,19 @@ export function BriefingSheet() {
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
     seek(pct * playback.duration);
+  };
+
+  const handleRegenerate = async () => {
+    const newId = await regenerate();
+    if (newId) {
+      // Fetch the fresh briefing and update context
+      const { data } = await supabase
+        .from("briefings")
+        .select("*")
+        .eq("id", newId)
+        .maybeSingle();
+      if (data) setBriefing(data);
+    }
   };
 
   const handleFeedback = (segmentIndex: number, reaction: "useful" | "not_useful") => {
@@ -126,9 +142,20 @@ export function BriefingSheet() {
                   </p>
                 )}
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setSheetOpen(false)}>
-                <X className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleRegenerate}
+                  disabled={regenerating}
+                  title="Regenerate briefing"
+                >
+                  <RefreshCw className={`h-4 w-4 ${regenerating ? "animate-spin" : ""}`} />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => setSheetOpen(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Player controls (fixed) */}
@@ -182,7 +209,7 @@ export function BriefingSheet() {
             {/* Segment cards (scrollable) */}
             <div
               ref={scrollRef}
-              className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain px-4 py-4 space-y-3"
+              className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain px-2 py-4 space-y-3"
             >
               {briefing.segments.map((segment, index) => (
                 <div

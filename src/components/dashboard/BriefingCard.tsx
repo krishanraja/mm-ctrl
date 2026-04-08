@@ -8,7 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Briefing, BriefingSegment } from "@/types/briefing";
 import { FRAMEWORK_TAG_CONFIG, BRIEFING_TYPES } from "@/types/briefing";
-import { usePollAudio } from "@/hooks/useBriefing";
+import { usePollAudio, useGenerateBriefing } from "@/hooks/useBriefing";
+import { supabase } from "@/integrations/supabase/client";
 import { useBriefingContext } from "@/contexts/BriefingContext";
 
 function RotatingHeadlines({ segments }: { segments: BriefingSegment[] }) {
@@ -64,7 +65,20 @@ export function BriefingCard({
     briefing.audio_url ? null : briefing.id
   );
   const { setBriefing } = useBriefingContext();
+  const { regenerate, generating: regenerating } = useGenerateBriefing();
   const [expanded, setExpanded] = useState(false);
+
+  const handleRegenerate = async () => {
+    const newId = await regenerate();
+    if (newId) {
+      const { data } = await supabase
+        .from("briefings")
+        .select("*")
+        .eq("id", newId)
+        .maybeSingle();
+      if (data) setBriefing(data);
+    }
+  };
 
   useEffect(() => {
     if (audioUrl && !briefing.audio_url) {
@@ -108,6 +122,14 @@ export function BriefingCard({
                   {hasListened && (
                     <Check className="w-3 h-3 text-emerald-500" />
                   )}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleRegenerate(); }}
+                    disabled={regenerating}
+                    className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    title="Regenerate briefing"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${regenerating ? "animate-spin" : ""}`} />
+                  </button>
                   <motion.div
                     animate={{ rotate: expanded ? 180 : 0 }}
                     transition={{ duration: 0.2 }}

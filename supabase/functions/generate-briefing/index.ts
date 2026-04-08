@@ -24,13 +24,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-// ── Timeout helper ────────────────────────────────────────────────
-function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer));
-}
-
 // ── Types ──────────────────────────────────────────────────────────
 
 interface NewsHeadline {
@@ -57,7 +50,6 @@ interface UserContext {
   objectives: string[];
   blockers: string[];
   preferences: string[];
-  topMemories: string[];
   learningStyle: string;
   feedbackPreferences: { preferredTags: string[]; preferredSources: string[] };
 }
@@ -104,15 +96,6 @@ function buildPerplexityPrompt(userCtx: UserContext, briefingType: BriefingType,
     parts.push(`Active decisions on their desk: ${userCtx.recentDecisions.slice(0, 3).join("; ")}.`);
   }
 
-  // Holistic user identity from top-ranked memories across ALL categories
-  if (userCtx.topMemories.length > 0) {
-    parts.push(`\nHere are the most important things we know about this person (ranked by importance across their entire profile):`);
-    userCtx.topMemories.forEach((m, i) => {
-      parts.push(`${i + 1}. ${m}`);
-    });
-    parts.push(`Use ALL of the above to shape your news search. Stories should be relevant to the FULL picture of who this person is, not just one dimension. Aim for diversity: cover multiple facets of their work and interests.`);
-  }
-
   // Type-specific search shaping
   const typeInstructions = buildTypeSearchInstructions(briefingType, customContext, userCtx);
 
@@ -122,11 +105,13 @@ ${typeInstructions}
 QUALITY BAR: Only include stories where THIS SPECIFIC leader would say "that changes something for me." Prefer last-48-hour news. Every headline must pass this test: does it change one of their decisions, affect one of their priorities, or surface a number relevant to their specific situation?
 
 RELEVANCE TEST - every story MUST connect to at least one of these (from the leader's actual profile):
-${userCtx.topMemories.length > 0 ? userCtx.topMemories.map((m, i) => `${i + 1}. ${m}`).join("\n") : ''}
-${userCtx.watchingCompanies.length > 0 ? `- Their watchlist: ${userCtx.watchingCompanies.join(", ")}` : ''}
+${userCtx.objectives.length > 0 ? `- Their objectives: ${userCtx.objectives.slice(0, 4).join("; ")}` : ''}
 ${userCtx.activeMissions.length > 0 ? `- Their priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}` : ''}
+${userCtx.recentDecisions.length > 0 ? `- Their active decisions: ${userCtx.recentDecisions.slice(0, 3).join("; ")}` : ''}
+${userCtx.watchingCompanies.length > 0 ? `- Their watchlist: ${userCtx.watchingCompanies.join(", ")}` : ''}
+${userCtx.preferences.length > 0 ? `- Their tools/methods: ${userCtx.preferences.slice(0, 4).join(", ")}` : ''}
+${userCtx.blockers.length > 0 ? `- Their challenges: ${userCtx.blockers.slice(0, 3).join("; ")}` : ''}
 If a story does not clearly connect to ANY of the above, DO NOT include it, no matter how trendy or popular the topic is.
-IMPORTANT: Aim for DIVERSITY across these topics. Do not return 5 stories about the same theme. Each story should connect to a DIFFERENT aspect of this person's profile.
 
 For each headline, assign ONE tag:
 SIGNAL: Changes the math on a decision this leader faces.
@@ -204,38 +189,39 @@ function buildTypeSearchInstructions(briefingType: BriefingType, customContext: 
 }
 
 function buildPersonalizedSearchTopics(userCtx: UserContext): string[] {
-  // Build topic buckets from each source, each internally ranked by importance
-  const buckets: string[][] = [];
-
-  if (userCtx.objectives.length > 0)
-    buckets.push(userCtx.objectives.slice(0, 3));
-  if (userCtx.activeMissions.length > 0)
-    buckets.push(userCtx.activeMissions.slice(0, 2));
-  if (userCtx.blockers.length > 0)
-    buckets.push(userCtx.blockers.slice(0, 2));
-  if (userCtx.preferences.length > 0)
-    buckets.push(userCtx.preferences.slice(0, 2).map((p) => `${p} news updates`));
-  if (userCtx.watchingCompanies.length > 0)
-    buckets.push(userCtx.watchingCompanies.slice(0, 2).map((c) => `${c} latest news`));
-  if (userCtx.recentDecisions.length > 0)
-    buckets.push(userCtx.recentDecisions.slice(0, 2));
-
-  // Round-robin: take 1 from each bucket per round to ensure diversity
   const topics: string[] = [];
-  let round = 0;
-  while (topics.length < 10) {
-    let added = false;
-    for (const bucket of buckets) {
-      if (round < bucket.length && topics.length < 10) {
-        topics.push(bucket[round]);
-        added = true;
-      }
-    }
-    if (!added) break;
-    round++;
+
+  // From objectives: each becomes a concrete search topic
+  for (const obj of userCtx.objectives.slice(0, 4)) {
+    topics.push(obj);
   }
 
-  return topics;
+  // From blockers: solution-seeking searches
+  for (const blocker of userCtx.blockers.slice(0, 2)) {
+    topics.push(blocker);
+  }
+
+  // From preferences (tools, methods): search for updates on tools they actually use
+  for (const pref of userCtx.preferences.slice(0, 3)) {
+    topics.push(`${pref} news updates`);
+  }
+
+  // From watching companies: competitive intelligence
+  for (const company of userCtx.watchingCompanies.slice(0, 4)) {
+    topics.push(`${company} latest news strategy`);
+  }
+
+  // From active decisions: decision-relevant context
+  for (const decision of userCtx.recentDecisions.slice(0, 2)) {
+    topics.push(decision);
+  }
+
+  // From active missions: mission-relevant news
+  for (const mission of userCtx.activeMissions.slice(0, 2)) {
+    topics.push(mission);
+  }
+
+  return topics.slice(0, 12);
 }
 
 async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefingType: BriefingType = 'default', customContext?: string): Promise<NewsHeadline[]> {
@@ -264,7 +250,7 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
     contextParts.push(`Frame news through the lens of a ${userCtx.role}.`);
   }
 
-  const response = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+  const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -281,7 +267,7 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
       ],
       temperature: 0.2,
     }),
-  }, 15_000);
+  });
 
   if (!response.ok) throw new Error(`Perplexity error: ${response.status}`);
   const data = await response.json();
@@ -321,7 +307,7 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
 
   for (const query of queries) {
     try {
-      const response = await fetchWithTimeout("https://api.tavily.com/search", {
+      const response = await fetch("https://api.tavily.com/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -333,7 +319,7 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
           max_results: 10,
           include_answer: false,
         }),
-      }, 8_000);
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -448,7 +434,7 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
         country: "US",
         search_lang: "en",
       });
-      const response = await fetchWithTimeout(
+      const response = await fetch(
         `https://api.search.brave.com/res/v1/news/search?${params}`,
         {
           headers: {
@@ -456,8 +442,7 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
             "Accept-Encoding": "gzip",
             "X-Subscription-Token": apiKey,
           },
-        },
-        8_000
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -504,7 +489,7 @@ async function curateWithOpenAI(
 
   const leaderDesc = `${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''}`;
 
-  const response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -530,7 +515,7 @@ Return JSON: [{"title": "[TAG] headline", "source": "Source"}]. Select 10-15. Sk
       ],
       temperature: 0.2,
     }),
-  }, 10_000);
+  });
 
   if (!response.ok) throw new Error(`OpenAI curation error: ${response.status}`);
   const data = await response.json();
@@ -616,7 +601,7 @@ async function curateHeadlines(
     ? `This leader tends to find ${userCtx.feedbackPreferences.preferredTags.join(', ')} stories most useful.${userCtx.feedbackPreferences.preferredSources.length > 0 ? ` Stories from ${userCtx.feedbackPreferences.preferredSources.join(', ')} resonate.` : ''} Lean toward these.`
     : '';
 
-  const response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${openaiKey}`,
@@ -649,7 +634,7 @@ Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
       ],
       temperature: 0.1,
     }),
-  }, 10_000);
+  });
 
   if (!response.ok) {
     console.warn("Second-pass curation failed, using original headlines");
@@ -668,38 +653,6 @@ Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
 }
 
 // ── User Context ───────────────────────────────────────────────────
-
-interface RankedFact {
-  fact_key: string;
-  fact_value: string;
-  fact_category: string;
-  temperature: string | null;
-  confidence_score: number | null;
-  verification_status: string | null;
-  reference_count: number | null;
-  importance: number;
-}
-
-function computeImportance(fact: {
-  temperature?: string | null;
-  confidence_score?: number | null;
-  verification_status?: string | null;
-  reference_count?: number | null;
-}): number {
-  let score = 0;
-  // Temperature: hot=3, warm=2, cold=1
-  if (fact.temperature === "hot") score += 3;
-  else if (fact.temperature === "warm") score += 2;
-  else score += 1;
-  // Verification: verified/corrected=2, inferred=1
-  if (fact.verification_status === "verified" || fact.verification_status === "corrected") score += 2;
-  else score += 1;
-  // Confidence: 0-1 scaled to 0-2
-  score += (fact.confidence_score || 0.5) * 2;
-  // Reference count bonus (capped at 5)
-  score += Math.min(fact.reference_count || 0, 5) * 0.2;
-  return score;
-}
 
 async function getUserContext(
   supabase: ReturnType<typeof createClient>,
@@ -720,67 +673,44 @@ async function getUserContext(
     objectives: [],
     blockers: [],
     preferences: [],
-    topMemories: [],
     learningStyle: "",
     feedbackPreferences: { preferredTags: [], preferredSources: [] },
   };
 
-  // User memory facts - fetch with ranking columns
+  // User memory facts
   try {
     const { data: facts } = await supabase
       .from("user_memory")
-      .select("fact_key, fact_value, fact_category, temperature, confidence_score, verification_status, reference_count")
+      .select("fact_key, fact_value, fact_category")
       .eq("user_id", userId)
       .eq("is_current", true)
-      .is("archived_at", null)
       .in("fact_category", ["identity", "business", "objective", "blocker", "preference"])
       .order("confidence_score", { ascending: false })
-      .limit(50);
+      .limit(40);
 
     if (facts) {
-      // Score and rank all facts by importance
-      const ranked: RankedFact[] = facts.map((f) => ({
-        ...f,
-        importance: computeImportance(f),
-      }));
-      ranked.sort((a, b) => b.importance - a.importance);
-
-      // Extract identity fields from highest-importance facts first
-      for (const f of ranked) {
+      for (const f of facts) {
         if (
           f.fact_key === "name" ||
           f.fact_key === "first_name" ||
           f.fact_key === "preferred_name"
         )
-          ctx.name = ctx.name === "there" ? f.fact_value : ctx.name;
+          ctx.name = f.fact_value;
         if (
           f.fact_key === "role" ||
           f.fact_key === "title" ||
           f.fact_key === "job_title"
         )
-          ctx.role = ctx.role === "executive" ? f.fact_value : ctx.role;
+          ctx.role = f.fact_value;
         if (f.fact_key === "company_name" || f.fact_key === "company")
-          ctx.company = ctx.company || f.fact_value;
+          ctx.company = f.fact_value;
         if (f.fact_key === "industry" || f.fact_key === "vertical")
-          ctx.industry = ctx.industry || f.fact_value;
-        if (f.fact_key === "team_size") ctx.teamSize = ctx.teamSize || f.fact_value;
+          ctx.industry = f.fact_value;
+        if (f.fact_key === "team_size") ctx.teamSize = f.fact_value;
+        if (f.fact_category === "objective") ctx.objectives.push(f.fact_value);
+        if (f.fact_category === "blocker") ctx.blockers.push(f.fact_value);
+        if (f.fact_category === "preference") ctx.preferences.push(f.fact_value);
       }
-
-      // Categorize non-identity facts, preserving importance order
-      const objectiveFacts = ranked.filter((f) => f.fact_category === "objective");
-      const blockerFacts = ranked.filter((f) => f.fact_category === "blocker");
-      const preferenceFacts = ranked.filter((f) => f.fact_category === "preference");
-      ctx.objectives = objectiveFacts.map((f) => f.fact_value);
-      ctx.blockers = blockerFacts.map((f) => f.fact_value);
-      ctx.preferences = preferenceFacts.map((f) => f.fact_value);
-
-      // Build top memories: top 10 most important facts across ALL categories
-      // (excluding pure identity fields like name/role which are already captured)
-      const identityKeys = new Set(["name", "first_name", "preferred_name", "role", "title", "job_title", "company_name", "company", "industry", "vertical", "team_size"]);
-      ctx.topMemories = ranked
-        .filter((f) => !identityKeys.has(f.fact_key))
-        .slice(0, 10)
-        .map((f) => f.fact_value);
     }
   } catch (e) {
     console.warn("Failed to fetch user memory:", e);
@@ -1044,7 +974,7 @@ async function generateBriefingScript(
   const purposeBlock = buildBriefingPurposeBlock(briefingType, customContext);
   const firstName = userCtx.name.split(" ")[0];
 
-  const response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${openaiKey}`,
@@ -1115,7 +1045,7 @@ Total: 500-600 words. 3-4 minutes spoken. Every sentence earns its place.`,
       temperature: 0.5,
       response_format: { type: "json_object" },
     }),
-  }, 20_000);
+  });
 
   if (!response.ok) {
     const err = await response.text().catch(() => "");
@@ -1273,11 +1203,11 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
-    // Parse request body for briefing type
+    // Parse request body for briefing type and force-regenerate flag
     let briefingType: BriefingType = 'default';
     let customContext: string | undefined;
     let voiceNoteUrl: string | undefined;
-    let forceRegenerate = false;
+    let force = false;
 
     try {
       const body = await req.json();
@@ -1290,8 +1220,8 @@ serve(async (req) => {
       if (body.voice_note_url && typeof body.voice_note_url === 'string') {
         voiceNoteUrl = body.voice_note_url;
       }
-      if (body.force_regenerate === true) {
-        forceRegenerate = true;
+      if (body.force === true) {
+        force = true;
       }
     } catch {
       // No body or invalid JSON - use defaults
@@ -1321,34 +1251,28 @@ serve(async (req) => {
     // Check if this specific briefing type already exists today
     // (custom_voice allows multiples, others are one per day)
     if (briefingType !== 'custom_voice') {
-      if (forceRegenerate) {
-        // Delete existing briefing so we can regenerate fresh
-        await supabase
-          .from("briefings")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("briefing_date", today)
-          .eq("briefing_type", briefingType);
-        console.log("Force regenerate: deleted existing briefing");
-      } else {
-        const { data: existing } = await supabase
-          .from("briefings")
-          .select("id, audio_url")
-          .eq("user_id", user.id)
-          .eq("briefing_date", today)
-          .eq("briefing_type", briefingType)
-          .maybeSingle();
+      const { data: existing } = await supabase
+        .from("briefings")
+        .select("id, audio_url")
+        .eq("user_id", user.id)
+        .eq("briefing_date", today)
+        .eq("briefing_type", briefingType)
+        .maybeSingle();
 
-        if (existing) {
-          return new Response(
-            JSON.stringify({
-              briefing_id: existing.id,
-              already_exists: true,
-              has_audio: !!existing.audio_url,
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+      if (existing && force) {
+        // Force regeneration: delete old briefing and its feedback
+        console.log(`Force regeneration: deleting briefing ${existing.id}`);
+        await supabase.from("briefing_feedback").delete().eq("briefing_id", existing.id);
+        await supabase.from("briefings").delete().eq("id", existing.id);
+      } else if (existing) {
+        return new Response(
+          JSON.stringify({
+            briefing_id: existing.id,
+            already_exists: true,
+            has_audio: !!existing.audio_url,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
     }
 
@@ -1369,7 +1293,6 @@ serve(async (req) => {
       role: userCtx.role,
       company: userCtx.company,
       industry: userCtx.industry,
-      topMemories: userCtx.topMemories,
       objectives: userCtx.objectives.slice(0, 4),
       blockers: userCtx.blockers.slice(0, 3),
       preferences: userCtx.preferences.slice(0, 4),
@@ -1438,31 +1361,43 @@ serve(async (req) => {
       }
     }
 
+    let usedFallback = false;
     if (headlines.length === 0) {
       console.log("Using static fallback");
       headlines = STATIC_FALLBACK;
+      usedFallback = true;
     }
 
-    // 3. PHASE 1: Insert raw headlines immediately so the client can show them
-    //    while curation and script generation continue in the background.
-    //    This gets content visible to the user in ~7-15s instead of 30-45s.
-    const rawSegments = headlines.slice(0, 8).map(h => ({
-      headline: h.title,
-      analysis: "",
-      framework_tag: "signal",
-      source: h.source,
-      relevance_reason: "",
-    }));
+    // 2.5 Second-pass curation: deduplicate, rank, keep top 6-8
+    console.log("Running second-pass curation...");
+    headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
+    console.log(`After curation: ${headlines.length} headlines`);
 
+    // 3. Generate personalised briefing
+    console.log("Generating personalised briefing...");
+    const { segments, script } = await generateBriefingScript(
+      headlines,
+      userCtx,
+      openaiKey,
+      briefingType,
+      customContext,
+      resolvedScriptModel,
+    );
+
+    if (!script || segments.length === 0) {
+      throw new Error("Failed to generate briefing content");
+    }
+
+    // 4. Store briefing
     const { data: briefing, error: insertError } = await supabase
       .from("briefings")
       .insert({
         user_id: user.id,
         briefing_date: today,
         briefing_type: briefingType,
-        script_text: null,
-        segments: rawSegments,
-        context_snapshot: userCtx,
+        script_text: script,
+        segments,
+        context_snapshot: { ...userCtx, used_fallback: usedFallback },
         news_sources: headlines,
         generation_model: resolvedScriptModel,
         custom_context: customContext || null,
@@ -1473,74 +1408,18 @@ serve(async (req) => {
       .single();
 
     if (insertError) throw insertError;
-    console.log(`Briefing row created (raw headlines): ${briefing.id}`);
 
-    // 4. PHASE 2: Second-pass curation (deduplicate, rank, keep top 6-8)
-    console.log("Running second-pass curation...");
-    try {
-      headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
-      console.log(`After curation: ${headlines.length} headlines`);
+    console.log(`Briefing created: ${briefing.id} (type: ${briefingType})`);
 
-      // Update row with curated headlines
-      const curatedSegments = headlines.map(h => ({
-        headline: h.title,
-        analysis: "",
-        framework_tag: "signal",
-        source: h.source,
-        relevance_reason: "",
-      }));
-
-      await supabase
-        .from("briefings")
-        .update({ segments: curatedSegments, news_sources: headlines })
-        .eq("id", briefing.id);
-      console.log("Updated with curated headlines");
-    } catch (curationErr) {
-      console.warn("Curation failed; raw headlines preserved:", curationErr);
-    }
-
-    // 5. PHASE 3: Generate full script + enriched segments, then update the row
-    console.log("Generating personalised briefing...");
-    try {
-      const { segments, script } = await generateBriefingScript(
-        headlines,
-        userCtx,
-        openaiKey,
-        briefingType,
-        customContext,
-        resolvedScriptModel,
-      );
-
-      if (script && segments.length > 0) {
-        const { error: updateError } = await supabase
-          .from("briefings")
-          .update({
-            script_text: script,
-            segments,
-          })
-          .eq("id", briefing.id);
-
-        if (updateError) {
-          console.error("Failed to update briefing with script:", updateError);
-        } else {
-          console.log(`Briefing updated with script: ${briefing.id} (type: ${briefingType})`);
-        }
-      } else {
-        console.warn("Script generation returned empty; headline-only briefing preserved");
-      }
-    } catch (scriptErr) {
-      // Headline-only briefing still exists; client can show headlines
-      console.error("Script generation failed; headline-only briefing preserved:", scriptErr);
-    }
-
-    // 6. Return - client triggers audio synthesis separately
+    // 5. Return immediately - client triggers audio synthesis separately
     return new Response(
       JSON.stringify({
         briefing_id: briefing.id,
         already_exists: false,
         has_audio: false,
-        segment_count: rawSegments.length,
+        segment_count: segments.length,
         briefing_type: briefingType,
+        used_fallback: usedFallback,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
