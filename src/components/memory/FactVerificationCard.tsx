@@ -6,8 +6,9 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
-import { Check, X, Pencil, ChevronDown } from 'lucide-react';
+import { Check, X, Pencil, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { haptics } from '@/lib/haptics';
 import type { PendingVerification } from '@/types/memory';
 
 interface FactVerificationCardProps {
@@ -29,6 +30,7 @@ export const FactVerificationCard: React.FC<FactVerificationCardProps> = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const currentFact = facts[currentIndex];
   const progress = ((currentIndex + 1) / facts.length) * 100;
@@ -36,27 +38,66 @@ export const FactVerificationCard: React.FC<FactVerificationCardProps> = ({
   const handleVerify = async () => {
     if (!currentFact) return;
     setIsProcessing(true);
-    await onVerify(currentFact.id);
-    setIsProcessing(false);
-    advanceOrComplete();
+    setError(null);
+    try {
+      const result = await onVerify(currentFact.id);
+      if (result) {
+        haptics.success();
+        advanceOrComplete();
+      } else {
+        setError('Could not save. Try again.');
+        haptics.error();
+      }
+    } catch {
+      setError('Could not save. Try again.');
+      haptics.error();
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleReject = async () => {
     if (!currentFact) return;
     setIsProcessing(true);
-    await onReject(currentFact.id);
-    setIsProcessing(false);
-    advanceOrComplete();
+    setError(null);
+    try {
+      const result = await onReject(currentFact.id);
+      if (result) {
+        haptics.medium();
+        advanceOrComplete();
+      } else {
+        setError('Could not save. Try again.');
+        haptics.error();
+      }
+    } catch {
+      setError('Could not save. Try again.');
+      haptics.error();
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleSaveEdit = async () => {
     if (!currentFact || !editValue.trim()) return;
     setIsProcessing(true);
-    await onVerify(currentFact.id, editValue.trim());
-    setIsProcessing(false);
-    setEditingId(null);
-    setEditValue('');
-    advanceOrComplete();
+    setError(null);
+    try {
+      const result = await onVerify(currentFact.id, editValue.trim());
+      if (result) {
+        haptics.success();
+        setEditingId(null);
+        setEditValue('');
+        advanceOrComplete();
+      } else {
+        setError('Could not save correction. Try again.');
+        haptics.error();
+      }
+    } catch {
+      setError('Could not save correction. Try again.');
+      haptics.error();
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const advanceOrComplete = () => {
@@ -233,6 +274,22 @@ export const FactVerificationCard: React.FC<FactVerificationCardProps> = ({
             )}
           </AnimatePresence>
         </div>
+
+        {/* Error banner */}
+        <AnimatePresence>
+          {error && (
+            <motion.button
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              onClick={() => setError(null)}
+              className="mx-6 mb-2 p-2.5 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center gap-2 w-auto text-left"
+            >
+              <AlertCircle className="w-3.5 h-3.5 text-destructive flex-shrink-0" />
+              <p className="text-xs text-destructive">{error}</p>
+            </motion.button>
+          )}
+        </AnimatePresence>
 
         {/* Actions */}
         {editingId !== currentFact.id && (
