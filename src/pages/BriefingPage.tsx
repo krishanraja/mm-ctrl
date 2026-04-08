@@ -49,6 +49,17 @@ function BriefingPage() {
     setSheetOpen(true);
   };
 
+  const [refreshingBriefing, setRefreshingBriefing] = useState(false);
+  const handleRefreshBriefing = async () => {
+    setRefreshingBriefing(true);
+    try {
+      const id = await generate('default', undefined, true);
+      if (id) await refetch();
+    } finally {
+      setRefreshingBriefing(false);
+    }
+  };
+
   const handleCustomGenerate = async (
     briefingType: BriefingType,
     customContext?: string
@@ -154,6 +165,8 @@ function BriefingPage() {
               briefing={defaultBriefing}
               hasListened={playback.hasListened}
               onPlay={() => handlePlayBriefing(defaultBriefing)}
+              onRefresh={handleRefreshBriefing}
+              refreshing={refreshingBriefing}
               onCustomBriefing={() => setCustomSheetOpen(true)}
               customBriefingCount={customBriefings.length}
             />

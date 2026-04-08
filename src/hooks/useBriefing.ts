@@ -109,6 +109,7 @@ export function useGenerateBriefing() {
   const generate = useCallback(async (
     briefingType?: BriefingType,
     customContext?: string,
+    forceRegenerate?: boolean,
   ): Promise<string | null> => {
     try {
       setGenerating(true);
@@ -122,9 +123,10 @@ export function useGenerateBriefing() {
         setTimeout(() => reject(new Error('Briefing generation timed out. Please try again.')), GENERATE_TIMEOUT)
       );
 
-      const body: Record<string, string> = {};
+      const body: Record<string, unknown> = {};
       if (briefingType) body.briefing_type = briefingType;
       if (customContext) body.custom_context = customContext;
+      if (forceRegenerate) body.force_regenerate = true;
 
       const { data, error: genErr } = await Promise.race([
         supabase.functions.invoke('generate-briefing', {

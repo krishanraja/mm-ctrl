@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check, ChevronDown, Sparkles } from "lucide-react";
+import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Briefing, BriefingSegment } from "@/types/briefing";
@@ -45,6 +45,8 @@ interface BriefingCardProps {
   briefing: Briefing;
   hasListened: boolean;
   onPlay: () => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
   onCustomBriefing?: () => void;
   customBriefingCount?: number;
 }
@@ -53,6 +55,8 @@ export function BriefingCard({
   briefing,
   hasListened,
   onPlay,
+  onRefresh,
+  refreshing = false,
   onCustomBriefing,
   customBriefingCount = 0,
 }: BriefingCardProps) {
@@ -89,17 +93,18 @@ export function BriefingCard({
     >
       <Card className="overflow-hidden">
         <CardContent className="p-2.5">
+          {/* Header row: icon + title + badge on left, listen button on right */}
           <div className="flex items-start justify-between gap-2">
-            <div className="flex items-start gap-2 flex-1 min-w-0">
+            <div
+              className="flex items-start gap-2 flex-1 min-w-0 cursor-pointer"
+              onClick={() => setExpanded((prev) => !prev)}
+            >
               <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Radio className="w-3 h-3 text-accent" />
               </div>
-              <div
-                className="min-w-0 flex-1 cursor-pointer"
-                onClick={() => setExpanded((prev) => !prev)}
-              >
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <p className="text-sm font-semibold">{briefingLabel}</p>
+                  <p className="text-sm font-semibold whitespace-nowrap">{briefingLabel}</p>
                   <Badge variant="secondary" className="text-[10px] font-normal px-2 py-0.5 whitespace-nowrap">
                     {durationMin} min
                   </Badge>
@@ -113,49 +118,19 @@ export function BriefingCard({
                     <ChevronDown className="w-3 h-3 text-muted-foreground" />
                   </motion.div>
                 </div>
-                <p className="text-xs text-muted-foreground mb-1">
+                <p className="text-xs text-muted-foreground">
                   {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
                 </p>
-
-                <AnimatePresence mode="wait">
-                  {expanded ? (
-                    <motion.div
-                      key="expanded"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="space-y-1.5 mt-1 overflow-hidden"
-                    >
-                      {briefing.segments?.map((seg, i) => {
-                        const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
-                        return (
-                          <div key={i} className="leading-snug">
-                            <span
-                              className={cn(
-                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
-                                tagConfig?.className || "bg-muted text-muted-foreground border-border"
-                              )}
-                            >
-                              {tagConfig?.label || seg.framework_tag}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {seg.headline}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </motion.div>
-                  ) : (
-                    <motion.div key="collapsed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                      {waitingForAudio && briefing.segments?.length > 0 ? (
-                        <RotatingHeadlines segments={briefing.segments} />
-                      ) : (
-                        <p className="text-xs leading-relaxed line-clamp-2 text-muted-foreground/80">{teaser}</p>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Teaser / rotating headline when collapsed */}
+                {!expanded && (
+                  <div className="mt-0.5">
+                    {waitingForAudio && briefing.segments?.length > 0 ? (
+                      <RotatingHeadlines segments={briefing.segments} />
+                    ) : (
+                      <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -196,6 +171,52 @@ export function BriefingCard({
               )}
             </div>
           </div>
+
+          {/* Expanded stories - FULL WIDTH across the card */}
+          <AnimatePresence>
+            {expanded && (
+              <motion.div
+                key="expanded-stories"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                <div className="space-y-1 mt-2 pt-2 border-t border-border/30">
+                  {briefing.segments?.map((seg, i) => {
+                    const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
+                    return (
+                      <div key={i} className="leading-snug">
+                        <span
+                          className={cn(
+                            "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
+                            tagConfig?.className || "bg-muted text-muted-foreground border-border"
+                          )}
+                        >
+                          {tagConfig?.label || seg.framework_tag}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {seg.headline}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Refresh button in expanded view */}
+                {onRefresh && (
+                  <button
+                    onClick={onRefresh}
+                    disabled={refreshing}
+                    className="flex items-center gap-1 mt-2 text-[10px] text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                  >
+                    <RefreshCw className={cn("w-2.5 h-2.5", refreshing && "animate-spin")} />
+                    {refreshing ? "Refreshing..." : "Refresh stories"}
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Bottom row: Custom Briefing button + custom briefing count */}
           {onCustomBriefing && (

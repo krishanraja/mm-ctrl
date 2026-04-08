@@ -1207,6 +1207,7 @@ serve(async (req) => {
     let briefingType: BriefingType = 'default';
     let customContext: string | undefined;
     let voiceNoteUrl: string | undefined;
+    let forceRegenerate = false;
 
     try {
       const body = await req.json();
@@ -1218,6 +1219,9 @@ serve(async (req) => {
       }
       if (body.voice_note_url && typeof body.voice_note_url === 'string') {
         voiceNoteUrl = body.voice_note_url;
+      }
+      if (body.force_regenerate === true) {
+        forceRegenerate = true;
       }
     } catch {
       // No body or invalid JSON - use defaults
@@ -1247,23 +1251,34 @@ serve(async (req) => {
     // Check if this specific briefing type already exists today
     // (custom_voice allows multiples, others are one per day)
     if (briefingType !== 'custom_voice') {
-      const { data: existing } = await supabase
-        .from("briefings")
-        .select("id, audio_url")
-        .eq("user_id", user.id)
-        .eq("briefing_date", today)
-        .eq("briefing_type", briefingType)
-        .maybeSingle();
+      if (forceRegenerate) {
+        // Delete existing briefing so we can regenerate fresh
+        await supabase
+          .from("briefings")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("briefing_date", today)
+          .eq("briefing_type", briefingType);
+        console.log("Force regenerate: deleted existing briefing");
+      } else {
+        const { data: existing } = await supabase
+          .from("briefings")
+          .select("id, audio_url")
+          .eq("user_id", user.id)
+          .eq("briefing_date", today)
+          .eq("briefing_type", briefingType)
+          .maybeSingle();
 
-      if (existing) {
-        return new Response(
-          JSON.stringify({
-            briefing_id: existing.id,
-            already_exists: true,
-            has_audio: !!existing.audio_url,
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        if (existing) {
+          return new Response(
+            JSON.stringify({
+              briefing_id: existing.id,
+              already_exists: true,
+              has_audio: !!existing.audio_url,
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
       }
     }
 
