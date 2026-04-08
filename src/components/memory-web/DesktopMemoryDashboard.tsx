@@ -475,7 +475,7 @@ export function DesktopMemoryDashboard() {
               <button
                 onClick={handleGenerateBriefing}
                 disabled={generating}
-                className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden"
+                className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden text-center"
               >
                 {generating && (
                   <motion.div
