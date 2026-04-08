@@ -15,8 +15,29 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const VOICE_ID = "7ApmIXLoWa0cKUtJqfHc";
-const ELEVENLABS_URL = `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`;
+const DEFAULT_VOICE_ID = "7ApmIXLoWa0cKUtJqfHc";
+const DEFAULT_MODEL_ID = "eleven_multilingual_v2";
+
+/**
+ * Load TTS config from database (allows admin-configurable provider switching).
+ * Falls back to hardcoded defaults if the table doesn't exist or has no rows.
+ */
+async function loadTTSConfig(supabase: any): Promise<{ voiceId: string; modelId: string }> {
+  try {
+    const { data } = await supabase
+      .from("tts_config")
+      .select("voice_id, model_id")
+      .eq("is_active", true)
+      .limit(1)
+      .single();
+    if (data?.voice_id && data?.model_id) {
+      return { voiceId: data.voice_id, modelId: data.model_id };
+    }
+  } catch {
+    // Table may not exist yet; fall through to defaults
+  }
+  return { voiceId: DEFAULT_VOICE_ID, modelId: DEFAULT_MODEL_ID };
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -33,6 +54,8 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false },
     });
+
+    const ttsConfig = await loadTTSConfig(supabase);
 
     const { briefing_id } = await req.json();
     if (!briefing_id) throw new Error("briefing_id required");
@@ -54,8 +77,9 @@ serve(async (req) => {
 
     console.log(`Synthesizing audio for briefing ${briefing.id}...`);
 
-    // Call ElevenLabs TTS
-    const ttsResponse = await fetch(ELEVENLABS_URL, {
+    // Call ElevenLabs TTS (voice/model from tts_config or defaults)
+    const elevenlabsUrl = `https://api.elevenlabs.io/v1/text-to-speech/${ttsConfig.voiceId}`;
+    const ttsResponse = await fetch(elevenlabsUrl, {
       method: "POST",
       headers: {
         "xi-api-key": elevenLabsKey,
@@ -64,7 +88,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         text: briefing.script_text,
-        model_id: "eleven_multilingual_v2",
+        model_id: ttsConfig.modelId,
         voice_settings: {
           stability: 0.4,
           similarity_boost: 0.75,

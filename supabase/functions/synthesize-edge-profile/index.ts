@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildMemoryContext } from "../_shared/memory-context-builder.ts";
-import { callOpenAI, selectModel } from "../_shared/openai-utils.ts";
+import { callOpenAI, selectModel, selectModelDynamic } from "../_shared/openai-utils.ts";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
@@ -215,7 +215,11 @@ OUTPUT FORMAT (respond in valid JSON):
           { role: "system", content: systemPrompt },
           { role: "user", content: "Analyze this leader's data and produce their Edge profile." },
         ],
-        model: selectModel("complex"),
+        model: await selectModelDynamic("complex", "edge_synthesis", createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+          { auth: { persistSession: false } }
+        )),
         temperature: 0.5,
         max_tokens: 3000,
         response_format: { type: "json_object" },

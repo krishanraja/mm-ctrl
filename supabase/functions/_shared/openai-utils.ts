@@ -33,7 +33,10 @@ export interface OpenAIResponse {
 }
 
 /**
- * Select appropriate OpenAI model based on task complexity
+ * Select appropriate OpenAI model based on task complexity.
+ * If a supabase client and routerTaskName are provided, delegates to the
+ * dynamic model router (when MODEL_ROUTING_ENABLED=true). Otherwise,
+ * returns the hardcoded default.
  */
 export function selectModel(task: 'chat' | 'analysis' | 'simple' | 'complex'): string {
   const models = {
@@ -42,8 +45,26 @@ export function selectModel(task: 'chat' | 'analysis' | 'simple' | 'complex'): s
     analysis: 'gpt-4o', // Good for structured analysis
     complex: 'gpt-4o', // Best for complex reasoning
   };
-  
+
   return models[task] || 'gpt-4o';
+}
+
+/**
+ * Select model via dynamic routing (async).
+ * Falls back to selectModel() if routing is unavailable.
+ */
+export async function selectModelDynamic(
+  task: 'chat' | 'analysis' | 'simple' | 'complex',
+  routerTaskName: string,
+  supabase: any
+): Promise<string> {
+  try {
+    const { selectOptimalModel } = await import("./model-router.ts");
+    const selection = await selectOptimalModel(routerTaskName, supabase);
+    return selection.model;
+  } catch {
+    return selectModel(task);
+  }
 }
 
 /**
