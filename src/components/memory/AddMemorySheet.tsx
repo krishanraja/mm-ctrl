@@ -224,7 +224,7 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
           />
 
           {/* Sheet */}
@@ -234,7 +234,7 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 35, stiffness: 400, mass: 0.8 }}
             className={cn(
-              "fixed bottom-0 left-0 right-0 z-50",
+              "fixed bottom-0 left-0 right-0 z-[70]",
               "h-[85vh] bg-background rounded-t-3xl",
               "border-t border-border shadow-2xl",
               "flex flex-col"
