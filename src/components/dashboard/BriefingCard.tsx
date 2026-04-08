@@ -99,7 +99,7 @@ export function BriefingCard({
                 onClick={() => setExpanded((prev) => !prev)}
               >
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-sm font-semibold">{briefingLabel}</p>
+                  <p className="text-sm font-semibold truncate">{briefingLabel}</p>
                   <Badge variant="secondary" className="text-[10px] font-normal px-2 py-0.5 whitespace-nowrap">
                     {durationMin} min
                   </Badge>

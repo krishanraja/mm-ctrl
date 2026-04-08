@@ -47,6 +47,7 @@ interface UserContext {
   objectives: string[];
   blockers: string[];
   preferences: string[];
+  newsProfileLine: string;
   learningStyle: string;
   feedbackPreferences: { preferredTags: string[]; preferredSources: string[] };
 }
@@ -66,16 +67,22 @@ function buildPerplexityPrompt(userCtx: UserContext, briefingType: BriefingType,
     `You are an elite news curator. You find the stories that make busy leaders stop scrolling.`,
   ];
 
-  if (userCtx.role && userCtx.company) {
-    parts.push(`This person is the ${userCtx.role} of ${userCtx.company}.`);
-  } else if (userCtx.role) {
-    parts.push(`This person is a ${userCtx.role}.`);
-  }
-  if (userCtx.industry) {
-    parts.push(`Their industry: ${userCtx.industry}.`);
-  }
-  if (userCtx.activeMissions.length > 0) {
-    parts.push(`Active priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}.`);
+  // Use the news profile line as the primary frame when available
+  if (userCtx.newsProfileLine) {
+    parts.push(`NEWS PROFILE: ${userCtx.newsProfileLine}`);
+  } else {
+    // Fallback to piecemeal context
+    if (userCtx.role && userCtx.company) {
+      parts.push(`This person is the ${userCtx.role} of ${userCtx.company}.`);
+    } else if (userCtx.role) {
+      parts.push(`This person is a ${userCtx.role}.`);
+    }
+    if (userCtx.industry) {
+      parts.push(`Their industry: ${userCtx.industry}.`);
+    }
+    if (userCtx.activeMissions.length > 0) {
+      parts.push(`Active priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}.`);
+    }
   }
   if (userCtx.watchingCompanies.length > 0) {
     parts.push(`Companies they track: ${userCtx.watchingCompanies.join(", ")}.`);
@@ -87,14 +94,16 @@ function buildPerplexityPrompt(userCtx: UserContext, briefingType: BriefingType,
   parts.push(`
 ${typeInstructions}
 
-QUALITY BAR: Only include stories where a busy leader would say "I'm glad someone told me this." Prefer last-48-hour news. Every headline must pass this test: does it change a decision, reveal a competitive shift, or surface a number worth knowing?
+QUALITY BAR: Only include stories where this specific leader would say "I'm glad someone told me this." Prefer last-48-hour news. Every headline must pass this test: does it change a decision, reveal a competitive shift, or surface a number worth knowing FOR THEM specifically?
+
+Prioritize: their industry developments, what peers in similar roles are doing, tools and trends disrupting businesses their size, competitor moves, growth opportunities. Include AI news only when it concretely affects their world.
 
 For each headline, assign ONE tag:
 SIGNAL: Changes the math on a decision this leader faces.
 DECISION TRIGGER: Something shifted that demands action or reassessment.
 KRISH'S TAKE: A sharp, slightly cynical observation that reframes conventional wisdom.
 
-Do NOT include NOISE items. Do NOT include: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless they shift competitive dynamics).
+Do NOT include NOISE items. Do NOT include: governance fluff, workforce surveys, geopolitics, AGI speculation, celebrity AI, funding rounds (unless they shift competitive dynamics for THIS leader).
 
 8-18 words per headline. Present tense. Specific numbers when available.
 
@@ -149,26 +158,26 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
   const today = new Date().toISOString().split("T")[0];
 
   const contextParts: string[] = [];
-  if (userCtx.industry) {
-    contextParts.push(`Focus heavily on the ${userCtx.industry} industry.`);
-  }
-  if (userCtx.activeMissions.length > 0) {
-    contextParts.push(`Their current priorities: ${userCtx.activeMissions.slice(0, 2).join("; ")}. Flag news that affects these.`);
+  if (userCtx.newsProfileLine) {
+    contextParts.push(`Find news specifically for: ${userCtx.newsProfileLine}`);
   }
   if (userCtx.watchingCompanies.length > 0) {
-    contextParts.push(`Search specifically for recent news about: ${userCtx.watchingCompanies.join(", ")}.`);
+    contextParts.push(`Also search for recent news about: ${userCtx.watchingCompanies.join(", ")}.`);
   }
   if (userCtx.recentDecisions.length > 0) {
     contextParts.push(`Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join("; ")}. Surface news that informs these.`);
   }
-  if (userCtx.objectives?.length > 0) {
-    contextParts.push(`Their strategic goals: ${userCtx.objectives.slice(0, 3).join("; ")}. Prioritize news that advances or threatens these.`);
-  }
-  if (userCtx.blockers?.length > 0) {
-    contextParts.push(`Challenges they face: ${userCtx.blockers.slice(0, 2).join("; ")}. Surface solutions or shifts relevant to these.`);
-  }
-  if (userCtx.role) {
-    contextParts.push(`Frame news through the lens of a ${userCtx.role}.`);
+  if (!userCtx.newsProfileLine) {
+    // Fallback context when no profile line exists
+    if (userCtx.industry) {
+      contextParts.push(`Focus heavily on the ${userCtx.industry} industry.`);
+    }
+    if (userCtx.activeMissions.length > 0) {
+      contextParts.push(`Their current priorities: ${userCtx.activeMissions.slice(0, 2).join("; ")}.`);
+    }
+    if (userCtx.role) {
+      contextParts.push(`Frame news through the lens of a ${userCtx.role}.`);
+    }
   }
 
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
@@ -200,12 +209,16 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
 async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<NewsHeadline[]> {
   const queries: string[] = [];
 
-  // Primary query: industry + role
+  // Use profile line as primary search query when available
+  if (userCtx.newsProfileLine) {
+    // Extract key terms for search (first ~60 chars or first sentence)
+    const profileQuery = userCtx.newsProfileLine.substring(0, 80);
+    queries.push(profileQuery);
+  }
+
+  // Industry-specific queries
   if (userCtx.industry) {
     queries.push(`${userCtx.industry} industry news trends`);
-  }
-  if (userCtx.industry) {
-    queries.push(`AI ${userCtx.industry} business impact`);
   }
 
   // Watched companies
@@ -304,10 +317,14 @@ function formatSource(hostname: string): string {
 async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<string[]> {
   const queries: string[] = [];
 
-  // Industry-specific queries first (highest relevance)
+  // Use profile line as first query when available
+  if (userCtx.newsProfileLine) {
+    queries.push(userCtx.newsProfileLine.substring(0, 80));
+  }
+
+  // Industry-specific queries (highest relevance)
   if (userCtx.industry) {
     queries.push(`"${userCtx.industry}" AND ("trend" OR "growth" OR "disruption" OR "news")`);
-    queries.push(`"AI" AND "${userCtx.industry}" AND ("impact" OR "adoption" OR "launch")`);
   }
 
   // Watched companies (high relevance)
@@ -400,14 +417,17 @@ async function curateWithOpenAI(
   const today = new Date().toISOString().split("T")[0];
 
   const contextLines: string[] = [];
-  if (userCtx.role) contextLines.push(`Role: ${userCtx.role}`);
-  if (userCtx.company) contextLines.push(`Company: ${userCtx.company}`);
-  if (userCtx.industry) contextLines.push(`Industry: ${userCtx.industry}`);
-  if (userCtx.activeMissions.length > 0) contextLines.push(`Current priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}`);
-  if (userCtx.objectives?.length > 0) contextLines.push(`Goals: ${userCtx.objectives.slice(0, 2).join("; ")}`);
+  if (userCtx.newsProfileLine) {
+    contextLines.push(`NEWS PROFILE: ${userCtx.newsProfileLine}`);
+  } else {
+    if (userCtx.role) contextLines.push(`Role: ${userCtx.role}`);
+    if (userCtx.company) contextLines.push(`Company: ${userCtx.company}`);
+    if (userCtx.industry) contextLines.push(`Industry: ${userCtx.industry}`);
+    if (userCtx.activeMissions.length > 0) contextLines.push(`Current priorities: ${userCtx.activeMissions.slice(0, 3).join("; ")}`);
+  }
   if (userCtx.recentDecisions.length > 0) contextLines.push(`Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join("; ")}`);
 
-  const leaderDesc = `${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''}`;
+  const leaderDesc = userCtx.newsProfileLine || `${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''}`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -531,10 +551,10 @@ async function curateHeadlines(
       messages: [
         {
           role: "system",
-          content: `You are a ruthless news editor. Your job: cut the weak stories and keep only what would make a busy ${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''} stop what they are doing to listen. ${typeHint} ${feedbackHint}
-${userCtx.activeMissions.length > 0 ? `Their active priorities: ${userCtx.activeMissions.slice(0, 3).join('; ')}. Stories touching these priorities should rank higher.` : ''}
+          content: `You are a ruthless news editor curating for a specific leader.
+${userCtx.newsProfileLine ? `NEWS PROFILE: ${userCtx.newsProfileLine}` : `Role: ${userCtx.role || 'executive'}${userCtx.industry ? `, Industry: ${userCtx.industry}` : ''}${userCtx.company ? `, Company: ${userCtx.company}` : ''}`}
+Your job: cut the weak stories and keep only what would make THIS person stop what they are doing to listen. ${typeHint} ${feedbackHint}
 ${userCtx.recentDecisions.length > 0 ? `Decisions on their desk: ${userCtx.recentDecisions.slice(0, 2).join('; ')}. News informing these decisions is high-priority.` : ''}
-${(userCtx.objectives?.length || 0) > 0 ? `Strategic goals: ${userCtx.objectives.slice(0, 2).join('; ')}.` : ''}
 
 Rules:
 - Deduplicate similar stories (keep the strongest angle)
@@ -571,11 +591,132 @@ Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
   }
 }
 
+// ── News Profile Line ─────────────────────────────────────────────
+
+async function getOrBuildNewsProfileLine(
+  supabase: ReturnType<typeof createClient>,
+  userId: string,
+  ctx: UserContext,
+  openaiKey: string,
+): Promise<string> {
+  // Check for existing fresh profile line
+  try {
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: existing } = await supabase
+      .from("user_memory")
+      .select("fact_value, created_at")
+      .eq("user_id", userId)
+      .eq("fact_key", "news_profile_line")
+      .eq("is_current", true)
+      .maybeSingle();
+
+    if (existing?.fact_value && existing.created_at > twentyFourHoursAgo) {
+      console.log("Using cached news profile line");
+      return existing.fact_value;
+    }
+  } catch (e) {
+    console.warn("Failed to check existing profile line:", e);
+  }
+
+  // Build facts summary for LLM
+  const bullets: string[] = [];
+  if (ctx.role && ctx.role !== "executive") bullets.push(`Role: ${ctx.role}`);
+  if (ctx.company) bullets.push(`Company: ${ctx.company}`);
+  if (ctx.industry) bullets.push(`Industry: ${ctx.industry}`);
+  if (ctx.teamSize) bullets.push(`Team size: ${ctx.teamSize}`);
+  if (ctx.activeMissions.length > 0) bullets.push(`Working on: ${ctx.activeMissions.join("; ")}`);
+  if (ctx.objectives.length > 0) bullets.push(`Goals: ${ctx.objectives.join("; ")}`);
+  if (ctx.blockers.length > 0) bullets.push(`Challenges: ${ctx.blockers.join("; ")}`);
+  if (ctx.watchingCompanies.length > 0) bullets.push(`Watching: ${ctx.watchingCompanies.join(", ")}`);
+  if (ctx.recentDecisions.length > 0) bullets.push(`Decisions: ${ctx.recentDecisions.slice(0, 3).join("; ")}`);
+  if (ctx.strengths.length > 0) bullets.push(`Strengths: ${ctx.strengths.join(", ")}`);
+
+  // Not enough data to build a meaningful profile
+  if (bullets.length < 2) {
+    console.log("Insufficient data for news profile line");
+    return "";
+  }
+
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You build search profiles for a news curation system. Given facts about a business leader, write ONE dense sentence (max 40 words) that captures WHO they are for news relevance.
+
+Include when available: exact role, company name and stage/size, specific industry vertical, team size, what they are actively building or working on, companies they track, key challenges.
+
+Optimize for search relevance. Be hyper-specific. "CEO" is useless; "Series B healthtech CEO scaling AI scheduling for mid-market hospitals" drives targeted results.
+
+Return ONLY the sentence, nothing else.`,
+          },
+          {
+            role: "user",
+            content: bullets.map(b => `- ${b}`).join("\n"),
+          },
+        ],
+        temperature: 0.2,
+        max_tokens: 100,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn("Profile line generation failed:", response.status);
+      return "";
+    }
+
+    const data = await response.json();
+    const line = (data?.choices?.[0]?.message?.content || "").trim().replace(/^["']|["']$/g, "");
+
+    if (!line || line.length < 10) return "";
+
+    console.log("Generated news profile line:", line);
+
+    // Store it: mark old ones as not current, insert new
+    try {
+      await supabase
+        .from("user_memory")
+        .update({ is_current: false })
+        .eq("user_id", userId)
+        .eq("fact_key", "news_profile_line")
+        .eq("is_current", true);
+
+      await supabase
+        .from("user_memory")
+        .insert({
+          user_id: userId,
+          fact_key: "news_profile_line",
+          fact_category: "preference",
+          fact_label: "News Profile",
+          fact_value: line,
+          confidence_score: 0.9,
+          source_type: "enrichment",
+          is_current: true,
+        });
+    } catch (e) {
+      console.warn("Failed to store profile line:", e);
+    }
+
+    return line;
+  } catch (e) {
+    console.warn("Profile line computation failed:", e);
+    return "";
+  }
+}
+
 // ── User Context ───────────────────────────────────────────────────
 
 async function getUserContext(
   supabase: ReturnType<typeof createClient>,
-  userId: string
+  userId: string,
+  openaiKey: string,
 ): Promise<UserContext> {
   const ctx: UserContext = {
     name: "there",
@@ -592,6 +733,7 @@ async function getUserContext(
     objectives: [],
     blockers: [],
     preferences: [],
+    newsProfileLine: "",
     learningStyle: "",
     feedbackPreferences: { preferredTags: [], preferredSources: [] },
   };
@@ -796,6 +938,9 @@ async function getUserContext(
     console.warn("Failed to fetch feedback preferences:", e);
   }
 
+  // Build or fetch cached news profile line
+  ctx.newsProfileLine = await getOrBuildNewsProfileLine(supabase, userId, ctx, openaiKey);
+
   return ctx;
 }
 
@@ -850,6 +995,7 @@ async function generateBriefingScript(
 ): Promise<{ segments: BriefingSegment[]; script: string }> {
   const contextBlock = [
     `Name: ${userCtx.name}`,
+    userCtx.newsProfileLine ? `News profile: ${userCtx.newsProfileLine}` : null,
     `Role: ${userCtx.role}`,
     userCtx.company ? `Company: ${userCtx.company}` : null,
     userCtx.industry ? `Industry: ${userCtx.industry}` : null,
@@ -1090,7 +1236,7 @@ serve(async (req) => {
 
     // 1. Get user context
     console.log("Fetching user context...");
-    const userCtx = await getUserContext(supabase, user.id);
+    const userCtx = await getUserContext(supabase, user.id, openaiKey);
 
     console.log("User context populated:", {
       hasName: userCtx.name !== "there",
@@ -1102,6 +1248,7 @@ serve(async (req) => {
       watchlist: userCtx.watchingCompanies.length,
       decisions: userCtx.recentDecisions.length,
       patterns: userCtx.confirmedPatterns.length,
+      newsProfileLine: userCtx.newsProfileLine ? userCtx.newsProfileLine.substring(0, 80) : "(none)",
       learningStyle: userCtx.learningStyle,
       briefingType,
     });
