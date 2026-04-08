@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Plus, Shield, Download, Upload, CheckCircle2, Flame, Thermometer, User } from 'lucide-react';
+import { Brain, Plus, Shield, Download, ArrowUpRight, FileText, CheckCircle2, Flame, Thermometer, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -89,12 +89,21 @@ export default function MemoryCenter() {
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
+                  onClick={() => navigate('/context')}
+                  size="sm"
+                  className="border-0 bg-accent/10 text-accent hover:bg-accent/20"
+                >
+                  <ArrowUpRight className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Export to AI</span>
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={triggerImport}
                   disabled={isImporting}
                   size="sm"
                   className="border-0 bg-secondary/50"
                 >
-                  <Upload className="h-4 w-4 sm:mr-1" />
+                  <FileText className="h-4 w-4 sm:mr-1" />
                   <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import'}</span>
                 </Button>
                 <Button

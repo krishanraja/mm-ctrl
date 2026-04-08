@@ -6,8 +6,9 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, Loader2, Brain, Plus } from 'lucide-react';
+import { Search, Filter, X, Loader2, Brain, Plus, ArrowUpRight, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -44,11 +45,15 @@ export const MemoryList: React.FC<MemoryListProps> = ({
   onAddMemory,
   onQuickVerify,
 }) => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<FactCategory | 'all'>('all');
   const [selectedSource, setSelectedSource] = useState<string | 'all'>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [exportCtaDismissed, setExportCtaDismissed] = useState(
+    () => localStorage.getItem('export-cta-dismissed') === 'true'
+  );
 
   // Build filters
   const filters = useMemo(() => ({
@@ -246,6 +251,40 @@ export const MemoryList: React.FC<MemoryListProps> = ({
               {data?.total || 0} {data?.total === 1 ? 'memory' : 'memories'}
               {hasActiveFilters && ' matching filters'}
             </p>
+
+            {/* Export to AI CTA */}
+            {!exportCtaDismissed && (data?.total || 0) >= 3 && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative rounded-xl bg-gradient-to-r from-accent/10 via-purple-500/10 to-emerald-500/10 border border-accent/20 p-3 mb-1"
+              >
+                <button
+                  onClick={() => navigate('/context')}
+                  className="w-full flex items-center gap-3 text-left"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <ArrowUpRight className="h-4 w-4 text-accent" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground">Export to AI</p>
+                    <p className="text-[11px] text-muted-foreground">Make ChatGPT, Claude, or Cursor understand you</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    localStorage.setItem('export-cta-dismissed', 'true');
+                    setExportCtaDismissed(true);
+                  }}
+                  className="absolute top-2 right-2 p-1 rounded-md text-muted-foreground/40 hover:text-muted-foreground"
+                  aria-label="Dismiss"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </motion.div>
+            )}
 
             <AnimatePresence mode="popLayout">
               {memories.map((memory) => (

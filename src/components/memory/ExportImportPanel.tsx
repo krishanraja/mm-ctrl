@@ -5,8 +5,9 @@
  */
 
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Upload, FileJson, FileSpreadsheet, Loader2, AlertCircle, Check, X } from 'lucide-react';
+import { Download, Upload, FileJson, FileSpreadsheet, Loader2, AlertCircle, Check, X, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -21,6 +22,7 @@ interface ExportImportPanelProps {
 export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
   className,
 }) => {
+  const navigate = useNavigate();
   const [importResult, setImportResult] = useState<{ imported: number; skipped: number } | null>(null);
   const [extractionResult, setExtractionResult] = useState<{ extracted: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -191,6 +193,27 @@ export const ExportImportPanel: React.FC<ExportImportPanelProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* AI Export Wizard CTA */}
+      <Card className="border-accent/20 bg-gradient-to-r from-accent/5 via-purple-500/5 to-emerald-500/5">
+        <CardContent className="p-4">
+          <button
+            onClick={() => navigate('/context')}
+            className="w-full flex items-center gap-3 text-left"
+          >
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <ArrowUpRight className="h-5 w-5 text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">Export to AI</p>
+              <p className="text-xs text-muted-foreground">
+                Formatted context for ChatGPT, Claude, Gemini, Cursor, and more
+              </p>
+            </div>
+            <ArrowRight className="h-4 w-4 text-accent flex-shrink-0" />
+          </button>
+        </CardContent>
+      </Card>
 
       {/* Export Card */}
       <Card>
