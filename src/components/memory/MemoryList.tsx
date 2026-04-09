@@ -6,17 +6,15 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, Loader2, Brain, Plus, ArrowUpRight, ChevronRight } from 'lucide-react';
+import { Search, Filter, X, Loader2, Brain, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MemoryItemCard } from './MemoryItemCard';
 import { useMemoryList, useDeleteMemory } from '@/hooks/useMemoryQueries';
 import type { UserMemoryFact, FactCategory } from '@/types/memory';
-import { staggerContainer, slideUp } from '@/lib/motion';
+import { staggerContainer } from '@/lib/motion';
 
 interface MemoryListProps {
   onEditMemory: (memory: UserMemoryFact) => void;
@@ -45,15 +43,11 @@ export const MemoryList: React.FC<MemoryListProps> = ({
   onAddMemory,
   onQuickVerify,
 }) => {
-  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<FactCategory | 'all'>('all');
   const [selectedSource, setSelectedSource] = useState<string | 'all'>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [exportCtaDismissed, setExportCtaDismissed] = useState(
-    () => localStorage.getItem('export-cta-dismissed') === 'true'
-  );
 
   // Build filters
   const filters = useMemo(() => ({
@@ -114,51 +108,48 @@ export const MemoryList: React.FC<MemoryListProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Search and Filter Header */}
-      <div className="flex-shrink-0 px-4 py-3 space-y-3 border-b border-border">
-        {/* Search input */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search memories..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-10 h-11"
-          />
-          {search && (
-            <button
-              onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-secondary"
-            >
-              <X className="w-4 h-4 text-muted-foreground" />
-            </button>
-          )}
-        </div>
-
-        {/* Filter toggle */}
-        <div className="flex items-center justify-between">
+      {/* Search + Filter Header */}
+      <div className="flex-shrink-0 px-4 py-2 space-y-2">
+        {/* Search input + filter toggle in one row */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search memories..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 pr-10 h-10"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-secondary"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
+          </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm",
+              "flex items-center justify-center w-10 h-10 rounded-lg flex-shrink-0 relative",
               "transition-colors",
               showFilters ? "bg-primary text-primary-foreground" : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
             )}
+            aria-label="Filters"
           >
             <Filter className="w-4 h-4" />
-            Filters
             {hasActiveFilters && (
-              <span className="w-2 h-2 rounded-full bg-accent" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent" />
             )}
           </button>
-          
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="text-[10px] text-muted-foreground hover:text-foreground flex-shrink-0"
             >
-              Clear all
+              Clear
             </button>
           )}
         </div>
@@ -174,13 +165,13 @@ export const MemoryList: React.FC<MemoryListProps> = ({
               className="overflow-hidden space-y-2"
             >
               {/* Category filters */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.value}
                     onClick={() => setSelectedCategory(cat.value)}
                     className={cn(
-                      "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                      "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors",
                       selectedCategory === cat.value
                         ? "bg-primary text-primary-foreground"
                         : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
@@ -192,13 +183,13 @@ export const MemoryList: React.FC<MemoryListProps> = ({
               </div>
 
               {/* Source filters */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {SOURCES.map((src) => (
                   <button
                     key={src.value}
                     onClick={() => setSelectedSource(src.value)}
                     className={cn(
-                      "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                      "px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors",
                       selectedSource === src.value
                         ? "bg-accent text-accent-foreground"
                         : "bg-secondary/50 text-muted-foreground hover:bg-secondary"
@@ -214,7 +205,7 @@ export const MemoryList: React.FC<MemoryListProps> = ({
       </div>
 
       {/* Memory list */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-4 py-2">
         {memories.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -251,40 +242,6 @@ export const MemoryList: React.FC<MemoryListProps> = ({
               {data?.total || 0} {data?.total === 1 ? 'memory' : 'memories'}
               {hasActiveFilters && ' matching filters'}
             </p>
-
-            {/* Export to AI CTA */}
-            {!exportCtaDismissed && (data?.total || 0) >= 3 && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative rounded-xl bg-gradient-to-r from-accent/10 via-purple-500/10 to-emerald-500/10 border border-accent/20 p-3 mb-1"
-              >
-                <button
-                  onClick={() => navigate('/context')}
-                  className="w-full flex items-center gap-3 text-left"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                    <ArrowUpRight className="h-4 w-4 text-accent" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">Export to AI</p>
-                    <p className="text-[11px] text-muted-foreground">Make ChatGPT, Claude, or Cursor understand you</p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    localStorage.setItem('export-cta-dismissed', 'true');
-                    setExportCtaDismissed(true);
-                  }}
-                  className="absolute top-2 right-2 p-1 rounded-md text-muted-foreground/40 hover:text-muted-foreground"
-                  aria-label="Dismiss"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </motion.div>
-            )}
 
             <AnimatePresence mode="popLayout">
               {memories.map((memory) => (

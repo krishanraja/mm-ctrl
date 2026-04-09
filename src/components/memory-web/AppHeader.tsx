@@ -1,12 +1,19 @@
 import { useNavigate } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { User, Plus, ArrowUpRight } from 'lucide-react';
 import { CtrlLogo } from '@/components/landing/CtrlLogo';
+
+interface AppHeaderProps {
+  showProfile?: boolean;
+  onAdd?: () => void;
+  onExport?: () => void;
+}
 
 /**
  * Shared app header: small favicon icon + CTRL logo in top-left.
  * Used on all authenticated mobile pages.
+ * Optionally renders Add / Export action buttons next to the profile icon.
  */
-export function AppHeader({ showProfile = true }: { showProfile?: boolean }) {
+export function AppHeader({ showProfile = true, onAdd, onExport }: AppHeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -15,15 +22,35 @@ export function AppHeader({ showProfile = true }: { showProfile?: boolean }) {
         <img src="/mindmaker-favicon.png" alt="" className="h-6 w-6" />
         <CtrlLogo className="h-3.5 w-auto translate-x-0.5" />
       </div>
-      {showProfile && (
-        <button
-          onClick={() => navigate('/profile')}
-          className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
-          aria-label="Profile"
-        >
-          <User className="h-4 w-4" />
-        </button>
-      )}
+      <div className="flex items-center gap-1.5">
+        {onExport && (
+          <button
+            onClick={onExport}
+            className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
+            aria-label="Export to AI"
+          >
+            <ArrowUpRight className="h-4 w-4" />
+          </button>
+        )}
+        {onAdd && (
+          <button
+            onClick={onAdd}
+            className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white hover:bg-accent/90 transition-colors"
+            aria-label="Add memory"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        )}
+        {showProfile && (
+          <button
+            onClick={() => navigate('/profile')}
+            className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent hover:bg-accent/20 transition-colors"
+            aria-label="Profile"
+          >
+            <User className="h-4 w-4" />
+          </button>
+        )}
+      </div>
     </header>
   );
 }
