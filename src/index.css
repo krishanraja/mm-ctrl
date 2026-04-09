@@ -131,6 +131,10 @@
   bottom: calc(4rem + env(safe-area-inset-bottom, 0px) + 0.75rem);
 }
 
+.bottom-nav-clearance-with-player {
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px) + 0.75rem + 3.25rem);
+}
+
 /* === SPLASH SCREEN ANIMATIONS === */
 @keyframes splash-ring-rotate {
   from {

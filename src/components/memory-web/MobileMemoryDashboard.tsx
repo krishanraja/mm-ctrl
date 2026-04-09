@@ -83,7 +83,7 @@ export function MobileMemoryDashboard() {
     refreshPending,
   } = useVerificationFlow();
   const { briefing: todaysBriefing, customBriefings, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
-  const { setBriefing, setSheetOpen, playback } = useBriefingContext();
+  const { setBriefing, setSheetOpen, playback, isMiniPlayerVisible } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
   const [customSheetOpen, setCustomSheetOpen] = useState(false);
 
@@ -651,30 +651,36 @@ export function MobileMemoryDashboard() {
           </motion.div>
         </div>
 
-        {/* Verify action - shown only when there are pending verifications */}
-        {hasData && !isVoiceExpanded && unverifiedCount > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="flex-shrink-0 px-4 py-2 relative z-10"
-          >
-            <button
-              onClick={openVerifyFlow}
-              className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs font-semibold"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Verify ({unverifiedCount})
-            </button>
-          </motion.div>
-        )}
-
         {/* Spacer for fixed bottom nav */}
         <div className="flex-shrink-0 h-20" />
 
         <MiniPlayer />
       </div>
       <BottomNav />
+
+      {/* Verify action - floating above bottom nav */}
+      <AnimatePresence>
+        {hasData && !isVoiceExpanded && unverifiedCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ delay: 0.4 }}
+            className={cn(
+              "fixed left-4 right-4 z-40",
+              isMiniPlayerVisible ? "bottom-nav-clearance-with-player" : "bottom-nav-clearance"
+            )}
+          >
+            <button
+              onClick={openVerifyFlow}
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 text-xs font-semibold backdrop-blur-md border border-emerald-500/20"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Verify ({unverifiedCount})
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showVerification && pendingVerifications.length > 0 && (
