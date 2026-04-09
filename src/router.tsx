@@ -2,18 +2,38 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { RequireAuth } from '@/components/auth/RequireAuth'
 
-const Landing = lazy(() => import('@/pages/Landing'))
-const Auth = lazy(() => import('@/pages/Auth'))
-const AuthCallback = lazy(() => import('@/pages/AuthCallback'))
-const Dashboard = lazy(() => import('@/pages/Dashboard'))
-const MemoryCenter = lazy(() => import('@/pages/MemoryCenter'))
-const ContextExport = lazy(() => import('@/pages/ContextExport'))
-const Settings = lazy(() => import('@/pages/Settings'))
-const Compliance = lazy(() => import('@/pages/Compliance'))
-const Profile = lazy(() => import('@/pages/Profile'))
-const Booking = lazy(() => import('@/pages/Booking'))
-const BriefingPage = lazy(() => import('@/pages/BriefingPage'))
-const NotFound = lazy(() => import('@/pages/NotFound'))
+/**
+ * Wrap lazy imports so that stale-chunk 404s trigger a single page
+ * reload instead of crashing the app. After a new deploy, the old
+ * HTML may reference chunk filenames that no longer exist.
+ */
+function lazyWithRetry(importFn: () => Promise<{ default: React.ComponentType }>) {
+  return lazy(() =>
+    importFn().catch(() => {
+      const key = 'chunk_reload'
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, '1')
+        window.location.reload()
+      }
+      // Return a no-op module so TypeScript is happy; the reload above
+      // means this line is effectively unreachable.
+      return { default: () => null } as { default: React.ComponentType }
+    }),
+  )
+}
+
+const Landing = lazyWithRetry(() => import('@/pages/Landing'))
+const Auth = lazyWithRetry(() => import('@/pages/Auth'))
+const AuthCallback = lazyWithRetry(() => import('@/pages/AuthCallback'))
+const Dashboard = lazyWithRetry(() => import('@/pages/Dashboard'))
+const MemoryCenter = lazyWithRetry(() => import('@/pages/MemoryCenter'))
+const ContextExport = lazyWithRetry(() => import('@/pages/ContextExport'))
+const Settings = lazyWithRetry(() => import('@/pages/Settings'))
+const Compliance = lazyWithRetry(() => import('@/pages/Compliance'))
+const Profile = lazyWithRetry(() => import('@/pages/Profile'))
+const Booking = lazyWithRetry(() => import('@/pages/Booking'))
+const BriefingPage = lazyWithRetry(() => import('@/pages/BriefingPage'))
+const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 function LoadingPage() {
   return (
