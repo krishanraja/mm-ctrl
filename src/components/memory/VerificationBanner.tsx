@@ -1,6 +1,6 @@
 /**
  * VerificationBanner Component
- * Nudge banner encouraging users to verify their inferred memories.
+ * Compact pill nudging users to verify their inferred memories.
  * Appears above the memory list tabs when unverified memories exist.
  */
 
@@ -18,42 +18,6 @@ interface VerificationBannerProps {
 
 const DISMISS_KEY = 'verification-banner-dismissed-at';
 const DISMISS_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-
-function MiniProgressRing({ rate }: { rate: number }) {
-  const size = 32;
-  const strokeWidth = 3;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (rate / 100) * circumference;
-
-  return (
-    <svg width={size} height={size} className="flex-shrink-0 -rotate-90">
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        className="text-emerald-500/20"
-      />
-      <motion.circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        className="text-emerald-500"
-        strokeDasharray={circumference}
-        initial={{ strokeDashoffset: circumference }}
-        animate={{ strokeDashoffset: offset }}
-        transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-      />
-    </svg>
-  );
-}
 
 export const VerificationBanner: React.FC<VerificationBannerProps> = ({
   unverifiedCount,
@@ -87,41 +51,35 @@ export const VerificationBanner: React.FC<VerificationBannerProps> = ({
   return (
     <AnimatePresence>
       <motion.button
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10, height: 0 }}
+        exit={{ opacity: 0, y: -6, height: 0 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => {
           haptics.light();
           onStartVerification();
         }}
         className={cn(
-          'w-full flex items-center gap-3 px-4 py-3 rounded-2xl',
+          'w-full flex items-center gap-2 px-3 py-2 rounded-xl',
           'bg-emerald-500/5 border border-emerald-500/20',
           'text-left transition-colors hover:bg-emerald-500/10',
-          'mb-3',
         )}
       >
-        <MiniProgressRing rate={verifiedRate} />
+        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
 
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground">
-            {unverifiedCount} {unverifiedCount === 1 ? 'memory' : 'memories'} to verify
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Tap to review and confirm
-          </p>
-        </div>
+        <p className="flex-1 min-w-0 text-xs font-medium text-foreground">
+          {unverifiedCount} {unverifiedCount === 1 ? 'memory' : 'memories'} to verify
+        </p>
 
         <button
           onClick={handleDismiss}
-          className="p-1.5 rounded-lg hover:bg-secondary/50 transition-colors flex-shrink-0"
+          className="p-1 rounded-md hover:bg-secondary/50 transition-colors flex-shrink-0"
           aria-label="Dismiss"
         >
-          <X className="w-3.5 h-3.5 text-muted-foreground" />
+          <X className="w-3 h-3 text-muted-foreground" />
         </button>
 
-        <ChevronRight className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+        <ChevronRight className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
       </motion.button>
     </AnimatePresence>
   );
