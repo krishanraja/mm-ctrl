@@ -105,6 +105,19 @@ export function MobileMemoryDashboard() {
     }
   };
 
+  const [refreshingBriefing, setRefreshingBriefing] = useState(false);
+  const handleRefreshBriefing = async () => {
+    setRefreshingBriefing(true);
+    try {
+      const briefingId = await generate('default', undefined, true);
+      if (briefingId) {
+        await refetchBriefing();
+      }
+    } finally {
+      setRefreshingBriefing(false);
+    }
+  };
+
   const handleCustomGenerate = async (briefingType: BriefingType, customContext?: string) => {
     const briefingId = await generate(briefingType, customContext);
     if (briefingId) {
@@ -245,6 +258,8 @@ export function MobileMemoryDashboard() {
               briefing={todaysBriefing}
               hasListened={playback.hasListened}
               onPlay={handlePlayBriefing}
+              onRefresh={handleRefreshBriefing}
+              refreshing={refreshingBriefing}
               onCustomBriefing={() => setCustomSheetOpen(true)}
               customBriefingCount={customBriefings.length}
             />
