@@ -117,36 +117,8 @@ export function BriefingCard({
                   {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
                 </p>
 
-                <AnimatePresence mode="wait">
-                  {expanded ? (
-                    <motion.div
-                      key="expanded"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="space-y-1.5 mt-1 overflow-hidden"
-                    >
-                      {briefing.segments?.map((seg, i) => {
-                        const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
-                        return (
-                          <div key={i} className="leading-snug">
-                            <span
-                              className={cn(
-                                "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
-                                tagConfig?.className || "bg-muted text-muted-foreground border-border"
-                              )}
-                            >
-                              {tagConfig?.label || seg.framework_tag}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {seg.headline}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </motion.div>
-                  ) : (
+                {!expanded && (
+                  <AnimatePresence mode="wait">
                     <motion.div key="collapsed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                       {waitingForAudio && briefing.segments?.length > 0 ? (
                         <RotatingHeadlines segments={briefing.segments} />
@@ -154,8 +126,8 @@ export function BriefingCard({
                         <p className="text-xs leading-relaxed line-clamp-2 text-muted-foreground/80">{teaser}</p>
                       )}
                     </motion.div>
-                  )}
-                </AnimatePresence>
+                  </AnimatePresence>
+                )}
               </div>
             </div>
 
@@ -196,6 +168,39 @@ export function BriefingCard({
               )}
             </div>
           </div>
+
+          {/* Expanded headlines - full width, outside the flex row */}
+          <AnimatePresence mode="wait">
+            {expanded && (
+              <motion.div
+                key="expanded"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="space-y-1.5 mt-1.5 ml-8 overflow-hidden"
+              >
+                {briefing.segments?.map((seg, i) => {
+                  const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
+                  return (
+                    <div key={i} className="leading-snug">
+                      <span
+                        className={cn(
+                          "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
+                          tagConfig?.className || "bg-muted text-muted-foreground border-border"
+                        )}
+                      >
+                        {tagConfig?.label || seg.framework_tag}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {seg.headline}
+                      </span>
+                    </div>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Bottom row: Custom Briefing button + custom briefing count */}
           {onCustomBriefing && (
