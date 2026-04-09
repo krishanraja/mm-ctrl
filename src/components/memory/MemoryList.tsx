@@ -205,7 +205,7 @@ export const MemoryList: React.FC<MemoryListProps> = ({
       </div>
 
       {/* Memory list */}
-      <div className="flex-1 overflow-y-auto px-4 py-2">
+      <div className="flex-1 overflow-y-auto px-4 py-2 pb-20">
         {memories.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
