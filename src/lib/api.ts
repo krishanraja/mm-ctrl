@@ -1,5 +1,6 @@
 // src/lib/api.ts
 import { supabase } from '@/integrations/supabase/client'
+import { sanitizeTranscriptionError } from '@/utils/transcriptionErrors'
 
 // Timeout wrapper to prevent hanging requests
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
@@ -115,7 +116,8 @@ export const api = {
   // ============================================
   async transcribeAudio(audioBlob: Blob, sessionId?: string) {
     const formData = new FormData()
-    formData.append('audio', audioBlob, 'recording.webm')
+    const ext = audioBlob.type?.includes('mp4') ? 'mp4' : 'webm'
+    formData.append('audio', audioBlob, `recording.${ext}`)
     const sid = sessionId || crypto.randomUUID()
     formData.append('sessionId', sid)
 
@@ -138,7 +140,7 @@ export const api = {
       } catch { /* response not parseable */ }
 
       console.error('voice-transcribe error:', errorDetail)
-      const err = new Error(errorDetail) as Error & { fallbackAvailable?: boolean }
+      const err = new Error(sanitizeTranscriptionError(errorDetail)) as Error & { fallbackAvailable?: boolean }
       err.fallbackAvailable = fallbackAvailable
       throw err
     }

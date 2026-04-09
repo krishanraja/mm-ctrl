@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useVoice } from "@/hooks/useVoice"
 import { AudioWaveform } from "./AudioWaveform"
 import { cn } from "@/lib/utils"
+import { sanitizeTranscriptionError } from "@/utils/transcriptionErrors"
 
 interface VoiceRecorderProps {
   onTranscript?: (transcript: string) => void
@@ -63,7 +64,7 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
       {/* Error */}
       {error && (
         <div className="w-full text-sm text-destructive bg-destructive/10 p-3 rounded-lg text-center">
-          {error.message}
+          {sanitizeTranscriptionError(error.message)}
         </div>
       )}
 

@@ -94,6 +94,7 @@ export const VoiceCapture: React.FC<VoiceCaptureProps> = ({
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       const result: TranscriptionResult = data;
       setTranscript(result.transcript);

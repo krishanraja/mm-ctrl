@@ -96,6 +96,7 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       if (data?.transcript) {
         onValueChange(data.transcript);
