@@ -35,6 +35,7 @@ import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BottomNav } from './BottomNav';
 import { AppHeader } from './AppHeader';
 import { useToast } from '@/hooks/use-toast';
+import { sanitizeTranscriptionError } from '@/utils/transcriptionErrors';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet, MiniPlayer, CustomBriefingSheet } from '@/components/briefing';
 import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
@@ -176,17 +177,9 @@ export function MobileMemoryDashboard() {
 
   useEffect(() => {
     if (voiceError) {
-      const msg = voiceError.message || '';
-      const friendly = msg.includes('timed out')
-        ? 'Transcription took too long. Try a shorter recording.'
-        : msg.includes('unavailable') || msg.includes('API key')
-        ? 'Voice transcription is temporarily unavailable.'
-        : msg.includes('All transcription providers')
-        ? 'Could not transcribe audio. Please try again.'
-        : msg || 'Something went wrong. Please try again.';
       toast({
         title: 'Transcription failed',
-        description: friendly,
+        description: sanitizeTranscriptionError(voiceError.message),
         variant: 'destructive',
       });
       setIsProcessing(false);

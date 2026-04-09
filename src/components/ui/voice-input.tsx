@@ -82,6 +82,7 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       if (data?.transcript) {
         onTranscript(data.transcript);

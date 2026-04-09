@@ -250,7 +250,8 @@ serve(async (req) => {
     if (OPENAI_API_KEY) {
       try {
         const whisperFormData = new FormData();
-        whisperFormData.append('file', audioBlob, 'audio.webm');
+        const audioFileName = (audioBlob as Blob).type?.includes('mp4') ? 'audio.mp4' : 'audio.webm';
+        whisperFormData.append('file', audioBlob, audioFileName);
         whisperFormData.append('model', 'whisper-1');
         whisperFormData.append('language', 'en');
         whisperFormData.append('response_format', 'verbose_json');
@@ -445,7 +446,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in voice-transcribe:', error);
     return new Response(
-      JSON.stringify({ error: error.message, fallback_available: true }),
+      JSON.stringify({ error: 'Transcription failed. Please try again.', fallback_available: true }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -112,10 +112,11 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
       });
 
       if (transcribeError) throw transcribeError;
-      
+      if (transcribeData?.error) throw new Error(transcribeData.error);
+
       // Guard after async operation
       if (!isMountedRef.current) return;
-      
+
       const transcriptText = transcribeData?.transcript || '';
       setTranscript(transcriptText);
 
