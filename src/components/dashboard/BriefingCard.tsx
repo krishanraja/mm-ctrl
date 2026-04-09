@@ -123,13 +123,15 @@ export function BriefingCard({
                 </p>
                 {/* Teaser / rotating headline when collapsed */}
                 {!expanded && (
-                  <div className="mt-0.5">
-                    {waitingForAudio && briefing.segments?.length > 0 ? (
-                      <RotatingHeadlines segments={briefing.segments} />
-                    ) : (
-                      <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
-                    )}
-                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.div key="collapsed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      {waitingForAudio && briefing.segments?.length > 0 ? (
+                        <RotatingHeadlines segments={briefing.segments} />
+                      ) : (
+                        <p className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80">{teaser}</p>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
                 )}
               </div>
             </div>
@@ -173,7 +175,7 @@ export function BriefingCard({
           </div>
 
           {/* Expanded stories - FULL WIDTH across the card */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {expanded && (
               <motion.div
                 key="expanded-stories"

@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashboard"
 import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
-import { GuidedFirstExperience } from "@/components/memory-web/GuidedFirstExperience"
+import { OnboardingInterview } from "@/components/onboarding/OnboardingInterview"
 import { BottomNav } from "@/components/memory-web/BottomNav"
 import { DesktopSidebar } from "@/components/memory-web/DesktopSidebar"
 import { AppHeader } from "@/components/memory-web/AppHeader"
@@ -50,7 +50,7 @@ export default function Dashboard() {
   }
 
   if (isFirstTime && !hasExistingFacts && !alreadyOnboarded) {
-    return <GuidedFirstExperience onComplete={completeOnboarding} />
+    return <OnboardingInterview onComplete={completeOnboarding} />
   }
 
   // Edge view
@@ -59,7 +59,7 @@ export default function Dashboard() {
       return (
         <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
           <AppHeader />
-          <div className="flex-1 overflow-y-auto px-4 py-4">
+          <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
             <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
               <EdgeViewLazy />
             </React.Suspense>

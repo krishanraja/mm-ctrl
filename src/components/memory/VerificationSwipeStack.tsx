@@ -6,7 +6,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence, PanInfo, useMotionValue, useTransform } from 'framer-motion';
-import { X, Check, Pencil, User, Building, Target, AlertTriangle, Settings } from 'lucide-react';
+import { X, Check, Pencil, User, Building, Target, AlertTriangle, Settings, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { haptics } from '@/lib/haptics';
 import { VerificationCompletionScreen } from './VerificationCompletionScreen';
@@ -216,6 +216,7 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
   const [isComplete, setIsComplete] = useState(false);
   const [exitDirection, setExitDirection] = useState<'left' | 'right' | null>(null);
   const [isExiting, setIsExiting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const currentFact = facts[currentIndex];
   const nextFact = facts[currentIndex + 1];
@@ -233,12 +234,22 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
   const handleSwipeRight = useCallback(async () => {
     if (!currentFact || isProcessing || isExiting) return;
     setIsProcessing(true);
+    setError(null);
     const factId = currentFact.id;
-    setExitDirection('right');
-    setIsExiting(true);
     try {
       const result = await onVerify(factId);
-      if (result) setVerifiedCount((prev) => prev + 1);
+      if (result) {
+        setVerifiedCount((prev) => prev + 1);
+        setExitDirection('right');
+        setIsExiting(true);
+        haptics.success();
+      } else {
+        setError('Could not save. Tap to retry.');
+        haptics.error();
+      }
+    } catch {
+      setError('Could not save. Tap to retry.');
+      haptics.error();
     } finally {
       setIsProcessing(false);
     }
@@ -247,12 +258,22 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
   const handleSwipeLeft = useCallback(async () => {
     if (!currentFact || isProcessing || isExiting) return;
     setIsProcessing(true);
+    setError(null);
     const factId = currentFact.id;
-    setExitDirection('left');
-    setIsExiting(true);
     try {
       const result = await onReject(factId);
-      if (result) setRejectedCount((prev) => prev + 1);
+      if (result) {
+        setRejectedCount((prev) => prev + 1);
+        setExitDirection('left');
+        setIsExiting(true);
+        haptics.medium();
+      } else {
+        setError('Could not save. Tap to retry.');
+        haptics.error();
+      }
+    } catch {
+      setError('Could not save. Tap to retry.');
+      haptics.error();
     } finally {
       setIsProcessing(false);
     }
@@ -267,15 +288,25 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
   const handleSaveEdit = useCallback(async () => {
     if (!currentFact || !editValue.trim()) return;
     setIsProcessing(true);
+    setError(null);
     const factId = currentFact.id;
     const value = editValue.trim();
-    setEditingId(null);
-    setEditValue('');
-    setExitDirection('right');
-    setIsExiting(true);
     try {
       const result = await onVerify(factId, value);
-      if (result) setVerifiedCount((prev) => prev + 1);
+      if (result) {
+        setEditingId(null);
+        setEditValue('');
+        setVerifiedCount((prev) => prev + 1);
+        setExitDirection('right');
+        setIsExiting(true);
+        haptics.success();
+      } else {
+        setError('Could not save correction. Try again.');
+        haptics.error();
+      }
+    } catch {
+      setError('Could not save correction. Try again.');
+      haptics.error();
     } finally {
       setIsProcessing(false);
     }
@@ -466,6 +497,22 @@ export const VerificationSwipeStack: React.FC<VerificationSwipeStackProps> = ({
                 isProcessing={isProcessing}
               />
             ) : null}
+          </AnimatePresence>
+
+          {/* Error banner */}
+          <AnimatePresence>
+            {error && (
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                onClick={() => setError(null)}
+                className="absolute bottom-2 left-0 right-0 mx-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center gap-2 z-10"
+              >
+                <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
+                <p className="text-sm text-destructive">{error}</p>
+              </motion.button>
+            )}
           </AnimatePresence>
         </div>
 

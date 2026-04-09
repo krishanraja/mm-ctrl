@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Plus, Shield, Download, Upload, CheckCircle2, Flame, Thermometer, User } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Brain, Plus, Shield, Download, ArrowUpRight, FileText, CheckCircle2, Flame, Thermometer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MemoryErrorBoundary } from '@/components/memory/MemoryErrorBoundary';
@@ -53,7 +52,7 @@ export default function MemoryCenter() {
     <MemoryErrorBoundary>
       {/* Hidden file input for markdown import */}
       <input {...fileInputProps} />
-      <div className="flex-1 min-h-0 flex flex-col space-y-4">
+      <div className="flex-1 min-h-0 flex flex-col space-y-2">
         {/* Verification banner */}
         {unverifiedCount > 0 && (
           <VerificationBanner
@@ -69,47 +68,22 @@ export default function MemoryCenter() {
           onValueChange={setActiveTab}
           className="flex-1 min-h-0 flex flex-col overflow-hidden"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <TabsList className="h-11">
-              <TabsTrigger value="memories" className="text-sm px-3">
-                <Brain className="h-4 w-4 mr-1.5 hidden sm:inline" />
-                All Facts
-              </TabsTrigger>
-              <TabsTrigger value="privacy" className="text-sm px-3">
-                <Shield className="h-4 w-4 mr-1.5 hidden sm:inline" />
-                Privacy
-              </TabsTrigger>
-              <TabsTrigger value="data" className="text-sm px-3">
-                <Download className="h-4 w-4 mr-1.5 hidden sm:inline" />
-                Data
-              </TabsTrigger>
-            </TabsList>
+          <TabsList className="h-9 flex-shrink-0">
+            <TabsTrigger value="memories" className="text-xs px-3">
+              <Brain className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+              All Facts
+            </TabsTrigger>
+            <TabsTrigger value="privacy" className="text-xs px-3">
+              <Shield className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+              Privacy
+            </TabsTrigger>
+            <TabsTrigger value="data" className="text-xs px-3">
+              <Download className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+              Data
+            </TabsTrigger>
+          </TabsList>
 
-            {activeTab === 'memories' && (
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={triggerImport}
-                  disabled={isImporting}
-                  size="sm"
-                  className="border-0 bg-secondary/50"
-                >
-                  <Upload className="h-4 w-4 sm:mr-1" />
-                  <span className="hidden sm:inline">{isImporting ? 'Importing...' : 'Import'}</span>
-                </Button>
-                <Button
-                  onClick={() => setIsAddOpen(true)}
-                  size="sm"
-                  className="border-0"
-                >
-                  <Plus className="h-4 w-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Add</span>
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <TabsContent value="memories" className="mt-4 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
+          <TabsContent value="memories" className="mt-2 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
             <MemoryList
               onEditMemory={handleEditMemory}
               onAddMemory={() => setIsAddOpen(true)}
@@ -117,11 +91,11 @@ export default function MemoryCenter() {
             />
           </TabsContent>
 
-          <TabsContent value="privacy" className="mt-4 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
+          <TabsContent value="privacy" className="mt-2 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
             <PrivacyControlsPanel />
           </TabsContent>
 
-          <TabsContent value="data" className="mt-4 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
+          <TabsContent value="data" className="mt-2 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
             <ExportImportPanel />
           </TabsContent>
         </Tabs>
@@ -164,24 +138,53 @@ export default function MemoryCenter() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-6 space-y-3"
+              className="mb-4 space-y-2"
             >
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
                   <Brain className="h-5 w-5 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold">Memory Browser</h1>
-                  <p className="text-sm text-muted-foreground">
+                <div className="flex-1">
+                  <h1 className="text-xl font-bold">Memory Browser</h1>
+                  <p className="text-xs text-muted-foreground">
                     Everything your AI knows about you
                   </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/context')}
+                    size="sm"
+                    className="border-0 bg-accent/10 text-accent hover:bg-accent/20"
+                  >
+                    <ArrowUpRight className="h-4 w-4 mr-1" />
+                    Export to AI
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={triggerImport}
+                    disabled={isImporting}
+                    size="sm"
+                    className="border-0 bg-secondary/50"
+                  >
+                    <FileText className="h-4 w-4 mr-1" />
+                    {isImporting ? 'Importing...' : 'Import'}
+                  </Button>
+                  <Button
+                    onClick={() => setIsAddOpen(true)}
+                    size="sm"
+                    className="border-0"
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add
+                  </Button>
                 </div>
               </div>
 
               {stats && (
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent/10 text-accent text-sm font-medium">
-                    <Brain className="h-3.5 w-3.5" />
+                <div className="flex flex-wrap gap-2 pl-[52px]">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-accent text-xs font-medium">
+                    <Brain className="h-3 w-3" />
                     {stats.total_facts} facts
                   </span>
                   <motion.button
@@ -189,19 +192,19 @@ export default function MemoryCenter() {
                     whileTap={{ scale: 0.95 }}
                     animate={stats.verified_rate === 0 ? { opacity: [1, 0.7, 1] } : undefined}
                     transition={stats.verified_rate === 0 ? { repeat: Infinity, duration: 2 } : undefined}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 text-sm font-medium cursor-pointer hover:bg-emerald-500/20 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium cursor-pointer hover:bg-emerald-500/20 transition-colors"
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <CheckCircle2 className="h-3 w-3" />
                     {stats.verified_rate}% verified
                   </motion.button>
                   {(stats.temperature_distribution?.hot || 0) > 0 && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-500 text-sm font-medium">
-                      <Flame className="h-3.5 w-3.5" />
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-500 text-xs font-medium">
+                      <Flame className="h-3 w-3" />
                       {stats.temperature_distribution.hot} hot
                     </span>
                   )}
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-500 text-sm font-medium">
-                    <Thermometer className="h-3.5 w-3.5" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
+                    <Thermometer className="h-3 w-3" />
                     {stats.temperature_distribution?.warm || 0} warm
                   </span>
                 </div>
@@ -216,52 +219,38 @@ export default function MemoryCenter() {
 
   return (
     <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      <AppHeader />
+      <AppHeader
+        onAdd={() => setIsAddOpen(true)}
+        onExport={() => navigate('/context')}
+      />
 
-      <div className="flex-shrink-0 px-4 pb-2">
-        <div className="flex items-center gap-2.5 mb-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-emerald-500 flex items-center justify-center shadow-lg shadow-accent/20">
-            <Brain className="h-4 w-4 text-white" />
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-foreground">Memory Browser</h1>
-            <p className="text-[10px] text-muted-foreground leading-tight">
-              Everything your AI knows about you
-            </p>
-          </div>
-        </div>
-
-        {stats && (
-          <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent/10 text-accent text-xs font-medium">
-              <Brain className="h-3 w-3" />
-              {stats.total_facts} facts
-            </span>
+      {stats && (
+        <div className="flex-shrink-0 px-5 pb-1.5">
+          <p className="text-[11px] text-muted-foreground leading-tight">
+            <span className="text-accent font-medium">{stats.total_facts} facts</span>
+            {' · '}
             <motion.button
               onClick={openFlow}
               whileTap={{ scale: 0.95 }}
               animate={stats.verified_rate === 0 ? { opacity: [1, 0.7, 1] } : undefined}
               transition={stats.verified_rate === 0 ? { repeat: Infinity, duration: 2 } : undefined}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-medium cursor-pointer hover:bg-emerald-500/20 transition-colors"
+              className="text-emerald-500 font-medium hover:underline"
             >
-              <CheckCircle2 className="h-3 w-3" />
               {stats.verified_rate}% verified
             </motion.button>
             {(stats.temperature_distribution?.hot || 0) > 0 && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-500/10 text-orange-500 text-xs font-medium">
-                <Flame className="h-3 w-3" />
-                {stats.temperature_distribution.hot} hot
-              </span>
+              <>
+                {' · '}
+                <span className="text-orange-500 font-medium">{stats.temperature_distribution.hot} hot</span>
+              </>
             )}
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-medium">
-              <Thermometer className="h-3 w-3" />
-              {stats.temperature_distribution?.warm || 0} warm
-            </span>
-          </div>
-        )}
-      </div>
+            {' · '}
+            <span className="text-amber-500 font-medium">{stats.temperature_distribution?.warm || 0} warm</span>
+          </p>
+        </div>
+      )}
 
-      <main className="flex-1 min-h-0 overflow-hidden px-4 py-2 flex flex-col">
+      <main className="flex-1 min-h-0 overflow-hidden px-4 py-1 flex flex-col">
         {content}
       </main>
 
