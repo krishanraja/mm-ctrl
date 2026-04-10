@@ -1443,14 +1443,10 @@ serve(async (req) => {
       headlines = STATIC_FALLBACK;
     }
 
-    // 2.5 Second-pass curation: deduplicate, rank, keep top 6-8
-    console.log("Running second-pass curation...");
-    headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
-    console.log(`After curation: ${headlines.length} headlines`);
-
-    // 3. Phase 1: Insert preliminary briefing with headline-only segments
-    //    Client can poll and show headlines immediately while script generates
-    const preliminarySegments = headlines.map(h => ({
+    // 3. PHASE 1: Insert raw headlines immediately so the client can show them
+    //    while curation and script generation continue in the background.
+    //    This gets content visible to the user in ~7-15s instead of 30-45s.
+    const rawSegments = headlines.slice(0, 8).map(h => ({
       headline: h.title,
       analysis: "",
       framework_tag: "signal",
@@ -1465,7 +1461,7 @@ serve(async (req) => {
         briefing_date: today,
         briefing_type: briefingType,
         script_text: null,
-        segments: preliminarySegments,
+        segments: rawSegments,
         context_snapshot: userCtx,
         news_sources: headlines,
         generation_model: resolvedScriptModel,
@@ -1477,9 +1473,33 @@ serve(async (req) => {
       .single();
 
     if (insertError) throw insertError;
-    console.log(`Briefing row created (headlines only): ${briefing.id}`);
+    console.log(`Briefing row created (raw headlines): ${briefing.id}`);
 
-    // 4. Phase 2: Generate full script + enriched segments, then update the row
+    // 4. PHASE 2: Second-pass curation (deduplicate, rank, keep top 6-8)
+    console.log("Running second-pass curation...");
+    try {
+      headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
+      console.log(`After curation: ${headlines.length} headlines`);
+
+      // Update row with curated headlines
+      const curatedSegments = headlines.map(h => ({
+        headline: h.title,
+        analysis: "",
+        framework_tag: "signal",
+        source: h.source,
+        relevance_reason: "",
+      }));
+
+      await supabase
+        .from("briefings")
+        .update({ segments: curatedSegments, news_sources: headlines })
+        .eq("id", briefing.id);
+      console.log("Updated with curated headlines");
+    } catch (curationErr) {
+      console.warn("Curation failed; raw headlines preserved:", curationErr);
+    }
+
+    // 5. PHASE 3: Generate full script + enriched segments, then update the row
     console.log("Generating personalised briefing...");
     try {
       const { segments, script } = await generateBriefingScript(
@@ -1513,13 +1533,13 @@ serve(async (req) => {
       console.error("Script generation failed; headline-only briefing preserved:", scriptErr);
     }
 
-    // 5. Return immediately - client triggers audio synthesis separately
+    // 6. Return - client triggers audio synthesis separately
     return new Response(
       JSON.stringify({
         briefing_id: briefing.id,
         already_exists: false,
         has_audio: false,
-        segment_count: preliminarySegments.length,
+        segment_count: rawSegments.length,
         briefing_type: briefingType,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
