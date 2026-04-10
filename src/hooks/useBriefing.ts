@@ -201,10 +201,14 @@ export function useGenerateBriefing() {
 
           if (data?.id && data.segments?.length > 0) {
             cleanup();
+            // Refetch FIRST so todaysBriefing is populated before
+            // generating turns off. The three-state UI condition
+            // (todaysBriefing ? card : generating ? banner : CTA)
+            // needs todaysBriefing to be set before generating=false,
+            // otherwise the CTA flashes briefly.
+            if (onFound) await onFound();
             setPhase('idle');
             setGenerating(false);
-            // Trigger parent refetch to get full briefing data
-            if (onFound) await onFound();
             resolve(data.id);
             return;
           }
