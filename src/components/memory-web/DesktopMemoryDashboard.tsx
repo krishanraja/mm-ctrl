@@ -183,27 +183,6 @@ export function DesktopMemoryDashboard() {
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
 
-  // Bridge the gap between generation completing and briefing refetch finishing
-  const [generatingHold, setGeneratingHold] = useState(false);
-
-  useEffect(() => {
-    if (generating) setGeneratingHold(true);
-  }, [generating]);
-
-  useEffect(() => {
-    if (!generatingHold) return;
-    if (todaysBriefing) {
-      setGeneratingHold(false);
-      return;
-    }
-    if (!generating) {
-      const timer = setTimeout(() => setGeneratingHold(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [generatingHold, todaysBriefing, generating]);
-
-  const showGeneratingBanner = (generating || generatingHold) && !todaysBriefing && facts.length > 0;
-
   // Sync briefing into context
   useEffect(() => {
     if (todaysBriefing) setBriefing(todaysBriefing);
@@ -498,7 +477,7 @@ export function DesktopMemoryDashboard() {
                       <div>
                         <p className="text-sm font-semibold text-foreground whitespace-nowrap">Your Daily Briefing</p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {showGeneratingBanner
+                          {generating
                             ? phase === 'scanning' ? 'Scanning today\'s news...'
                               : phase === 'personalising' ? 'Preparing what matters...'
                               : 'Preparing your briefing...'
@@ -508,10 +487,10 @@ export function DesktopMemoryDashboard() {
                     </div>
                     <button
                       onClick={handleGenerateBriefing}
-                      disabled={generating || showGeneratingBanner}
+                      disabled={generating}
                       className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden text-center"
                     >
-                      {showGeneratingBanner && (
+                      {generating && (
                         <motion.div
                           className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
                           initial={{ scaleX: 0 }}
@@ -521,7 +500,7 @@ export function DesktopMemoryDashboard() {
                         />
                       )}
                       <span className="relative z-10">
-                        {showGeneratingBanner
+                        {generating
                           ? phase === 'scanning' ? 'Scanning...'
                             : phase === 'personalising' ? 'Curating...'
                             : 'Preparing...'

@@ -94,30 +94,6 @@ export function MobileMemoryDashboard() {
     todaysBriefing, briefingLoading, hasDataForBriefing, refetchBriefing
   );
 
-  // Bridge the gap between generation completing and briefing refetch finishing
-  const [generatingHold, setGeneratingHold] = useState(false);
-
-  useEffect(() => {
-    if (autoGenerating || generating) {
-      setGeneratingHold(true);
-    }
-  }, [autoGenerating, generating]);
-
-  useEffect(() => {
-    if (!generatingHold) return;
-    if (todaysBriefing) {
-      setGeneratingHold(false);
-      return;
-    }
-    // If generation finished, give refetch 5s to complete before hiding
-    if (!autoGenerating && !generating) {
-      const timer = setTimeout(() => setGeneratingHold(false), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [generatingHold, todaysBriefing, autoGenerating, generating]);
-
-  const showGeneratingBanner = (autoGenerating || generating || generatingHold) && !todaysBriefing && hasDataForBriefing;
-
   // Sync briefing into context
   useEffect(() => {
     if (todaysBriefing) setBriefing(todaysBriefing);
@@ -128,6 +104,11 @@ export function MobileMemoryDashboard() {
       setBriefing(todaysBriefing);
       setSheetOpen(true);
     }
+  };
+
+  const handleGenerateBriefing = async () => {
+    await generate();
+    await refetchBriefing();
   };
 
   const [refreshingBriefing, setRefreshingBriefing] = useState(false);
@@ -268,7 +249,7 @@ export function MobileMemoryDashboard() {
         {/* Header */}
         <AppHeader />
 
-        {/* Briefing area - fixed height slot, never changes size */}
+        {/* Briefing area - fixed height slot, always shows one of three states */}
         {hasData && (
           <div className="flex-shrink-0 h-[72px] px-4 pt-2 overflow-hidden">
             <AnimatePresence mode="wait">
@@ -290,7 +271,7 @@ export function MobileMemoryDashboard() {
                     customBriefingCount={customBriefings.length}
                   />
                 </motion.div>
-              ) : showGeneratingBanner ? (
+              ) : (autoGenerating || generating) ? (
                 <motion.div
                   key="generating-banner"
                   initial={{ opacity: 0 }}
@@ -326,6 +307,31 @@ export function MobileMemoryDashboard() {
                         : 'Preparing...'}
                     </span>
                   </div>
+                </motion.div>
+              ) : !briefingLoading ? (
+                <motion.div
+                  key="generate-cta"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-2xl border border-accent/20 bg-accent/5 p-3 flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-4 h-4 text-accent" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground whitespace-nowrap">Your Daily Briefing</p>
+                      <p className="text-xs text-muted-foreground truncate">Personalised AI news, in your voice</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleGenerateBriefing}
+                    className="flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold text-center hover:bg-accent/90 transition-colors"
+                  >
+                    Generate
+                  </button>
                 </motion.div>
               ) : null}
             </AnimatePresence>
