@@ -88,10 +88,10 @@ export function useAutoGenerateBriefing(
 
     triggered.current = true;
     (async () => {
-      const id = await generate();
-      if (id) {
-        await refetch();
-      }
+      await generate();
+      // Always refetch - the briefing may have been created even if
+      // the client-side request timed out or returned an error
+      await refetch();
     })();
   }, [briefingLoading, defaultBriefing, hasData, generate, refetch]);
 
