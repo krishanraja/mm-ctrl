@@ -37,7 +37,7 @@ import { DesktopSidebar } from './DesktopSidebar';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet } from '@/components/briefing/BriefingSheet';
-import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
+import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type {
   MemoryWebFact,
@@ -182,6 +182,10 @@ export function DesktopMemoryDashboard() {
   const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
+  const hasData = facts.length > 0;
+  const { generating: autoGenerating, phase: autoPhase } = useAutoGenerateBriefing(
+    todaysBriefing, briefingLoading, hasData, refetchBriefing
+  );
 
   // Sync briefing into context
   useEffect(() => {
@@ -196,11 +200,8 @@ export function DesktopMemoryDashboard() {
   };
 
   const handleGenerateBriefing = async () => {
-    const briefingId = await generate();
-    if (briefingId) {
-      // Refetch to get the briefing data, then show the card
-      await refetchBriefing();
-    }
+    await generate(undefined, undefined, undefined, refetchBriefing);
+    await refetchBriefing();
   };
 
   const { isRecording, startRecording, stopRecording } = useVoice({
@@ -247,7 +248,6 @@ export function DesktopMemoryDashboard() {
   }, []);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || '';
-  const hasData = facts.length > 0;
 
   const handleSubmit = async () => {
     if (!inputText.trim() || isSubmitting) return;
@@ -443,7 +443,7 @@ export function DesktopMemoryDashboard() {
             </button>
           </div>
 
-          {/* Briefing area - fixed height slot */}
+          {/* Briefing area - fixed height slot, three states */}
           {hasData && (
             <div className="h-[72px] overflow-hidden">
               <AnimatePresence mode="wait">
@@ -461,7 +461,44 @@ export function DesktopMemoryDashboard() {
                       onPlay={handlePlayBriefing}
                     />
                   </motion.div>
-                ) : (
+                ) : (autoGenerating || generating) ? (
+                  <motion.div
+                    key="generating-banner"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-accent animate-pulse" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground whitespace-nowrap">Preparing your briefing</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
+                            : (autoPhase || phase) === 'personalising' ? 'Preparing what matters...'
+                            : 'Almost ready...'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="relative flex-shrink-0 w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold overflow-hidden text-center">
+                      <motion.div
+                        className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 15, ease: "linear" }}
+                        style={{ transformOrigin: "left" }}
+                      />
+                      <span className="relative z-10">
+                        {(autoPhase || phase) === 'scanning' ? 'Scanning...'
+                          : (autoPhase || phase) === 'personalising' ? 'Curating...'
+                          : 'Preparing...'}
+                      </span>
+                    </div>
+                  </motion.div>
+                ) : !briefingLoading ? (
                   <motion.div
                     key="generate-cta"
                     initial={{ opacity: 0 }}
@@ -476,39 +513,17 @@ export function DesktopMemoryDashboard() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-foreground whitespace-nowrap">Your Daily Briefing</p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {generating
-                            ? phase === 'scanning' ? 'Scanning today\'s news...'
-                              : phase === 'personalising' ? 'Preparing what matters...'
-                              : 'Preparing your briefing...'
-                            : 'Personalised AI news, in your voice'}
-                        </p>
+                        <p className="text-xs text-muted-foreground truncate">Personalised AI news, in your voice</p>
                       </div>
                     </div>
                     <button
                       onClick={handleGenerateBriefing}
-                      disabled={generating}
-                      className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden text-center"
+                      className="w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors text-center"
                     >
-                      {generating && (
-                        <motion.div
-                          className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ duration: 15, ease: "linear" }}
-                          style={{ transformOrigin: "left" }}
-                        />
-                      )}
-                      <span className="relative z-10">
-                        {generating
-                          ? phase === 'scanning' ? 'Scanning...'
-                            : phase === 'personalising' ? 'Curating...'
-                            : 'Preparing...'
-                          : 'Generate Briefing'}
-                      </span>
+                      Generate Briefing
                     </button>
                   </motion.div>
-                )}
+                ) : null}
               </AnimatePresence>
             </div>
           )}
