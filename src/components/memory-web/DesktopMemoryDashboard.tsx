@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -182,6 +182,12 @@ export function DesktopMemoryDashboard() {
   const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
+
+  // Bridge the gap between generation completing and briefing refetch finishing
+  const wasGeneratingRef = useRef(false);
+  if (generating) wasGeneratingRef.current = true;
+  if (todaysBriefing) wasGeneratingRef.current = false;
+  const showGeneratingBanner = (generating || wasGeneratingRef.current) && !todaysBriefing && facts.length > 0;
 
   // Sync briefing into context
   useEffect(() => {
@@ -443,58 +449,74 @@ export function DesktopMemoryDashboard() {
             </button>
           </div>
 
-          {/* Briefing Card */}
-          {todaysBriefing && !briefingLoading && (
-            <BriefingCard
-              briefing={todaysBriefing}
-              hasListened={playback.hasListened}
-              onPlay={handlePlayBriefing}
-            />
-          )}
-          {!todaysBriefing && !briefingLoading && hasData && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-accent" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Your Daily Briefing</p>
-                  <p className="text-xs text-muted-foreground">
-                    {generating
-                      ? phase === 'scanning' ? 'Scanning today\'s news...'
-                        : phase === 'personalising' ? 'Finding what matters to you...'
-                        : 'Preparing your briefing...'
-                      : 'Personalised AI news, in your voice'}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleGenerateBriefing}
-                disabled={generating}
-                className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden text-center"
-              >
-                {generating && (
+          {/* Briefing area - fixed height slot */}
+          {hasData && (
+            <div className="h-[72px] overflow-hidden">
+              <AnimatePresence mode="wait">
+                {todaysBriefing && !briefingLoading ? (
                   <motion.div
-                    className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 15, ease: "linear" }}
-                    style={{ transformOrigin: "left" }}
-                  />
+                    key="briefing-card"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <BriefingCard
+                      briefing={todaysBriefing}
+                      hasListened={playback.hasListened}
+                      onPlay={handlePlayBriefing}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="generate-cta"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground whitespace-nowrap">Your Daily Briefing</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {showGeneratingBanner
+                            ? phase === 'scanning' ? 'Scanning today\'s news...'
+                              : phase === 'personalising' ? 'Finding what matters to you...'
+                              : 'Preparing your briefing...'
+                            : 'Personalised AI news, in your voice'}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleGenerateBriefing}
+                      disabled={generating || showGeneratingBanner}
+                      className="relative w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors overflow-hidden text-center"
+                    >
+                      {showGeneratingBanner && (
+                        <motion.div
+                          className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ duration: 15, ease: "linear" }}
+                          style={{ transformOrigin: "left" }}
+                        />
+                      )}
+                      <span className="relative z-10">
+                        {showGeneratingBanner
+                          ? phase === 'scanning' ? 'Scanning...'
+                            : phase === 'personalising' ? 'Curating...'
+                            : 'Preparing...'
+                          : 'Generate Briefing'}
+                      </span>
+                    </button>
+                  </motion.div>
                 )}
-                <span className="relative z-10">
-                  {generating
-                    ? phase === 'scanning' ? 'Scanning...'
-                      : phase === 'personalising' ? 'Curating...'
-                      : 'Preparing...'
-                    : 'Generate Briefing'}
-                </span>
-              </button>
-            </motion.div>
+              </AnimatePresence>
+            </div>
           )}
 
           {isLoading && (

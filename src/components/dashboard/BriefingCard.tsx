@@ -33,7 +33,7 @@ function RotatingHeadlines({ segments }: { segments: BriefingSegment[] }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.25 }}
-        className="text-xs leading-relaxed line-clamp-2 text-muted-foreground/80"
+        className="text-xs leading-relaxed line-clamp-1 text-muted-foreground/80"
       >
         {headline}
       </motion.p>
@@ -86,11 +86,7 @@ export function BriefingCard({
   const teaser = briefing.segments?.[0]?.headline || "Your personalised news briefing is ready";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-    >
+    <div>
       <Card className="overflow-hidden">
         <CardContent className="p-2.5">
           {/* Header row: icon + title + badge on left, listen button on right */}
@@ -216,29 +212,28 @@ export function BriefingCard({
                     {refreshing ? "Refreshing..." : "Refresh stories"}
                   </button>
                 )}
+                {/* Custom Briefing button - inside expanded view to keep collapsed height stable */}
+                {onCustomBriefing && (
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+                    <button
+                      onClick={onCustomBriefing}
+                      className="flex items-center gap-1.5 text-[11px] font-medium text-accent hover:text-accent/80 transition-colors"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      Custom Briefing
+                    </button>
+                    {customBriefingCount > 0 && (
+                      <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                        +{customBriefingCount} custom
+                      </span>
+                    )}
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
-
-          {/* Bottom row: Custom Briefing button + custom briefing count */}
-          {onCustomBriefing && (
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-              <button
-                onClick={onCustomBriefing}
-                className="flex items-center gap-1.5 text-[11px] font-medium text-accent hover:text-accent/80 transition-colors"
-              >
-                <Sparkles className="w-3 h-3" />
-                Custom Briefing
-              </button>
-              {customBriefingCount > 0 && (
-                <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                  +{customBriefingCount} custom
-                </span>
-              )}
-            </div>
-          )}
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }

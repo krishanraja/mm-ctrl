@@ -94,6 +94,12 @@ export function MobileMemoryDashboard() {
     todaysBriefing, briefingLoading, hasDataForBriefing, refetchBriefing
   );
 
+  // Bridge the gap between generation completing and briefing refetch finishing
+  const wasGeneratingRef = useRef(false);
+  if (autoGenerating || generating) wasGeneratingRef.current = true;
+  if (todaysBriefing) wasGeneratingRef.current = false;
+  const showGeneratingBanner = (autoGenerating || generating || wasGeneratingRef.current) && !todaysBriefing && hasDataForBriefing;
+
   // Sync briefing into context
   useEffect(() => {
     if (todaysBriefing) setBriefing(todaysBriefing);
@@ -244,55 +250,67 @@ export function MobileMemoryDashboard() {
         {/* Header */}
         <AppHeader />
 
-        {/* Briefing Card */}
-        {todaysBriefing && !briefingLoading && (
-          <div className="flex-shrink-0 px-4 pt-2">
-            <BriefingCard
-              briefing={todaysBriefing}
-              hasListened={playback.hasListened}
-              onPlay={handlePlayBriefing}
-              onRefresh={handleRefreshBriefing}
-              refreshing={refreshingBriefing}
-              onCustomBriefing={() => setCustomSheetOpen(true)}
-              customBriefingCount={customBriefings.length}
-            />
-          </div>
-        )}
-        {!todaysBriefing && !briefingLoading && hasData && (autoGenerating || generating) && (
-          <div className="flex-shrink-0 px-4 pt-2">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-accent/20 bg-accent/5 p-3 flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-accent animate-pulse" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">Preparing your briefing</p>
-                  <p className="text-xs text-muted-foreground">
-                    {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
-                      : (autoPhase || phase) === 'personalising' ? 'Finding what matters to you...'
-                      : 'Almost ready...'}
-                  </p>
-                </div>
-              </div>
-              <div className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold overflow-hidden text-center">
+        {/* Briefing area - fixed height slot, never changes size */}
+        {hasData && (
+          <div className="flex-shrink-0 h-[72px] px-4 pt-2 overflow-hidden">
+            <AnimatePresence mode="wait">
+              {todaysBriefing && !briefingLoading ? (
                 <motion.div
-                  className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: 15, ease: "linear" }}
-                  style={{ transformOrigin: "left" }}
-                />
-                <span className="relative z-10">
-                  {(autoPhase || phase) === 'scanning' ? 'Scanning...'
-                    : (autoPhase || phase) === 'personalising' ? 'Curating...'
-                    : 'Preparing...'}
-                </span>
-              </div>
-            </motion.div>
+                  key="briefing-card"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <BriefingCard
+                    briefing={todaysBriefing}
+                    hasListened={playback.hasListened}
+                    onPlay={handlePlayBriefing}
+                    onRefresh={handleRefreshBriefing}
+                    refreshing={refreshingBriefing}
+                    onCustomBriefing={() => setCustomSheetOpen(true)}
+                    customBriefingCount={customBriefings.length}
+                  />
+                </motion.div>
+              ) : showGeneratingBanner ? (
+                <motion.div
+                  key="generating-banner"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-2xl border border-accent/20 bg-accent/5 p-3 flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-4 h-4 text-accent animate-pulse" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground whitespace-nowrap">Preparing your briefing</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
+                          : (autoPhase || phase) === 'personalising' ? 'Finding what matters to you...'
+                          : 'Almost ready...'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="relative flex-shrink-0 w-[100px] py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold overflow-hidden text-center">
+                    <motion.div
+                      className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 15, ease: "linear" }}
+                      style={{ transformOrigin: "left" }}
+                    />
+                    <span className="relative z-10">
+                      {(autoPhase || phase) === 'scanning' ? 'Scanning...'
+                        : (autoPhase || phase) === 'personalising' ? 'Curating...'
+                        : 'Preparing...'}
+                    </span>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
         )}
 
