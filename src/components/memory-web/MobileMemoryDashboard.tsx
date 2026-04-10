@@ -95,10 +95,28 @@ export function MobileMemoryDashboard() {
   );
 
   // Bridge the gap between generation completing and briefing refetch finishing
-  const wasGeneratingRef = useRef(false);
-  if (autoGenerating || generating) wasGeneratingRef.current = true;
-  if (todaysBriefing) wasGeneratingRef.current = false;
-  const showGeneratingBanner = (autoGenerating || generating || wasGeneratingRef.current) && !todaysBriefing && hasDataForBriefing;
+  const [generatingHold, setGeneratingHold] = useState(false);
+
+  useEffect(() => {
+    if (autoGenerating || generating) {
+      setGeneratingHold(true);
+    }
+  }, [autoGenerating, generating]);
+
+  useEffect(() => {
+    if (!generatingHold) return;
+    if (todaysBriefing) {
+      setGeneratingHold(false);
+      return;
+    }
+    // If generation finished, give refetch 5s to complete before hiding
+    if (!autoGenerating && !generating) {
+      const timer = setTimeout(() => setGeneratingHold(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [generatingHold, todaysBriefing, autoGenerating, generating]);
+
+  const showGeneratingBanner = (autoGenerating || generating || generatingHold) && !todaysBriefing && hasDataForBriefing;
 
   // Sync briefing into context
   useEffect(() => {
@@ -289,7 +307,7 @@ export function MobileMemoryDashboard() {
                       <p className="text-sm font-semibold text-foreground whitespace-nowrap">Preparing your briefing</p>
                       <p className="text-xs text-muted-foreground truncate">
                         {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
-                          : (autoPhase || phase) === 'personalising' ? 'Finding what matters to you...'
+                          : (autoPhase || phase) === 'personalising' ? 'Preparing what matters...'
                           : 'Almost ready...'}
                       </p>
                     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -184,10 +184,25 @@ export function DesktopMemoryDashboard() {
   const { generate, generating, phase } = useGenerateBriefing();
 
   // Bridge the gap between generation completing and briefing refetch finishing
-  const wasGeneratingRef = useRef(false);
-  if (generating) wasGeneratingRef.current = true;
-  if (todaysBriefing) wasGeneratingRef.current = false;
-  const showGeneratingBanner = (generating || wasGeneratingRef.current) && !todaysBriefing && facts.length > 0;
+  const [generatingHold, setGeneratingHold] = useState(false);
+
+  useEffect(() => {
+    if (generating) setGeneratingHold(true);
+  }, [generating]);
+
+  useEffect(() => {
+    if (!generatingHold) return;
+    if (todaysBriefing) {
+      setGeneratingHold(false);
+      return;
+    }
+    if (!generating) {
+      const timer = setTimeout(() => setGeneratingHold(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [generatingHold, todaysBriefing, generating]);
+
+  const showGeneratingBanner = (generating || generatingHold) && !todaysBriefing && facts.length > 0;
 
   // Sync briefing into context
   useEffect(() => {
@@ -485,7 +500,7 @@ export function DesktopMemoryDashboard() {
                         <p className="text-xs text-muted-foreground truncate">
                           {showGeneratingBanner
                             ? phase === 'scanning' ? 'Scanning today\'s news...'
-                              : phase === 'personalising' ? 'Finding what matters to you...'
+                              : phase === 'personalising' ? 'Preparing what matters...'
                               : 'Preparing your briefing...'
                             : 'Personalised AI news, in your voice'}
                         </p>
