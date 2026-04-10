@@ -24,6 +24,13 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// ── Timeout helper ────────────────────────────────────────────────
+function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 // ── Types ──────────────────────────────────────────────────────────
 
 interface NewsHeadline {
@@ -257,7 +264,7 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
     contextParts.push(`Frame news through the lens of a ${userCtx.role}.`);
   }
 
-  const response = await fetch("https://api.perplexity.ai/chat/completions", {
+  const response = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -274,7 +281,7 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
       ],
       temperature: 0.2,
     }),
-  });
+  }, 15_000);
 
   if (!response.ok) throw new Error(`Perplexity error: ${response.status}`);
   const data = await response.json();
@@ -314,7 +321,7 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
 
   for (const query of queries) {
     try {
-      const response = await fetch("https://api.tavily.com/search", {
+      const response = await fetchWithTimeout("https://api.tavily.com/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -326,7 +333,7 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
           max_results: 10,
           include_answer: false,
         }),
-      });
+      }, 8_000);
 
       if (response.ok) {
         const data = await response.json();
@@ -441,7 +448,7 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
         country: "US",
         search_lang: "en",
       });
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `https://api.search.brave.com/res/v1/news/search?${params}`,
         {
           headers: {
@@ -449,7 +456,8 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
             "Accept-Encoding": "gzip",
             "X-Subscription-Token": apiKey,
           },
-        }
+        },
+        8_000
       );
       if (response.ok) {
         const data = await response.json();
@@ -496,7 +504,7 @@ async function curateWithOpenAI(
 
   const leaderDesc = `${userCtx.role || 'executive'}${userCtx.industry ? ` in ${userCtx.industry}` : ''}${userCtx.company ? ` at ${userCtx.company}` : ''}`;
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -522,7 +530,7 @@ Return JSON: [{"title": "[TAG] headline", "source": "Source"}]. Select 10-15. Sk
       ],
       temperature: 0.2,
     }),
-  });
+  }, 10_000);
 
   if (!response.ok) throw new Error(`OpenAI curation error: ${response.status}`);
   const data = await response.json();
@@ -608,7 +616,7 @@ async function curateHeadlines(
     ? `This leader tends to find ${userCtx.feedbackPreferences.preferredTags.join(', ')} stories most useful.${userCtx.feedbackPreferences.preferredSources.length > 0 ? ` Stories from ${userCtx.feedbackPreferences.preferredSources.join(', ')} resonate.` : ''} Lean toward these.`
     : '';
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${openaiKey}`,
@@ -641,7 +649,7 @@ Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
       ],
       temperature: 0.1,
     }),
-  });
+  }, 10_000);
 
   if (!response.ok) {
     console.warn("Second-pass curation failed, using original headlines");
@@ -1036,7 +1044,7 @@ async function generateBriefingScript(
   const purposeBlock = buildBriefingPurposeBlock(briefingType, customContext);
   const firstName = userCtx.name.split(" ")[0];
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetchWithTimeout("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${openaiKey}`,
@@ -1107,7 +1115,7 @@ Total: 500-600 words. 3-4 minutes spoken. Every sentence earns its place.`,
       temperature: 0.5,
       response_format: { type: "json_object" },
     }),
-  });
+  }, 20_000);
 
   if (!response.ok) {
     const err = await response.text().catch(() => "");
@@ -1440,30 +1448,24 @@ serve(async (req) => {
     headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
     console.log(`After curation: ${headlines.length} headlines`);
 
-    // 3. Generate personalised briefing
-    console.log("Generating personalised briefing...");
-    const { segments, script } = await generateBriefingScript(
-      headlines,
-      userCtx,
-      openaiKey,
-      briefingType,
-      customContext,
-      resolvedScriptModel,
-    );
+    // 3. Phase 1: Insert preliminary briefing with headline-only segments
+    //    Client can poll and show headlines immediately while script generates
+    const preliminarySegments = headlines.map(h => ({
+      headline: h.title,
+      analysis: "",
+      framework_tag: "signal",
+      source: h.source,
+      relevance_reason: "",
+    }));
 
-    if (!script || segments.length === 0) {
-      throw new Error("Failed to generate briefing content");
-    }
-
-    // 4. Store briefing
     const { data: briefing, error: insertError } = await supabase
       .from("briefings")
       .insert({
         user_id: user.id,
         briefing_date: today,
         briefing_type: briefingType,
-        script_text: script,
-        segments,
+        script_text: null,
+        segments: preliminarySegments,
         context_snapshot: userCtx,
         news_sources: headlines,
         generation_model: resolvedScriptModel,
@@ -1475,8 +1477,41 @@ serve(async (req) => {
       .single();
 
     if (insertError) throw insertError;
+    console.log(`Briefing row created (headlines only): ${briefing.id}`);
 
-    console.log(`Briefing created: ${briefing.id} (type: ${briefingType})`);
+    // 4. Phase 2: Generate full script + enriched segments, then update the row
+    console.log("Generating personalised briefing...");
+    try {
+      const { segments, script } = await generateBriefingScript(
+        headlines,
+        userCtx,
+        openaiKey,
+        briefingType,
+        customContext,
+        resolvedScriptModel,
+      );
+
+      if (script && segments.length > 0) {
+        const { error: updateError } = await supabase
+          .from("briefings")
+          .update({
+            script_text: script,
+            segments,
+          })
+          .eq("id", briefing.id);
+
+        if (updateError) {
+          console.error("Failed to update briefing with script:", updateError);
+        } else {
+          console.log(`Briefing updated with script: ${briefing.id} (type: ${briefingType})`);
+        }
+      } else {
+        console.warn("Script generation returned empty; headline-only briefing preserved");
+      }
+    } catch (scriptErr) {
+      // Headline-only briefing still exists; client can show headlines
+      console.error("Script generation failed; headline-only briefing preserved:", scriptErr);
+    }
 
     // 5. Return immediately - client triggers audio synthesis separately
     return new Response(
@@ -1484,7 +1519,7 @@ serve(async (req) => {
         briefing_id: briefing.id,
         already_exists: false,
         has_audio: false,
-        segment_count: segments.length,
+        segment_count: preliminarySegments.length,
         briefing_type: briefingType,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

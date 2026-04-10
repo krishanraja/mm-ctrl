@@ -53,8 +53,8 @@ function BriefingPage() {
   const handleRefreshBriefing = async () => {
     setRefreshingBriefing(true);
     try {
-      const id = await generate('default', undefined, true);
-      if (id) await refetch();
+      await generate('default', undefined, true, refetch);
+      await refetch();
     } finally {
       setRefreshingBriefing(false);
     }
@@ -64,7 +64,7 @@ function BriefingPage() {
     briefingType: BriefingType,
     customContext?: string
   ) => {
-    const id = await generate(briefingType, customContext);
+    const id = await generate(briefingType, customContext, undefined, refetch);
     if (id) {
       setCustomSheetOpen(false);
       await refetch();

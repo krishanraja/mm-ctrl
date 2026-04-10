@@ -73,6 +73,7 @@ export function BriefingCard({
   }, [audioUrl, briefing, setBriefing]);
 
   const hasAudio = !!(briefing.audio_url || audioUrl);
+  const hasScript = !!briefing.script_text;
   const waitingForAudio = !hasAudio && (polling || !exhausted);
 
   const segmentCount = briefing.segments?.length || 0;

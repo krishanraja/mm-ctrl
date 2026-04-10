@@ -107,7 +107,7 @@ export function MobileMemoryDashboard() {
   };
 
   const handleGenerateBriefing = async () => {
-    await generate();
+    await generate(undefined, undefined, undefined, refetchBriefing);
     await refetchBriefing();
   };
 
@@ -115,17 +115,15 @@ export function MobileMemoryDashboard() {
   const handleRefreshBriefing = async () => {
     setRefreshingBriefing(true);
     try {
-      const briefingId = await generate('default', undefined, true);
-      if (briefingId) {
-        await refetchBriefing();
-      }
+      await generate('default', undefined, true, refetchBriefing);
+      await refetchBriefing();
     } finally {
       setRefreshingBriefing(false);
     }
   };
 
   const handleCustomGenerate = async (briefingType: BriefingType, customContext?: string) => {
-    const briefingId = await generate(briefingType, customContext);
+    const briefingId = await generate(briefingType, customContext, undefined, refetchBriefing);
     if (briefingId) {
       setCustomSheetOpen(false);
       await refetchBriefing();

@@ -88,7 +88,7 @@ export interface Briefing {
   user_id: string;
   briefing_date: string;
   briefing_type: BriefingType;
-  script_text: string;
+  script_text: string | null;
   segments: BriefingSegment[];
   audio_url: string | null;
   audio_duration_seconds: number | null;
