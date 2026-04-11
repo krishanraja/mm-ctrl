@@ -31,7 +31,7 @@ function getCapabilityScore(model: AAModel, capability: ModelCapability): number
  */
 const FALLBACK_SELECTIONS: Record<string, ModelSelection> = {
   briefing_script: {
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     provider: "openai",
     qualityScore: 0,
     costPer1MTokens: null,

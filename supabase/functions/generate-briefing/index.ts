@@ -305,8 +305,8 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
 
   const allResults: Array<{ title: string; url: string; content: string }> = [];
 
-  for (const query of queries) {
-    try {
+  const queryResults = await Promise.allSettled(
+    queries.map(async (query) => {
       const response = await fetch("https://api.tavily.com/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -320,13 +320,17 @@ async function fetchWithTavily(apiKey: string, userCtx: UserContext): Promise<Ne
           include_answer: false,
         }),
       });
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.results || [];
+    })
+  );
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.results) allResults.push(...data.results);
-      }
-    } catch (e) {
-      console.warn(`Tavily query failed: ${query}`, e);
+  for (const result of queryResults) {
+    if (result.status === "fulfilled" && result.value.length > 0) {
+      allResults.push(...result.value);
+    } else if (result.status === "rejected") {
+      console.warn("Tavily query failed:", result.reason);
     }
   }
 
@@ -425,8 +429,8 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
     meta_url?: { hostname: string };
   }> = [];
 
-  for (const query of queries) {
-    try {
+  const queryResults = await Promise.allSettled(
+    queries.map(async (query) => {
       const params = new URLSearchParams({
         q: query,
         freshness: "pw",
@@ -444,12 +448,17 @@ async function fetchBraveNews(apiKey: string, userCtx: UserContext): Promise<str
           },
         }
       );
-      if (response.ok) {
-        const data = await response.json();
-        if (data.results) allResults.push(...data.results);
-      }
-    } catch (e) {
-      console.warn(`Brave query failed: ${query}`, e);
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.results || [];
+    })
+  );
+
+  for (const result of queryResults) {
+    if (result.status === "fulfilled" && result.value.length > 0) {
+      allResults.push(...result.value);
+    } else if (result.status === "rejected") {
+      console.warn("Brave query failed:", result.reason);
     }
   }
 
@@ -981,7 +990,7 @@ async function generateBriefingScript(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: modelOverride || "gpt-4o",
+      model: modelOverride || "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -1323,41 +1332,62 @@ serve(async (req) => {
       }
     }
 
-    if (headlines.length === 0 && perplexityKey) {
-      try {
-        headlines = await fetchWithPerplexity(perplexityKey, userCtx, briefingType, customContext);
-        console.log(`Perplexity: ${headlines.length} headlines`);
-      } catch (e) {
-        console.error("Perplexity failed:", e);
-      }
-    }
+    // Race all available news providers in parallel instead of sequential fallback
+    if (headlines.length === 0) {
+      const providers: Promise<NewsHeadline[]>[] = [];
 
-    if (headlines.length === 0 && tavilyKey) {
-      try {
-        const tavilyRaw = await fetchWithTavily(tavilyKey, userCtx);
-        if (tavilyRaw.length > 0 && openaiKey) {
-          headlines = await curateWithOpenAI(
-            tavilyRaw.map(h => `${h.title} (${h.source})`),
-            openaiKey,
-            userCtx,
-            resolvedCurationModel
-          );
-          console.log(`Tavily+OpenAI: ${headlines.length} headlines`);
-        }
-      } catch (e) {
-        console.error("Tavily failed:", e);
+      if (perplexityKey) {
+        providers.push(
+          fetchWithPerplexity(perplexityKey, userCtx, briefingType, customContext)
+            .then(h => {
+              if (h.length === 0) throw new Error("Empty Perplexity result");
+              console.log(`Perplexity: ${h.length} headlines`);
+              return h;
+            })
+        );
       }
-    }
 
-    if (headlines.length === 0 && braveKey && openaiKey) {
-      try {
-        const raw = await fetchBraveNews(braveKey, userCtx);
-        if (raw.length > 0) {
-          headlines = await curateWithOpenAI(raw, openaiKey, userCtx, resolvedCurationModel);
-          console.log(`Brave+OpenAI: ${headlines.length} headlines`);
+      if (tavilyKey && openaiKey) {
+        providers.push(
+          fetchWithTavily(tavilyKey, userCtx)
+            .then(raw => {
+              if (raw.length === 0) throw new Error("Empty Tavily result");
+              return curateWithOpenAI(
+                raw.map(h => `${h.title} (${h.source})`),
+                openaiKey,
+                userCtx,
+                resolvedCurationModel
+              );
+            })
+            .then(h => {
+              if (h.length === 0) throw new Error("Empty Tavily+OpenAI result");
+              console.log(`Tavily+OpenAI: ${h.length} headlines`);
+              return h;
+            })
+        );
+      }
+
+      if (braveKey && openaiKey) {
+        providers.push(
+          fetchBraveNews(braveKey, userCtx)
+            .then(raw => {
+              if (raw.length === 0) throw new Error("Empty Brave result");
+              return curateWithOpenAI(raw, openaiKey, userCtx, resolvedCurationModel);
+            })
+            .then(h => {
+              if (h.length === 0) throw new Error("Empty Brave+OpenAI result");
+              console.log(`Brave+OpenAI: ${h.length} headlines`);
+              return h;
+            })
+        );
+      }
+
+      if (providers.length > 0) {
+        try {
+          headlines = await Promise.any(providers);
+        } catch (e) {
+          console.error("All news providers failed:", e);
         }
-      } catch (e) {
-        console.error("Brave+OpenAI failed:", e);
       }
     }
 

@@ -249,7 +249,7 @@ export function MobileMemoryDashboard() {
 
         {/* Briefing area - fixed height slot, always shows one of three states */}
         {hasData && (
-          <div className="flex-shrink-0 h-[72px] px-4 pt-2 overflow-hidden">
+          <div className="flex-shrink-0 h-[72px] px-4 pt-2 relative z-20">
             <AnimatePresence mode="wait">
               {todaysBriefing && !briefingLoading ? (
                 <motion.div
