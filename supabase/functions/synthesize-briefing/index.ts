@@ -75,6 +75,14 @@ serve(async (req) => {
       );
     }
 
+    // Script not ready yet (preliminary briefing still being refined)
+    if (!briefing.script_text) {
+      return new Response(
+        JSON.stringify({ status: "pending_script" }),
+        { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     console.log(`Synthesizing audio for briefing ${briefing.id}...`);
 
     // Call ElevenLabs TTS (voice/model from tts_config or defaults)

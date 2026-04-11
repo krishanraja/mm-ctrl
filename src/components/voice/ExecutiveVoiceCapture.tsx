@@ -14,6 +14,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, X, Loader2, RotateCcw, MessageSquare, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { api } from '@/lib/api';
 import { useAudioCapture } from '@/hooks/useAudioCapture';
 import { classifyVoiceIntent, VoiceIntent } from '@/utils/classifyVoiceIntent';
 import { composeExecutiveResponse, StructuredResponse } from '@/utils/decisionResponseComposer';
@@ -102,22 +103,12 @@ export const ExecutiveVoiceCapture: React.FC<ExecutiveVoiceCaptureProps> = ({
     
     try {
       // Step 1: Transcribe
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sessionId', `exec-capture-${Date.now()}`);
-      formData.append('moduleType', 'executive_capture');
-
-      const { data: transcribeData, error: transcribeError } = await supabase.functions.invoke('voice-transcribe', {
-        body: formData,
-      });
-
-      if (transcribeError) throw transcribeError;
-      if (transcribeData?.error) throw new Error(transcribeData.error);
+      const transcribeResult = await api.transcribeAudio(audioBlob, `exec-capture-${Date.now()}`, 'executive_capture');
 
       // Guard after async operation
       if (!isMountedRef.current) return;
 
-      const transcriptText = transcribeData?.transcript || '';
+      const transcriptText = transcribeResult?.transcript || '';
       setTranscript(transcriptText);
 
       if (!transcriptText.trim()) {

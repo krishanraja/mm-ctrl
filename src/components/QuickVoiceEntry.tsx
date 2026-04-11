@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, Mic, Lightbulb, Target, Mail, Check, RotateCcw, Lock, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { api } from '@/lib/api';
 import { invokeEdgeFunction } from '@/utils/edgeFunctionClient';
 import { validateEmail } from '@/utils/formValidation';
 import { useAuth } from '@/hooks/useAuth';
@@ -76,19 +77,9 @@ const CircularMicButton = forwardRef<{ stopRecording: () => void }, CircularMicB
 
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sessionId', `quick-entry-${Date.now()}`);
-      formData.append('moduleType', 'quick_entry');
-
-      const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-        body: formData
-      });
-
-      if (error) throw error;
-
-      if (data?.transcript) {
-        onTranscript(data.transcript);
+      const result = await api.transcribeAudio(audioBlob, `quick-entry-${Date.now()}`, 'quick_entry');
+      if (result?.transcript) {
+        onTranscript(result.transcript);
       }
       setIsTranscribing(false);
     } catch (err) {

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Mic, MicOff, Keyboard } from 'lucide-react';
 import { AudioRecorder } from '@/utils/audioRecorder';
-import { supabase } from '@/integrations/supabase/client';
+import { api } from '@/lib/api';
 import { TranscriptionResult } from '@/types/voice';
 
 interface VoiceCaptureProps {
@@ -84,24 +84,12 @@ export const VoiceCapture: React.FC<VoiceCaptureProps> = ({
 
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sessionId', sessionId);
-      formData.append('moduleType', moduleName);
-
-      const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-        body: formData
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      const result: TranscriptionResult = data;
+      const result = await api.transcribeAudio(audioBlob, sessionId, moduleName);
       setTranscript(result.transcript);
       onTranscriptReady(result.transcript);
       setIsTranscribing(false);
-    } catch (error) {
-      console.error('Error transcribing audio:', error);
+    } catch (err) {
+      console.error('Error transcribing audio:', err);
       setIsTranscribing(false);
       onError('Failed to transcribe audio. Please try again.');
     }

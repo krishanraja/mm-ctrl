@@ -71,6 +71,8 @@ export function useTodaysBriefing() {
 
 /**
  * Auto-generate the default briefing on page load if none exists today.
+ * Polls the DB every 3s while generation is in-flight so preliminary
+ * headlines (inserted early by generate-briefing) appear immediately.
  */
 export function useAutoGenerateBriefing(
   defaultBriefing: Briefing | null,
@@ -80,6 +82,7 @@ export function useAutoGenerateBriefing(
 ) {
   const { generate, generating, phase } = useGenerateBriefing();
   const triggered = useRef(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (briefingLoading || triggered.current) return;
@@ -87,13 +90,35 @@ export function useAutoGenerateBriefing(
     if (!hasData) return; // user has no profile data yet
 
     triggered.current = true;
+
+    // Poll DB every 3s so we pick up the preliminary briefing row
+    // as soon as it is inserted (before generate-briefing returns)
+    pollRef.current = setInterval(() => {
+      refetch();
+    }, POLL_INTERVAL);
+
     (async () => {
       const id = await generate();
+      // Stop polling once generation completes
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
       if (id) {
         await refetch();
       }
     })();
   }, [briefingLoading, defaultBriefing, hasData, generate, refetch]);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    };
+  }, []);
 
   return { generating, phase };
 }

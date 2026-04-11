@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mic, MicOff, Loader2, Edit2, X } from 'lucide-react';
 import { AudioRecorder } from '@/utils/audioRecorder';
-import { supabase } from '@/integrations/supabase/client';
+import { api } from '@/lib/api';
 import { haptic } from '@/utils/haptic';
 
 interface VoiceFirstInputProps {
@@ -86,20 +86,9 @@ export const VoiceFirstInput: React.FC<VoiceFirstInputProps> = ({
 
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sessionId', `operator-intake-${Date.now()}`);
-      formData.append('moduleType', 'operator_intake');
-
-      const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-        body: formData
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      if (data?.transcript) {
-        onValueChange(data.transcript);
+      const result = await api.transcribeAudio(audioBlob, `operator-intake-${Date.now()}`, 'operator_intake');
+      if (result?.transcript) {
+        onValueChange(result.transcript);
         haptic.double();
       }
       setIsTranscribing(false);

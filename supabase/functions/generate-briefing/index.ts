@@ -1323,7 +1323,7 @@ serve(async (req) => {
       }
     }
 
-    if (perplexityKey) {
+    if (headlines.length === 0 && perplexityKey) {
       try {
         headlines = await fetchWithPerplexity(perplexityKey, userCtx, briefingType, customContext);
         console.log(`Perplexity: ${headlines.length} headlines`);
@@ -1368,12 +1368,50 @@ serve(async (req) => {
       usedFallback = true;
     }
 
-    // 2.5 Second-pass curation: deduplicate, rank, keep top 6-8
+    // 2.5 EARLY INSERT: Create preliminary briefing with raw headlines
+    // so the frontend can display them immediately while curation + script run
+    const preliminarySegments: BriefingSegment[] = headlines.slice(0, 8).map((h) => {
+      const tagMatch = h.title.match(/^\[(SIGNAL|DECISION TRIGGER|KRISH'S TAKE|NOISE)\]\s*/i);
+      const rawTag = tagMatch ? tagMatch[1].toLowerCase().replace(/\s+/g, '_') : 'signal';
+      const cleanTitle = h.title.replace(/^\[.*?\]\s*/, '');
+      return {
+        headline: cleanTitle,
+        analysis: '',
+        framework_tag: rawTag,
+        source: h.source,
+        relevance_reason: '',
+      };
+    });
+
+    const { data: earlyBriefing, error: earlyInsertError } = await supabase
+      .from("briefings")
+      .insert({
+        user_id: user.id,
+        briefing_date: today,
+        briefing_type: briefingType,
+        script_text: null,
+        segments: preliminarySegments,
+        context_snapshot: { ...userCtx, used_fallback: usedFallback },
+        news_sources: headlines,
+        generation_model: resolvedScriptModel,
+        custom_context: customContext || null,
+        voice_note_url: voiceNoteUrl || null,
+        is_pro_only: isProOnly,
+      })
+      .select("id")
+      .single();
+
+    if (earlyInsertError) throw earlyInsertError;
+
+    const briefingId = earlyBriefing.id;
+    console.log(`Preliminary briefing inserted: ${briefingId} (${preliminarySegments.length} raw headlines)`);
+
+    // 3. Second-pass curation: deduplicate, rank, keep top 6-8
     console.log("Running second-pass curation...");
     headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
     console.log(`After curation: ${headlines.length} headlines`);
 
-    // 3. Generate personalised briefing
+    // 4. Generate personalised briefing script + polished segments
     console.log("Generating personalised briefing...");
     const { segments, script } = await generateBriefingScript(
       headlines,
@@ -1388,33 +1426,41 @@ serve(async (req) => {
       throw new Error("Failed to generate briefing content");
     }
 
-    // 4. Store briefing
-    const { data: briefing, error: insertError } = await supabase
+    // 5. Update briefing with polished segments + script
+    const { error: updateError } = await supabase
       .from("briefings")
-      .insert({
-        user_id: user.id,
-        briefing_date: today,
-        briefing_type: briefingType,
+      .update({
         script_text: script,
         segments,
-        context_snapshot: { ...userCtx, used_fallback: usedFallback },
         news_sources: headlines,
-        generation_model: resolvedScriptModel,
-        custom_context: customContext || null,
-        voice_note_url: voiceNoteUrl || null,
-        is_pro_only: isProOnly,
       })
-      .select("id")
-      .single();
+      .eq("id", briefingId);
 
-    if (insertError) throw insertError;
+    if (updateError) {
+      console.error("Failed to update briefing with polished content:", updateError);
+    } else {
+      console.log(`Briefing refined: ${briefingId} (${segments.length} polished segments)`);
+    }
 
-    console.log(`Briefing created: ${briefing.id} (type: ${briefingType})`);
+    // 6. Trigger audio synthesis server-side (fire-and-forget)
+    try {
+      const synthUrl = `${supabaseUrl}/functions/v1/synthesize-briefing`;
+      fetch(synthUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${supabaseServiceKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ briefing_id: briefingId }),
+      }).catch((e) => console.warn("Server-side synthesis trigger failed:", e));
+    } catch (e) {
+      console.warn("Could not trigger synthesis:", e);
+    }
 
-    // 5. Return immediately - client triggers audio synthesis separately
+    // 7. Return briefing ID
     return new Response(
       JSON.stringify({
-        briefing_id: briefing.id,
+        briefing_id: briefingId,
         already_exists: false,
         has_audio: false,
         segment_count: segments.length,

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Loader2 } from 'lucide-react';
 import { AudioRecorder } from '@/utils/audioRecorder';
-import { supabase } from '@/integrations/supabase/client';
+import { api } from '@/lib/api';
 
 interface VoiceInputProps {
   onTranscript: (transcript: string) => void;
@@ -72,20 +72,9 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
 
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sessionId', `deep-profile-${Date.now()}`);
-      formData.append('moduleType', 'deep_profile');
-
-      const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-        body: formData
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      if (data?.transcript) {
-        onTranscript(data.transcript);
+      const result = await api.transcribeAudio(audioBlob, `deep-profile-${Date.now()}`, 'deep_profile');
+      if (result?.transcript) {
+        onTranscript(result.transcript);
       }
       setIsTranscribing(false);
     } catch (err) {

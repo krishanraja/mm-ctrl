@@ -16,9 +16,13 @@ export class AudioRecorder {
         }
       });
 
-      this.mediaRecorder = new MediaRecorder(this.stream, {
-        mimeType: 'audio/webm'
-      });
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : MediaRecorder.isTypeSupported('audio/mp4')
+          ? 'audio/mp4'
+          : undefined;
+
+      this.mediaRecorder = new MediaRecorder(this.stream, mimeType ? { mimeType } : undefined);
 
       this.onDataAvailable = onDataCallback;
       this.audioChunks = [];
@@ -30,7 +34,7 @@ export class AudioRecorder {
       };
 
       this.mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+        const audioBlob = new Blob(this.audioChunks, { type: this.mediaRecorder?.mimeType || 'audio/webm' });
         if (this.onDataAvailable) {
           this.onDataAvailable(audioBlob);
         }

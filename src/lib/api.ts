@@ -114,12 +114,13 @@ export const api = {
   // ============================================
   // Voice Transcription (Whisper -> Gemini -> fallback)
   // ============================================
-  async transcribeAudio(audioBlob: Blob, sessionId?: string) {
+  async transcribeAudio(audioBlob: Blob, sessionId?: string, moduleType?: string) {
     const formData = new FormData()
     const ext = audioBlob.type?.includes('mp4') ? 'mp4' : 'webm'
     formData.append('audio', audioBlob, `recording.${ext}`)
     const sid = sessionId || crypto.randomUUID()
     formData.append('sessionId', sid)
+    if (moduleType) formData.append('moduleType', moduleType)
 
     const { data, error } = await withTimeout(
       supabase.functions.invoke('voice-transcribe', { body: formData }),

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Mic, Send, Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { api } from '@/lib/api';
 import { AudioRecorder } from '@/utils/audioRecorder';
 
 interface DailyProvocationProps {
@@ -76,20 +77,9 @@ export const DailyProvocation: React.FC<DailyProvocationProps> = ({
 
   const transcribeAudio = async (audioBlob: Blob) => {
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sessionId', `reflection-${Date.now()}`);
-      formData.append('moduleType', 'reflection');
-
-      const { data, error } = await supabase.functions.invoke('voice-transcribe', {
-        body: formData,
-      });
-
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-
-      if (data?.transcript) {
-        setResponseText(data.transcript);
+      const result = await api.transcribeAudio(audioBlob, `reflection-${Date.now()}`, 'reflection');
+      if (result?.transcript) {
+        setResponseText(result.transcript);
       }
     } catch (err) {
       console.error('Transcription error:', err);
