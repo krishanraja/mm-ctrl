@@ -445,7 +445,7 @@ export function DesktopMemoryDashboard() {
 
           {/* Briefing area - fixed height slot, three states */}
           {hasData && (
-            <div className="h-[72px] overflow-hidden">
+            <div className="relative z-20">
               <AnimatePresence mode="wait">
                 {todaysBriefing && !briefingLoading ? (
                   <motion.div
