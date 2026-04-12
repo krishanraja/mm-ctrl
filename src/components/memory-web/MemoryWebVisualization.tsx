@@ -207,6 +207,7 @@ interface MemoryWebVisualizationProps {
   className?: string;
   onNodeTap?: (fact: MemoryWebFact) => void;
   showEmptyState?: boolean;
+  clearSelection?: boolean;
 }
 
 export function MemoryWebVisualization({
@@ -214,6 +215,7 @@ export function MemoryWebVisualization({
   className,
   onNodeTap,
   showEmptyState = false,
+  clearSelection = false,
 }: MemoryWebVisualizationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({ w: 360, h: 400 });
@@ -274,6 +276,11 @@ export function MemoryWebVisualization({
 
   // Clear selection when facts change
   useEffect(() => { setSelectedIndex(null); }, [factIds]);
+
+  // Clear selection when parent signals (e.g., briefing card expanded)
+  useEffect(() => {
+    if (clearSelection) setSelectedIndex(null);
+  }, [clearSelection]);
 
   const isNodeHighlighted = (index: number) =>
     selectedIndex === null || index === selectedIndex || connectedIndices.has(index);

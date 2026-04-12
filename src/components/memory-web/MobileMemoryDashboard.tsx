@@ -87,6 +87,7 @@ export function MobileMemoryDashboard() {
   const { setBriefing, setSheetOpen, playback, isMiniPlayerVisible } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
   const [customSheetOpen, setCustomSheetOpen] = useState(false);
+  const [briefingExpanded, setBriefingExpanded] = useState(false);
 
   // Auto-generate default briefing on load (hasData defined below after hooks)
   const hasDataForBriefing = facts.length > 0;
@@ -249,7 +250,7 @@ export function MobileMemoryDashboard() {
 
         {/* Briefing area - fixed height slot, always shows one of three states */}
         {hasData && (
-          <div className="flex-shrink-0 h-[72px] px-4 pt-2 relative z-20">
+          <div className="flex-shrink-0 px-4 pt-2 relative z-20">
             <AnimatePresence mode="wait">
               {todaysBriefing && !briefingLoading ? (
                 <motion.div
@@ -267,6 +268,7 @@ export function MobileMemoryDashboard() {
                     refreshing={refreshingBriefing}
                     onCustomBriefing={() => setCustomSheetOpen(true)}
                     customBriefingCount={customBriefings.length}
+                    onExpandChange={setBriefingExpanded}
                   />
                 </motion.div>
               ) : (autoGenerating || generating) ? (
@@ -401,6 +403,7 @@ export function MobileMemoryDashboard() {
             <MemoryWebVisualization
               facts={facts}
               showEmptyState={!isLoading && !hasData && mode === 'idle'}
+              clearSelection={briefingExpanded}
             />
 
             {/* Loading */}

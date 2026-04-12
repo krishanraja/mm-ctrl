@@ -50,6 +50,7 @@ interface BriefingCardProps {
   refreshing?: boolean;
   onCustomBriefing?: () => void;
   customBriefingCount?: number;
+  onExpandChange?: (expanded: boolean) => void;
 }
 
 export function BriefingCard({
@@ -60,6 +61,7 @@ export function BriefingCard({
   refreshing = false,
   onCustomBriefing,
   customBriefingCount = 0,
+  onExpandChange,
 }: BriefingCardProps) {
   const { audioUrl, polling, exhausted, retry } = usePollAudio(
     briefing.audio_url ? null : briefing.id
@@ -100,15 +102,21 @@ export function BriefingCard({
 
   const teaser = briefing.segments?.[0]?.headline || "Your personalised news briefing is ready";
 
+  const toggleExpanded = () => {
+    const next = !expanded;
+    setExpanded(next);
+    onExpandChange?.(next);
+  };
+
   return (
-    <div>
+    <div className="relative">
       <Card className="overflow-hidden">
         <CardContent className="p-2.5">
           {/* Header row: icon + title + badge on left, listen button on right */}
           <div className="flex items-start justify-between gap-2">
             <div
               className="flex items-start gap-2 flex-1 min-w-0 cursor-pointer"
-              onClick={() => setExpanded((prev) => !prev)}
+              onClick={toggleExpanded}
             >
               <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Radio className="w-3 h-3 text-accent" />
@@ -193,18 +201,23 @@ export function BriefingCard({
             </div>
           </div>
 
-          {/* Expanded stories - FULL WIDTH across the card */}
-          <AnimatePresence mode="wait">
-            {expanded && (
-              <motion.div
-                key="expanded-stories"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="overflow-hidden"
-              >
-                <div className="space-y-1 mt-2 pt-2 border-t border-border/30">
+        </CardContent>
+      </Card>
+
+      {/* Expanded stories - absolutely positioned overlay below the card */}
+      <AnimatePresence mode="wait">
+        {expanded && (
+          <motion.div
+            key="expanded-stories"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="absolute top-full left-0 right-0 z-30 overflow-hidden"
+          >
+            <Card className="mt-1 overflow-hidden shadow-xl">
+              <CardContent className="p-2.5">
+                <div className="space-y-1">
                   {briefing.segments?.map((seg, i) => {
                     const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
                     return (
@@ -235,7 +248,7 @@ export function BriefingCard({
                     {refreshing ? "Refreshing..." : "Refresh stories"}
                   </button>
                 )}
-                {/* Custom Briefing button - inside expanded view to keep collapsed height stable */}
+                {/* Custom Briefing button */}
                 {onCustomBriefing && (
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
                     <button
@@ -252,11 +265,11 @@ export function BriefingCard({
                     )}
                   </div>
                 )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
