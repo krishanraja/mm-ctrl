@@ -65,7 +65,7 @@ export function BriefingTypePicker({
             transition={{ delay: i * 0.04 }}
             onClick={() => handleSelect(config)}
             className={cn(
-              "relative flex items-start gap-2.5 p-3 rounded-xl border text-left transition-all",
+              "relative flex items-start gap-2.5 p-3 rounded-xl border text-left transition-all h-full",
               layout === "horizontal" && "min-w-[140px] flex-shrink-0",
               isSelected
                 ? "border-accent bg-accent/5 ring-1 ring-accent/30"
@@ -100,7 +100,7 @@ export function BriefingTypePicker({
                   <Lock className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                 )}
               </div>
-              <p className="text-[10px] text-muted-foreground leading-snug mt-0.5 line-clamp-2">
+              <p className="text-[10px] text-muted-foreground leading-snug mt-0.5">
                 {config.description}
               </p>
             </div>
