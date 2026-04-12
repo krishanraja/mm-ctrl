@@ -202,22 +202,37 @@ export default function ContextExport() {
   }, [exportResult?.content]);
 
   const handleDownload = useCallback(() => {
-    if (!exportResult?.content || !selectedFormat) return;
-    const guide = PLATFORM_GUIDES[selectedFormat];
-    const blob = new Blob([exportResult.content], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = guide.filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (!exportResult || !selectedFormat) return;
+    // Per-target artefacts: each file has its own filename + MIME. ChatGPT
+    // produces Instructions + Knowledge; Gemini produces system-instruction +
+    // context; others produce a single file with the tool-native filename
+    // (CLAUDE.md, .cursorrules, etc.).
+    const artefacts = exportResult.artefacts?.length
+      ? exportResult.artefacts
+      : [{
+          filename: exportResult.primary_filename || PLATFORM_GUIDES[selectedFormat]?.filename || 'my-ai-context.md',
+          mime: exportResult.primary_mime || 'text/markdown',
+          kind: 'universal',
+          content: exportResult.content,
+        }];
+
+    for (const art of artefacts) {
+      const blob = new Blob([art.content], { type: art.mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = art.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
     setTimeout(() => {
       setFeedbackSubmitted(null);
       setShowFeedback(true);
     }, 500);
-  }, [exportResult?.content, selectedFormat]);
+  }, [exportResult, selectedFormat]);
 
   const submitExportFeedback = useCallback(async (rating: 'positive' | 'negative') => {
     setFeedbackSubmitted(rating);
@@ -582,6 +597,11 @@ export default function ContextExport() {
                 <p className="text-xs text-muted-foreground">
                   {exportResult.token_count.toLocaleString()} tokens - formatted for {guide?.label}
                 </p>
+                {exportResult.artefacts && exportResult.artefacts.length > 1 && (
+                  <p className="text-xs text-accent mt-1">
+                    {exportResult.artefacts.length} files - {exportResult.artefacts.map(a => a.filename).join(', ')}
+                  </p>
+                )}
               </div>
             </div>
           </div>

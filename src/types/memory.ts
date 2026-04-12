@@ -169,12 +169,22 @@ export interface MemoryBudget {
   last_cleanup_at: string;
 }
 
+export interface ExportArtefact {
+  filename: string;
+  mime: string;
+  kind: string;
+  content: string;
+}
+
 export interface MemoryExportResult {
   format: ExportFormat;
   use_case: ExportUseCase;
   content: string;
   token_count: number;
   last_updated: string;
+  artefacts?: ExportArtefact[];
+  primary_filename?: string;
+  primary_mime?: string;
 }
 
 // Common fact keys and their labels

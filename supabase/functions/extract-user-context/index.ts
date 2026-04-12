@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { runGuardrails, type IncomingFact } from '../_shared/fact-guardrails.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,33 +19,51 @@ interface ExtractedFact {
 
 const EXTRACTION_PROMPT = `You are an expert at extracting structured facts about business leaders from their written or spoken input.
 
-Your job is to identify and extract key facts about the person speaking. Be precise and only extract facts that are explicitly stated or strongly implied.
+Your job is to identify DURABLE FACTS about the PERSON SPEAKING. Be precise. Only extract facts that are explicitly stated or strongly implied about the speaker themselves.
 
 FACT CATEGORIES:
 1. IDENTITY - role, title, department, who they report to, team size, seniority level
 2. BUSINESS - company name, industry/vertical, company size, growth stage, revenue info
-3. OBJECTIVE - main goals, quarterly priorities, success metrics, what they're trying to achieve
-4. BLOCKER - personal challenges, team challenges, organizational challenges, time constraints, what's holding them back
+3. OBJECTIVE - main goals, quarterly priorities, success metrics, what they are trying to achieve
+4. BLOCKER - personal challenges, team challenges, organizational challenges, time constraints
 5. PREFERENCE - communication style, decision-making approach, delegation comfort, work style
 
+NEVER EXTRACT (these are NOT user facts):
+- META-INSTRUCTIONS to the assistant: "don't use em dashes", "write it shorter", "avoid jargon", "give me bullet points", "make sure you...". These shape the OUTPUT and are not facts about the user.
+- NEGATIONS on their own: "I don't like X" alone is not a positive preference. Only capture positive statements of what the user DOES prefer or use.
+- TRANSIENT CONTEXT: "I'm tired today", "running late", "feeling off". Not durable.
+- THIRD-PARTY IDENTITY: "my cofounder is the CEO" does NOT make the speaker the CEO. Capture the cofounder as a relationship fact only if clearly relevant.
+- COPY-EDIT, FORMATTING, OR TYPOGRAPHIC RULES under ANY category. Em dashes, bullet points, markdown, tone, voice, word count, brevity - these are style rules, never user facts.
+- HYPOTHETICALS: "if I had more time I'd...", "I would like to...". Not current facts.
+- SELF-ADDRESSED DIRECTIVES: "you should", "please avoid", "can you". These are for the assistant.
+
+EXAMPLES of what to REJECT:
+- "Don't ever use em dashes in my briefings." -> REJECT, this is a style rule for the assistant
+- "Keep it under 200 words." -> REJECT, formatting instruction
+- "I'm a bit tired today, running late." -> REJECT tired/running-late (transient); keep "has a meeting today" ONLY if named
+- "My cofounder Jake is the CEO." -> REJECT "user is CEO"; keep "cofounder is named Jake" only if durable
+
 For each fact you extract:
-- fact_key: A snake_case identifier (e.g., "role", "company_name", "main_blocker")
-- fact_category: One of "identity", "business", "objective", "blocker", "preference"
-- fact_label: Human-readable label (e.g., "Your Role", "Company", "Main Challenge")
-- fact_value: The extracted value (be concise but complete)
-- fact_context: The exact quote or paraphrase from the transcript that supports this
-- confidence_score: 0.0-1.0 (how confident are you this is correct?)
-- is_high_stakes: true if getting this wrong would be embarrassing (role, company name, main goal)
+- fact_key: snake_case identifier (e.g., "role", "company_name", "main_blocker")
+- fact_category: "identity" | "business" | "objective" | "blocker" | "preference"
+- fact_label: human-readable label
+- fact_value: the extracted value (concise but complete)
+- fact_context: exact quote or paraphrase supporting the fact
+- confidence_score: 0.0-1.0 (conservative)
+- is_high_stakes: true for role, company name, main objective
 
 RULES:
-- Only extract facts that are actually mentioned or strongly implied
-- Don't invent or assume facts
-- Be conservative with confidence scores
-- Mark role, company, and main objective as high_stakes
-- Extract 5-15 facts maximum
-- If the transcript is too short or vague, extract fewer facts
+- Only extract facts actually mentioned or strongly implied
+- Never invent or assume
+- Be conservative with confidence
+- Extract 5-15 facts maximum; fewer if input is sparse
 
-Return a JSON array of facts. If no facts can be extracted, return an empty array.`;
+Return a JSON object with two arrays:
+{
+  "facts": [ {fact_key, fact_category, fact_label, fact_value, fact_context, confidence_score, is_high_stakes}, ... ],
+  "rejected": [ {candidate: string, reason: string}, ... ]
+}
+If nothing extractable, return {"facts": [], "rejected": []}.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -73,9 +92,18 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
-    // Get authenticated user
-    const { data: userData } = await supabaseAuth.auth.getUser();
+    // Get authenticated user - REQUIRED. Any caller without a valid JWT is
+    // rejected early so we never write rows with user_id=undefined which
+    // would become cross-visible through the permissive RLS policy.
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser();
     const userId = userData?.user?.id;
+
+    if (!userId || userErr) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized: valid user session required', facts: [] }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Use service role for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -351,8 +379,44 @@ Only flag TRUE contradictions where both facts cannot be simultaneously true. Do
       }
     }
 
+    // === DETERMINISTIC GUARDRAILS ===
+    // Final pass before writing anything. Drops facts that match reject
+    // patterns in the training material (typography rules, meta-instructions,
+    // transient context, third-party identity, self-addressed directives) and
+    // downgrades un-mappable preferences. Runs on ALL extraction paths.
+    let guardrailTrainingVersion = 0;
+    if (extractedFacts.length > 0) {
+      try {
+        const guarded = await runGuardrails(
+          extractedFacts as IncomingFact[],
+          userId,
+          session_id || null,
+          supabase,
+        );
+        extractedFacts = guarded.kept as unknown as ExtractedFact[];
+        guardrailTrainingVersion = guarded.training_version;
+        if (guarded.rejected.length > 0) {
+          console.log(`Guardrails rejected ${guarded.rejected.length} fact(s):`,
+            guarded.rejected.map(r => `${r.reason_id}: ${r.fact.fact_key}`).join('; '));
+        }
+      } catch (guardErr) {
+        console.warn('Guardrails error (non-blocking):', guardErr);
+      }
+    }
+
     // Store facts in database
     if (userId && extractedFacts.length > 0) {
+      // Defense-in-depth: every fact must carry the authenticated user's id.
+      // Any row that fails this assertion is dropped before it reaches SQL.
+      extractedFacts = extractedFacts.filter(f => {
+        const claimed = (f as unknown as { user_id?: string }).user_id;
+        if (claimed && claimed !== userId) {
+          console.error(`User-scope assertion failed for fact ${f.fact_key}; dropping`);
+          return false;
+        }
+        return true;
+      });
+
       // Fetch existing facts (key + value + metadata for semantic comparison)
       const { data: existingFacts } = await supabase
         .from('user_memory')
@@ -453,9 +517,13 @@ Only flag TRUE contradictions where both facts cannot be simultaneously true. Do
           fact_context: fact.fact_context,
           confidence_score: fact.confidence_score,
           is_high_stakes: fact.is_high_stakes,
-          verification_status: 'inferred',
+          // ALL new extractions are inferred; only an explicit user action
+          // (update-fact-verification) may promote to 'verified'.
+          verification_status: 'inferred' as const,
+          fact_subtype: (fact as unknown as { fact_subtype?: string | null }).fact_subtype ?? null,
           source_type: source_type || 'voice',
           source_session_id: session_id || null,
+          training_material_version: guardrailTrainingVersion,
         }));
 
       // Update existing facts if new extraction has higher confidence
@@ -488,15 +556,23 @@ Only flag TRUE contradictions where both facts cannot be simultaneously true. Do
               fact_context: fact.fact_context,
               confidence_score: fact.confidence_score,
             })
-            .eq('id', existing.id);
+            .eq('id', existing.id)
+            .eq('user_id', userId); // defense-in-depth: scope update by caller
         }
       }
 
+      // Final assert: every row about to be inserted MUST carry this user's id.
+      const violating = factsToInsert.filter(row => row.user_id !== userId);
+      if (violating.length > 0) {
+        console.error(`Refusing to insert: ${violating.length} rows failed user_id assertion`);
+      }
+      const safeInsert = factsToInsert.filter(row => row.user_id === userId);
+
       // Insert new facts
-      if (factsToInsert.length > 0) {
+      if (safeInsert.length > 0) {
         const { error: insertError } = await supabase
           .from('user_memory')
-          .insert(factsToInsert);
+          .insert(safeInsert);
 
         if (insertError) {
           console.error('Error inserting facts:', insertError);

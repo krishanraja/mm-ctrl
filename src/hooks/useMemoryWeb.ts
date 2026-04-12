@@ -12,6 +12,16 @@ import type {
   FactCategory,
 } from '@/types/memory';
 
+/**
+ * A fact counts as verified ONLY if the user has explicitly confirmed or
+ * corrected it. Null / undefined / unknown values are treated as inferred.
+ * This prevents the "100% verified" bug when verification_status is absent
+ * or the column has drifted to a default.
+ */
+function isVerified(status: unknown): boolean {
+  return status === 'verified' || status === 'corrected';
+}
+
 function calculateHealthScore(
   facts: MemoryWebFact[],
   patterns: UserPattern[],
@@ -20,9 +30,7 @@ function calculateHealthScore(
   if (facts.length === 0) return 0;
   let score = 0;
   score += Math.min(20, facts.length * 2);
-  const verified = facts.filter(
-    (f) => f.verification_status === 'verified' || f.verification_status === 'corrected',
-  );
+  const verified = facts.filter((f) => isVerified(f.verification_status));
   score += Math.round((verified.length / facts.length) * 25);
   score += Math.min(20, patterns.length * 4);
   score += Math.min(15, decisions.length * 5);
@@ -103,10 +111,8 @@ export function useMemoryWeb() {
         .single();
       if (!budgetResult.error && budgetResult.data) setBudget(budgetResult.data as unknown as MemoryBudget);
 
-      // Calculate stats
-      const verified = allFacts.filter(
-        (f) => f.verification_status === 'verified' || f.verification_status === 'corrected',
-      );
+      // Calculate stats - null-safe: any unknown / missing status is inferred.
+      const verified = allFacts.filter((f) => isVerified(f.verification_status));
       const tempDist: Record<Temperature, number> = { hot: 0, warm: 0, cold: 0 };
       const catDist: Record<string, number> = {};
       for (const f of allFacts) {

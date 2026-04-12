@@ -22,6 +22,9 @@ export function useMemoryExport() {
           content: data?.context || '',
           token_count: data?.tokenCount || 0,
           last_updated: data?.lastUpdated || new Date().toISOString(),
+          artefacts: data?.artefacts,
+          primary_filename: data?.primary_filename,
+          primary_mime: data?.primary_mime,
         };
         setExportResult(result);
         return result;
@@ -50,6 +53,9 @@ export function useMemoryExport() {
           content: data?.context || '',
           token_count: data?.tokenCount || 0,
           last_updated: data?.lastUpdated || new Date().toISOString(),
+          artefacts: data?.artefacts,
+          primary_filename: data?.primary_filename,
+          primary_mime: data?.primary_mime,
         };
         setExportResult(result);
         setCustomTitle(data?.title || null);
