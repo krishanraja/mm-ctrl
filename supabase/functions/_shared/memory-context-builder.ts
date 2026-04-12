@@ -1,4 +1,6 @@
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { loadGlobalTraining } from "./training-loader.ts";
+import type { TrainingMaterial } from "./training-schema.ts";
 
 export interface MemoryContextOptions {
   includeWarm?: boolean;
@@ -16,6 +18,17 @@ export interface MemoryContextResult {
   patternCount: number;
   decisionCount: number;
   lastUpdated: string;
+  // Multi-artefact exports surface primary + secondary files (e.g. ChatGPT
+  // Custom GPT produces "Instructions" + "Knowledge"). When present, clients
+  // should prefer `artefacts` over `context` for downloads.
+  artefacts?: ExportArtefact[];
+}
+
+export interface ExportArtefact {
+  filename: string;
+  mime: string;
+  kind: string;
+  content: string;
 }
 
 interface Fact {
@@ -149,39 +162,250 @@ function getUseCasePreamble(useCase: string): { heading: string; instructions: s
   }
 }
 
-function applyFormat(markdown: string, format: string, useCase: string = "general"): string {
+// ─── Per-target model-native formatters ─────────────────────────────────────
+// Each target receives a tailored artefact (or set of artefacts) reflecting
+// how that specific tool consumes configuration. The voice card for each
+// target comes from the training material so voice tuning is a YAML edit.
+
+const FORMAT_TO_VOICE_KEY: Record<string, string> = {
+  chatgpt: "chatgpt_custom_gpt",
+  claude: "claude_project",
+  "claude-code": "claude_code",
+  cursor: "cursor",
+  gemini: "gemini_system_instruction",
+  markdown: "markdown",
+};
+
+interface BuiltSections {
+  identity: string[];
+  business: string[];
+  objectives: string[];
+  blockers: string[];
+  preferences: string[];
+  decisions: string[];
+  patterns: string[];
+  userName: string | null;
+}
+
+function buildSections(
+  facts: Fact[],
+  patterns: Pattern[],
+  decisions: Decision[],
+  userName: string | null,
+): BuiltSections {
+  const grouped = groupFactsByCategory(facts);
+  return {
+    identity: (grouped.identity || []).map(f => f.fact_value),
+    business: (grouped.business || []).map(f => f.fact_value),
+    objectives: (grouped.objective || []).map(f => f.fact_value),
+    blockers: (grouped.blocker || []).map(f => f.fact_value),
+    preferences: (grouped.preference || []).map(f => f.fact_value),
+    decisions: decisions.map(d => d.rationale ? `${d.decision_text} (${d.rationale})` : d.decision_text),
+    patterns: patterns.map(p => `${p.pattern_text} (${Math.round(p.confidence * 100)}% confidence)`),
+    userName,
+  };
+}
+
+function xmlBlock(tag: string, items: string[]): string {
+  if (!items.length) return "";
+  return `  <${tag}>\n${items.map(i => `    <item>${escapeXml(i)}</item>`).join("\n")}\n  </${tag}>`;
+}
+
+function escapeXml(s: string): string {
+  return s.replace(/[<>&]/g, c => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c] as string));
+}
+
+// Format: ChatGPT Custom GPT - returns Instructions + Knowledge as two files.
+function formatChatGPTCustomGPT(s: BuiltSections, useCase: string): ExportArtefact[] {
   const preamble = getUseCasePreamble(useCase);
+  const name = s.userName || "the user";
 
-  switch (format) {
-    case "chatgpt": {
-      const heading = preamble?.heading || "What to know about me";
-      const instructions = preamble?.instructions
-        || "Be direct and specific, not generic\n- Reference my context when relevant\n- Challenge my blind spots when you see them\n- Prioritize actionable advice over theory";
-      return `# ${heading}\n\n${markdown}\n\n# How to respond to me\n- ${instructions}`;
-    }
+  const instructions = [
+    `You are a personalized assistant for ${name}.`,
+    preamble?.instructions || "Be direct and specific. Reference the knowledge block when relevant. Challenge blind spots. Prioritize action over theory.",
+    "",
+    "Posture:",
+    "- Do not explain the user's own context back to them.",
+    "- Cite the relevant fact when you use it.",
+    "- Default to the user's stated preferences for communication style.",
+  ].join("\n");
 
-    case "claude": {
-      const instruction = preamble?.instructions
-        || "Use the context above to personalize your responses. Reference specific facts when relevant. Be direct.";
-      return `<context>\n${preamble?.heading ? `# ${preamble.heading}\n\n` : ""}${markdown}\n</context>\n\n${instruction}`;
-    }
+  const knowledgeLines: string[] = [];
+  if (s.identity.length) knowledgeLines.push(`## Identity\n${s.identity.map(x => `- ${x}`).join("\n")}`);
+  if (s.business.length) knowledgeLines.push(`## Business context\n${s.business.map(x => `- ${x}`).join("\n")}`);
+  if (s.objectives.length) knowledgeLines.push(`## Active objectives\n${s.objectives.map(x => `- ${x}`).join("\n")}`);
+  if (s.blockers.length) knowledgeLines.push(`## Blockers\n${s.blockers.map(x => `- ${x}`).join("\n")}`);
+  if (s.preferences.length) knowledgeLines.push(`## Communication preferences\n${s.preferences.map(x => `- ${x}`).join("\n")}`);
+  if (s.decisions.length) knowledgeLines.push(`## Active decisions\n${s.decisions.map(x => `- ${x}`).join("\n")}`);
+  if (s.patterns.length) knowledgeLines.push(`## Observed patterns\n${s.patterns.map(x => `- ${x}`).join("\n")}`);
 
-    case "gemini": {
-      const prefix = preamble?.heading || "Context about me";
-      const instruction = preamble?.instructions
-        || "Use this context to give me personalized, specific responses. Don't repeat my context back to me, just use it.";
-      return `${prefix}:\n\n${markdown}\n\n${instruction}`;
-    }
+  return [
+    { filename: "chatgpt-instructions.md", mime: "text/markdown", kind: "instructions", content: instructions },
+    { filename: "chatgpt-knowledge.md", mime: "text/markdown", kind: "knowledge", content: knowledgeLines.join("\n\n") },
+  ];
+}
 
-    case "cursor":
-      return `# User Context\n\n${markdown}\n\n# Coding Preferences\n- Follow existing patterns in the codebase\n- Be concise in comments\n- Prefer simple solutions`;
+// Format: Claude Project - XML-structured project instructions.
+function formatClaudeProject(s: BuiltSections, useCase: string): ExportArtefact[] {
+  const preamble = getUseCasePreamble(useCase);
+  const name = s.userName || "the user";
 
-    case "claude-code":
-      return `# User Context\n\n${markdown}\n\n# Working Rules\n- Reference this context when making decisions\n- Be direct and specific\n- Don't ask questions you can answer from context`;
+  const profile = [
+    `<user_profile>`,
+    `  <name>${escapeXml(name)}</name>`,
+    xmlBlock("identity", s.identity),
+    xmlBlock("business", s.business),
+    xmlBlock("objectives", s.objectives),
+    xmlBlock("blockers", s.blockers),
+    xmlBlock("communication_preferences", s.preferences),
+    xmlBlock("active_decisions", s.decisions),
+    xmlBlock("observed_patterns", s.patterns),
+    `</user_profile>`,
+  ].filter(Boolean).join("\n");
 
-    default:
-      return preamble ? `# ${preamble.heading}\n\n${markdown}\n\n---\n${preamble.instructions}` : markdown;
+  const guidelines = [
+    `<response_guidelines>`,
+    `  ${preamble?.instructions || "Use the profile above to personalize every response. Cite the specific fact when you draw on it. Never restate the profile back to the user."}`,
+    `</response_guidelines>`,
+  ].join("\n");
+
+  return [
+    {
+      filename: "claude-project-instructions.md",
+      mime: "text/markdown",
+      kind: "project_instructions",
+      content: `${profile}\n\n${guidelines}`,
+    },
+  ];
+}
+
+// Format: Claude Code - a proper CLAUDE.md file focused on conventions.
+function formatClaudeCode(s: BuiltSections, useCase: string): ExportArtefact[] {
+  void useCase;
+  const conventions = s.preferences.filter(p =>
+    /\b(use|prefer|code|test|lint|framework|react|typescript|python|eslint|prettier)\b/i.test(p)
+  );
+  const businessHints = s.business.slice(0, 3);
+
+  const content = [
+    `# CLAUDE.md`,
+    ``,
+    `## Project`,
+    businessHints.length ? businessHints.map(b => `- ${b}`).join("\n") : "- (no business context captured)",
+    ``,
+    `## Always do`,
+    `- Follow existing patterns in the codebase before inventing new ones.`,
+    `- Keep commits small and focused; one logical change per commit.`,
+    `- Run \`npm run build\` to verify changes compile.`,
+    conventions.length ? conventions.map(c => `- ${c}`).join("\n") : ``,
+    ``,
+    `## Never do`,
+    `- Use em dashes (\u2014) or en dashes (\u2013). Use commas, semicolons, or periods.`,
+    `- Add dependencies without justification.`,
+    `- Skip tests on files you modify.`,
+    ``,
+    `## Voice`,
+    `- Direct, terse, convention-first. No marketing language.`,
+  ].filter(Boolean).join("\n");
+
+  return [{ filename: "CLAUDE.md", mime: "text/markdown", kind: "agent_instructions", content }];
+}
+
+// Format: Cursor - a real .cursorrules file. Plain text, imperative one-liners.
+function formatCursor(s: BuiltSections, useCase: string): ExportArtefact[] {
+  void useCase;
+  const lines: string[] = [
+    `# Stack`,
+    `- Follow the project's existing stack and build tools; do not introduce new frameworks.`,
+    ``,
+    `# Style`,
+    `- Match existing file naming, import order, and formatting.`,
+    `- Prefer composition over inheritance.`,
+    `- Do not use em dashes or en dashes in any user-visible copy.`,
+    ``,
+    `# Testing`,
+    `- Add or update a test when you change runtime behaviour.`,
+    `- Run the repo's test command before claiming completion.`,
+    ``,
+    `# Review discipline`,
+    `- Keep diffs minimal; no unrelated refactors.`,
+    `- Call out any assumption you are making in a code comment.`,
+  ];
+  const codeStylePrefs = s.preferences.filter(p =>
+    /\b(code|style|format|test|review|pr|commit|comment)\b/i.test(p)
+  );
+  if (codeStylePrefs.length) {
+    lines.push(``, `# User-specific`);
+    for (const p of codeStylePrefs) lines.push(`- ${p}`);
   }
+  return [{ filename: ".cursorrules", mime: "text/plain", kind: "agent_instructions", content: lines.join("\n") }];
+}
+
+// Format: Gemini - system instruction (plain prose) + long-form context.
+function formatGemini(s: BuiltSections, useCase: string): ExportArtefact[] {
+  const preamble = getUseCasePreamble(useCase);
+  const name = s.userName || "the user";
+
+  const sys: string[] = [`You are a personalized assistant for ${name}.`];
+  if (s.identity.length) sys.push(`Role: ${s.identity[0]}.`);
+  if (s.objectives.length) sys.push(`Current objectives: ${s.objectives.slice(0, 3).join("; ")}.`);
+  if (s.preferences.length) sys.push(`Preferences: ${s.preferences.slice(0, 3).join("; ")}.`);
+  sys.push(preamble?.instructions || "Personalize every response using this context. Do not restate the context back.");
+
+  const context = [
+    s.business.length ? `Business context: ${s.business.join("; ")}.` : "",
+    s.blockers.length ? `Blockers: ${s.blockers.join("; ")}.` : "",
+    s.decisions.length ? `Active decisions: ${s.decisions.join("; ")}.` : "",
+    s.patterns.length ? `Observed patterns: ${s.patterns.join("; ")}.` : "",
+  ].filter(Boolean).join("\n\n");
+
+  const artefacts: ExportArtefact[] = [
+    { filename: "gemini-system-instruction.txt", mime: "text/plain", kind: "system_instruction", content: sys.join(" ") },
+  ];
+  if (context) {
+    artefacts.push({ filename: "gemini-context.md", mime: "text/markdown", kind: "long_context", content: context });
+  }
+  return artefacts;
+}
+
+// Format: universal markdown (default).
+function formatUniversalMarkdown(s: BuiltSections, useCase: string, markdown: string): ExportArtefact[] {
+  const preamble = getUseCasePreamble(useCase);
+  const content = preamble
+    ? `# ${preamble.heading}\n\n${markdown}\n\n---\n${preamble.instructions}`
+    : markdown;
+  return [{ filename: "my-ai-context.md", mime: "text/markdown", kind: "universal", content }];
+}
+
+function buildArtefactsForFormat(
+  format: string,
+  sections: BuiltSections,
+  useCase: string,
+  markdown: string,
+): ExportArtefact[] {
+  switch (format) {
+    case "chatgpt":     return formatChatGPTCustomGPT(sections, useCase);
+    case "claude":      return formatClaudeProject(sections, useCase);
+    case "claude-code": return formatClaudeCode(sections, useCase);
+    case "cursor":      return formatCursor(sections, useCase);
+    case "gemini":      return formatGemini(sections, useCase);
+    default:            return formatUniversalMarkdown(sections, useCase, markdown);
+  }
+}
+
+/**
+ * Backwards-compatible applyFormat — returns only the primary artefact as a
+ * single string. Callers that want the full artefact set should use
+ * buildMemoryExport instead.
+ */
+function applyFormat(markdown: string, format: string, useCase: string = "general", sections?: BuiltSections): string {
+  if (!sections) {
+    // Fall-back: callers that do not supply parsed sections get the legacy
+    // markdown wrapped in a minimal universal block.
+    return markdown;
+  }
+  const artefacts = buildArtefactsForFormat(format, sections, useCase, markdown);
+  return artefacts[0]?.content || markdown;
 }
 
 function filterByUseCase(
@@ -336,23 +560,39 @@ export async function buildMemoryContext(
   // Apply use case filter
   const filtered = filterByUseCase(allFacts, patterns, decisions, useCase);
 
-  // Build markdown
+  // Build markdown (universal base)
   let markdown = buildMarkdownContext(filtered.facts, filtered.patterns, filtered.decisions, userName);
+  let sections = buildSections(filtered.facts, filtered.patterns, filtered.decisions, userName);
 
   // Enforce token budget - trim warm facts first
   let tokenCount = estimateTokens(markdown);
   if (tokenCount > maxTokens && warmFacts.length > 0) {
-    // Rebuild with fewer warm facts
     const reducedWarm = warmFacts.slice(0, Math.floor(warmFacts.length / 2));
     const reducedFacts = [...(hotFacts || []) as Fact[], ...reducedWarm];
     const reducedFiltered = filterByUseCase(reducedFacts, filtered.patterns, filtered.decisions, useCase);
     markdown = buildMarkdownContext(reducedFiltered.facts, reducedFiltered.patterns, reducedFiltered.decisions, userName);
+    sections = buildSections(reducedFiltered.facts, reducedFiltered.patterns, reducedFiltered.decisions, userName);
     tokenCount = estimateTokens(markdown);
   }
 
-  // Apply format template
-  const context = applyFormat(markdown, format, useCase);
+  // Build every artefact for this target (may be 1 or 2 files).
+  const artefacts = buildArtefactsForFormat(format, sections, useCase, markdown);
+
+  // Primary "context" string for backwards-compatible callers: the first
+  // artefact's content.
+  const context = artefacts[0]?.content || markdown;
   const finalTokenCount = estimateTokens(context);
+
+  // Optional: read training material so callers know which version produced
+  // the export. Non-blocking.
+  let trainingVersion = 0;
+  try {
+    const training = await loadGlobalTraining(supabase);
+    trainingVersion = training.version;
+  } catch {
+    // ignore
+  }
+  void trainingVersion;
 
   return {
     context,
@@ -361,5 +601,14 @@ export async function buildMemoryContext(
     patternCount: filtered.patterns.length,
     decisionCount: filtered.decisions.length,
     lastUpdated: new Date().toISOString(),
+    artefacts,
   };
 }
+
+// Silence unused-import warnings; TrainingMaterial is re-exported indirectly
+// through the loader and kept here for future per-target voice-card wiring.
+export type { TrainingMaterial };
+// Kept for downstream use; wiring voice-card tone into formatter prose is a
+// follow-up tuning knob. Consumers should read export_voice_cards[format]
+// from the training material when they want the canonical tone label.
+export { FORMAT_TO_VOICE_KEY };

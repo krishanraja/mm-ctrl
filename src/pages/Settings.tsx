@@ -7,6 +7,7 @@ import { NotificationsTab } from '@/components/settings/NotificationsTab'
 import { PreferencesTab } from '@/components/settings/PreferencesTab'
 import { EdgeProTab } from '@/components/settings/EdgeProTab'
 import { ManifestoTab } from '@/components/settings/ManifestoTab'
+import { BriefingDirectivesTab } from '@/components/settings/BriefingDirectivesTab'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -26,6 +27,7 @@ function SettingsTabs() {
         <TabsTrigger value="preferences" className="text-xs whitespace-nowrap flex-shrink-0">Preferences</TabsTrigger>
         <TabsTrigger value="edge-pro" className="text-xs whitespace-nowrap flex-shrink-0">Edge Pro</TabsTrigger>
         <TabsTrigger value="manifesto" className="text-xs whitespace-nowrap flex-shrink-0">Manifesto</TabsTrigger>
+        <TabsTrigger value="briefing-directives" className="text-xs whitespace-nowrap flex-shrink-0">Briefing Rules</TabsTrigger>
       </TabsList>
 
       <TabsContent value="account" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
@@ -54,6 +56,10 @@ function SettingsTabs() {
 
       <TabsContent value="manifesto" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
         <ManifestoTab />
+      </TabsContent>
+
+      <TabsContent value="briefing-directives" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
+        <BriefingDirectivesTab />
       </TabsContent>
     </Tabs>
   )

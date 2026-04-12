@@ -17,6 +17,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { selectOptimalModel } from "../_shared/model-router.ts";
 import { getModelBenchmarks } from "../_shared/aa-cache.ts";
 import type { AAModel } from "../_shared/aa-types.ts";
+import { loadTrainingForUser } from "../_shared/training-loader.ts";
+import { applyTypographyRules, stripBannedPhrases } from "../_shared/fact-guardrails.ts";
+import type { TrainingMaterial } from "../_shared/training-schema.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -940,7 +943,9 @@ async function generateBriefingScript(
   briefingType: BriefingType = 'default',
   customContext?: string,
   modelOverride?: string,
-): Promise<{ segments: BriefingSegment[]; script: string }> {
+  training?: TrainingMaterial,
+  userDirectives?: string,
+): Promise<{ segments: BriefingSegment[]; script: string; training_version: number }> {
   const contextBlock = [
     `Name: ${userCtx.name}`,
     `Role: ${userCtx.role}`,
@@ -983,6 +988,71 @@ async function generateBriefingScript(
   const purposeBlock = buildBriefingPurposeBlock(briefingType, customContext);
   const firstName = userCtx.name.split(" ")[0];
 
+  // ── Training-material injection ────────────────────────────────────
+  // All voice / typography / dont-phrases / self-check / exemplars come from
+  // the authored YAML so voice tuning is a YAML edit, not a redeploy.
+  const trainingBlocks: string[] = [];
+  let trainingVersion = 0;
+  if (training) {
+    trainingVersion = training.version;
+    trainingBlocks.push(
+      `<voice_card>\n` +
+      `register: ${training.voice_card.register}\n` +
+      `adjectives: ${training.voice_card.adjectives.join(", ")}\n` +
+      `anti_adjectives: ${training.voice_card.anti_adjectives.join(", ")}\n` +
+      `sentence_length: ${training.voice_card.sentence_length}\n` +
+      `</voice_card>`
+    );
+    trainingBlocks.push(
+      `<do_phrases>\n` +
+      `openers: ${training.do_phrases.openers.join(" | ")}\n` +
+      `connectors: ${training.do_phrases.connectors.join(" | ")}\n` +
+      `closers: ${training.do_phrases.closers.join(" | ")}\n` +
+      `</do_phrases>`
+    );
+    trainingBlocks.push(
+      `<dont_phrases>\nNEVER use these: ${training.dont_phrases.join("; ")}\n</dont_phrases>`
+    );
+    trainingBlocks.push(
+      `<typography_rules>\n` +
+      `Forbidden characters: ${training.typography_rules.forbidden_chars.join(" ")}\n` +
+      `Forbidden tokens: ${training.typography_rules.forbidden_tokens.join(", ")}\n` +
+      `</typography_rules>`
+    );
+    const rubricKey = briefingType === 'default' ? 'daily_brief' : briefingType;
+    const rubric = training.structural_rubric[rubricKey] || training.structural_rubric.daily_brief;
+    if (rubric) {
+      trainingBlocks.push(
+        `<structural_rubric>\n` +
+        `hook: ${rubric.hook}\n` +
+        `body: ${rubric.body}\n` +
+        `close: ${rubric.close}\n` +
+        `word_budget: ${rubric.word_budget} (tolerance \u00B1${Math.round(rubric.tolerance * 100)}%)\n` +
+        `</structural_rubric>`
+      );
+    }
+    const exemplarKey = briefingType === 'default' ? 'daily_brief' : briefingType;
+    const exemplars = training.briefing_exemplars[exemplarKey];
+    if (exemplars && exemplars.length > 0) {
+      trainingBlocks.push(`<example>\n${exemplars[0]}\n</example>`);
+    }
+    trainingBlocks.push(
+      `<self_check_gate>\n` +
+      `Before returning, silently verify each:\n` +
+      training.self_check_gate.map((c, i) => `${i + 1}. ${c}`).join("\n") +
+      `\n</self_check_gate>`
+    );
+  }
+  if (userDirectives && userDirectives.trim().length > 0) {
+    trainingBlocks.push(
+      `<user-directives>\n` +
+      `These are the user's personal rules for their briefings. Apply them AFTER the house rules above:\n` +
+      userDirectives.trim() +
+      `\n</user-directives>`
+    );
+  }
+  const trainingInjection = trainingBlocks.join("\n\n");
+
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -995,6 +1065,8 @@ async function generateBriefingScript(
         {
           role: "system",
           content: `You are briefing a peer, not presenting to an audience. Think: sharp friend who read everything so they don't have to.
+
+${trainingInjection}
 
 YOUR VOICE:
 - Short sentences. Vary rhythm. One long, then two short, then a half-sentence opinion.
@@ -1067,15 +1139,22 @@ Total: 500-600 words. 3-4 minutes spoken. Every sentence earns its place.`,
 
   const parsed = JSON.parse(content);
 
-  // Post-process: strip em dashes and forbidden filler
+  // Post-process: apply typography rules + strip banned phrases. Both rule
+  // sets come from the training material so tuning is a YAML edit.
   let script = parsed.script || "";
-  script = script.replace(/\u2014/g, ";").replace(/\u2013/g, "-");
-  script = script.replace(/\b(Additionally|Furthermore|Moreover|Interestingly|It's worth noting|It remains to be seen)\b/gi, "");
-  script = script.replace(/\s{2,}/g, " ").trim();
+  if (training) {
+    script = applyTypographyRules(script, training);
+    script = stripBannedPhrases(script, training);
+  } else {
+    // Fallback when training material is unavailable. Keep the minimum.
+    script = script.replace(/\u2014/g, ", ").replace(/\u2013/g, "-");
+    script = script.replace(/\s{2,}/g, " ").trim();
+  }
 
   return {
     segments: parsed.segments || [],
     script,
+    training_version: trainingVersion,
   };
 }
 
@@ -1441,16 +1520,34 @@ serve(async (req) => {
     headlines = await curateHeadlines(headlines, userCtx, openaiKey, briefingType, customContext, resolvedCurationModel);
     console.log(`After curation: ${headlines.length} headlines`);
 
-    // 4. Generate personalised briefing script + polished segments
+    // 4. Load training material + user directives, then generate briefing.
+    //    Training material contains voice, typography, dont_phrases,
+    //    exemplars, rubric and self-check. User directives are optional
+    //    per-user prose from Settings -> Briefing Rules.
+    console.log("Loading training material...");
+    const training = await loadTrainingForUser(supabase, user.id).catch(e => {
+      console.warn("training load failed (non-blocking):", e);
+      return undefined;
+    });
+    const { data: directivesRow } = await supabase
+      .from("user_briefing_directives")
+      .select("body")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    const userDirectives = (directivesRow?.body as string | undefined) || undefined;
+
     console.log("Generating personalised briefing...");
-    const { segments, script } = await generateBriefingScript(
+    const { segments, script, training_version } = await generateBriefingScript(
       headlines,
       userCtx,
       openaiKey,
       briefingType,
       customContext,
       resolvedScriptModel,
+      training,
+      userDirectives,
     );
+    console.log(`Briefing produced with training_material_version=${training_version}`);
 
     if (!script || segments.length === 0) {
       throw new Error("Failed to generate briefing content");

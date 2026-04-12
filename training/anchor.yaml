@@ -1,0 +1,410 @@
+# =========================================================================
+# ANCHOR TRAINING FILE
+# =========================================================================
+# The single source of truth for:
+#   1. Fact extraction reject rules (consumed by _shared/fact-guardrails.ts)
+#   2. Briefing voice and typography rules (consumed by generate-briefing)
+#   3. Per-target export voice cards (consumed by memory-context-builder)
+#
+# Edit this file to tune the app's voice, extraction behaviour, and export
+# outputs without touching TypeScript. The regression harness at
+# `npm run test:training` validates every change against the evaluation_corpus
+# at the bottom of the file.
+#
+# Anything in `typography_rules` or `extraction_rejects` is treated as a
+# formatting / meta-rule and MUST NEVER be captured as a user fact.
+# =========================================================================
+
+version: 1
+scope: global
+
+# ─────────────────────────────────────────────────────────────────────────
+# VOICE CARD — how every output should sound
+# ─────────────────────────────────────────────────────────────────────────
+voice_card:
+  adjectives:
+    - direct
+    - crisp
+    - high-signal
+    - observant
+    - unfussy
+  anti_adjectives:
+    - breathless
+    - salesy
+    - hedgy
+    - performative
+    - twee
+  register: "executive peer, not assistant"
+  sentence_length: "short to medium; fragments allowed for emphasis"
+
+# ─────────────────────────────────────────────────────────────────────────
+# PHRASE BANKS
+# ─────────────────────────────────────────────────────────────────────────
+do_phrases:
+  openers:
+    - "Heads up."
+    - "Quick read."
+    - "One to watch."
+    - "Worth your attention."
+  connectors:
+    - "Meanwhile,"
+    - "In parallel,"
+    - "The counter-signal:"
+    - "Separately,"
+  closers:
+    - "Net:"
+    - "Watch for:"
+    - "Call to make:"
+
+dont_phrases:
+  - "in today's fast-paced world"
+  - "dive deep"
+  - "game-changer"
+  - "game changer"
+  - "unlock value"
+  - "leverage synergies"
+  - "at the end of the day"
+  - "it's worth noting"
+  - "it remains to be seen"
+  - "interestingly"
+  - "in conclusion"
+  - "furthermore"
+  - "additionally"
+  - "moreover"
+  - "this is significant because"
+
+# ─────────────────────────────────────────────────────────────────────────
+# TYPOGRAPHY RULES — NEVER a user preference, ALWAYS a formatting rule
+# ─────────────────────────────────────────────────────────────────────────
+typography_rules:
+  forbidden_chars:
+    - "\u2014"  # em dash
+    - "\u2013"  # en dash
+  forbidden_tokens:
+    - "em dash"
+    - "em-dash"
+    - "en dash"
+    - "en-dash"
+    - "bullet point"
+    - "bullet points"
+    - "markdown heading"
+    - "markdown"
+    - "word count"
+    - "tone"
+    - "voice"
+    - "formatting"
+    - "typography"
+    - "brevity"
+    - "concise"
+    - "verbose"
+  replacement_map:
+    "\u2014": ", "
+    "\u2013": "-"
+
+# ─────────────────────────────────────────────────────────────────────────
+# EXTRACTION REJECT TAXONOMY
+# Consumed by fact-guardrails.ts. Each entry: regex pattern + reason.
+# Patterns are applied case-insensitive against fact_value + fact_context.
+# ─────────────────────────────────────────────────────────────────────────
+extraction_rejects:
+  - id: meta_instruction
+    pattern: "^(don'?t|do not|avoid|never|stop|please stop|write in|use \\w+ instead|make sure you|you should|you must)\\b"
+    reason: "output-shaping instruction, not a user fact"
+    field: fact_context
+
+  - id: style_rule
+    pattern: "(em[\\s-]?dash|en[\\s-]?dash|bullet\\s*point|markdown|\\bformat(?:ting)?\\b|\\btone\\b|\\bvoice\\b|word\\s*count|no more than \\d+ words|brevity|concise|verbose|typography)"
+    reason: "typography/style rule, never a user fact"
+    field: both
+
+  - id: transient_state
+    pattern: "(i'?m tired|running late|feeling \\w+ today|sick today|off today|hungover|exhausted today|busy today)"
+    reason: "transient context, not durable fact"
+    field: both
+
+  - id: third_party_identity
+    pattern: "(my (cofounder|co-founder|partner|cto|ceo|cfo|coo|boss|manager|colleague|assistant)(?: is| was)|our (cto|ceo|cfo|coo|vp|head of|director))"
+    reason: "describes third party, not the speaker"
+    field: both
+
+  - id: self_addressed_directive
+    pattern: "(you should|can you|please (use|write|make|add|remove|include|exclude|avoid))"
+    reason: "addressed to the app, not a fact about self"
+    field: fact_context
+
+  - id: hypothetical
+    pattern: "^(if i (had|could|were)|i would|i'?d (like|love|want) to)"
+    reason: "hypothetical or wish, not a durable fact"
+    field: fact_context
+
+  - id: pure_negation
+    pattern: "^(i do(?:n'?t| not)|i don'?t|i never|i won'?t|i'?m not) (like|want|use|prefer|do)"
+    reason: "pure negation, not a positive preference"
+    field: fact_context
+
+# ─────────────────────────────────────────────────────────────────────────
+# PREFERENCE SUBTYPES
+# If fact_category=preference, the extracted value MUST map to one of
+# these subtypes. Otherwise the fact is downgraded to pending.
+# ─────────────────────────────────────────────────────────────────────────
+preference_subtypes:
+  communication_style:
+    keywords: [bullet, summary, tldr, prose, email, slack, async, sync, meeting, call, written, verbal, visual, numbers]
+    examples:
+      - "prefers bullet summaries over prose"
+      - "likes tldr at the top"
+      - "async-first communicator"
+  decision_style:
+    keywords: [data, gut, deliberate, quick, slow, analyze, intuition, commit, delegate, consensus]
+    examples:
+      - "data-driven"
+      - "deliberates before committing"
+      - "bias to action"
+  work_style:
+    keywords: [morning, evening, deep work, focus, interrupt, calendar, time block, sprint, marathon, solo, pair]
+    examples:
+      - "deep-work mornings"
+      - "standups at 9am"
+      - "no meetings before noon"
+  tool_or_method:
+    keywords: [uses, runs, tracks, manages, with, in, via]
+    examples:
+      - "uses Linear for tracking"
+      - "runs OKRs quarterly"
+      - "tracks metrics in Looker"
+
+# ─────────────────────────────────────────────────────────────────────────
+# BRIEFING EXEMPLARS (gold-standard outputs per type)
+# ─────────────────────────────────────────────────────────────────────────
+briefing_exemplars:
+  daily_brief:
+    - |
+      Heads up. OpenAI shipped GPT-4o mini yesterday; pricing is 60% below gpt-4-turbo and latency is meaningfully lower. Net: if you are running production GPT-4 workloads, A/B test this week.
+      Meanwhile, Anthropic's Claude 3.5 Sonnet benchmark lead on SWE-bench held up in independent testing. Watch for enterprise deals shifting on that signal.
+      Call to make: brief engineering on the cost delta before next sprint planning.
+  macro_trends:
+    - |
+      Three things moving this week. One: model price per token is compressing faster than compute is scaling; margin is leaving the inference layer. Two: agent frameworks are consolidating around two or three patterns; differentiation is shifting to tool quality, not orchestration. Three: regulator attention is moving from training data to deployment oversight.
+  boardroom_prep:
+    - |
+      For the 10am. Revenue is on plan, churn is 40bps worse than forecast, driven by two enterprise logos. The board will push on ACV expansion. Have your top three expansion motions ready with concrete next steps, not intentions.
+  competitive_intel:
+    - |
+      One to watch. Your nearest competitor quietly changed pricing tiers yesterday; entry SKU dropped 15% and the mid-tier added a seat-based component. Net: your deal cycle will meet this change inside two weeks. Brief sales before Monday.
+  vendor_landscape:
+    - |
+      Quick read on the vendor set. The observability category consolidated further; two mid-market players were acquired. Watch for your current vendor repricing within a quarter, the counter-signal is that the new owners have a record of keeping prices flat for a year post-acquisition. Call to make: lock rates now if your renewal is inside six months.
+
+# ─────────────────────────────────────────────────────────────────────────
+# HOT-SIGNAL TAXONOMY
+# Drives curation inside generate-briefing/index.ts.
+# ─────────────────────────────────────────────────────────────────────────
+hot_signal_taxonomy:
+  must_include:
+    - "benchmark movement >5 points on a public eval"
+    - "funding round >$100M or strategic round from a hyperscaler"
+    - "regulatory action: rulings, enforcement, new legislation"
+    - "C-suite departure at a top 50 AI company"
+    - "model release from OpenAI, Anthropic, Google, Meta, or xAI"
+    - "pricing change >15% from a category leader"
+  deprioritize:
+    - "incremental feature launches"
+    - "demo videos without pricing or availability"
+    - "opinion pieces without new data"
+    - "reheated coverage of older stories"
+  drop:
+    - "personnel moves below C-suite"
+    - "funding rounds below $20M unless strategic"
+    - "speculation without named sources"
+    - "partnership announcements without commercial terms"
+
+# ─────────────────────────────────────────────────────────────────────────
+# CITATION POLICY
+# ─────────────────────────────────────────────────────────────────────────
+citation_policy:
+  when_to_cite: "whenever a specific number, name, or claim appears"
+  uncertainty_phrasing: "use 'reportedly' or 'per <source>' when not first-party"
+  never: "speculate on private-company internals without attribution"
+
+# ─────────────────────────────────────────────────────────────────────────
+# WATCHLIST (defaults; user-level watchlist overrides these)
+# ─────────────────────────────────────────────────────────────────────────
+watchlist:
+  companies: [OpenAI, Anthropic, "Google DeepMind", "Meta AI", xAI, Mistral, Cohere, "Scale AI"]
+  people: ["Sam Altman", "Dario Amodei", "Demis Hassabis", "Yann LeCun", "Sundar Pichai"]
+  themes: ["inference cost", "agent reliability", "model evals", "regulation", "alignment"]
+
+# ─────────────────────────────────────────────────────────────────────────
+# STRUCTURAL RUBRIC PER BRIEFING TYPE
+# ─────────────────────────────────────────────────────────────────────────
+structural_rubric:
+  daily_brief:
+    hook: "1 sentence, names the thing that matters most today"
+    body: "3-5 stories, 2-3 sentences each, each ending with a 'so what'"
+    close: "1 action or watch item"
+    word_budget: 220
+    tolerance: 0.15
+  macro_trends:
+    hook: "1 framing sentence"
+    body: "3 numbered trends, 2-3 sentences each"
+    close: "what shifts if any trend inflects"
+    word_budget: 280
+    tolerance: 0.15
+  boardroom_prep:
+    hook: "1 sentence naming the meeting or forum"
+    body: "2-3 discussion items, each with data + recommended posture"
+    close: "one ask or decision to land"
+    word_budget: 240
+    tolerance: 0.15
+
+# ─────────────────────────────────────────────────────────────────────────
+# SELF-CHECK GATE (enforced post-generation)
+# ─────────────────────────────────────────────────────────────────────────
+self_check_gate:
+  - "Any em dashes or en dashes? Replace using replacement_map."
+  - "Any banned phrases from dont_phrases? Rewrite."
+  - "Did the brief personalize the lead with user context, or is it generic? If generic, regenerate."
+  - "Every specific number or name attributed? If not, add source or remove."
+  - "Word count within tolerance of rubric budget?"
+
+# ─────────────────────────────────────────────────────────────────────────
+# PER-TARGET EXPORT VOICE CARDS
+# Consumed by _shared/memory-context-builder.ts formatters.
+# Each target gets a genuinely different packaging of the same facts.
+# ─────────────────────────────────────────────────────────────────────────
+export_voice_cards:
+  chatgpt_custom_gpt:
+    tone: "second-person, directive, no prose preamble"
+    emphasis: [identity, objectives, communication_preferences]
+    avoid: [code_conventions, tooling]
+    artefacts:
+      - filename: "chatgpt-instructions.md"
+        mime: "text/markdown"
+        kind: instructions
+      - filename: "chatgpt-knowledge.md"
+        mime: "text/markdown"
+        kind: knowledge
+
+  chatgpt_assistants_api:
+    tone: "terse JSON object, no prose"
+    emphasis: [identity, objectives]
+    avoid: [examples, long_lists]
+    artefacts:
+      - filename: "chatgpt-assistant.json"
+        mime: "application/json"
+        kind: api_config
+
+  claude_project:
+    tone: "structured XML, declarative, no marketing copy"
+    emphasis: [identity, business, objectives, blockers, communication_preferences]
+    avoid: [small_talk, code_conventions_unless_code_first_user]
+    artefacts:
+      - filename: "claude-project-instructions.md"
+        mime: "text/markdown"
+        kind: project_instructions
+
+  claude_code:
+    tone: "imperative, convention-heavy, terse"
+    emphasis: [stack, conventions, always_never_rules, tooling]
+    avoid: [identity, objectives, business_goals]
+    artefacts:
+      - filename: "CLAUDE.md"
+        mime: "text/markdown"
+        kind: agent_instructions
+
+  cursor:
+    tone: "imperative one-liners grouped by concern"
+    emphasis: [stack, style, testing, review_discipline]
+    avoid: [prose, identity]
+    artefacts:
+      - filename: ".cursorrules"
+        mime: "text/plain"
+        kind: agent_instructions
+
+  gemini_system_instruction:
+    tone: "plain prose, no markdown, maximum signal density"
+    emphasis: [identity, objectives, communication_preferences]
+    avoid: [examples, long_lists]
+    artefacts:
+      - filename: "gemini-system-instruction.txt"
+        mime: "text/plain"
+        kind: system_instruction
+      - filename: "gemini-context.md"
+        mime: "text/markdown"
+        kind: long_context
+
+  markdown:
+    tone: "neutral, section-headed, universal"
+    emphasis: [identity, business, objectives, blockers, preferences]
+    avoid: []
+    artefacts:
+      - filename: "my-ai-context.md"
+        mime: "text/markdown"
+        kind: universal
+
+# ─────────────────────────────────────────────────────────────────────────
+# EVALUATION CORPUS
+# Used by `npm run test:training` to regression-test every change to this
+# file, the extraction guardrails, and the briefing prompt.
+# ─────────────────────────────────────────────────────────────────────────
+evaluation_corpus:
+  - id: em_dash_rejection
+    kind: extraction
+    input: "Don't ever use em dashes in my briefings."
+    expect:
+      decision: reject
+      reason_id: meta_instruction
+
+  - id: style_rule_rejection
+    kind: extraction
+    input: "Keep it under 200 words and no bullet points."
+    expect:
+      decision: reject
+      reason_id: style_rule
+
+  - id: transient_rejection
+    kind: extraction
+    input: "I'm a bit tired today, running late to the board meeting."
+    expect:
+      decision: reject
+      reason_id: transient_state
+
+  - id: third_party_rejection
+    kind: extraction
+    input: "My cofounder Jake is the CEO of our company."
+    expect:
+      decision: reject
+      reason_id: third_party_identity
+
+  - id: self_addressed_directive
+    kind: extraction
+    input: "Make sure you avoid bullet points when you draft."
+    expect:
+      decision: reject
+      reason_id: self_addressed_directive
+
+  - id: positive_extraction_role
+    kind: extraction
+    input: "I run product at Mindmaker and we are raising a Series B."
+    expect:
+      decision: keep
+
+  - id: briefing_banned_phrase
+    kind: briefing
+    briefing_type: default
+    expect:
+      not_contains:
+        - "in today's fast-paced world"
+        - "dive deep"
+        - "\u2014"
+        - "\u2013"
+        - "game-changer"
+
+  - id: briefing_rubric_daily
+    kind: briefing
+    briefing_type: default
+    expect:
+      word_budget: 220
+      tolerance: 0.15
+      has_hook: true
+      has_close: true
