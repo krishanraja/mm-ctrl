@@ -260,7 +260,7 @@ export function CustomBriefingSheet({
   if (isMobile) {
     return (
       <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-8 pt-5 max-h-[85dvh] overflow-y-auto">
+        <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-8 pt-5 max-h-[92dvh] overflow-y-auto">
           <SheetHeader className="sr-only">
             <SheetTitle>Custom Briefing</SheetTitle>
             <SheetDescription>Choose a briefing type or describe what you need</SheetDescription>
