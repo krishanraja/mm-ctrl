@@ -180,7 +180,7 @@ export function EdgeOnboarding({ onComplete }: Props) {
   // -----------------------------------------------------------------------
 
   return (
-    <div className="h-screen bg-background flex flex-col">
+    <div className="h-full bg-background flex flex-col">
       {/* Progress bar */}
       {step !== 'welcome' && step !== 'done' && (
         <div className="flex-shrink-0 px-6 pt-6 pb-2">
