@@ -801,11 +801,30 @@ export default function ContextExport() {
       <AppHeader />
 
       <div className="flex-shrink-0 px-4 pb-1">
-        <div className="flex items-center gap-2 mb-1">
-          <FileText className="h-5 w-5 text-accent" />
-          <h1 className="text-base font-semibold text-foreground">Export to AI</h1>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-accent" />
+            <h1 className="text-base font-semibold text-foreground">Export to AI</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            {[1, 2, 3].map((s) => (
+              <button
+                key={s}
+                onClick={() => s < step ? goToStep(s as WizardStep) : undefined}
+                disabled={s > step}
+                className={cn(
+                  'h-2 rounded-full transition-all duration-300',
+                  s === step
+                    ? 'w-8 bg-accent'
+                    : s < step
+                    ? 'w-2 bg-accent/40 cursor-pointer hover:bg-accent/60'
+                    : 'w-2 bg-border'
+                )}
+                aria-label={`Step ${s}`}
+              />
+            ))}
+          </div>
         </div>
-        {stepIndicator}
       </div>
 
       <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-20">
