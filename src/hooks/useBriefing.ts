@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Briefing, BriefingFeedback, BriefingType } from '@/types/briefing';
 
-const GENERATE_TIMEOUT = 30_000; // 30s for news fetch + GPT-4o
+const GENERATE_TIMEOUT = 60_000; // news fetch + curation + training load + script gen can exceed 30s on cold start
 const POLL_INTERVAL = 3_000;
 const MAX_POLLS = 40; // 40 * 3s = 120s max
 
