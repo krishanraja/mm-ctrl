@@ -6,8 +6,51 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// TODO: Replace with actual Stripe price ID after creating subscription product
-const EDGE_PRO_PRICE_ID = Deno.env.get("STRIPE_EDGE_PRO_PRICE_ID") || "price_edge_pro_monthly";
+const EDGE_PRO_PRICE_ID_ENV = Deno.env.get("STRIPE_EDGE_PRO_PRICE_ID");
+const EDGE_PRO_PRODUCT_NAME = "Edge Pro";
+const EDGE_PRO_UNIT_AMOUNT = 900; // $9.00/month in cents
+const EDGE_PRO_INTERVAL = "month" as const;
+
+// Self-healing price lookup: if STRIPE_EDGE_PRO_PRICE_ID is not set, look up
+// (or create) the "Edge Pro" product and its recurring monthly price.
+async function resolveEdgeProPriceId(stripe: Stripe): Promise<string> {
+  if (EDGE_PRO_PRICE_ID_ENV && EDGE_PRO_PRICE_ID_ENV.startsWith("price_")) {
+    return EDGE_PRO_PRICE_ID_ENV;
+  }
+
+  // Find or create product
+  const products = await stripe.products.list({ limit: 100, active: true });
+  let product = products.data.find((p) => p.name === EDGE_PRO_PRODUCT_NAME);
+  if (!product) {
+    product = await stripe.products.create({
+      name: EDGE_PRO_PRODUCT_NAME,
+      description: "Full access to Edge capabilities including Custom via Voice",
+    });
+  }
+
+  // Find or create recurring monthly price
+  const prices = await stripe.prices.list({
+    product: product.id,
+    active: true,
+    limit: 100,
+  });
+  const existing = prices.data.find(
+    (p) =>
+      p.recurring?.interval === EDGE_PRO_INTERVAL &&
+      p.unit_amount === EDGE_PRO_UNIT_AMOUNT &&
+      p.currency === "usd",
+  );
+  if (existing) return existing.id;
+
+  const created = await stripe.prices.create({
+    product: product.id,
+    unit_amount: EDGE_PRO_UNIT_AMOUNT,
+    currency: "usd",
+    recurring: { interval: EDGE_PRO_INTERVAL },
+    metadata: { product: "edge_pro" },
+  });
+  return created.id;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -29,9 +72,18 @@ Deno.serve(async (req) => {
       });
     }
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeSecretKey) {
+      return new Response(
+        JSON.stringify({ error: "Stripe is not configured on the server" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2025-08-27.basil",
     });
+
+    const edgeProPriceId = await resolveEdgeProPriceId(stripe);
 
     // Find or create Stripe customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
@@ -66,7 +118,7 @@ Deno.serve(async (req) => {
     const origin = req.headers.get("origin") || "https://mindmaker.app";
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      line_items: [{ price: EDGE_PRO_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: edgeProPriceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/dashboard?view=edge&subscription=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/dashboard?view=edge&subscription=canceled`,
