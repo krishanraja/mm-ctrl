@@ -20,6 +20,9 @@ import type { AAModel } from "../_shared/aa-types.ts";
 import { loadTrainingForUser } from "../_shared/training-loader.ts";
 import { applyTypographyRules, stripBannedPhrases } from "../_shared/fact-guardrails.ts";
 import type { TrainingMaterial } from "../_shared/training-schema.ts";
+import { buildImportanceLens, planQueries, type LensItem, type LensSource, type PlannedQuery } from "../_shared/briefing-lens.ts";
+import { dedupeAndScore, type CandidateHeadline, type ScoredHeadline } from "../_shared/briefing-scoring.ts";
+import { curateSegments, segmentCountFromBudget, type CuratedSegment } from "../_shared/briefing-curation.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -63,6 +66,10 @@ interface BriefingSegment {
   framework_tag: string;
   source: string;
   relevance_reason: string;
+  // v2 evidence fields — optional so v1 rows stay schema-compatible.
+  lens_item_id?: string;
+  relevance_score?: number;
+  matched_profile_fact?: string;
 }
 
 // ── News Fetching ──────────────────────────────────────────────────
@@ -1253,6 +1260,446 @@ function generateAILandscapeHeadlines(models: AAModel[], userCtx: UserContext): 
   return headlines.slice(0, 10);
 }
 
+// ── v2 Pipeline (evidence-based lens + embeddings) ────────────────
+
+interface V2FetchResult {
+  candidates: CandidateHeadline[];
+  provider: string;
+}
+
+/**
+ * Wrap a per-provider fetch with a hard timeout and a minimal retry.
+ * Returns an empty array on failure — Stage 3 never lets one slow or broken
+ * provider block the briefing.
+ */
+async function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return await new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`${label} timeout after ${ms}ms`)), ms);
+    p.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+  });
+}
+
+async function v2FetchTavily(apiKey: string, queries: PlannedQuery[]): Promise<V2FetchResult> {
+  const candidates: CandidateHeadline[] = [];
+  await Promise.allSettled(queries.map(async (q) => {
+    try {
+      const res = await withTimeout(
+        fetch("https://api.tavily.com/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            api_key: apiKey,
+            query: q.query,
+            search_depth: "advanced",
+            topic: "news",
+            days: 7,
+            max_results: 8,
+            include_answer: false,
+          }),
+        }),
+        8_000,
+        `Tavily(${q.target_lens_item_id})`,
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      const results = Array.isArray(data?.results) ? data.results : [];
+      for (const r of results) {
+        if (!r?.title || !r?.url) continue;
+        let source = "Web";
+        try {
+          const host = new URL(r.url).hostname.replace(/^www\./, "");
+          source = formatSource(host);
+        } catch { /* keep default */ }
+        candidates.push({
+          title: r.title,
+          source,
+          snippet: typeof r.content === "string" ? r.content.slice(0, 280) : undefined,
+          provider: "tavily",
+        });
+      }
+    } catch (e) {
+      console.warn(`v2 Tavily query failed (${q.target_lens_item_id}):`, e instanceof Error ? e.message : e);
+    }
+  }));
+  return { candidates, provider: "tavily" };
+}
+
+async function v2FetchBrave(apiKey: string, queries: PlannedQuery[]): Promise<V2FetchResult> {
+  const candidates: CandidateHeadline[] = [];
+  await Promise.allSettled(queries.map(async (q) => {
+    try {
+      const params = new URLSearchParams({
+        q: q.query,
+        freshness: "pw",
+        count: "10",
+        country: "US",
+        search_lang: "en",
+      });
+      const res = await withTimeout(
+        fetch(`https://api.search.brave.com/res/v1/news/search?${params}`, {
+          headers: {
+            Accept: "application/json",
+            "Accept-Encoding": "gzip",
+            "X-Subscription-Token": apiKey,
+          },
+        }),
+        8_000,
+        `Brave(${q.target_lens_item_id})`,
+      );
+      if (!res.ok) return;
+      const data = await res.json();
+      const results = Array.isArray(data?.results) ? data.results : [];
+      for (const r of results) {
+        if (!r?.title || !r?.meta_url?.hostname) continue;
+        const title = (r.title as string).replace(/\s*[-|]\s*[^-|]+$/, "").trim();
+        if (title.length < 15) continue;
+        candidates.push({
+          title,
+          source: formatSource(r.meta_url.hostname),
+          snippet: typeof r.description === "string" ? (r.description as string).slice(0, 280) : undefined,
+          provider: "brave",
+        });
+      }
+    } catch (e) {
+      console.warn(`v2 Brave query failed (${q.target_lens_item_id}):`, e instanceof Error ? e.message : e);
+    }
+  }));
+  return { candidates, provider: "brave" };
+}
+
+async function v2FetchPerplexity(apiKey: string, queries: PlannedQuery[]): Promise<V2FetchResult> {
+  // Perplexity's Sonar is slow; send ONE request covering all planned queries.
+  const queryBlock = queries.map((q, i) => `${i + 1}. ${q.query}`).join("\n");
+  try {
+    const res = await withTimeout(
+      fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "sonar",
+          messages: [
+            {
+              role: "system",
+              content:
+                `Return 10-15 recent news headlines (past 7 days) that answer the queries below. For each, include a 1-2 sentence snippet and the publication. No commentary. Return ONLY JSON: [{"title":"","source":"","snippet":""}].`,
+            },
+            { role: "user", content: queryBlock },
+          ],
+          temperature: 0.1,
+        }),
+      }),
+      10_000,
+      "Perplexity",
+    );
+    if (!res.ok) return { candidates: [], provider: "perplexity" };
+    const data = await res.json();
+    const content = data?.choices?.[0]?.message?.content ?? "";
+    const cleaned = content.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+    let parsed: unknown[] = [];
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      const start = cleaned.indexOf("[");
+      const end = cleaned.lastIndexOf("]");
+      if (start !== -1 && end > start) {
+        try { parsed = JSON.parse(cleaned.substring(start, end + 1)); } catch { /* drop */ }
+      }
+    }
+    const candidates: CandidateHeadline[] = (Array.isArray(parsed) ? parsed : [])
+      .filter((h): h is { title: string; source: string; snippet?: string } =>
+        !!h && typeof h === "object" &&
+        typeof (h as Record<string, unknown>).title === "string" &&
+        typeof (h as Record<string, unknown>).source === "string" &&
+        ((h as Record<string, unknown>).title as string).length > 15,
+      )
+      .map(h => ({
+        title: h.title,
+        source: h.source,
+        snippet: typeof h.snippet === "string" ? h.snippet.slice(0, 280) : undefined,
+        provider: "perplexity",
+      }));
+    return { candidates, provider: "perplexity" };
+  } catch (e) {
+    console.warn("v2 Perplexity failed:", e instanceof Error ? e.message : e);
+    return { candidates: [], provider: "perplexity" };
+  }
+}
+
+/**
+ * Fan out all providers with a hard wall-clock cap. Per red-team guidance:
+ * one slow provider must not block the briefing.
+ */
+async function v2FetchAll(
+  queries: PlannedQuery[],
+  providerKeys: { perplexity?: string; tavily?: string; brave?: string },
+  totalCapMs = 12_000,
+): Promise<CandidateHeadline[]> {
+  const tasks: Array<Promise<V2FetchResult>> = [];
+  if (providerKeys.perplexity) tasks.push(v2FetchPerplexity(providerKeys.perplexity, queries));
+  if (providerKeys.tavily) tasks.push(v2FetchTavily(providerKeys.tavily, queries));
+  if (providerKeys.brave) tasks.push(v2FetchBrave(providerKeys.brave, queries));
+  if (tasks.length === 0) return [];
+
+  const capped = Promise.race([
+    Promise.allSettled(tasks),
+    new Promise<Array<PromiseSettledResult<V2FetchResult>>>(resolve =>
+      setTimeout(() => resolve([]), totalCapMs),
+    ),
+  ]);
+
+  const results = await capped;
+  const candidates: CandidateHeadline[] = [];
+  for (const r of results) {
+    if (r.status === "fulfilled" && r.value?.candidates) {
+      candidates.push(...r.value.candidates);
+    }
+  }
+  return candidates;
+}
+
+function toLensSource(userId: string, userCtx: UserContext, missionIds: string[], decisionIds: string[]): LensSource {
+  return {
+    userId,
+    name: userCtx.name,
+    role: userCtx.role,
+    company: userCtx.company,
+    industry: userCtx.industry,
+    objectives: userCtx.objectives.map((text) => ({ text })),
+    blockers: userCtx.blockers.map((text) => ({ text })),
+    missions: userCtx.activeMissions.map((title, i) => ({ id: missionIds[i] ?? `m_${i}`, title })),
+    decisions: userCtx.recentDecisions.map((text, i) => ({ id: decisionIds[i] ?? `d_${i}`, text })),
+    watchingCompanies: userCtx.watchingCompanies,
+    patterns: userCtx.confirmedPatterns.map((text) => ({ type: "pattern", text, confidence: 0.8 })),
+  };
+}
+
+interface V2PipelineArgs {
+  supabase: ReturnType<typeof createClient>;
+  supabaseUrl: string;
+  supabaseServiceKey: string;
+  openaiKey: string;
+  userId: string;
+  userCtx: UserContext;
+  briefingType: BriefingType;
+  customContext?: string;
+  voiceNoteUrl?: string;
+  isProOnly: boolean;
+  today: string;
+  resolvedScriptModel: string;
+  resolvedCurationModel: string;
+  providerKeys: { perplexity?: string; tavily?: string; brave?: string };
+}
+
+/**
+ * v2 pipeline — evidence-based relevance.
+ * Stages: lens -> query planner -> provider fan-out -> embed+dedupe+score ->
+ * budget-constrained curation -> v1 script generator -> synth trigger.
+ */
+async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unknown>> {
+  const {
+    supabase, supabaseUrl, supabaseServiceKey, openaiKey, userId, userCtx,
+    briefingType, customContext, voiceNoteUrl, isProOnly, today,
+    resolvedScriptModel, resolvedCurationModel, providerKeys,
+  } = args;
+
+  const t0 = Date.now();
+
+  // Fetch mission + decision IDs so lens_item refs point at real rows.
+  const [{ data: missions }, { data: decisions }, training] = await Promise.all([
+    supabase.from("user_missions").select("id, title").eq("user_id", userId).eq("status", "active").limit(3),
+    supabase.from("user_decisions").select("id, decision_text").eq("user_id", userId).eq("status", "active").order("created_at", { ascending: false }).limit(5),
+    loadTrainingForUser(supabase, userId).catch(() => undefined),
+  ]);
+  const missionIds = ((missions as Array<{ id: string }> | null) ?? []).map(m => m.id);
+  const decisionIds = ((decisions as Array<{ id: string }> | null) ?? []).map(d => d.id);
+
+  const source = toLensSource(userId, userCtx, missionIds, decisionIds);
+
+  // Stage 1: lens.
+  console.log("[v2] Building importance lens...");
+  const lens: LensItem[] = await buildImportanceLens(supabase, openaiKey, source, briefingType);
+  console.log(`[v2] Lens size=${lens.length}, top=${lens.slice(0, 3).map(l => `${l.type}(${l.weight.toFixed(2)})`).join(", ")}`);
+
+  if (lens.length === 0) {
+    throw new Error("Lens empty — user has no profile data to personalise against");
+  }
+
+  // Stage 2: query plan.
+  console.log("[v2] Planning queries...");
+  const queries = await planQueries(openaiKey, lens, training, briefingType, customContext);
+  console.log(`[v2] Queries planned: ${queries.length}`);
+
+  // Stage 3: provider fan-out with hard 12s cap.
+  console.log("[v2] Fetching providers...");
+  const tFetch = Date.now();
+  const rawCandidates = await v2FetchAll(queries, providerKeys, 12_000);
+  console.log(`[v2] Providers returned ${rawCandidates.length} raw candidates in ${Date.now() - tFetch}ms`);
+
+  // Stage 4: embed + dedupe + score.
+  let scored: ScoredHeadline[] = [];
+  if (rawCandidates.length > 0) {
+    console.log("[v2] Scoring candidates...");
+    const tScore = Date.now();
+    scored = await dedupeAndScore(supabase, openaiKey, rawCandidates, lens);
+    console.log(`[v2] ${scored.length} survivors after dedupe in ${Date.now() - tScore}ms`);
+  }
+
+  const usedFallback = scored.length === 0;
+
+  // 2.5 EARLY INSERT so the frontend sees headlines while curation runs.
+  const preliminarySegments: BriefingSegment[] = (scored.length > 0 ? scored.slice(0, 8) : []).map(s => ({
+    headline: s.title.replace(/^\[.*?\]\s*/, ""),
+    analysis: "",
+    framework_tag: "signal",
+    source: s.source,
+    relevance_reason: "",
+    lens_item_id: s.matched_lens_item_id,
+    relevance_score: Number(s.relevance_score.toFixed(4)),
+  }));
+
+  const { data: earlyBriefing, error: earlyInsertError } = await supabase
+    .from("briefings")
+    .insert({
+      user_id: userId,
+      briefing_date: today,
+      briefing_type: briefingType,
+      script_text: null,
+      segments: preliminarySegments,
+      context_snapshot: {
+        ...userCtx,
+        v2: true,
+        lens,
+        queries,
+        used_fallback: usedFallback,
+      },
+      news_sources: scored.map(s => ({ title: s.title, source: s.source, provider: s.provider })),
+      generation_model: resolvedScriptModel,
+      custom_context: customContext || null,
+      voice_note_url: voiceNoteUrl || null,
+      is_pro_only: isProOnly,
+      schema_version: 2,
+    })
+    .select("id")
+    .single();
+
+  if (earlyInsertError) throw earlyInsertError;
+  const briefingId = (earlyBriefing as { id: string }).id;
+  console.log(`[v2] Preliminary briefing inserted: ${briefingId}`);
+
+  if (scored.length === 0) {
+    // No candidates survived — return the briefing with an empty curated segment list.
+    // Client will show a friendly "no new stories worth your time today" state.
+    return {
+      briefing_id: briefingId,
+      already_exists: false,
+      has_audio: false,
+      segment_count: 0,
+      briefing_type: briefingType,
+      used_fallback: true,
+      pipeline_version: 2,
+    };
+  }
+
+  // Stage 5: budget-constrained curation.
+  const rubricKey = briefingType === "default" ? "daily_brief" : briefingType;
+  const rubric = training?.structural_rubric[rubricKey] ?? training?.structural_rubric.daily_brief;
+  const wordBudget = rubric ? { target: rubric.word_budget, tolerance: rubric.tolerance } : { target: 450, tolerance: 0.15 };
+  const targetCount = segmentCountFromBudget(wordBudget);
+
+  const leaderDesc = `${userCtx.role || "executive"}${userCtx.industry ? ` in ${userCtx.industry}` : ""}${userCtx.company ? ` at ${userCtx.company}` : ""}`;
+
+  console.log(`[v2] Curating ${targetCount} segments from ${scored.length} candidates...`);
+  const curated: CuratedSegment[] = await curateSegments(
+    openaiKey,
+    scored,
+    lens,
+    briefingType,
+    customContext,
+    leaderDesc,
+    targetCount,
+    resolvedCurationModel,
+  );
+  console.log(`[v2] Curation produced ${curated.length} segments`);
+
+  // Stage 6: v1 script generator, now fed curated segments instead of raw headlines.
+  const { data: directivesRow } = await supabase
+    .from("user_briefing_directives")
+    .select("body")
+    .eq("user_id", userId)
+    .maybeSingle();
+  const userDirectives = ((directivesRow as { body?: string } | null)?.body) || undefined;
+
+  const scriptHeadlines: NewsHeadline[] = curated.map(c => ({
+    title: `[${c.framework_tag.toUpperCase().replace(/_/g, " ")}] ${c.headline}`,
+    source: c.source,
+  }));
+
+  console.log("[v2] Generating script...");
+  const { script, training_version } = await generateBriefingScript(
+    scriptHeadlines,
+    userCtx,
+    openaiKey,
+    briefingType,
+    customContext,
+    resolvedScriptModel,
+    training,
+    userDirectives,
+  );
+  console.log(`[v2] Script produced (training_material_version=${training_version})`);
+
+  // Merge v2 curated segments with any script-side rewrites: we keep the v2
+  // segments as-is because they carry the evidence fields; the script is the
+  // narrative layer on top.
+  const finalSegments: BriefingSegment[] = curated.map(c => ({
+    headline: c.headline,
+    analysis: c.analysis,
+    framework_tag: c.framework_tag,
+    source: c.source,
+    relevance_reason: c.relevance_reason,
+    lens_item_id: c.lens_item_id,
+    relevance_score: Number(c.relevance_score.toFixed(4)),
+    matched_profile_fact: c.matched_profile_fact,
+  }));
+
+  const { error: updateError } = await supabase
+    .from("briefings")
+    .update({
+      script_text: script,
+      segments: finalSegments,
+    })
+    .eq("id", briefingId);
+
+  if (updateError) console.error("[v2] Failed to update briefing with polished content:", updateError);
+  else console.log(`[v2] Briefing refined: ${briefingId}`);
+
+  // Stage 7: fire-and-forget synthesis.
+  try {
+    const synthUrl = `${supabaseUrl}/functions/v1/synthesize-briefing`;
+    fetch(synthUrl, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${supabaseServiceKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ briefing_id: briefingId }),
+    }).catch(e => console.warn("[v2] synthesis trigger failed:", e));
+  } catch (e) {
+    console.warn("[v2] Could not trigger synthesis:", e);
+  }
+
+  console.log(`[v2] Total pipeline time: ${Date.now() - t0}ms`);
+
+  return {
+    briefing_id: briefingId,
+    already_exists: false,
+    has_audio: false,
+    segment_count: finalSegments.length,
+    briefing_type: briefingType,
+    used_fallback: false,
+    pipeline_version: 2,
+  };
+}
+
 // ── Main Handler ───────────────────────────────────────────────────
 
 serve(async (req) => {
@@ -1296,6 +1743,7 @@ serve(async (req) => {
     let customContext: string | undefined;
     let voiceNoteUrl: string | undefined;
     let force = false;
+    let requestedVersion: 1 | 2 | undefined;
 
     try {
       const body = await req.json();
@@ -1311,6 +1759,8 @@ serve(async (req) => {
       if (body.force === true) {
         force = true;
       }
+      if (body.briefing_version === 2 || body.briefing_version === "2") requestedVersion = 2;
+      if (body.briefing_version === 1 || body.briefing_version === "1") requestedVersion = 1;
     } catch {
       // No body or invalid JSON - use defaults
     }
@@ -1393,6 +1843,47 @@ serve(async (req) => {
       briefingType,
       searchTopics,
     });
+
+    // Flag: route to v2 evidence-based pipeline if enabled.
+    // Request body wins > per-user memory opt-in > env default.
+    const v2EnvDefault = (Deno.env.get("BRIEFING_V2_ENABLED_DEFAULT") ?? "false").toLowerCase() === "true";
+    let v2Enabled = v2EnvDefault;
+    try {
+      const { data: optIn } = await supabase
+        .from("user_memory")
+        .select("fact_value")
+        .eq("user_id", user.id)
+        .eq("fact_key", "briefing_v2_enabled")
+        .eq("is_current", true)
+        .maybeSingle();
+      if (optIn && typeof (optIn as { fact_value?: unknown }).fact_value !== "undefined") {
+        v2Enabled = String((optIn as { fact_value: unknown }).fact_value).toLowerCase() === "true";
+      }
+    } catch { /* flag lookup best-effort */ }
+    if (requestedVersion === 2) v2Enabled = true;
+    if (requestedVersion === 1) v2Enabled = false;
+
+    if (v2Enabled && briefingType !== "ai_landscape") {
+      const result = await runV2Pipeline({
+        supabase,
+        supabaseUrl,
+        supabaseServiceKey,
+        openaiKey,
+        userId: user.id,
+        userCtx,
+        briefingType,
+        customContext,
+        voiceNoteUrl,
+        isProOnly,
+        today,
+        resolvedScriptModel,
+        resolvedCurationModel,
+        providerKeys: { perplexity: perplexityKey, tavily: tavilyKey, brave: braveKey },
+      });
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // 2. Fetch news (shaped by briefing type)
     console.log(`Fetching news for ${briefingType} briefing...`);

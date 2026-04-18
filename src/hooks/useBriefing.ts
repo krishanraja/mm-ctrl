@@ -187,22 +187,37 @@ export function useGenerateBriefing() {
 }
 
 /**
- * Submit feedback on a briefing segment
+ * Submit feedback on a briefing segment.
+ * v2 callers can pass lensItemId + dwellMs + replayed so the server can learn
+ * per-lens-item engagement. v1 callers can omit them; server defaults are null/false.
  */
+export interface SubmitFeedbackOptions {
+  lensItemId?: string | null;
+  dwellMs?: number;
+  replayed?: boolean;
+}
+
 export function useSubmitFeedback() {
   const [submitting, setSubmitting] = useState(false);
 
   const submitFeedback = useCallback(
-    async (briefingId: string, segmentIndex: number, reaction: BriefingFeedback['reaction']) => {
+    async (
+      briefingId: string,
+      segmentIndex: number,
+      reaction: BriefingFeedback['reaction'],
+      options: SubmitFeedbackOptions = {},
+    ) => {
       try {
         setSubmitting(true);
-        const { error } = await supabase
-          .from('briefing_feedback')
-          .insert({
-            briefing_id: briefingId,
-            segment_index: segmentIndex,
-            reaction,
-          });
+        const row: Record<string, unknown> = {
+          briefing_id: briefingId,
+          segment_index: segmentIndex,
+          reaction,
+        };
+        if (options.lensItemId !== undefined) row.lens_item_id = options.lensItemId;
+        if (typeof options.dwellMs === 'number') row.dwell_ms = Math.round(options.dwellMs);
+        if (typeof options.replayed === 'boolean') row.replayed = options.replayed;
+        const { error } = await supabase.from('briefing_feedback').insert(row);
         if (error) throw error;
       } catch (err) {
         console.error('Feedback failed:', err);

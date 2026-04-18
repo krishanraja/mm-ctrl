@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, ThumbsDown, Eye, EyeOff, Check } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Eye, EyeOff, Check, Anchor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
 import type { BriefingSegment, FrameworkTag } from "@/types/briefing";
 
+interface FeedbackPayload {
+  reaction: "useful" | "not_useful";
+  lens_item_id?: string | null;
+  dwell_ms?: number;
+}
+
 interface SegmentCardProps {
   segment: BriefingSegment;
   index: number;
   isActive: boolean;
-  onFeedback: (reaction: "useful" | "not_useful") => void;
+  onFeedback: (payload: FeedbackPayload) => void;
   onWatchCompany?: (company: string) => void;
   watchedCompanies?: string[];
 }
@@ -56,6 +62,18 @@ export function SegmentCard({
   const [justWatched, setJustWatched] = useState<string | null>(null);
   const tagConfig = FRAMEWORK_TAG_CONFIG[segment.framework_tag as FrameworkTag];
 
+  // Track dwell: ms the card was the active segment before the user reacted.
+  const activeSinceRef = useRef<number | null>(null);
+  const dwellAccumMsRef = useRef(0);
+  useEffect(() => {
+    if (isActive) {
+      activeSinceRef.current = Date.now();
+    } else if (activeSinceRef.current !== null) {
+      dwellAccumMsRef.current += Date.now() - activeSinceRef.current;
+      activeSinceRef.current = null;
+    }
+  }, [isActive]);
+
   const detectedCompanies = extractCompanyNames(segment);
   const unwatchedCompanies = detectedCompanies.filter(
     (c) => !watchedCompanies.includes(c.toLowerCase())
@@ -64,7 +82,15 @@ export function SegmentCard({
   const handleFeedback = (reaction: "useful" | "not_useful") => {
     if (feedback) return;
     setFeedback(reaction);
-    onFeedback(reaction);
+    const currentActive = activeSinceRef.current !== null
+      ? Date.now() - activeSinceRef.current
+      : 0;
+    const dwellMs = dwellAccumMsRef.current + currentActive;
+    onFeedback({
+      reaction,
+      lens_item_id: segment.lens_item_id ?? null,
+      dwell_ms: dwellMs,
+    });
     haptics.light();
   };
 
@@ -106,6 +132,20 @@ export function SegmentCard({
           <p className="text-[11px] text-accent/80 italic leading-relaxed">
             {segment.relevance_reason}
           </p>
+        )}
+
+        {/* v2: matched profile fact — shows the specific profile item that */}
+        {/* anchored this story. Only rendered on schema_version 2 rows. */}
+        {segment.matched_profile_fact && (
+          <div
+            className="flex items-start gap-1.5 pt-0.5"
+            title="Why this story is in your briefing"
+          >
+            <Anchor className="w-3 h-3 mt-[2px] text-accent/70 shrink-0" />
+            <p className="text-[10px] text-muted-foreground leading-relaxed">
+              Anchored to: <span className="text-foreground/80">{segment.matched_profile_fact}</span>
+            </p>
+          </div>
         )}
 
         {/* Actions row */}
