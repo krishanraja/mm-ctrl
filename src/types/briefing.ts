@@ -81,6 +81,11 @@ export interface BriefingSegment {
   framework_tag: FrameworkTag;
   source: string;
   relevance_reason: string;
+  // v2 evidence fields. Null/undefined on pre-v2 rows; always populated on
+  // schema_version=2 rows.
+  lens_item_id?: string | null;
+  relevance_score?: number | null;
+  matched_profile_fact?: string | null;
 }
 
 export interface Briefing {
@@ -99,6 +104,8 @@ export interface Briefing {
   voice_note_url: string | null;
   is_pro_only: boolean;
   created_at: string;
+  // 1 = legacy pipeline. 2 = evidence-based lens pipeline.
+  schema_version?: number;
 }
 
 export interface BriefingFeedback {
@@ -107,6 +114,10 @@ export interface BriefingFeedback {
   segment_index: number;
   reaction: 'useful' | 'not_useful' | 'save';
   created_at: string;
+  // v2 feedback enrichment. Server accepts nulls for v1 rows.
+  lens_item_id?: string | null;
+  dwell_ms?: number | null;
+  replayed?: boolean;
 }
 
 export type PlaybackSpeed = 1 | 1.25 | 1.5 | 2;

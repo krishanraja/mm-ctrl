@@ -81,9 +81,15 @@ export function BriefingSheet() {
     }
   };
 
-  const handleFeedback = (segmentIndex: number, reaction: "useful" | "not_useful") => {
+  const handleFeedback = (
+    segmentIndex: number,
+    payload: { reaction: "useful" | "not_useful"; lens_item_id?: string | null; dwell_ms?: number },
+  ) => {
     if (briefing) {
-      submitFeedback(briefing.id, segmentIndex, reaction);
+      submitFeedback(briefing.id, segmentIndex, payload.reaction, {
+        lensItemId: payload.lens_item_id ?? null,
+        dwellMs: payload.dwell_ms,
+      });
       haptics.light();
     }
   };
@@ -220,7 +226,7 @@ export function BriefingSheet() {
                     segment={segment}
                     index={index}
                     isActive={index === playback.currentSegmentIndex}
-                    onFeedback={(reaction) => handleFeedback(index, reaction)}
+                    onFeedback={(payload) => handleFeedback(index, payload)}
                     onWatchCompany={watchCompany}
                     watchedCompanies={watchedCompanies}
                   />
