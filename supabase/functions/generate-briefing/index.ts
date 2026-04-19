@@ -20,9 +20,10 @@ import type { AAModel } from "../_shared/aa-types.ts";
 import { loadTrainingForUser } from "../_shared/training-loader.ts";
 import { applyTypographyRules, stripBannedPhrases } from "../_shared/fact-guardrails.ts";
 import type { TrainingMaterial } from "../_shared/training-schema.ts";
-import { buildImportanceLens, planQueries, type LensItem, type LensSource, type PlannedQuery } from "../_shared/briefing-lens.ts";
+import { buildImportanceLens, planQueries, type LensItem, type PlannedQuery } from "../_shared/briefing-lens.ts";
 import { dedupeAndScore, type CandidateHeadline, type ScoredHeadline } from "../_shared/briefing-scoring.ts";
 import { curateSegments, segmentCountFromBudget, type CuratedSegment } from "../_shared/briefing-curation.ts";
+import { getUserContext, toLensSource, type UserContext } from "../_shared/user-context.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,25 +41,6 @@ interface NewsHeadline {
 type BriefingType = 'default' | 'macro_trends' | 'vendor_landscape' | 'competitive_intel' | 'boardroom_prep' | 'team_update' | 'ai_landscape' | 'custom_voice';
 
 const PRO_ONLY_TYPES: BriefingType[] = ['vendor_landscape', 'competitive_intel', 'boardroom_prep', 'ai_landscape', 'custom_voice'];
-
-interface UserContext {
-  name: string;
-  role: string;
-  company: string;
-  industry: string;
-  teamSize: string;
-  strengths: string[];
-  weaknesses: string[];
-  activeMissions: string[];
-  recentDecisions: string[];
-  confirmedPatterns: string[];
-  watchingCompanies: string[];
-  objectives: string[];
-  blockers: string[];
-  preferences: string[];
-  learningStyle: string;
-  feedbackPreferences: { preferredTags: string[]; preferredSources: string[] };
-}
 
 interface BriefingSegment {
   headline: string;
@@ -671,234 +653,6 @@ Return ONLY a JSON array: [{"title": "headline", "source": "Source"}]`,
   }
 }
 
-// ── User Context ───────────────────────────────────────────────────
-
-async function getUserContext(
-  supabase: ReturnType<typeof createClient>,
-  userId: string
-): Promise<UserContext> {
-  const ctx: UserContext = {
-    name: "there",
-    role: "executive",
-    company: "",
-    industry: "",
-    teamSize: "",
-    strengths: [],
-    weaknesses: [],
-    activeMissions: [],
-    recentDecisions: [],
-    confirmedPatterns: [],
-    watchingCompanies: [],
-    objectives: [],
-    blockers: [],
-    preferences: [],
-    learningStyle: "",
-    feedbackPreferences: { preferredTags: [], preferredSources: [] },
-  };
-
-  // User memory facts
-  try {
-    const { data: facts } = await supabase
-      .from("user_memory")
-      .select("fact_key, fact_value, fact_category")
-      .eq("user_id", userId)
-      .eq("is_current", true)
-      .in("fact_category", ["identity", "business", "objective", "blocker", "preference"])
-      .order("confidence_score", { ascending: false })
-      .limit(40);
-
-    if (facts) {
-      for (const f of facts) {
-        if (
-          f.fact_key === "name" ||
-          f.fact_key === "first_name" ||
-          f.fact_key === "preferred_name"
-        )
-          ctx.name = f.fact_value;
-        if (
-          f.fact_key === "role" ||
-          f.fact_key === "title" ||
-          f.fact_key === "job_title"
-        )
-          ctx.role = f.fact_value;
-        if (f.fact_key === "company_name" || f.fact_key === "company")
-          ctx.company = f.fact_value;
-        if (f.fact_key === "industry" || f.fact_key === "vertical")
-          ctx.industry = f.fact_value;
-        if (f.fact_key === "team_size") ctx.teamSize = f.fact_value;
-        if (f.fact_category === "objective") ctx.objectives.push(f.fact_value);
-        if (f.fact_category === "blocker") ctx.blockers.push(f.fact_value);
-        if (f.fact_category === "preference") ctx.preferences.push(f.fact_value);
-      }
-    }
-  } catch (e) {
-    console.warn("Failed to fetch user memory:", e);
-  }
-
-  // Edge profile
-  try {
-    const { data: profile } = await supabase
-      .from("edge_profiles")
-      .select("strengths, weaknesses")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (profile) {
-      ctx.strengths = (profile.strengths || [])
-        .slice(0, 3)
-        .map((s: { label: string }) => s.label);
-      ctx.weaknesses = (profile.weaknesses || [])
-        .slice(0, 3)
-        .map((w: { label: string }) => w.label);
-    }
-  } catch (e) {
-    console.warn("Failed to fetch edge profile:", e);
-  }
-
-  // Active missions
-  try {
-    const { data: missions } = await supabase
-      .from("user_missions")
-      .select("title")
-      .eq("user_id", userId)
-      .eq("status", "active")
-      .limit(3);
-
-    if (missions) {
-      ctx.activeMissions = missions.map(
-        (m: { title: string }) => m.title
-      );
-    }
-  } catch (e) {
-    console.warn("Failed to fetch missions:", e);
-  }
-
-  // Watching companies (watchlist)
-  try {
-    const { data: watchlist } = await supabase
-      .from("user_memory")
-      .select("fact_value")
-      .eq("user_id", userId)
-      .eq("fact_key", "watching_company")
-      .eq("is_current", true);
-
-    if (watchlist) {
-      ctx.watchingCompanies = watchlist.map(
-        (w: { fact_value: string }) => w.fact_value
-      );
-    }
-  } catch (e) {
-    console.warn("Failed to fetch watchlist:", e);
-  }
-
-  // Active decisions on their desk
-  try {
-    const { data: decisions } = await supabase
-      .from("user_decisions")
-      .select("decision_text")
-      .eq("user_id", userId)
-      .eq("status", "active")
-      .order("created_at", { ascending: false })
-      .limit(5);
-
-    if (decisions) {
-      ctx.recentDecisions = decisions.map(
-        (d: { decision_text: string }) => d.decision_text
-      );
-    }
-  } catch (e) {
-    console.warn("Failed to fetch decisions:", e);
-  }
-
-  // Confirmed behavioral patterns and blind spots
-  try {
-    const { data: patterns } = await supabase
-      .from("user_patterns")
-      .select("pattern_type, pattern_text")
-      .eq("user_id", userId)
-      .in("status", ["confirmed", "emerging"])
-      .gte("confidence", 0.6)
-      .order("confidence", { ascending: false })
-      .limit(5);
-
-    if (patterns) {
-      ctx.confirmedPatterns = patterns.map(
-        (p: { pattern_type: string; pattern_text: string }) =>
-          `[${p.pattern_type}] ${p.pattern_text}`
-      );
-    }
-  } catch (e) {
-    console.warn("Failed to fetch patterns:", e);
-  }
-
-  // Learning style (for cohort-specific tone)
-  try {
-    const { data: session } = await supabase
-      .from("voice_sessions")
-      .select("compass_tier")
-      .eq("user_id", userId)
-      .not("compass_tier", "is", null)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (session?.compass_tier) {
-      ctx.learningStyle = session.compass_tier;
-    }
-  } catch (e) {
-    console.warn("Failed to fetch learning style:", e);
-  }
-
-  // Feedback loop: what stories has this leader found useful?
-  try {
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: feedback } = await supabase
-      .from("briefing_feedback")
-      .select("reaction, briefing_id")
-      .gte("created_at", sevenDaysAgo)
-      .eq("reaction", "useful");
-
-    if (feedback && feedback.length > 0) {
-      // Get the briefing IDs for this user's feedback
-      const briefingIds = [...new Set(feedback.map((f: { briefing_id: string }) => f.briefing_id))];
-      const { data: briefings } = await supabase
-        .from("briefings")
-        .select("id, segments")
-        .eq("user_id", userId)
-        .in("id", briefingIds);
-
-      if (briefings) {
-        const tagCounts: Record<string, number> = {};
-        const sourceCounts: Record<string, number> = {};
-
-        for (const b of briefings) {
-          const segments = b.segments as Array<{ framework_tag: string; source: string }>;
-          if (!Array.isArray(segments)) continue;
-          for (const seg of segments) {
-            tagCounts[seg.framework_tag] = (tagCounts[seg.framework_tag] || 0) + 1;
-            sourceCounts[seg.source] = (sourceCounts[seg.source] || 0) + 1;
-          }
-        }
-
-        ctx.feedbackPreferences.preferredTags = Object.entries(tagCounts)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([tag]) => tag);
-        ctx.feedbackPreferences.preferredSources = Object.entries(sourceCounts)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 3)
-          .map(([source]) => source);
-      }
-    }
-  } catch (e) {
-    console.warn("Failed to fetch feedback preferences:", e);
-  }
-
-  return ctx;
-}
-
 // ── Personalisation + Script Generation ────────────────────────────
 
 function buildCohortToneDirective(learningStyle: string): string {
@@ -1460,22 +1214,6 @@ async function v2FetchAll(
   return candidates;
 }
 
-function toLensSource(userId: string, userCtx: UserContext, missionIds: string[], decisionIds: string[]): LensSource {
-  return {
-    userId,
-    name: userCtx.name,
-    role: userCtx.role,
-    company: userCtx.company,
-    industry: userCtx.industry,
-    objectives: userCtx.objectives.map((text) => ({ text })),
-    blockers: userCtx.blockers.map((text) => ({ text })),
-    missions: userCtx.activeMissions.map((title, i) => ({ id: missionIds[i] ?? `m_${i}`, title })),
-    decisions: userCtx.recentDecisions.map((text, i) => ({ id: decisionIds[i] ?? `d_${i}`, text })),
-    watchingCompanies: userCtx.watchingCompanies,
-    patterns: userCtx.confirmedPatterns.map((text) => ({ type: "pattern", text, confidence: 0.8 })),
-  };
-}
-
 interface V2PipelineArgs {
   supabase: ReturnType<typeof createClient>;
   supabaseUrl: string;
@@ -1518,10 +1256,10 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
 
   const source = toLensSource(userId, userCtx, missionIds, decisionIds);
 
-  // Stage 1: lens.
+  // Stage 1: lens + user-declared excludes.
   console.log("[v2] Building importance lens...");
-  const lens: LensItem[] = await buildImportanceLens(supabase, openaiKey, source, briefingType);
-  console.log(`[v2] Lens size=${lens.length}, top=${lens.slice(0, 3).map(l => `${l.type}(${l.weight.toFixed(2)})`).join(", ")}`);
+  const { items: lens, excludes } = await buildImportanceLens(supabase, openaiKey, source, briefingType);
+  console.log(`[v2] Lens size=${lens.length}, top=${lens.slice(0, 3).map(l => `${l.type}(${l.weight.toFixed(2)})`).join(", ")}, excludes=${excludes.length}`);
 
   if (lens.length === 0) {
     throw new Error("Lens empty — user has no profile data to personalise against");
@@ -1538,13 +1276,13 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
   const rawCandidates = await v2FetchAll(queries, providerKeys, 12_000);
   console.log(`[v2] Providers returned ${rawCandidates.length} raw candidates in ${Date.now() - tFetch}ms`);
 
-  // Stage 4: embed + dedupe + score.
+  // Stage 4: embed + dedupe + score + exclude-filter.
   let scored: ScoredHeadline[] = [];
   if (rawCandidates.length > 0) {
     console.log("[v2] Scoring candidates...");
     const tScore = Date.now();
-    scored = await dedupeAndScore(supabase, openaiKey, rawCandidates, lens);
-    console.log(`[v2] ${scored.length} survivors after dedupe in ${Date.now() - tScore}ms`);
+    scored = await dedupeAndScore(supabase, openaiKey, rawCandidates, lens, excludes);
+    console.log(`[v2] ${scored.length} survivors after dedupe+excludes in ${Date.now() - tScore}ms`);
   }
 
   const usedFallback = scored.length === 0;
@@ -1573,6 +1311,7 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
         v2: true,
         lens,
         queries,
+        excludes,
         used_fallback: usedFallback,
       },
       news_sources: scored.map(s => ({ title: s.title, source: s.source, provider: s.provider })),
