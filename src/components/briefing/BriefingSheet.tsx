@@ -11,6 +11,7 @@ import { FRAMEWORK_TAG_CONFIG, BRIEFING_TYPES } from "@/types/briefing";
 import type { PlaybackSpeed, FrameworkTag } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
 import { SegmentCard } from "./SegmentCard";
+import { SeedBeatsPrompt } from "./SeedBeatsPrompt";
 
 const SPEEDS: PlaybackSpeed[] = [1, 1.25, 1.5, 2];
 
@@ -217,6 +218,10 @@ export function BriefingSheet() {
               ref={scrollRef}
               className="flex-1 min-h-0 overflow-y-auto scrollbar-hide overscroll-contain px-2 py-4 space-y-3"
             >
+              {/* Cold-start seed prompt: only renders for users without enough */}
+              {/* declared interests. Self-manages dismissal via localStorage. */}
+              <SeedBeatsPrompt hidden={!isSheetOpen} />
+
               {briefing.segments.map((segment, index) => (
                 <div
                   key={index}
