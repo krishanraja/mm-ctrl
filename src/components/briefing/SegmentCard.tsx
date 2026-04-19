@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, ThumbsDown, Eye, EyeOff, Check, Anchor, Bookmark, BookmarkCheck } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Eye, EyeOff, Check, Anchor, Bookmark, BookmarkCheck, Ban, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
 import { useBriefingInterests } from "@/hooks/useBriefingInterests";
+import { useKillLensItem } from "@/hooks/useKillLensItem";
 import type { BriefingSegment, FrameworkTag } from "@/types/briefing";
 
 interface FeedbackPayload {
@@ -21,6 +22,8 @@ interface SegmentCardProps {
   onFeedback: (payload: FeedbackPayload) => void;
   onWatchCompany?: (company: string) => void;
   watchedCompanies?: string[];
+  /** v2: briefing id used by the kill action. Omit on v1 briefings. */
+  briefingId?: string;
 }
 
 // Extract likely company names from headline + source
@@ -58,6 +61,7 @@ export function SegmentCard({
   onFeedback,
   onWatchCompany,
   watchedCompanies = [],
+  briefingId,
 }: SegmentCardProps) {
   const [feedback, setFeedback] = useState<"useful" | "not_useful" | null>(null);
   const [justWatched, setJustWatched] = useState<string | null>(null);
@@ -80,6 +84,28 @@ export function SegmentCard({
       haptics.light();
     } finally {
       setPinning(false);
+    }
+  };
+
+  // v2: persistent kill — "don't show me stories like this". Only offered
+  // when we have a lens anchor to kill and we're not killing an interest the
+  // user themselves added (interest_* kills are done by removing from the
+  // Interests tab instead).
+  const { killByBriefing, killing } = useKillLensItem();
+  const canKill = Boolean(
+    briefingId &&
+      segment.lens_item_id &&
+      !segment.lens_item_id.startsWith("interest_"),
+  );
+  const [killed, setKilled] = useState(false);
+  const isKilling = killing === (segment.lens_item_id ?? "");
+
+  const handleKill = async () => {
+    if (!canKill || !briefingId || !segment.lens_item_id || killed || isKilling) return;
+    const ok = await killByBriefing({ briefingId, lensItemId: segment.lens_item_id });
+    if (ok) {
+      setKilled(true);
+      haptics.light();
     }
   };
 
@@ -214,6 +240,31 @@ export function SegmentCard({
                 <BookmarkCheck className="w-3.5 h-3.5" />
               ) : (
                 <Bookmark className="w-3.5 h-3.5" />
+              )}
+            </button>
+          )}
+
+          {/* v2: persistent kill — "don't show me stories like this". */}
+          {canKill && (
+            <button
+              onClick={handleKill}
+              disabled={killed || isKilling}
+              title={
+                killed
+                  ? "Killed — this lens item won't appear in future briefings"
+                  : `Don't show me stories like this (${pinnable || "this topic"})`
+              }
+              className={cn(
+                "p-1.5 rounded-md transition-colors",
+                killed
+                  ? "text-red-500 bg-red-500/10"
+                  : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10",
+              )}
+            >
+              {isKilling ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Ban className="w-3.5 h-3.5" />
               )}
             </button>
           )}

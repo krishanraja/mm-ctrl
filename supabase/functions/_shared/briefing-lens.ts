@@ -15,6 +15,7 @@
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCachedResponse, setCachedResponse, hashPrompt } from "./ai-cache.ts";
 import type { TrainingMaterial } from "./training-schema.ts";
+import { computeLensSignature } from "./lens-signature.ts";
 
 export type LensItemType =
   | "decision"
@@ -76,6 +77,57 @@ interface LoadedInterests {
   beats: Array<{ id: string; text: string }>;
   entities: Array<{ id: string; text: string }>;
   excludes: string[];
+}
+
+/**
+ * Load negative weight deltas keyed by lens-item signature. Both explicit
+ * kills (weight_delta -1.0) and aggregated thumbs-down (weight_delta -0.4)
+ * contribute. Deltas are summed per signature so a killed-then-aggregated
+ * item falls to -1.4 (effectively gone either way, but the accumulated
+ * value gives us audit data).
+ */
+async function loadLensFeedbackDeltas(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Map<string, number>> {
+  const out = new Map<string, number>();
+  try {
+    const { data, error } = await supabase
+      .from("briefing_lens_feedback")
+      .select("lens_item_signature, weight_delta")
+      .eq("user_id", userId)
+      .eq("is_active", true);
+    if (error || !data) return out;
+    for (const row of data as Array<{ lens_item_signature: string; weight_delta: number }>) {
+      const current = out.get(row.lens_item_signature) ?? 0;
+      out.set(row.lens_item_signature, current + Number(row.weight_delta));
+    }
+  } catch (e) {
+    console.warn("briefing-lens: loadLensFeedbackDeltas failed", e instanceof Error ? e.message : e);
+  }
+  return out;
+}
+
+/**
+ * Apply negative feedback deltas to a list of lens items. Drops any item
+ * whose effective weight falls to or below zero. Signatures are computed
+ * in parallel since SHA-256 via Web Crypto is async.
+ */
+async function applyFeedbackDeltas(
+  items: LensItem[],
+  deltas: Map<string, number>,
+): Promise<LensItem[]> {
+  if (deltas.size === 0 || items.length === 0) return items;
+  const signed = await Promise.all(
+    items.map(async (item) => {
+      const sig = await computeLensSignature(item.type, item.text);
+      const delta = deltas.get(sig) ?? 0;
+      return { item, sig, effectiveWeight: item.weight + delta };
+    }),
+  );
+  return signed
+    .filter((s) => s.effectiveWeight > 0)
+    .map((s) => ({ ...s.item, weight: Math.max(0, Math.min(1, s.effectiveWeight)) }));
 }
 
 /**
@@ -227,7 +279,13 @@ export async function buildImportanceLens(
 
   const baseline = deterministicLens(source, briefingType);
   // Cap at 10 (was 8) so users with 3-5 interests still get baseline coverage.
-  const combined = [...interestItems, ...baseline].slice(0, 10);
+  const preFeedback = [...interestItems, ...baseline].slice(0, 10);
+
+  // Apply persisted negative feedback BEFORE the LLM reweight so the LLM
+  // never sees items the user explicitly killed or aggregated-down. Interests
+  // are subject to the same rule: users can kill their own past interests.
+  const feedbackDeltas = await loadLensFeedbackDeltas(supabase, source.userId);
+  const combined = await applyFeedbackDeltas(preFeedback, feedbackDeltas);
 
   if (combined.length === 0) return { items: [], excludes: interests.excludes };
   if (!openaiKey) return { items: combined, excludes: interests.excludes };
@@ -236,10 +294,12 @@ export async function buildImportanceLens(
   const cached = await getCachedResponse(supabase, cacheKey, LENS_CACHE_MODEL, LENS_CACHE_TTL_MS);
   if (cached && Array.isArray(cached.items) && cached.items.length > 0) {
     // Fresh interests always overlay the cache so a user toggling Interests
-    // mid-day sees the effect without waiting for cache expiry.
+    // mid-day sees the effect without waiting for cache expiry. Same for
+    // negative feedback — kills need to take effect immediately.
     const cachedItems = cached.items as LensItem[];
     const merged = mergeInterestsIntoCached(interestItems, cachedItems);
-    return { items: merged, excludes: interests.excludes };
+    const filtered = await applyFeedbackDeltas(merged, feedbackDeltas);
+    return { items: filtered, excludes: interests.excludes };
   }
 
   try {

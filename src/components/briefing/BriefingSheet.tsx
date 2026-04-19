@@ -234,6 +234,7 @@ export function BriefingSheet() {
                     onFeedback={(payload) => handleFeedback(index, payload)}
                     onWatchCompany={watchCompany}
                     watchedCompanies={watchedCompanies}
+                    briefingId={briefing.id}
                   />
                 </div>
               ))}
