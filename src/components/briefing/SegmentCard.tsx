@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, ThumbsDown, Eye, EyeOff, Check, Anchor } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Eye, EyeOff, Check, Anchor, Bookmark, BookmarkCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMEWORK_TAG_CONFIG } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
+import { useBriefingInterests } from "@/hooks/useBriefingInterests";
 import type { BriefingSegment, FrameworkTag } from "@/types/briefing";
 
 interface FeedbackPayload {
@@ -61,6 +62,26 @@ export function SegmentCard({
   const [feedback, setFeedback] = useState<"useful" | "not_useful" | null>(null);
   const [justWatched, setJustWatched] = useState<string | null>(null);
   const tagConfig = FRAMEWORK_TAG_CONFIG[segment.framework_tag as FrameworkTag];
+
+  // v2: user can pin the story's anchor as a persistent beat. Only meaningful
+  // when matched_profile_fact is present (schema_version 2 rows).
+  const { beats: existingBeats, add: addInterest } = useBriefingInterests();
+  const pinnable = (segment.matched_profile_fact ?? "").trim();
+  const alreadyPinned = pinnable.length > 0 && existingBeats.some(
+    (b) => b.text.toLowerCase() === pinnable.toLowerCase(),
+  );
+  const [pinning, setPinning] = useState(false);
+
+  const handlePin = async () => {
+    if (!pinnable || alreadyPinned || pinning) return;
+    setPinning(true);
+    try {
+      await addInterest("beat", pinnable, { source: "manual" });
+      haptics.light();
+    } finally {
+      setPinning(false);
+    }
+  };
 
   // Track dwell: ms the card was the active segment before the user reacted.
   const activeSinceRef = useRef<number | null>(null);
@@ -175,6 +196,27 @@ export function SegmentCard({
           >
             <ThumbsDown className="w-3.5 h-3.5" />
           </button>
+
+          {/* v2: pin the lens anchor as a persistent beat. */}
+          {pinnable.length > 0 && (
+            <button
+              onClick={handlePin}
+              disabled={alreadyPinned || pinning}
+              title={alreadyPinned ? `Already a beat: ${pinnable}` : `Keep beat: ${pinnable}`}
+              className={cn(
+                "p-1.5 rounded-md transition-colors",
+                alreadyPinned
+                  ? "text-accent bg-accent/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
+              )}
+            >
+              {alreadyPinned ? (
+                <BookmarkCheck className="w-3.5 h-3.5" />
+              ) : (
+                <Bookmark className="w-3.5 h-3.5" />
+              )}
+            </button>
+          )}
 
           {/* Watch company buttons */}
           {unwatchedCompanies.length > 0 && (

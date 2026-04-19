@@ -120,6 +120,22 @@ export interface BriefingFeedback {
   replayed?: boolean;
 }
 
+export type BriefingInterestKind = 'beat' | 'entity' | 'exclude';
+
+export type BriefingInterestSource = 'manual' | 'seed_accepted' | 'feedback_promoted';
+
+export interface BriefingInterest {
+  id: string;
+  user_id: string;
+  kind: BriefingInterestKind;
+  text: string;
+  weight: number;
+  source: BriefingInterestSource;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export type PlaybackSpeed = 1 | 1.25 | 1.5 | 2;
 
 export interface BriefingPlaybackState {

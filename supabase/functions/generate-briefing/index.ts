@@ -1256,10 +1256,10 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
 
   const source = toLensSource(userId, userCtx, missionIds, decisionIds);
 
-  // Stage 1: lens.
+  // Stage 1: lens + user-declared excludes.
   console.log("[v2] Building importance lens...");
-  const lens: LensItem[] = await buildImportanceLens(supabase, openaiKey, source, briefingType);
-  console.log(`[v2] Lens size=${lens.length}, top=${lens.slice(0, 3).map(l => `${l.type}(${l.weight.toFixed(2)})`).join(", ")}`);
+  const { items: lens, excludes } = await buildImportanceLens(supabase, openaiKey, source, briefingType);
+  console.log(`[v2] Lens size=${lens.length}, top=${lens.slice(0, 3).map(l => `${l.type}(${l.weight.toFixed(2)})`).join(", ")}, excludes=${excludes.length}`);
 
   if (lens.length === 0) {
     throw new Error("Lens empty — user has no profile data to personalise against");
@@ -1276,13 +1276,13 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
   const rawCandidates = await v2FetchAll(queries, providerKeys, 12_000);
   console.log(`[v2] Providers returned ${rawCandidates.length} raw candidates in ${Date.now() - tFetch}ms`);
 
-  // Stage 4: embed + dedupe + score.
+  // Stage 4: embed + dedupe + score + exclude-filter.
   let scored: ScoredHeadline[] = [];
   if (rawCandidates.length > 0) {
     console.log("[v2] Scoring candidates...");
     const tScore = Date.now();
-    scored = await dedupeAndScore(supabase, openaiKey, rawCandidates, lens);
-    console.log(`[v2] ${scored.length} survivors after dedupe in ${Date.now() - tScore}ms`);
+    scored = await dedupeAndScore(supabase, openaiKey, rawCandidates, lens, excludes);
+    console.log(`[v2] ${scored.length} survivors after dedupe+excludes in ${Date.now() - tScore}ms`);
   }
 
   const usedFallback = scored.length === 0;
@@ -1311,6 +1311,7 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
         v2: true,
         lens,
         queries,
+        excludes,
         used_fallback: usedFallback,
       },
       news_sources: scored.map(s => ({ title: s.title, source: s.source, provider: s.provider })),

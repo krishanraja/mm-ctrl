@@ -22,7 +22,9 @@ export type LensItemType =
   | "watchlist"
   | "blocker"
   | "objective"
-  | "pattern";
+  | "pattern"
+  | "interest_beat"
+  | "interest_entity";
 
 export interface LensItem {
   id: string;
@@ -30,6 +32,17 @@ export interface LensItem {
   ref_id: string | null;
   text: string;
   weight: number;
+}
+
+/**
+ * Output of buildImportanceLens. `items` are positive-weight lens items the
+ * pipeline scores candidates against. `excludes` are user-declared topics
+ * that post-filter the candidate pool; they never become lens items and do
+ * not themselves attract stories.
+ */
+export interface LensResult {
+  items: LensItem[];
+  excludes: string[];
 }
 
 export interface PlannedQuery {
@@ -54,6 +67,50 @@ export interface LensSource {
 
 const LENS_CACHE_MODEL = "briefing-lens-v2";
 const LENS_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
+/** Minimum post-LLM weight for user-declared interest items. Interests are */
+/** explicit preferences; the LLM can reorder them but must not demote them. */
+const INTEREST_WEIGHT_FLOOR = 0.8;
+
+interface LoadedInterests {
+  beats: Array<{ id: string; text: string }>;
+  entities: Array<{ id: string; text: string }>;
+  excludes: string[];
+}
+
+/**
+ * Load the user's active declared interests. beat + entity rows become
+ * weight-1.0 lens items; exclude rows post-filter the candidate pool in
+ * briefing-scoring. Empty structure on any error — the lens pipeline must
+ * not fail just because interest loading misbehaved.
+ */
+async function loadInterests(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<LoadedInterests> {
+  const empty: LoadedInterests = { beats: [], entities: [], excludes: [] };
+  try {
+    const { data, error } = await supabase
+      .from("briefing_interests")
+      .select("id, kind, text")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: true });
+    if (error || !data) return empty;
+
+    const out: LoadedInterests = { beats: [], entities: [], excludes: [] };
+    for (const row of data as Array<{ id: string; kind: string; text: string }>) {
+      if (!row.text || row.text.trim().length === 0) continue;
+      if (row.kind === "beat") out.beats.push({ id: row.id, text: row.text.trim() });
+      else if (row.kind === "entity") out.entities.push({ id: row.id, text: row.text.trim() });
+      else if (row.kind === "exclude") out.excludes.push(row.text.trim());
+    }
+    return out;
+  } catch (e) {
+    console.warn("briefing-lens: loadInterests failed", e instanceof Error ? e.message : e);
+    return empty;
+  }
+}
 
 /**
  * Build a deterministic prompt hash that uniquely identifies a lens.
@@ -145,17 +202,44 @@ export async function buildImportanceLens(
   source: LensSource,
   briefingType: string,
   model: string = "gpt-4o-mini",
-): Promise<LensItem[]> {
+): Promise<LensResult> {
   const today = new Date().toISOString().split("T")[0];
-  const baseline = deterministicLens(source, briefingType);
+  const interests = await loadInterests(supabase, source.userId);
 
-  if (baseline.length === 0) return [];
-  if (!openaiKey) return baseline;
+  // Interests become weight-1.0 lens items, prepended to the deterministic
+  // baseline. They outrank inferred signals by construction.
+  const interestItems: LensItem[] = [
+    ...interests.beats.map(b => ({
+      id: `interest_beat_${b.id}`,
+      type: "interest_beat" as const,
+      ref_id: b.id,
+      text: b.text,
+      weight: 1.0,
+    })),
+    ...interests.entities.map(e => ({
+      id: `interest_entity_${e.id}`,
+      type: "interest_entity" as const,
+      ref_id: e.id,
+      text: e.text,
+      weight: 1.0,
+    })),
+  ];
+
+  const baseline = deterministicLens(source, briefingType);
+  // Cap at 10 (was 8) so users with 3-5 interests still get baseline coverage.
+  const combined = [...interestItems, ...baseline].slice(0, 10);
+
+  if (combined.length === 0) return { items: [], excludes: interests.excludes };
+  if (!openaiKey) return { items: combined, excludes: interests.excludes };
 
   const cacheKey = buildLensCacheKey(source.userId, briefingType, today, source);
   const cached = await getCachedResponse(supabase, cacheKey, LENS_CACHE_MODEL, LENS_CACHE_TTL_MS);
   if (cached && Array.isArray(cached.items) && cached.items.length > 0) {
-    return cached.items as LensItem[];
+    // Fresh interests always overlay the cache so a user toggling Interests
+    // mid-day sees the effect without waiting for cache expiry.
+    const cachedItems = cached.items as LensItem[];
+    const merged = mergeInterestsIntoCached(interestItems, cachedItems);
+    return { items: merged, excludes: interests.excludes };
   }
 
   try {
@@ -171,7 +255,7 @@ export async function buildImportanceLens(
           {
             role: "system",
             content:
-              `You build a RELEVANCE LENS for a personalised news briefing. Reorder and reweight the candidate lens items so the items most relevant to a "${briefingType}" briefing rise to the top. Weights must be between 0 and 1. Keep every item id unchanged. Return AT MOST 8 items, sorted by weight descending. Do not invent new items. Return JSON: {"items": [{"id":"...","type":"...","ref_id":"...","text":"...","weight":0.85}]}`,
+              `You build a RELEVANCE LENS for a personalised news briefing. Reorder and reweight the candidate lens items so the items most relevant to a "${briefingType}" briefing rise to the top. Weights must be between 0 and 1. Keep every item id unchanged. Return AT MOST 10 items, sorted by weight descending. Do not invent new items. Items whose id starts with "interest_" are USER-DECLARED preferences — their weight must remain >= ${INTEREST_WEIGHT_FLOOR}. Return JSON: {"items": [{"id":"...","type":"...","ref_id":"...","text":"...","weight":0.85}]}`,
           },
           {
             role: "user",
@@ -182,7 +266,7 @@ export async function buildImportanceLens(
                 industry: source.industry,
               },
               briefing_type: briefingType,
-              candidate_items: baseline,
+              candidate_items: combined,
             }),
           },
         ],
@@ -191,32 +275,53 @@ export async function buildImportanceLens(
       }),
     });
 
-    if (!response.ok) return baseline;
+    if (!response.ok) return { items: combined, excludes: interests.excludes };
     const data = await response.json();
     const content = data?.choices?.[0]?.message?.content;
-    if (!content) return baseline;
+    if (!content) return { items: combined, excludes: interests.excludes };
 
     const parsed = JSON.parse(content);
     const raw = Array.isArray(parsed.items) ? parsed.items : [];
-    const allowedIds = new Set(baseline.map(b => b.id));
-    const baselineById = new Map(baseline.map(b => [b.id, b]));
+    const allowedIds = new Set(combined.map(b => b.id));
+    const byId = new Map(combined.map(b => [b.id, b]));
 
     const items: LensItem[] = raw
       .filter((r: Record<string, unknown>) => typeof r.id === "string" && allowedIds.has(r.id as string))
       .map((r: Record<string, unknown>) => {
-        const b = baselineById.get(r.id as string)!;
-        const w = typeof r.weight === "number" ? r.weight : b.weight;
+        const b = byId.get(r.id as string)!;
+        let w = typeof r.weight === "number" ? r.weight : b.weight;
+        // Clamp interest items to the floor so the LLM can't demote them.
+        if (b.type === "interest_beat" || b.type === "interest_entity") {
+          w = Math.max(INTEREST_WEIGHT_FLOOR, w);
+        }
         return { ...b, weight: Math.max(0, Math.min(1, w)) };
       })
-      .slice(0, 8);
+      .slice(0, 10);
 
-    const finalItems = items.length > 0 ? items : baseline;
+    const finalItems = items.length > 0 ? items : combined;
     await setCachedResponse(supabase, cacheKey, LENS_CACHE_MODEL, { items: finalItems }, LENS_CACHE_TTL_MS);
-    return finalItems;
+    return { items: finalItems, excludes: interests.excludes };
   } catch (e) {
     console.warn("briefing-lens: LLM lens failed, using deterministic", e instanceof Error ? e.message : e);
-    return baseline;
+    return { items: combined, excludes: interests.excludes };
   }
+}
+
+/**
+ * When we pull a cached lens, the user may have added or removed interests
+ * since the cache was written. Overlay the current interest items on top of
+ * the cached list so they take effect immediately.
+ */
+function mergeInterestsIntoCached(currentInterests: LensItem[], cached: LensItem[]): LensItem[] {
+  const currentIds = new Set(currentInterests.map(i => i.id));
+  const nonInterestCached = cached.filter(c => c.type !== "interest_beat" && c.type !== "interest_entity");
+  // Also drop any cached interest that is no longer active.
+  const stillActiveCachedInterests = cached.filter(c =>
+    (c.type === "interest_beat" || c.type === "interest_entity") && currentIds.has(c.id),
+  );
+  const existingIds = new Set(stillActiveCachedInterests.map(c => c.id));
+  const addedInterests = currentInterests.filter(i => !existingIds.has(i.id));
+  return [...addedInterests, ...stillActiveCachedInterests, ...nonInterestCached].slice(0, 10);
 }
 
 /**

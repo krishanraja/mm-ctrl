@@ -74,12 +74,16 @@ serve(async (req) => {
       supabase.from("user_decisions").select("id, decision_text").eq("user_id", user.id).eq("status", "active").order("created_at", { ascending: false }).limit(5),
     ]);
 
-    // 2. Build the lens (same code path as generation).
+    // 2. Build the lens (same code path as generation). Now returns items +
+    //    user-declared excludes.
     let lens: LensItem[] = [];
+    let excludes: string[] = [];
     let queries: PlannedQuery[] = [];
     const training = await loadTrainingForUser(supabase, user.id).catch(() => undefined);
     try {
-      lens = await buildImportanceLens(supabase, openaiKey, lensSource, briefingType);
+      const result = await buildImportanceLens(supabase, openaiKey, lensSource, briefingType);
+      lens = result.items;
+      excludes = result.excludes;
     } catch (e) {
       console.warn("diagnose: lens build failed:", e instanceof Error ? e.message : e);
     }
@@ -90,6 +94,15 @@ serve(async (req) => {
     } catch (e) {
       console.warn("diagnose: query plan failed:", e instanceof Error ? e.message : e);
     }
+
+    // 2b. Pull the user's declared interests for side-by-side visibility.
+    const { data: interestsRaw } = await supabase
+      .from("briefing_interests")
+      .select("id, kind, text, weight, source, is_active, created_at")
+      .eq("user_id", user.id)
+      .order("kind", { ascending: true })
+      .order("created_at", { ascending: true });
+    const interests = interestsRaw ?? [];
 
     // 3. Last briefing for this user (any type — lets the caller see both
     //    default and custom briefings and compare against the lens).
@@ -176,7 +189,9 @@ serve(async (req) => {
         patterns: userCtx.confirmedPatterns,
         feedback_preferences: userCtx.feedbackPreferences,
       },
+      interests,
       lens,
+      excludes,
       planned_queries: queries,
       last_briefing: lastBriefing ?? null,
       recent_feedback: feedback,

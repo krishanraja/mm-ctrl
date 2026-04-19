@@ -150,6 +150,19 @@ function getDedupeThreshold(): number {
 }
 
 /**
+ * Threshold for excluding a candidate based on cosine similarity to any
+ * user-declared exclude. Default 0.80 is intentionally more aggressive than
+ * dedupe (0.87) — users who said "never show me geopolitics" shouldn't see
+ * borderline geopolitics stories either.
+ */
+function getExcludeThreshold(): number {
+  const raw = Deno.env.get("BRIEFING_EXCLUDE_THRESHOLD");
+  if (!raw) return 0.80;
+  const n = parseFloat(raw);
+  return Number.isFinite(n) && n > 0 && n < 1 ? n : 0.80;
+}
+
+/**
  * Dedupe + score in one pass.
  *
  * Dedupe rule: if a candidate's cosine similarity against an already-kept
@@ -167,27 +180,50 @@ export async function dedupeAndScore(
   openaiKey: string,
   candidates: CandidateHeadline[],
   lens: LensItem[],
+  excludes: string[] = [],
 ): Promise<ScoredHeadline[]> {
   if (candidates.length === 0 || lens.length === 0) return [];
 
-  const threshold = getDedupeThreshold();
+  const dedupeThreshold = getDedupeThreshold();
+  const excludeThreshold = getExcludeThreshold();
 
   const candidateInputs = candidates.map(c =>
     c.snippet && c.snippet.length > 0 ? `${c.title} — ${c.snippet}` : c.title,
   );
-  const candidateVectors = await embedBatch(openaiKey, candidateInputs);
+  // Embed candidates + excludes in the same batch to avoid a second API call.
+  const batchInputs = [...candidateInputs, ...excludes];
+  const allVectors = await embedBatch(openaiKey, batchInputs);
+  const candidateVectors = allVectors.slice(0, candidateInputs.length);
+  const excludeVectors = allVectors.slice(candidateInputs.length);
   const lensVectors = await embedLensItems(supabase, openaiKey, lens);
 
-  // Dedupe pass. Use authority as tiebreaker; earlier provider breaks authority ties.
+  // Exclude + dedupe pass. Exclusions short-circuit before dedupe so we
+  // don't waste slots comparing them. Authority is the dedupe tiebreaker;
+  // earlier provider breaks authority ties.
   const kept: Array<{ cand: CandidateHeadline; vec: number[] }> = [];
+  let excludedCount = 0;
   for (let i = 0; i < candidates.length; i++) {
     const cand = candidates[i];
     const vec = candidateVectors[i];
     if (!vec) continue;
 
+    // Exclude filter — drop if semantically close to ANY user-declared exclude.
+    let isExcluded = false;
+    for (const ev of excludeVectors) {
+      if (!ev) continue;
+      if (cosine(vec, ev) >= excludeThreshold) {
+        isExcluded = true;
+        break;
+      }
+    }
+    if (isExcluded) {
+      excludedCount++;
+      continue;
+    }
+
     let duplicateOfIdx = -1;
     for (let k = 0; k < kept.length; k++) {
-      if (cosine(vec, kept[k].vec) >= threshold) {
+      if (cosine(vec, kept[k].vec) >= dedupeThreshold) {
         duplicateOfIdx = k;
         break;
       }
@@ -201,6 +237,9 @@ export async function dedupeAndScore(
         kept[duplicateOfIdx] = { cand, vec };
       }
     }
+  }
+  if (excludedCount > 0) {
+    console.log(`briefing-scoring: excluded ${excludedCount} candidates via user exclude list`);
   }
 
   // Score pass.
