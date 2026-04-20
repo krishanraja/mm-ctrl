@@ -37,6 +37,7 @@ import { DesktopSidebar } from './DesktopSidebar';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet } from '@/components/briefing/BriefingSheet';
+import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
 import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type {
@@ -454,7 +455,10 @@ export function DesktopMemoryDashboard() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
+                    className="space-y-2"
                   >
+                    {/* v2 cold-start: suggest industry beats until the user has declared interests. */}
+                    <SeedBeatsPrompt />
                     <BriefingCard
                       briefing={todaysBriefing}
                       hasListened={playback.hasListened}
