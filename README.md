@@ -38,6 +38,18 @@ Your strengths sharpened, your weaknesses covered. Edge synthesizes your Memory 
 - Intelligence gap detection with guided resolution
 - Pro tier with premium artifact generation
 
+### Daily Briefing: Personalised Intelligence
+Three minutes of audio every morning, tuned to the one thing that matters: your world. Not a feed. Not another digest. An **evidence-based pass** that reads your active decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that actually move your math.
+
+- Every story is **anchored** to something specific in your profile (you can literally see "Anchored to: <your active decision>" on the card)
+- **Bookmark** any story → its anchor becomes a persistent beat
+- **Ban** any topic → kills it semantically (embeddings-based, not keyword)
+- **Settings → Interests** → declare beats, track people/companies, exclude whole topics
+- Cold-start covered: new users get industry-specific seed beats proposed on day one (11 industries pre-seeded)
+- Seven briefing types: Daily Brief, Macro Trends, Vendor Landscape, Competitive Intel, Boardroom Prep, AI Model Landscape, Custom Voice
+- Built on a seven-stage pipeline: importance lens → query planner → multi-provider fan-out → pgvector dedupe + scoring → budget-constrained curation → script generation → audio synthesis
+- Persistent semantic feedback loop: explicit kills (-1.0 immediately) + nightly aggregator that promotes 3+ thumbs-down to persistent -0.4 weight deltas
+
 ### Context Export: Your Context, Everywhere
 One click to export your context to **any** AI tool:
 - **ChatGPT** - Custom instructions

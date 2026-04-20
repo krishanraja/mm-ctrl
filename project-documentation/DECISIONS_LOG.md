@@ -171,3 +171,38 @@ Key architectural and product decisions with rationale.
 **Rationale**: CTRL positions the product around decision speed and executive control over AI strategy, aligning with the core value proposition of helping leaders take command of their AI-era leadership
 **Trade-off**: Brand recognition reset vs stronger, more differentiated positioning
 **Outcome**: ✅ Implemented
+
+## Decision 25: Rebuild Briefing Personalization Around an Evidence-Based Lens (v2)
+**Date**: Apr 2026
+**Decision**: Replace the v1 briefing pipeline (flattened profile → templated queries → race-and-keep-one provider → LLM ranker-narrator) with a seven-stage evidence-based pipeline where every retained segment carries a `lens_item_id`, a `relevance_score`, and the specific `matched_profile_fact` that justifies inclusion.
+**Rationale**: v1 asserted personalization in prose but couldn't prove it. A creator-economy user's briefing ran four consecutive off-topic stories (geopolitics, CIO100, fintech VC) because the LLM had nothing to anchor against. Auditable relevance is both a product feature (users see why each story was surfaced) and an engineering feature (the diagnose endpoint answers "why did this happen?" in one call).
+**Trade-off**: Added 3 LLM hops + one embedding batch call per briefing (~5-8s more on cache miss) vs personalization that is legible, debuggable, and learnable.
+**Outcome**: ✅ Shipped behind `BRIEFING_V2_ENABLED_DEFAULT` flag + per-user opt-in. ai_landscape briefings stay on v1 (they use synthetic headlines from AA benchmark data).
+
+## Decision 26: Add pgvector for Embedding-Based Relevance (not LLM-asserted)
+**Date**: Apr 2026
+**Decision**: Enable the pgvector extension; embed candidate headlines and lens items with `text-embedding-3-small` (batched); score via cosine similarity × lens weight.
+**Rationale**: Considered staying LLM-only (ask gpt-4o-mini to rank each candidate against each lens item), but that's opaque, slow at 50+ candidates, and doesn't compose well with dedupe. Embeddings give us real evidence (cosine score persisted on every segment), fast enough to do 45+ candidates in a single API call, and enable the semantic exclude filter ("kill geopolitics" = drop anything cosine >= 0.80).
+**Trade-off**: New DB extension + ongoing embedding API cost (~$0.02 per 1M tokens, negligible at scale) vs opaque LLM-only ranking.
+**Outcome**: ✅ pgvector enabled on remote; lens-item embeddings cached in `ai_response_cache` (7d TTL); candidate embeddings computed inline per briefing.
+
+## Decision 27: First-Class `briefing_interests` Table, NOT user_memory Overload
+**Date**: Apr 2026
+**Decision**: Create a dedicated `briefing_interests` table for user-declared beats / entities / excludes rather than overloading `user_memory` with another `fact_category`.
+**Rationale**: Interests are declared preferences with their own UX (Settings tab + inline Add buttons), lifecycle (soft-delete, source provenance: manual / seed_accepted / feedback_promoted), and weight semantics (1.0 with LLM floor at 0.8). `user_memory` is for AI-extracted facts with a different validation story. Mixing the two would complicate both systems.
+**Trade-off**: One more table + CRUD surface vs clean separation of "things the AI extracted" from "things the user declared."
+**Outcome**: ✅ Shipped with RLS self-only policies. Interests seed the lens at the top, outranking inferred signals.
+
+## Decision 28: Signature-Based Persistent Negative Feedback (not lens-item-id)
+**Date**: Apr 2026
+**Decision**: Key `briefing_lens_feedback` on SHA-256 of `bucket|normalized_text`, NOT on the ephemeral `lens_item_id` that shows up on segments.
+**Rationale**: Lens items are regenerated every day - `decision_0` today is a different decision tomorrow. Keying on the id means feedback evaporates overnight. Keying on the content signature means a user who Bans "geopolitics" keeps it banned forever, even as the lens rebuilds. The `bucket` coarsens lens types (decisions / missions / objectives / blockers all bucket to `goal`) so related profile items share fate.
+**Trade-off**: Slightly more CPU per lens build (SHA-256 per item, batched via Promise.all) vs persistent, predictable user control.
+**Outcome**: ✅ Applied in both cold and cached lens paths so kills take effect within one regeneration.
+
+## Decision 29: In-Database Aggregator (plpgsql + pg_cron), Not HTTP Cron
+**Date**: Apr 2026
+**Decision**: Implement the nightly feedback aggregation as `sp_aggregate_briefing_feedback` plpgsql + a pg_cron schedule, rather than calling the `briefing-aggregate-feedback` edge function via `net.http_post`.
+**Rationale**: The HTTP path requires storing the service-role JWT in Postgres (vault or a setting), adding blast-radius. The SQL function runs as `SECURITY DEFINER postgres`, owns its own query plan, and never touches a token. Faster (no HTTP roundtrip), simpler ops (one less secret), safer (no exposed key). The edge function stays for admin/ad-hoc invocation.
+**Trade-off**: Maintained logic in two places (plpgsql + TypeScript) vs no service-role token exposure.
+**Outcome**: ✅ Scheduled at 03:07 UTC daily. Dry-run on deploy returned zero buckets as expected (no v2 feedback in the wild yet).

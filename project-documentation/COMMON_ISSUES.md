@@ -2,7 +2,7 @@
 
 Recurring bugs, architectural pain points, and solutions.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -388,3 +388,56 @@ Before shipping:
 **Root Cause**: AI cache too aggressive, matching on insufficient key dimensions
 **Solution**: Review cache key generation in `_shared/ai-cache.ts`, ensure profile-specific differentiation
 **Status**: ⚠️ Monitor
+
+---
+
+## Daily Briefing Issues (Apr 2026 - v2 pipeline)
+
+### Issue 31: Briefing Headlines Are Wildly Off-Topic for the User
+**Symptom**: User opens today's briefing and sees 4-5 generic stories (geopolitics, executive tech conferences, generic fintech) instead of anything relevant to their actual industry or role.
+**Root Cause (most common)**: User has not declared any `briefing_interests`, AND the inferred profile from voice sessions is shallow or generic (typical pattern: "grow the business", "hire a team"). The v2 lens has nothing specific to anchor against.
+**Diagnosis**: Call `briefing-diagnose` from the browser console. Check `profile.interests` (empty?), `lens[0..2]` (generic goals?), and `last_briefing.segments[*].matched_profile_fact` (is it tied to anything specific?).
+**Solution**:
+  1. Get the user to Settings → Interests and declare 3-5 beats + 3-5 entities + 1-2 excludes (fastest fix).
+  2. Or: have them accept the `SeedBeatsPrompt` on the dashboard (industry-aware one-tap seeds).
+  3. Regenerate the briefing with force=true (`Refresh stories` on the card). The new lens will include the declared interests at weight 1.0.
+**Status**: ✅ Resolved via Interests feature + SeedBeatsPrompt (PR #87, PR #88).
+
+### Issue 32: User Can't Find the Interests UI After v2 Ship
+**Symptom**: User was told "go to Interests" but doesn't see the tab.
+**Root Cause**: Frontend cache (Vercel's CDN can serve stale index.html with old chunk hashes for 24h+ on some paths). OR the user merged main but didn't trigger a fresh Vercel production deploy. OR they have an old tab/window open.
+**Solution**:
+  1. Check `ctrl.themindmaker.ai` main bundle hash (`curl -s ... | grep 'assets/index-'`). Compare to latest Vercel deployment output. Mismatch = stale.
+  2. Force a redeploy via Vercel API (`POST /v13/deployments` with `forceNew=1` and the main sha).
+  3. User hard-refresh (Cmd+Shift+R) or incognito window.
+  4. Confirm the `Interests` tab sits at position 3 in Settings (after Account + Work).
+**Status**: ⚠️ Monitor - CDN cache behaviour is the recurring culprit.
+
+### Issue 33: `generate-briefing` Throws "Lens Empty" on New Users
+**Symptom**: v2 pipeline returns 500 with message "Lens empty — user has no profile data to personalise against".
+**Root Cause**: The user has zero entries in `user_memory`, `user_missions`, `user_decisions`, and `briefing_interests`. `deterministicLens` produces an empty array and v2 refuses to proceed.
+**Solution**: Either (a) send the user through onboarding to seed `user_memory`, (b) have them declare 3+ `briefing_interests`, or (c) temporarily flip them to v1 via `user_memory` row `{fact_key: 'briefing_v2_enabled', fact_value: 'false', is_current: true}`.
+**Status**: ⚠️ Monitor - probably needs a graceful fallback to industry-only seeds when lens is empty.
+
+### Issue 34: Killed Lens Item Reappears Next Day
+**Symptom**: User taps Ban on a segment; next day the same topic is back.
+**Root Cause (unlikely but possible)**: The kill wrote a signature that doesn't match what the new lens generates. Likely culprit: the v2 lens used an `interest_beat_*` id whose `lens_item_id` starts with `interest_` - the Ban button is hidden for those (users remove interests from Settings instead, intentionally). If still repeating: check `briefing_lens_feedback` for the signature, verify `is_active = true`, and that `applyFeedbackDeltas` is running (log line `briefing-lens: loadLensFeedbackDeltas`).
+**Solution**: Check DB row. If present and active, debug `computeLensSignature` bucketing. If absent, the kill endpoint failed - check function logs.
+**Status**: ⚠️ Monitor.
+
+### Issue 35: Nightly Aggregator Not Promoting Obvious Negatives
+**Symptom**: User has banned "geopolitics" repeatedly via thumbs-down, but no `not_useful_aggregate` row appears.
+**Root Cause**: Aggregator requires >= 3 not_useful reactions on the SAME lens signature within 30 days. Different wording of "geopolitics" across briefings produces different signatures.
+**Diagnosis**: `SELECT lens_item_text, COUNT(*) FROM briefing_feedback f JOIN briefings b ON b.id = f.briefing_id CROSS JOIN LATERAL jsonb_array_elements(b.context_snapshot->'lens') li WHERE f.reaction = 'not_useful' AND li->>'id' = f.lens_item_id GROUP BY 1 ORDER BY 2 DESC;`
+**Solution**: User should Ban explicitly instead of thumbs-down (kills at -1.0 immediately, no threshold). Or: widen the signature bucketing in `_shared/lens-signature.ts` if the pattern shows up repeatedly.
+**Status**: ⚠️ Monitor.
+
+### Issue 36: Briefing Takes > 30 Seconds on Cold Start
+**Symptom**: User triggers a briefing and it takes 30-45 seconds before the preliminary row even appears.
+**Root Cause**: All five v2 LLM hops run sequentially on cache miss: lens (1.5s) → planner (1.5s) → providers (up to 12s) → embeddings + scoring (1s) → curation (3s) = ~19s + script gen (4-6s). If Perplexity is slow (often), total can exceed 30s.
+**Solution**:
+  1. Trigger provider warmup speculatively alongside the query planner (not yet implemented).
+  2. Confirm Perplexity is responsive via direct test call.
+  3. Ensure `lens` cache is warm: regeneration within 24h uses cached lens (saves ~1.5s).
+  4. As a last resort, bump the generation timeout in `useBriefing.ts` (currently 60s).
+**Status**: ⚠️ Monitor. The 12s Stage 3 wall-clock cap protects against worst-case provider hangs.
