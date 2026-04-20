@@ -2,7 +2,7 @@
 
 Clear value propositions for each audience. Every claim ties back to one thing: decision speed.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -43,6 +43,14 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - "Ask a hard question. Get an answer that knows your context."
 - No setup. No preamble. It reads your Memory Web and meets you where you are.
 - Faster from question to clarity than any conversation with a blank AI
+
+**Daily Briefing (the feature most leaders use most)**
+- "Three minutes a day that replace thirty minutes of scrolling. News filtered through the one thing that matters: your world."
+- Not a feed. Not another digest. A personalised intelligence pass that reads your decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that move YOUR math.
+- Every story is anchored to something you actually care about. You can see exactly why it was surfaced: "Anchored to: <your active decision>". No mystery algorithm. Auditable relevance.
+- Tap **Bookmark** to keep a beat. Tap **Ban** to kill a topic. The next briefing learns from it. Your briefing gets smarter every day you use it.
+- Cold-start covered: new users get industry-specific seed beats proposed on day one. One tap to accept.
+- Audio-first (500-600 words, 3-4 minutes), listen on the way to your first meeting.
 
 **Meeting Prep**
 - "Walk into every meeting already briefed, by AI that knows your priorities"

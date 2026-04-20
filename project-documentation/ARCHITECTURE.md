@@ -2,7 +2,7 @@
 
 Complete system architecture and data flow documentation.
 
-**Last Updated:** 2026-04-01
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -644,13 +644,80 @@ index_participant_data
 ├── dimension_scores (JSON)
 ├── consent_flags (JSON)
 └── completed_at
+
+briefings
+├── id (PK, UUID)
+├── user_id (FK → auth.users)
+├── briefing_date (DATE)
+├── briefing_type (default | macro_trends | vendor_landscape | competitive_intel | boardroom_prep | team_update | ai_landscape | custom_voice)
+├── script_text (nullable - filled after preliminary insert)
+├── segments (JSONB array of BriefingSegment)
+├── audio_url, audio_duration_seconds
+├── context_snapshot (JSONB - v2 stores lens + queries + excludes here)
+├── news_sources (JSONB)
+├── generation_model
+├── custom_context, voice_note_url
+├── is_pro_only (BOOL)
+├── schema_version (INT, 1 = legacy, 2 = evidence-based lens pipeline)
+└── created_at
+  - UNIQUE (user_id, briefing_date, briefing_type) except for custom_voice
+
+briefing_feedback
+├── id (PK), briefing_id (FK), segment_index
+├── reaction (useful | not_useful | save)
+├── lens_item_id (v2 - which lens item the segment matched)
+├── dwell_ms (v2 - time user kept segment open)
+├── replayed (v2 - did they replay the audio)
+└── created_at
+
+briefing_interests                      -- user-declared preferences
+├── id (PK), user_id (FK)
+├── kind (beat | entity | exclude)
+├── text, weight
+├── source (manual | seed_accepted | feedback_promoted)
+├── is_active, created_at, updated_at
+  - RLS to owner; soft-delete via is_active
+
+industry_beat_library                   -- reference data for cold-start seeds
+├── id (PK), industry_key (UNIQUE), label
+├── aliases (TEXT[], lowercase substrings for fuzzy match)
+├── beats (JSONB: [{label}])
+├── entities (JSONB: [{label}])
+├── is_active, updated_at
+  - 11 rows seeded; RLS read-only to authenticated
+
+briefing_lens_feedback                  -- persistent negative weight deltas
+├── id (PK), user_id (FK)
+├── lens_item_signature (SHA-256 of "bucket|normalized_text")
+├── lens_item_type, lens_item_text
+├── weight_delta (NUMERIC, always negative)
+├── source (kill | not_useful_aggregate)
+├── evidence_count (INT - how many reactions contributed)
+├── is_active, created_at, updated_at
+  - UNIQUE (user_id, signature, source); writes via edge functions only
+
+ai_response_cache                       -- generic AI + embedding cache
+├── prompt_hash, model
+├── response (JSONB)
+├── expires_at
+  - Used by lens cache (24h) and lens-item embedding cache (7d)
+
+training_material                       -- YAML voice guide, single source of truth
+├── scope (global | cohort | user), user_id (optional), version
+├── body_raw (TEXT YAML), body_parsed (JSONB)
+└── is_active
 ```
+
+**PostgreSQL Extensions (required):**
+- `pgvector` - embedding storage + cosine operators (briefing scoring)
+- `pgcrypto` - `digest('sha256', ...)` for lens signatures
+- `pg_cron` - nightly feedback aggregator schedule
 
 ### Edge Functions
 
 **Location**: `supabase/functions/`
 
-**Total**: 53 edge functions + shared module directory
+**Total**: 58+ edge functions + shared module directory. The Briefing subsystem added five functions (`generate-briefing`, `synthesize-briefing`, `briefing-diagnose`, `get-industry-seeds`, `briefing-kill-lens-item`, `briefing-aggregate-feedback`) plus new shared modules (`briefing-lens`, `briefing-scoring`, `briefing-curation`, `user-context`, `lens-signature`).
 
 #### Core Assessment Functions
 
@@ -730,6 +797,15 @@ index_participant_data
 47. **edge-generate** - Generate Edge artifacts (board memos, strategy docs, emails, frameworks)
 48. **create-edge-subscription** - Create Edge Pro Stripe subscription
 49. **deliver-edge-artifact** - Deliver generated artifact via email
+
+#### Daily Briefing Subsystem (v2 pipeline, evidence-based lens)
+
+54. **generate-briefing** - Main orchestrator. Routes to v1 (legacy) or v2 (evidence-based) based on flag. v2 runs lens → query planner → provider fan-out (Perplexity/Tavily/Brave, 12s cap) → embedding dedupe + scoring + exclude filter → budget-constrained curation → script generation → audio synthesis trigger.
+55. **synthesize-briefing** - ElevenLabs MP3 synthesis, fire-and-forget from `generate-briefing`.
+56. **briefing-diagnose** - Read-only diagnostic endpoint. Returns `{ profile, interests, lens, excludes, planned_queries, last_briefing, recent_feedback }` for the authenticated user. Used to answer "why did this user get these headlines?"
+57. **get-industry-seeds** - Returns industry-specific beats + entities from `industry_beat_library`. Fuzzy-matches on user's `industry` fact (longest alias wins), falls back to `generic`. Pre-filters anything already in the user's interests.
+58. **briefing-kill-lens-item** - Records an explicit "don't show me stories like this" signal. Accepts `(briefing_id, lens_item_id)` or `(lens_item_type, lens_item_text)`. Upserts `briefing_lens_feedback` with `weight_delta = -1.0`.
+59. **briefing-aggregate-feedback** - Admin/cron HTTP entrypoint (requires service-role JWT). Scans recent `briefing_feedback` rows, groups by lens signature, promotes anything >= 3 thumbs-down to a persistent `-0.4` delta. Nightly schedule is actually implemented as `sp_aggregate_briefing_feedback` (plpgsql) + pg_cron so no service-role key is stored in Postgres.
 
 #### Memory Lifecycle Functions
 
@@ -880,6 +956,59 @@ Privacy controls:
 ├─ Set retention period
 └─ Export/import data
 ```
+
+### Daily Briefing Flow (v2, evidence-based lens)
+
+```
+Dashboard mounts / user taps regenerate
+         ↓
+useBriefing hook invokes generate-briefing edge function
+         ↓
+generate-briefing:
+  1. Auth + parse body (briefing_type, force, custom_context)
+  2. Check v2 flag: request body > user_memory opt-in > env default
+  3. Load user context (_shared/user-context.ts)
+         ↓
+  If v2:
+  4. Build importance lens (_shared/briefing-lens.ts)
+     ├─ loadInterests() → beats/entities/excludes
+     ├─ deterministicLens() → weighted items from decisions/missions/objectives/watchlist
+     ├─ Combine (interests prepended, weight 1.0, floor 0.8)
+     ├─ Apply negative feedback deltas (briefing_lens_feedback)
+     └─ LLM reweight (gpt-4o-mini, 24h cache, key = user+briefing_type+date+sig)
+  5. Plan queries (gpt-4o-mini) from lens + training_material hot_signal_taxonomy
+  6. Fan out to providers in parallel (Promise.allSettled, 12s cap)
+     ├─ Perplexity (single call covering all queries)
+     ├─ Tavily (per-query)
+     └─ Brave (per-query)
+  7. Embed + dedupe + score (_shared/briefing-scoring.ts)
+     ├─ Single batched OpenAI embeddings call (candidates + excludes)
+     ├─ Cosine-based exclude filter (drop near user excludes)
+     ├─ Cosine dedupe (authority as tiebreaker)
+     └─ Score each survivor against each lens item
+  8. EARLY INSERT preliminary briefing row (frontend polls every 3s)
+  9. Curate final segments (_shared/briefing-curation.ts)
+     ├─ Read word_budget from training_material.structural_rubric
+     ├─ gpt-4o-mini picks segments with diversity + coverage constraints
+     └─ Returns segments with lens_item_id, relevance_score, matched_profile_fact
+ 10. Generate script (gpt-4o + training_material voice card + rubric + exemplars)
+ 11. Update briefing row with final segments + script
+ 12. Fire-and-forget synthesize-briefing (ElevenLabs MP3)
+         ↓
+Frontend polling picks up segments + audio_url
+         ↓
+BriefingCard renders inline with:
+  - Framework tag + headline
+  - "Anchored to: <lens item text>" chip
+  - Bookmark (pin anchor as beat) / Ban (kill lens signature) buttons
+  - Thumbs up/down with dwell_ms + lens_item_id capture
+         ↓
+Segments playable via BriefingSheet (full-screen slide-up)
+         ↓
+SeedBeatsPrompt shows above briefing if user has < 3 declared interests
+```
+
+**Learning loop:** every thumbs-down captures `lens_item_id`; the nightly `sp_aggregate_briefing_feedback` plpgsql function (scheduled via pg_cron at 03:07 UTC) promotes any signature with 3+ negatives to a persistent `-0.4` delta in `briefing_lens_feedback`. Explicit kills via the Ban button write `-1.0` immediately. `applyFeedbackDeltas` is invoked in both the cold and cached lens paths of `buildImportanceLens` so kills take effect without waiting for the 24h lens cache to expire.
 
 ### Missions Flow
 

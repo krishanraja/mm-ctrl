@@ -2,6 +2,8 @@
 
 Step-by-step instructions to replicate CTRL from scratch.
 
+**Last Updated:** 2026-04-19
+
 ---
 
 ## Prerequisites
@@ -264,6 +266,65 @@ supabase db push --project-ref YOUR_REF
 - [ ] Edge functions don't timeout
 - [ ] Payment flow works
 - [ ] Email confirmations send
+
+---
+
+## Daily Briefing Subsystem Setup (v2, Apr 2026)
+
+Running the Briefing in its v2 / evidence-based form requires three things in addition to the base app: extensions, migrations, and edge functions.
+
+**1. Enable PostgreSQL extensions**
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;    -- embeddings (text-embedding-3-small, 1536 dims)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;  -- digest('sha256', ...) for lens signatures
+CREATE EXTENSION IF NOT EXISTS pg_cron;   -- nightly aggregator schedule
+```
+
+**2. Apply migrations in order**
+```
+supabase/migrations/20260418000000_briefing_v2_pgvector_schema.sql   -- schema_version + feedback extension
+supabase/migrations/20260419000000_briefing_interests.sql            -- user-declared beats/entities/excludes
+supabase/migrations/20260419000001_industry_beat_library.sql         -- cold-start seeds (11 industries)
+supabase/migrations/20260419000002_briefing_lens_feedback.sql        -- persistent negative feedback
+supabase/migrations/20260419000003_briefing_aggregate_feedback_cron.sql  -- plpgsql aggregator + pg_cron schedule
+```
+All migrations are idempotent (`IF NOT EXISTS`, `ON CONFLICT DO UPDATE`).
+
+**3. Deploy briefing edge functions**
+```bash
+supabase functions deploy \
+  generate-briefing synthesize-briefing \
+  briefing-diagnose get-industry-seeds \
+  briefing-kill-lens-item briefing-aggregate-feedback
+```
+
+**4. Required secrets** (Supabase → Settings → Secrets)
+- `OPENAI_API_KEY` - embeddings + curation LLM
+- `PERPLEXITY_API_KEY`, `TAVILY_API_KEY`, `BRAVE_SEARCH_API` - at least one required; more = better recall
+- `ELEVENLABS_API_KEY` - audio synthesis
+
+**5. Optional env vars**
+- `BRIEFING_V2_ENABLED_DEFAULT=true` - flip every user to v2. Leave unset (false) to roll out per-user via `user_memory.briefing_v2_enabled`.
+- `BRIEFING_DEDUPE_THRESHOLD=0.87` - cosine threshold for headline dedupe
+- `BRIEFING_EXCLUDE_THRESHOLD=0.80` - cosine threshold for user-exclude post-filter
+
+**6. Verify cron job**
+```sql
+SELECT jobid, jobname, schedule, active FROM cron.job WHERE jobname = 'briefing-aggregate-feedback-nightly';
+-- Expected: schedule='7 3 * * *', active=true
+```
+
+**7. Smoke test**
+From an authenticated browser console:
+```js
+const r = await supabase.functions.invoke('briefing-diagnose')
+console.log({
+  lensSize: r.data.lens.length,
+  interests: r.data.interests.length,
+  lastSchema: r.data.last_briefing?.schema_version,
+})
+```
+A healthy v2-ready user: `lensSize > 0`, `lastSchema === 2` (after first v2 generation).
 
 ---
 

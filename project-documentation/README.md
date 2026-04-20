@@ -4,8 +4,8 @@
 
 This folder contains all technical and strategic documentation for the CTRL portable AI context platform.
 
-**Last Updated:** 2026-04-01
-**Current Version:** v4.2 (Unified dashboard + Edge leadership amplifier)
+**Last Updated:** 2026-04-19
+**Current Version:** v5.0 (Evidence-based Briefing v2 pipeline + four-part learning loop)
 
 ---
 
@@ -30,7 +30,7 @@ This folder contains all technical and strategic documentation for the CTRL port
 - [BRANDING.md](./BRANDING.md) - Brand voice, tone, and messaging guidelines
 
 ### Operational Knowledge
-- [HISTORY.md](./HISTORY.md) - Evolution of the product and major pivots (Phases 1-5)
+- [HISTORY.md](./HISTORY.md) - Evolution of the product and major pivots (Phases 1-6)
 - [COMMON_ISSUES.md](./COMMON_ISSUES.md) - Recurring bugs and architectural pain points
 - [DECISIONS_LOG.md](./DECISIONS_LOG.md) - Key architectural and product decisions
 - [REPLICATION_GUIDE.md](./REPLICATION_GUIDE.md) - Step-by-step rebuild instructions
@@ -107,6 +107,7 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 ### Core Features
 - **Memory Web**: Voice-first context extraction with encrypted storage (default dashboard view)
 - **Edge**: Leadership amplifier - strengths sharpened, weaknesses covered with AI artifacts (Pro tier available)
+- **Daily Briefing (v2)**: Evidence-based personalised intelligence. Seven-stage pipeline (lens → query planner → multi-provider fan-out → pgvector dedupe + scoring → budget-constrained curation → script → audio). Every segment carries `lens_item_id`, `relevance_score`, `matched_profile_fact`. Learning loop: Interests (beats/entities/excludes), industry-aware seed beats (11 industries), persistent semantic kills + nightly aggregator via pg_cron.
 - **Context Export**: One-click export to ChatGPT, Claude, Gemini, Cursor, Claude Code
 - **Guided First Experience**: 3-question onboarding delivering export in 2 minutes
 - **Pattern Detection**: 10X skills, blind spots, behavioral preferences
@@ -139,13 +140,15 @@ All AI-generated insights are anchored in cognitive frameworks embedded in the `
 
 | Field | Value |
 |-------|-------|
-| Documentation last updated | 2026-04-01 |
-| Current product version | v4.2 (Unified dashboard + Edge) |
-| Architecture version | Unified dashboard (Memory Web + Edge views) |
+| Documentation last updated | 2026-04-19 |
+| Current product version | v5.0 (Briefing v2 + learning loop) |
+| Architecture version | Unified dashboard (Memory Web + Edge + Daily Briefing) |
 | Design system version | v3.0 (Light mode, Apple-like) |
 | AI primary model | Vertex AI (Gemini 2.0 Flash) |
 | AI fallback model | OpenAI GPT-4o |
-| Edge functions | 53 |
+| Embedding model | OpenAI text-embedding-3-small (1536-dim, pgvector) |
+| Edge functions | 58+ (including Daily Briefing subsystem) |
+| Database extensions | pgvector, pgcrypto, pg_cron |
 | Active routes | 10 (+ legacy redirects) |
-| Custom hooks | 32 |
+| Custom hooks | 36+ |
 | Node.js requirement | >=22 <24 |

@@ -2,7 +2,7 @@
 
 **For outbound sales agents. Read this before writing any email.**
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -85,6 +85,22 @@ This is the moment a leader goes from generic AI to personalized AI. It takes on
 ### Decision Advisor
 AI that already knows your context helps you think through hard calls. No setup. No preamble. Ask the question, get an answer that accounts for your business, your constraints, your priorities. Faster from question to clarity.
 
+### Daily Briefing (most-used feature after Memory Web)
+A 3-minute audio intelligence briefing, every morning, tuned to the one thing you care about: YOUR world.
+
+Not a news feed. Not another digest. A personalised pass that reads your active decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that actually move your math.
+
+Every story is **anchored** to something specific in your profile. The card literally shows "Anchored to: <your active decision>" so you can see why it was surfaced. Auditable relevance - no black box.
+
+Three controls that make it smarter every day:
+- **Bookmark** a story → its anchor becomes a persistent beat
+- **Ban** a topic → the system never shows it again (semantic, not keyword - it gets related topics too)
+- **Settings → Interests** → declare beats, track specific people/companies, exclude whole topics
+
+Cold-start solved: new users get industry-specific seed beats proposed on day one (11 industries pre-seeded: creator economy, SaaS, healthcare, finance, consulting, ecommerce, media, edtech, biotech, legal, generic). One tap to accept.
+
+Seven briefing types for different contexts: Daily Brief, Macro Trends, Vendor Landscape, Competitive Intel, Boardroom Prep, AI Model Landscape, Custom Voice. Pro tier unlocks the specialised ones.
+
 ### Meeting Prep
 Contextual briefs generated from your Memory Web. Walk into every meeting already briefed by AI that knows what matters to you.
 
@@ -166,6 +182,12 @@ Somewhere, a leader in your space is making AI-assisted decisions in seconds bec
 ### The "Infrastructure, Not Education" Angle
 You don't need another AI course. You don't need to learn prompt engineering. You need infrastructure that makes every AI tool you already use work like it was built for you. CTRL is that infrastructure. Two minutes. One click. Done.
 
+### The "Daily Briefing" Angle
+Every leader wants a curated news feed. Most vendors give them a firehose tagged with keywords. CTRL does something different: it reads your ACTUAL priorities - the decision on your desk, the companies on your watchlist, the beats you said you care about - and hands you 3-5 stories every morning with "Anchored to: <your priority>" on each one. You see exactly why every headline made the cut. Tap Bookmark to keep a beat. Tap Ban to kill a topic. Your briefing gets sharper every day you use it. Three minutes, audio, done.
+
+### The "Auditable AI" Angle
+Leaders are getting tired of mystery algorithms. ChatGPT, LinkedIn, everywhere - "here's what we think you want, trust us." CTRL flips it. Every briefing story shows the specific profile item it was anchored to. Every killed topic was killed by you, on purpose, and you can see the history. It's AI personalization where the leader stays in control of the logic. That matters more every quarter.
+
 ### The "No Integrations" Angle
 Most AI context tools want access to your Slack, email, calendar, and browser. That means enterprise security reviews, IT approvals, and someone else reading your data. CTRL takes a different approach: you just talk to it. No integrations. No plugins. No permissions. Your context is built from what you choose to share — nothing else. The most private AI double you can build.
 
@@ -190,6 +212,12 @@ Conservative math: every leader spends 30-60 minutes per day on AI context setup
 
 **"Is this just a fancy prompt template?"**
 No. Prompt templates are static and generic. CTRL builds a living, structured knowledge base about you from natural conversation, formats it for each specific AI platform, and evolves as your context changes. It's the difference between a form letter and a briefing document written by someone who knows you.
+
+**"I already get too many newsletters"**
+This isn't a newsletter. Newsletters are written for everyone. The Daily Briefing is generated for YOU, every morning, from YOUR active decisions and declared interests, filtered against fresh news with embeddings. Every story shows the specific anchor it matched (your decision, your watchlist, your beat). You can Bookmark or Ban any topic with one tap and the system learns immediately. It replaces three newsletters plus 30 minutes of scrolling with 3 minutes of audio that's actually relevant.
+
+**"How is this different from Feedly / Techmeme / morning briefs?"**
+Those are curated feeds. They serve everyone the same stories and hope one's relevant. CTRL reads your active decisions, missions, watchlist, and declared beats, generates a custom lens per user per briefing type per day, scores live headlines against it with embeddings, then writes audio in your register. Every segment shows "Anchored to: <your specific priority>" - you can literally audit the relevance. No feed does that.
 
 **"Our leaders aren't technical enough for this"**
 That's exactly who this is for. Voice-first. No typing required. No prompt engineering. No technical skills. If a leader can answer three questions about their work out loud, they can use CTRL. Two minutes to a working AI double.

@@ -2,7 +2,7 @@
 
 Expected outcomes and success metrics for CTRL users. Every outcome ties back to decision speed.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -90,6 +90,40 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 - 70%+ report "AI is dramatically more useful now"
 - 60%+ challenged or redirected an AI initiative with sharper judgment
 - 50%+ report saving 30+ minutes per week on AI-related context setup
+
+---
+
+### Daily Briefing Outcomes
+
+**First briefing (day 1-2)**
+- SeedBeatsPrompt surfaces on the dashboard with industry-relevant beats. One-tap acceptance.
+- First briefing lands with 3-5 stories, each visibly anchored to something the leader cares about ("Anchored to: <beat or decision>").
+- The leader can tell, at a glance, WHY each story earned the slot. No black box.
+
+**Week 1**
+- Leader has declared 4-8 interests (beats + entities) via seed acceptance or manual add.
+- Excluded 1-3 topics they never want to see again.
+- At least one "Bookmark" tap (promoting a story's anchor to a persistent beat).
+- Briefing is noticeably tighter than day-1 because the lens now weights declared interests at 1.0.
+
+**Week 2-4**
+- Feedback loop activating: 3+ thumbs-downs on generic topics automatically promote to persistent `-0.4` weight deltas. Topics start disappearing even without explicit Bans.
+- Leader catches a decision-relevant story in a briefing (something on their watchlist moved, a regulatory shift, a pricing change) and acts on it same-day.
+- Briefing becomes a ritual. The 3-minute audio fits into the morning commute / first coffee window.
+- Custom briefings (vendor_landscape, competitive_intel, boardroom_prep) used for specific prep moments.
+
+**Measurable:**
+- 80%+ of new users accept at least 3 seed beats within first dashboard session
+- 60%+ manually add at least one beat or entity within 7 days
+- 40%+ use the Ban action at least once in first 30 days (semantic feedback working)
+- 70%+ of v2 briefings have every segment carrying a `matched_profile_fact` (evidence coverage)
+- 50%+ of leaders report "the briefing changed a decision" within 30 days
+
+**What Leaders Say:**
+- "I finally have a news feed that doesn't waste my time."
+- "It caught a competitor move that I would have missed. That alone is worth it."
+- "I can see exactly why each story is there. No more AI mystery box."
+- "I banned 'geopolitics' once. It's gone. That's how it should work."
 
 ---
 

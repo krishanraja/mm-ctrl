@@ -2,7 +2,7 @@
 
 Complete feature inventory across all three CTRL tools.
 
-**Last Updated:** 2026-04-01
+**Last Updated:** 2026-04-19
 
 ---
 
@@ -431,6 +431,155 @@ The headline differentiator: export your Memory Web as formatted context to any 
 
 **Hooks**
 - `useMemoryExport.ts`: Export generation, format selection, and clipboard integration
+
+---
+
+## Daily Briefing: Personalised Intelligence with an Evidence-Based Lens
+
+The most sophisticated component of the Leaders tool. Produces a 500-600 word audio briefing every morning, tuned to what this specific leader cares about today. Built on an evidence-based relevance pipeline (v2) that can prove, story by story, why every headline earned its place in front of you.
+
+**Pages / surfaces:**
+- `/dashboard` - inline briefing card with expandable segments and quick actions
+- `BriefingSheet` - full-screen slide-up with audio player and segment details
+- `BriefingPage.tsx` - deep-link view for a specific briefing
+
+### The Pipeline (v2, merged April 2026)
+
+Seven stages, all running inside `generate-briefing/index.ts`:
+
+| Stage | What it does | Model / Tool |
+|---|---|---|
+| 1. Importance Lens | Ranks the profile items that matter TODAY for THIS briefing type | gpt-4o-mini (structured JSON), 24h cache |
+| 2. Query Planner | Turns the lens into 4-6 targeted news queries | gpt-4o-mini |
+| 3. Provider Fan-out | Perplexity + Tavily + Brave in parallel, 12s wall-clock cap | `Promise.allSettled` |
+| 4. Embedding Dedupe + Scoring | Cosine dedupe, user-exclude filter, relevance scoring | `text-embedding-3-small` (batched), pgvector |
+| 5. Budget-Constrained Curation | Picks final segments within word budget with diversity + coverage rules | gpt-4o-mini |
+| 6. Script Generation | Writes the audio script using training_material voice + rubric | gpt-4o |
+| 7. Audio Synthesis | Generates the MP3 | ElevenLabs (`synthesize-briefing` fire-and-forget) |
+
+Every retained segment carries three evidence fields v1 never captured:
+- `lens_item_id` - which lens item this story matched
+- `relevance_score` - cosine similarity * lens weight
+- `matched_profile_fact` - the quoted text from the user's profile that justifies the story
+
+Routed behind a per-user flag - `user_memory.briefing_v2_enabled`, or the `BRIEFING_V2_ENABLED_DEFAULT` env var. `ai_landscape` briefings stay on v1 (they use synthetic headlines from live AA benchmark data, not live news).
+
+### Briefing Types
+
+| Type | Intent | Pro only? |
+|---|---|---|
+| `default` ("Daily Brief") | Top stories for your world | No |
+| `macro_trends` | Big shifts in AI / markets / regulation | No |
+| `vendor_landscape` | Launches, pricing, vendor moves | Yes |
+| `competitive_intel` | What your watchlist is doing | Yes |
+| `boardroom_prep` | Trends and data for exec presentations | Yes |
+| `ai_landscape` | Live benchmarks on models that matter | Yes |
+| `custom_voice` | User describes what they need | Yes |
+
+### Briefing Interests (user-declared preferences)
+
+A first-class surface that overrides inferred signals. Three kinds:
+
+- **Beats** - topics you want covered (e.g. "creator monetization", "AI pricing"). Become lens items with weight 1.0. LLM cannot demote them below 0.8.
+- **People & Companies** - named entities to track (e.g. "MrBeast", "OpenAI"). Also weight 1.0.
+- **Don't show me** - topics to permanently kill. Post-filters the candidate pool - any story within 0.80 cosine of an exclude never surfaces.
+
+**UI:**
+- Settings → Interests tab (position 3, after Account + Work)
+- Inline `SeedBeatsPrompt` on the dashboard for cold-start users
+- Inline Bookmark button on every v2 segment (pins the `matched_profile_fact` as a beat)
+- Inline Ban button (records a persistent kill - see below)
+
+**Data:** `briefing_interests` table, RLS-guarded to owner, soft-delete via `is_active`.
+
+### Industry-Aware Seed Beats
+
+Solves the new-user cold-start. Before a user has declared anything, the `SeedBeatsPrompt` proposes a relevant starter set of beats and entities keyed to their declared industry.
+
+**Library (`industry_beat_library` table):**
+- 11 industries seeded: `creator_economy`, `saas`, `healthcare`, `finance_fintech`, `consulting_professional_services`, `ecommerce_retail`, `media_publishing`, `education_edtech`, `biotech_life_sciences`, `legal_services`, `generic`
+- Each row: 6-8 curated beats + 4-7 recommended entities + fuzzy-match aliases
+- Editable via SQL without redeploy (content ops friendly)
+
+**Resolution:** fuzzy match on user's `industry` fact; longest-alias wins; `generic` fallback. Pre-filters anything the user already added or excluded. Taps write `briefing_interests` rows with `source='seed_accepted'`.
+
+### Persistent Semantic Feedback Loop
+
+Promotes thumbs-down from a per-segment reaction into a durable signal that reshapes the lens. Signatures are SHA-256 of `bucket|normalized_text`, so feedback persists across daily lens regenerations.
+
+**Two sources, both stored in `briefing_lens_feedback`:**
+
+1. **Explicit kill** (`source='kill'`, delta = -1.0) - user taps the Ban icon on any v2 segment. Takes effect on the next generation.
+2. **Aggregated thumbs-down** (`source='not_useful_aggregate'`, delta = -0.4) - nightly `pg_cron` job (`briefing-aggregate-feedback-nightly`, 03:07 UTC) promotes any lens signature that has accumulated 3+ not_useful reactions in the last 30 days.
+
+`applyFeedbackDeltas` runs in both the cold build path and the cached-lens path, so kills don't need to wait for the 24h lens cache to expire.
+
+**Kill UI:** Ban icon on `SegmentCard` and on `BriefingCard`'s inline segments, hidden on interest-type items (users remove their own interests from the Settings tab instead).
+
+### Feedback That Does Something
+
+Thumbs-up / thumbs-down now capture:
+- `lens_item_id` - what the segment was anchored to
+- `dwell_ms` - how long the user kept the segment open before reacting
+- `replayed` - whether they replayed the audio
+
+This is the substrate the aggregator reads from.
+
+### Segment UI (v2)
+
+Every v2 segment on the dashboard shows:
+1. Framework tag badge (SIGNAL / DECISION TRIGGER / KRISH'S TAKE)
+2. Headline (rewritten through the leader's lens, 8-16 words)
+3. `Anchored to: <lens item>` chip - the evidence
+4. Thumbs-up / thumbs-down (feedback)
+5. Bookmark (pin the anchor as a persistent beat)
+6. Ban (kill the lens signature)
+7. Source badge
+
+### Preliminary Insert Pattern
+
+`generate-briefing` writes an EARLY briefing row as soon as raw headlines are scored, so the frontend can show results while curation + script generation run in the background. The frontend polls every 3s; the preliminary row has `script_text = null` and empty `analysis` / `relevance_reason` fields that fill in when curation completes.
+
+### Data Architecture
+
+**Tables**
+- `briefings` - one row per briefing (`schema_version = 2` for v2 rows); carries `segments JSONB[]`, `context_snapshot` (lens + queries + excludes), `audio_url`
+- `briefing_feedback` - per-segment reactions with v2 fields (`lens_item_id`, `dwell_ms`, `replayed`)
+- `briefing_interests` - user-declared beats / entities / excludes
+- `industry_beat_library` - reference data for cold-start seeds
+- `briefing_lens_feedback` - persistent negative deltas per lens signature
+- `ai_response_cache` - lens cache + lens-item embedding cache
+- `training_material` - YAML voice guide (structural_rubric, hot_signal_taxonomy, exemplars, watchlist)
+
+**Extensions:** pgvector (for embeddings), pgcrypto (for signature hashing), pg_cron (for the nightly aggregator).
+
+**Edge Functions**
+- `generate-briefing` - main pipeline (both v1 + v2 paths)
+- `synthesize-briefing` - ElevenLabs audio synthesis
+- `briefing-diagnose` - read-only diagnostic: returns profile + lens + last briefing + feedback stats for the authenticated user
+- `get-industry-seeds` - returns industry-specific beat / entity suggestions
+- `briefing-kill-lens-item` - records an explicit kill
+- `briefing-aggregate-feedback` - admin / cron entrypoint (the nightly schedule uses a SQL function `sp_aggregate_briefing_feedback` so no service-role key is needed)
+
+**Shared modules** (`_shared/`)
+- `briefing-lens.ts` - Stages 1 + 2 (lens + query planner)
+- `briefing-scoring.ts` - Stage 4 (embeddings + dedupe + scoring + exclude filter)
+- `briefing-curation.ts` - Stage 5 (budget-constrained picker)
+- `user-context.ts` - profile projection (shared with diagnose)
+- `lens-signature.ts` - SHA-256 signature of `(type, text)` for stable feedback keying
+- `training-loader.ts`, `ai-cache.ts`, `model-router.ts`, `rateLimit.ts` - reused infra
+
+**Frontend hooks**
+- `useBriefing` - briefing fetch + polling
+- `useBriefingInterests` - CRUD for the Interests tab
+- `useIndustrySeeds` - cold-start suggestions
+- `useKillLensItem` - kill action wrapper
+
+### Pipeline Flags / Env Vars
+
+- `BRIEFING_V2_ENABLED_DEFAULT` - global default for v2 routing (`false` to stay on v1)
+- `BRIEFING_DEDUPE_THRESHOLD` - cosine threshold for headline dedupe (default 0.87)
+- `BRIEFING_EXCLUDE_THRESHOLD` - cosine threshold for user-exclude post-filter (default 0.80)
 
 ---
 
