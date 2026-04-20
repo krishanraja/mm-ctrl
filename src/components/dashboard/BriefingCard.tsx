@@ -3,14 +3,136 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw } from "lucide-react";
+import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw, Bookmark, BookmarkCheck, Ban, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Briefing, BriefingSegment } from "@/types/briefing";
 import { FRAMEWORK_TAG_CONFIG, BRIEFING_TYPES } from "@/types/briefing";
 import { usePollAudio, useGenerateBriefing } from "@/hooks/useBriefing";
+import { useBriefingInterests } from "@/hooks/useBriefingInterests";
+import { useKillLensItem } from "@/hooks/useKillLensItem";
+import { haptics } from "@/lib/haptics";
 import { supabase } from "@/integrations/supabase/client";
 import { useBriefingContext } from "@/contexts/BriefingContext";
+
+/**
+ * Inline segment row used in the expanded dashboard briefing card.
+ * Compact by design — matches the surrounding card density — but surfaces
+ * the v2 anchor + quick actions so the user sees the new loop without
+ * opening the full sheet.
+ */
+function InlineSegmentRow({
+  segment,
+  briefingId,
+}: {
+  segment: BriefingSegment;
+  briefingId: string;
+}) {
+  const tagConfig = FRAMEWORK_TAG_CONFIG[segment.framework_tag];
+  const anchor = (segment.matched_profile_fact ?? "").trim();
+  const hasV2 = anchor.length > 0 && !!segment.lens_item_id;
+  const canKill = hasV2 && !segment.lens_item_id!.startsWith("interest_");
+
+  const { beats, add } = useBriefingInterests();
+  const { killByBriefing, killing } = useKillLensItem();
+  const alreadyPinned =
+    anchor.length > 0 &&
+    beats.some((b) => b.text.toLowerCase() === anchor.toLowerCase());
+  const [pinning, setPinning] = useState(false);
+  const [killed, setKilled] = useState(false);
+  const isKilling = killing === (segment.lens_item_id ?? "");
+
+  const handlePin = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!anchor || alreadyPinned || pinning) return;
+    setPinning(true);
+    try {
+      await add("beat", anchor, { source: "manual" });
+      haptics.light();
+    } finally {
+      setPinning(false);
+    }
+  };
+
+  const handleKill = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!canKill || killed || isKilling || !segment.lens_item_id) return;
+    const ok = await killByBriefing({ briefingId, lensItemId: segment.lens_item_id });
+    if (ok) {
+      setKilled(true);
+      haptics.light();
+    }
+  };
+
+  return (
+    <div className="leading-snug group">
+      <div>
+        <span
+          className={cn(
+            "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
+            tagConfig?.className || "bg-muted text-muted-foreground border-border",
+          )}
+        >
+          {tagConfig?.label || segment.framework_tag}
+        </span>
+        <span className="text-xs text-muted-foreground">{segment.headline}</span>
+      </div>
+
+      {/* v2 anchor + quick actions. Hidden on v1 rows (anchor empty). */}
+      {hasV2 && (
+        <div className="flex items-center gap-2 mt-0.5 pl-1">
+          <span className="text-[10px] text-muted-foreground/70 italic truncate">
+            Anchored to: <span className="text-foreground/80">{anchor}</span>
+          </span>
+          <div className="flex items-center gap-0.5 ml-auto">
+            <button
+              onClick={handlePin}
+              disabled={alreadyPinned || pinning}
+              title={alreadyPinned ? `Already a beat: ${anchor}` : `Keep beat: ${anchor}`}
+              className={cn(
+                "p-1 rounded transition-colors",
+                alreadyPinned
+                  ? "text-accent bg-accent/10"
+                  : "text-muted-foreground/50 hover:text-accent hover:bg-accent/10",
+              )}
+            >
+              {pinning ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : alreadyPinned ? (
+                <BookmarkCheck className="w-3 h-3" />
+              ) : (
+                <Bookmark className="w-3 h-3" />
+              )}
+            </button>
+            {canKill && (
+              <button
+                onClick={handleKill}
+                disabled={killed || isKilling}
+                title={
+                  killed
+                    ? "Killed — won't appear in future briefings"
+                    : `Don't show me stories like this`
+                }
+                className={cn(
+                  "p-1 rounded transition-colors",
+                  killed
+                    ? "text-red-500 bg-red-500/10"
+                    : "text-muted-foreground/50 hover:text-red-500 hover:bg-red-500/10",
+                )}
+              >
+                {isKilling ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <Ban className="w-3 h-3" />
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function RotatingHeadlines({ segments }: { segments: BriefingSegment[] }) {
   const [index, setIndex] = useState(0);
@@ -217,25 +339,10 @@ export function BriefingCard({
           >
             <Card className="mt-1 overflow-hidden shadow-xl">
               <CardContent className="p-2.5">
-                <div className="space-y-1">
-                  {briefing.segments?.map((seg, i) => {
-                    const tagConfig = FRAMEWORK_TAG_CONFIG[seg.framework_tag];
-                    return (
-                      <div key={i} className="leading-snug">
-                        <span
-                          className={cn(
-                            "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
-                            tagConfig?.className || "bg-muted text-muted-foreground border-border"
-                          )}
-                        >
-                          {tagConfig?.label || seg.framework_tag}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {seg.headline}
-                        </span>
-                      </div>
-                    );
-                  })}
+                <div className="space-y-2">
+                  {briefing.segments?.map((seg, i) => (
+                    <InlineSegmentRow key={i} segment={seg} briefingId={briefing.id} />
+                  ))}
                 </div>
                 {/* Refresh button in expanded view */}
                 {onRefresh && (

@@ -38,6 +38,7 @@ import { useToast } from '@/hooks/use-toast';
 import { sanitizeTranscriptionError } from '@/utils/transcriptionErrors';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet, MiniPlayer, CustomBriefingSheet } from '@/components/briefing';
+import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
 import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type { BriefingType } from '@/types/briefing';
@@ -259,7 +260,10 @@ export function MobileMemoryDashboard() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
+                  className="space-y-2"
                 >
+                  {/* v2 cold-start: suggest industry beats until the user has declared interests. */}
+                  <SeedBeatsPrompt />
                   <BriefingCard
                     briefing={todaysBriefing}
                     hasListened={playback.hasListened}
