@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { MessageSquare, Mic, Radio, Settings as SettingsIcon, UserCircle } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
@@ -12,6 +12,15 @@ const LONG_PRESS_MS = 220
 
 export function GlobalFAB() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+
+  // The dashboard memory view (home tab) has its own on-screen mic and a
+  // Settings gear in the header, so a second mic-shaped FAB here just
+  // duplicates affordances. Hide the FAB on that one view; keep it on
+  // tabs that lack a voice entry point.
+  const isHomeMemoryView =
+    location.pathname === '/dashboard' && (searchParams.get('view') || 'memory') === 'memory'
   const [menuOpen, setMenuOpen] = useState(false)
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const didLongPress = useRef(false)
@@ -68,6 +77,8 @@ export function GlobalFAB() {
   }
 
   const briefingPlaying = playback.isPlaying
+
+  if (isHomeMemoryView) return null
 
   return (
     <>

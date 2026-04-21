@@ -1,11 +1,11 @@
-import { Plus, ArrowUpRight } from 'lucide-react';
+import { Plus, ArrowUpRight, Settings as SettingsIcon } from 'lucide-react';
 import { CtrlLogo } from '@/components/landing/CtrlLogo';
+import { useSettingsSheet } from '@/contexts/SettingsSheetContext';
 
 interface AppHeaderProps {
   /**
    * Retained for compatibility. The profile button no longer renders in the
-   * header on any platform; Profile is reachable via the global FAB menu
-   * (long-press the mic, tap Profile) which opens the Settings sheet.
+   * header on any platform; Profile is reachable from the Settings sheet.
    */
   showProfile?: boolean;
   onAdd?: () => void;
@@ -13,12 +13,13 @@ interface AppHeaderProps {
 }
 
 /**
- * Shared app header: small favicon icon + CTRL logo in top-left.
- * Used on all authenticated mobile pages.
- * Optionally renders Add / Export action buttons. Keep this bar minimal so
- * the viewport stays readable under browser chrome at 360px widths.
+ * Shared app header: small favicon icon + CTRL logo in top-left, and a
+ * Settings gear in the top-right so chrome is always reachable. Used on all
+ * authenticated mobile pages. Optionally renders Add / Export action buttons.
  */
 export function AppHeader({ onAdd, onExport }: AppHeaderProps) {
+  const { openSheet } = useSettingsSheet();
+
   return (
     <header className="flex-shrink-0 flex items-center justify-between px-5 pt-4 pb-2">
       <div className="flex items-center gap-2">
@@ -44,6 +45,13 @@ export function AppHeader({ onAdd, onExport }: AppHeaderProps) {
             <Plus className="h-4 w-4" />
           </button>
         )}
+        <button
+          onClick={openSheet}
+          className="w-8 h-8 rounded-full bg-muted/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          aria-label="Open settings"
+        >
+          <SettingsIcon className="h-4 w-4" />
+        </button>
       </div>
     </header>
   );
