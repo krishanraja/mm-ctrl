@@ -18,6 +18,7 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
     duration,
     transcript,
     error,
+    browserCaptionPreview,
     startRecording,
     stopRecording,
     resetRecording,
@@ -70,9 +71,14 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
 
       {/* Processing state */}
       {isProcessing ? (
-        <div className="flex flex-col items-center gap-4 py-8">
+        <div className="flex flex-col items-center gap-4 py-8 max-w-md mx-auto">
           <Loader2 className="h-12 w-12 text-accent animate-spin" />
           <p className="text-sm text-muted-foreground">Processing your recording...</p>
+          {browserCaptionPreview ? (
+            <p className="text-xs text-muted-foreground/80 text-center italic">
+              Browser preview (may differ from final): {browserCaptionPreview}
+            </p>
+          ) : null}
         </div>
       ) : (
         <>
@@ -111,6 +117,12 @@ export function VoiceRecorder({ onTranscript }: VoiceRecorderProps) {
 
               {/* Waveform */}
               <AudioWaveform isRecording={isRecording} />
+
+              {browserCaptionPreview ? (
+                <p className="text-xs text-muted-foreground text-center italic px-2">
+                  Live caption (approx.): {browserCaptionPreview}
+                </p>
+              ) : null}
 
               {/* Stop button */}
               <Button

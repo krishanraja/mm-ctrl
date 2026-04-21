@@ -53,6 +53,7 @@ import { AppHeader } from '@/components/memory-web/AppHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { PLATFORM_GUIDES } from '@/lib/platform-guides';
 import { ModelRecommendationCard } from '@/components/export/ModelRecommendationCard';
+import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 import type { ExportRecommendation } from '@/types/edge';
 
@@ -135,25 +136,40 @@ export default function ContextExport() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<'positive' | 'negative' | null>(null);
   const [showRawContent, setShowRawContent] = useState(false);
+  const [editExportReviewText, setEditExportReviewText] = useState('');
+
+  const handleVoiceTranscriptReady = useCallback((text: string) => {
+    setCustomTranscript(text);
+  }, []);
 
   // Voice recording for custom export
   const {
     isRecording,
     isProcessing: isTranscribing,
     duration,
-    transcript: voiceTranscript,
     error: voiceError,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
     startRecording,
     stopRecording,
     resetRecording,
-  } = useVoice({ maxDuration: 60 });
+  } = useVoice({
+    maxDuration: 60,
+    deferTranscriptCallback: true,
+    onTranscript: handleVoiceTranscriptReady,
+  });
 
-  // When voice transcript arrives, save it and advance
   useEffect(() => {
-    if (voiceTranscript && isCustomMode) {
-      setCustomTranscript(voiceTranscript);
+    if (pendingReview) {
+      setEditExportReviewText(pendingReview.transcript);
     }
-  }, [voiceTranscript, isCustomMode]);
+  }, [pendingReview]);
+
+  const handleConfirmExportVoiceReview = useCallback(async () => {
+    await confirmPendingTranscript(editExportReviewText);
+  }, [confirmPendingTranscript, editExportReviewText]);
 
   const goToStep = useCallback((target: WizardStep) => {
     setDirection(target > step ? 1 : -1);
@@ -342,7 +358,7 @@ export default function ContextExport() {
 
             {isPaidUser ? (
               <div className="mt-3">
-                {!isRecording && !isTranscribing && !customTranscript && (
+                {!isRecording && !isTranscribing && !customTranscript && !pendingReview && (
                   <button
                     onClick={startRecording}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-accent bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
@@ -353,25 +369,56 @@ export default function ContextExport() {
                 )}
 
                 {isRecording && (
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={stopRecording}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 transition-colors"
-                    >
-                      <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                      Stop ({duration}s)
-                    </button>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={stopRecording}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 transition-colors"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                        Stop ({duration}s)
+                      </button>
+                    </div>
+                    {browserCaptionPreview ? (
+                      <p className="text-xs text-muted-foreground italic">
+                        Live caption (approx.): {browserCaptionPreview}
+                      </p>
+                    ) : null}
                   </div>
                 )}
 
                 {isTranscribing && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <div className="w-3 h-3 border border-accent/30 border-t-accent rounded-full animate-spin" />
-                    Transcribing...
+                  <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 border border-accent/30 border-t-accent rounded-full animate-spin" />
+                      Transcribing...
+                    </div>
+                    {browserCaptionPreview ? (
+                      <p className="text-xs italic">
+                        Browser preview (may differ): {browserCaptionPreview}
+                      </p>
+                    ) : null}
                   </div>
                 )}
 
-                {customTranscript && (
+                {pendingReview && !isRecording && !isTranscribing && (
+                  <TranscriptReviewPanel
+                    transcript={pendingReview.transcript}
+                    rawTranscript={pendingReview.rawTranscript}
+                    refined={pendingReview.refined}
+                    editedText={editExportReviewText}
+                    onEditedTextChange={setEditExportReviewText}
+                    onConfirm={handleConfirmExportVoiceReview}
+                    onDismiss={() => {
+                      dismissPendingReview();
+                      setCustomTranscript(null);
+                    }}
+                    confirmLabel="Use this transcript"
+                    className="mt-1"
+                  />
+                )}
+
+                {customTranscript && !pendingReview && (
                   <div className="space-y-2">
                     <div className="rounded-lg bg-secondary/50 border border-border p-3">
                       <p className="text-xs text-foreground/80 leading-relaxed">
@@ -384,7 +431,7 @@ export default function ContextExport() {
                         className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-accent text-white hover:bg-accent/90 transition-colors"
                       >
                         <ArrowRight className="h-4 w-4" />
-                        Use this
+                        Continue
                       </button>
                       <button
                         onClick={() => {

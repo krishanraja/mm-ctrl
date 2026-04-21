@@ -36,6 +36,7 @@ import { BottomNav } from './BottomNav';
 import { AppHeader } from './AppHeader';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeTranscriptionError } from '@/utils/transcriptionErrors';
+import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet, MiniPlayer, CustomBriefingSheet } from '@/components/briefing';
 import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
@@ -132,10 +133,11 @@ export function MobileMemoryDashboard() {
     }
   };
 
-  const [mode, setMode] = useState<'idle' | 'voice' | 'text'>('idle');
+  const [mode, setMode] = useState<'idle' | 'voice' | 'text' | 'review'>('idle');
   const [textInput, setTextInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
+  const [editReviewText, setEditReviewText] = useState('');
   const processingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleTranscript = useCallback(
@@ -173,10 +175,30 @@ export function MobileMemoryDashboard() {
     isProcessing: isTranscribing,
     duration,
     error: voiceError,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
     startRecording,
     stopRecording,
     resetRecording,
-  } = useVoice({ maxDuration: 120, onTranscript: handleTranscript });
+  } = useVoice({ maxDuration: 120, deferTranscriptCallback: true, onTranscript: handleTranscript });
+
+  useEffect(() => {
+    if (pendingReview) {
+      setEditReviewText(pendingReview.transcript);
+      setMode('review');
+    }
+  }, [pendingReview]);
+
+  const handleConfirmVoiceReview = useCallback(async () => {
+    await confirmPendingTranscript(editReviewText);
+  }, [confirmPendingTranscript, editReviewText]);
+
+  const handleDismissVoiceReview = useCallback(() => {
+    dismissPendingReview();
+    setMode('idle');
+  }, [dismissPendingReview]);
 
   const activeProcessing = isProcessing || isExtracting || isTranscribing;
 
@@ -200,7 +222,7 @@ export function MobileMemoryDashboard() {
           description: 'You can cancel and try again.',
           variant: 'destructive',
         });
-      }, 35_000);
+      }, 120_000);
     } else if (processingTimerRef.current) {
       clearTimeout(processingTimerRef.current);
       processingTimerRef.current = null;
@@ -239,7 +261,8 @@ export function MobileMemoryDashboard() {
     `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
   const hasData = facts.length > 0;
-  const isVoiceExpanded = isRecording || activeProcessing || mode === 'text';
+  const isVoiceExpanded =
+    isRecording || activeProcessing || mode === 'text' || mode === 'review' || !!pendingReview;
 
   return (
     <>
@@ -471,7 +494,7 @@ export function MobileMemoryDashboard() {
             className={cn('flex flex-col', isVoiceExpanded && 'h-full justify-center')}
           >
             <AnimatePresence mode="wait">
-              {mode === 'idle' && !activeProcessing && (
+              {mode === 'idle' && !activeProcessing && !pendingReview && (
                 <motion.div
                   key="idle"
                   initial={{ opacity: 0 }}
@@ -597,7 +620,35 @@ export function MobileMemoryDashboard() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground/50">Tap to stop</p>
+                  {browserCaptionPreview ? (
+                    <p className="text-[10px] text-muted-foreground/70 text-center max-w-[280px] italic">
+                      Live caption (approx.): {browserCaptionPreview}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground/50">Tap to stop</p>
+                  )}
+                </motion.div>
+              )}
+
+              {mode === 'review' && pendingReview && (
+                <motion.div
+                  key="review"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="py-2 w-full max-w-md mx-auto"
+                >
+                  <TranscriptReviewPanel
+                    transcript={pendingReview.transcript}
+                    rawTranscript={pendingReview.rawTranscript}
+                    refined={pendingReview.refined}
+                    editedText={editReviewText}
+                    onEditedTextChange={setEditReviewText}
+                    onConfirm={handleConfirmVoiceReview}
+                    onDismiss={handleDismissVoiceReview}
+                    confirmLabel="Continue"
+                    className="border-foreground/10"
+                  />
                 </motion.div>
               )}
 
@@ -678,6 +729,11 @@ export function MobileMemoryDashboard() {
                   <p className="text-sm text-foreground font-medium">
                     {isTranscribing ? 'Processing speech...' : 'Weaving into your memory web...'}
                   </p>
+                  {isTranscribing && browserCaptionPreview ? (
+                    <p className="text-[10px] text-muted-foreground text-center max-w-[280px] italic">
+                      Browser preview (may differ): {browserCaptionPreview}
+                    </p>
+                  ) : null}
                   <button
                     onClick={handleCancelProcessing}
                     className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-1"

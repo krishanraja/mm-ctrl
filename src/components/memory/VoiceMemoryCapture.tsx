@@ -4,7 +4,7 @@
  * Integrates with memory system for fact extraction and verification
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Send, Loader2, Sparkles, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useVoice } from '@/hooks/useVoice';
 import { useUserMemory } from '@/hooks/useUserMemory';
 import { FactVerificationCard } from './FactVerificationCard';
+import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 
 interface VoiceMemoryCaptureProps {
   onComplete?: (transcript: string) => void;
@@ -28,25 +29,12 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
   showVerification = true,
   className,
 }) => {
-  const [mode, setMode] = useState<'idle' | 'voice' | 'text'>('idle');
+  const [mode, setMode] = useState<'idle' | 'voice' | 'text' | 'review'>('idle');
   const [textInput, setTextInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showVerificationCard, setShowVerificationCard] = useState(false);
   const [lastTranscript, setLastTranscript] = useState('');
-
-  const {
-    isRecording,
-    isProcessing: isTranscribing,
-    duration,
-    transcript,
-    error: voiceError,
-    startRecording,
-    stopRecording,
-    resetRecording,
-  } = useVoice({
-    maxDuration: 120,
-    onTranscript: handleTranscript,
-  });
+  const [editReviewText, setEditReviewText] = useState('');
 
   const {
     pendingVerifications,
@@ -57,12 +45,7 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
     clearPendingVerifications,
   } = useUserMemory();
 
-  async function handleTranscript(text: string) {
-    setLastTranscript(text);
-    await processInput(text);
-  }
-
-  async function processInput(text: string) {
+  const processInput = useCallback(async (text: string) => {
     if (!text.trim()) {
       toast.error('No speech detected. Please try again');
       return;
@@ -92,7 +75,46 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
     } finally {
       setIsProcessing(false);
     }
-  }
+  }, [showVerification, extractFromTranscript, onComplete, toast]);
+
+  const handleTranscript = useCallback(async (text: string) => {
+    setLastTranscript(text);
+    await processInput(text);
+  }, [processInput]);
+
+  const {
+    isRecording,
+    isProcessing: isTranscribing,
+    duration,
+    error: voiceError,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
+    startRecording,
+    stopRecording,
+    resetRecording,
+  } = useVoice({
+    maxDuration: 120,
+    deferTranscriptCallback: true,
+    onTranscript: handleTranscript,
+  });
+
+  useEffect(() => {
+    if (pendingReview) {
+      setEditReviewText(pendingReview.transcript);
+      setMode('review');
+    }
+  }, [pendingReview]);
+
+  const handleConfirmReview = useCallback(async () => {
+    await confirmPendingTranscript(editReviewText);
+  }, [confirmPendingTranscript, editReviewText]);
+
+  const handleDismissReview = useCallback(() => {
+    dismissPendingReview();
+    setMode('idle');
+  }, [dismissPendingReview]);
 
   const handleTextSubmit = async () => {
     if (!textInput.trim()) return;
@@ -131,6 +153,8 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
 
   const isLoading = isProcessing || isExtracting || isTranscribing;
 
+  const showIdle = mode === 'idle' && !isLoading && !pendingReview;
+
   return (
     <>
       <div className={cn('w-full max-w-lg mx-auto', className)}>
@@ -147,7 +171,7 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
         <div className="relative">
           <AnimatePresence mode="wait">
             {/* Idle state - show both options */}
-            {mode === 'idle' && !isLoading && (
+            {showIdle && (
               <motion.div
                 key="idle"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -246,7 +270,13 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
                   ))}
                 </div>
 
-                <p className="text-sm text-foreground/50">Tap to stop</p>
+                {browserCaptionPreview ? (
+                  <p className="text-xs text-foreground/50 text-center max-w-full px-2 italic">
+                    Live caption (approx.): {browserCaptionPreview}
+                  </p>
+                ) : (
+                  <p className="text-sm text-foreground/50">Tap to stop</p>
+                )}
               </motion.div>
             )}
 
@@ -344,13 +374,33 @@ export const VoiceMemoryCapture: React.FC<VoiceMemoryCaptureProps> = ({
                      isExtracting ? 'Learning about you...' : 
                      'Analyzing...'}
                   </p>
-                  <p className="text-sm text-foreground/50 mt-1">
-                    This only takes a moment
-                  </p>
+                  {isTranscribing && browserCaptionPreview ? (
+                    <p className="text-xs text-foreground/50 mt-2 max-w-full px-2 italic">
+                      Browser preview (may differ): {browserCaptionPreview}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-foreground/50 mt-1">
+                      This only takes a moment
+                    </p>
+                  )}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
+
+          {mode === 'review' && pendingReview && (
+            <TranscriptReviewPanel
+              transcript={pendingReview.transcript}
+              rawTranscript={pendingReview.rawTranscript}
+              refined={pendingReview.refined}
+              editedText={editReviewText}
+              onEditedTextChange={setEditReviewText}
+              onConfirm={handleConfirmReview}
+              onDismiss={handleDismissReview}
+              confirmLabel="Continue"
+              className="mt-4"
+            />
+          )}
 
           {/* Error display */}
           {voiceError && (

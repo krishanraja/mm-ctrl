@@ -1,3 +1,8 @@
+/**
+ * Transcription edge function.
+ * Env: OPENAI_API_KEY, GEMINI_API_KEY (fallback), optional OPENAI_TRANSCRIPTION_MODEL
+ * (default whisper-1; try gpt-4o-transcribe or gpt-4o-mini-transcribe — falls back to whisper-1 on failure).
+ */
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
@@ -15,10 +20,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const WHISPER_TIMEOUT = 15_000;
-const GEMINI_TIMEOUT = 12_000;
+/** Rough bytes/sec for compressed voice (webm/opus); used to scale API timeouts with recording length. */
+const BYTES_PER_SECOND_ESTIMATE = 12_000;
+const OPENAI_TIMEOUT_MIN_MS = 20_000;
+const OPENAI_TIMEOUT_MAX_MS = 120_000;
+const GEMINI_TIMEOUT_MIN_MS = 15_000;
+const GEMINI_TIMEOUT_MAX_MS = 45_000;
+
 const ENRICHMENT_TIMEOUT = 5_000;
 const REFINEMENT_TIMEOUT = 3_000;
+
+function estimateDurationSecondsFromBlob(blob: Blob): number {
+  return Math.max(1, blob.size / BYTES_PER_SECOND_ESTIMATE);
+}
+
+/** Scale OpenAI transcription timeout with estimated audio length (plan: align with up to ~120s recordings). */
+function computeOpenAiTranscriptionTimeoutMs(blob: Blob): number {
+  const estSec = estimateDurationSecondsFromBlob(blob);
+  const scaled = OPENAI_TIMEOUT_MIN_MS + Math.ceil(estSec * 500);
+  return Math.min(OPENAI_TIMEOUT_MAX_MS, Math.max(OPENAI_TIMEOUT_MIN_MS, scaled));
+}
+
+function computeGeminiTimeoutMs(blob: Blob): number {
+  const estSec = estimateDurationSecondsFromBlob(blob);
+  const scaled = GEMINI_TIMEOUT_MIN_MS + Math.ceil(estSec * 250);
+  return Math.min(GEMINI_TIMEOUT_MAX_MS, Math.max(GEMINI_TIMEOUT_MIN_MS, scaled));
+}
 
 async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
   const controller = new AbortController();
@@ -155,7 +182,7 @@ async function enrichWhisperPrompt(req: Request): Promise<string | null> {
   return contextParts.join('. ') + '.';
 }
 
-/** Compute confidence from Whisper segment-level scores. */
+/** Compute confidence from Whisper / compatible segment-level scores. */
 function computeWhisperConfidence(segments: Array<{ avg_logprob: number; no_speech_prob?: number }>): number {
   if (!segments || segments.length === 0) return 0.95;
   const segmentProbs = segments.map((seg) => {
@@ -166,6 +193,78 @@ function computeWhisperConfidence(segments: Array<{ avg_logprob: number; no_spee
   let confidence = segmentProbs.reduce((a, b) => a + b, 0) / segmentProbs.length;
   confidence = Math.max(0, Math.min(1, confidence));
   return Math.round(confidence * 100) / 100;
+}
+
+/** When verbose_json has no segments (some ASR models), use a neutral prior for refinement gating. */
+function confidenceFromTranscriptionJson(whisperResult: {
+  text?: string;
+  segments?: Array<{ avg_logprob: number; no_speech_prob?: number }>;
+}): number {
+  if (whisperResult.segments && whisperResult.segments.length > 0) {
+    return computeWhisperConfidence(whisperResult.segments);
+  }
+  return 0.88;
+}
+
+/**
+ * Try OpenAI audio/transcriptions with OPENAI_TRANSCRIPTION_MODEL (default whisper-1), then whisper-1 if primary differs and failed.
+ */
+async function transcribeWithOpenAI(
+  audioBlob: Blob,
+  whisperPrompt: string,
+  openAiKey: string,
+  timeoutMs: number,
+): Promise<{ text: string; confidence: number; provider: string; asrModel: string } | null> {
+  const configured = Deno.env.get("OPENAI_TRANSCRIPTION_MODEL")?.trim() || "whisper-1";
+  const fallback = "whisper-1";
+  const modelsToTry = configured === fallback ? [fallback] : [configured, fallback];
+  const tried = new Set<string>();
+
+  for (const model of modelsToTry) {
+    if (tried.has(model)) continue;
+    tried.add(model);
+
+    const whisperFormData = new FormData();
+    const audioFileName = audioBlob.type?.includes("mp4") ? "audio.mp4" : "audio.webm";
+    whisperFormData.append("file", audioBlob, audioFileName);
+    whisperFormData.append("model", model);
+    whisperFormData.append("language", "en");
+    whisperFormData.append("response_format", "verbose_json");
+    whisperFormData.append("temperature", "0");
+    whisperFormData.append("prompt", whisperPrompt);
+
+    try {
+      const response = await fetchWithTimeout(
+        "https://api.openai.com/v1/audio/transcriptions",
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${openAiKey}` },
+          body: whisperFormData,
+        },
+        timeoutMs,
+      );
+
+      if (response.ok) {
+        const whisperResult = await response.json();
+        const text = whisperResult.text as string;
+        if (!text?.trim()) {
+          console.warn(`[AI-PROVIDER] OpenAI model ${model} returned empty text`);
+          continue;
+        }
+        const confidence = confidenceFromTranscriptionJson(whisperResult);
+        const provider = model.startsWith("gpt-4o") ? "openai-gpt4o-asr" : "whisper";
+        console.log(`[AI-PROVIDER] OpenAI SUCCESS model=${model}`);
+        return { text, confidence, provider, asrModel: model };
+      }
+      const errorText = await response.text();
+      console.warn(`[AI-PROVIDER] OpenAI model ${model} HTTP ${response.status}: ${errorText.slice(0, 200)}`);
+    } catch (err: unknown) {
+      const reason =
+        err instanceof Error ? (err.name === "AbortError" ? "timeout" : err.message) : String(err);
+      console.warn(`[AI-PROVIDER] OpenAI model ${model} failed (${reason})`);
+    }
+  }
+  return null;
 }
 
 serve(async (req) => {
@@ -242,47 +341,23 @@ serve(async (req) => {
 
     const whisperPrompt = enrichedSuffix ? `${basePrompt} ${enrichedSuffix}` : basePrompt;
 
+    const openAiTimeoutMs = computeOpenAiTranscriptionTimeoutMs(audioBlob as Blob);
+    const geminiTimeoutMs = computeGeminiTimeoutMs(audioBlob as Blob);
+
     // ========================================
-    // TIER 1: OpenAI Whisper
+    // TIER 1: OpenAI (OPENAI_TRANSCRIPTION_MODEL → whisper-1 fallback)
     // ========================================
-    let result: { text: string; confidence: number; provider: string } | null = null;
+    let result: { text: string; confidence: number; provider: string; asrModel: string } | null = null;
 
     if (OPENAI_API_KEY) {
-      try {
-        const whisperFormData = new FormData();
-        const audioFileName = (audioBlob as Blob).type?.includes('mp4') ? 'audio.mp4' : 'audio.webm';
-        whisperFormData.append('file', audioBlob, audioFileName);
-        whisperFormData.append('model', 'whisper-1');
-        whisperFormData.append('language', 'en');
-        whisperFormData.append('response_format', 'verbose_json');
-        whisperFormData.append('temperature', '0');
-        whisperFormData.append('prompt', whisperPrompt);
-
-        const response = await fetchWithTimeout(
-          'https://api.openai.com/v1/audio/transcriptions',
-          {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}` },
-            body: whisperFormData,
-          },
-          WHISPER_TIMEOUT
-        );
-
-        if (response.ok) {
-          const whisperResult = await response.json();
-          const confidence = computeWhisperConfidence(whisperResult.segments);
-          result = { text: whisperResult.text, confidence, provider: 'whisper' };
-          console.log(`[AI-PROVIDER] Whisper SUCCESS`);
-        } else {
-          const errorText = await response.text();
-          console.warn(`[AI-PROVIDER] Whisper HTTP ${response.status}: ${errorText.slice(0, 200)}`);
-        }
-      } catch (err) {
-        const reason = err.name === 'AbortError' ? 'timeout' : err.message;
-        console.warn(`[AI-PROVIDER] Whisper failed (${reason})`);
-      }
+      result = await transcribeWithOpenAI(
+        audioBlob as Blob,
+        whisperPrompt,
+        OPENAI_API_KEY,
+        openAiTimeoutMs,
+      );
     } else {
-      console.log('[AI-PROVIDER] Whisper skipped (no OPENAI_API_KEY)');
+      console.log('[AI-PROVIDER] OpenAI transcription skipped (no OPENAI_API_KEY)');
     }
 
     // ========================================
@@ -312,14 +387,14 @@ serve(async (req) => {
               generationConfig: { temperature: 0, maxOutputTokens: 2000 },
             }),
           },
-          GEMINI_TIMEOUT
+          geminiTimeoutMs
         );
 
         if (geminiResp.ok) {
           const data = await geminiResp.json();
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
           if (text && text.trim().length > 0) {
-            result = { text: text.trim(), confidence: 0.75, provider: 'gemini' };
+            result = { text: text.trim(), confidence: 0.75, provider: 'gemini', asrModel: 'gemini-2.0-flash' };
             console.log(`[AI-PROVIDER] Gemini Flash SUCCESS (fallback)`);
           } else {
             console.warn('[AI-PROVIDER] Gemini returned empty transcript');
@@ -410,11 +485,12 @@ serve(async (req) => {
           session_id: isUuid ? sessionIdStr : null,
           event_type: 'transcription_complete',
           module_name: moduleName,
-          metadata: {
+            metadata: {
             duration_seconds: duration,
             transcript_length: result.text.length,
             confidence: result.confidence,
             provider: result.provider,
+            asr_model: result.asrModel,
             session_id_raw: isUuid ? null : sessionIdStr,
             refined: refinementApplied,
             refinement_latency_ms: refinementLatencyMs,
@@ -438,6 +514,7 @@ serve(async (req) => {
         duration_seconds: duration,
         needs_clarification: result.confidence < 0.5,
         provider: result.provider,
+        asr_model: result.asrModel,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

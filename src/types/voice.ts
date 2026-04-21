@@ -84,3 +84,10 @@ export interface TranscriptionResult {
   duration_seconds: number;
   needs_clarification: boolean;
 }
+
+/** Shown when `deferTranscriptCallback` is true; user confirms or edits before downstream handlers run. */
+export interface PendingTranscriptReview {
+  transcript: string;
+  rawTranscript?: string;
+  refined?: boolean;
+}

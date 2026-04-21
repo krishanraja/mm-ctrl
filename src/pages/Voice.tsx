@@ -1,34 +1,22 @@
 import * as React from "react"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Mic, MicOff, Send, Sparkles, MessageSquare, X } from "lucide-react"
+import { ArrowLeft, Mic, MicOff, Send, Sparkles, MessageSquare } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useVoice } from "@/hooks/useVoice"
 import { useUserMemory } from "@/hooks/useUserMemory"
 import { FactVerificationCard } from "@/components/memory/FactVerificationCard"
+import { TranscriptReviewPanel } from "@/components/voice/TranscriptReviewPanel"
 
-type CaptureMode = 'idle' | 'voice' | 'text' | 'processing'
+type CaptureMode = 'idle' | 'voice' | 'text' | 'processing' | 'review'
 
 export default function Voice() {
   const navigate = useNavigate()
   const [mode, setMode] = useState<CaptureMode>('idle')
   const [textInput, setTextInput] = useState('')
-  const [lastTranscript, setLastTranscript] = useState('')
   const [showVerification, setShowVerification] = useState(false)
-
-  const {
-    isRecording,
-    isProcessing: isTranscribing,
-    duration,
-    error: voiceError,
-    startRecording,
-    stopRecording,
-    resetRecording,
-  } = useVoice({
-    maxDuration: 120,
-    onTranscript: handleTranscript,
-  })
+  const [editReviewText, setEditReviewText] = useState('')
 
   const {
     pendingVerifications,
@@ -39,13 +27,12 @@ export default function Voice() {
     clearPendingVerifications,
   } = useUserMemory()
 
-  async function handleTranscript(text: string) {
-    setLastTranscript(text)
-    setMode('processing')
-    await processInput(text)
-  }
+  const handleComplete = useCallback(() => {
+    setMode('idle')
+    navigate('/diagnostic')
+  }, [navigate])
 
-  async function processInput(text: string) {
+  const processInput = useCallback(async (text: string) => {
     if (!text.trim()) {
       setMode('idle')
       return
@@ -53,7 +40,7 @@ export default function Voice() {
 
     try {
       const result = await extractFromTranscript(text)
-      
+
       if (result.pending_verifications?.length > 0) {
         setShowVerification(true)
       } else {
@@ -63,16 +50,49 @@ export default function Voice() {
       console.error('Error processing input:', err)
       handleComplete()
     }
-  }
+  }, [extractFromTranscript, handleComplete])
 
-  const handleComplete = () => {
+  const handleTranscript = useCallback(async (text: string) => {
+    setMode('processing')
+    await processInput(text)
+  }, [processInput])
+
+  const {
+    isRecording,
+    isProcessing: isTranscribing,
+    duration,
+    error: voiceError,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
+    startRecording,
+    stopRecording,
+    resetRecording,
+  } = useVoice({
+    maxDuration: 120,
+    deferTranscriptCallback: true,
+    onTranscript: handleTranscript,
+  })
+
+  useEffect(() => {
+    if (pendingReview) {
+      setEditReviewText(pendingReview.transcript)
+      setMode('review')
+    }
+  }, [pendingReview])
+
+  const handleConfirmReview = useCallback(async () => {
+    await confirmPendingTranscript(editReviewText)
+  }, [confirmPendingTranscript, editReviewText])
+
+  const handleDismissReview = useCallback(() => {
+    dismissPendingReview()
     setMode('idle')
-    navigate('/diagnostic')
-  }
+  }, [dismissPendingReview])
 
   const handleTextSubmit = async () => {
     if (!textInput.trim()) return
-    setLastTranscript(textInput)
     setMode('processing')
     await processInput(textInput)
     setTextInput('')
@@ -131,11 +151,11 @@ export default function Voice() {
       </header>
 
       {/* Main Content - Centered, No Scroll */}
-      <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 sm:px-6">
+      <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 sm:px-6 overflow-y-auto">
         <div className="w-full max-w-md">
           <AnimatePresence mode="wait">
             {/* Idle State */}
-            {mode === 'idle' && !isLoading && (
+            {mode === 'idle' && !isLoading && !pendingReview && (
               <motion.div
                 key="idle"
                 initial={{ opacity: 0, y: 20 }}
@@ -248,9 +268,15 @@ export default function Voice() {
                   ))}
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-4">
-                  Tap to stop
-                </p>
+                {browserCaptionPreview ? (
+                  <p className="text-xs text-muted-foreground mt-4 max-w-full text-center px-2 italic">
+                    Live caption (approx.): {browserCaptionPreview}
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-4">
+                    Tap to stop
+                  </p>
+                )}
               </motion.div>
             )}
 
@@ -341,12 +367,32 @@ export default function Voice() {
                 <p className="text-sm text-foreground mt-6">
                   {isTranscribing ? 'Processing...' : 'Learning about you...'}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  This only takes a moment
-                </p>
+                {isTranscribing && browserCaptionPreview ? (
+                  <p className="text-xs text-muted-foreground mt-3 max-w-full text-center px-2 italic">
+                    Browser preview (may differ): {browserCaptionPreview}
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This only takes a moment
+                  </p>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
+
+          {mode === 'review' && pendingReview && (
+            <TranscriptReviewPanel
+              transcript={pendingReview.transcript}
+              rawTranscript={pendingReview.rawTranscript}
+              refined={pendingReview.refined}
+              editedText={editReviewText}
+              onEditedTextChange={setEditReviewText}
+              onConfirm={handleConfirmReview}
+              onDismiss={handleDismissReview}
+              confirmLabel="Continue"
+              className="mt-4"
+            />
+          )}
 
           {/* Error Display */}
           {voiceError && (

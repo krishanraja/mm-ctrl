@@ -22,6 +22,7 @@ import { useVoice } from "@/hooks/useVoice";
 import { useEdgeSubscription } from "@/hooks/useEdgeSubscription";
 import { EdgePaywall } from "@/components/edge/EdgePaywall";
 import { BriefingTypePicker } from "./BriefingTypePicker";
+import { TranscriptReviewPanel } from "@/components/voice/TranscriptReviewPanel";
 import type { BriefingType } from "@/types/briefing";
 
 interface CustomBriefingSheetProps {
@@ -40,6 +41,7 @@ function CustomBriefingContent({
   const [inputMode, setInputMode] = useState<"voice" | "text">("text");
   const [textInput, setTextInput] = useState("");
   const [showPaywall, setShowPaywall] = useState(false);
+  const [editReviewText, setEditReviewText] = useState("");
   const { hasAccess } = useEdgeSubscription();
 
   const handleTranscript = useCallback((transcript: string) => {
@@ -50,10 +52,28 @@ function CustomBriefingContent({
     isRecording,
     isProcessing: isTranscribing,
     duration,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
     startRecording,
     stopRecording,
     resetRecording,
-  } = useVoice({ maxDuration: 60, onTranscript: handleTranscript });
+  } = useVoice({
+    maxDuration: 60,
+    deferTranscriptCallback: true,
+    onTranscript: handleTranscript,
+  });
+
+  useEffect(() => {
+    if (pendingReview) {
+      setEditReviewText(pendingReview.transcript);
+    }
+  }, [pendingReview]);
+
+  const handleConfirmBriefingReview = useCallback(async () => {
+    await confirmPendingTranscript(editReviewText);
+  }, [confirmPendingTranscript, editReviewText]);
 
   const formatTime = (s: number) =>
     `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
@@ -82,6 +102,7 @@ function CustomBriefingContent({
     !isGenerating &&
     !isRecording &&
     !isTranscribing &&
+    !pendingReview &&
     (selectedType !== "custom_voice" || textInput.trim());
 
   // Show context input for custom_voice, or optionally for other types
@@ -161,50 +182,83 @@ function CustomBriefingContent({
                   />
                 </div>
               ) : (
-                <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/30">
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={handleVoiceToggle}
-                    disabled={isTranscribing}
-                    className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-                      isRecording
-                        ? "bg-red-500 text-white"
-                        : isTranscribing
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-accent text-accent-foreground"
-                    )}
-                  >
-                    {isTranscribing ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : isRecording ? (
-                      <MicOff className="w-4 h-4" />
-                    ) : (
-                      <Mic className="w-4 h-4" />
-                    )}
-                  </motion.button>
-                  <div className="flex-1 min-w-0">
-                    {isRecording ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                        <span className="text-xs text-foreground font-medium">
-                          Recording {formatTime(duration)}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/30">
+                    <motion.button
+                      whileTap={{ scale: 0.9 }}
+                      onClick={handleVoiceToggle}
+                      disabled={isTranscribing || !!pendingReview}
+                      className={cn(
+                        "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
+                        isRecording
+                          ? "bg-red-500 text-white"
+                          : isTranscribing
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-accent text-accent-foreground"
+                      )}
+                    >
+                      {isTranscribing ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : isRecording ? (
+                        <MicOff className="w-4 h-4" />
+                      ) : (
+                        <Mic className="w-4 h-4" />
+                      )}
+                    </motion.button>
+                    <div className="flex-1 min-w-0">
+                      {isRecording ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                            <span className="text-xs text-foreground font-medium">
+                              Recording {formatTime(duration)}
+                            </span>
+                          </div>
+                          {browserCaptionPreview ? (
+                            <p className="text-[10px] text-muted-foreground italic line-clamp-2">
+                              {browserCaptionPreview}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : isTranscribing ? (
+                        <div className="space-y-1">
+                          <span className="text-xs text-muted-foreground">
+                            Transcribing...
+                          </span>
+                          {browserCaptionPreview ? (
+                            <p className="text-[10px] text-muted-foreground italic line-clamp-2">
+                              Preview: {browserCaptionPreview}
+                            </p>
+                          ) : null}
+                        </div>
+                      ) : textInput && !pendingReview ? (
+                        <p className="text-xs text-foreground line-clamp-2">
+                          {textInput}
+                        </p>
+                      ) : !pendingReview ? (
+                        <span className="text-xs text-muted-foreground">
+                          Tap to record your context
                         </span>
-                      </div>
-                    ) : isTranscribing ? (
-                      <span className="text-xs text-muted-foreground">
-                        Transcribing...
-                      </span>
-                    ) : textInput ? (
-                      <p className="text-xs text-foreground line-clamp-2">
-                        {textInput}
-                      </p>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">
-                        Tap to record your context
-                      </span>
-                    )}
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          Review transcript below
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  {pendingReview && !isRecording && !isTranscribing && (
+                    <TranscriptReviewPanel
+                      transcript={pendingReview.transcript}
+                      rawTranscript={pendingReview.rawTranscript}
+                      refined={pendingReview.refined}
+                      editedText={editReviewText}
+                      onEditedTextChange={setEditReviewText}
+                      onConfirm={handleConfirmBriefingReview}
+                      onDismiss={() => dismissPendingReview()}
+                      confirmLabel="Use transcript"
+                      className="border-border"
+                    />
+                  )}
                 </div>
               )}
             </div>

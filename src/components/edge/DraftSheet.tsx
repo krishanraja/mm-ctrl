@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mic,
@@ -29,6 +29,7 @@ import { useVoice } from '@/hooks/useVoice';
 import { supabase } from '@/integrations/supabase/client';
 import type { EdgeCapability, ActionType, SharpenCapability } from '@/types/edge';
 import { COVER_CAPABILITY_META, SHARPEN_CAPABILITY_META } from '@/types/edge';
+import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -117,6 +118,7 @@ function DraftContent({
   const [draftState, setDraftState] = useState<DraftState>('idle');
   const [voiceTranscript, setVoiceTranscript] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [editReviewText, setEditReviewText] = useState('');
 
   const meta = resolveCapabilityMeta(capability, actionType);
   const promptText = getPromptText(actionType, capability);
@@ -136,10 +138,29 @@ function DraftContent({
     isRecording,
     isProcessing: isTranscribing,
     duration,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
     startRecording,
     stopRecording,
     resetRecording,
-  } = useVoice({ maxDuration: 120, onTranscript: handleTranscript });
+  } = useVoice({
+    maxDuration: 120,
+    deferTranscriptCallback: true,
+    onTranscript: handleTranscript,
+  });
+
+  useEffect(() => {
+    if (pendingReview) {
+      setEditReviewText(pendingReview.transcript);
+      setDraftState('idle');
+    }
+  }, [pendingReview]);
+
+  const handleConfirmVoiceReview = useCallback(async () => {
+    await confirmPendingTranscript(editReviewText);
+  }, [confirmPendingTranscript, editReviewText]);
 
   const handleVoiceToggle = useCallback(() => {
     if (isRecording) {
@@ -296,15 +317,45 @@ function DraftContent({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                  className="flex flex-col items-center gap-2 text-sm text-muted-foreground"
                 >
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Transcribing...
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Transcribing...
+                  </div>
+                  {browserCaptionPreview ? (
+                    <p className="text-xs text-center italic max-w-full px-1">
+                      Browser preview (may differ): {browserCaptionPreview}
+                    </p>
+                  ) : null}
                 </motion.div>
               )}
 
-              {/* Transcript preview */}
-              {voiceTranscript && !isRecording && !isTranscribing && (
+              {isRecording && browserCaptionPreview ? (
+                <p className="text-xs text-muted-foreground/70 text-center italic max-w-full">
+                  Live caption (approx.): {browserCaptionPreview}
+                </p>
+              ) : null}
+
+              {pendingReview && !isRecording && !isTranscribing && (
+                <TranscriptReviewPanel
+                  transcript={pendingReview.transcript}
+                  rawTranscript={pendingReview.rawTranscript}
+                  refined={pendingReview.refined}
+                  editedText={editReviewText}
+                  onEditedTextChange={setEditReviewText}
+                  onConfirm={handleConfirmVoiceReview}
+                  onDismiss={() => {
+                    dismissPendingReview();
+                    setVoiceTranscript(null);
+                  }}
+                  confirmLabel="Use this text"
+                  className="w-full"
+                />
+              )}
+
+              {/* Transcript preview after confirm */}
+              {voiceTranscript && !isRecording && !isTranscribing && !pendingReview && (
                 <motion.div
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -320,7 +371,7 @@ function DraftContent({
               )}
 
               {/* Idle hint */}
-              {!isRecording && !isTranscribing && !voiceTranscript && (
+              {!isRecording && !isTranscribing && !voiceTranscript && !pendingReview && (
                 <p className="text-xs text-muted-foreground/50">
                   Tap to speak (up to 2 minutes)
                 </p>

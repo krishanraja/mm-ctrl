@@ -13,7 +13,8 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 }
 
 const DEFAULT_TIMEOUT = 15_000 // 15 seconds for general edge functions
-const TRANSCRIPTION_TIMEOUT = 45_000 // 45 seconds for transcription (covers Whisper 15s + Gemini 12s + overhead)
+// Server scales OpenAI timeout up to 120s by audio size; Gemini + refinement need headroom.
+const TRANSCRIPTION_TIMEOUT = 150_000
 
 // Generic edge function invoker with error handling and timeout
 export async function invokeEdgeFunction<T>(
@@ -153,6 +154,7 @@ export const api = {
       confidence?: number
       duration_seconds?: number
       provider?: string
+      asr_model?: string
     }
   },
 

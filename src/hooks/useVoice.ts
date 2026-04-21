@@ -1,10 +1,16 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { api } from '@/lib/api'
 import { uploadVoiceRecordingToStorage } from '@/utils/supabaseStorage'
+import type { PendingTranscriptReview } from '@/types/voice'
 
 interface UseVoiceOptions {
   maxDuration?: number // in seconds
-  onTranscript?: (transcript: string) => void
+  onTranscript?: (transcript: string) => void | Promise<void>
+  /**
+   * When true, transcription result is held in `pendingReview` until `confirmPendingTranscript` runs.
+   * Use with TranscriptReviewPanel for editable preview on critical flows.
+   */
+  deferTranscriptCallback?: boolean
 }
 
 interface UseVoiceReturn {
@@ -13,42 +19,56 @@ interface UseVoiceReturn {
   duration: number
   transcript: string | null
   error: Error | null
+  /** Live browser caption during recording + while server transcribes (non-authoritative). */
+  browserCaptionPreview: string
+  pendingReview: PendingTranscriptReview | null
+  confirmPendingTranscript: (editedText?: string) => Promise<void>
+  dismissPendingReview: () => void
   startRecording: () => Promise<void>
   stopRecording: () => void
   resetRecording: () => void
 }
 
 export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
-  const { maxDuration = 120, onTranscript } = options
+  const { maxDuration = 120, deferTranscriptCallback = false } = options
+
+  const onTranscriptRef = useRef(options.onTranscript)
+  useEffect(() => {
+    onTranscriptRef.current = options.onTranscript
+  }, [options.onTranscript])
 
   const [isRecording, setIsRecording] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [duration, setDuration] = useState(0)
   const [transcript, setTranscript] = useState<string | null>(null)
   const [error, setError] = useState<Error | null>(null)
+  const [browserCaptionPreview, setBrowserCaptionPreview] = useState('')
+  const [pendingReview, setPendingReview] = useState<PendingTranscriptReview | null>(null)
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
 
-  // Web Speech API fallback: accumulates transcript in parallel during recording
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const speechRecognitionRef = useRef<any>(null)
   const webSpeechTranscriptRef = useRef<string>('')
 
-  // Cleanup function
   const cleanup = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current)
       timerRef.current = null
     }
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop())
+      streamRef.current.getTracks().forEach((track) => track.stop())
       streamRef.current = null
     }
     if (speechRecognitionRef.current) {
-      try { speechRecognitionRef.current.stop() } catch { /* already stopped */ }
+      try {
+        speechRecognitionRef.current.stop()
+      } catch {
+        /* already stopped */
+      }
       speechRecognitionRef.current = null
     }
     webSpeechTranscriptRef.current = ''
@@ -56,12 +76,45 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
     chunksRef.current = []
   }, [])
 
-  // Start recording
+  const confirmPendingTranscript = useCallback(async (editedText?: string) => {
+    const pending = pendingReview
+    if (!pending) return
+    const text = (editedText ?? pending.transcript).trim()
+    if (!text) return
+    setPendingReview(null)
+    setTranscript(text)
+    const cb = onTranscriptRef.current
+    if (cb) await cb(text)
+  }, [pendingReview])
+
+  const dismissPendingReview = useCallback(() => {
+    setPendingReview(null)
+    setTranscript(null)
+  }, [])
+
+  const stopRecordingFnRef = useRef<() => void>(() => {})
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [isRecording])
+
+  useEffect(() => {
+    stopRecordingFnRef.current = stopRecording
+  }, [stopRecording])
+
   const startRecording = useCallback(async () => {
     try {
       setError(null)
       setTranscript(null)
+      setPendingReview(null)
       setDuration(0)
+      setBrowserCaptionPreview('')
       chunksRef.current = []
       webSpeechTranscriptRef.current = ''
 
@@ -71,14 +124,12 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
           noiseSuppression: true,
           autoGainControl: true,
           sampleRate: 16000,
-        }
+        },
       })
       streamRef.current = stream
 
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm')
-          ? 'audio/webm'
-          : 'audio/mp4'
+        mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4',
       })
       mediaRecorderRef.current = mediaRecorder
 
@@ -92,41 +143,57 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
         setIsRecording(false)
         setIsProcessing(true)
 
-        // Stop Web Speech API recognition
         if (speechRecognitionRef.current) {
-          try { speechRecognitionRef.current.stop() } catch { /* already stopped */ }
+          try {
+            speechRecognitionRef.current.stop()
+          } catch {
+            /* already stopped */
+          }
           speechRecognitionRef.current = null
+        }
+
+        const previewSnapshot = webSpeechTranscriptRef.current.trim()
+        if (previewSnapshot) {
+          setBrowserCaptionPreview(previewSnapshot)
         }
 
         try {
           const audioBlob = new Blob(chunksRef.current, {
-            type: mediaRecorder.mimeType
+            type: mediaRecorder.mimeType,
           })
 
-          // Transcribe via edge function (Whisper -> Gemini failover)
           const result = await api.transcribeAudio(audioBlob)
-          setTranscript(result.transcript)
 
           if (result.provider) {
-            console.log(`[VOICE] Transcribed via ${result.provider}`)
+            console.log(`[VOICE] Transcribed via ${result.provider}`, result.asr_model ?? '')
           }
 
-          // Retain raw audio in Supabase Storage (fire-and-forget)
           const sessionId = crypto.randomUUID()
-          uploadVoiceRecordingToStorage(audioBlob, sessionId, 'voice-capture')
-            .catch(err => console.warn('Audio storage failed (non-blocking):', err))
+          uploadVoiceRecordingToStorage(audioBlob, sessionId, 'voice-capture').catch((err) =>
+            console.warn('Audio storage failed (non-blocking):', err),
+          )
 
-          if (onTranscript) {
-            await onTranscript(result.transcript)
+          if (deferTranscriptCallback) {
+            setPendingReview({
+              transcript: result.transcript,
+              rawTranscript: result.raw_transcript,
+              refined: result.refined === true,
+            })
+          } else {
+            setTranscript(result.transcript)
+            const cb = onTranscriptRef.current
+            if (cb) await cb(result.transcript)
           }
         } catch (err) {
-          // TIER 3: If edge function failed entirely, try the Web Speech API fallback
           const fallbackText = webSpeechTranscriptRef.current.trim()
           if (fallbackText.length > 5) {
             console.warn('[VOICE] Edge function failed, using Web Speech API fallback transcript')
-            setTranscript(fallbackText)
-            if (onTranscript) {
-              await onTranscript(fallbackText)
+            if (deferTranscriptCallback) {
+              setPendingReview({ transcript: fallbackText })
+            } else {
+              setTranscript(fallbackText)
+              const cb = onTranscriptRef.current
+              if (cb) await cb(fallbackText)
             }
           } else {
             console.error('Transcription error:', err)
@@ -134,14 +201,14 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
           }
         } finally {
           setIsProcessing(false)
+          setBrowserCaptionPreview('')
           cleanup()
         }
       }
 
-      mediaRecorder.start(1000) // Collect data every second
+      mediaRecorder.start(1000)
       setIsRecording(true)
 
-      // Start parallel Web Speech API recognition as client-side fallback
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const w = window as any
@@ -149,7 +216,7 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
         if (SpeechRecognitionAPI) {
           const recognition = new SpeechRecognitionAPI()
           recognition.continuous = true
-          recognition.interimResults = false // only final results
+          recognition.interimResults = false
           recognition.lang = 'en-US'
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,14 +224,20 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
             for (let i = event.resultIndex; i < event.results.length; i++) {
               if (event.results[i].isFinal) {
                 webSpeechTranscriptRef.current += event.results[i][0].transcript + ' '
+                setBrowserCaptionPreview(webSpeechTranscriptRef.current.trim())
               }
             }
           }
-          recognition.onerror = () => { /* non-blocking fallback */ }
+          recognition.onerror = () => {
+            /* non-blocking fallback */
+          }
           recognition.onend = () => {
-            // Restart if still recording (Web Speech API auto-stops after silence)
             if (mediaRecorderRef.current?.state === 'recording' && speechRecognitionRef.current) {
-              try { speechRecognitionRef.current.start() } catch { /* ignore */ }
+              try {
+                speechRecognitionRef.current.start()
+              } catch {
+                /* ignore */
+              }
             }
           }
 
@@ -172,39 +245,25 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
           recognition.start()
         }
       } catch {
-        // Web Speech API not available - no fallback, but edge function still works
+        /* Web Speech API not available */
       }
 
-      // Start duration timer
       timerRef.current = setInterval(() => {
-        setDuration(prev => {
+        setDuration((prev) => {
           const newDuration = prev + 1
           if (newDuration >= maxDuration) {
-            stopRecording()
+            stopRecordingFnRef.current()
           }
           return newDuration
         })
       }, 1000)
-
     } catch (err) {
       console.error('Failed to start recording:', err)
       setError(new Error('Microphone access denied. Please allow microphone access to record.'))
       cleanup()
     }
-  }, [maxDuration, onTranscript, cleanup])
+  }, [maxDuration, cleanup, deferTranscriptCallback])
 
-  // Stop recording
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-        timerRef.current = null
-      }
-    }
-  }, [isRecording])
-
-  // Reset recording
   const resetRecording = useCallback(() => {
     cleanup()
     setIsRecording(false)
@@ -212,9 +271,10 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
     setDuration(0)
     setTranscript(null)
     setError(null)
+    setBrowserCaptionPreview('')
+    setPendingReview(null)
   }, [cleanup])
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       cleanup()
@@ -227,6 +287,10 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
     duration,
     transcript,
     error,
+    browserCaptionPreview,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
     startRecording,
     stopRecording,
     resetRecording,

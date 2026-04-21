@@ -38,6 +38,7 @@ import { MemoryWebVisualization } from './MemoryWebVisualization';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet } from '@/components/briefing/BriefingSheet';
 import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
+import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type {
@@ -205,17 +206,43 @@ export function DesktopMemoryDashboard() {
     await refetchBriefing();
   };
 
-  const { isRecording, startRecording, stopRecording } = useVoice({
-    onTranscript: (transcript) => setInputText(transcript),
-  });
-
-  const { triggerImport, handleFiles, isImporting, fileInputProps } = useMarkdownImport();
-
   const { toast } = useToast();
   const [inputText, setInputText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quickExportCopied, setQuickExportCopied] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [editDesktopReviewText, setEditDesktopReviewText] = useState('');
+
+  const handleDesktopVoiceTranscript = useCallback((transcript: string) => {
+    setInputText(transcript);
+  }, []);
+
+  const {
+    isRecording,
+    isProcessing: isVoiceProcessing,
+    pendingReview,
+    confirmPendingTranscript,
+    dismissPendingReview,
+    browserCaptionPreview,
+    startRecording,
+    stopRecording,
+  } = useVoice({
+    maxDuration: 120,
+    deferTranscriptCallback: true,
+    onTranscript: handleDesktopVoiceTranscript,
+  });
+
+  useEffect(() => {
+    if (pendingReview) {
+      setEditDesktopReviewText(pendingReview.transcript);
+    }
+  }, [pendingReview]);
+
+  const handleConfirmDesktopReview = useCallback(async () => {
+    await confirmPendingTranscript(editDesktopReviewText);
+  }, [confirmPendingTranscript, editDesktopReviewText]);
+
+  const { triggerImport, handleFiles, isImporting, fileInputProps } = useMarkdownImport();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -399,14 +426,17 @@ export function DesktopMemoryDashboard() {
           </div>
 
           {/* Input Bar - Voice, Text, Import */}
+          <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
             <button
               onClick={isRecording ? stopRecording : startRecording}
+              disabled={!!pendingReview || isVoiceProcessing}
               className={cn(
                 'flex-shrink-0 p-2 rounded-lg transition-colors',
                 isRecording
                   ? 'bg-red-500/10 text-red-400 animate-pulse'
                   : 'hover:bg-secondary text-muted-foreground hover:text-foreground',
+                (pendingReview || isVoiceProcessing) && 'opacity-50 cursor-not-allowed',
               )}
               title={isRecording ? 'Stop recording' : 'Start recording'}
             >
@@ -433,7 +463,7 @@ export function DesktopMemoryDashboard() {
             />
             <button
               onClick={handleSubmit}
-              disabled={!inputText.trim() || isSubmitting}
+              disabled={!inputText.trim() || isSubmitting || !!pendingReview}
               className={cn(
                 'flex-shrink-0 p-2 rounded-lg transition-colors',
                 isSubmitting ? 'text-accent animate-pulse cursor-wait' :
@@ -442,6 +472,26 @@ export function DesktopMemoryDashboard() {
             >
               {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </button>
+          </div>
+          {(isRecording || isVoiceProcessing) && browserCaptionPreview ? (
+            <p className="text-[10px] text-muted-foreground px-1 italic line-clamp-2">
+              {isVoiceProcessing ? 'Preview (may differ): ' : 'Live caption (approx.): '}
+              {browserCaptionPreview}
+            </p>
+          ) : null}
+          {pendingReview && (
+            <TranscriptReviewPanel
+              transcript={pendingReview.transcript}
+              rawTranscript={pendingReview.rawTranscript}
+              refined={pendingReview.refined}
+              editedText={editDesktopReviewText}
+              onEditedTextChange={setEditDesktopReviewText}
+              onConfirm={handleConfirmDesktopReview}
+              onDismiss={() => dismissPendingReview()}
+              confirmLabel="Insert into field"
+              className="border-border"
+            />
+          )}
           </div>
 
           {/* Briefing area - fixed height slot, three states */}
