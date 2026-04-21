@@ -12,6 +12,7 @@ import type { PlaybackSpeed, FrameworkTag } from "@/types/briefing";
 import { haptics } from "@/lib/haptics";
 import { SegmentCard } from "./SegmentCard";
 import { SeedBeatsPrompt } from "./SeedBeatsPrompt";
+import { BriefingVoiceButton } from "./BriefingVoiceButton";
 
 const SPEEDS: PlaybackSpeed[] = [1, 1.25, 1.5, 2];
 
@@ -188,7 +189,7 @@ export function BriefingSheet() {
                   )}
                 </motion.button>
 
-                <div className="min-w-[40px]" /> {/* Spacer for symmetry */}
+                <BriefingVoiceButton />
               </div>
 
               {/* Progress bar */}

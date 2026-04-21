@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { RequireAuth } from '@/components/auth/RequireAuth'
+import { AuthedLayoutRoute } from '@/components/layout/AuthedLayoutRoute'
 
 /**
  * Wrap lazy imports so that stale-chunk 404s trigger a single page
@@ -66,38 +67,43 @@ export const router = createBrowserRouter([
     element: <LazyWrapper><Booking /></LazyWrapper>,
   },
 
-  // Authenticated routes
+  // Authenticated routes (share a persistent chrome: GlobalFAB + SettingsSheet)
   {
-    path: '/dashboard',
-    element: <LazyWrapper><RequireAuth><Dashboard /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/think',
-    element: <Navigate to="/dashboard?view=edge" replace />,
-  },
-  {
-    path: '/memory',
-    element: <LazyWrapper><RequireAuth><MemoryCenter /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/context',
-    element: <LazyWrapper><RequireAuth><ContextExport /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/briefing',
-    element: <LazyWrapper><RequireAuth><BriefingPage /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/settings',
-    element: <LazyWrapper><RequireAuth><Settings /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/compliance',
-    element: <LazyWrapper><RequireAuth><Compliance /></RequireAuth></LazyWrapper>,
-  },
-  {
-    path: '/profile',
-    element: <LazyWrapper><RequireAuth><Profile /></RequireAuth></LazyWrapper>,
+    element: <AuthedLayoutRoute />,
+    children: [
+      {
+        path: '/dashboard',
+        element: <LazyWrapper><RequireAuth><Dashboard /></RequireAuth></LazyWrapper>,
+      },
+      {
+        path: '/think',
+        element: <Navigate to="/dashboard?view=edge" replace />,
+      },
+      {
+        path: '/memory',
+        element: <LazyWrapper><RequireAuth><MemoryCenter /></RequireAuth></LazyWrapper>,
+      },
+      {
+        path: '/context',
+        element: <LazyWrapper><RequireAuth><ContextExport /></RequireAuth></LazyWrapper>,
+      },
+      {
+        path: '/briefing',
+        element: <LazyWrapper><RequireAuth><BriefingPage /></RequireAuth></LazyWrapper>,
+      },
+      {
+        path: '/settings',
+        element: <LazyWrapper><RequireAuth><Settings /></RequireAuth></LazyWrapper>,
+      },
+      {
+        path: '/compliance',
+        element: <LazyWrapper><RequireAuth><Compliance /></RequireAuth></LazyWrapper>,
+      },
+      {
+        path: '/profile',
+        element: <LazyWrapper><RequireAuth><Profile /></RequireAuth></LazyWrapper>,
+      },
+    ],
   },
 
   // Legacy redirects
