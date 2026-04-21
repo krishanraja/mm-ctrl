@@ -39,8 +39,9 @@ import { sanitizeTranscriptionError } from '@/utils/transcriptionErrors';
 import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet, MiniPlayer, CustomBriefingSheet } from '@/components/briefing';
-import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
+import { InterestsSheet } from '@/components/briefing/InterestsSheet';
 import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
+import { useBriefingInterests } from '@/hooks/useBriefingInterests';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type { BriefingType } from '@/types/briefing';
 import type { FactCategory, PatternType } from '@/types/memory';
@@ -88,13 +89,19 @@ export function MobileMemoryDashboard() {
   const { briefing: todaysBriefing, customBriefings, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback, isMiniPlayerVisible } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
+  const { all: declaredInterests, loading: interestsLoading } = useBriefingInterests();
   const [customSheetOpen, setCustomSheetOpen] = useState(false);
   const [briefingExpanded, setBriefingExpanded] = useState(false);
+  const [interestsSheetOpen, setInterestsSheetOpen] = useState(false);
 
-  // Auto-generate default briefing on load (hasData defined below after hooks)
   const hasDataForBriefing = facts.length > 0;
+  // A user is "declared" once they've picked enough interests to make the
+  // briefing worth generating. Below this threshold the briefing would be
+  // generic, so we gate auto-generation on it and surface the cold-start CTA
+  // instead.
+  const hasDeclaredInterests = declaredInterests.length >= 3;
   const { generating: autoGenerating, phase: autoPhase } = useAutoGenerateBriefing(
-    todaysBriefing, briefingLoading, hasDataForBriefing, refetchBriefing
+    todaysBriefing, briefingLoading, hasDataForBriefing && hasDeclaredInterests, refetchBriefing
   );
 
   // Sync briefing into context
@@ -272,7 +279,7 @@ export function MobileMemoryDashboard() {
         {/* Header */}
         <AppHeader />
 
-        {/* Briefing area - fixed height slot, always shows one of three states */}
+        {/* Briefing area - fixed height slot, shows exactly one state */}
         {hasData && (
           <div className="flex-shrink-0 px-4 pt-2 relative z-20">
             <AnimatePresence mode="wait">
@@ -283,10 +290,7 @@ export function MobileMemoryDashboard() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="space-y-2"
                 >
-                  {/* v2 cold-start: suggest industry beats until the user has declared interests. */}
-                  <SeedBeatsPrompt />
                   <BriefingCard
                     briefing={todaysBriefing}
                     hasListened={playback.hasListened}
@@ -334,6 +338,31 @@ export function MobileMemoryDashboard() {
                         : 'Preparing...'}
                     </span>
                   </div>
+                </motion.div>
+              ) : !briefingLoading && !interestsLoading && !hasDeclaredInterests ? (
+                <motion.div
+                  key="coldstart-cta"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-2xl border border-accent/20 bg-accent/5 p-3 flex items-center justify-between gap-3"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                      <Sparkles className="w-4 h-4 text-accent" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground whitespace-nowrap">Make your briefing yours</p>
+                      <p className="text-xs text-muted-foreground truncate">Pick a few beats and we'll personalise it</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setInterestsSheetOpen(true)}
+                    className="flex-shrink-0 px-3 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-semibold text-center hover:bg-accent/90 transition-colors"
+                  >
+                    Set interests
+                  </button>
                 </motion.div>
               ) : !briefingLoading ? (
                 <motion.div
@@ -810,6 +839,17 @@ export function MobileMemoryDashboard() {
         onClose={() => setCustomSheetOpen(false)}
         onGenerate={handleCustomGenerate}
         isGenerating={generating}
+      />
+      <InterestsSheet
+        open={interestsSheetOpen}
+        onOpenChange={setInterestsSheetOpen}
+        onSaved={() => {
+          // Kick the briefing off right away so it's ready when the user
+          // returns to the home tab. The auto-gen effect would also catch
+          // this once `hasDeclaredInterests` flips true, but firing here
+          // keeps the feedback loop tight.
+          void handleGenerateBriefing();
+        }}
       />
     </>
   );
