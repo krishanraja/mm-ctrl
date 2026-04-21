@@ -6,7 +6,6 @@ import { WeeklyActionCard } from "../WeeklyActionCard"
 import { DailyProvocationCard } from "../DailyProvocationCard"
 import { BriefingCard } from "../BriefingCard"
 import { BottomNav } from "./BottomNav"
-import { VoiceFAB } from "./VoiceFAB"
 import { useAuth } from "@/components/auth/AuthProvider"
 import { MissionsDashboard } from "@/components/missions/MissionsDashboard"
 import { useTodaysBriefing } from "@/hooks/useBriefing"
@@ -88,7 +87,6 @@ export function MobileDashboard() {
       {/* Navigation */}
       <MiniPlayer />
       <BottomNav />
-      <VoiceFAB />
       <BriefingSheet />
     </div>
   )

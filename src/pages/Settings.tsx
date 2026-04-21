@@ -1,4 +1,5 @@
 // src/pages/Settings.tsx
+import { useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AccountTab } from '@/components/settings/AccountTab'
 import { WorkContextTab } from '@/components/settings/WorkContextTab'
@@ -9,13 +10,29 @@ import { EdgeProTab } from '@/components/settings/EdgeProTab'
 import { ManifestoTab } from '@/components/settings/ManifestoTab'
 import { BriefingDirectivesTab } from '@/components/settings/BriefingDirectivesTab'
 import { BriefingInterestsTab } from '@/components/settings/BriefingInterestsTab'
-import { ArrowLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { BottomNav } from '@/components/memory-web/BottomNav'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar'
-import { AppHeader } from '@/components/memory-web/AppHeader'
 import { useDevice } from '@/hooks/useDevice'
+import {
+  useSettingsSheet,
+  type SettingsSection,
+} from '@/contexts/SettingsSheetContext'
+
+const VALID_SECTIONS: SettingsSection[] = [
+  'account',
+  'profile',
+  'briefing',
+  'briefing-interests',
+  'notifications',
+  'privacy',
+  'preferences',
+  'edge-pro',
+  'manifesto',
+]
+
+function isValidSection(value: string | null): value is SettingsSection {
+  return value !== null && (VALID_SECTIONS as string[]).includes(value)
+}
 
 function SettingsTabs() {
   return (
@@ -71,37 +88,45 @@ function SettingsTabs() {
   )
 }
 
-export default function Settings() {
+/**
+ * Mobile branch: /settings is not a full page on mobile. It opens the global
+ * SettingsSheet (honoring ?section=...) and redirects to /dashboard so the
+ * user keeps their underlying context.
+ */
+function MobileSettingsRedirect() {
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { openTo, openSheet } = useSettingsSheet()
+
+  useEffect(() => {
+    const param = searchParams.get('section')
+    if (isValidSection(param)) {
+      openTo(param)
+    } else {
+      openSheet()
+    }
+    navigate('/dashboard', { replace: true })
+  }, [searchParams, openTo, openSheet, navigate])
+
+  return null
+}
+
+export default function Settings() {
   const { isMobile } = useDevice()
 
-  if (!isMobile) {
-    return (
-      <div className="min-h-screen bg-background">
-        <DesktopSidebar />
-        <main className="ml-64 min-h-screen">
-          <div className="max-w-3xl mx-auto px-8 py-8">
-            <h1 className="text-2xl font-bold mb-6">Settings</h1>
-            <SettingsTabs />
-          </div>
-        </main>
-      </div>
-    )
+  if (isMobile) {
+    return <MobileSettingsRedirect />
   }
 
   return (
-    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      <AppHeader />
-
-      <div className="flex-shrink-0 px-4 pb-2">
-        <h1 className="text-base font-bold">Settings</h1>
-      </div>
-
-      <div className="flex-1 overflow-hidden flex flex-col min-h-0 px-4">
-        <SettingsTabs />
-      </div>
-
-      <BottomNav />
+    <div className="min-h-screen bg-background">
+      <DesktopSidebar />
+      <main className="ml-64 min-h-screen">
+        <div className="max-w-3xl mx-auto px-8 py-8">
+          <h1 className="text-2xl font-bold mb-6">Settings</h1>
+          <SettingsTabs />
+        </div>
+      </main>
     </div>
   )
 }
