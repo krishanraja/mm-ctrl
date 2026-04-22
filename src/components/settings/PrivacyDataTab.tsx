@@ -1,19 +1,34 @@
 // src/components/settings/PrivacyDataTab.tsx
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/components/auth/AuthProvider'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Trash2, ShieldCheck, Sparkles } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import {
+  FACT_CATEGORY_META,
+  type FactCategory,
+  type UserMemoryFact,
+} from '@/types/memory'
+
+const CATEGORY_ORDER: FactCategory[] = [
+  'identity',
+  'business',
+  'objective',
+  'blocker',
+  'preference',
+]
 
 export function PrivacyDataTab() {
   const { user } = useAuth()
   const { toast } = useToast()
-  const [facts, setFacts] = useState<any[]>([])
+  const [facts, setFacts] = useState<UserMemoryFact[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     loadMemories()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
   const loadMemories = async () => {
@@ -24,10 +39,11 @@ export function PrivacyDataTab() {
         .from('user_memory')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .eq('is_current', true)
+        .order('confidence_score', { ascending: false })
 
       if (error) throw error
-      setFacts(data || [])
+      setFacts((data ?? []) as UserMemoryFact[])
     } catch (error) {
       console.error('Error loading memories:', error)
     } finally {
@@ -65,7 +81,6 @@ export function PrivacyDataTab() {
 
   const handleExportData = async () => {
     try {
-      // Fetch all user data
       const { data: profileData } = await supabase
         .from('leaders')
         .select('*')
@@ -83,7 +98,6 @@ export function PrivacyDataTab() {
         exportedAt: new Date().toISOString(),
       }
 
-      // Download as JSON
       const blob = new Blob([JSON.stringify(exportData, null, 2)], {
         type: 'application/json',
       })
@@ -110,53 +124,135 @@ export function PrivacyDataTab() {
     }
   }
 
-  const getCategoryIcon = (category: string) => {
-    const icons: Record<string, string> = {
+  const grouped = useMemo(() => {
+    const buckets: Record<FactCategory, UserMemoryFact[]> = {
+      identity: [],
+      business: [],
+      objective: [],
+      blocker: [],
+      preference: [],
+    }
+    for (const fact of facts) {
+      const cat = (fact.fact_category ?? 'preference') as FactCategory
+      if (buckets[cat]) buckets[cat].push(fact)
+      else buckets.preference.push(fact)
+    }
+    return buckets
+  }, [facts])
+
+  const getCategoryIcon = (category: FactCategory) => {
+    const icons: Record<FactCategory, string> = {
       identity: '👤',
       business: '🏢',
       objective: '🎯',
       blocker: '🚧',
       preference: '⚙️',
     }
-    return icons[category] || '📝'
+    return icons[category] ?? '📝'
   }
 
   return (
     <div className="space-y-6">
       {/* User Memory */}
       <div className="bg-card p-6 rounded-lg border border-border">
-        <h3 className="text-lg font-semibold mb-2 text-foreground">User Memory</h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          These facts were extracted from your conversations. You can delete any incorrect information.
-        </p>
+        <div className="flex items-start justify-between mb-2 gap-3">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">User Memory</h3>
+            <p className="text-sm text-muted-foreground">
+              These facts were extracted from your conversations. You can delete any
+              incorrect information.
+            </p>
+          </div>
+          <Badge variant="secondary" className="shrink-0">
+            {facts.length} facts
+          </Badge>
+        </div>
 
         {isLoading ? (
           <p className="text-center text-muted-foreground py-8">Loading...</p>
         ) : facts.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">No facts captured yet</p>
         ) : (
-          <div className="space-y-3">
-            {facts.map((fact) => (
-              <div key={fact.id} className="flex items-start justify-between bg-secondary p-4 rounded">
-                <div className="flex items-start gap-3 flex-1">
-                  <span className="text-2xl">{getCategoryIcon(fact.category)}</span>
-                  <div className="flex-1">
-                    <div className="font-medium text-foreground">{fact.fact_text}</div>
-                    <div className="text-sm text-muted-foreground mt-1">
-                      {fact.category} - Confidence: {Math.round((fact.confidence || 0) * 100)}%
-                    </div>
+          <div className="space-y-5 mt-4">
+            {CATEGORY_ORDER.filter((cat) => grouped[cat].length > 0).map((cat) => {
+              const meta = FACT_CATEGORY_META[cat]
+              const items = grouped[cat]
+              return (
+                <div key={cat} className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{getCategoryIcon(cat)}</span>
+                    <h4 className="text-sm font-semibold text-foreground">
+                      {meta?.label ?? cat}
+                    </h4>
+                    <span className="text-xs text-muted-foreground">
+                      ({items.length})
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {items.map((fact) => {
+                      const confidencePct = Math.round(
+                        (fact.confidence_score ?? 0) * 100,
+                      )
+                      const isVerified =
+                        fact.verification_status === 'verified' ||
+                        fact.verification_status === 'corrected'
+                      return (
+                        <div
+                          key={fact.id}
+                          className="flex items-start justify-between bg-secondary p-3 rounded-md"
+                        >
+                          <div className="flex-1 min-w-0 pr-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs font-medium text-muted-foreground">
+                                {fact.fact_label || fact.fact_key}
+                              </span>
+                              {isVerified ? (
+                                <Badge
+                                  variant="outline"
+                                  className="h-5 px-1.5 text-[10px] gap-1 border-emerald-500/40 text-emerald-600"
+                                >
+                                  <ShieldCheck className="w-3 h-3" />
+                                  Verified
+                                </Badge>
+                              ) : fact.verification_status === 'inferred' ? (
+                                <Badge
+                                  variant="outline"
+                                  className="h-5 px-1.5 text-[10px] gap-1 border-amber-500/40 text-amber-600"
+                                >
+                                  <Sparkles className="w-3 h-3" />
+                                  Inferred
+                                </Badge>
+                              ) : null}
+                            </div>
+                            <p className="text-sm text-foreground mt-0.5 break-words">
+                              {fact.fact_value}
+                            </p>
+                            {fact.fact_context && (
+                              <p className="text-xs text-muted-foreground mt-1 italic line-clamp-2">
+                                {fact.fact_context}
+                              </p>
+                            )}
+                            <p className="text-[11px] text-muted-foreground mt-1">
+                              Confidence {confidencePct}%
+                              {fact.source_type ? ` · ${fact.source_type}` : ''}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(fact.id)}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(fact.id)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
@@ -178,9 +274,7 @@ export function PrivacyDataTab() {
         <p className="text-sm text-muted-foreground mb-4">
           Permanently delete your account and all data. This action cannot be undone.
         </p>
-        <Button variant="destructive">
-          Delete Account
-        </Button>
+        <Button variant="destructive">Delete Account</Button>
       </div>
     </div>
   )

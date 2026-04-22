@@ -609,6 +609,25 @@ Only flag TRUE contradictions where both facts cannot be simultaneously true. Do
         // Non-critical - don't fail the extraction
       }
 
+      // Trigger briefing-interest inference in the background so the user
+      // doesn't get asked twice for the same context. Fire-and-forget; only
+      // runs when at least one fact actually landed (otherwise nothing to
+      // infer from new info).
+      if (safeInsert.length > 0 || factsToUpdate.length > 0) {
+        try {
+          fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/infer-briefing-interests`, {
+            method: 'POST',
+            headers: {
+              'Authorization': req.headers.get('Authorization')!,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+          }).catch(err => console.warn('Briefing inference trigger failed (non-critical):', err));
+        } catch {
+          // Non-critical
+        }
+      }
+
       return new Response(
         JSON.stringify({
           success: true,

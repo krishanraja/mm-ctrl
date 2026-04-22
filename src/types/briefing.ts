@@ -122,7 +122,12 @@ export interface BriefingFeedback {
 
 export type BriefingInterestKind = 'beat' | 'entity' | 'exclude';
 
-export type BriefingInterestSource = 'manual' | 'seed_accepted' | 'feedback_promoted';
+export type BriefingInterestSource =
+  | 'manual'
+  | 'seed_accepted'
+  | 'feedback_promoted'
+  | 'inferred_auto'
+  | 'inferred_suggested';
 
 export interface BriefingInterest {
   id: string;
@@ -132,6 +137,24 @@ export interface BriefingInterest {
   weight: number;
   source: BriefingInterestSource;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Medium-confidence interests inferred from user_memory by
+ * `infer-briefing-interests` and waiting for one-tap user acceptance.
+ */
+export interface SuggestedBriefingInterest {
+  id: string;
+  user_id: string;
+  kind: BriefingInterestKind;
+  text: string;
+  confidence: number;
+  reason: string | null;
+  source: 'inferred_suggested';
+  accepted_at: string | null;
+  dismissed_at: string | null;
   created_at: string;
   updated_at: string;
 }

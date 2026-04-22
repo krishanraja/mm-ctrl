@@ -10,7 +10,7 @@ export function SettingsSheet() {
 
   return (
     <Drawer open={open} onOpenChange={(next) => (next ? null : closeSheet())}>
-      <DrawerContent className="h-[92dvh] max-h-[92dvh] p-0">
+      <DrawerContent className="h-[92svh] max-h-[92svh] p-0">
         <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2 min-w-0">
             {section && (

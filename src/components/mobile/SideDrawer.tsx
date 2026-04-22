@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, User, BarChart3, Target, Brain, Settings, LogOut, TrendingUp } from 'lucide-react';
+import { X, User, BarChart3, Target, Brain, Settings, LogOut, TrendingUp, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { useToast } from '@/hooks/use-toast';
 
 interface SideDrawerProps {
   isOpen: boolean;
@@ -29,6 +31,27 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
   onNavigate,
   onSheetOpen,
 }) => {
+  const { signOut } = useAuth();
+  const { toast } = useToast();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    try {
+      await signOut();
+      onClose();
+      onNavigate('/auth');
+    } catch (err) {
+      console.error('sign out failed:', err);
+      toast({
+        title: 'Sign out failed',
+        description: (err as Error).message,
+        variant: 'destructive',
+      });
+      setSigningOut(false);
+    }
+  };
+
   const handleItemClick = (item: typeof navigationItems[0]) => {
     if (item.action === 'sheet' && onSheetOpen) {
       onSheetOpen(item.id);
@@ -120,12 +143,14 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
               <Button
                 variant="ghost"
                 className="w-full justify-start text-muted-foreground"
-                onClick={() => {
-                  onNavigate('/logout');
-                  onClose();
-                }}
+                onClick={handleSignOut}
+                disabled={signingOut}
               >
-                <LogOut className="h-4 w-4 mr-2" />
+                {signingOut ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <LogOut className="h-4 w-4 mr-2" />
+                )}
                 Sign Out
               </Button>
             </div>

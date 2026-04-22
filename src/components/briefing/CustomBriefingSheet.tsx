@@ -30,16 +30,23 @@ interface CustomBriefingSheetProps {
   onClose: () => void;
   onGenerate: (briefingType: BriefingType, customContext?: string) => void;
   isGenerating: boolean;
+  /** Pre-fill the prompt textarea (used by voice nudges that route here). */
+  initialContext?: string;
 }
 
 function CustomBriefingContent({
   onClose,
   onGenerate,
   isGenerating,
+  initialContext,
 }: Omit<CustomBriefingSheetProps, "isOpen">) {
-  const [selectedType, setSelectedType] = useState<BriefingType | null>(null);
-  const [inputMode, setInputMode] = useState<"voice" | "text">("text");
-  const [textInput, setTextInput] = useState("");
+  const [selectedType, setSelectedType] = useState<BriefingType | null>(
+    initialContext ? "deep_dive" : null,
+  );
+  const [inputMode, setInputMode] = useState<"voice" | "text">(
+    initialContext ? "text" : "text",
+  );
+  const [textInput, setTextInput] = useState(initialContext ?? "");
   const [showPaywall, setShowPaywall] = useState(false);
   const [editReviewText, setEditReviewText] = useState("");
   const { hasAccess } = useEdgeSubscription();
@@ -301,6 +308,7 @@ export function CustomBriefingSheet({
   onClose,
   onGenerate,
   isGenerating,
+  initialContext,
 }: CustomBriefingSheetProps) {
   const isMobile = useIsMobile();
 
@@ -314,7 +322,7 @@ export function CustomBriefingSheet({
   if (isMobile) {
     return (
       <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-8 pt-5 max-h-[92dvh] overflow-y-auto">
+        <SheetContent side="bottom" className="rounded-t-2xl px-5 pb-8 pt-5 max-h-[92svh] overflow-y-auto">
           <SheetHeader className="sr-only">
             <SheetTitle>Custom Briefing</SheetTitle>
             <SheetDescription>Choose a briefing type or describe what you need</SheetDescription>
@@ -323,6 +331,7 @@ export function CustomBriefingSheet({
             onClose={onClose}
             onGenerate={onGenerate}
             isGenerating={isGenerating}
+            initialContext={initialContext}
           />
         </SheetContent>
       </Sheet>
@@ -340,6 +349,7 @@ export function CustomBriefingSheet({
           onClose={onClose}
           onGenerate={onGenerate}
           isGenerating={isGenerating}
+          initialContext={initialContext}
         />
       </DialogContent>
     </Dialog>

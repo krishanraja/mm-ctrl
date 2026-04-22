@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useVisualViewport } from "@/hooks/useVisualViewport";
 import { X, Play, Pause, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ export function BriefingSheet() {
   const { submitFeedback } = useSubmitFeedback();
   const { regenerate, generating: regenerating } = useGenerateBriefing();
   const { watchedCompanies, watchCompany } = useWatchlist();
+  const { keyboardHeight } = useVisualViewport();
   const scrollRef = useRef<HTMLDivElement>(null);
   const segmentRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -122,10 +124,10 @@ export function BriefingSheet() {
           {/* Sheet */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: 0 }}
+            animate={{ y: keyboardHeight > 0 ? -keyboardHeight : 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 35, stiffness: 400, mass: 0.8 }}
-            className="fixed bottom-0 left-0 right-0 z-50 h-[85dvh] bg-background rounded-t-2xl border-t border-border shadow-2xl flex flex-col"
+            className="fixed bottom-0 left-0 right-0 z-50 h-[85svh] bg-background rounded-t-2xl border-t border-border shadow-2xl flex flex-col"
           >
             {/* Handle */}
             <div className="flex items-center justify-center pt-2 pb-1">

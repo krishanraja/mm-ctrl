@@ -4,3 +4,6 @@ export { MiniPlayer } from "./MiniPlayer";
 export { GeneratingOverlay } from "./GeneratingOverlay";
 export { BriefingTypePicker } from "./BriefingTypePicker";
 export { CustomBriefingSheet } from "./CustomBriefingSheet";
+export { VoiceSteerBar } from "./VoiceSteerBar";
+export { InterestChipsRow } from "./InterestChipsRow";
+export { SuggestedInterestsCard } from "./SuggestedInterestsCard";

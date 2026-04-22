@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw, Bookmark, BookmarkCheck, Ban, Loader2 } from "lucide-react";
+import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw, Bookmark, BookmarkCheck, Ban, Loader2, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { Briefing, BriefingSegment } from "@/types/briefing";
@@ -64,18 +65,46 @@ function InlineSegmentRow({
     }
   };
 
+  const whyReason =
+    anchor.length > 0
+      ? `Matched to your interest in ${anchor}.`
+      : `This segment fits the ${tagConfig?.label || segment.framework_tag} lens for your role.`;
+
   return (
     <div className="leading-snug group">
-      <div>
+      <div className="flex items-start gap-1.5">
         <span
           className={cn(
-            "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mr-1.5",
+            "text-[8px] font-bold uppercase px-1 py-0.5 rounded border inline-block align-middle mt-[2px] shrink-0",
             tagConfig?.className || "bg-muted text-muted-foreground border-border",
           )}
         >
           {tagConfig?.label || segment.framework_tag}
         </span>
-        <span className="text-xs text-muted-foreground">{segment.headline}</span>
+        <span className="text-xs text-muted-foreground flex-1 min-w-0">
+          {segment.headline}
+        </span>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              onClick={(e) => e.stopPropagation()}
+              aria-label="Why this segment?"
+              className="shrink-0 mt-[2px] p-0.5 rounded text-muted-foreground/40 hover:text-accent hover:bg-accent/10 transition-colors"
+            >
+              <Info className="w-3 h-3" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="top"
+            align="end"
+            className="w-64 text-[11px] p-2.5 leading-snug"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="font-semibold text-foreground mb-1">Why this?</p>
+            <p className="text-muted-foreground">{whyReason}</p>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* v2 anchor + quick actions. Hidden on v1 rows (anchor empty). */}
