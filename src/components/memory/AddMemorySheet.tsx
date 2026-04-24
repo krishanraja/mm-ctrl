@@ -58,6 +58,38 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
 
   const createMemory = useCreateMemory();
 
+  // Voice capture is deliberately one-tap-to-save: a busy leader says the
+  // thought, taps stop, and the memory lands. Category is defaulted — the
+  // user can refine it later from the Memory Center. The text flow (below)
+  // still surfaces the full form for users who want to choose upfront.
+  const autoSaveVoiceMemory = useCallback(async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    try {
+      const factKey = `voice_${Date.now()}`;
+      await createMemory.mutateAsync({
+        fact_key: factKey,
+        fact_category: 'preference',
+        fact_label: 'Voice memory',
+        fact_value: trimmed,
+        source_type: 'voice',
+        confidence_score: 1.0,
+        is_high_stakes: false,
+      });
+      localStorage.removeItem(DRAFT_KEY);
+      haptics?.success?.();
+      toast.success('Memory saved. Open it in Memory Center to change the category.');
+      onSuccess?.();
+      handleCloseRef.current?.();
+    } catch (err) {
+      // Fall back to the review form so nothing is lost.
+      setValue(trimmed);
+      setMode('text');
+      const msg = err instanceof Error ? err.message : 'Could not save automatically';
+      toast.error(`${msg}. Review and save manually.`);
+    }
+  }, [createMemory, onSuccess]);
+
   const {
     isRecording,
     isProcessing: isTranscribing,
@@ -70,11 +102,13 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
   } = useVoice({
     maxDuration: 120,
     onTranscript: (text) => {
-      setValue(text);
-      setMode('text');
-      toast.success('Transcription complete. Review and save your memory');
+      void autoSaveVoiceMemory(text);
     },
   });
+
+  // Ref to handleClose so the voice auto-save callback can use it without
+  // creating a circular dependency with useCallback's deps.
+  const handleCloseRef = React.useRef<(() => void) | null>(null);
 
   // Check for saved draft on mount
   useEffect(() => {
@@ -196,7 +230,7 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
     }
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setMode('choice');
     setLabel('');
     setValue('');
@@ -204,7 +238,13 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
     setError(null);
     resetRecording();
     onClose();
-  };
+  }, [resetRecording, onClose]);
+
+  // Keep the ref in sync so autoSaveVoiceMemory can close the sheet without
+  // being rebuilt every render (which would break the useVoice callback).
+  useEffect(() => {
+    handleCloseRef.current = handleClose;
+  }, [handleClose]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

@@ -30,27 +30,27 @@ interface SectionConfig {
 const SECTIONS: SectionConfig[] = [
   {
     kind: 'beat',
-    title: 'Beats',
+    title: 'Topics you care about',
     description:
-      'Topics you want covered. Broad is fine — "creator monetization", "platform policy", "AI pricing".',
-    placeholder: 'Add a beat',
+      'Broad is fine — "creator monetization", "platform policy", "AI pricing". These shape every briefing.',
+    placeholder: 'Add a topic',
     target: '3 to 5',
     chipClass: 'bg-accent/10 text-accent border-accent/30',
   },
   {
     kind: 'entity',
-    title: 'People & Companies',
+    title: 'People & companies to watch',
     description:
-      'Named entities to track. Creators, competitors, investors, regulators — anyone whose moves matter.',
+      'Named entities to track — creators, competitors, investors, regulators, anyone whose moves matter.',
     placeholder: 'Add a person or company',
     target: '3 to 10',
     chipClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
   },
   {
     kind: 'exclude',
-    title: "Don't show me",
+    title: 'Never show me',
     description:
-      'Topics to permanently kill. Stories semantically close to these never make it into your briefing.',
+      'Topics to keep out of your briefing for good. Anything close to these is dropped before you see it.',
     placeholder: 'Add a topic to exclude',
     target: '0 to 5',
     chipClass: 'bg-muted text-muted-foreground border-border',
@@ -166,8 +166,7 @@ export function BriefingInterestsTab() {
       <div className="rounded-lg border border-border bg-card p-5">
         <h3 className="text-lg font-semibold">Briefing Interests</h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Tell us what you actually care about. Beats and entities seed every briefing at the top of the relevance lens,
-          outranking anything we infer from your voice sessions. Excludes permanently drop any story that comes close.
+          These influence every briefing. What you add here always outranks anything we pick up from your voice sessions.
         </p>
       </div>
 

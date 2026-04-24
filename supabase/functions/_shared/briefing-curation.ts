@@ -82,10 +82,11 @@ export async function curateSegments(
           {
             role: "system",
             content:
-              `You are the final editor of a personalised news briefing for a ${leaderDesc}. You will receive a ranked pool of candidate headlines and the relevance lens they were scored against. Pick exactly ${targetCount} segments.
+              `You are the final editor of a personalised news briefing for a ${leaderDesc}. You will receive a ranked pool of candidate headlines and the relevance lens they were scored against. Pick UP TO ${targetCount} segments — only those that are genuinely relevant to the lens. If the pool is thin or weakly matched, returning fewer segments is correct. A deliberately short, tight briefing is better than one padded with filler.
 
 Rules:
 - Every segment MUST reference a lens item id from the provided list.
+- Never include a candidate that is not genuinely on-topic for its lens item, even if it is the highest-scored remaining option.
 - Diversity: if the lens has 3 or more items, do NOT pick 3 segments that map to the same lens item id.
 - Coverage: prefer picks that span the top-3 highest-weight lens items when eligible.
 - Rewrite each headline in 8-16 words from THIS leader's perspective; never generic news framing.

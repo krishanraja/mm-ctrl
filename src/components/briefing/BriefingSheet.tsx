@@ -33,7 +33,6 @@ export function BriefingSheet() {
     togglePlay,
     seek,
     setSpeed,
-    play,
   } = useBriefingContext();
 
   const { submitFeedback } = useSubmitFeedback();
@@ -51,13 +50,8 @@ export function BriefingSheet() {
     }
   }, [playback.currentSegmentIndex]);
 
-  // Auto-play on open if not already playing
-  useEffect(() => {
-    if (isSheetOpen && briefing?.audio_url && !playback.isPlaying && !playback.hasListened) {
-      const timer = setTimeout(() => play(), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isSheetOpen, briefing?.audio_url, playback.isPlaying, playback.hasListened, play]);
+  // No auto-play: opening the sheet shows the player in paused state so the
+  // user decides when to start. Tap the play button (togglePlay) to begin.
 
   const handleSpeedToggle = () => {
     const currentIdx = SPEEDS.indexOf(playback.speed);

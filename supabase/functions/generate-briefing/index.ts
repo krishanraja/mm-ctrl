@@ -1265,9 +1265,10 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
     throw new Error("Lens empty — user has no profile data to personalise against");
   }
 
-  // Stage 2: query plan.
+  // Stage 2: query plan. Pass industry so queries stay inside the leader's
+  // domain (e.g., a technology leader doesn't pull biomedical headlines).
   console.log("[v2] Planning queries...");
-  const queries = await planQueries(openaiKey, lens, training, briefingType, customContext);
+  const queries = await planQueries(openaiKey, lens, training, briefingType, customContext, source.industry);
   console.log(`[v2] Queries planned: ${queries.length}`);
 
   // Stage 3: provider fan-out with hard 12s cap.
@@ -1414,17 +1415,9 @@ async function runV2Pipeline(args: V2PipelineArgs): Promise<Record<string, unkno
   if (updateError) console.error("[v2] Failed to update briefing with polished content:", updateError);
   else console.log(`[v2] Briefing refined: ${briefingId}`);
 
-  // Stage 7: fire-and-forget synthesis.
-  try {
-    const synthUrl = `${supabaseUrl}/functions/v1/synthesize-briefing`;
-    fetch(synthUrl, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${supabaseServiceKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ briefing_id: briefingId }),
-    }).catch(e => console.warn("[v2] synthesis trigger failed:", e));
-  } catch (e) {
-    console.warn("[v2] Could not trigger synthesis:", e);
-  }
+  // Audio synthesis is user-triggered: the frontend calls synthesize-briefing
+  // only when the user clicks "Generate audio". This avoids TTS spend on
+  // briefings that are read but not listened to.
 
   console.log(`[v2] Total pipeline time: ${Date.now() - t0}ms`);
 
@@ -1563,6 +1556,44 @@ serve(async (req) => {
     // 1. Get user context
     console.log("Fetching user context...");
     const userCtx = await getUserContext(supabase, user.id);
+
+    // Sparse-profile guardrail: a thin profile produces a generic lens which
+    // pulls broad news which matches weakly — exactly the failure mode that
+    // put biomedical headlines on a technology leader's briefing. Return a
+    // structured signal the UI can convert into a targeted onboarding CTA
+    // instead of a bad briefing. custom_voice is user-narrated and bypasses
+    // the lens pipeline, so it's allowed through.
+    if (briefingType !== 'custom_voice') {
+      const { data: interestRows } = await supabase
+        .from("briefing_interests")
+        .select("id, kind")
+        .eq("user_id", user.id)
+        .eq("is_active", true);
+      const interests = (interestRows ?? []) as Array<{ id: string; kind: string }>;
+      const positiveInterests = interests.filter(r => r.kind !== "exclude").length;
+      const missionCount = userCtx.activeMissions?.length ?? 0;
+      const decisionCount = userCtx.recentDecisions?.length ?? 0;
+      const depth = positiveInterests + missionCount + decisionCount;
+      if (depth < 5) {
+        const missing: string[] = [];
+        if (positiveInterests < 3) missing.push("interests");
+        if (missionCount < 1) missing.push("missions");
+        if (decisionCount < 1) missing.push("recent decisions");
+        console.log(
+          `Profile too sparse (depth=${depth}, interests=${positiveInterests}, missions=${missionCount}, decisions=${decisionCount}); returning onboarding signal.`,
+        );
+        return new Response(
+          JSON.stringify({
+            error: "profile_too_sparse",
+            message: "Add more signal to your profile to unlock a tailored briefing.",
+            depth,
+            required: 5,
+            missing,
+          }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
 
     const searchTopics = buildPersonalizedSearchTopics(userCtx);
     console.log("User context populated:", {
@@ -1799,20 +1830,7 @@ serve(async (req) => {
       console.log(`Briefing refined: ${briefingId} (${segments.length} polished segments)`);
     }
 
-    // 6. Trigger audio synthesis server-side (fire-and-forget)
-    try {
-      const synthUrl = `${supabaseUrl}/functions/v1/synthesize-briefing`;
-      fetch(synthUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${supabaseServiceKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ briefing_id: briefingId }),
-      }).catch((e) => console.warn("Server-side synthesis trigger failed:", e));
-    } catch (e) {
-      console.warn("Could not trigger synthesis:", e);
-    }
+    // 6. Audio synthesis is user-triggered (see v2 path note above).
 
     // 7. Return briefing ID
     return new Response(

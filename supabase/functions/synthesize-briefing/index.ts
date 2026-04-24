@@ -68,10 +68,41 @@ serve(async (req) => {
       .single();
 
     if (fetchError || !briefing) throw new Error("Briefing not found");
+
+    // Storage path for this briefing's audio (matches the upload path below).
+    const storagePath = `${briefing.user_id}/${briefing.briefing_date}-${briefing.id.substring(0, 8)}.mp3`;
+
+    // If we already have an audio URL on the briefing row, the storage object
+    // likely exists but the 24h signed URL may have expired. Verify existence
+    // and re-sign a fresh URL — cheap, no TTS re-run. Only fall through to a
+    // full re-synthesize if the storage object has genuinely disappeared.
     if (briefing.audio_url) {
-      return new Response(
-        JSON.stringify({ audio_url: briefing.audio_url, already_exists: true }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      const folder = briefing.user_id;
+      const filename = `${briefing.briefing_date}-${briefing.id.substring(0, 8)}.mp3`;
+      const { data: files } = await supabase.storage
+        .from("ctrl-briefings")
+        .list(folder, { search: filename });
+      const exists = files?.some((f: { name: string }) => f.name === filename);
+
+      if (exists) {
+        const { data: signedData } = await supabase.storage
+          .from("ctrl-briefings")
+          .createSignedUrl(storagePath, 86400);
+        const freshUrl = signedData?.signedUrl;
+        if (freshUrl) {
+          // Persist the fresh URL so subsequent reads don't need to re-sign.
+          await supabase
+            .from("briefings")
+            .update({ audio_url: freshUrl })
+            .eq("id", briefing.id);
+          return new Response(
+            JSON.stringify({ audio_url: freshUrl, already_exists: true, resigned: true }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+      console.warn(
+        `Storage object missing for briefing ${briefing.id}; re-synthesizing from script.`
       );
     }
 
@@ -121,9 +152,6 @@ serve(async (req) => {
     // Estimate duration (~150 words/min for TTS)
     const wordCount = briefing.script_text.split(/\s+/).length;
     const estimatedDuration = Math.round((wordCount / 150) * 60);
-
-    // Upload to Supabase Storage (include briefing ID for uniqueness across types)
-    const storagePath = `${briefing.user_id}/${briefing.briefing_date}-${briefing.id.substring(0, 8)}.mp3`;
 
     // Ensure bucket exists (ignore error if already exists)
     await supabase.storage.createBucket("ctrl-briefings", {

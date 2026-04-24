@@ -399,13 +399,14 @@ export async function planQueries(
   training: TrainingMaterial | undefined,
   briefingType: string,
   customContext: string | undefined,
+  industry: string | undefined = undefined,
   model: string = "gpt-4o-mini",
 ): Promise<PlannedQuery[]> {
   const topLens = lens.slice(0, 6);
   if (topLens.length === 0) return [];
 
   const deterministic: PlannedQuery[] = topLens.slice(0, 5).map(item => ({
-    query: queryForLensItem(item, briefingType),
+    query: queryForLensItem(item, briefingType, industry),
     intent: `Coverage of ${item.type} "${truncate(item.text, 60)}"`,
     target_lens_item_id: item.id,
   }));
@@ -416,6 +417,7 @@ export async function planQueries(
     const mustInclude = training?.hot_signal_taxonomy?.must_include ?? [];
     const drop = training?.hot_signal_taxonomy?.drop ?? [];
     const watchlist = training?.watchlist ?? { companies: [], people: [], themes: [] };
+    const industryGuidance = industryQueryBias(industry);
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -429,13 +431,19 @@ export async function planQueries(
           {
             role: "system",
             content:
-              `You are a news-search query planner. Given a lens (items that matter to a specific leader today) produce 4-6 distinct web-search queries. Each query must target exactly one lens item. Every query must cite the target lens item's id. Prefer specific named entities over generic topics. Bias queries toward must_include categories; never target drop categories. Return JSON: {"queries":[{"query":"...","intent":"...","target_lens_item_id":"..."}]}`,
+              `You are a news-search query planner. Given a lens (items that matter to a specific leader today) produce 4-6 distinct web-search queries. Each query must target exactly one lens item. Every query must cite the target lens item's id. Prefer specific named entities over generic topics. Bias queries toward must_include categories; never target drop categories.
+
+Industry scoping is critical: the leader works in "${industry ?? "an unspecified industry"}". Every query MUST stay within that industry's adjacent domains (see industry_bias.include). Queries MUST NOT drift into industry_bias.exclude domains unless a lens item explicitly names that domain. E.g., a technology leader should not receive biomedical, clinical, or pharmaceutical queries unless a lens item explicitly names biotech. When uncertain, stay inside industry_bias.include.
+
+Return JSON: {"queries":[{"query":"...","intent":"...","target_lens_item_id":"..."}]}`,
           },
           {
             role: "user",
             content: JSON.stringify({
               briefing_type: briefingType,
               custom_context: customContext ?? null,
+              leader_industry: industry ?? null,
+              industry_bias: industryGuidance,
               lens: topLens,
               must_include: mustInclude,
               drop,
@@ -477,24 +485,99 @@ export async function planQueries(
   }
 }
 
-function queryForLensItem(item: LensItem, briefingType: string): string {
+function queryForLensItem(
+  item: LensItem,
+  briefingType: string,
+  industry?: string,
+): string {
   const base = item.text.trim();
+  // Industry-scoped suffix keeps deterministic-fallback queries from drifting
+  // across domains when the lens item text is generic (e.g., "AI" alone).
+  const bias = industryQueryBias(industry);
+  const scope =
+    bias.include.length > 0 && !mentionsIndustryDomain(base, bias)
+      ? ` (${bias.include.slice(0, 2).join(" OR ")})`
+      : "";
   switch (item.type) {
     case "watchlist":
       return briefingType === "competitive_intel"
         ? `"${base}" strategy OR product OR hiring latest`
         : `"${base}" news latest`;
     case "decision":
-      return `${base} industry news 2026`;
+      return `${base} industry news 2026${scope}`;
     case "mission":
-      return `${base} latest developments`;
+      return `${base} latest developments${scope}`;
     case "objective":
-      return `${base} trends 2026`;
+      return `${base} trends 2026${scope}`;
     case "blocker":
-      return `${base} solutions OR tools`;
+      return `${base} solutions OR tools${scope}`;
     case "pattern":
-      return base;
+      return `${base}${scope}`;
   }
+}
+
+/**
+ * Industry → domain include/exclude lists for query biasing. This is the
+ * guardrail that keeps a technology leader from receiving biomedical
+ * headlines when lens items are generic (e.g., "AI", "productivity").
+ *
+ * Unknown industries get a permissive default (no scoping) so the planner
+ * can still function. To add an industry, extend the switch.
+ */
+export function industryQueryBias(industry: string | undefined): {
+  include: string[];
+  exclude: string[];
+} {
+  const norm = (industry ?? "").trim().toLowerCase();
+  if (!norm) return { include: [], exclude: [] };
+  if (/tech|software|saas|ai|platform|developer/.test(norm)) {
+    return {
+      include: ["SaaS", "enterprise software", "AI infrastructure", "developer tools", "cloud platforms"],
+      exclude: ["biomedical", "clinical trial", "pharma", "drug approval", "medical device"],
+    };
+  }
+  if (/finance|banking|fintech|capital|invest|asset/.test(norm)) {
+    return {
+      include: ["fintech", "capital markets", "banking", "payments", "asset management"],
+      exclude: ["biomedical", "clinical trial", "pharma"],
+    };
+  }
+  if (/health|bio|pharma|medical|clinic/.test(norm)) {
+    return {
+      include: ["biotech", "clinical trial", "pharma", "medical device", "digital health"],
+      exclude: ["consumer retail", "fashion"],
+    };
+  }
+  if (/retail|consumer|e-?commerce|brand/.test(norm)) {
+    return {
+      include: ["retail", "consumer brands", "e-commerce", "DTC", "supply chain"],
+      exclude: ["biomedical", "clinical trial"],
+    };
+  }
+  if (/energy|oil|gas|utility|power|renewable/.test(norm)) {
+    return {
+      include: ["energy markets", "renewables", "grid", "oil & gas", "utilities"],
+      exclude: ["biomedical", "clinical trial"],
+    };
+  }
+  if (/legal|law|compliance/.test(norm)) {
+    return {
+      include: ["legal", "regulation", "compliance", "policy"],
+      exclude: ["biomedical", "clinical trial"],
+    };
+  }
+  return { include: [], exclude: [] };
+}
+
+function mentionsIndustryDomain(
+  text: string,
+  bias: { include: string[]; exclude: string[] },
+): boolean {
+  const lower = text.toLowerCase();
+  for (const term of [...bias.include, ...bias.exclude]) {
+    if (lower.includes(term.toLowerCase())) return true;
+  }
+  return false;
 }
 
 function truncate(s: string, n: number): string {
