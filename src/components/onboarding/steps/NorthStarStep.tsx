@@ -1,62 +1,50 @@
 // src/components/onboarding/steps/NorthStarStep.tsx
+//
+// Strategic context capture. Previously this rendered a single textarea
+// and stored the first 200 chars as `strategicProblem`, leaving the other
+// three fields empty (a stub that promised AI extraction "in production"
+// but never delivered). The downstream VerificationStep then showed the
+// user blank cards.
+//
+// Replaced with four direct prompts that map 1:1 to the four fields the
+// rest of the app actually uses. No AI extraction needed; the user gives
+// us exactly what we need.
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import { motion } from 'framer-motion'
-import { Mic, Type } from 'lucide-react'
 
 interface NorthStarStepProps {
-  onUpdate: (data: any) => void
+  onUpdate: (data: {
+    strategicProblem: string
+    biggestObstacle: string
+    biggestFear: string
+    strategicGoal: string
+  }) => void
   onNext: () => void
   onBack: () => void
 }
 
 export function NorthStarStep({ onUpdate, onNext, onBack }: NorthStarStepProps) {
-  const [mode, setMode] = useState<'voice' | 'text'>('text') // Default to text for simplicity
-  const [textInput, setTextInput] = useState('')
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [strategicProblem, setStrategicProblem] = useState('')
+  const [biggestObstacle, setBiggestObstacle] = useState('')
+  const [biggestFear, setBiggestFear] = useState('')
+  const [strategicGoal, setStrategicGoal] = useState('')
 
-  const handleSubmit = async () => {
-    if (!textInput.trim()) return
+  // Problem and goal are required; obstacle and fear are nice-to-have.
+  // A leader can give us a useful slice of context without filling everything.
+  const canContinue = strategicProblem.trim().length > 0 && strategicGoal.trim().length > 0
 
-    setIsProcessing(true)
-
-    try {
-      // For now, do simple extraction locally
-      // In production, this would call the edge function
-      const extracted = extractStrategicContext(textInput)
-
-      onUpdate({
-        strategicProblem: extracted.problem,
-        biggestObstacle: extracted.obstacle,
-        biggestFear: extracted.fear,
-        strategicGoal: extracted.goal,
-      })
-
-      onNext()
-    } catch (error) {
-      console.error('Extraction failed:', error)
-      // Continue anyway with raw text
-      onUpdate({
-        strategicProblem: textInput,
-        biggestObstacle: '',
-        biggestFear: '',
-        strategicGoal: '',
-      })
-      onNext()
-    } finally {
-      setIsProcessing(false)
-    }
-  }
-
-  // Simple local extraction (will be replaced with AI in production)
-  const extractStrategicContext = (text: string) => {
-    return {
-      problem: text.substring(0, 200), // Use first part as problem
-      obstacle: '', // To be extracted by AI
-      fear: null, // To be extracted by AI
-      goal: '', // To be extracted by AI
-    }
+  const handleSubmit = () => {
+    if (!canContinue) return
+    onUpdate({
+      strategicProblem: strategicProblem.trim(),
+      biggestObstacle: biggestObstacle.trim(),
+      biggestFear: biggestFear.trim(),
+      strategicGoal: strategicGoal.trim(),
+    })
+    onNext()
   }
 
   return (
@@ -64,64 +52,85 @@ export function NorthStarStep({ onUpdate, onNext, onBack }: NorthStarStepProps) 
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
-      className="space-y-8"
+      className="space-y-6"
     >
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-3">
         <h2 className="text-3xl font-bold text-[#00D9B6]">
           What keeps you up at night?
         </h2>
-        <p className="text-gray-300 text-lg">
-          Understanding your biggest challenge helps us give you relevant, actionable advice.
-        </p>
-        <p className="text-sm text-gray-500">
-          🔒 Your response is private and helps us tailor recommendations to your situation
+        <p className="text-gray-300 text-base">
+          Four short prompts. Required ones are marked.
         </p>
       </div>
 
-      <div className="bg-gray-900/50 p-6 rounded-lg">
-        <p className="text-gray-300 mb-4">Tell us about:</p>
-        <ul className="space-y-2 text-gray-400 text-sm">
-          <li className="flex items-start gap-2">
-            <span className="text-[#00D9B6]">•</span>
-            <span>Your biggest business challenge or problem right now</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-[#00D9B6]">•</span>
-            <span>What's holding you back from solving it</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-[#00D9B6]">•</span>
-            <span>What you're most worried about (optional)</span>
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="text-[#00D9B6]">•</span>
-            <span>What you're trying to achieve</span>
-          </li>
-        </ul>
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="problem" className="text-gray-200">
+            Biggest challenge right now <span className="text-[#00D9B6]">*</span>
+          </Label>
+          <Textarea
+            id="problem"
+            value={strategicProblem}
+            onChange={(e) => setStrategicProblem(e.target.value)}
+            placeholder="e.g. Scaling product team from 5 to 15 this quarter without losing shipping speed."
+            rows={3}
+            className="bg-gray-900 border-gray-700 text-white"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="goal" className="text-gray-200">
+            What you're trying to achieve <span className="text-[#00D9B6]">*</span>
+          </Label>
+          <Textarea
+            id="goal"
+            value={strategicGoal}
+            onChange={(e) => setStrategicGoal(e.target.value)}
+            placeholder="e.g. Ship v2 by end of quarter, hit $5M ARR, hire two senior engineers."
+            rows={3}
+            className="bg-gray-900 border-gray-700 text-white"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="obstacle" className="text-gray-200">
+            What's holding you back <span className="text-gray-500 text-xs">(optional)</span>
+          </Label>
+          <Textarea
+            id="obstacle"
+            value={biggestObstacle}
+            onChange={(e) => setBiggestObstacle(e.target.value)}
+            placeholder="e.g. I'm bottlenecked on every decision because nobody's been promoted to share it."
+            rows={2}
+            className="bg-gray-900 border-gray-700 text-white"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="fear" className="text-gray-200">
+            What you're most worried about <span className="text-gray-500 text-xs">(optional)</span>
+          </Label>
+          <Textarea
+            id="fear"
+            value={biggestFear}
+            onChange={(e) => setBiggestFear(e.target.value)}
+            placeholder="e.g. Delegating the wrong decision to the wrong person and finding out three weeks too late."
+            rows={2}
+            className="bg-gray-900 border-gray-700 text-white"
+          />
+        </div>
       </div>
 
-      <div className="space-y-4">
-        <Textarea
-          value={textInput}
-          onChange={(e) => setTextInput(e.target.value)}
-          placeholder="Example: I'm scaling our product team from 5 to 15 people this quarter, but I'm worried about maintaining quality and shipping speed. We keep missing deadlines because I'm bottlenecked on all decisions. I need to delegate more effectively but I'm not sure who to trust with what..."
-          className="min-h-[200px] bg-gray-900 border-gray-700 text-white"
-        />
-        <p className="text-xs text-gray-500">
-          Be as specific as you can - the more context you provide, the better our recommendations will be
-        </p>
-      </div>
-
-      <div className="flex justify-between">
+      <div className="flex justify-between pt-2">
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
         <Button
           onClick={handleSubmit}
-          disabled={!textInput.trim() || isProcessing}
+          disabled={!canContinue}
           className="bg-[#00D9B6] hover:bg-[#00C4A3] text-black font-semibold"
         >
-          {isProcessing ? 'Processing...' : 'Continue'}
+          Continue
         </Button>
       </div>
     </motion.div>
