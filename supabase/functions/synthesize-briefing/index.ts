@@ -8,6 +8,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -68,6 +69,26 @@ serve(async (req) => {
       .single();
 
     if (fetchError || !briefing) throw new Error("Briefing not found");
+
+    // Cost-control rate limit per briefing-owner. Each TTS run is paid bytes;
+    // 12/min/user bounds cost without throttling normal use. Re-sign-existing
+    // (the cheap path below) is rate-limited too — that's intentional, since
+    // a tight retry loop is the primary cost-leak vector here.
+    const rateLimit = await checkRateLimit(
+      { maxRequests: 12, windowMs: 60_000, identifier: "synthesize-briefing" },
+      briefing.user_id,
+      supabase,
+    );
+    if (!rateLimit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: "rate_limited",
+          message: "Audio generation rate limit hit. Try again in a minute.",
+          retry_after_ms: Math.max(0, rateLimit.resetAt - Date.now()),
+        }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Storage path for this briefing's audio (matches the upload path below).
     const storagePath = `${briefing.user_id}/${briefing.briefing_date}-${briefing.id.substring(0, 8)}.mp3`;
