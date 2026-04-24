@@ -20,7 +20,6 @@ import { AppHeader } from "@/components/memory-web/AppHeader";
 import {
   useTodaysBriefing,
   useGenerateBriefing,
-  useAutoGenerateBriefing,
 } from "@/hooks/useBriefing";
 import { useBriefingContext } from "@/contexts/BriefingContext";
 import { useMemoryWeb } from "@/hooks/useMemoryWeb";
@@ -54,19 +53,13 @@ function BriefingPage() {
     refetch: refetchSuggestions,
   } = useSuggestedInterests();
 
-  // Mirror MobileMemoryDashboard: only auto-generate after the user has
-  // declared (or we've inferred high-confidence) at least 3 interests so the
-  // briefing isn't generic on the first visit.
+  // Briefing generation only fires from an explicit user gesture. Before the
+  // user has 3+ declared interests the briefing would be generic, so we
+  // surface the cold-start "Pick a few topics first" CTA instead of a
+  // generation button.
   const hasDeclaredOrInferred = declaredInterests.length >= 3;
 
-  const { generating: autoGenerating, phase: autoPhase } =
-    useAutoGenerateBriefing(
-      defaultBriefing,
-      loading,
-      hasData && hasDeclaredOrInferred,
-      refetch,
-    );
-  const { generate, generating, phase } = useGenerateBriefing();
+  const { generate, generating, phase, sparseProfile, clearSparseProfile } = useGenerateBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const [customSheetOpen, setCustomSheetOpen] = useState(false);
   const [interestsSheetOpen, setInterestsSheetOpen] = useState(false);
@@ -105,6 +98,14 @@ function BriefingPage() {
     }
   };
 
+  // Explicit primary action: user decides when today's briefing is generated.
+  const handleGenerateToday = async () => {
+    const id = await generate("default");
+    if (id) {
+      await refetch();
+    }
+  };
+
   // Voice nudge that classifies as `request_custom` opens the custom sheet
   // pre-filled with the requested prompt so the user just confirms.
   const handleVoiceCustomRequest = (prompt: string) => {
@@ -116,8 +117,8 @@ function BriefingPage() {
     await Promise.all([refetchInterests(), refetchSuggestions()]);
   };
 
-  const isGenerating = generating || autoGenerating;
-  const currentPhase = autoGenerating ? autoPhase : phase;
+  const isGenerating = generating;
+  const currentPhase = phase;
 
   // "Earlier this week" = briefings older than today's default that aren't
   // custom. We bucket by ISO date so timezones don't shuffle them around.
@@ -133,7 +134,12 @@ function BriefingPage() {
 
   const liveStatus = (() => {
     if (loading) return "Loading...";
-    if (isGenerating) return "Personalising...";
+    if (isGenerating) {
+      if (currentPhase === "scanning") return "Reading your profile";
+      if (currentPhase === "personalising") return "Searching today's news";
+      if (currentPhase === "preparing") return "Curating";
+      return "Preparing your briefing";
+    }
     if (defaultBriefing) {
       const created = new Date(defaultBriefing.created_at);
       const minutesAgo = Math.max(
@@ -253,14 +259,14 @@ function BriefingPage() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">
-                    Personalising your first briefing...
+                    Generating today's briefing
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {currentPhase === "scanning"
-                      ? "Scanning today's news..."
+                      ? "Reading your profile"
                       : currentPhase === "personalising"
-                      ? "Finding what matters to you..."
-                      : "Almost ready..."}
+                      ? "Searching today's news"
+                      : "Curating"}
                   </p>
                 </div>
               </div>
@@ -272,6 +278,77 @@ function BriefingPage() {
                   transition={{ duration: 20, ease: "linear" }}
                 />
               </motion.div>
+            </motion.div>
+          ) : !defaultBriefing && sparseProfile ? (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-amber-500" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">
+                    A little more signal, and your briefing lands
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {sparseProfile.missing.length > 0
+                      ? `Add ${sparseProfile.missing.slice(0, 2).join(" and ")} so today's briefing is actually about you.`
+                      : sparseProfile.message}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => {
+                    clearSparseProfile();
+                    setInterestsSheetOpen(true);
+                  }}
+                  size="sm"
+                  className="flex-1"
+                >
+                  Add interests
+                </Button>
+                <Button
+                  onClick={clearSparseProfile}
+                  size="sm"
+                  variant="ghost"
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </motion.div>
+          ) : !defaultBriefing && hasDeclaredOrInferred ? (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="rounded-2xl border border-accent/30 bg-accent/5 p-4 space-y-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center">
+                  <Radio className="w-5 h-5 text-accent" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">
+                    Today's briefing is ready to generate
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Drawn from {declaredInterests.length}{" "}
+                    {declaredInterests.length === 1 ? "interest" : "interests"}
+                    {facts.length > 0 && `, ${facts.length} ${facts.length === 1 ? "memory" : "memories"}`}
+                    {" · ~30s"}
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={handleGenerateToday}
+                size="sm"
+                className="w-full"
+              >
+                Generate today's briefing
+              </Button>
             </motion.div>
           ) : defaultBriefing ? (
             <BriefingCard

@@ -14,7 +14,6 @@ export function useTodaysBriefing() {
   const [briefings, setBriefings] = useState<Briefing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const autoGenerateTriggered = useRef(false);
 
   const fetchBriefings = useCallback(async () => {
     try {
@@ -65,117 +64,109 @@ export function useTodaysBriefing() {
     loading,
     error,
     refetch: fetchBriefings,
-    autoGenerateTriggered,
   };
 }
 
 /**
- * Auto-generate the default briefing on page load if none exists today.
- * Polls the DB every 3s while generation is in-flight so preliminary
- * headlines (inserted early by generate-briefing) appear immediately.
+ * Generate a briefing on demand (supports custom types).
+ *
+ * Deliberately has no auto-trigger: briefing generation is a user-controlled
+ * action. Refreshing the page or logging back in must NOT cause regeneration —
+ * today's briefing is persisted in the `briefings` table and surfaced by
+ * `useTodaysBriefing` without any API call. Generation only fires from an
+ * explicit user gesture (primary CTA button, refresh button, custom request).
  */
-export function useAutoGenerateBriefing(
-  defaultBriefing: Briefing | null,
-  briefingLoading: boolean,
-  hasData: boolean,
-  refetch: () => Promise<void>,
-) {
-  const { generate, generating, phase } = useGenerateBriefing();
-  const triggered = useRef(false);
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    if (briefingLoading || triggered.current) return;
-    if (defaultBriefing) return; // already exists
-    if (!hasData) return; // user has no profile data yet
-
-    triggered.current = true;
-
-    // Poll DB every 3s so we pick up the preliminary briefing row
-    // as soon as it is inserted (before generate-briefing returns)
-    pollRef.current = setInterval(() => {
-      refetch();
-    }, POLL_INTERVAL);
-
-    (async () => {
-      const id = await generate();
-      // Stop polling once generation completes
-      if (pollRef.current) {
-        clearInterval(pollRef.current);
-        pollRef.current = null;
-      }
-      if (id) {
-        await refetch();
-      }
-    })();
-  }, [briefingLoading, defaultBriefing, hasData, generate, refetch]);
-
-  // Cleanup polling on unmount
-  useEffect(() => {
-    return () => {
-      if (pollRef.current) {
-        clearInterval(pollRef.current);
-        pollRef.current = null;
-      }
-    };
-  }, []);
-
-  return { generating, phase };
+export interface SparseProfileInfo {
+  depth: number;
+  required: number;
+  missing: string[];
+  message: string;
 }
 
-/**
- * Generate a briefing on demand (supports custom types)
- */
 export function useGenerateBriefing() {
   const [generating, setGenerating] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'scanning' | 'personalising' | 'preparing'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [sparseProfile, setSparseProfile] = useState<SparseProfileInfo | null>(null);
+  // In-flight promise cache keyed by (briefingType|custom|force). A rapid
+  // second click for the same request returns the existing promise instead
+  // of kicking off a duplicate edge-function call.
+  const inFlight = useRef<Map<string, Promise<string | null>>>(new Map());
 
   const generate = useCallback(async (
     briefingType?: BriefingType,
     customContext?: string,
     options?: { force?: boolean },
   ): Promise<string | null> => {
+    const key = `${briefingType ?? 'default'}|${customContext ?? ''}|${options?.force ? 'force' : ''}`;
+    const existing = inFlight.current.get(key);
+    if (existing) return existing;
+
+    const run = (async (): Promise<string | null> => {
+      try {
+        setGenerating(true);
+        setError(null);
+        setSparseProfile(null);
+        setPhase('scanning');
+
+        const phaseTimer = setTimeout(() => setPhase('personalising'), 3000);
+        const phaseTimer2 = setTimeout(() => setPhase('preparing'), 7000);
+
+        const timeout = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Briefing generation timed out. Please try again.')), GENERATE_TIMEOUT)
+        );
+
+        const body: Record<string, unknown> = {};
+        if (briefingType) body.briefing_type = briefingType;
+        if (customContext) body.custom_context = customContext;
+        if (options?.force) body.force = true;
+
+        const { data, error: genErr } = await Promise.race([
+          supabase.functions.invoke('generate-briefing', {
+            body: Object.keys(body).length > 0 ? body : undefined,
+          }),
+          timeout,
+        ]);
+
+        clearTimeout(phaseTimer);
+        clearTimeout(phaseTimer2);
+
+        if (genErr) throw genErr;
+
+        // Backend sparse-profile signal: surface a structured state so the
+        // UI can render an onboarding CTA instead of a silent no-op.
+        if (data?.error === 'profile_too_sparse') {
+          setSparseProfile({
+            depth: typeof data.depth === 'number' ? data.depth : 0,
+            required: typeof data.required === 'number' ? data.required : 5,
+            missing: Array.isArray(data.missing) ? data.missing : [],
+            message: typeof data.message === 'string'
+              ? data.message
+              : 'Add more signal to your profile to unlock a tailored briefing.',
+          });
+          setPhase('idle');
+          return null;
+        }
+
+        const briefingId = data?.briefing_id || null;
+
+        setPhase('idle');
+        return briefingId;
+      } catch (err) {
+        console.error('Generate briefing failed:', err);
+        setError((err as Error).message);
+        setPhase('idle');
+        return null;
+      } finally {
+        setGenerating(false);
+      }
+    })();
+
+    inFlight.current.set(key, run);
     try {
-      setGenerating(true);
-      setError(null);
-      setPhase('scanning');
-
-      const phaseTimer = setTimeout(() => setPhase('personalising'), 3000);
-      const phaseTimer2 = setTimeout(() => setPhase('preparing'), 7000);
-
-      const timeout = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Briefing generation timed out. Please try again.')), GENERATE_TIMEOUT)
-      );
-
-      const body: Record<string, unknown> = {};
-      if (briefingType) body.briefing_type = briefingType;
-      if (customContext) body.custom_context = customContext;
-      if (options?.force) body.force = true;
-
-      const { data, error: genErr } = await Promise.race([
-        supabase.functions.invoke('generate-briefing', {
-          body: Object.keys(body).length > 0 ? body : undefined,
-        }),
-        timeout,
-      ]);
-
-      clearTimeout(phaseTimer);
-      clearTimeout(phaseTimer2);
-
-      if (genErr) throw genErr;
-
-      const briefingId = data?.briefing_id || null;
-
-      setPhase('idle');
-      return briefingId;
-    } catch (err) {
-      console.error('Generate briefing failed:', err);
-      setError((err as Error).message);
-      setPhase('idle');
-      return null;
+      return await run;
     } finally {
-      setGenerating(false);
+      inFlight.current.delete(key);
     }
   }, []);
 
@@ -183,7 +174,9 @@ export function useGenerateBriefing() {
     return generate(undefined, undefined, { force: true });
   }, [generate]);
 
-  return { generate, regenerate, generating, phase, error };
+  const clearSparseProfile = useCallback(() => setSparseProfile(null), []);
+
+  return { generate, regenerate, generating, phase, error, sparseProfile, clearSparseProfile };
 }
 
 /**
@@ -233,17 +226,19 @@ export function useSubmitFeedback() {
 
 /**
  * Poll for audio readiness while also triggering synthesis.
- * Uses both the synthesis response and DB polling in parallel;
- * whichever finds the audio_url first wins.
+ *
+ * Explicit-trigger only: `start(id)` must be called from a user gesture
+ * (e.g. "Generate audio" button). The hook never auto-fires on mount or
+ * briefingId change. If a briefing already has `audio_url` set, callers
+ * should skip `start` entirely and use the cached URL.
  */
-export function usePollAudio(briefingId: string | null) {
+export function usePollAudio() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [polling, setPolling] = useState(false);
   const [exhausted, setExhausted] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollCountRef = useRef(0);
   const resolvedRef = useRef(false);
-  const synthTriggeredRef = useRef<string | null>(null);
 
   const cleanup = useCallback(() => {
     if (intervalRef.current) {
@@ -260,28 +255,28 @@ export function usePollAudio(briefingId: string | null) {
     cleanup();
   }, [cleanup]);
 
-  const startPollingAndSynthesis = useCallback((id: string) => {
+  const start = useCallback((id: string) => {
+    if (!id) return;
     resolvedRef.current = false;
     setPolling(true);
     setExhausted(false);
     setAudioUrl(null);
     pollCountRef.current = 0;
+    cleanup();
 
     // Path 1: Trigger synthesis and use its response directly
-    if (synthTriggeredRef.current !== id) {
-      synthTriggeredRef.current = id;
-      supabase.functions
-        .invoke('synthesize-briefing', { body: { briefing_id: id } })
-        .then(({ data, error }) => {
-          if (resolvedRef.current) return;
-          if (!error && data?.audio_url) {
-            resolve(data.audio_url);
-          }
-        })
-        .catch((e) => console.warn('Synthesis trigger failed:', e));
-    }
+    supabase.functions
+      .invoke('synthesize-briefing', { body: { briefing_id: id } })
+      .then(({ data, error }) => {
+        if (resolvedRef.current) return;
+        if (!error && data?.audio_url) {
+          resolve(data.audio_url);
+        }
+      })
+      .catch((e) => console.warn('Synthesis trigger failed:', e));
 
-    // Path 2: Poll DB as backup
+    // Path 2: Poll DB as backup (in case synthesis is still in-flight
+    // when the edge function times out from the client perspective)
     const poll = async () => {
       if (resolvedRef.current) return;
       pollCountRef.current += 1;
@@ -312,22 +307,10 @@ export function usePollAudio(briefingId: string | null) {
     intervalRef.current = setInterval(poll, POLL_INTERVAL);
   }, [cleanup, resolve]);
 
+  // Cleanup on unmount only
   useEffect(() => {
-    if (!briefingId) {
-      setPolling(false);
-      cleanup();
-      return;
-    }
-
-    startPollingAndSynthesis(briefingId);
     return cleanup;
-  }, [briefingId, startPollingAndSynthesis, cleanup]);
+  }, [cleanup]);
 
-  const retry = useCallback(() => {
-    if (!briefingId) return;
-    synthTriggeredRef.current = null;
-    startPollingAndSynthesis(briefingId);
-  }, [briefingId, startPollingAndSynthesis]);
-
-  return { audioUrl, polling, exhausted, retry };
+  return { audioUrl, polling, exhausted, start };
 }

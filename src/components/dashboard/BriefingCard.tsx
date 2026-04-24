@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw, Bookmark, BookmarkCheck, Ban, Loader2, Info } from "lucide-react";
+import { Radio, Play, Check, ChevronDown, Sparkles, RefreshCw, Bookmark, BookmarkCheck, Ban, Loader2, Info, Volume2 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -214,12 +214,14 @@ export function BriefingCard({
   customBriefingCount = 0,
   onExpandChange,
 }: BriefingCardProps) {
-  const { audioUrl, polling, exhausted, retry } = usePollAudio(
-    briefing.audio_url ? null : briefing.id
-  );
+  const { audioUrl, polling, exhausted, start } = usePollAudio();
   const { setBriefing } = useBriefingContext();
   const { regenerate, generating: regenerating } = useGenerateBriefing();
   const [expanded, setExpanded] = useState(false);
+
+  const handleGenerateAudio = () => {
+    if (!briefing.audio_url) start(briefing.id);
+  };
 
   const handleRegenerate = async () => {
     const newId = await regenerate();
@@ -241,12 +243,24 @@ export function BriefingCard({
 
   const hasAudio = !!(briefing.audio_url || audioUrl);
   const hasScript = !!briefing.script_text;
-  const waitingForAudio = !hasAudio && (polling || !exhausted);
+  const waitingForAudio = !hasAudio && polling;
 
   const segmentCount = briefing.segments?.length || 0;
   const durationMin = briefing.audio_duration_seconds
     ? Math.ceil(briefing.audio_duration_seconds / 60)
     : 3;
+
+  // How many of the user's distinct profile anchors surfaced stories today.
+  // A tangible "this was actually about you" signal — replaces the opaque
+  // generic "personalised" claim with a count tied to their own inputs.
+  const anchorCount = React.useMemo(() => {
+    const anchors = new Set<string>();
+    for (const seg of briefing.segments ?? []) {
+      const anchor = (seg.matched_profile_fact ?? "").trim().toLowerCase();
+      if (anchor.length > 0) anchors.add(anchor);
+    }
+    return anchors.size;
+  }, [briefing.segments]);
 
   const briefingTypeConfig = BRIEFING_TYPES.find(t => t.type === (briefing.briefing_type || 'default'));
   const briefingLabel = briefingTypeConfig?.label || "Your Briefing";
@@ -297,7 +311,15 @@ export function BriefingCard({
                   </motion.div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {segmentCount} {segmentCount === 1 ? "story" : "stories"} picked for you today
+                  {segmentCount} {segmentCount === 1 ? "story" : "stories"}
+                  {anchorCount > 0 && (
+                    <>
+                      {" · drawn from "}
+                      <span className="text-foreground/80">
+                        {anchorCount} of your {anchorCount === 1 ? "inputs" : "inputs"}
+                      </span>
+                    </>
+                  )}
                 </p>
                 {/* Teaser / rotating headline when collapsed */}
                 {!expanded && (
@@ -325,16 +347,7 @@ export function BriefingCard({
                   <Play className="w-3 h-3 fill-current mr-1" />
                   Listen
                 </Button>
-              ) : exhausted ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 text-[11px]"
-                  onClick={retry}
-                >
-                  Retry
-                </Button>
-              ) : (
+              ) : polling ? (
                 <Button
                   variant="default"
                   size="sm"
@@ -347,6 +360,27 @@ export function BriefingCard({
                     transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
                   />
                   <span className="relative z-10 text-xs">Audio...</span>
+                </Button>
+              ) : exhausted ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-3 text-[11px]"
+                  onClick={(e) => { e.stopPropagation(); handleGenerateAudio(); }}
+                >
+                  Retry audio
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-3 gap-1"
+                  onClick={(e) => { e.stopPropagation(); handleGenerateAudio(); }}
+                  disabled={!hasScript}
+                  title={hasScript ? "Generate audio for this briefing" : "Waiting for script"}
+                >
+                  <Volume2 className="w-3 h-3" />
+                  <span className="text-xs">Generate audio</span>
                 </Button>
               )}
             </div>

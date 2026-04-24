@@ -163,6 +163,22 @@ function getExcludeThreshold(): number {
 }
 
 /**
+ * Minimum relevance floor: (cosine_sim × lens_item.weight). Below this,
+ * a candidate is not genuinely on-topic and is dropped before curation.
+ * Prevents "biomedical story for a tech-profile user" drift when the
+ * candidate pool is broad and the lens has a weakly-matching item.
+ *
+ * 0.30 is an initial calibration. Tune via BRIEFING_MIN_RELEVANCE env var
+ * or migrate to a briefing_config table column once we have data.
+ */
+function getMinRelevance(): number {
+  const raw = Deno.env.get("BRIEFING_MIN_RELEVANCE");
+  if (!raw) return 0.30;
+  const n = parseFloat(raw);
+  return Number.isFinite(n) && n >= 0 && n < 1 ? n : 0.30;
+}
+
+/**
  * Dedupe + score in one pass.
  *
  * Dedupe rule: if a candidate's cosine similarity against an already-kept
@@ -186,6 +202,7 @@ export async function dedupeAndScore(
 
   const dedupeThreshold = getDedupeThreshold();
   const excludeThreshold = getExcludeThreshold();
+  const minRelevance = getMinRelevance();
 
   const candidateInputs = candidates.map(c =>
     c.snippet && c.snippet.length > 0 ? `${c.title} — ${c.snippet}` : c.title,
@@ -244,6 +261,7 @@ export async function dedupeAndScore(
 
   // Score pass.
   const scored: ScoredHeadline[] = [];
+  let belowThresholdCount = 0;
   for (const { cand, vec } of kept) {
     let bestScore = 0;
     let bestLensId = lens[0].id;
@@ -257,11 +275,22 @@ export async function dedupeAndScore(
         bestLensId = lensItem.id;
       }
     }
+    // Drop candidates below the minimum relevance floor so curation can't
+    // fill "pick N" with weakly-matched filler.
+    if (bestScore < minRelevance) {
+      belowThresholdCount++;
+      continue;
+    }
     scored.push({
       ...cand,
       relevance_score: bestScore,
       matched_lens_item_id: bestLensId,
     });
+  }
+  if (belowThresholdCount > 0) {
+    console.log(
+      `briefing-scoring: dropped ${belowThresholdCount} candidates below relevance floor ${minRelevance}`,
+    );
   }
 
   scored.sort((a, b) => b.relevance_score - a.relevance_score);

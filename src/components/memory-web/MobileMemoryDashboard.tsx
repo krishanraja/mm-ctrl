@@ -40,7 +40,7 @@ import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel'
 import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet, MiniPlayer, CustomBriefingSheet } from '@/components/briefing';
 import { InterestsSheet } from '@/components/briefing/InterestsSheet';
-import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
+import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingInterests } from '@/hooks/useBriefingInterests';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type { BriefingType } from '@/types/briefing';
@@ -100,9 +100,6 @@ export function MobileMemoryDashboard() {
   // generic, so we gate auto-generation on it and surface the cold-start CTA
   // instead.
   const hasDeclaredInterests = declaredInterests.length >= 3;
-  const { generating: autoGenerating, phase: autoPhase } = useAutoGenerateBriefing(
-    todaysBriefing, briefingLoading, hasDataForBriefing && hasDeclaredInterests, refetchBriefing
-  );
 
   // Sync briefing into context
   useEffect(() => {
@@ -302,7 +299,7 @@ export function MobileMemoryDashboard() {
                     onExpandChange={setBriefingExpanded}
                   />
                 </motion.div>
-              ) : (autoGenerating || generating) ? (
+              ) : generating ? (
                 <motion.div
                   key="generating-banner"
                   initial={{ opacity: 0 }}
@@ -318,8 +315,8 @@ export function MobileMemoryDashboard() {
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground whitespace-nowrap">Preparing your briefing</p>
                       <p className="text-xs text-muted-foreground truncate">
-                        {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
-                          : (autoPhase || phase) === 'personalising' ? 'Preparing what matters...'
+                        {phase === 'scanning' ? 'Reading your profile'
+                          : phase === 'personalising' ? 'Searching today\'s news'
                           : 'Almost ready...'}
                       </p>
                     </div>
@@ -333,8 +330,8 @@ export function MobileMemoryDashboard() {
                       style={{ transformOrigin: "left" }}
                     />
                     <span className="relative z-10">
-                      {(autoPhase || phase) === 'scanning' ? 'Scanning...'
-                        : (autoPhase || phase) === 'personalising' ? 'Curating...'
+                      {phase === 'scanning' ? 'Reading profile...'
+                        : phase === 'personalising' ? 'Searching news...'
                         : 'Preparing...'}
                     </span>
                   </div>

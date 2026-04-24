@@ -39,7 +39,7 @@ import { BriefingCard } from '@/components/dashboard/BriefingCard';
 import { BriefingSheet } from '@/components/briefing/BriefingSheet';
 import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
 import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
-import { useTodaysBriefing, useGenerateBriefing, useAutoGenerateBriefing } from '@/hooks/useBriefing';
+import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
 import type {
   MemoryWebFact,
@@ -185,9 +185,6 @@ export function DesktopMemoryDashboard() {
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
   const hasData = facts.length > 0;
-  const { generating: autoGenerating, phase: autoPhase } = useAutoGenerateBriefing(
-    todaysBriefing, briefingLoading, hasData, refetchBriefing
-  );
 
   // Sync briefing into context
   useEffect(() => {
@@ -515,7 +512,7 @@ export function DesktopMemoryDashboard() {
                       onPlay={handlePlayBriefing}
                     />
                   </motion.div>
-                ) : (autoGenerating || generating) ? (
+                ) : generating ? (
                   <motion.div
                     key="generating-banner"
                     initial={{ opacity: 0 }}
@@ -531,8 +528,8 @@ export function DesktopMemoryDashboard() {
                       <div>
                         <p className="text-sm font-semibold text-foreground whitespace-nowrap">Preparing your briefing</p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {(autoPhase || phase) === 'scanning' ? 'Scanning today\'s news...'
-                            : (autoPhase || phase) === 'personalising' ? 'Preparing what matters...'
+                          {phase === 'scanning' ? 'Reading your profile'
+                            : phase === 'personalising' ? 'Searching today\'s news'
                             : 'Almost ready...'}
                         </p>
                       </div>
@@ -546,8 +543,8 @@ export function DesktopMemoryDashboard() {
                         style={{ transformOrigin: "left" }}
                       />
                       <span className="relative z-10">
-                        {(autoPhase || phase) === 'scanning' ? 'Scanning...'
-                          : (autoPhase || phase) === 'personalising' ? 'Curating...'
+                        {phase === 'scanning' ? 'Reading profile...'
+                          : phase === 'personalising' ? 'Searching news...'
                           : 'Preparing...'}
                       </span>
                     </div>
