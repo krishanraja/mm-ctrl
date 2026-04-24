@@ -76,35 +76,54 @@ serve(async (req) => {
 
     const deletionErrors: string[] = [];
 
-    // 1. Delete assessment-related data (respecting FK constraints)
-    const { data: assessments } = await supabaseAdmin
-      .from('leader_assessments')
+    // 1. Delete assessment-related data (respecting FK constraints).
+    //
+    // Bug fix during the data-path audit: this code previously filtered on
+    // `owner_user_id`, a column that doesn't exist on leader_assessments.
+    // The real ownership chain is leader_assessments → leaders → user_id
+    // (or leaders.email = auth.users.email for older rows). Without this
+    // fix, assessment cleanup silently failed for every account deletion
+    // since the rename — orphaned PII left behind. The leader_assessments
+    // FK is ON DELETE CASCADE, so deleting the leaders row at step 4 will
+    // remove assessments transitively, but we still want explicit child
+    // deletion here to avoid relying solely on cascade and to keep the
+    // audit log accurate.
+    const { data: leaderRows } = await supabaseAdmin
+      .from('leaders')
       .select('id')
-      .eq('owner_user_id', userId);
+      .eq('user_id', userId);
+    const leaderIds = (leaderRows ?? []).map((l: { id: string }) => l.id);
 
-    if (assessments?.length) {
-      const assessmentIds = assessments.map((a: { id: string }) => a.id);
-
-      const childDeletes = await Promise.allSettled([
-        supabaseAdmin.from('leader_dimension_scores').delete().in('assessment_id', assessmentIds),
-        supabaseAdmin.from('leader_risk_signals').delete().in('assessment_id', assessmentIds),
-        supabaseAdmin.from('leader_tensions').delete().in('assessment_id', assessmentIds),
-        supabaseAdmin.from('leader_org_scenarios').delete().in('assessment_id', assessmentIds),
-        supabaseAdmin.from('leader_first_moves').delete().in('assessment_id', assessmentIds),
-        supabaseAdmin.from('leader_prompt_sets').delete().in('assessment_id', assessmentIds),
-      ]);
-
-      childDeletes.forEach((result, i) => {
-        if (result.status === 'rejected') {
-          deletionErrors.push(`assessment_child_${i}: ${result.reason}`);
-        }
-      });
-
-      const { error: assessmentError } = await supabaseAdmin
+    if (leaderIds.length > 0) {
+      const { data: assessments } = await supabaseAdmin
         .from('leader_assessments')
-        .delete()
-        .eq('owner_user_id', userId);
-      if (assessmentError) deletionErrors.push(`leader_assessments: ${assessmentError.message}`);
+        .select('id')
+        .in('leader_id', leaderIds);
+
+      if (assessments?.length) {
+        const assessmentIds = assessments.map((a: { id: string }) => a.id);
+
+        const childDeletes = await Promise.allSettled([
+          supabaseAdmin.from('leader_dimension_scores').delete().in('assessment_id', assessmentIds),
+          supabaseAdmin.from('leader_risk_signals').delete().in('assessment_id', assessmentIds),
+          supabaseAdmin.from('leader_tensions').delete().in('assessment_id', assessmentIds),
+          supabaseAdmin.from('leader_org_scenarios').delete().in('assessment_id', assessmentIds),
+          supabaseAdmin.from('leader_first_moves').delete().in('assessment_id', assessmentIds),
+          supabaseAdmin.from('leader_prompt_sets').delete().in('assessment_id', assessmentIds),
+        ]);
+
+        childDeletes.forEach((result, i) => {
+          if (result.status === 'rejected') {
+            deletionErrors.push(`assessment_child_${i}: ${result.reason}`);
+          }
+        });
+
+        const { error: assessmentError } = await supabaseAdmin
+          .from('leader_assessments')
+          .delete()
+          .in('leader_id', leaderIds);
+        if (assessmentError) deletionErrors.push(`leader_assessments: ${assessmentError.message}`);
+      }
     }
 
     // 2. Delete user data tables
@@ -119,6 +138,11 @@ serve(async (req) => {
       supabaseAdmin.from('notification_preferences').delete().eq('user_id', userId),
       supabaseAdmin.from('leader_missions').delete().eq('user_id', userId),
       supabaseAdmin.from('briefings').delete().eq('user_id', userId),
+      // Briefing-side tables added in the audit data-path pass; tolerate
+      // the table being absent on older deployments via .catch on the .from
+      // chain (Supabase returns the error in the result, not as a throw).
+      supabaseAdmin.from('briefing_interests').delete().eq('user_id', userId),
+      supabaseAdmin.from('suggested_briefing_interests').delete().eq('user_id', userId),
     ]);
 
     userDataDeletes.forEach((result, i) => {
@@ -127,14 +151,49 @@ serve(async (req) => {
       }
     });
 
-    // 3. Delete profile last (FK parent)
+    // 3. Purge Storage. Audio briefings frequently contain the leader's
+    // spoken name, company, and strategic decisions — they are PII. The DB
+    // delete above already removed the briefings rows, but the underlying
+    // MP3s in the ctrl-briefings bucket would otherwise survive forever
+    // (GDPR Art. 17 violation). Same logic applies to any uploaded files
+    // in the `documents` bucket.
+    //
+    // Path convention: <user_id>/... so we list the user's folder and
+    // remove every object found. Best-effort: a partial purge logs an
+    // error but doesn't fail the deletion request — the audit log captures
+    // it for follow-up.
+    const purgeBucket = async (bucket: string): Promise<string | null> => {
+      try {
+        const { data: files, error: listErr } = await supabaseAdmin.storage
+          .from(bucket)
+          .list(userId, { limit: 1000 });
+        if (listErr) return `${bucket}: list failed — ${listErr.message}`;
+        if (!files || files.length === 0) return null;
+        const paths = files.map((f: { name: string }) => `${userId}/${f.name}`);
+        const { error: removeErr } = await supabaseAdmin.storage
+          .from(bucket)
+          .remove(paths);
+        if (removeErr) return `${bucket}: remove failed — ${removeErr.message}`;
+        console.log(`Purged ${paths.length} object(s) from ${bucket} for ${userId}`);
+        return null;
+      } catch (e) {
+        return `${bucket}: ${e instanceof Error ? e.message : String(e)}`;
+      }
+    };
+
+    for (const bucket of ['ctrl-briefings', 'documents']) {
+      const err = await purgeBucket(bucket);
+      if (err) deletionErrors.push(`storage_${bucket}: ${err}`);
+    }
+
+    // 4. Delete profile last (FK parent)
     const { error: profileError } = await supabaseAdmin
       .from('leaders')
       .delete()
       .eq('user_id', userId);
     if (profileError) deletionErrors.push(`leaders: ${profileError.message}`);
 
-    // 4. Log successful deletion to audit
+    // 5. Log successful deletion to audit
     await supabaseAdmin.from('data_audit_log').insert({
       user_id: userId,
       action_type: 'DELETE',
