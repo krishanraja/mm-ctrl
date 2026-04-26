@@ -189,6 +189,7 @@ export function BriefingProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useBriefingContext() {
   const ctx = useContext(BriefingContext);
   if (!ctx) throw new Error('useBriefingContext must be used within BriefingProvider');
