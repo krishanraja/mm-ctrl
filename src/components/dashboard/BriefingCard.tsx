@@ -214,13 +214,16 @@ export function BriefingCard({
   customBriefingCount = 0,
   onExpandChange,
 }: BriefingCardProps) {
-  const { audioUrl, polling, exhausted, start } = usePollAudio();
+  const { audioUrl, polling, exhausted, synthError, start, clearError } = usePollAudio();
   const { setBriefing } = useBriefingContext();
   const { regenerate, generating: regenerating } = useGenerateBriefing();
   const [expanded, setExpanded] = useState(false);
 
   const handleGenerateAudio = () => {
-    if (!briefing.audio_url) start(briefing.id);
+    if (!briefing.audio_url) {
+      clearError();
+      start(briefing.id);
+    }
   };
 
   const handleRegenerate = async () => {
@@ -362,14 +365,28 @@ export function BriefingCard({
                   <span className="relative z-10 text-xs">Audio...</span>
                 </Button>
               ) : exhausted ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-8 px-3 text-[11px]"
-                  onClick={(e) => { e.stopPropagation(); handleGenerateAudio(); }}
-                >
-                  Retry audio
-                </Button>
+                <div className="flex flex-col items-end gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-3 text-[11px]"
+                    onClick={(e) => { e.stopPropagation(); handleGenerateAudio(); }}
+                  >
+                    Retry audio
+                  </Button>
+                  {synthError && (
+                    <span
+                      className={`text-[10px] max-w-[160px] text-right ${
+                        synthError.kind === 'rate_limited' ? 'text-amber-500' : 'text-muted-foreground'
+                      }`}
+                      title={synthError.message}
+                    >
+                      {synthError.kind === 'rate_limited' && 'Rate limited'}
+                      {synthError.kind === 'provider_unavailable' && 'TTS unavailable'}
+                      {synthError.kind === 'unknown' && 'Audio failed'}
+                    </span>
+                  )}
+                </div>
               ) : (
                 <Button
                   variant="outline"

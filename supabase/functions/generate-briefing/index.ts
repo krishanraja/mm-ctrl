@@ -25,6 +25,7 @@ import { dedupeAndScore, type CandidateHeadline, type ScoredHeadline } from "../
 import { curateSegments, segmentCountFromBudget, type CuratedSegment } from "../_shared/briefing-curation.ts";
 import { getUserContext, toLensSource, type UserContext } from "../_shared/user-context.ts";
 import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { fetchWithTimeout, ProviderUnavailableError } from "../_shared/with-timeout.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -243,8 +244,13 @@ async function fetchWithPerplexity(apiKey: string, userCtx: UserContext, briefin
     contextParts.push(`Frame news through the lens of a ${userCtx.role}.`);
   }
 
-  const response = await fetch("https://api.perplexity.ai/chat/completions", {
+  // Perplexity wrapped in fetchWithTimeout: 15s budget + 1 retry on 5xx.
+  // Without this, a hung Perplexity stalls the whole briefing pipeline
+  // until Supabase's 60s wall clock kills the function.
+  const response = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
     method: "POST",
+    provider: "perplexity",
+    timeoutMs: 15_000,
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",

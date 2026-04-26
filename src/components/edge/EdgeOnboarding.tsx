@@ -25,7 +25,7 @@ interface Props {
   onComplete: () => void;
 }
 
-type Step = 'welcome' | 'prompt' | 'recording' | 'transcribing' | 'submitting' | 'done';
+type Step = 'welcome' | 'prompt' | 'recording' | 'transcribing' | 'submitting' | 'submit_stalled' | 'done';
 
 interface QuestionConfig {
   heading: string;
@@ -75,12 +75,21 @@ export function EdgeOnboarding({ onComplete }: Props) {
   const [textInput, setTextInput] = useState('');
   const [responses, setResponses] = useState<string[]>([]);
 
-  // Safety timeout for the submitting state so the user never gets stuck.
+  // Safety timeout for the submitting state. Previously this silently fired
+  // advanceAfterSubmit() after 30s — the user was moved on without knowing
+  // their answer might not have saved. Now we transition to a `submit_stalled`
+  // step that surfaces a recovery card with Retry / Skip choices so the user
+  // is in control when something is genuinely slow.
   const submittingTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  // Pending response captured at submit time; used by the Retry path.
+  const pendingResponseRef = useRef<string | null>(null);
   useEffect(() => {
     if (step === 'submitting') {
       submittingTimerRef.current = setTimeout(() => {
-        advanceAfterSubmit();
+        console.warn(
+          `EdgeOnboarding submission stalled (>30s) at question ${questionIndex}`,
+        );
+        setStep('submit_stalled');
       }, 30_000);
     }
     return () => clearTimeout(submittingTimerRef.current);
@@ -122,6 +131,7 @@ export function EdgeOnboarding({ onComplete }: Props) {
   // -----------------------------------------------------------------------
 
   async function submitResponse(text: string) {
+    pendingResponseRef.current = text;
     const nextResponses = [...responses, text];
     setResponses(nextResponses);
 
@@ -134,8 +144,30 @@ export function EdgeOnboarding({ onComplete }: Props) {
       // Non-blocking -- we still advance so the user isn't stuck.
     }
 
+    pendingResponseRef.current = null;
     advanceAfterSubmit(nextResponses);
   }
+
+  // Recovery handlers for the submit_stalled step.
+  const handleStalledRetry = useCallback(() => {
+    const text = pendingResponseRef.current;
+    if (!text) {
+      // No pending text means the user got here via an edge case;
+      // treat as a skip.
+      setStep('submitting');
+      advanceAfterSubmit();
+      return;
+    }
+    setStep('submitting');
+    void submitResponse(text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleStalledSkip = useCallback(() => {
+    pendingResponseRef.current = null;
+    advanceAfterSubmit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function advanceAfterSubmit(nextResponses?: string[]) {
     clearTimeout(submittingTimerRef.current);
@@ -485,6 +517,37 @@ export function EdgeOnboarding({ onComplete }: Props) {
               </motion.div>
               <p className="text-foreground font-medium">Processing your answer...</p>
               <p className="text-sm text-muted-foreground">Building your leadership context</p>
+            </motion.div>
+          )}
+
+          {/* ---- SUBMIT STALLED ---- recovery card when extract-user-context
+                  hasn't responded after 30s. The user picks: retry the same
+                  answer, or skip past this question. Replaces the previous
+                  silent auto-advance. */}
+          {step === 'submit_stalled' && (
+            <motion.div
+              key="submit_stalled"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center space-y-5 max-w-sm"
+            >
+              <div className="w-16 h-16 rounded-full bg-amber-500/15 mx-auto flex items-center justify-center">
+                <Shield className="w-7 h-7 text-amber-500" />
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-foreground font-semibold">That took longer than expected</p>
+                <p className="text-sm text-muted-foreground">
+                  Your last answer may not have saved. Retry, or skip and we'll keep going.
+                </p>
+              </div>
+              <div className="flex gap-3 justify-center pt-1">
+                <Button onClick={handleStalledRetry} className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  Retry
+                </Button>
+                <Button variant="outline" onClick={handleStalledSkip}>
+                  Skip
+                </Button>
+              </div>
             </motion.div>
           )}
 

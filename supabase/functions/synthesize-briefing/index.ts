@@ -9,6 +9,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { fetchWithTimeout, ProviderUnavailableError } from "../_shared/with-timeout.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -137,26 +138,47 @@ serve(async (req) => {
 
     console.log(`Synthesizing audio for briefing ${briefing.id}...`);
 
-    // Call ElevenLabs TTS (voice/model from tts_config or defaults)
+    // Call ElevenLabs TTS (voice/model from tts_config or defaults).
+    // Wrapped in fetchWithTimeout: 20s budget + 1 retry on 5xx. On terminal
+    // failure surface `provider_unavailable` so the frontend renders a
+    // recoverable "audio temporarily unavailable" prompt instead of a stuck
+    // spinner.
     const elevenlabsUrl = `https://api.elevenlabs.io/v1/text-to-speech/${ttsConfig.voiceId}`;
-    const ttsResponse = await fetch(elevenlabsUrl, {
-      method: "POST",
-      headers: {
-        "xi-api-key": elevenLabsKey,
-        "Content-Type": "application/json",
-        Accept: "audio/mpeg",
-      },
-      body: JSON.stringify({
-        text: briefing.script_text,
-        model_id: ttsConfig.modelId,
-        voice_settings: {
-          stability: 0.4,
-          similarity_boost: 0.75,
-          style: 0.45,
-          use_speaker_boost: true,
+    let ttsResponse: Response;
+    try {
+      ttsResponse = await fetchWithTimeout(elevenlabsUrl, {
+        method: "POST",
+        provider: "elevenlabs",
+        timeoutMs: 20_000,
+        headers: {
+          "xi-api-key": elevenLabsKey,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
         },
-      }),
-    });
+        body: JSON.stringify({
+          text: briefing.script_text,
+          model_id: ttsConfig.modelId,
+          voice_settings: {
+            stability: 0.4,
+            similarity_boost: 0.75,
+            style: 0.45,
+            use_speaker_boost: true,
+          },
+        }),
+      });
+    } catch (e) {
+      if (e instanceof ProviderUnavailableError) {
+        return new Response(
+          JSON.stringify({
+            error: "provider_unavailable",
+            provider: "elevenlabs",
+            message: "Audio service is temporarily unavailable. Try again in a moment.",
+          }),
+          { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw e;
+    }
 
     if (!ttsResponse.ok) {
       const errText = await ttsResponse.text().catch(() => "");

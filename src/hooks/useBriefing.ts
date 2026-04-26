@@ -236,6 +236,11 @@ export function usePollAudio() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [polling, setPolling] = useState(false);
   const [exhausted, setExhausted] = useState(false);
+  // synthError lets the BriefingCard render a real "audio failed — retry?"
+  // affordance instead of a stuck "Audio…" pill. Categorised so different
+  // failure modes can get different copy (rate_limited vs provider_unavailable
+  // vs unknown).
+  const [synthError, setSynthError] = useState<{ kind: 'rate_limited' | 'provider_unavailable' | 'unknown'; message: string } | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const pollCountRef = useRef(0);
   const resolvedRef = useRef(false);
@@ -255,25 +260,55 @@ export function usePollAudio() {
     cleanup();
   }, [cleanup]);
 
+  const fail = useCallback((kind: 'rate_limited' | 'provider_unavailable' | 'unknown', message: string) => {
+    if (resolvedRef.current) return;
+    resolvedRef.current = true;
+    setSynthError({ kind, message });
+    setPolling(false);
+    setExhausted(true);
+    cleanup();
+  }, [cleanup]);
+
   const start = useCallback((id: string) => {
     if (!id) return;
     resolvedRef.current = false;
     setPolling(true);
     setExhausted(false);
     setAudioUrl(null);
+    setSynthError(null);
     pollCountRef.current = 0;
     cleanup();
 
-    // Path 1: Trigger synthesis and use its response directly
+    // Path 1: Trigger synthesis and use its response directly. The function
+    // can return three useful states: success (audio_url), structured error
+    // (data.error = 'rate_limited' | 'provider_unavailable'), or thrown error.
     supabase.functions
       .invoke('synthesize-briefing', { body: { briefing_id: id } })
       .then(({ data, error }) => {
         if (resolvedRef.current) return;
         if (!error && data?.audio_url) {
           resolve(data.audio_url);
+          return;
+        }
+        // Structured error from the edge function (status 429 / 503 still
+        // arrive here as `data` because supabase-js doesn't throw on those).
+        if (data?.error === 'rate_limited') {
+          fail('rate_limited', data.message || 'Audio generation is rate-limited. Try again in a minute.');
+          return;
+        }
+        if (data?.error === 'provider_unavailable') {
+          fail('provider_unavailable', data.message || 'Audio service is temporarily unavailable.');
+          return;
+        }
+        if (error) {
+          console.warn('Synthesis returned error:', error);
         }
       })
-      .catch((e) => console.warn('Synthesis trigger failed:', e));
+      .catch((e) => {
+        console.warn('Synthesis trigger failed:', e);
+        if (resolvedRef.current) return;
+        fail('unknown', 'Could not generate audio. Try again.');
+      });
 
     // Path 2: Poll DB as backup (in case synthesis is still in-flight
     // when the edge function times out from the client perspective)
@@ -282,9 +317,12 @@ export function usePollAudio() {
       pollCountRef.current += 1;
 
       if (pollCountRef.current > MAX_POLLS) {
-        setPolling(false);
-        setExhausted(true);
-        cleanup();
+        // Pool exhausted without resolving. If a synth-side error already
+        // fired we'd already be resolved; this branch covers the "synth
+        // returned nothing useful and DB never updated" case.
+        if (!resolvedRef.current) {
+          fail('unknown', 'Audio generation timed out. Try again.');
+        }
         return;
       }
 
@@ -305,12 +343,14 @@ export function usePollAudio() {
 
     poll();
     intervalRef.current = setInterval(poll, POLL_INTERVAL);
-  }, [cleanup, resolve]);
+  }, [cleanup, resolve, fail]);
+
+  const clearError = useCallback(() => setSynthError(null), []);
 
   // Cleanup on unmount only
   useEffect(() => {
     return cleanup;
   }, [cleanup]);
 
-  return { audioUrl, polling, exhausted, start };
+  return { audioUrl, polling, exhausted, synthError, start, clearError };
 }
