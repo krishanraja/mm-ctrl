@@ -4,7 +4,7 @@
  * Centralized route configuration.
  */
 
-import { RouteObject } from 'react-router-dom';
+import { Navigate, RouteObject } from 'react-router-dom';
 import Landing from '@/pages/Landing';
 import Dashboard from '@/pages/Dashboard';
 import Today from '@/pages/Today';
@@ -41,12 +41,16 @@ export const routes: RouteObject[] = [
     path: '/voice',
     element: <Voice />,
   },
+  // /timeline and /profile were unimplemented "coming soon" stubs that
+  // shipped as bare divs. Redirect rather than 404 so any existing
+  // bookmarks / email links land somewhere useful: timeline → briefing
+  // (closest functional surface), profile → settings/account.
   {
     path: '/timeline',
-    element: <div>Timeline (coming soon)</div>,
+    element: <Navigate to="/briefing" replace />,
   },
   {
     path: '/profile',
-    element: <div>Profile (coming soon)</div>,
+    element: <Navigate to="/dashboard?section=account" replace />,
   },
 ];

@@ -1,7 +1,6 @@
 import { AccountTab } from './AccountTab'
 import { WorkContextTab } from './WorkContextTab'
 import { PrivacyDataTab } from './PrivacyDataTab'
-import { NotificationsTab } from './NotificationsTab'
 import { PreferencesTab } from './PreferencesTab'
 import { EdgeProTab } from './EdgeProTab'
 import { ManifestoTab } from './ManifestoTab'
@@ -13,6 +12,9 @@ interface SettingsSectionViewProps {
   section: SettingsSection
 }
 
+// 'notifications' was a placeholder tab and is intentionally not handled
+// here; the mobile sheet falls through to `default` and shows nothing.
+// Once a real notifications backend exists, route the case back here.
 export function SettingsSectionView({ section }: SettingsSectionViewProps) {
   switch (section) {
     case 'account':
@@ -23,8 +25,6 @@ export function SettingsSectionView({ section }: SettingsSectionViewProps) {
       return <BriefingInterestsTab />
     case 'briefing':
       return <BriefingDirectivesTab />
-    case 'notifications':
-      return <NotificationsTab />
     case 'privacy':
       return <PrivacyDataTab />
     case 'preferences':

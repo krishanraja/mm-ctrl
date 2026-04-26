@@ -28,33 +28,18 @@ export function AccountTab() {
     }
   }
 
+  // Audit cleanup: removed the "Profile photo coming soon" placeholder and
+  // the Change Password button (no click handler, no backend wired up).
+  // Password reset is handled via the auth provider's "forgot password" link
+  // on the sign-in screen — that's the working path for now. Add a real
+  // in-app change-password flow when there's a working backend for it.
   return (
     <div className="space-y-6">
       <div className="bg-card border border-border p-6 rounded-lg">
         <h3 className="text-lg font-semibold text-foreground mb-4">Profile</h3>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm text-muted-foreground">Email</label>
-            <p className="text-foreground">{user?.email}</p>
-          </div>
-          <div className="pt-4 border-t border-border">
-            <p className="text-sm text-muted-foreground mb-2">
-              Profile photo coming soon
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-6 rounded-lg">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Security</h3>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm text-muted-foreground">Password</label>
-            <p className="text-muted-foreground text-sm mb-2">••••••••</p>
-            <Button variant="outline" size="sm">
-              Change Password
-            </Button>
-          </div>
+        <div>
+          <label className="text-sm text-muted-foreground">Email</label>
+          <p className="text-foreground">{user?.email}</p>
         </div>
       </div>
 
