@@ -544,5 +544,5 @@ This is core to vibe coding.
 
 ---
 
-*Last Updated: 2024-12-09*
-*Version: 1.0.0*
+*Last Updated: 2026-04-26*
+*Version: 1.1.0 (post Phase 7 audit hardening)*

@@ -2,7 +2,21 @@
 
 Complete feature inventory across all three CTRL tools.
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
+
+> **For sales/marketing AI agents**: every major feature in this doc has a "Sales Anchor" callout. Pull those into outbound copy. Every feature is shipped, deployed, and observable in production unless explicitly marked `[planned]`.
+
+---
+
+## Repo at a glance (verified 2026-04-26)
+
+- **74 Supabase edge functions** (Deno runtime), grouped: 7 briefing, 5 memory, 5 AI generation, 4 billing, 6 diagnostic, 8 email, 9 enrichment, 11 leadership/missions/observability/voice, plus shared modules
+- **48 React hooks** under `src/hooks/`
+- **97 PostgreSQL migrations** applied to remote
+- **PostgreSQL extensions in use**: pgvector, pgcrypto, pg_cron
+- **6 audit-week tracks shipped** (PR #93-#101): revenue path, data path, UX, reliability, observability, cleanup. See `HISTORY.md` Phase 7.
+- **CI gates blocking on PRs**: typecheck (tsc --noEmit), full Vite build, ESLint on PR diff
+- **Tests**: 6 Vitest unit/shared + 6 Playwright e2e (auth-journeys, briefing-journey, briefing-rate-limits, sparse-profile, account-deletion, stripe-webhook-idempotency)
 
 ---
 
@@ -99,12 +113,12 @@ Complete feature inventory across all three CTRL tools.
 - Limited prompts (2 categories)
 - Basic tensions view
 
-**Paid Tier** (Full Leadership Diagnostic)
-- Full tensions, risks, and scenarios
-- Complete prompt library (3-8 categories)
-- Priority ranking and evidence
-- Downloadable reports
-- Payment: $49 via Stripe
+**Paid Tiers** (Stripe-managed, signature-verified, idempotent)
+- **Full Diagnostic** ($49 one-time): full tensions/risks/scenarios, complete prompt library (3-8 categories), priority ranking, downloadable reports.
+- **Deep Context Upgrade** ($29 one-time): enhanced company context enrichment.
+- **Full Diagnostic + Deep Context Bundle** ($69 one-time, saves $10): both above. Default upsell.
+
+**Sales Anchor — Diagnostic**: "10 minutes. Six dimensions. The provocation report your board will ask you about. $49 — cheaper than the slide deck a consultant would write to ask you the same questions."
 
 ---
 
@@ -197,10 +211,15 @@ Edge analyzes everything CTRL knows about a leader and surfaces:
 - Feedback loops
 - Limited artifact previews (samples only)
 
-**Pro (Stripe subscription):**
+**Edge Pro** ($9/month, Stripe subscription):
 - Unlimited artifact generation
-- Email delivery
+- Email delivery via `deliver-edge-artifact`
 - All capability types
+- All 7 briefing types (incl. Boardroom Prep, Vendor Landscape, Competitive Intel, AI Model Landscape, Custom Voice)
+- Subscription management UI via `create-billing-portal-session`
+- Stripe webhook idempotency table (`stripe_events_processed`) prevents double-charges (Audit Week 1)
+
+**Sales Anchor — Edge Pro**: "$9/month. Less than a coffee a week. Generates board memos, strategy docs, and meeting agendas in your register, on demand. Skip the blank page entirely."
 
 ---
 
@@ -580,6 +599,23 @@ Every v2 segment on the dashboard shows:
 - `BRIEFING_V2_ENABLED_DEFAULT` - global default for v2 routing (`false` to stay on v1)
 - `BRIEFING_DEDUPE_THRESHOLD` - cosine threshold for headline dedupe (default 0.87)
 - `BRIEFING_EXCLUDE_THRESHOLD` - cosine threshold for user-exclude post-filter (default 0.80)
+
+### Reliability hardening (Audit Week 4)
+
+The briefing pipeline ships with concrete reliability primitives:
+- **`with-timeout` utility** (`supabase/functions/_shared/with-timeout.ts`, tested) wraps every external API call with explicit timeouts and retries.
+- **Provider fan-out** uses `Promise.allSettled` with a 12-second wall-clock cap so a single slow provider can't block the briefing.
+- **Audio failure UX**: if synthesis fails, the briefing card still shows segments + script. The MP3 is fire-and-forget and degrades gracefully.
+- **Rate limits** on `generate-briefing` (Audit Week 1) prevent abuse and runaway cost.
+- **Onboarding stall recovery** for users who started a briefing then closed the app.
+
+### Observability (Audit Week 5)
+
+- **Structured edge-function logger** (`supabase/functions/_shared/logger.ts`) emits JSON logs with `ts`, `level`, `fn`, `msg`, `userId`, `duration_ms`, `error`. Searchable in Supabase logs.
+- **CI gate** prevents `console.log` regressions in edge functions.
+- **`with-timeout` test coverage** validates retry + timeout behaviour.
+
+**Sales Anchor — Daily Briefing**: "Three minutes a day that replace thirty minutes of scrolling. Every story shows the specific profile fact it was anchored to. Bookmark to keep a beat. Ban to kill a topic semantically. Your briefing gets sharper every day."
 
 ---
 
@@ -1121,3 +1157,61 @@ AI-powered tools for day-to-day leadership decision-making, available after comp
 - Smooth, not bouncy
 - Subtle, not dramatic
 - Respect reduced motion preferences
+
+---
+
+## Audit Track Record (April 2026)
+
+CTRL shipped six thematic audit weeks closing technical debt and hardening the product for executive use. Sales/marketing AI agents can cite these as **proof of operational maturity** — this is not a prototype, it's a hardened production platform.
+
+| Week | Theme | Headline Outcomes |
+|------|-------|-------------------|
+| 1 (PR #93) | **Revenue path** | Mandatory Stripe webhook signature verification; webhook idempotency table (`stripe_events_processed`); briefing rate limits; create/verify diagnostic payment hardened; Edge Pro subscription path validated |
+| 2 (PR #94) | **Data path** | Closed assessment data leak; codified storage bucket policy (`ctrl-briefings`); end-to-end account deletion; RLS audit |
+| 3 (PR #95) | **UX** | Killed onboarding gate; fixed NorthStar stub; voice permission recovery; killed surveillance copy; removed all "coming soon" placeholders for unimplemented affordances |
+| 4 (PR #99) | **Reliability** | Timeouts + retries on all external APIs (`with-timeout` utility, tested); audio failure UX; onboarding stall recovery |
+| 5 (PR #97) | **Observability** | Structured edge-function JSON logger (`_shared/logger.ts`); CI gate against `console.log` regressions; tests for `with-timeout` |
+| 6 (PR #98, #100, #101) | **Cleanup** | P2 backlog closure; stale-incomplete recovery; e2e contract starter (auth, briefing, account-deletion, stripe-idempotency, sparse-profile, briefing-rate-limits); AI response cache; lint cleanup |
+
+### Verifiable proof points for buyers
+
+- Stripe webhook handler validates signatures and dedupes events — buyers concerned about double-charges or webhook spoofing can audit `supabase/functions/stripe-webhook/`
+- E2E test `tests/stripe-webhook-idempotency.spec.ts` proves it
+- E2E test `tests/account-deletion.spec.ts` proves account deletion is end-to-end
+- E2E test `tests/briefing-rate-limits.spec.ts` proves rate limiting is enforced
+- E2E test `tests/sparse-profile.spec.ts` proves the briefing pipeline gracefully handles new/empty profiles
+
+---
+
+## Settings — what users actually control
+
+Settings sheet (`src/components/settings/`) tabs in current order:
+
+1. **AccountTab** — name, email, password, sign-out, delete account (end-to-end)
+2. **WorkContextTab** — role, company, industry, company size (drives briefing seeds + AI context)
+3. **BriefingInterestsTab** — declare beats, entities, excludes (Briefing v2 lens inputs)
+4. **BriefingDirectivesTab** — set briefing type defaults, voice, schedule
+5. **EdgeProTab** — Edge Pro subscription state, billing portal, capability list
+6. **PreferencesTab** — display/theme/audio preferences
+7. **PrivacyDataTab** — data retention, export, deletion, consent flags
+8. **ManifestoTab** — the founder's positioning (legible to users; explains what we're not)
+
+**Sales Anchor — Settings**: "Every setting is a lever the leader controls — what gets stored, what gets killed, what gets generated. No mystery dial behind the scenes."
+
+---
+
+## Sales-anchor index (for AI agents)
+
+A condensed list of one-liners pullable for outbound. Each tied to a real shipped feature:
+
+- **Memory Web**: "Talk for two minutes. Get a portable AI double that works in every AI tool."
+- **Context Export**: "One click. ChatGPT, Claude, Gemini, Cursor, Claude Code — all of them. Yours."
+- **Daily Briefing v2**: "Three minutes of audio. Every story anchored to a specific priority on your desk. No mystery algorithm."
+- **Edge — Sharpen/Cover**: "Your strengths systemized. Your weaknesses covered. Board memos and strategy docs in your register, on demand."
+- **Decision Advisor**: "Ask a hard question. Get an answer that already knows your context."
+- **Meeting Prep**: "Walk in briefed by an AI that knows your team, your priorities, and your last decision."
+- **Diagnostic**: "10 minutes. Six dimensions. The questions your board will ask you. $49."
+- **Edge Pro**: "$9/month. Less than a coffee. More leverage than your last consulting hour."
+- **Privacy**: "No Slack. No email. No calendar. You talk to it. That's the whole connection."
+- **Auditable AI**: "Every Briefing segment shows the profile fact that earned it the slot. No black box."
+- **Hardened production**: "6 audit weeks shipped. Stripe sig + idempotency. End-to-end deletion. Structured logging. E2E tests."

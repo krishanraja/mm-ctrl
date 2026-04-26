@@ -2,7 +2,7 @@
 
 Evolution of CTRL (originally Mindmaker) and major product pivots.
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
 
 ---
 
@@ -221,7 +221,9 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 
 ---
 
-## Version History| Version | Date | Description |
+## Version History
+
+| Version | Date | Description |
 |---------|------|-------------|
 | 1.0 | Early 2024 | Initial AI Leadership Benchmark |
 | 2.0 | Mid 2024 | Dual architecture with V2 components |
@@ -230,6 +232,7 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 | 4.0 | Feb-Mar 2026 | Memory Web, Context Export, Portable AI Double |
 | 4.1 | Mar 2026 | Rebrand from Mindmaker to CTRL: "Clarity for Leaders" |
 | 5.0 | Apr 2026 | Briefing v2: evidence-based relevance lens + pgvector + four-part learning loop (Interests, industry seeds, explicit kill, nightly aggregator) |
+| 5.1 | Apr 2026 | Phase 7 — six audit-week tracks shipped: revenue path, data path, UX, reliability, observability, cleanup. Hardened production platform. |
 
 ---
 
@@ -278,3 +281,78 @@ Initially the new loop landed in `BriefingSheet` (the full-screen slide-up) and 
 - `20260419000001_industry_beat_library` - new table + seed data (11 industries)
 - `20260419000002_briefing_lens_feedback` - new table
 - `20260419000003_briefing_aggregate_feedback_cron` - SQL aggregator function + pg_cron schedule
+
+---
+
+## Phase 7: Six-Week Audit Hardening (April 2026)
+
+### Context
+
+By mid-April 2026, the product surface area had grown to 74 edge functions, 48 hooks, 97 migrations, and a multi-stage briefing pipeline. The shape was right; the edges were not all clean. A six-week audit-track program was committed, each week landing as its own PR with a clear thematic boundary.
+
+### Week 1 — Revenue Path (PR #93, merged 2026-04-21)
+
+**Shipped:**
+- Mandatory Stripe webhook signature verification on `stripe-webhook` edge function. Unsigned/badly-signed payloads now reject with 400.
+- Webhook idempotency via new `stripe_events_processed` table — replays of the same event ID are recognised and skipped.
+- Briefing rate limits enforced via `_shared/rateLimit.ts` to prevent abuse and runaway cost.
+- E2E test `tests/stripe-webhook-idempotency.spec.ts` proves the contract.
+
+**Why it mattered:** A leaked or replayed Stripe webhook could double-charge a Pro subscriber. This is the kind of issue that surfaces at audit time and damages trust with executive buyers.
+
+### Week 2 — Data Path (PR #94, merged 2026-04-22)
+
+**Shipped:**
+- Closed an assessment-data leak (specific issue redacted from public docs).
+- Codified the storage bucket policy for `ctrl-briefings` (audio artifacts now have explicit RLS-aligned object policies).
+- Completed end-to-end account deletion: removes Memory Web, briefings, audio artifacts, decisions, missions, assessments — verified in `tests/account-deletion.spec.ts`.
+
+**Why it mattered:** Privacy claims must be backed by code. "Self-contained, encrypted at rest, fully deletable" is a sales anchor; this week made it provably true.
+
+### Week 3 — UX (PR #95, merged 2026-04-22)
+
+**Shipped:**
+- Killed the onboarding gate that was blocking returning users on the dashboard.
+- Fixed the NorthStar stub on the home view.
+- Voice permission recovery flow when a user denies microphone access then changes their mind.
+- Removed surveillance-y copy across the app.
+- Removed every "coming soon" placeholder for unimplemented affordances. The product no longer advertises what it can't do.
+
+**Why it mattered:** The product is sold to executives. Anything that feels half-finished erodes the premium positioning.
+
+### Week 4 — Reliability (PR #99, merged 2026-04-23)
+
+**Shipped:**
+- New `_shared/with-timeout.ts` utility (with vitest coverage). Every external API call (Vertex, OpenAI, ElevenLabs, Perplexity, Tavily, Brave, Resend, Stripe) now wraps in a timeout + retry contract.
+- Audio failure UX — if synthesis fails, the briefing card still shows segments + script.
+- Onboarding stall recovery — users who closed the app mid-onboarding can resume cleanly.
+
+**Why it mattered:** A 3-minute briefing that hangs for 60 seconds because Perplexity is slow is a credibility hit. The 12-second wall-clock cap on provider fan-out + per-call timeouts means worst-case behaviour is bounded.
+
+### Week 5 — Observability (PR #97, merged 2026-04-23)
+
+**Shipped:**
+- Structured edge-function logger at `_shared/logger.ts`. JSON output: `{ ts, level, fn, msg, userId, duration_ms, error }`. Searchable in Supabase logs.
+- CI gate prevents `console.log` regressions in edge functions.
+- Tests for `with-timeout` to lock the retry contract.
+
+**Why it mattered:** When a leader emails saying "my briefing is broken," we can find the request in seconds, see the exact failure path, and fix it the same day.
+
+### Week 6 — Cleanup + e2e starter (PR #98, #100, #101, merged 2026-04-24 → 2026-04-26)
+
+**Shipped:**
+- P2 backlog closure across UX, copy, and minor inconsistencies.
+- E2E test contract starter: 6 Playwright specs covering the highest-risk paths (auth, briefing journey, briefing rate limits, sparse profile, account deletion, stripe idempotency).
+- New `ai_response_cache` table + 4 more end-to-end contracts.
+- Lint cleanup (kept ~1600 pre-existing warnings as accepted debt; new violations now blocked at CI).
+
+**Why it mattered:** The remaining "I'll fix it later" items had been later for too long. Closing them out cleared the runway for the next product expansion.
+
+### Outcomes from Phase 7
+
+- 6 thematic PRs merged in April 2026
+- 6 e2e specs covering the riskiest user paths
+- 0 known revenue-path bugs
+- 0 known data-leak vectors
+- Structured logs in production, queryable per user / function / duration
+- This is the version sales/marketing AI agents can confidently sell — not "we plan to harden it" but "the audit is shipped and the tests prove it."

@@ -2,7 +2,9 @@
 
 Recurring bugs, architectural pain points, and solutions.
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
+
+> **Status**: Most pre-2026-04 issues are closed. The April 2026 six-week audit (Phase 7) covered revenue path, data path, UX, reliability, observability, and cleanup. New issues added at the bottom under "Audit Phase Aftermath."
 
 ---
 
@@ -440,4 +442,38 @@ Before shipping:
   2. Confirm Perplexity is responsive via direct test call.
   3. Ensure `lens` cache is warm: regeneration within 24h uses cached lens (saves ~1.5s).
   4. As a last resort, bump the generation timeout in `useBriefing.ts` (currently 60s).
-**Status**: ⚠️ Monitor. The 12s Stage 3 wall-clock cap protects against worst-case provider hangs.
+**Status**: ⚠️ Monitor. The 12s Stage 3 wall-clock cap + `with-timeout` per call (Audit Week 4) protects against worst-case provider hangs.
+
+---
+
+## Audit Phase Aftermath (April 2026, post-Phase 7)
+
+### Issue 37: Stripe Webhook Replays Now Visible in Logs
+**Symptom**: Operator sees `stripe_events_processed` rows where the same event id is logged with `idempotent_skip: true`.
+**Root Cause**: Normal Stripe behaviour. Webhooks are retried on any non-2xx response or network blip.
+**Solution**: This is by design. The presence of these log lines confirms idempotency is working. No action required.
+**Status**: ✅ Resolved by design (Audit Week 1).
+
+### Issue 38: Account Deletion Slow on Active Users
+**Symptom**: A user who has used CTRL for months and accumulated thousands of memory facts, hundreds of briefings, and dozens of decisions sees the deletion flow take 5-10 seconds.
+**Root Cause**: We delete in a careful FK-aware order. Larger users have more rows.
+**Solution**: Acceptable for an end-to-end-deletion guarantee. If perception becomes a problem, consider chunked async deletion with a confirmed-pending UI state. For now, the wait is honest.
+**Status**: ⚠️ Monitor (Audit Week 2).
+
+### Issue 39: External Provider Slowness Now Bounded but Still Visible
+**Symptom**: A briefing finishes with fewer-than-expected segments because Perplexity or Tavily timed out.
+**Root Cause**: `with-timeout` (Audit Week 4) caps each provider call. Slow providers are dropped rather than blocking the pipeline.
+**Solution**: This is the desired tradeoff. If recall drops materially, retune timeouts in `_shared/with-timeout.ts` per provider. The structured logger (Audit Week 5) makes per-provider success rates queryable.
+**Status**: ✅ Working as designed.
+
+### Issue 40: Lint Warnings High but Stable
+**Symptom**: ~1600 ESLint warnings persist in the codebase.
+**Root Cause**: Accepted technical debt (Audit Week 6). CI runs ESLint on PR-diff only — new violations block, historical baseline does not.
+**Solution**: Treat as a known number, not a problem. Ratcheting down can be a future quarterly initiative.
+**Status**: 🟡 Accepted debt.
+
+### Issue 41: Briefing Has No Audio Yet
+**Symptom**: Briefing card shows segments and script, but the audio MP3 isn't ready immediately.
+**Root Cause**: ElevenLabs synthesis is fire-and-forget from `generate-briefing` to `synthesize-briefing`. The frontend polls every 3s. Audio Failure UX (Audit Week 4) ensures segments + script render even if synthesis ultimately fails.
+**Solution**: User can read segments immediately. Audio appears when synthesis completes. If `audio_url` stays null after a minute, check `synthesize-briefing` logs.
+**Status**: ✅ Resolved (Audit Week 4 audio failure UX).

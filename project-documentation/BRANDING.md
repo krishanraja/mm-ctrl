@@ -1,6 +1,6 @@
 # Branding
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-04-26
 
 ---
 
@@ -46,10 +46,13 @@
 "Every conversation makes your AI context richer. The gap between you and leaders using AI generically widens every day."
 
 ### 5. Operator Credibility
-"Krish built $100M+ with AI. CTRL is the tool he wished existed."
+"Krish built $0→$12M ARR at Captify, $9M→$61M data revenue at Nine. CTRL is the tool he wished existed."
 
 ### 6. Self-Contained Privacy
 "No plugins. No integrations. No enterprise security reviews. CTRL is self-contained — you talk to it, and your data stays yours."
+
+### 7. Auditable Relevance
+"Every Briefing segment shows the specific profile fact that earned it the slot. Personalization you can prove, not just promise."
 
 ---
 
@@ -169,7 +172,7 @@ Krish
 ```
 Krish Raja
 Founder, CTRL
-ctrl.ai
+ctrl.themindmaker.ai
 ```
 
 ---

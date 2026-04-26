@@ -2,7 +2,9 @@
 
 Complete system architecture and data flow documentation.
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
+
+> **Verified counts (2026-04-26)**: 74 edge functions, 48 hooks, 97 migrations, 6 e2e specs, 6 vitest specs, pgvector + pgcrypto + pg_cron extensions enabled, 6 audit-week tracks shipped (revenue path, data path, UX, reliability, observability, cleanup).
 
 ---
 
@@ -136,7 +138,7 @@ src/
 ├── contexts/
 │   ├── AppStateContext.tsx    # Global app state management
 │   └── AssessmentContext.tsx  # Assessment flow state
-├── hooks/                     # 32 custom hooks
+├── hooks/                     # 48 custom hooks
 │   ├── useStructuredAssessment.ts
 │   ├── useRealtimeAssessment.ts
 │   ├── useAILiteracyAssessment.ts
@@ -197,7 +199,7 @@ src/
 │   └── supabase/
 │       ├── client.ts          # Supabase client
 │       └── types.ts           # Generated DB types (READ-ONLY)
-├── pages/                     # 23 page files (many are legacy, now redirected)
+├── pages/                     # 25 page files (many legacy, now redirected to /dashboard)
 │   ├── Landing.tsx            # Landing page (/)
 │   ├── Auth.tsx               # Authentication (/auth)
 │   ├── AuthCallback.tsx       # OAuth callback (/auth/callback)
@@ -717,7 +719,15 @@ training_material                       -- YAML voice guide, single source of tr
 
 **Location**: `supabase/functions/`
 
-**Total**: 58+ edge functions + shared module directory. The Briefing subsystem added five functions (`generate-briefing`, `synthesize-briefing`, `briefing-diagnose`, `get-industry-seeds`, `briefing-kill-lens-item`, `briefing-aggregate-feedback`) plus new shared modules (`briefing-lens`, `briefing-scoring`, `briefing-curation`, `user-context`, `lens-signature`).
+**Total**: 74 edge functions in `supabase/functions/` plus a `_shared/` module directory. The Briefing subsystem (Phase 6) added seven functions (`generate-briefing`, `synthesize-briefing`, `briefing-diagnose`, `get-industry-seeds`, `briefing-kill-lens-item`, `briefing-aggregate-feedback`, `infer-briefing-interests`, `nudge-briefing`) plus shared modules (`briefing-lens`, `briefing-scoring`, `briefing-curation`, `user-context`, `lens-signature`, `with-timeout`, `logger`).
+
+**Production hardening (Audit Weeks 1-6, April 2026):**
+- All external API calls now wrapped with `_shared/with-timeout.ts` (timeouts + retries, tested)
+- All edge functions emit structured JSON logs via `_shared/logger.ts` (CI gate against `console.log` regressions)
+- Stripe webhook signature verification + idempotency via `stripe_events_processed` table
+- Briefing rate limits enforced via `_shared/rateLimit.ts`
+- Account deletion is end-to-end (deletes Memory Web, briefings, audio artifacts, decisions, missions, assessments)
+- E2E tests cover the highest-risk paths: auth journeys, briefing journey, briefing rate limits, sparse profile, account deletion, stripe webhook idempotency
 
 #### Core Assessment Functions
 
@@ -818,21 +828,22 @@ training_material                       -- YAML voice guide, single source of tr
 53. **enrich-company-context** - Enrich company data for contextual AI responses
 
 **Shared Modules** (`supabase/functions/_shared/`):
-- `context-builder.ts`: Builds LLM context from diagnostic data
-- `memory-context-builder.ts`: Builds Memory Web context for AI
-- `openai-utils.ts`: OpenAI API wrapper utilities
-- `ai-cache.ts`: AI response caching layer
-- `rate-limiting.ts` / `rate-limit.ts`: Request rate limiting
-- `llm-quality-guardrails.ts`: LLM output validation
-- `storage-utils.ts`: File storage utilities
-- `validate-database.ts`: Database validation helpers
-- `email-utils.ts`: Email sending utilities
-- `llm-quality-guardrails.ts`: Output validation and filtering
-- `ai-cache.ts`: AI response caching layer
-- `rate-limit.ts` / `rate-limiting.ts`: Rate limiting middleware
-- `email-utils.ts`: Email sending utilities
-- `storage-utils.ts`: Supabase Storage helpers
-- `validate-database.ts`: Database validation helpers
+- `context-builder.ts` / `memory-context-builder.ts` — LLM context construction
+- `user-context.ts` — Profile projection (shared between briefing pipeline + diagnose endpoint)
+- `briefing-lens.ts` — Importance lens (Stage 1+2 of v2 pipeline)
+- `briefing-scoring.ts` — Embedding dedupe + scoring + exclude filter (Stage 4)
+- `briefing-curation.ts` — Budget-constrained segment picker (Stage 5)
+- `lens-signature.ts` — SHA-256 signature for stable feedback keying
+- `training-loader.ts` — YAML voice guide loader (training_material table)
+- `ai-cache.ts` — Generic AI + embedding response cache (24h lens cache, 7d embedding cache, backed by `ai_response_cache` table)
+- `model-router.ts` — Vertex AI primary, OpenAI GPT-4o fallback, static tertiary
+- `rateLimit.ts` / `rate-limiting.ts` — Per-user rate limiting (briefing rate-limit shipped Audit Week 1)
+- `with-timeout.ts` — Timeout + retry wrapper for all external API calls (Audit Week 4)
+- `logger.ts` — Structured JSON edge-function logger (Audit Week 5)
+- `llm-quality-guardrails.ts` — LLM output validation
+- `storage-utils.ts` — Supabase Storage helpers (`ctrl-briefings` bucket policy codified Audit Week 2)
+- `email-utils.ts` — Resend email sending
+- `validate-database.ts` — DB validation helpers
 
 ---
 
@@ -1177,7 +1188,27 @@ All user-facing tables have RLS policies:
 
 ### Current State
 
-**Automated Testing**: Vitest configured (`vitest.config.ts`) with unit tests in `src/__tests__/`
+**Vitest** (`vitest.config.ts`) — 6 unit/shared specs:
+- `src/__tests__/api.test.ts`
+- `src/__tests__/authMachine.test.ts`
+- `src/__tests__/renderMarkdown.test.ts`
+- `src/__tests__/training.test.ts`
+- `src/__tests__/HeroSection.video.test.tsx`
+- `supabase/functions/_shared/with-timeout.test.ts`
+
+**Playwright** (`playwright.config.ts`) — 6 e2e specs:
+- `tests/auth-journeys.spec.ts`
+- `tests/briefing-journey.spec.ts`
+- `tests/briefing-rate-limits.spec.ts`
+- `tests/sparse-profile.spec.ts`
+- `tests/account-deletion.spec.ts`
+- `tests/stripe-webhook-idempotency.spec.ts`
+
+**CI gates** (`.github/workflows/ci.yml`) — three blocking checks per PR:
+1. Typecheck (`tsc --noEmit`)
+2. Full Vite build
+3. ESLint on PR diff (~1600 pre-existing warnings accepted as technical debt; new lint regressions blocked)
+
 
 **Manual Testing Checklist**:
 - [ ] Quiz assessment completes successfully

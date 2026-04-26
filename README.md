@@ -2,9 +2,31 @@
 
 > Think out loud. See what emerges.
 
-CTRL helps leaders voice their thoughts and organizes them into a **Memory Web** (your portable context that makes every AI smarter), an **Edge** profile (your leadership strengths amplified, weaknesses covered), and **Context Exports** that make every AI tool you use instantly personal.
+CTRL helps leaders voice their thoughts and organizes them into a **Memory Web** (your portable context that makes every AI smarter), an **Edge** profile (your leadership strengths amplified, weaknesses covered), **Context Exports** that make every AI tool you use instantly personal, and a **Daily Briefing** anchored to your real priorities.
 
-**Build your portable AI double in 2 minutes. Every AI tool you use instantly knows your context, goals, and thinking style.**
+**Build your portable AI double in 2 minutes. Hear 3 minutes of audio every morning that's actually about your world. Every AI tool you use already knows your context, goals, and thinking style.**
+
+---
+
+## Documentation
+
+The canonical source of truth lives in [`project-documentation/`](./project-documentation/README.md). Start there for everything: features, architecture, sales briefs, ICP, outcomes, decisions, and history.
+
+For sales & marketing AI agents:
+- [project-documentation/SALES_BRIEF.md](./project-documentation/SALES_BRIEF.md)
+- [project-documentation/ICP.md](./project-documentation/ICP.md)
+- [project-documentation/VALUE_PROP.md](./project-documentation/VALUE_PROP.md)
+- [project-documentation/OUTCOMES.md](./project-documentation/OUTCOMES.md)
+- [project-documentation/Master_Messaging_and_FAQ.md](./project-documentation/Master_Messaging_and_FAQ.md)
+
+For developers:
+- [project-documentation/ARCHITECTURE.md](./project-documentation/ARCHITECTURE.md)
+- [project-documentation/FEATURES.md](./project-documentation/FEATURES.md)
+- [project-documentation/HISTORY.md](./project-documentation/HISTORY.md)
+- [project-documentation/DECISIONS_LOG.md](./project-documentation/DECISIONS_LOG.md)
+- [project-documentation/COMMON_ISSUES.md](./project-documentation/COMMON_ISSUES.md)
+- [CLAUDE.md](./CLAUDE.md) — workflow conventions for Claude Code / agentic edits
+- [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
@@ -12,76 +34,88 @@ CTRL helps leaders voice their thoughts and organizes them into a **Memory Web**
 
 Every leader uses AI. But every AI conversation starts from zero. You re-explain who you are, what your company does, what you're working on, every single time. The advice stays generic. Decision speed suffers.
 
-CTRL eliminates that friction permanently.
+Plus the **noise tax** — newsletters and feeds serve everyone the same content. 30+ minutes a day for two useful insights at best.
+
+CTRL eliminates both, permanently.
 
 ## How It Works
 
-1. **Voice a thought**
-2. **It organizes itself**
-3. **Export anywhere** - ChatGPT, Claude, Gemini, Cursor, Claude Code
-4. **Every decision gets faster**
-
-2 minutes to your first export. Voice-first, text always available.
+1. **Voice a thought** — 2 minutes, no typing
+2. **It organizes itself** — Memory Web extracts and verifies structured facts
+3. **Export anywhere** — ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown
+4. **Hear your world** — 3-minute audio Briefing every morning, every story anchored to a specific priority on your desk
+5. **Every decision gets faster** — Edge artifacts, Decision Advisor, Meeting Prep already know your context
 
 ---
 
 ## Core Features
 
 ### Memory Web
-Your thoughts, organized. A living map of what you know, what you want, and how you think. Facts are categorized, verified by you, and encrypted at rest.
+Your thoughts, organized. A living map of what you know, what you want, and how you think. Facts are categorized, verified by you, and encrypted at rest (AES-256-GCM).
 
-### Edge: Leadership Amplifier
+### Edge — Leadership Amplifier
 Your strengths sharpened, your weaknesses covered. Edge synthesizes your Memory Web and assessment data into a leadership profile, then offers AI-powered capabilities:
 - **Sharpen** strengths: Systemize, Teach, Lean Into
-- **Cover** weaknesses: Board Memos, Strategy Docs, Emails, Meeting Agendas, Templates
+- **Cover** weaknesses: Board Memos, Strategy Docs, Emails, Meeting Agendas, Templates, Frameworks
 - Interactive strength/weakness pills with feedback loops
 - Intelligence gap detection with guided resolution
-- Pro tier with premium artifact generation
+- Edge Pro ($9/month) for unlimited artifact generation + email delivery
 
-### Daily Briefing: Personalised Intelligence
-Three minutes of audio every morning, tuned to the one thing that matters: your world. Not a feed. Not another digest. An **evidence-based pass** that reads your active decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that actually move your math.
+### Daily Briefing v2 — Evidence-based intelligence
+Three minutes of audio every morning, tuned to the one thing that matters: your world.
 
-- Every story is **anchored** to something specific in your profile (you can literally see "Anchored to: <your active decision>" on the card)
+- Every segment is **anchored** to something specific in your profile (the card literally shows "Anchored to: <your active decision>")
 - **Bookmark** any story → its anchor becomes a persistent beat
 - **Ban** any topic → kills it semantically (embeddings-based, not keyword)
-- **Settings → Interests** → declare beats, track people/companies, exclude whole topics
-- Cold-start covered: new users get industry-specific seed beats proposed on day one (11 industries pre-seeded)
+- **Settings → Interests** → declare beats, track people/companies, exclude topics
+- Cold-start solved: 11 industries pre-seeded with relevant starter beats
 - Seven briefing types: Daily Brief, Macro Trends, Vendor Landscape, Competitive Intel, Boardroom Prep, AI Model Landscape, Custom Voice
-- Built on a seven-stage pipeline: importance lens → query planner → multi-provider fan-out → pgvector dedupe + scoring → budget-constrained curation → script generation → audio synthesis
-- Persistent semantic feedback loop: explicit kills (-1.0 immediately) + nightly aggregator that promotes 3+ thumbs-down to persistent -0.4 weight deltas
+- Persistent learning: explicit Bans (-1.0 immediately) + nightly aggregator (-0.4 after 3+ thumbs-down on same signature)
 
-### Context Export: Your Context, Everywhere
+### Context Export — Your Context, Everywhere
 One click to export your context to **any** AI tool:
-- **ChatGPT** - Custom instructions
-- **Claude** - Conversation context
-- **Gemini** - Formatted context
-- **Cursor** - .cursorrules file
-- **Claude Code** - CLAUDE.md file
-- **Raw Markdown** - Use anywhere
+- **ChatGPT** — Custom instructions
+- **Claude** — Conversation context
+- **Gemini** — Formatted context
+- **Cursor** — `.cursorrules` file
+- **Claude Code** — `CLAUDE.md` file
+- **Raw Markdown** — Use anywhere
 
-Export optimized for specific use cases: General Advisor, Meeting Prep, Decision Support, Code Review, Email Drafting, Strategic Planning.
+Optimized for: General Advisor, Meeting Prep, Decision Support, Code Review, Email Drafting, Strategic Planning.
 
 ### Thinking Tools
-Four tools that think with your context:
-- **Decision Advisor** - Think through a decision with full context
-- **Meeting Prep** - Walk in prepared
-- **Team Brief** - Draft instructions for your team
-- **Stream of Consciousness** - Speak freely. It organizes itself.
+- **Decision Advisor** — Think through a decision with full context
+- **Meeting Prep** — Walk in prepared
+- **Team Brief** — Draft instructions for your team
+- **Stream of Consciousness** — Speak freely. It organizes itself.
 
 ### AI Literacy Diagnostic
-10-minute assessment covering Strategic Vision, Experimentation Culture, Delegation & Automation, Data & Decision Quality, Team Capability, and Governance. Surfaces tensions, risk signals, and organizational scenarios.
+10-minute assessment covering Strategic Vision, Experimentation Culture, Delegation & Automation, Data & Decision Quality, Team Capability, and Governance. Surfaces tensions, risk signals, and organizational scenarios. $49 to unlock the full report.
 
 ### Missions & Progress
 Commit to action items from your diagnostic. Track progress through check-ins. Adaptive prompts adjust based on your momentum.
 
 ---
 
+## Pricing
+
+| SKU | Price | What |
+|---|---|---|
+| Free / Core | $0 | Memory Web, Context Export, basic Briefing, AI tools |
+| Full Diagnostic | $49 one-time | Tensions, risks, scenarios, full thinking tools |
+| Deep Context Upgrade | $29 one-time | Enhanced company-context enrichment |
+| Diagnostic + Deep Context Bundle | $69 one-time | Both above (saves $10) |
+| Edge Pro | $9/month | Unlimited Edge artifacts + 7 briefing types |
+
+---
+
 ## Design Philosophy
 
-- **Apple-like quality** - Executive-grade, 10/10 visual polish
-- **Voice-first** - Talk naturally, we handle the structure
-- **Mobile-first** - Immersive, no-scroll experience on every page
-- **Light mode** - Warm off-white backgrounds, deep ink text, pure white cards
+- **Apple-like quality** — Executive-grade, 10/10 visual polish
+- **Voice-first** — Talk naturally, structure handled
+- **Mobile-first** — Immersive, no-scroll experience on every key page
+- **Light mode** — Warm off-white backgrounds, deep ink text, pure white cards
+- **Auditable relevance** — Every Briefing segment proves its relevance with a specific profile fact
 
 ---
 
@@ -89,46 +123,55 @@ Commit to action items from your diagnostic. Track progress through check-ins. A
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | React 18, TypeScript, Vite, Framer Motion |
-| Styling | Tailwind CSS, shadcn/ui |
-| State | React Context, TanStack Query |
-| Backend | Supabase (PostgreSQL, 53 Edge Functions, Deno runtime) |
+| Frontend | React 18.3.1, TypeScript 5.5, Vite 5.4, Framer Motion 12 |
+| Routing | React Router 6.26.2 (lazy-loaded routes) |
+| Styling | Tailwind CSS, shadcn/ui (Radix UI) |
+| State | React Context, TanStack Query 5.56 |
+| Backend | Supabase (PostgreSQL + 74 Edge Functions, Deno runtime) |
 | AI Primary | Vertex AI (Gemini 2.0 Flash) via Google Cloud service account |
 | AI Fallback | OpenAI GPT-4o |
 | Voice | OpenAI Whisper |
+| Embeddings | OpenAI `text-embedding-3-small` (1536-dim, pgvector) |
+| Audio | ElevenLabs |
 | Auth | Supabase Auth (Email + Google OAuth) |
-| Payments | Stripe (Edge Pro subscription) |
+| Payments | Stripe (signature-verified, idempotent) |
 | Email | Resend |
+| DB extensions | pgvector, pgcrypto, pg_cron |
+| Tests | Vitest (unit + shared, 6 specs), Playwright (e2e, 6 specs) |
 | Hosting | Vercel (frontend), Supabase Cloud (backend) |
+| Node.js | `>=22 <24` |
+
+### Verified counts (2026-04-26)
+- 74 Supabase edge functions
+- 48 React custom hooks
+- 97 PostgreSQL migrations applied
+- 25 top-level page components
+- 11 active routes (+ 5 legacy redirects to `/dashboard`)
+- 6 audit-week tracks shipped (revenue path, data path, UX, reliability, observability, cleanup)
 
 ---
 
-## Architecture
+## Architecture (high level)
 
 The app uses a **unified dashboard** architecture. The Dashboard page (`/dashboard`) is the primary hub, rendering either the Memory Web view (default) or the Edge view (`?view=edge`). Desktop uses a persistent sidebar; mobile uses a bottom navigation bar.
 
 ### Active Routes
 
-| Route | Page | Auth | Notes |
-|-------|------|------|-------|
-| `/` | Landing | No | Video background hero, CTRL branding |
-| `/auth` | Auth | No | Email + Google OAuth |
-| `/auth/callback` | Auth Callback | No | OAuth redirect handler |
-| `/booking` | Booking | No | External booking page |
-| `/dashboard` | Dashboard (Memory Web) | Yes | Default view - Memory Web with guided first experience |
-| `/dashboard?view=edge` | Dashboard (Edge) | Yes | Edge leadership amplifier |
-| `/memory` | Memory Center | Yes | Detailed memory management |
-| `/context` | Context Export | Yes | Export to AI tools |
-| `/settings` | Settings | Yes | User preferences |
-| `/profile` | Profile | Yes | User profile |
+| Route | Page | Auth |
+|-------|------|------|
+| `/` | Landing | No |
+| `/auth` | Auth (Email + Google OAuth) | No |
+| `/auth/callback` | OAuth redirect handler | No |
+| `/booking` | Booking | No |
+| `/dashboard` | Dashboard hub (Memory Web view by default; `?view=edge` for Edge) | Yes |
+| `/memory` | Memory Center | Yes |
+| `/context` | Context Export | Yes |
+| `/briefing` | Daily Briefing page | Yes |
+| `/settings` | Settings | Yes |
+| `/compliance` | Compliance | Yes |
+| `/profile` | Profile | Yes |
 
 Legacy routes (`/today`, `/voice`, `/pulse`, `/diagnostic`, `/think`) redirect to `/dashboard`.
-
-### Navigation Structure
-
-**Desktop:** Fixed left sidebar (264px) with CTRL logo, nav items (Home, Edge, Memory Web, Export to AI), settings, and sign out.
-
-**Mobile:** Bottom navigation bar with 4 tabs: Home, Edge, Memory, Export.
 
 ### Directory Structure
 
@@ -136,98 +179,108 @@ Legacy routes (`/today`, `/voice`, `/pulse`, `/diagnostic`, `/think`) redirect t
 src/
 ├── components/
 │   ├── ui/              # shadcn/ui primitives
-│   ├── auth/            # Authentication (AuthProvider, RequireAuth)
-│   ├── landing/         # Landing page (HeroSection, CtrlLogo, TrustIndicators)
+│   ├── auth/            # AuthProvider, RequireAuth
+│   ├── landing/         # HeroSection, CtrlLogo, TrustIndicators
 │   ├── dashboard/       # Dashboard hub
-│   │   ├── desktop/     # DesktopDashboard, Sidebar, Panel
-│   │   └── mobile/      # MobileDashboard, BottomNav, VoiceFAB, sheets
-│   ├── memory-web/      # Memory Web views (desktop + mobile dashboards, sidebar, guided experience)
-│   ├── edge/            # Edge leadership amplifier (EdgeView, EdgeProfileCard, paywall, pills)
-│   ├── voice/           # Voice capture components
-│   ├── memory/          # Memory management components
+│   ├── memory-web/      # Memory Web views, sidebars, guided experience
+│   ├── edge/            # EdgeView, profile card, paywall, pills, draft sheet
+│   ├── voice/           # Voice capture
+│   ├── memory/          # Memory management
 │   ├── onboarding/      # Guided first experience
 │   ├── missions/        # Missions tracking
-│   ├── sharpen/         # Sharpen tool (voice input, insights)
+│   ├── settings/        # Account, WorkContext, BriefingInterests, BriefingDirectives, EdgePro, Preferences, PrivacyData, Manifesto
+│   ├── sharpen/         # Sharpen tool
 │   ├── ai-chat/         # AI interaction
 │   ├── diagnostic/      # Assessment components
-│   ├── team-instructions/ # Team instruction generation
-│   └── pulse/           # Strategic Pulse
-├── hooks/               # 32 custom React hooks
-├── pages/               # 23 page components (many are legacy redirects)
-├── contexts/            # Auth, Theme, AppState
-├── types/               # TypeScript types (including edge.ts)
+│   └── ... (operator, progress, provocation, pulse, team-instructions, etc.)
+├── hooks/               # 48 custom React hooks
+├── pages/               # 25 page components (many are legacy redirects)
+├── contexts/            # AppState, Assessment, Auth, Theme
+├── types/               # TypeScript types
 ├── utils/               # Utilities
 ├── router.tsx           # React Router v6 with createBrowserRouter
 └── integrations/        # External service clients (Supabase)
 
 supabase/
-├── functions/           # 53 edge functions (Deno runtime)
-│   ├── _shared/         # Shared utilities (rate limiting, AI cache, context builders, etc.)
-│   ├── ai-generate/     # Central AI function (Vertex primary, OpenAI fallback)
-│   ├── voice-transcribe/
-│   ├── extract-user-context/
-│   ├── memory-crud/
-│   ├── memory-export/
-│   ├── edge-generate/   # Edge artifact generation
-│   ├── synthesize-edge-profile/  # Edge profile synthesis
-│   ├── create-edge-subscription/ # Edge Pro payments
-│   ├── detect-patterns/
-│   ├── submit-decision-capture/
-│   ├── generate-meeting-prep/
-│   ├── prompt-coach/
-│   └── ... (53 total)
-├── migrations/          # PostgreSQL migrations
+├── functions/           # 74 edge functions (Deno runtime)
+│   ├── _shared/         # logger, with-timeout, ai-cache, rate-limit, briefing-lens/scoring/curation, model-router, training-loader, etc.
+│   ├── generate-briefing/        # Briefing v2 orchestrator
+│   ├── synthesize-briefing/      # ElevenLabs MP3 synthesis
+│   ├── briefing-diagnose/        # Read-only "why these stories?" endpoint
+│   ├── briefing-kill-lens-item/  # Explicit Ban
+│   ├── briefing-aggregate-feedback/  # Aggregator (HTTP entrypoint)
+│   ├── infer-briefing-interests/
+│   ├── nudge-briefing/
+│   ├── ai-generate/              # Vertex primary, OpenAI fallback, static tertiary
+│   ├── memory-crud/, memory-export/, memory-lifecycle/, memory-settings/, memory-synthesize/
+│   ├── edge-generate/            # Edge artifact generation
+│   ├── deliver-edge-artifact/    # Email delivery (Pro)
+│   ├── create-edge-subscription/, create-billing-portal-session/
+│   ├── stripe-webhook/           # Signature-verified, idempotent
+│   ├── voice-transcribe/         # Whisper
+│   └── ... (74 total)
+├── migrations/          # 97 PostgreSQL migrations
 ├── email-templates/     # Auth email templates
 └── config.toml
 ```
 
 ---
 
-## Local Development
+## Production Hardening (April 2026 audit cycle)
 
-```bash
-# Install dependencies
-npm install
+The product survived a six-week audit-track program. Each week landed as its own PR with a clear thematic boundary:
 
-# Start development server
-npm run dev
+| Week | Theme | What shipped |
+|------|-------|--------------|
+| 1 | Revenue path | Mandatory Stripe webhook signature verification + idempotency table; briefing rate limits |
+| 2 | Data path | Closed assessment data leak; codified storage bucket; end-to-end account deletion |
+| 3 | UX | Killed onboarding gate; voice permission recovery; killed surveillance copy; removed all "coming soon" placeholders |
+| 4 | Reliability | `with-timeout` utility wrapping all external API calls (tested); audio failure UX; onboarding stall recovery |
+| 5 | Observability | Structured edge-function JSON logger; CI gate against `console.log` regressions |
+| 6 | Cleanup + e2e | P2 backlog; 6 e2e specs covering riskiest paths; AI response cache; lint cleanup |
 
-# Build for production
-npm run build
-
-# Run tests
-npm test
-```
-
-Requires **Node.js >=22 <24**. Environment variables configured in Supabase dashboard for edge function secrets.
+E2E specs covering the highest-risk paths:
+- `tests/auth-journeys.spec.ts`
+- `tests/briefing-journey.spec.ts`
+- `tests/briefing-rate-limits.spec.ts`
+- `tests/sparse-profile.spec.ts`
+- `tests/account-deletion.spec.ts`
+- `tests/stripe-webhook-idempotency.spec.ts`
 
 ---
 
-## Documentation
+## Local Dev
 
-Detailed documentation lives in `project-documentation/`:
+```bash
+# install
+npm install
 
-| Document | Purpose |
-|----------|---------|
-| [README.md](./project-documentation/README.md) | Documentation index and quick start |
-| [SALES_BRIEF.md](./project-documentation/SALES_BRIEF.md) | Sales-ready product overview |
-| [FEATURES.md](./project-documentation/FEATURES.md) | Complete feature inventory |
-| [VALUE_PROP.md](./project-documentation/VALUE_PROP.md) | Value propositions by audience |
-| [PURPOSE.md](./project-documentation/PURPOSE.md) | Core mission and problem statement |
-| [ICP.md](./project-documentation/ICP.md) | Ideal customer profile |
-| [ARCHITECTURE.md](./project-documentation/ARCHITECTURE.md) | System architecture |
-| [BRANDING.md](./project-documentation/BRANDING.md) | Brand voice and guidelines |
-| [DESIGN_SYSTEM.md](./project-documentation/DESIGN_SYSTEM.md) | Design tokens, components, patterns |
-| [MASTER_INSTRUCTIONS.md](./project-documentation/MASTER_INSTRUCTIONS.md) | AI development guidelines |
+# dev server
+npm run dev
+
+# tests
+npm run test           # vitest watch
+npm run test:coverage  # vitest with coverage
+npm run test:e2e       # playwright
+
+# build
+npm run build
+```
+
+Supabase deployment conventions live in [`CLAUDE.md`](./CLAUDE.md).
 
 ---
 
 ## Deployment
 
 - **Frontend**: Auto-deploys to Vercel on push to main
-- **Edge Functions**: Deployed via Supabase CLI (`supabase functions deploy`)
-- **Database**: Migrations applied via `supabase db push`
+- **Edge Functions**: Deployed via Supabase CLI (`supabase functions deploy <name>`)
+- **Database**: Migrations applied via the Supabase Management API (see `CLAUDE.md` for the canonical PowerShell snippet)
 
 ---
 
-*Built by [Krish Raja](https://ctrl.ai). Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com)*
+## Production URL
+
+`ctrl.themindmaker.ai`
+
+Built by [Krish Raja](https://ctrl.themindmaker.ai). Deployed on [Vercel](https://vercel.com) and [Supabase](https://supabase.com).

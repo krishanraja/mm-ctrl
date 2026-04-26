@@ -1,26 +1,30 @@
-# Mindmaker Master Messaging & FAQ Document
+# CTRL & Mindmaker Master Messaging & FAQ
 *Core Source of Truth for Product Marketing, Sales, Content, and Outbound*
 
-**Goal:** This document serves as the central brain for Mindmaker. It synthesizes the operator history, the psychological pain of the enterprise buyer, the specific "Aha" moments of the products, and the core philosophies of the business. 
+**Last Updated:** 2026-04-26
+
+---
+
+**Goal:** This document is the central brain for the CTRL product (the portable context layer for leaders) and the Mindmaker operating brand (Krish Raja's commercial entity). It synthesizes the operator history, the psychological pain of the enterprise buyer, the specific "Aha" moments of the products, and the core philosophies of the business.
 
 ---
 
 ## PART 1: THE CORE NARRATIVE & IDENTITY (WHO IS KRISH?)
 
-**The One-Liner:** 
-Technical strategist. 16 years monetizing emerging tech at scale. 
+**The One-Liner:**
+Technical strategist. 16 years monetizing emerging tech at scale.
 
-**The Credential Pivot (For Outbound & Sales):** 
+**The Credential Pivot (For Outbound & Sales):**
 "I started coding at Microsoft and spent my career running product strategy. I was always the one asked to build the 'what's next' revenue stream. Now I build autonomous business systems."
 
 **The Proof Points (Never boastful, always factual context):**
-*   **The Foundation:** Built the first global automated media campaigns at Microsoft in 2010.
-*   **The Scale:** Scaled Captify APAC from $0 to $12M ARR as MD (P&L owner), leading a team of 18 with 22% EBITDA.
-*   **The Enterprise Transformation:** Took Nine Entertainment's data revenue from $9M to $61M.
-*   **The Current Reality:** CEO of Mindmaker, running a custom multi-agent OS (v3) that automates the output of a 30-person team. I am building the future live.
+- **The Foundation:** Built the first global automated media campaigns at Microsoft in 2010.
+- **The Scale:** Scaled Captify APAC from $0 to $12M ARR as MD (P&L owner), leading a team of 18 with 22% EBITDA.
+- **The Enterprise Transformation:** Took Nine Entertainment's data revenue from $9M to $61M.
+- **The Current Reality:** CEO of Mindmaker, running a custom multi-agent OS (v3) that automates the output of a 30-person team. Building the future live.
 
 **The Positioning vs. The Market:**
-I am not an advisor. I am an operator, a CEO, and a systems builder. I do not sell 40-slide research decks. I provide live, operational training tailored to your business goals while I build the systems in the room with you. 
+I am not an advisor. I am an operator, a CEO, and a systems builder. I do not sell 40-slide research decks. I provide live, operational training tailored to your business goals while I build the systems in the room with you.
 
 ---
 
@@ -30,9 +34,9 @@ I am not an advisor. I am an operator, a CEO, and a systems builder. I do not se
 Executives are learning AI "from a distance." They are putting AI on board decks and forcing themselves to talk the talk to inspire their teams, but they are not in the tools. They are outsourcing the actual mechanics to their IT or RevOps teams.
 
 **The Underlying Anxiety (What they feel):**
-*   **The Boardroom Fear:** The visceral terror of looking dumb in a board meeting because they cannot actually execute the strategy they just presented.
-*   **The Competitor Threat:** The knowledge that AI-native competitors will move faster by default. Once an AI-enabled business hits its stride, a legacy business cannot pivot fast enough to catch up.
-*   **The Vendor Paralysis:** The fear of wasting millions of dollars on the wrong vendor because they lack the technical literacy to evaluate them properly.
+- **The Boardroom Fear:** The visceral terror of looking dumb in a board meeting because they cannot actually execute the strategy they just presented.
+- **The Competitor Threat:** The knowledge that AI-native competitors will move faster by default. Once an AI-enabled business hits its stride, a legacy business cannot pivot fast enough to catch up.
+- **The Vendor Paralysis:** The fear of wasting millions of dollars on the wrong vendor because they lack the technical literacy to evaluate them properly.
 
 **The Enemy (The 6-Figure Consultant Trap):**
 The big consultancies (McKinsey, BCG, Deloitte) are selling 6-figure decks built by lifelong researchers. They cannot see the future because they do not build it. They research it. Leaders don't need research; they need operational certainty from someone who has run a P&L and actually codes the systems.
@@ -45,7 +49,7 @@ The big consultancies (McKinsey, BCG, Deloitte) are selling 6-figure decks built
 ## PART 3: THE CTRL APP (THE PORTABLE CONTEXT LAYER)
 
 **What is CTRL?**
-A portable AI memory web. It is a private, fundamental brain that sits underneath tools like Cursor, Claude, or ChatGPT. It organizes, verifies, and retains your specific context permanently.
+A portable AI memory web. A private, fundamental brain that sits underneath tools like Cursor, Claude, or ChatGPT. It organizes, verifies, and retains your specific context permanently. Plus a daily 3-minute audio briefing built from your real priorities, where every segment is anchored to a specific profile fact.
 
 **The "Aha" Moment (The Origin Story):**
 The moment people tried to export their memories from ChatGPT to Claude and realized they were hallucinated, inaccurate, or trapped. AI models will constantly change. Vendor lock-in is a massive risk. Your context and memories are too precious to rent. You need a layer of controlled trust over a technology that hallucinates.
@@ -54,19 +58,28 @@ The moment people tried to export their memories from ChatGPT to Claude and real
 Every time you test a new model or open Cursor, you start from zero. You spend cycles re-explaining your architecture. CTRL fixes this friction. Stop renting your brain to walled gardens and build a compounding advantage.
 
 **The Pitch to Enterprise (The Trojan Horse):**
-We give CTRL away for free to leaders. Once they use it and map their context, it inevitably exposes the reality gap in their organization—their tech might be strong, but their governance or commercial positioning is broken. This realization sells the Enterprise Sprint.
+We give CTRL away free for the core experience (Memory Web, Context Export, basic Briefing). Once leaders use it and map their context, it inevitably exposes the reality gap in their organization — their tech might be strong, but their governance or commercial positioning is broken. That realization sells the Mindmaker Sprint.
+
+**The CTRL stack at a glance (today):**
+- React 18 + TypeScript + Vite + Tailwind + shadcn/ui front-end
+- Supabase backend: PostgreSQL with pgvector + pgcrypto + pg_cron, **74 edge functions** (Deno), **48 React hooks**, **97 migrations** applied
+- AI: Vertex AI (Gemini 2.0 Flash) primary, OpenAI GPT-4o fallback, OpenAI Whisper for voice, ElevenLabs for audio, OpenAI `text-embedding-3-small` for the briefing pipeline
+- Payments: Stripe (signature-verified, idempotent webhooks)
+- Email: Resend
+- Hosting: Vercel front-end, Supabase Cloud backend
+- Audit-hardened: 6 thematic audit weeks shipped covering revenue path, data path, UX, reliability, observability, and cleanup
 
 ---
 
 ## PART 4: MINDMAKER SPRINTS (THE BUSINESS MOMENT)
 
 **What it is:**
-High-leverage, 1:1 operational sprints. 
-*   **Enterprise Sprints (1-Day):** Embedded commercial strategy, positioning, and board-ready decision frameworks.
-*   **Builder/Orchestrator Sprints (4-Week):** Resolving build-vs-buy friction, mapping deployment sequences, and locking in architecture.
+High-leverage, 1:1 operational sprints.
+- **Enterprise Sprints (1-Day):** Embedded commercial strategy, positioning, and board-ready decision frameworks. $15K-$50K depending on scope.
+- **Builder/Orchestrator Sprints (4-Week):** Resolving build-vs-buy friction, mapping deployment sequences, and locking in architecture.
 
 **The "Aha" Moment (The Outcome):**
-It is NOT an AI moment. It is a **Business Moment**. 
+It is NOT an AI moment. It is a **Business Moment**.
 At the end of the sprint, the leader walks away with the ability to stand on a stage, look their board in the eye, inspire their team, and make faster decisions with absolute confidence. They transition from "learning AI from a distance" to walking the walk.
 
 **The Output:**
@@ -74,7 +87,21 @@ One decision. One trade-off analysis. One commitment. Working systems and a 90-d
 
 ---
 
-## PART 5: MASTER FAQ & OBJECTION HANDLING
+## PART 5: PRICING ANCHORS
+
+| SKU | Price | Audience |
+|---|---|---|
+| CTRL Free / Core | $0 | Every leader. The land in land-and-expand. |
+| Full Diagnostic | $49 one-time | Leaders who want a one-shot deep audit |
+| Deep Context Upgrade | $29 one-time | Pre-meeting / strategy sprint prep |
+| Diagnostic + Deep Context Bundle | $69 one-time (saves $10) | Default upsell after Memory Web is built |
+| Edge Pro | $9/month | Active leaders who treat AI as part of weekly cadence |
+| Mindmaker Enterprise Sprint | $15K-$50K | Exec teams |
+| Mindmaker Portfolio Engagement | $5K-$25K | VC / PE / consulting partners |
+
+---
+
+## PART 6: MASTER FAQ & OBJECTION HANDLING
 
 **Q: Why shouldn't we just hire a major consultancy to build our AI strategy?**
 A: Big consultancies sell you 6-figure decks built by lifelong researchers. I am an operator and a CEO. I have scaled businesses from $0 to $12M ARR, and today I run my own autonomous AI company. I don't give you research; I give you live operational training and working systems tailored to your revenue goals.
@@ -83,13 +110,25 @@ A: Big consultancies sell you 6-figure decks built by lifelong researchers. I am
 A: The previous era of SaaS was designed to be used by humans, so IT could manage it. Agentic AI is designed to replace human workflows, which changes the entire organizational structure. If you separate the business acumen from the AI decision-making, your strategy will fail. You cannot outsource your vision.
 
 **Q: We are already subscribing to ChatGPT Enterprise. Isn't that enough?**
-A: Buying ChatGPT Enterprise is not an AI strategy; it is a software subscription. It leaves you vulnerable to vendor lock-in and traps your company's context in a walled garden. You need a portable context layer (CTRL) and an orchestrated system that works across models. 
+A: Buying ChatGPT Enterprise is not an AI strategy; it is a software subscription. It leaves you vulnerable to vendor lock-in and traps your company's context in a walled garden. You need a portable context layer (CTRL) and an orchestrated system that works across models.
 
 **Q: How do we know which vendors to choose? The market is moving too fast.**
 A: That is exactly the friction my sprints resolve. You are paralyzed by the fear of wasting millions on the wrong vendor. We cut through the noise, lock in an architecture, and give you the confidence to commit to a direction so your team can actually start shipping.
 
 **Q: What is the most sensitive question you get asked in closed rooms?**
-A: "How do I identify who I should replace in my business versus who I should empower?" It is the unspoken reality of AI deployment, and navigating it requires someone who has managed P&Ls and led teams through digital transformations, not just an engineer. 
+A: "How do I identify who I should replace in my business versus who I should empower?" It is the unspoken reality of AI deployment, and navigating it requires someone who has managed P&Ls and led teams through digital transformations, not just an engineer.
 
 **Q: What is the Builder Economy?**
 A: The Creator Economy allowed everyone to broadcast. The Builder Economy means everyone will build. People will "vibe code" software, and it will change the paradigm of work entirely. Mindmaker is built to arm the leaders of this new economy.
+
+**Q: Is CTRL secure for executive use?**
+A: Yes. Memory Web content is encrypted at rest (AES-256-GCM), decrypted only inside edge functions and never client-side. Stripe webhooks are signature-verified and idempotent. Account deletion is end-to-end. Briefing rate limits are enforced. There is no Slack, email, or calendar integration — the data flow is exactly what you spoke or typed, nothing else.
+
+**Q: How is the Briefing different from a newsletter or Feedly?**
+A: Newsletters serve everyone the same content. Feedly is a tag-and-rank UI on top of RSS. CTRL builds a custom **lens** per user per briefing type per day from your active decisions, missions, watchlist, and declared interests, scores live headlines against it with embeddings, then writes audio in your register. Every segment shows "Anchored to: <your specific priority>" — auditable relevance. Bookmark to pin a beat. Ban to semantically kill a topic forever. The lens learns from a nightly aggregator that promotes 3+ thumbs-down on the same signature into a persistent `-0.4` weight delta.
+
+**Q: What about model lock-in? You mention OpenAI and Vertex AI.**
+A: We use Vertex AI (Gemini 2.0 Flash) as primary and OpenAI GPT-4o as fallback inside the AI generation pipeline — this is hidden infrastructure, not a buyer commitment. The user-facing value is **portable context**: your Memory Web exports to ChatGPT, Claude, Gemini, Cursor, Claude Code, or raw markdown. The leader is never locked into our model choices. They take their context anywhere.
+
+**Q: Can I delete everything if I leave?**
+A: Yes. Account deletion removes Memory Web facts, briefings, audio artifacts, decisions, missions, and assessments. Audit Week 2 closed an assessment-data leak and codified the storage bucket policy. Your data does not train any AI model. Your data is yours.

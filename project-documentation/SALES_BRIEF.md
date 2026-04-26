@@ -1,14 +1,14 @@
 # CTRL: Sales Brief
 
-**For outbound sales agents. Read this before writing any email.**
+**For outbound sales agents (human and AI). Read this before writing any email, post, or DM.**
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
 
 ---
 
 ## The One-Liner
 
-CTRL builds a portable AI double of you in 2 minutes. Every AI tool you use - ChatGPT, Claude, Gemini - instantly knows your context, your goals, and how you think. You decide faster. Full stop.
+CTRL builds a portable AI double of you in 2 minutes. Every AI tool you use — ChatGPT, Claude, Gemini — instantly knows your context, your goals, and how you think. Plus a 3-minute daily audio briefing tuned to YOUR world. You decide faster. Full stop.
 
 ---
 
@@ -18,20 +18,23 @@ Leaders are slow with AI. Not because they lack tools. Because every tool lacks 
 
 Open ChatGPT. Re-explain who you are. Re-explain what your company does. Re-explain the decision on your desk. Do it again in Claude. Again in Gemini. Again tomorrow. The AI never remembers. The output stays generic. The decision waits.
 
-This is the zero-context tax. Every leader pays it, multiple times per day, across every AI tool they touch. It turns AI - which should be a speed multiplier - into a speed drag.
+This is the **zero-context tax**. Every leader pays it, multiple times per day, across every AI tool they touch. It turns AI — which should be a speed multiplier — into a speed drag.
 
 The leaders who are actually faster with AI have figured out one thing: give the AI your context up front. But doing that manually across multiple tools takes hours of prompt engineering most leaders will never do.
 
-**CTRL eliminates the zero-context tax in 2 minutes.**
+There's a second tax: the **noise tax**. Newsletters and feeds serve everyone the same stories. Leaders waste 30+ minutes a day skimming for the 2-3 stories that actually matter to their world. The personalization is theatre.
+
+**CTRL eliminates the zero-context tax in 2 minutes. And replaces 30 minutes of scrolling with 3 minutes of audio.**
 
 ---
 
 ## How It Works
 
-1. **Talk naturally** - Describe your work, goals, challenges, how you think. Voice or text. Two minutes.
-2. **CTRL builds your Memory Web** - AI extracts structured facts about you: identity, business context, objectives, blockers, decision patterns, preferences.
-3. **Export to any AI tool** - One click. Your context is formatted for ChatGPT, Claude, Gemini, Cursor, or any LLM.
-4. **Every AI interaction starts from you** - From the first word. No re-explaining. The AI knows your world.
+1. **Talk naturally** — Describe your work, goals, challenges, how you think. Voice or text. Two minutes.
+2. **CTRL builds your Memory Web** — AI extracts structured facts about you: identity, business context, objectives, blockers, decision patterns, preferences.
+3. **Export to any AI tool** — One click. Your context is formatted for ChatGPT, Claude, Gemini, Cursor, or any LLM.
+4. **Hear your world every morning** — A 3-minute audio briefing built from your active decisions, missions, watchlist, and declared interests. Every story shows the specific profile item it's anchored to.
+5. **Every AI interaction starts from you** — From the first word. No re-explaining. The AI knows your world.
 
 The result: faster from question to decision. Every time. Across every tool.
 
@@ -40,7 +43,7 @@ The result: faster from question to decision. Every time. Across every tool.
 ## What Makes CTRL Different
 
 ### vs. Writing Custom Instructions by Hand
-- CTRL extracts structure from natural speech - no prompt engineering
+- CTRL extracts structure from natural speech — no prompt engineering
 - Updates continuously as your context evolves
 - Formats for 6+ AI tools automatically
 - Saves hours per week and produces richer context than most people write manually
@@ -62,12 +65,22 @@ The result: faster from question to decision. Every time. Across every tool.
 - Cost: free to start vs. $15K+ consulting engagement
 - Value in 2 minutes, not 2 months
 
+### vs. Morning Briefs (Axios, Morning Brew, Techmeme, Feedly)
+- Those are curated feeds — same stories for everyone, light reorder.
+- CTRL builds a custom lens per user per briefing type per day, scores live headlines against it with embeddings, and writes audio in your register.
+- Every segment shows "Anchored to: <your specific priority>" — auditable relevance, no black box.
+- Bookmark to keep a beat. Ban to kill a topic. The system learns immediately.
+
+### vs. AI Context Tools (Notion AI, Mem, Rewind)
+- Those want access to your Slack, email, calendar, browser. Enterprise security review required.
+- CTRL is self-contained. You talk to it. No integrations. No permissions. No IT.
+
 ---
 
 ## Key Features to Mention
 
 ### Memory Web
-A living knowledge base about the leader, built from voice or text input, verified by the user, encrypted at rest. Categories: identity, business, goals, challenges, decision patterns, preferences. This is the engine. Everything else runs on it.
+A living knowledge base about the leader, built from voice or text input, verified by the user, encrypted at rest (AES-256-GCM). Categories: identity, business, goals, challenges, decision patterns, preferences. This is the engine. Everything else runs on it.
 
 ### Context Export (the killer feature)
 One-click export to:
@@ -82,27 +95,45 @@ Optimized for specific use cases: Meeting Prep, Decision Support, Email Drafting
 
 This is the moment a leader goes from generic AI to personalized AI. It takes one click.
 
-### Decision Advisor
-AI that already knows your context helps you think through hard calls. No setup. No preamble. Ask the question, get an answer that accounts for your business, your constraints, your priorities. Faster from question to clarity.
+### Daily Briefing v2 — evidence-based intelligence
+A 3-minute audio briefing every morning, tuned to the one thing you care about: YOUR world.
 
-### Daily Briefing (most-used feature after Memory Web)
-A 3-minute audio intelligence briefing, every morning, tuned to the one thing you care about: YOUR world.
+Built on a seven-stage pipeline:
+1. **Importance Lens** — ranks profile items that matter today for this briefing type (gpt-4o-mini, 24h cache)
+2. **Query Planner** — turns the lens into 4-6 targeted news queries
+3. **Provider Fan-out** — Perplexity + Tavily + Brave in parallel, 12s cap
+4. **Embedding Dedupe + Scoring** — `text-embedding-3-small` + pgvector, cosine dedupe, score = similarity × lens weight
+5. **Budget-Constrained Curation** — diversity + coverage rules within word budget
+6. **Script Generation** — gpt-4o + your training material voice card
+7. **Audio Synthesis** — ElevenLabs MP3, 3-4 minutes
 
-Not a news feed. Not another digest. A personalised pass that reads your active decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that actually move your math.
-
-Every story is **anchored** to something specific in your profile. The card literally shows "Anchored to: <your active decision>" so you can see why it was surfaced. Auditable relevance - no black box.
+Every retained segment carries `lens_item_id`, `relevance_score`, and `matched_profile_fact`. **Personalization is auditable, not asserted.**
 
 Three controls that make it smarter every day:
 - **Bookmark** a story → its anchor becomes a persistent beat
-- **Ban** a topic → the system never shows it again (semantic, not keyword - it gets related topics too)
+- **Ban** a topic → semantic kill (related topics die too, not just keyword matches). Writes a `-1.0` weight delta immediately.
 - **Settings → Interests** → declare beats, track specific people/companies, exclude whole topics
 
-Cold-start solved: new users get industry-specific seed beats proposed on day one (11 industries pre-seeded: creator economy, SaaS, healthcare, finance, consulting, ecommerce, media, edtech, biotech, legal, generic). One tap to accept.
+Cold-start solved: 11 industries pre-seeded (creator economy, SaaS, healthcare, fintech, consulting, e-commerce, media, edtech, biotech, legal, generic). One tap to accept.
 
-Seven briefing types for different contexts: Daily Brief, Macro Trends, Vendor Landscape, Competitive Intel, Boardroom Prep, AI Model Landscape, Custom Voice. Pro tier unlocks the specialised ones.
+Persistent learning: the nightly aggregator (`sp_aggregate_briefing_feedback`, pg_cron 03:07 UTC) promotes any lens signature with 3+ thumbs-down to a persistent `-0.4` delta. Topics fade without manual policing.
+
+Seven briefing types: Daily Brief, Macro Trends, Vendor Landscape, Competitive Intel, Boardroom Prep, AI Model Landscape, Custom Voice. Pro tier unlocks the specialised ones.
+
+### Edge — Leadership Amplifier
+AI synthesizes the user's Memory Web and assessment data into an actionable leadership profile:
+- **Sharpen** strengths: Systemize, Teach, Lean Into
+- **Cover** weaknesses: Board Memos, Strategy Docs, Emails, Meeting Agendas, Templates, Frameworks
+- Interactive strength/weakness pills with feedback loops
+- Intelligence gap detection with guided resolution
+
+Edge Pro ($9/month) unlocks unlimited artifact generation + email delivery.
+
+### Decision Advisor
+AI that already knows your context helps you think through hard calls. No setup. No preamble. Ask the question, get an answer that accounts for your business, your constraints, your priorities.
 
 ### Meeting Prep
-Contextual briefs generated from your Memory Web. Walk into every meeting already briefed by AI that knows what matters to you.
+Contextual briefs generated from your Memory Web. Walk into every meeting already briefed.
 
 ### Prompt Coach
 Turns vague prompts into precise, context-rich ones. Leaders don't need to learn prompting. CTRL handles it.
@@ -121,43 +152,58 @@ AI identifies strengths to amplify and blind spots to close. Personalized patter
 ## Who This Is For
 
 **Title:** C-suite, VPs, Senior Directors, Founders
-**Company Size:** 50-5,000 employees
-**Industries:** Professional services, financial services, healthcare, tech, manufacturing
+**Company Size:** 50-5,000 employees (sweet spot 100-1,000)
+**Industries:** Creator economy, SaaS, financial services, professional services, healthcare, e-commerce, media, edtech, biotech, legal, manufacturing
 **Mindset:** Pragmatic, time-poor, skeptical of AI hype but know they need to move faster
 
-**Pain Signals:**
+**Pain Signals (top quotes that prove fit):**
 - "I use ChatGPT but it doesn't know anything about me"
 - "I spend 10 minutes setting up context every time I use AI"
 - "AI gives me generic advice that doesn't apply to my situation"
 - "I know AI could help me decide faster but I don't have time to figure out how"
 - "My competitors seem to be moving faster with AI than we are"
+- "I cancelled three newsletters this month and still feel behind"
 - Board or investor pressure around AI adoption and decision velocity
 
 ---
 
 ## Who This Is NOT For
 
-- Technical AI roles (ML engineers, data scientists) - they need implementation tools
-- Individual contributors - wrong scope
-- Companies wanting someone to implement AI for them - we build decision speed, not systems
+- Technical AI roles (ML engineers, data scientists) — they need implementation tools
+- Individual contributors — wrong scope
+- Companies wanting someone to implement AI for them — we build decision speed, not systems
 - AI enthusiasts who want depth on model architecture
+- Buyers requiring SOC 2 / vendor security review for an individual purchase — drive them to enterprise/Sprint
+- Buyers demanding Slack/email/calendar integration — wrong product, redirect
 
 ---
 
 ## Pricing
 
-- **Free**: Full onboarding, Memory Web, Context Export, AI tools
-- **Diagnostic Upgrade**: $49 one-time for full AI literacy diagnostic with detailed tensions, risk signals, org scenarios, and thinking tools
+| Tier | Price | What you get |
+|------|-------|--------------|
+| **Free / Core** | $0 | Memory Web, Context Export, Onboarding, Daily Briefing (basic), Decision Advisor, Meeting Prep, Prompt Coach, Edge profile preview |
+| **Full Diagnostic** | $49 one-time | Full tensions/risks/scenarios, complete thinking tools library |
+| **Deep Context Upgrade** | $29 one-time | Enhanced company-context enrichment |
+| **Diagnostic + Deep Context Bundle** | $69 one-time | Both above. Saves $10. The default upsell. |
+| **Edge Pro** | $9/month | Unlimited Edge artifacts, all 7 briefing types, email delivery |
+| **Bootcamp** (Teams) | $15K-$50K | 4-hour exec sprint + pilot charter |
+| **Portfolio** (Partners) | $5K-$25K | Heatmap + offer pack |
 
 ---
 
 ## Proof Points
 
-- 2 minutes to first export (onboarding is 3 guided voice questions)
-- Voice-first design - leaders don't need to type or learn anything
-- Apple-like executive-grade design - built to put in front of CEOs
-- Data encrypted at rest, user-controlled privacy, portable (not locked in)
-- Built by Krish Raja - operator experience building $100M+ with AI
+- **2 minutes to first export** (onboarding is 3 guided voice questions)
+- **3-minute daily audio briefing** with auditable anchoring on every segment
+- **Voice-first design** — leaders don't need to type or learn anything
+- **Apple-like executive-grade design** — built to put in front of CEOs
+- **Self-contained** — no Slack/email/calendar access, no enterprise security review
+- **Encrypted at rest** (AES-256-GCM); user controls retention; data never trains any AI model
+- **Portable** — not locked to any AI provider or platform
+- **74 edge functions, 48 hooks, 97 migrations live** — this is not a prototype
+- **Audit weeks 1-6 shipped** (revenue path, data path, UX, reliability, observability, cleanup): timeouts + retries on external APIs, mandatory Stripe signature verification + idempotency, structured edge-function logger, e2e test contracts
+- **Built by Krish Raja** — operator experience: Microsoft (2010), MD at Captify ($0→$12M ARR), data revenue at Nine Entertainment ($9M→$61M). Now CEO of Mindmaker, running a multi-agent OS that automates the output of a 30-person team.
 - Context export produces richer, more structured prompts than most leaders write by hand in an hour
 
 ---
@@ -171,7 +217,7 @@ The leaders pulling ahead with AI aren't using better tools. They're deciding fa
 Every time you open ChatGPT and re-explain who you are, you're paying the zero-context tax. Multiply that across every AI tool, every day. CTRL eliminates it in 2 minutes. Your AI tools know you from the first word.
 
 ### The "Portable AI Double" Angle
-What if every AI tool you used already knew your business, your goals, your decision style? Not one tool - all of them. CTRL builds a portable AI double from 2 minutes of conversation. It works across ChatGPT, Claude, Gemini, Cursor. Switch tools freely. Your context follows.
+What if every AI tool you used already knew your business, your goals, your decision style? Not one tool — all of them. CTRL builds a portable AI double from 2 minutes of conversation. It works across ChatGPT, Claude, Gemini, Cursor. Switch tools freely. Your context follows.
 
 ### The "2 Minutes vs. 2 Hours" Angle
 Most leaders spend 5-10 minutes per AI session setting up context. That's 30-60 minutes a day. CTRL replaces all of it with a one-time, 2-minute voice conversation. The math is simple. The impact is immediate.
@@ -183,13 +229,16 @@ Somewhere, a leader in your space is making AI-assisted decisions in seconds bec
 You don't need another AI course. You don't need to learn prompt engineering. You need infrastructure that makes every AI tool you already use work like it was built for you. CTRL is that infrastructure. Two minutes. One click. Done.
 
 ### The "Daily Briefing" Angle
-Every leader wants a curated news feed. Most vendors give them a firehose tagged with keywords. CTRL does something different: it reads your ACTUAL priorities - the decision on your desk, the companies on your watchlist, the beats you said you care about - and hands you 3-5 stories every morning with "Anchored to: <your priority>" on each one. You see exactly why every headline made the cut. Tap Bookmark to keep a beat. Tap Ban to kill a topic. Your briefing gets sharper every day you use it. Three minutes, audio, done.
+Every leader wants a curated news feed. Most vendors give them a firehose tagged with keywords. CTRL does something different: it reads your ACTUAL priorities — the decision on your desk, the companies on your watchlist, the beats you said you care about — and hands you 3-5 stories every morning with "Anchored to: <your priority>" on each one. You see exactly why every headline made the cut. Tap Bookmark to keep a beat. Tap Ban to kill a topic. Your briefing gets sharper every day you use it. Three minutes, audio, done.
 
 ### The "Auditable AI" Angle
-Leaders are getting tired of mystery algorithms. ChatGPT, LinkedIn, everywhere - "here's what we think you want, trust us." CTRL flips it. Every briefing story shows the specific profile item it was anchored to. Every killed topic was killed by you, on purpose, and you can see the history. It's AI personalization where the leader stays in control of the logic. That matters more every quarter.
+Leaders are getting tired of mystery algorithms. ChatGPT, LinkedIn, everywhere — "here's what we think you want, trust us." CTRL flips it. Every briefing story shows the specific profile item it was anchored to. Every killed topic was killed by you, on purpose, and you can see the history. It's AI personalization where the leader stays in control of the logic. That matters more every quarter.
 
 ### The "No Integrations" Angle
 Most AI context tools want access to your Slack, email, calendar, and browser. That means enterprise security reviews, IT approvals, and someone else reading your data. CTRL takes a different approach: you just talk to it. No integrations. No plugins. No permissions. Your context is built from what you choose to share — nothing else. The most private AI double you can build.
+
+### The "Edge Pro Upgrade" Angle (for active free users)
+You've built your Memory Web. You've exported to Claude. Now skip the blank page entirely. Edge Pro generates board memos, strategy docs, emails, and meeting agendas in your register, anytime, for $9/month. Less than a coffee. More leverage than your last consulting hour.
 
 ---
 
@@ -202,13 +251,13 @@ Good. CTRL makes them dramatically better. Right now, those tools start every co
 Three questions. Two minutes. Voice. That's it. Faster than writing custom instructions in ChatGPT for one tool, and this works across all of them. The time investment is trivial. The time savings compound daily.
 
 **"What about data privacy?"**
-CTRL is self-contained. It doesn't connect to your Slack, email, calendar, or any other tool. No enterprise security approvals needed. No background scanning. You talk to it — that's it. All data encrypted at rest (AES-256-GCM). You control what's stored, what's exported, and what's deleted. Your context never trains any AI model. You own your data completely.
+CTRL is self-contained. It doesn't connect to your Slack, email, calendar, or any other tool. No enterprise security approvals needed. No background scanning. You talk to it — that's it. All data encrypted at rest (AES-256-GCM). You control what's stored, what's exported, and what's deleted. Your context never trains any AI model. You own your data completely. Stripe webhooks are signature-verified and idempotent (Audit Week 1, shipped 2026-04). Account deletion is end-to-end (Audit Week 2).
 
 **"We already have an AI strategy"**
 CTRL isn't a strategy. It's infrastructure. It makes whatever AI strategy you have execute faster by giving every leader on your team personalized AI from day one. Strategy is the plan. CTRL is the accelerant.
 
 **"What's the ROI?"**
-Conservative math: every leader spends 30-60 minutes per day on AI context setup. CTRL eliminates that entirely. But the real ROI is decision quality: AI output built on rich, structured context is fundamentally better than output from a blank prompt. Better inputs. Better outputs. Better decisions. Every day.
+Conservative math: every leader spends 30-60 minutes per day on AI context setup. CTRL eliminates that entirely. Add 30 minutes a day saved on news scrolling via the Briefing. That's an hour a day. At a $300/hour fully-loaded leader rate, that's $1,500+/week. Edge Pro is $9/month. The math is not subtle. But the real ROI is decision quality: AI output built on rich, structured context is fundamentally better than output from a blank prompt.
 
 **"Is this just a fancy prompt template?"**
 No. Prompt templates are static and generic. CTRL builds a living, structured knowledge base about you from natural conversation, formats it for each specific AI platform, and evolves as your context changes. It's the difference between a form letter and a briefing document written by someone who knows you.
@@ -217,17 +266,23 @@ No. Prompt templates are static and generic. CTRL builds a living, structured kn
 This isn't a newsletter. Newsletters are written for everyone. The Daily Briefing is generated for YOU, every morning, from YOUR active decisions and declared interests, filtered against fresh news with embeddings. Every story shows the specific anchor it matched (your decision, your watchlist, your beat). You can Bookmark or Ban any topic with one tap and the system learns immediately. It replaces three newsletters plus 30 minutes of scrolling with 3 minutes of audio that's actually relevant.
 
 **"How is this different from Feedly / Techmeme / morning briefs?"**
-Those are curated feeds. They serve everyone the same stories and hope one's relevant. CTRL reads your active decisions, missions, watchlist, and declared beats, generates a custom lens per user per briefing type per day, scores live headlines against it with embeddings, then writes audio in your register. Every segment shows "Anchored to: <your specific priority>" - you can literally audit the relevance. No feed does that.
+Those are curated feeds. They serve everyone the same stories and hope one's relevant. CTRL reads your active decisions, missions, watchlist, and declared beats, generates a custom lens per user per briefing type per day, scores live headlines against it with embeddings, then writes audio in your register. Every segment shows "Anchored to: <your specific priority>" — you can literally audit the relevance. No feed does that.
 
 **"Our leaders aren't technical enough for this"**
 That's exactly who this is for. Voice-first. No typing required. No prompt engineering. No technical skills. If a leader can answer three questions about their work out loud, they can use CTRL. Two minutes to a working AI double.
+
+**"Will my data train an AI model?"**
+No. Your Memory Web is yours. It's encrypted at rest, never used as training data for any provider, and you can delete it permanently at any time (the account deletion flow is end-to-end — Audit Week 2 closure).
+
+**"Is the briefing accurate?"**
+Auditable. Every segment shows the specific profile fact and the cosine relevance score that earned it the slot. If you disagree, Ban it — it dies semantically (related topics die too) and the kill persists forever. There is no black box.
 
 ---
 
 ## Key URLs
 
-- **Product**: ctrl.ai
-- **Booking**: Calendly integration for strategy calls
+- **Product**: ctrl.themindmaker.ai
+- **Booking**: Calendly integration for strategy calls (linked in product footer)
 
 ---
 
@@ -242,5 +297,6 @@ That's exactly who this is for. Voice-first. No typing required. No prompt engin
 - "Memory Web" not "database" or "profile"
 - "AI double" not "AI assistant" or "AI agent"
 - "Thinking tools" not "prompt library"
-- "Zero-context tax" - use this phrase, it lands
+- "Zero-context tax" — use this phrase, it lands
+- "Auditable relevance" — use when discussing the Briefing
 - Every claim should make someone want to write an email

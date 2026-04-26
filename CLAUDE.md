@@ -46,9 +46,13 @@
 - Desktop: sidebar navigation (`DesktopSidebar`) + main content area
 - Mobile: bottom nav (`BottomNav`) + full-screen views
 - Legacy routes (`/today`, `/voice`, `/pulse`, `/diagnostic`, `/think`) all redirect to `/dashboard`
-- AI: Vertex AI Gemini primary, OpenAI GPT-4o fallback
-- 55+ edge functions in `supabase/functions/`
-- 35+ custom hooks in `src/hooks/`
+- AI: Vertex AI Gemini 2.0 Flash primary, OpenAI GPT-4o fallback, static tertiary
+- **74 edge functions** in `supabase/functions/` (verified 2026-04-26)
+- **48 custom hooks** in `src/hooks/`
+- **97 migrations** applied via Supabase Management API
+- DB extensions in use: pgvector, pgcrypto, pg_cron
+- Briefing v2 pipeline: lens → planner → fan-out (Perplexity/Tavily/Brave, 12s cap) → embed dedupe + score → curate → script (gpt-4o) → audio (ElevenLabs)
+- All external API calls wrapped via `_shared/with-timeout.ts`. Structured logs via `_shared/logger.ts`. Stripe webhooks signature-verified + idempotent.
 
 ## Key Conventions
 

@@ -2,6 +2,8 @@
 
 Key architectural and product decisions with rationale.
 
+**Last Updated:** 2026-04-26
+
 ---
 
 ## Decision 1: Single DB-Based Architecture
@@ -206,3 +208,59 @@ Key architectural and product decisions with rationale.
 **Rationale**: The HTTP path requires storing the service-role JWT in Postgres (vault or a setting), adding blast-radius. The SQL function runs as `SECURITY DEFINER postgres`, owns its own query plan, and never touches a token. Faster (no HTTP roundtrip), simpler ops (one less secret), safer (no exposed key). The edge function stays for admin/ad-hoc invocation.
 **Trade-off**: Maintained logic in two places (plpgsql + TypeScript) vs no service-role token exposure.
 **Outcome**: ✅ Scheduled at 03:07 UTC daily. Dry-run on deploy returned zero buckets as expected (no v2 feedback in the wild yet).
+
+## Decision 30: Mandatory Stripe Webhook Signature Verification + Idempotency Table
+**Date**: Apr 2026 (Audit Week 1, PR #93)
+**Decision**: Reject any Stripe webhook payload that does not validate against `STRIPE_WEBHOOK_SECRET`. Persist a row in a new `stripe_events_processed` table (PK = Stripe event id) for every successfully handled event; on replay, recognise and skip.
+**Rationale**: Without signature verification, a leaked endpoint URL is a replay vector. Without idempotency, a webhook retried by Stripe (which is normal) can double-fulfill an entitlement upgrade. Both are silent revenue/trust bugs that surface at audit time.
+**Trade-off**: One extra table + per-event row insert vs a buyer-trust risk we cannot afford.
+**Outcome**: ✅ Shipped. E2E test `tests/stripe-webhook-idempotency.spec.ts` locks the contract.
+
+## Decision 31: Codified Storage Bucket Policy for `ctrl-briefings`
+**Date**: Apr 2026 (Audit Week 2, PR #94)
+**Decision**: All briefing audio artifacts live in a dedicated `ctrl-briefings` Supabase Storage bucket with explicit object-level policies aligned to the `briefings` table RLS. No more shared/public bucket reliance.
+**Rationale**: The previous implicit policy left an edge case where a stale audio URL could be re-fetched after the briefing row was deleted. Codifying the bucket prevents the data-after-deletion vector.
+**Trade-off**: One more migration + ops awareness vs ambiguity around audio artifact lifecycle.
+**Outcome**: ✅ Shipped via `20260424000001_ctrl_briefings_bucket.sql`.
+
+## Decision 32: End-to-End Account Deletion (No Soft-Delete Hack)
+**Date**: Apr 2026 (Audit Week 2, PR #94)
+**Decision**: When a user deletes their account, remove all owned rows: Memory Web facts, briefings, audio artifacts, decisions, missions, assessments, dimension scores, insights, prompts, tensions, risk signals, scenarios, first moves, check-ins, progress snapshots, briefing interests, briefing feedback, briefing lens feedback, edge profiles, edge actions, edge feedback, edge subscriptions, index participant data. Audit Week 2 also closes the assessment data leak.
+**Rationale**: "You own your data" cannot be a marketing line if a deletion leaves orphaned rows. Buyers asking about GDPR/CCPA equivalence get a verifiable answer.
+**Trade-off**: Larger deletion path + more carefully ordered FK cleanup vs an honest privacy story.
+**Outcome**: ✅ Shipped. E2E test `tests/account-deletion.spec.ts` verifies it end-to-end.
+
+## Decision 33: `with-timeout` for Every External API Call
+**Date**: Apr 2026 (Audit Week 4, PR #99)
+**Decision**: Introduce `supabase/functions/_shared/with-timeout.ts` (with tests). Every call to Vertex AI, OpenAI, ElevenLabs, Perplexity, Tavily, Brave, Resend, and Stripe must wrap in this primitive — explicit timeout + bounded retry contract.
+**Rationale**: A slow upstream (especially Perplexity) used to mean a 60-second briefing generation. Worst-case is now bounded.
+**Trade-off**: Slightly more code per call vs predictable wall-clock behaviour.
+**Outcome**: ✅ Shipped. Provider fan-out also gets a 12-second `Promise.allSettled` cap on top.
+
+## Decision 34: Structured JSON Logger + CI Gate Against `console.log`
+**Date**: Apr 2026 (Audit Week 5, PR #97)
+**Decision**: All edge-function logging goes through `_shared/logger.ts` which emits `{ ts, level, fn, msg, userId, duration_ms, error }` JSON. CI fails any new edge-function code that uses raw `console.log` / `console.error`.
+**Rationale**: Without structured logs, supporting an executive customer at 9pm means grepping unstructured strings. Per-user, per-function, per-duration querying is now trivial in Supabase logs.
+**Trade-off**: One-time migration of existing logs vs a permanent observability dividend.
+**Outcome**: ✅ Shipped. CI gate live.
+
+## Decision 35: Lint Pragma — Block New Regressions, Accept ~1600 Existing Warnings
+**Date**: Apr 2026 (Audit Week 6, PR #100, #101)
+**Decision**: Treat the existing ~1600 ESLint warnings as accepted technical debt. CI runs ESLint only on PR-changed files, so new violations block but the historical surface doesn't ratchet to a green-field standard overnight.
+**Rationale**: A "fix all 1600" sprint would dwarf the audit value. Blocking new regressions captures 95% of the upside without the rewrite.
+**Trade-off**: Imperfect baseline vs shippable progress.
+**Outcome**: ✅ Shipped. Reviewable in `.github/workflows/ci.yml`.
+
+## Decision 36: AI Response Cache Table for Lens + Embedding Reuse
+**Date**: Apr 2026 (Audit Week 6, PR #101)
+**Decision**: A dedicated `ai_response_cache` table (`prompt_hash`, `model`, `response`, `expires_at`) backs the briefing lens cache (24h) and lens-item embedding cache (7d).
+**Rationale**: Without caching, every briefing generation re-runs the lens reweight (gpt-4o-mini, ~1.5s) and re-embeds the lens items (text-embedding-3-small). At 100+ users a day this is a noticeable cost and latency hit.
+**Trade-off**: One more table to manage vs ~1.5s per briefing + non-trivial embedding cost savings.
+**Outcome**: ✅ Shipped via `20260426000001_create_ai_response_cache.sql`.
+
+## Decision 37: E2E Tests First on Highest-Risk Paths (Not Coverage Maxing)
+**Date**: Apr 2026 (Audit Week 6)
+**Decision**: Write Playwright e2e specs that prove the riskiest contracts (auth journeys, briefing journey, briefing rate limits, sparse profile, account deletion, stripe webhook idempotency) before chasing broad unit-test coverage.
+**Rationale**: 80% unit-test coverage on a feature that doesn't exist in production is theatre. 6 e2e specs that prove the parts of the product a leader would notice are bug-free is real.
+**Trade-off**: Some breadth deferred vs tested confidence in the parts that matter.
+**Outcome**: ✅ 6 e2e specs live (`tests/`). Vitest unit coverage remains light by design.

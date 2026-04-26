@@ -1,12 +1,12 @@
 # Value Propositions
 
-Clear value propositions for each audience. Every claim ties back to one thing: decision speed.
+Clear value propositions for each audience. Every claim ties back to one thing: **decision speed**.
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
 
 ---
 
-## Leaders Tool: Individual Executives
+## Leaders Tool: Individual Executives (primary product)
 
 ### Core Value Proposition
 
@@ -14,59 +14,67 @@ Clear value propositions for each audience. Every claim ties back to one thing: 
 
 **Who**: Are making dozens of decisions per week and cannot afford to re-explain their world to AI every single time
 
-**CTRL**: Is a portable AI context platform
+**CTRL**: Is a portable AI context platform with a daily evidence-based intelligence Briefing
 
-**That**: Builds your AI double from two minutes of natural conversation, then exports your full context to any AI tool, so every interaction starts from depth, not from scratch
+**That**: Builds your AI double from two minutes of natural conversation, exports your full context to any AI tool, and delivers 3 minutes of audio every morning anchored to your real priorities — so every interaction starts from depth, not from scratch
 
-**Unlike**: Custom GPTs (locked to one platform), manual system prompts (hours of work), or AI courses (theory, not speed)
+**Unlike**: Custom GPTs (locked to one platform), manual system prompts (hours of work), AI courses (theory, not speed), or news feeds (everyone gets the same stories)
 
-**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours, plus built-in thinking tools that already know your world and cut the path to decisions
+**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours, plus built-in thinking tools and a daily audio briefing that already knows your world and cut the path to decisions
 
 ### The Flywheel
 
-The more you use CTRL, the richer your Memory Web becomes. The richer your Memory Web, the faster every AI tool gets you to a decision. The faster you decide, the more you use AI with confidence. Decision speed compounds. This is not incremental improvement. This is a structural advantage.
+The more you use CTRL, the richer your Memory Web becomes. The richer your Memory Web, the sharper every AI tool gets you to a decision and the more relevant your daily Briefing. The more relevant the Briefing, the more you bookmark and ban — which makes tomorrow's lens sharper still. Decision speed compounds. This is not incremental improvement. It is a structural advantage.
 
 ### Component Value Props
 
 **Memory Web**
-- "Build a living knowledge base about yourself by just talking"
-- Every fact verified by you, encrypted at rest, fully portable
+- "Build a living knowledge base about yourself by just talking."
+- Every fact verified by you, encrypted at rest (AES-256-GCM), fully portable.
 - The foundation of decision speed. AI that knows your world before you ask.
 
 **Context Export (the killer feature)**
 - "One click. Every AI tool you use knows who you are."
-- Works across ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown
-- Optimized for 6 use cases: meetings, decisions, email, strategy, code, general
-- This is the moment generic AI becomes your AI
+- Works across ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown.
+- Optimized for 6 use cases: meetings, decisions, email, strategy, code, general advisor.
+- This is the moment generic AI becomes your AI.
+
+**Daily Briefing — evidence-based, not engagement-based**
+- "Three minutes a day that replace thirty minutes of scrolling. News filtered through the one thing that matters: your world."
+- Not a feed. Not another digest. A personalised intelligence pass that reads your active decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that move YOUR math.
+- Every story is **anchored** to something specific in your profile. The card literally shows "Anchored to: <your active decision>". Auditable relevance. No black box.
+- **Bookmark** to keep a beat. **Ban** to kill a topic — semantically (related topics die too, not just keyword matches). The next briefing learns immediately.
+- Cold-start solved: industry-specific seed beats proposed on day one (11 industries pre-seeded).
+- Audio-first (500-600 words, 3-4 minutes), listen on the way to your first meeting.
+- Seven briefing types: Daily Brief, Macro Trends, Vendor Landscape, Competitive Intel, Boardroom Prep, AI Model Landscape, Custom Voice. Pro tier unlocks the specialised ones.
+- Persistent semantic learning: explicit Bans = -1.0 weight delta immediately; 3+ thumbs-downs on the same lens signature = -0.4 delta after the nightly aggregator runs (03:07 UTC). Topics fade without manual policing.
+
+**Edge — Leadership Amplifier**
+- "Your strengths sharpened, your weaknesses covered."
+- AI synthesizes your Memory Web + assessment data into an actionable leadership profile: strengths to amplify (Sharpen) and weaknesses to compensate for (Cover).
+- On-demand artifacts in your register: board memos, strategy docs, emails, meeting agendas, frameworks, templates.
+- Edge Pro ($9/month) unlocks unlimited generation + email delivery.
 
 **Decision Advisor**
 - "Ask a hard question. Get an answer that knows your context."
 - No setup. No preamble. It reads your Memory Web and meets you where you are.
-- Faster from question to clarity than any conversation with a blank AI
-
-**Daily Briefing (the feature most leaders use most)**
-- "Three minutes a day that replace thirty minutes of scrolling. News filtered through the one thing that matters: your world."
-- Not a feed. Not another digest. A personalised intelligence pass that reads your decisions, missions, watchlist, and declared interests, then hands you 3-5 stories that move YOUR math.
-- Every story is anchored to something you actually care about. You can see exactly why it was surfaced: "Anchored to: <your active decision>". No mystery algorithm. Auditable relevance.
-- Tap **Bookmark** to keep a beat. Tap **Ban** to kill a topic. The next briefing learns from it. Your briefing gets smarter every day you use it.
-- Cold-start covered: new users get industry-specific seed beats proposed on day one. One tap to accept.
-- Audio-first (500-600 words, 3-4 minutes), listen on the way to your first meeting.
+- Faster from question to clarity than any conversation with a blank AI.
 
 **Meeting Prep**
-- "Walk into every meeting already briefed, by AI that knows your priorities"
-- Contextual briefs generated from your Memory Web in seconds
+- "Walk into every meeting already briefed, by AI that knows your priorities."
+- Contextual briefs generated from your Memory Web in seconds.
 
 **Prompt Coach**
 - "Stop guessing what to type. CTRL makes your AI prompts sharp."
-- Turns vague questions into precise, context-rich prompts automatically
+- Turns vague questions into precise, context-rich prompts automatically.
 
 **10X Skills & Patterns**
-- "AI surfaces your strengths to amplify and your blind spots to close"
-- Pattern detection from your Memory Web data, not generic assessments
+- "AI surfaces your strengths to amplify and your blind spots to close."
+- Pattern detection from your Memory Web data, not generic assessments.
 
 **AI Literacy Diagnostic**
 - "Know where you stand in 10 minutes. Not 10 hours of courses."
-- Surfaces tensions, risk signals, and organizational scenarios specific to you
+- Surfaces tensions, risk signals, and organizational scenarios specific to you.
 
 ### Differentiation Matrix
 
@@ -78,7 +86,8 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 | **Custom GPTs** | One-off bots for specific tasks | Universal context that accelerates every AI interaction |
 | **AI Training Courses** | Hours of education before any value | Immediate infrastructure. 2 minutes to first export. |
 | **AI Consultants** | $15K+ engagement, creates dependency | Self-serve. Leader owns their data. No dependency. No delay. |
-| **AI Context Tools (Notion AI, Mem, Rewind)** | Connect to Slack, email, calendar — require enterprise approvals, read your whole computer | Self-contained. You talk to it. No integrations. No permissions. No IT review needed. |
+| **AI Context Tools (Notion AI, Mem, Rewind)** | Connect to Slack, email, calendar — require enterprise approvals, read your whole computer | Self-contained. You talk to it. No integrations. No permissions. No IT review. |
+| **Morning Briefs (Axios, Morning Brew, Techmeme, Feedly)** | Same stories for everyone, light algorithmic reorder | Custom lens per user per briefing type per day. Every segment shows the specific profile fact it was anchored to. |
 | **Doing Nothing** | Re-explain yourself to AI every time. Decisions slow. | Set it once. Works everywhere. Gets better over time. Decisions accelerate. |
 
 ### Why Leaders Choose CTRL
@@ -94,10 +103,11 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - Get from question to decision faster, with contextual support, not generic advice
 - Export context to any tool without prompt engineering skills
 - Reclaim the 30-60 minutes per day lost to AI context setup
+- Reclaim 30+ minutes a day of news scrolling for a 3-minute audio briefing that's actually relevant
 
 **Social Jobs**
 - Be the leader who uses AI at a level others notice
-- Share the approach with your team, not just the tool, the thinking
+- Share the approach with your team, not just the tool — the thinking
 - Walk into board conversations with AI fluency, not AI anxiety
 - Stay visibly ahead of leaders who use AI generically
 
@@ -113,7 +123,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 **CTRL**: Is a 4-hour executive bootcamp
 
-**That**: Aligns your team on AI decision criteria, surfaces hidden tensions, and produces a credible pilot charter, all in one session
+**That**: Aligns your team on AI decision criteria, surfaces hidden tensions, and produces a credible pilot charter — all in one session
 
 **Unlike**: Generic offsite facilitators or vendor-driven "vision" sessions
 
@@ -122,7 +132,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 ### Component Value Props
 
 **Pre-Work Assessment**
-- "Start the workshop already knowing where tensions hide and where speed is being lost"
+- "Start the workshop already knowing where tensions hide and where speed is being lost."
 
 **7-Segment Structure**
 - "Cover cognitive baseline to pilot charter in one session. No filler."
@@ -131,7 +141,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - "Leave with a charter, not a slide deck. Decisions made, not deferred."
 
 **Provocation Report**
-- "Get the uncomfortable questions your board will ask, before they ask them"
+- "Get the uncomfortable questions your board will ask, before they ask them."
 
 ### Differentiation Matrix
 
@@ -178,9 +188,9 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 **Problem**: Leaders use AI but every conversation starts from zero. This kills decision speed. Teams can't align on AI decisions. Portfolios lack visibility into where velocity is being lost.
 
-**Solution**: CTRL provides portable AI context (Memory Web + Export) and structured thinking tools that eliminate the zero-context tax and accelerate the path from question to decision.
+**Solution**: CTRL provides portable AI context (Memory Web + Export), evidence-based daily intelligence (Briefing v2), a leadership amplifier (Edge), and structured thinking tools that eliminate the zero-context tax and accelerate the path from question to decision.
 
-**Differentiation**: We don't teach AI. We don't implement AI. We make every AI tool a leader already uses dramatically faster to value by automating context.
+**Differentiation**: We don't teach AI. We don't implement AI. We make every AI tool a leader already uses dramatically faster to value by automating context — and we prove the relevance with auditable anchors.
 
 **Outcome**: Faster decisions. Sharper AI output. Less waste. More control. Compounding advantage over time.
 
@@ -188,12 +198,12 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 | Dimension | Leaders | Teams | Partners |
 |-----------|---------|-------|----------|
-| **Primary Need** | Decision speed via portable AI context | Team alignment on AI decisions | Portfolio-wide decision velocity visibility |
+| **Primary Need** | Decision speed via portable AI context + auditable daily briefing | Team alignment on AI decisions | Portfolio-wide decision velocity visibility |
 | **Time to Value** | 2 minutes | 4 hours | 2 weeks |
-| **Key Output** | Memory Web + Exports | Pilot charter | Heatmap + offer pack |
+| **Key Output** | Memory Web + Exports + Briefing | Pilot charter | Heatmap + offer pack |
 | **Core Action** | Talk, export, decide faster | Workshop, align, commit | Assess, prioritize, intervene |
 | **Buyer** | Self-funded | Exec team sponsor | Partner/firm |
-| **Price Point** | Free / $49 diagnostic | $15K-$50K | $5K-$25K |
+| **Price Point** | Free / $49 Diagnostic / $9/mo Edge Pro / $69 bundle | $15K-$50K | $5K-$25K |
 
 ### Shared Anti-Positioning
 
@@ -202,10 +212,41 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - Tool vendors or resellers
 - Generic executive education
 - Another AI wrapper locked to one platform
+- A news aggregator that ranks by engagement
 
 **We Are**:
 - The decision-speed layer for leaders who use AI
 - Portable AI context infrastructure that works everywhere
 - Self-contained — no integrations, no plugins, no enterprise security reviews
 - Voice-first, zero-learning-curve, executive-grade
+- Auditable: every recommendation, every Briefing segment, can be traced to a specific profile fact
 - Focused on one thing: leaders deciding faster with AI
+
+---
+
+## Pricing & Packaging (current)
+
+| SKU | Price | What's included | Best for |
+|-----|-------|-----------------|----------|
+| **Free / Core** | $0 | Memory Web, Context Export (all 6 tools), Onboarding, basic Daily Briefing, Decision Advisor, Meeting Prep, Prompt Coach, Edge profile (preview) | Every new leader. The "land" in land-and-expand. |
+| **Full Diagnostic** | $49 one-time | Complete tensions, risk signals, org scenarios, full thinking tools library | Leaders who want a one-shot deep audit |
+| **Deep Context Upgrade** | $29 one-time | Enhanced company-context enrichment for sharper AI output | Leaders pre-meeting prep / strategy sprints |
+| **Diagnostic + Deep Context Bundle** | $69 one-time | Both above. Saves $10 vs buying separately. | Default upsell once Memory Web is built |
+| **Edge Pro** | $9/month | Unlimited Edge artifacts (board memos, strategy docs, emails, agendas), all 7 Briefing types (incl. Boardroom Prep, Vendor Landscape, Competitive Intel, AI Model Landscape, Custom Voice), email delivery | Leaders who treat AI as part of their weekly cadence |
+| **Bootcamp** | $15K-$50K | 4-hour executive sprint + pilot charter + provocation report | Exec teams |
+| **Portfolio** | $5K-$25K | Heatmap + offer pack across portfolio companies | VCs / PE / consultants |
+
+---
+
+## Sales & Marketing Anchors (for AI agents)
+
+Pick the right hook for the audience and channel:
+
+- **For "I already use ChatGPT" objection**: "CTRL makes ChatGPT (and Claude, and Gemini) dramatically better. Same tools, your context, faster to useful output."
+- **For privacy-conscious audiences**: "No integrations. Self-contained. You talk to it. No IT review needed."
+- **For exhausted-by-AI-content audiences**: "Most AI tools want to read your inbox. CTRL just listens. That's the whole product."
+- **For information-overload audiences**: "Cancel three newsletters. We replace them with 3 minutes of audio that's actually about you."
+- **For boardroom-pressure audiences**: "Walk into your next board meeting fluent in your AI strategy. Or be the one being briefed."
+- **For peer-comparison audiences**: "Somewhere, a leader in your space is making AI-assisted decisions in seconds because their AI already knows their world. CTRL is how."
+- **For builder/operator audiences**: "Built by Krish Raja — 16 years monetizing emerging tech, $0 → $12M ARR at Captify, $9M → $61M data revenue at Nine. The tool he wished existed when running real P&Ls."
+- **CTA progression**: Free signup → first export in 2 min → seed beats accepted → first Briefing → Diagnostic upsell → Edge Pro upsell.

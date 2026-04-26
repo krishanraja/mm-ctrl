@@ -2,17 +2,23 @@
 
 Step-by-step instructions to replicate CTRL from scratch.
 
-**Last Updated:** 2026-04-19
+**Last Updated:** 2026-04-26
+
+> Current scope: 74 edge functions, 48 hooks, 97 migrations, pgvector + pgcrypto + pg_cron. This guide gets you to a runnable instance; full feature parity requires shipping each phase in order (see HISTORY.md).
 
 ---
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js >=22 <24 (the `package.json` engines field enforces this)
 - npm or bun
-- Supabase CLI
-- OpenAI API key
-- Stripe account (for payments)
+- Supabase CLI (linked to a project; for the canonical CTRL instance, project ref = `bkyuxvschuwngtcdhsyg`)
+- OpenAI API key (embeddings + fallback LLM + Whisper)
+- Vertex AI service account JSON (primary LLM)
+- Perplexity / Tavily / Brave API keys (briefing news providers — at least one required)
+- ElevenLabs API key (briefing audio)
+- Resend API key (transactional email)
+- Stripe account + webhook secret (Edge Pro subscription + Diagnostic / Deep Context one-time)
 
 ---
 

@@ -1,174 +1,120 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project. Format loosely follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) with phase-grouped entries.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
----
-
-## [Unreleased]
+For the full design narrative behind each phase, see [`project-documentation/HISTORY.md`](./project-documentation/HISTORY.md).
 
 ---
 
-## [1.4.0] - 2024-12-14 - UX Overhaul & Data Pipeline Fixes
+## [5.1] — 2026-04 — Phase 7: Six-Week Audit Hardening
 
-### Fixed
-- **Homepage Header Layout**: Fixed misalignment of MindMaker logo, Sample button, and Sign In button on mobile. Elements now vertically centered with consistent styling
-- **Mobile Viewport Scrolling**: Eliminated all vertical scrolling on question input screens. Using fixed positioning with safe-area-insets ensures Next button is always visible
-- **Data Pipeline Reliability**: Added bulletproof fallback score computation when AI generation fails. Quiz answers now always produce dimension scores even if edge functions return empty data
-- **Benchmark Score Display**: Fixed 0/100 score issue by computing scores from dimension averages when assessment record fetch fails
-
-### Changed
-- **HeroSection**: Removed excessive min-h-[80vh] constraint, reduced header element sizes for mobile, vertically centered button alignment
-- **SampleResultsDialog**: Updated trigger button to use outline variant for visual consistency with Sign In button
-- **UnifiedAssessment**: Switched from 100dvh to fixed positioning for bulletproof viewport handling on mobile
-- **DeepProfileQuestionnaire**: Switched to fixed positioning with proper safe-area handling. Navigation buttons always visible without scrolling
-- **SingleScrollResults**: Moved unlock teaser module ABOVE contact form as a hook to drive conversions
+The product survived six thematic audit weeks, each shipped as its own PR with a clear boundary.
 
 ### Added
-- **Fallback Score Computation**: New `computeDimensionScoresFromQuiz()` function generates dimension scores from quiz answers when AI fails
-- **Fallback Tensions/Risks/Moves**: Default tensions, risk signals, and first moves generated from dimension scores if AI returns empty
-- **viewport-fit=cover**: Added to viewport meta tag for proper iOS safe area handling
-- **Safe Area Padding**: Using pt-safe-top and pb-safe-bottom utilities for mobile browser chrome accommodation
+- **Audit Week 1 — Revenue path** (PR #93): Mandatory Stripe webhook signature verification. New `stripe_events_processed` table for webhook idempotency. Briefing rate limits via `_shared/rateLimit.ts`. E2E test `tests/stripe-webhook-idempotency.spec.ts`.
+- **Audit Week 2 — Data path** (PR #94): Closed assessment data leak. Codified `ctrl-briefings` storage bucket policy. End-to-end account deletion (Memory Web + briefings + audio + decisions + missions + assessments + all subordinate rows). E2E test `tests/account-deletion.spec.ts`.
+- **Audit Week 3 — UX** (PR #95): Killed onboarding gate. Fixed NorthStar stub. Voice permission recovery. Killed surveillance copy. Removed all "coming soon" placeholders for unimplemented affordances.
+- **Audit Week 4 — Reliability** (PR #99): New `_shared/with-timeout.ts` utility (with vitest coverage) wrapping every external API call. Audio failure UX so briefing card still renders if synthesis fails. Onboarding stall recovery.
+- **Audit Week 5 — Observability** (PR #97): Structured edge-function JSON logger at `_shared/logger.ts`. CI gate prevents `console.log` regressions.
+- **Audit Week 6 — Cleanup + e2e** (PR #98, #100, #101): P2 backlog closure. 5 more e2e specs (auth, briefing journey, briefing rate limits, sparse profile + the two from earlier weeks). New `ai_response_cache` table for lens + embedding caching. Lint cleanup.
+
+### Changed
+- All edge-function logging migrated to structured JSON via `_shared/logger.ts`
+- All external API calls (Vertex, OpenAI, ElevenLabs, Perplexity, Tavily, Brave, Resend, Stripe) now wrap in `with-timeout`
+- `briefing_v2_enabled` opt-in flag honored across cold and cached lens paths
+
+### Verified counts at end of phase
+- 74 edge functions
+- 48 hooks
+- 97 migrations
+- 6 Vitest specs + 6 Playwright e2e specs
 
 ---
 
-## [1.3.0] - 2024-12-14 - Mobile UX Premium Experience
+## [5.0] — 2026-04 — Phase 6: Briefing v2 (Evidence-Based Relevance Pipeline)
+
+### Added
+- **Seven-stage briefing pipeline**: importance lens → query planner → multi-provider fan-out (Perplexity + Tavily + Brave, 12s cap) → embedding dedupe + scoring (`text-embedding-3-small` + pgvector) → budget-constrained curation → script generation (gpt-4o) → audio synthesis (ElevenLabs)
+- Every retained segment carries `lens_item_id`, `relevance_score`, `matched_profile_fact` — auditable relevance, not asserted relevance
+- `briefing-diagnose` edge function: read-only "why these stories?" endpoint
+- `briefing_interests` table — user-declared beats / entities / excludes (Settings → Interests tab + inline Add buttons)
+- `industry_beat_library` table — 11 industries pre-seeded (creator economy, SaaS, healthcare, finance/fintech, consulting, e-commerce/retail, media/publishing, edtech, biotech, legal, generic) with 6-8 beats × 4-7 entities each
+- `briefing_lens_feedback` table — persistent semantic negative feedback. Explicit Ban writes -1.0 delta immediately. Aggregator (`sp_aggregate_briefing_feedback` plpgsql + pg_cron at 03:07 UTC) promotes 3+ thumbs-down on same signature to -0.4 delta.
+- `briefing_v2_enabled` per-user opt-in flag + `BRIEFING_V2_ENABLED_DEFAULT` env var
+- pgvector + pgcrypto + pg_cron extensions enabled
 
 ### Changed
-- **Progress Bar**: Now monotonically increasing only - never regresses. Uses displayProgress state with smooth time-based minimum floor for premium feel
-- **Assessment Flow**: Removed contact collection form before results - users go directly from questions to Quick Personalization screen
-- **Homepage Card**: Full-height premium card on mobile (min-h-[80vh]), larger typography and CTA buttons
-- **Loading/Progress Screen**: Full-height premium card on mobile with centered content
+- `briefings` table extended: `schema_version`, `segments` JSONB, `context_snapshot` JSONB
+- `briefing_feedback` extended with `lens_item_id`, `dwell_ms`, `replayed`
+- Briefing card on dashboard hoisted `SeedBeatsPrompt` above the briefing, added Bookmark + Ban + "Anchored to:" chips inline (PR #88)
+
+---
+
+## [4.1] — 2026-03 — Mindmaker → CTRL Rebrand
+
+### Changed
+- Product renamed from **Mindmaker** to **CTRL: Clarity for Leaders** across all user-facing surfaces
+- Production URL: `ctrl.themindmaker.ai`
+
+---
+
+## [4.0] — 2026-02 to 2026-03 — Memory Web, Context Export, Portable AI Double
+
+### Added
+- **Memory Web**: voice-first context extraction with encrypted storage (AES-256-GCM)
+- **Context Export**: one-click export to ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown
+- **Guided First Experience**: 3-question onboarding delivering exportable context in 2 minutes
+- **Pattern Detection**: 10X skills, blind spots, behavioral preferences from Memory Web
+- **AI Tools Hub**: Decision Advisor, Meeting Prep, Prompt Coach, Stream of Consciousness
+- **Edge** leadership amplifier: strengths sharpened, weaknesses covered with on-demand artifacts
+- **Edge Pro** ($9/month): unlimited artifact generation + email delivery
+- **Diagnostic Upgrade** ($49 one-time) + **Deep Context Upgrade** ($29) + **Bundle** ($69)
+- 45+ edge functions (up from ~20), 30+ hooks
+- Memory encryption (AES-256-GCM) end-to-end
+- Google OAuth alongside email auth
+
+---
+
+## [3.0] — 2026-01 — V3 Complete Rebuild (Apple-like Executive Design)
+
+### Changed
+- Complete visual rebuild to match executive-grade Apple-like aesthetic
+- Light mode design system (warm off-white #faf9f7, deep ink #0e1a2b, pure white cards)
+- No-scroll mobile experience on all key authed pages
+- Framer Motion animations throughout (spring physics: stiffness 400, damping 35)
+- Mobile viewport handling via `--mobile-vh` CSS variable + safe-area insets
+
+### Added
+- OpenAI Whisper integration for voice transcription
+- Vertex AI (Gemini 2.0 Flash) as primary LLM, OpenAI GPT-4o as fallback
+- Bottom-sheet pattern for mobile overlays
+- Floating voice FAB on dashboard
+- Cognitive frameworks embedded in `ai-generate` prompts (A/B Framing, Dialectical, WOOP, Reflective Equilibrium, First Principles)
 
 ### Removed
-- **Toast Notifications**: Removed all toast notifications throughout the application - using inline UI feedback instead
-- **ContactCollectionForm**: Removed from pre-results flow - contact collection now happens via unlock form on results page
-
-### Added
-- **Dimension Scores Preview**: Results page now shows dimension scores before requiring unlock
-- **Risk Signal Preview**: Results page shows top risk signal before requiring unlock
-- **Collapsible Unlock Form**: Unlock form is collapsed by default - users expand when interested
-- **Resend Email Integration**: Unlock form now sends notification email via Resend when user creates account
-
-### Fixed
-- **Mobile Viewport Fit**: All input screens (assessment questions, deep profile, quick personalization) now fit within viewport without scrolling using h-[100dvh] and flex layouts
-- **Assessment Error Handling**: Removed error toasts, errors are now logged silently and flow continues to results
+- All toast notifications (replaced with inline UI feedback)
+- V1 components and dual-architecture conditional rendering
+- Quiz/gamification language and emojis from copy
 
 ---
 
-## [1.2.0] - 2024-12-13 - UI/UX & Anti-Fragile Pipeline Update
+## [2.x] — 2024 to early 2025 — AI Literacy Repositioning
 
-### UI Improvements
-- **HeroSection**: Reduced logo size by 25% (190px → 143px), optimized for mobile viewport
-- **SingleScrollResults**: Reduced logo size by 25%, improved mobile spacing
-- **PeerBubbleChart**: Completely rethought for mobile - responsive height, compact labels, smaller bubbles
-- **DeepProfileQuestionnaire**: Full mobile viewport optimization, no vertical scrolling required
-- **ProgressScreen**: Logo now loads first for better UX, uses full logo instead of icon
-- **ContactCollectionForm**: Simplified to collect only Name, Email, Department, Primary AI Focus
-
-### New Features
-- **Voice Input**: Added voice recording option for "time waste examples" question using OpenAI Whisper
-- **Primary AI Focus**: Added to UnlockResultsForm for comprehensive user profiling
-
-### Anti-Fragile Pipeline Design
-- **pipelineGuards.ts**: Complete rewrite with comprehensive failure point enumeration
-  - 10 typed interfaces for safe data shapes
-  - Schema-compliant enum constants for all dimension keys, tiers, risk keys, etc.
-  - Mapping tables for AI output normalization
-  - Default values for all data types
-  - Normalization functions for all entity types
-  - DB insert helpers with schema compliance
-  - Comprehensive validation functions: validateContactData, validateAssessmentData, validateAIContent, validateAggregatedResults
-
-### Code Quality
-- Added VoiceInput component for reusable inline voice recording
-- Improved mobile-first responsive design across all pages
-- Uses 100dvh for proper mobile viewport handling
+### Changed
+- Repositioned from "AI transformation" to "AI literacy for executive cognition"
+- Surfaced tensions, risks, and scenarios as primary results UI (no longer hidden)
+- Renamed "Prompt Library" to "Thinking Tools"
+- Removed contact-collection form before results; collect via unlock form on results page
+- Monotonic progress bar (never regresses)
+- Mobile viewport-fit input screens (no scrolling during data input)
 
 ---
 
-## [1.1.0] - 2024-12-13 - Production Readiness Audit
+## [1.x] — 2024 — AI Leadership Benchmark (original)
 
-### Security & Data Flow
-- Enhanced assessment ID restoration with retry logic in `UnifiedResults.tsx`
-- Implemented proper Supabase auth signup flow in `SingleScrollResults.tsx` unlock form
-- Added proper error handling for assessment ID validation
-
-### UX Improvements
-- **NotFound.tsx**: Complete redesign using design system tokens (was using hardcoded gray/blue colors)
-- **Index.tsx**: Fixed assessment history view functionality - users can now view past assessments
-- **HeroSection.tsx**: Added ARIA labels and screen reader support for typewriter animation
-- **TensionsView.tsx**: Added proper error states and loading feedback
-- **UnifiedResults.tsx**: Added retry logic and proper loading/error states for assessment ID restoration
-
-### Bug Fixes
-- **ContactCollectionForm.tsx**: Fixed consent checkbox handling (was converting boolean to string incorrectly)
-- **PromptLibraryV2.tsx**: Fixed useEffect dependency warning
-- **TensionsView.tsx**: Added proper TypeScript typing (was using `any`)
-- **SingleScrollResults.tsx**: Implemented actual account creation in unlock form (was TODO)
-
-### Code Quality
-- Added ESLint suppression comments for intentional dependency array exclusions
-- Improved TypeScript typing across multiple components
-- Fixed React key warnings by using unique keys based on data fields
-
-### Accessibility
-- Added `sr-only` class for screen readers in HeroSection typewriter effect
-- Added `aria-label` to animated heading for accessibility
-- Improved focus states on consent checkbox
-
----
-
-## [1.0.0] - 2024-12-09
-
-### Initial Anti-Fragile Pipeline Implementation
-
-#### Phase 1: Generation Status Flag Merging
-- Fixed `runAssessment.ts` to fetch current status and merge flags
-- Each successful DB insert now updates its corresponding flag
-- Error log accumulates rather than overwrites
-
-#### Phase 2: Populate Missing Tables
-- Added dimension scores storage to `leader_dimension_scores`
-- Added prompt sets storage to `leader_prompt_sets`
-- Added first moves storage to `leader_first_moves`
-
-#### Phase 3: AI Generate Response Structure
-- Updated prompt to request comprehensive JSON response
-- Added enum constraints for `risk.key`, `risk.level`, `scenario.key`, `prompt.category`
-- Implemented `sanitizeEnums()` and `validateResponse()` functions
-- Added retry logic with exponential backoff
-
-#### Phase 4: Simplified Progress Tracking
-- Removed fake timer-based progress from `UnifiedAssessment.tsx`
-- Progress now relies solely on database-driven `useGenerationProgress` hook
-- Single source of truth eliminates erratic behavior
-
-#### Phase 5: Safety Guards
-- LLM response validation before returning
-- Enum sanitization to valid options
-- Try/catch blocks around all DB operations
-- Detailed error logging to `generation_status.error_log`
-
-#### Phase 6: Audit & Logging
-- Generation source tracking (`vertex-ai`, `openai`, `fallback`)
-- Duration tracking for each generation
-- Comprehensive console logging at each step
-
----
-
-## Format Guide
-
-### Types of changes
-- **Added** for new features.
-- **Changed** for changes in existing functionality.
-- **Deprecated** for soon-to-be removed features.
-- **Removed** for now removed features.
-- **Fixed** for any bug fixes.
-- **Security** for vulnerability fixes.
-
----
-
-*Maintained by the development team. Update this file with every significant change.*
+### Initial release
+- Quiz-based assessment
+- AI Leadership Benchmark scoring
+- Prompt library generation
+- Voice assessment path added later in 2024
+- Deep profile questionnaire
