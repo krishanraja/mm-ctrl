@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useRef, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import type { Briefing, PlaybackSpeed, BriefingPlaybackState } from '@/types/briefing';
 
 interface BriefingContextValue {
@@ -33,6 +34,13 @@ export function BriefingProvider({ children }: { children: React.ReactNode }) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Track whether we've already attempted a refresh for this src so a
+  // permanent storage failure doesn't loop. Resets on briefing change.
+  const refreshAttemptedRef = useRef(false);
+  useEffect(() => {
+    refreshAttemptedRef.current = false;
+  }, [briefing?.id, briefing?.audio_url]);
+
   // Sync audio element events
   useEffect(() => {
     const audio = audioRef.current;
@@ -63,11 +71,47 @@ export function BriefingProvider({ children }: { children: React.ReactNode }) {
       setMiniPlayerVisible(false);
     };
 
+    // 24h signed URLs expire silently. When the audio element fails to load
+    // its source, ask synthesize-briefing for a fresh signed URL (the
+    // backend re-signs without re-running TTS when the storage object
+    // exists). One attempt per (briefing, url); a permanent failure
+    // surfaces as the error continuing to fire and no further refreshes.
+    const onError = async () => {
+      if (!briefing?.id) return;
+      if (refreshAttemptedRef.current) return;
+      refreshAttemptedRef.current = true;
+      console.warn('Briefing audio failed to load; requesting fresh signed URL');
+      try {
+        const wasPlaying = !audio.paused;
+        const resumeAt = audio.currentTime;
+        const { data, error } = await supabase.functions.invoke(
+          'synthesize-briefing',
+          { body: { briefing_id: briefing.id } },
+        );
+        if (error || !data?.audio_url || data.audio_url === briefing.audio_url) {
+          // Either provider error, rate-limited, or the same URL. Don't
+          // loop; let the failure surface.
+          return;
+        }
+        // Replace the source URL on the briefing so the <audio> remounts
+        // with the fresh URL. Resume from where the user was.
+        setBriefing({ ...briefing, audio_url: data.audio_url });
+        // Wait one tick for the new src to bind, then attempt to resume.
+        setTimeout(() => {
+          if (resumeAt > 0) audio.currentTime = resumeAt;
+          if (wasPlaying) audio.play().catch(() => {});
+        }, 50);
+      } catch (e) {
+        console.warn('Audio recovery failed:', e);
+      }
+    };
+
     audio.addEventListener('timeupdate', onTimeUpdate);
     audio.addEventListener('loadedmetadata', onLoadedMetadata);
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
     audio.addEventListener('ended', onEnded);
+    audio.addEventListener('error', onError);
 
     return () => {
       audio.removeEventListener('timeupdate', onTimeUpdate);
@@ -75,6 +119,7 @@ export function BriefingProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener('play', onPlay);
       audio.removeEventListener('pause', onPause);
       audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('error', onError);
     };
   }, [briefing]);
 
