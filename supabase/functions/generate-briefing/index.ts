@@ -531,7 +531,7 @@ Return JSON: [{"title": "[TAG] headline", "source": "Source"}]. Select 10-15. Sk
 }
 
 function parseLLMJson(content: string): NewsHeadline[] {
-  let cleaned = content
+  const cleaned = content
     .replace(/```json\s*/gi, "")
     .replace(/```\s*/g, "")
     .trim();
