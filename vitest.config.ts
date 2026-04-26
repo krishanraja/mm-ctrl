@@ -9,7 +9,13 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/__tests__/setup.ts'],
-    include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+    include: [
+      'src/**/*.{test,spec}.{js,ts,jsx,tsx}',
+      // Edge-function shared helpers are deliberately Deno-import-free for
+      // logic like with-timeout / industry bias / scoring; vitest can run
+      // them in jsdom for fast unit feedback.
+      'supabase/functions/_shared/**/*.{test,spec}.{js,ts}',
+    ],
     exclude: ['src/__tests__/e2e/**'],
     coverage: {
       reporter: ['text', 'json', 'html'],

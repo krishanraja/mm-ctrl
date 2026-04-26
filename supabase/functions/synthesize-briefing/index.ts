@@ -182,6 +182,23 @@ serve(async (req) => {
 
     if (!ttsResponse.ok) {
       const errText = await ttsResponse.text().catch(() => "");
+      // Persistent 5xx after retry: surface as provider_unavailable so the
+      // frontend renders the categorised "TTS unavailable" affordance
+      // instead of a generic 500 stuck-spinner. 4xx is genuinely our bug
+      // (bad payload, bad key) and stays a hard error.
+      if (ttsResponse.status >= 500) {
+        console.error(
+          `ElevenLabs persistent 5xx: ${ttsResponse.status} ${errText.substring(0, 200)}`
+        );
+        return new Response(
+          JSON.stringify({
+            error: "provider_unavailable",
+            provider: "elevenlabs",
+            message: "Audio service is temporarily unavailable. Try again in a moment.",
+          }),
+          { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
       throw new Error(
         `ElevenLabs error: ${ttsResponse.status} ${errText.substring(0, 200)}`
       );

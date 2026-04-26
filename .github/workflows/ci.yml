@@ -1,0 +1,89 @@
+# CI gate for mm-ctrl.
+#
+# Runs on every PR + every push to main. Three checks, each blocking:
+#   1. typecheck — tsc --noEmit catches type errors before they hit prod
+#   2. build     — full Vite build catches integration breakage that tsc alone misses
+#   3. lint      — eslint with --max-warnings=0 only on files this PR touched
+#
+# We deliberately scope lint to the PR diff because the existing codebase has
+# ~1600 pre-existing warnings (mostly any-typed Stripe/Supabase responses).
+# Failing CI on those would block every PR forever. New code must be clean;
+# old code is a separate cleanup track.
+#
+# To strengthen later: add the test:run job once vitest coverage exists,
+# wire to required-status-checks in branch protection, and enable Dependabot.
+
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+  lint-changed:
+    name: lint (PR diff only)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: List changed files
+        id: changed
+        run: |
+          # Diff against the PR base, filter to lintable files.
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          changed=$(git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}"...HEAD \
+            | grep -E '\.(ts|tsx|js|jsx)$' \
+            | grep -v -E '^(node_modules|dist|supabase/functions/_shared/.*\.ts$)' || true)
+          if [ -z "$changed" ]; then
+            echo "No lintable files changed."
+            echo "files=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changed files:"
+            echo "$changed"
+            # GitHub Actions multiline output
+            {
+              echo "files<<EOF"
+              echo "$changed"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+      - name: Lint changed files
+        if: steps.changed.outputs.files != ''
+        run: |
+          # Run eslint on just the PR's changed files. Strict: any new warning
+          # fails the build. Pre-existing warnings in unrelated files are not
+          # this PR's problem.
+          echo "${{ steps.changed.outputs.files }}" | xargs npx eslint --max-warnings=0
