@@ -50,7 +50,7 @@ export function VerificationStep({ data, onUpdate, onNext, onBack }: Verificatio
           Verify & Edit
         </h2>
         <p className="text-gray-400">
-          Review what we captured and make any adjustments
+          Review your inputs and make any adjustments
         </p>
       </div>
 

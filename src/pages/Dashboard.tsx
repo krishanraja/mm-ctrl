@@ -1,12 +1,14 @@
 import * as React from "react"
 import { useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
+import { Sparkles, X } from "lucide-react"
 import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashboard"
 import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
 import { OnboardingInterview } from "@/components/onboarding/OnboardingInterview"
 import { BottomNav } from "@/components/memory-web/BottomNav"
 import { DesktopSidebar } from "@/components/memory-web/DesktopSidebar"
 import { AppHeader } from "@/components/memory-web/AppHeader"
+import { Button } from "@/components/ui/button"
 import { useDevice } from "@/hooks/useDevice"
 import { useGuidedCapture } from "@/hooks/useGuidedCapture"
 import { useAuth } from "@/components/auth/AuthProvider"
@@ -20,6 +22,12 @@ export default function Dashboard() {
   const { isFirstTime, completeOnboarding } = useGuidedCapture()
   const { user } = useAuth()
   const [searchParams] = useSearchParams()
+  // Onboarding is an opt-in overlay, not a full-screen blocker. Default-off:
+  // the dashboard always renders so a busy leader can land and explore. The
+  // dismissible top banner offers a 60-second guided setup for users who
+  // want it.
+  const [onboardingOpen, setOnboardingOpen] = React.useState(false)
+  const [bannerDismissed, setBannerDismissed] = React.useState(false)
 
   // Determine which view to show: Memory or Edge
   const activeView: EdgeView = (searchParams.get('view') as EdgeView) || 'memory'
@@ -49,9 +57,58 @@ export default function Dashboard() {
     return <div className="h-screen-safe flex items-center justify-center">Loading...</div>
   }
 
-  if (isFirstTime && !hasExistingFacts && !alreadyOnboarded) {
-    return <OnboardingInterview onComplete={completeOnboarding} />
+  // First-time prompt: offered, never enforced. The user can start the guided
+  // setup, defer (dismiss until next session), or skip permanently. Any one
+  // captured fact also flips alreadyOnboarded via the query above.
+  const showOnboardingPrompt =
+    isFirstTime && !hasExistingFacts && !alreadyOnboarded && !bannerDismissed
+
+  // If the user actively chose to do guided onboarding, render it full-screen
+  // as before. Completing it (or backing out) returns them to the dashboard.
+  if (onboardingOpen) {
+    return (
+      <OnboardingInterview
+        onComplete={() => {
+          completeOnboarding()
+          setOnboardingOpen(false)
+        }}
+      />
+    )
   }
+
+  const onboardingBanner = showOnboardingPrompt ? (
+    <div className="bg-accent/10 border-b border-accent/20 px-4 py-2.5">
+      <div className="max-w-4xl mx-auto flex items-center gap-3">
+        <Sparkles className="w-4 h-4 text-accent shrink-0" aria-hidden="true" />
+        <p className="text-xs text-foreground flex-1 min-w-0">
+          <span className="font-medium">Welcome.</span>{" "}
+          <span className="text-muted-foreground">
+            Set up your context in about a minute — or explore first.
+          </span>
+        </p>
+        <Button
+          size="sm"
+          onClick={() => setOnboardingOpen(true)}
+          className="h-7 px-3 text-xs"
+        >
+          Set up
+        </Button>
+        <button
+          type="button"
+          onClick={() => {
+            setBannerDismissed(true)
+            // Mark as onboarded on permanent skip so the prompt doesn't
+            // come back next session unless they explicitly trigger it.
+            completeOnboarding()
+          }}
+          aria-label="Dismiss"
+          className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  ) : null
 
   // Edge view
   if (activeView === 'edge') {
@@ -59,6 +116,7 @@ export default function Dashboard() {
       return (
         <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
           <AppHeader />
+          {onboardingBanner}
           <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
             <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
               <EdgeViewLazy />
@@ -72,6 +130,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-background">
         <DesktopSidebar />
         <main className="ml-64 min-h-screen">
+          {onboardingBanner}
           <div className="max-w-4xl mx-auto px-8 py-8">
             <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
               <EdgeViewLazy />
@@ -82,6 +141,12 @@ export default function Dashboard() {
     )
   }
 
-  // Memory view (default)
-  return isMobile ? <MobileMemoryDashboard /> : <DesktopMemoryDashboard />
+  // Memory view (default). Banner wraps the inner dashboard so it sits
+  // above whatever layout chrome the inner component renders.
+  return (
+    <>
+      {onboardingBanner}
+      {isMobile ? <MobileMemoryDashboard /> : <DesktopMemoryDashboard />}
+    </>
+  )
 }

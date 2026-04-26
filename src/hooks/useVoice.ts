@@ -13,12 +13,29 @@ interface UseVoiceOptions {
   deferTranscriptCallback?: boolean
 }
 
+/**
+ * Categorised reason a recording attempt failed. Lets the UI render a
+ * targeted recovery affordance instead of dumping a generic error message.
+ *  - `permission_denied`: user blocked mic in the browser (NotAllowedError)
+ *  - `no_device`: no mic hardware available (NotFoundError)
+ *  - `in_use`: another tab/app is holding the mic (NotReadableError)
+ *  - `insecure_context`: page not served over HTTPS (SecurityError on some browsers)
+ *  - `unknown`: anything else — show the raw message and offer retry
+ */
+export type VoiceErrorKind =
+  | 'permission_denied'
+  | 'no_device'
+  | 'in_use'
+  | 'insecure_context'
+  | 'unknown'
+
 interface UseVoiceReturn {
   isRecording: boolean
   isProcessing: boolean
   duration: number
   transcript: string | null
   error: Error | null
+  errorKind: VoiceErrorKind | null
   /** Live browser caption during recording + while server transcribes (non-authoritative). */
   browserCaptionPreview: string
   pendingReview: PendingTranscriptReview | null
@@ -42,6 +59,7 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
   const [duration, setDuration] = useState(0)
   const [transcript, setTranscript] = useState<string | null>(null)
   const [error, setError] = useState<Error | null>(null)
+  const [errorKind, setErrorKind] = useState<VoiceErrorKind | null>(null)
   const [browserCaptionPreview, setBrowserCaptionPreview] = useState('')
   const [pendingReview, setPendingReview] = useState<PendingTranscriptReview | null>(null)
 
@@ -111,6 +129,7 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
   const startRecording = useCallback(async () => {
     try {
       setError(null)
+      setErrorKind(null)
       setTranscript(null)
       setPendingReview(null)
       setDuration(0)
@@ -259,7 +278,39 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
       }, 1000)
     } catch (err) {
       console.error('Failed to start recording:', err)
-      setError(new Error('Microphone access denied. Please allow microphone access to record.'))
+      // Categorise the DOMException so the UI can render a targeted
+      // recovery card instead of a generic "denied" toast. The browser
+      // returns a structured error.name; we map the common ones.
+      const e = err as { name?: string; message?: string }
+      let kind: VoiceErrorKind = 'unknown'
+      let message = 'Could not start recording.'
+      switch (e.name) {
+        case 'NotAllowedError':
+        case 'PermissionDeniedError':
+          kind = 'permission_denied'
+          message = 'Microphone access is blocked. Allow it in your browser to record.'
+          break
+        case 'NotFoundError':
+        case 'DevicesNotFoundError':
+          kind = 'no_device'
+          message = 'No microphone detected. Plug one in or use text instead.'
+          break
+        case 'NotReadableError':
+        case 'TrackStartError':
+          kind = 'in_use'
+          message = 'Your microphone is busy in another tab or app. Close it and try again.'
+          break
+        case 'SecurityError':
+          kind = 'insecure_context'
+          message = 'Recording requires a secure (HTTPS) connection.'
+          break
+        default:
+          message = e.message || message
+      }
+      const error = new Error(message)
+      ;(error as Error & { kind: VoiceErrorKind }).kind = kind
+      setError(error)
+      setErrorKind(kind)
       cleanup()
     }
   }, [maxDuration, cleanup, deferTranscriptCallback])
@@ -271,6 +322,7 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
     setDuration(0)
     setTranscript(null)
     setError(null)
+    setErrorKind(null)
     setBrowserCaptionPreview('')
     setPendingReview(null)
   }, [cleanup])
@@ -287,6 +339,7 @@ export function useVoice(options: UseVoiceOptions = {}): UseVoiceReturn {
     duration,
     transcript,
     error,
+    errorKind,
     browserCaptionPreview,
     pendingReview,
     confirmPendingTranscript,

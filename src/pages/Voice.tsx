@@ -62,6 +62,7 @@ export default function Voice() {
     isProcessing: isTranscribing,
     duration,
     error: voiceError,
+    errorKind: voiceErrorKind,
     browserCaptionPreview,
     pendingReview,
     confirmPendingTranscript,
@@ -394,8 +395,57 @@ export default function Voice() {
             />
           )}
 
-          {/* Error Display */}
-          {voiceError && (
+          {/* Error Display — categorised so the user gets a real path forward,
+              not just a vague "denied" message. permission_denied / no_device /
+              in_use all surface a recovery card with Type Instead fallback. */}
+          {voiceError && voiceErrorKind && voiceErrorKind !== 'unknown' && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 max-w-md mx-auto"
+            >
+              <p className="text-sm font-semibold text-foreground mb-1">
+                {voiceErrorKind === 'permission_denied' && 'Microphone access is blocked'}
+                {voiceErrorKind === 'no_device' && 'No microphone detected'}
+                {voiceErrorKind === 'in_use' && 'Microphone is busy elsewhere'}
+                {voiceErrorKind === 'insecure_context' && 'HTTPS required'}
+              </p>
+              <p className="text-xs text-muted-foreground mb-3">
+                {voiceErrorKind === 'permission_denied' && (
+                  <>
+                    Click the lock or shield icon next to the URL, allow microphone, then refresh.
+                    Or type your thoughts instead.
+                  </>
+                )}
+                {voiceErrorKind === 'no_device' && (
+                  <>Plug in a microphone or headset, or type your thoughts instead.</>
+                )}
+                {voiceErrorKind === 'in_use' && (
+                  <>Close any other tab or app using your microphone (Zoom, Meet, etc.), then try again.</>
+                )}
+                {voiceErrorKind === 'insecure_context' && (
+                  <>Recording only works on secure (HTTPS) sites. Try the production URL.</>
+                )}
+              </p>
+              <div className="flex gap-2">
+                {(voiceErrorKind === 'permission_denied' || voiceErrorKind === 'in_use') && (
+                  <button
+                    onClick={() => { resetRecording(); startRecording() }}
+                    className="text-xs font-medium px-3 py-1.5 rounded-md bg-accent text-accent-foreground hover:bg-accent/90"
+                  >
+                    Try again
+                  </button>
+                )}
+                <button
+                  onClick={() => { resetRecording(); setMode('text') }}
+                  className="text-xs font-medium px-3 py-1.5 rounded-md border border-border hover:bg-muted"
+                >
+                  Type instead
+                </button>
+              </div>
+            </motion.div>
+          )}
+          {voiceError && (!voiceErrorKind || voiceErrorKind === 'unknown') && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -410,7 +460,7 @@ export default function Voice() {
       {/* Footer Hint */}
       <footer className="relative z-10 px-4 sm:px-6 pb-4">
         <p className="text-[10px] text-muted-foreground/40 text-center">
-          We extract key facts and ask you to verify what matters
+          Key points from your recording — confirm what matters
         </p>
       </footer>
 
