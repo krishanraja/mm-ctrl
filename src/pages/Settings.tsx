@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AccountTab } from '@/components/settings/AccountTab'
 import { WorkContextTab } from '@/components/settings/WorkContextTab'
 import { PrivacyDataTab } from '@/components/settings/PrivacyDataTab'
-import { NotificationsTab } from '@/components/settings/NotificationsTab'
 import { PreferencesTab } from '@/components/settings/PreferencesTab'
 import { EdgeProTab } from '@/components/settings/EdgeProTab'
 import { ManifestoTab } from '@/components/settings/ManifestoTab'
@@ -18,12 +17,15 @@ import {
   type SettingsSection,
 } from '@/contexts/SettingsSheetContext'
 
+// 'notifications' was an unimplemented placeholder tab and has been removed
+// from the navigation as part of the audit cleanup. The SettingsSection
+// type still allows the value so any deep link from older notification
+// emails redirects gracefully via the SettingsSheetContext default.
 const VALID_SECTIONS: SettingsSection[] = [
   'account',
   'profile',
   'briefing',
   'briefing-interests',
-  'notifications',
   'privacy',
   'preferences',
   'edge-pro',
@@ -43,7 +45,6 @@ function SettingsTabs() {
         <TabsTrigger value="briefing-interests" className="text-xs whitespace-nowrap flex-shrink-0">Interests</TabsTrigger>
         <TabsTrigger value="briefing-directives" className="text-xs whitespace-nowrap flex-shrink-0">Briefing Rules</TabsTrigger>
         <TabsTrigger value="privacy" className="text-xs whitespace-nowrap flex-shrink-0">Privacy</TabsTrigger>
-        <TabsTrigger value="notifications" className="text-xs whitespace-nowrap flex-shrink-0">Notifications</TabsTrigger>
         <TabsTrigger value="preferences" className="text-xs whitespace-nowrap flex-shrink-0">Preferences</TabsTrigger>
         <TabsTrigger value="edge-pro" className="text-xs whitespace-nowrap flex-shrink-0">Edge Pro</TabsTrigger>
         <TabsTrigger value="manifesto" className="text-xs whitespace-nowrap flex-shrink-0">Manifesto</TabsTrigger>
@@ -59,10 +60,6 @@ function SettingsTabs() {
 
       <TabsContent value="privacy" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
         <PrivacyDataTab />
-      </TabsContent>
-
-      <TabsContent value="notifications" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">
-        <NotificationsTab />
       </TabsContent>
 
       <TabsContent value="preferences" className="flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0 mt-4">

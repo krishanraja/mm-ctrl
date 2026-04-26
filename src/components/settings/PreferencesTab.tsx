@@ -35,15 +35,6 @@ export function PreferencesTab() {
         </div>
       </div>
 
-      <div className="bg-gray-900 p-6 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Language & Region</h3>
-        <p className="text-sm text-gray-400">Coming soon</p>
-      </div>
-
-      <div className="bg-gray-900 p-6 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Accessibility</h3>
-        <p className="text-sm text-gray-400">Accessibility settings coming soon</p>
-      </div>
     </div>
   )
 }
