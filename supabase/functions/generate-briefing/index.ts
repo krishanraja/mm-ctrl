@@ -24,6 +24,7 @@ import { buildImportanceLens, planQueries, type LensItem, type PlannedQuery } fr
 import { dedupeAndScore, type CandidateHeadline, type ScoredHeadline } from "../_shared/briefing-scoring.ts";
 import { curateSegments, segmentCountFromBudget, type CuratedSegment } from "../_shared/briefing-curation.ts";
 import { getUserContext, toLensSource, type UserContext } from "../_shared/user-context.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -1470,6 +1471,26 @@ serve(async (req) => {
       auth: { persistSession: false },
     });
 
+    // Cost-control rate limit. Briefing generation triggers 4+ external API
+    // calls (Perplexity, Brave, Tavily, OpenAI, embeddings, ElevenLabs) and
+    // costs ~$0.02 per run. 12/min/user is generous for legitimate use and
+    // bounds runaway-loop or compromised-token cost exposure.
+    const rateLimit = await checkRateLimit(
+      { maxRequests: 12, windowMs: 60_000, identifier: "generate-briefing" },
+      user.id,
+      supabase,
+    );
+    if (!rateLimit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: "rate_limited",
+          message: "You're generating briefings faster than expected. Try again in a minute.",
+          retry_after_ms: Math.max(0, rateLimit.resetAt - Date.now()),
+        }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Parse request body for briefing type and force-regenerate flag
     let briefingType: BriefingType = 'default';
     let customContext: string | undefined;
@@ -1530,6 +1551,34 @@ serve(async (req) => {
         .maybeSingle();
 
       if (existing && force) {
+        // Force-regen idempotency: at most one force-regeneration per minute
+        // per (user, date, type). Without this, a double-tap on "Refresh
+        // stories" deletes the existing row, then both callers see no
+        // existing row and run two parallel pipelines — burning ~$0.04 of
+        // external-API spend instead of $0.02. With this check, the second
+        // caller gets a clear 429 + the still-existing briefing id.
+        const forceCooldown = await checkRateLimit(
+          { maxRequests: 1, windowMs: 60_000, identifier: "force-regen" },
+          `${user.id}:${today}:${briefingType}`,
+          supabase,
+        );
+        if (!forceCooldown.allowed) {
+          console.log(
+            `Force-regen cooldown for ${user.id} ${today} ${briefingType}; returning existing briefing.`,
+          );
+          return new Response(
+            JSON.stringify({
+              briefing_id: existing.id,
+              already_exists: true,
+              has_audio: !!existing.audio_url,
+              cooldown: true,
+              retry_after_ms: Math.max(0, forceCooldown.resetAt - Date.now()),
+              message: "Today's briefing was just regenerated. Try again in a minute if you need another refresh.",
+            }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
         // Force regeneration: delete old briefing and its feedback
         console.log(`Force regeneration: deleting briefing ${existing.id}`);
         await supabase.from("briefing_feedback").delete().eq("briefing_id", existing.id);

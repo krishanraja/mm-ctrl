@@ -34,8 +34,16 @@ serve(async (req) => {
       throw new Error("STRIPE_SECRET_KEY not configured");
     }
 
+    // Hard requirement: webhook signature verification is mandatory. Without
+    // the secret, an attacker who knows the function URL can POST forged
+    // checkout.session.completed payloads and grant themselves subscriptions.
+    // Refuse to process — fail loud rather than silently accepting forgery.
     if (!webhookSecret) {
-      console.warn("⚠️ STRIPE_WEBHOOK_SECRET not configured. Webhook signature verification disabled.");
+      console.error("❌ STRIPE_WEBHOOK_SECRET not configured — refusing to process webhook.");
+      return new Response(
+        JSON.stringify({ error: "webhook_not_configured" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const stripe = new Stripe(stripeSecretKey, {
@@ -46,31 +54,31 @@ serve(async (req) => {
     const body = await req.text();
     const signature = req.headers.get("stripe-signature");
 
-    let event: Stripe.Event;
-
-    // Verify webhook signature if secret is configured
-    if (webhookSecret && signature) {
-      try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-      } catch (err) {
-        console.error('❌ Webhook signature verification failed:', err);
-        return new Response(
-          JSON.stringify({ error: "Webhook signature verification failed" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-    } else {
-      // If no secret configured, parse event without verification (not recommended for production)
-      console.warn("⚠️ Processing webhook without signature verification");
-      event = JSON.parse(body) as Stripe.Event;
+    if (!signature) {
+      console.error("❌ Missing stripe-signature header — refusing to process.");
+      return new Response(
+        JSON.stringify({ error: "missing_signature" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    console.log(`📥 Processing Stripe webhook: ${event.type}`);
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+      console.error('❌ Webhook signature verification failed:', err);
+      return new Response(
+        JSON.stringify({ error: "Webhook signature verification failed" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`📥 Processing Stripe webhook: ${event.type} (id: ${event.id})`);
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    
+
     if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
       throw new Error(`Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID})`);
     }
@@ -78,6 +86,30 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { persistSession: false }
     });
+
+    // Idempotency: Stripe retries webhooks for up to 3 days on transient
+    // failures. Without this guard, a successful subscription would be
+    // re-processed on every retry — granting duplicate access, polluting
+    // the audit trail, and potentially racing the DB. Insert-on-conflict
+    // is atomic; if 0 rows return, this event was already handled.
+    const { data: insertedEvent, error: idempotencyError } = await supabase
+      .from("stripe_events_processed")
+      .insert({ event_id: event.id, event_type: event.type })
+      .select("event_id")
+      .maybeSingle();
+
+    if (idempotencyError && idempotencyError.code !== "23505") {
+      // Non-conflict error: log but don't block processing — failing closed
+      // here would mean Stripe retries indefinitely on a transient DB blip.
+      console.warn(`⚠️ Idempotency log insert failed (non-conflict): ${idempotencyError.message}`);
+    } else if (!insertedEvent) {
+      // Conflict (duplicate event.id): already processed.
+      console.log(`↩️ Stripe event ${event.id} already processed; returning 200 no-op.`);
+      return new Response(
+        JSON.stringify({ received: true, already_processed: true, event_id: event.id }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Handle different event types
     switch (event.type) {
