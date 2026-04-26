@@ -531,7 +531,7 @@ Return JSON: [{"title": "[TAG] headline", "source": "Source"}]. Select 10-15. Sk
 }
 
 function parseLLMJson(content: string): NewsHeadline[] {
-  let cleaned = content
+  const cleaned = content
     .replace(/```json\s*/gi, "")
     .replace(/```\s*/g, "")
     .trim();
@@ -1546,17 +1546,43 @@ serve(async (req) => {
     const today = new Date().toISOString().split("T")[0];
 
     // Check if this specific briefing type already exists today
-    // (custom_voice allows multiples, others are one per day)
+    // (custom_voice allows multiples, others are one per day).
+    //
+    // The v2 pipeline inserts a "preliminary" briefing row early so the
+    // user sees headlines while the script polishes. If the function
+    // crashes between the preliminary insert and the final update,
+    // script_text remains NULL and segments are the unpolished ones.
+    // Treating that as a successful "already_exists" would lock the user
+    // into bad output forever. We detect stale-incomplete rows here and
+    // replace them transparently — same effect as a force-regen but the
+    // user didn't have to ask. The 5-minute window is generous enough to
+    // cover slow Perplexity / OpenAI runs but short enough that a real
+    // crash gets recovered on the user's next visit.
+    const STALE_INCOMPLETE_GRACE_MS = 5 * 60 * 1000;
     if (briefingType !== 'custom_voice') {
       const { data: existing } = await supabase
         .from("briefings")
-        .select("id, audio_url")
+        .select("id, audio_url, script_text, created_at")
         .eq("user_id", user.id)
         .eq("briefing_date", today)
         .eq("briefing_type", briefingType)
         .maybeSingle();
 
-      if (existing && force) {
+      // Stale-incomplete recovery: a briefing whose script never landed AND
+      // is older than the grace window is considered crashed and replaced.
+      if (
+        existing &&
+        !existing.script_text &&
+        existing.created_at &&
+        Date.now() - new Date(existing.created_at).getTime() > STALE_INCOMPLETE_GRACE_MS
+      ) {
+        console.warn(
+          `Stale-incomplete briefing ${existing.id} (script_text null, age >5m); replacing.`,
+        );
+        await supabase.from("briefing_feedback").delete().eq("briefing_id", existing.id);
+        await supabase.from("briefings").delete().eq("id", existing.id);
+        // Fall through into the regular "no existing row" path below.
+      } else if (existing && force) {
         // Force-regen idempotency: at most one force-regeneration per minute
         // per (user, date, type). Without this, a double-tap on "Refresh
         // stories" deletes the existing row, then both callers see no

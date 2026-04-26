@@ -52,7 +52,10 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
   const [mode, setMode] = useState<'choice' | 'voice' | 'text'>('choice');
   const [label, setLabel] = useState('');
   const [value, setValue] = useState('');
-  const [category, setCategory] = useState<FactCategory>('objective');
+  // Default to 'preference' — matches the voice auto-save flow and is the
+  // softest, most reversible category. The user can promote to a more
+  // specific category from the disclosure below or later from Memory Center.
+  const [category, setCategory] = useState<FactCategory>('preference');
   const [error, setError] = useState<string | null>(null);
   const [hasDraft, setHasDraft] = useState(false);
 
@@ -234,7 +237,7 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
     setMode('choice');
     setLabel('');
     setValue('');
-    setCategory('objective');
+    setCategory('preference');
     setError(null);
     resetRecording();
     onClose();
@@ -466,7 +469,11 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
                   </motion.div>
                 )}
 
-                {/* Text input mode */}
+                {/* Text input mode — minimal friction. The leader writes
+                    one field (memory content). Category defaults to
+                    "preference" and lives behind a disclosure for the rare
+                    case the user wants to set it explicitly. Label is also
+                    hidden by default; most memories don't need one. */}
                 {mode === 'text' && !isLoading && (
                   <motion.div
                     key="text"
@@ -475,37 +482,6 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
                     exit={{ opacity: 0, y: 20 }}
                     className="space-y-4"
                   >
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select value={category} onValueChange={(v) => setCategory(v as FactCategory)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CATEGORIES.map((cat) => (
-                            <SelectItem key={cat.value} value={cat.value}>
-                              <div>
-                                <span className="font-medium">{cat.label}</span>
-                                <span className="text-muted-foreground ml-2 text-xs">
-                                  {cat.description}
-                                </span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="label">Label (optional)</Label>
-                      <Input
-                        id="label"
-                        value={label}
-                        onChange={(e) => setLabel(e.target.value)}
-                        placeholder="e.g., My main goal for Q1"
-                      />
-                    </div>
-
                     <div className="space-y-2">
                       <Label htmlFor="value">Memory content</Label>
                       <Textarea
@@ -517,6 +493,47 @@ export const AddMemorySheet: React.FC<AddMemorySheetProps> = ({
                         className="resize-none"
                       />
                     </div>
+
+                    <details className="group rounded-lg border border-border/60 bg-secondary/30">
+                      <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer text-xs text-muted-foreground hover:text-foreground transition-colors">
+                        <span>
+                          Saved as <span className="text-foreground/80">{CATEGORIES.find(c => c.value === category)?.label || category}</span>
+                        </span>
+                        <span className="ml-auto text-[10px] uppercase tracking-wider">Edit</span>
+                      </summary>
+                      <div className="px-3 pb-3 space-y-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="category">Category</Label>
+                          <Select value={category} onValueChange={(v) => setCategory(v as FactCategory)}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {CATEGORIES.map((cat) => (
+                                <SelectItem key={cat.value} value={cat.value}>
+                                  <div>
+                                    <span className="font-medium">{cat.label}</span>
+                                    <span className="text-muted-foreground ml-2 text-xs">
+                                      {cat.description}
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="label">Label (optional)</Label>
+                          <Input
+                            id="label"
+                            value={label}
+                            onChange={(e) => setLabel(e.target.value)}
+                            placeholder="e.g., My main goal for Q1"
+                          />
+                        </div>
+                      </div>
+                    </details>
                   </motion.div>
                 )}
               </AnimatePresence>
