@@ -8,8 +8,9 @@
  * Matching order:
  *   1. Explicit industry_key in the request body (admin/debug use).
  *   2. The authenticated user's industry fact from user_memory.
- *   3. Fuzzy match: lowercase-substring against every row's aliases + key.
- *   4. Fallback row: industry_key='generic'.
+ *   3. Exact key/alias match (case-insensitive).
+ *   4. Word-boundary fuzzy match against aliases (longest match wins).
+ *   5. Fallback row: industry_key='generic'.
  *
  * Auth: authenticated user only. Read-only.
  */
@@ -66,6 +67,9 @@ serve(async (req) => {
     } catch { /* no body or invalid JSON */ }
 
     // Resolve the user's industry if not provided in the request.
+    // Tiebreaker on confidence: most recently updated wins, so the freshest
+    // declaration carries — otherwise Postgres returns ties in arbitrary order
+    // and the same user can flap between industries call to call.
     if (!explicitKey && !rawIndustry) {
       const { data: facts } = await supabase
         .from("user_memory")
@@ -74,6 +78,8 @@ serve(async (req) => {
         .eq("is_current", true)
         .in("fact_key", ["industry", "vertical"])
         .order("confidence_score", { ascending: false })
+        .order("updated_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
         .limit(1);
       if (facts && facts.length > 0 && typeof facts[0].fact_value === "string") {
         rawIndustry = facts[0].fact_value;
@@ -149,14 +155,17 @@ function matchIndustry(
     const needle = rawIndustry.trim().toLowerCase();
     if (byKey.has(needle)) return byKey.get(needle)!;
 
-    // Rank by longest-alias match so "creator economy" beats "creator" beats nothing.
+    // Rank by longest-alias match so "creator economy" beats "creator" beats
+    // nothing. We use word-boundary matching (not raw substring) so a generic
+    // term like "tech" doesn't get pulled into "biotech", and we exclude the
+    // industry_key slug from fuzzy candidates because slugs like
+    // "biotech_life_sciences" contain other industries' substrings.
     let best: { row: IndustryRow; score: number } | null = null;
     for (const row of rows) {
-      const candidates = [row.industry_key.toLowerCase(), ...row.aliases.map((a) => a.toLowerCase())];
-      for (const c of candidates) {
+      for (const aliasRaw of row.aliases) {
+        const c = aliasRaw.toLowerCase().trim();
         if (!c) continue;
-        const matches = needle.includes(c) || c.includes(needle);
-        if (!matches) continue;
+        if (!matchesAsWord(needle, c)) continue;
         const score = c.length;
         if (!best || score > best.score) best = { row, score };
       }
@@ -165,4 +174,18 @@ function matchIndustry(
   }
 
   return byKey.get("generic") ?? null;
+}
+
+/**
+ * Word-boundary match: true if `candidate` appears as a whole word/phrase
+ * inside `needle`, or vice versa. Treats anything outside [a-z0-9+] as a word
+ * separator (spaces, slashes, hyphens, underscores, &, etc.) so "tech" does
+ * not match "biotech" but does match "tech company" or "ed-tech".
+ */
+function matchesAsWord(needle: string, candidate: string): boolean {
+  if (!needle || !candidate) return false;
+  if (needle === candidate) return true;
+  const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const wrap = (s: string) => new RegExp(`(^|[^a-z0-9+])${escape(s)}([^a-z0-9+]|$)`);
+  return wrap(candidate).test(needle) || wrap(needle).test(candidate);
 }
