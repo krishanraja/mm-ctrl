@@ -54,8 +54,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { PLATFORM_GUIDES } from '@/lib/platform-guides';
 import { ModelRecommendationCard } from '@/components/export/ModelRecommendationCard';
 import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
+import { SkillExportCard } from '@/components/memory-web/SkillExportCard';
+import { SkillCaptureSheet } from '@/components/edge/SkillCaptureSheet';
+import { SkillPreviewSheet } from '@/components/edge/SkillPreviewSheet';
+import { useSkillExport } from '@/hooks/useSkillExport';
+import { useToast } from '@/hooks/use-toast';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 import type { ExportRecommendation } from '@/types/edge';
+import { isSkillSuccess } from '@/types/skill';
 
 // Icon lookup for dynamic recommendation icons
 const ICON_MAP: Record<string, typeof Bot> = {
@@ -125,6 +131,11 @@ export default function ContextExport() {
   const { recommendations, hasRecommendations } = useExportRecommendations();
   const { hasAccess: isPaidUser, subscribe } = useEdgeSubscription();
   const { userId, email } = useAuth();
+  const { toast } = useToast();
+  const skillExport = useSkillExport();
+
+  const [skillCaptureOpen, setSkillCaptureOpen] = useState(false);
+  const [skillPreviewOpen, setSkillPreviewOpen] = useState(false);
 
   const [step, setStep] = useState<WizardStep>(1);
   const [direction, setDirection] = useState(1);
@@ -270,6 +281,42 @@ export default function ContextExport() {
     }
     setTimeout(() => setShowFeedback(false), 1800);
   }, [userId, email, selectedFormat, selectedUseCase, isCustomMode]);
+
+  const handleOpenSkillCapture = useCallback(() => {
+    skillExport.reset();
+    setSkillCaptureOpen(true);
+  }, [skillExport]);
+
+  const handleSkillCaptureSubmit = useCallback(async (transcript: string) => {
+    const response = await skillExport.generateSkill(transcript);
+    if (!response) return;
+
+    if (isSkillSuccess(response)) {
+      setSkillCaptureOpen(false);
+      setSkillPreviewOpen(true);
+      return;
+    }
+
+    // Triage routed elsewhere - this isn't a skill. Tell the user where it
+    // belongs so they can add it to the right surface manually.
+    const routingCopy: Record<string, { title: string; description: string }> = {
+      custom_instruction: {
+        title: 'Better as a Custom Instruction',
+        description: response.triage.reasoning || 'This sounds like a universal preference, not a repeatable workflow. Add it to your AI tool\'s custom instructions.',
+      },
+      memory_fact: {
+        title: 'Better as a Memory Web fact',
+        description: response.triage.reasoning || 'This is context about you, not a workflow. Capture it in your Memory Web.',
+      },
+      saved_style: {
+        title: 'Better as a saved style',
+        description: response.triage.reasoning || 'This sounds like a tone preference. Save it as a writing style instead.',
+      },
+    };
+    const routed = routingCopy[response.triage.result] || routingCopy.memory_fact;
+    toast({ title: routed.title, description: routed.description });
+    setSkillCaptureOpen(false);
+  }, [skillExport, toast]);
 
   const handleStartOver = useCallback(() => {
     setStep(1);
@@ -465,6 +512,16 @@ export default function ContextExport() {
           </div>
         </div>
       </div>
+
+      {/* Agent Skill Builder entry point */}
+      <SkillExportCard
+        isPaidUser={isPaidUser}
+        onClick={handleOpenSkillCapture}
+        onUpgrade={async () => {
+          const url = await subscribe();
+          if (url) window.location.href = url;
+        }}
+      />
 
       {/* Recommended presets */}
       {hasRecommendations && (
@@ -832,6 +889,29 @@ export default function ContextExport() {
     </AnimatePresence>
   );
 
+  // ─── Skill Builder sheets (rendered at page root) ───────────────
+  const skillSheets = (
+    <>
+      <SkillCaptureSheet
+        isOpen={skillCaptureOpen}
+        onClose={() => setSkillCaptureOpen(false)}
+        onSubmit={handleSkillCaptureSubmit}
+        isGenerating={skillExport.isGenerating}
+        generationError={skillExport.error}
+      />
+      {skillExport.skillData && skillExport.qualityGate && skillExport.zipFilename && (
+        <SkillPreviewSheet
+          isOpen={skillPreviewOpen}
+          onClose={() => setSkillPreviewOpen(false)}
+          skill={skillExport.skillData}
+          qualityGate={skillExport.qualityGate}
+          onDownload={skillExport.downloadZip}
+          zipFilename={skillExport.zipFilename}
+        />
+      )}
+    </>
+  );
+
   // ─── Desktop layout ─────────────────────────────────────────────
   if (!isMobile) {
     return (
@@ -858,6 +938,7 @@ export default function ContextExport() {
             </div>
           </div>
         </main>
+        {skillSheets}
       </div>
     );
   }
@@ -899,6 +980,7 @@ export default function ContextExport() {
       </main>
 
       <BottomNav />
+      {skillSheets}
     </div>
   );
 }
