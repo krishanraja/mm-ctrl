@@ -264,6 +264,8 @@ export default function ContextExport() {
   const submitExportFeedback = useCallback(async (rating: 'positive' | 'negative') => {
     setFeedbackSubmitted(rating);
     try {
+      // 'feedback' table isn't in the generated Database types yet.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await supabase.from('feedback' as any).insert({
         user_id: userId,
         user_email: email,
