@@ -34,7 +34,7 @@ export function SkillExportCard({ isPaidUser, onClick, onUpgrade, className }: S
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground">Create Agent Skill</span>
+            <span className="text-sm font-medium text-foreground">Automate a weekly pain</span>
             {!isPaidUser && (
               <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent">
                 Pro
@@ -42,7 +42,7 @@ export function SkillExportCard({ isPaidUser, onClick, onUpgrade, className }: S
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-            Turn a workflow you repeat into an AI skill that triggers automatically.
+            Pick something you do every week and we'll turn it into an AI skill that triggers automatically.
           </p>
 
           {isPaidUser ? (
@@ -50,7 +50,7 @@ export function SkillExportCard({ isPaidUser, onClick, onUpgrade, className }: S
               onClick={onClick}
               className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-accent bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
             >
-              Describe Your Workflow
+              Start with a pain
               <ArrowRight className="h-4 w-4" />
             </button>
           ) : (

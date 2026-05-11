@@ -5,8 +5,14 @@ import {
   type SkillData,
   type SkillExportResponse,
   type SkillQualityGate,
+  type SkillSeed,
   type SkillTriage,
 } from "@/types/skill";
+
+export interface GenerateSkillOptions {
+  skillNameHint?: string;
+  seed?: SkillSeed | null;
+}
 
 interface UseSkillExport {
   isGenerating: boolean;
@@ -16,7 +22,7 @@ interface UseSkillExport {
   qualityGate: SkillQualityGate | null;
   zipBlob: Blob | null;
   zipFilename: string | null;
-  generateSkill: (transcript: string, skillNameHint?: string) => Promise<SkillExportResponse | null>;
+  generateSkill: (transcript: string, options?: GenerateSkillOptions) => Promise<SkillExportResponse | null>;
   downloadZip: () => void;
   reset: () => void;
 }
@@ -49,7 +55,7 @@ export function useSkillExport(): UseSkillExport {
   }, []);
 
   const generateSkill = useCallback(
-    async (transcript: string, skillNameHint?: string): Promise<SkillExportResponse | null> => {
+    async (transcript: string, options?: GenerateSkillOptions): Promise<SkillExportResponse | null> => {
       setIsGenerating(true);
       setError(null);
       setTriageResult(null);
@@ -59,8 +65,15 @@ export function useSkillExport(): UseSkillExport {
       setZipFilename(null);
 
       try {
+        const seed = options?.seed
+          ? { kind: options.seed.kind, text: options.seed.text }
+          : undefined;
         const { data, error: fnError } = await supabase.functions.invoke("generate-skill-export", {
-          body: { transcript, skill_name_hint: skillNameHint },
+          body: {
+            transcript,
+            skill_name_hint: options?.skillNameHint,
+            ...(seed ? { seed } : {}),
+          },
         });
 
         // Edge function returns the human-readable message in the error body

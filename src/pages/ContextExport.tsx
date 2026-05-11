@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Copy,
@@ -61,7 +62,7 @@ import { useSkillExport } from '@/hooks/useSkillExport';
 import { useToast } from '@/hooks/use-toast';
 import type { ExportFormat, ExportUseCase } from '@/types/memory';
 import type { ExportRecommendation } from '@/types/edge';
-import { isSkillSuccess } from '@/types/skill';
+import { isSkillSuccess, type SkillSeed } from '@/types/skill';
 
 // Icon lookup for dynamic recommendation icons
 const ICON_MAP: Record<string, typeof Bot> = {
@@ -134,8 +135,29 @@ export default function ContextExport() {
   const { toast } = useToast();
   const skillExport = useSkillExport();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [skillCaptureOpen, setSkillCaptureOpen] = useState(false);
   const [skillPreviewOpen, setSkillPreviewOpen] = useState(false);
+  const [skillSeed, setSkillSeed] = useState<SkillSeed | null>(null);
+
+  // Entry points (Edge AutomatePainCard, Memory blocker button, Briefing
+  // decision_trigger button) navigate to /context with location.state.seed.
+  // We consume the seed once, open the capture sheet pre-anchored, and clear
+  // the route state so a refresh doesn't replay it.
+  useEffect(() => {
+    const seedFromState = (location.state as { seed?: SkillSeed } | null)?.seed;
+    if (seedFromState && seedFromState.text) {
+      setSkillSeed(seedFromState);
+      skillExport.reset();
+      setSkillCaptureOpen(true);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+    // Intentional: only run on first relevant state change. skillExport.reset
+    // and setters are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   const [step, setStep] = useState<WizardStep>(1);
   const [direction, setDirection] = useState(1);
@@ -286,11 +308,12 @@ export default function ContextExport() {
 
   const handleOpenSkillCapture = useCallback(() => {
     skillExport.reset();
+    setSkillSeed(null);
     setSkillCaptureOpen(true);
   }, [skillExport]);
 
-  const handleSkillCaptureSubmit = useCallback(async (transcript: string) => {
-    const response = await skillExport.generateSkill(transcript);
+  const handleSkillCaptureSubmit = useCallback(async (transcript: string, seed?: SkillSeed | null) => {
+    const response = await skillExport.generateSkill(transcript, { seed: seed ?? null });
     if (!response) return;
 
     if (isSkillSuccess(response)) {
@@ -352,7 +375,20 @@ export default function ContextExport() {
         </p>
       </div>
 
-      {/* Voice input card */}
+      {/* Agent Skill Builder entry point — promoted above the voice context
+          card because a triggered Skill is a more durable artifact than a
+          one-off context export. */}
+      <SkillExportCard
+        isPaidUser={isPaidUser}
+        onClick={handleOpenSkillCapture}
+        onUpgrade={async () => {
+          const url = await subscribe();
+          if (url) window.location.href = url;
+        }}
+      />
+
+      {/* Voice input card — produces a custom context.md export, NOT a skill.
+          (Skill creation lives in the card above.) */}
       <div className={cn(
         'rounded-xl border p-4',
         isPaidUser
@@ -372,7 +408,7 @@ export default function ContextExport() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">Custom via Voice</span>
+              <span className="text-sm font-medium text-foreground">Custom context export</span>
               {!isPaidUser && (
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent">
                   Pro
@@ -380,7 +416,7 @@ export default function ContextExport() {
               )}
             </div>
             <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-              Describe what you need to get done and we will generate a custom AI skill for you
+              Describe a task and we'll generate a one-off context blob tailored to it (not a triggered skill).
             </p>
 
             {isPaidUser ? (
@@ -492,16 +528,6 @@ export default function ContextExport() {
           </div>
         </div>
       </div>
-
-      {/* Agent Skill Builder entry point */}
-      <SkillExportCard
-        isPaidUser={isPaidUser}
-        onClick={handleOpenSkillCapture}
-        onUpgrade={async () => {
-          const url = await subscribe();
-          if (url) window.location.href = url;
-        }}
-      />
 
       {/* Recommended presets */}
       {hasRecommendations && (
@@ -878,6 +904,7 @@ export default function ContextExport() {
         onSubmit={handleSkillCaptureSubmit}
         isGenerating={skillExport.isGenerating}
         generationError={skillExport.error}
+        initialSeed={skillSeed}
       />
       {skillExport.skillData && skillExport.qualityGate && skillExport.zipFilename && (
         <SkillPreviewSheet

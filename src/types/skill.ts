@@ -3,6 +3,31 @@
 
 export type SkillTriageResult = "skill" | "custom_instruction" | "memory_fact" | "saved_style";
 
+/**
+ * A SkillSeed lets an entry-point pre-anchor skill generation in an existing
+ * pain the user has already declared (a blocker, an active decision, a briefing
+ * segment about a decision trigger, etc.). The seed flows: entry point ->
+ * /context route state -> SkillCaptureSheet -> generate-skill-export body.
+ * The LLM uses it to ground extraction in the leader's actual situation
+ * instead of starting from a blank prompt.
+ */
+export type SkillSeedKind =
+  | "blocker"
+  | "decision"
+  | "mission"
+  | "briefing_segment"
+  | "example";
+
+export interface SkillSeed {
+  kind: SkillSeedKind;
+  text: string;
+  /** Optional: original row id so we can backlink the resulting skill. */
+  fact_id?: string;
+  decision_id?: string;
+  /** Optional: short label rendered as the chip the user tapped. */
+  label?: string;
+}
+
 export type SkillArchetype =
   | "decision-framework"
   | "voice-lock"

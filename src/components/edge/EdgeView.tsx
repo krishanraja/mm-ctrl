@@ -21,6 +21,7 @@ import { EdgeOnboarding } from './EdgeOnboarding';
 import { EdgePaywall, SAMPLE_ARTIFACTS } from './EdgePaywall';
 import { DraftSheet } from './DraftSheet';
 import { ArtifactPreview } from './ArtifactPreview';
+import { AutomatePainCard } from './AutomatePainCard';
 import { SHARPEN_CAPABILITY_META, COVER_CAPABILITY_META } from '@/types/edge';
 import type {
   EdgeCapability,
@@ -275,6 +276,17 @@ export default function EdgeView() {
           onFeedback={submitFeedback}
           isPaid={hasAccess}
           onAction={handleAction}
+        />
+
+        {/* Skill Builder entry: pains the leader has already declared, one
+            tap away from being turned into a triggered skill. Self-hides
+            when the leader has no pains yet. */}
+        <AutomatePainCard
+          isPaidUser={hasAccess}
+          onUpgrade={() => {
+            setPaywallCapability('Skill Builder');
+            setPaywallOpen(true);
+          }}
         />
 
         {/* Ambient Pro teaser - free users only */}

@@ -92,6 +92,25 @@ Deno.serve(async (req) => {
       ? body.skill_name_hint.trim()
       : undefined;
 
+    // Optional seed: when an entry point (Edge view chip, Memory blocker
+    // button, Briefing decision_trigger button) hands the user a pre-anchored
+    // pain, we forward it so the LLM grounds extraction in the leader's actual
+    // language instead of inventing a more abstract trigger.
+    const SEED_KINDS = ["blocker", "decision", "mission", "briefing_segment", "example"] as const;
+    type SeedKind = typeof SEED_KINDS[number];
+    let seed: { kind: SeedKind; text: string } | undefined;
+    if (body?.seed && typeof body.seed === "object") {
+      const rawKind = body.seed.kind;
+      const rawText = body.seed.text;
+      if (
+        typeof rawText === "string" &&
+        rawText.trim().length > 0 &&
+        SEED_KINDS.includes(rawKind as SeedKind)
+      ) {
+        seed = { kind: rawKind as SeedKind, text: rawText.trim().slice(0, 1000) };
+      }
+    }
+
     if (!transcript || transcript.trim().length < 20) {
       return jsonResponse(
         { error: "Transcript must be at least 20 characters. Describe the workflow in more detail." },
@@ -138,6 +157,7 @@ Deno.serve(async (req) => {
               transcript,
               memoryContext: memoryResult.context,
               profileContext,
+              seed,
             }),
           },
         ],
