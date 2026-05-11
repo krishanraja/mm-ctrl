@@ -47,7 +47,7 @@ import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useExportRecommendations } from '@/hooks/useExportRecommendations';
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
 import { useVoice } from '@/hooks/useVoice';
-import { DesktopSidebar } from '@/components/memory-web/DesktopSidebar';
+import { DesktopShell } from '@/components/layout/DesktopShell';
 import { BottomNav } from '@/components/memory-web/BottomNav';
 import { AppHeader } from '@/components/memory-web/AppHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -332,28 +332,6 @@ export default function ContextExport() {
     setFeedbackSubmitted(null);
     resetRecording();
   }, [resetRecording]);
-
-  // ─── Step Indicator ─────────────────────────────────────────────
-  const stepIndicator = (
-    <div className="flex items-center justify-center gap-2 py-3">
-      {[1, 2, 3].map((s) => (
-        <button
-          key={s}
-          onClick={() => s < step ? goToStep(s as WizardStep) : undefined}
-          disabled={s > step}
-          className={cn(
-            'h-2 rounded-full transition-all duration-300',
-            s === step
-              ? 'w-8 bg-accent'
-              : s < step
-              ? 'w-2 bg-accent/40 cursor-pointer hover:bg-accent/60'
-              : 'w-2 bg-border'
-          )}
-          aria-label={`Step ${s}`}
-        />
-      ))}
-    </div>
-  );
 
   // ─── Step 1: What do you need? ──────────────────────────────────
   const step1Content = (
@@ -916,32 +894,140 @@ export default function ContextExport() {
 
   // ─── Desktop layout ─────────────────────────────────────────────
   if (!isMobile) {
+    const stepLabels = ['What you need', 'Where it goes', 'Your export'];
+    const desktopRail = (
+      <div className="flex flex-col">
+        {/* Step progress in rail */}
+        <div className="border-b border-border/60 p-5">
+          <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            Wizard
+          </h3>
+          <ol className="space-y-1">
+            {stepLabels.map((label, i) => {
+              const s = (i + 1) as WizardStep;
+              const isActive = s === step;
+              const isDone = s < step;
+              return (
+                <li key={label}>
+                  <button
+                    type="button"
+                    onClick={() => (s < step ? goToStep(s) : undefined)}
+                    disabled={s > step}
+                    className={cn(
+                      'w-full flex items-center gap-3 px-2.5 py-2 rounded-md text-sm text-left transition-colors',
+                      isActive
+                        ? 'bg-accent/15 text-accent'
+                        : isDone
+                        ? 'text-foreground hover:bg-secondary/60'
+                        : 'text-muted-foreground/60 cursor-not-allowed',
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        'flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold flex-shrink-0',
+                        isActive
+                          ? 'bg-accent text-accent-foreground'
+                          : isDone
+                          ? 'bg-accent/30 text-accent'
+                          : 'bg-secondary text-muted-foreground/60',
+                      )}
+                    >
+                      {isDone ? <Check className="h-3 w-3" /> : s}
+                    </span>
+                    <span className="flex-1">{label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        {/* Context summary based on current state */}
+        <div className="border-b border-border/60 p-5">
+          <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            Current selection
+          </h3>
+          <dl className="space-y-2 text-xs">
+            <div className="flex items-start justify-between gap-2">
+              <dt className="text-muted-foreground">Mode</dt>
+              <dd className="text-foreground font-medium text-right">
+                {isCustomMode ? 'Custom (voice)' : selectedUseCase ? 'Preset' : '-'}
+              </dd>
+            </div>
+            <div className="flex items-start justify-between gap-2">
+              <dt className="text-muted-foreground">Use case</dt>
+              <dd className="text-foreground font-medium text-right">
+                {isCustomMode
+                  ? customTitle || 'Custom task'
+                  : USE_CASE_OPTIONS.find((o) => o.value === selectedUseCase)?.label || '-'}
+              </dd>
+            </div>
+            <div className="flex items-start justify-between gap-2">
+              <dt className="text-muted-foreground">Target</dt>
+              <dd className="text-foreground font-medium text-right">
+                {FORMAT_OPTIONS.find((o) => o.value === selectedFormat)?.label || '-'}
+              </dd>
+            </div>
+            {exportResult && (
+              <div className="flex items-start justify-between gap-2">
+                <dt className="text-muted-foreground">Tokens</dt>
+                <dd className="text-foreground font-mono font-medium text-right">
+                  {exportResult.token_count.toLocaleString()}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
+        {/* Tip */}
+        <div className="p-5">
+          <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            Pro tip
+          </h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {step === 1
+              ? 'Pick a preset for one-click context, or describe a recurring workflow with voice to build a reusable AI skill.'
+              : step === 2
+              ? 'Different tools want different shapes - ChatGPT prefers structured instructions, Cursor wants .cursorrules, Markdown works anywhere.'
+              : 'Re-export anytime as your Memory Web grows - the context will get sharper.'}
+          </p>
+        </div>
+      </div>
+    );
+
     return (
-      <div className="min-h-screen bg-background">
-        <DesktopSidebar />
-        <main className="ml-64 min-h-screen">
-          <div className="max-w-2xl mx-auto px-8 py-10">
-            {/* Header */}
+      <>
+        <DesktopShell
+          eyebrow="Export"
+          title="Export to AI"
+          actions={
+            step > 1 ? (
+              <button
+                onClick={handleStartOver}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Start over
+              </button>
+            ) : null
+          }
+          rightRail={desktopRail}
+        >
+          <div className="max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-2"
+              className="mb-6"
             >
-              <h1 className="text-2xl font-semibold text-foreground">Export to AI</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Make any AI tool understand you
+              <p className="text-sm text-muted-foreground">
+                Make any AI tool understand you - in one click.
               </p>
             </motion.div>
-
-            {stepIndicator}
-
-            <div className="mt-4">
-              {wizardContent}
-            </div>
+            {wizardContent}
           </div>
-        </main>
+        </DesktopShell>
         {skillSheets}
-      </div>
+      </>
     );
   }
 

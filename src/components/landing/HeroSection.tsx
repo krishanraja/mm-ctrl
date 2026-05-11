@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { SwipeableCards } from "@/components/mobile/SwipeableCards"
 import { CtrlLogo } from "./CtrlLogo"
-import { TrustIndicators } from "./TrustIndicators"
+import { DesktopLanding } from "./DesktopLanding"
 
 const PILLARS = [
   {
@@ -265,182 +265,6 @@ function JourneyScreen({ onGetStarted }: { onGetStarted: () => void }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Desktop Layout - viewport-contained, two-column                    */
-/* ------------------------------------------------------------------ */
-function DesktopLayout({ onGetStarted }: { onGetStarted: () => void }) {
-  const [activeStep, setActiveStep] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % JOURNEY_STEPS.length)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-
-  return (
-    <main className="flex-1 min-h-0 flex flex-col items-center justify-center px-8 py-6 overflow-hidden relative z-10">
-      <div className="w-full max-w-5xl">
-        {/* Logo lockup - centered */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="flex justify-center mb-6"
-        >
-          <div className="flex flex-col items-center gap-5">
-            {/* Mindmaker brand logo - nudged right to optically center */}
-            <img src="/mindmaker-full-logo.png" alt="Mindmaker" className="h-4 lg:h-5 w-auto translate-x-1" />
-            {/* CTRL product logo */}
-            <CtrlLogo className="h-12 lg:h-16 w-auto translate-x-1" />
-          </div>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed text-center mb-6"
-        >
-          Your portable memory for every AI conversation and decision. No plugins. No permissions. Just you.
-        </motion.p>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center justify-center gap-3 mb-8"
-        >
-          <Button
-            onClick={onGetStarted}
-            size="lg"
-            className="h-12 px-8 text-base font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/25"
-          >
-            Get Started Free
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
-          <div className="flex flex-col items-start gap-1">
-            <p className="text-xs text-muted-foreground/60">
-              No credit card needed.
-            </p>
-            <p className="text-xs text-muted-foreground/60 flex items-center gap-1.5">
-              <Shield className="h-3 w-3" />
-              No integrations. Your data stays yours.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Trust indicators */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="flex justify-center mb-8"
-        >
-          <TrustIndicators />
-        </motion.div>
-
-        {/* Two-column: Pillars + Journey */}
-        <div className="grid grid-cols-2 gap-8">
-          {/* Left - Pillars */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="space-y-3"
-          >
-            {PILLARS.map((pillar, idx) => (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 + idx * 0.1 }}
-                className={cn(
-                  "rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-4",
-                  "hover:border-accent/30 transition-all duration-300",
-                  "flex items-start gap-3"
-                )}
-              >
-                <div className={cn(
-                  "flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center",
-                  "shadow-lg",
-                  pillar.color,
-                  pillar.glow,
-                )}>
-                  <pillar.icon className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground mb-1">{pillar.title}</h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{pillar.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Right - Journey + Export */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
-            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
-              How it works
-            </h2>
-            <div className="space-y-2 mb-6">
-              {JOURNEY_STEPS.map((step, idx) => (
-                <motion.div
-                  key={idx}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-500",
-                    idx === activeStep
-                      ? "bg-accent/10 border border-accent/20"
-                      : "bg-transparent border border-transparent"
-                  )}
-                >
-                  <span className={cn(
-                    "flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500",
-                    idx === activeStep
-                      ? "bg-accent text-accent-foreground"
-                      : idx < activeStep
-                        ? "bg-accent/20 text-accent"
-                        : "bg-muted text-muted-foreground"
-                  )}>
-                    {idx + 1}
-                  </span>
-                  <span className={cn(
-                    "text-sm transition-colors duration-500",
-                    idx === activeStep ? "text-foreground font-medium" : "text-muted-foreground"
-                  )}>
-                    {step}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Export targets */}
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Download className="h-3.5 w-3.5 text-muted-foreground/50" />
-                <span className="text-xs text-muted-foreground/50 uppercase tracking-wider font-medium">
-                  Export to
-                </span>
-              </div>
-              <div className="flex items-center justify-center gap-4 flex-wrap">
-                {["ChatGPT", "Claude", "Gemini", "Cursor", "Any LLM"].map((name) => (
-                  <span key={name} className="text-xs text-muted-foreground/40 font-medium">
-                    {name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </main>
-  )
-}
-
-/* ------------------------------------------------------------------ */
 /*  HeroSection - entry point                                          */
 /* ------------------------------------------------------------------ */
 export function HeroSection() {
@@ -448,6 +272,12 @@ export function HeroSection() {
   const isMobile = useIsMobile()
 
   const handleGetStarted = () => navigate('/auth')
+
+  // Desktop gets the world-class landing experience. Mobile keeps the
+  // swipeable 3-card hero (designed for thumb-first interaction).
+  if (!isMobile) {
+    return <DesktopLanding />
+  }
 
   return (
     <div className="relative h-screen-safe overflow-hidden flex flex-col bg-black">
@@ -477,21 +307,15 @@ export function HeroSection() {
         </Button>
       </header>
 
-      {/* Main content area */}
-      {isMobile ? (
-        /* Mobile - swipeable 3-screen experience */
-        <SwipeableCards
-          className="relative z-10 flex-1 min-h-0"
-          dotClassName="pb-1"
-        >
-          <HeroScreen onGetStarted={handleGetStarted} />
-          <PillarsScreen />
-          <JourneyScreen onGetStarted={handleGetStarted} />
-        </SwipeableCards>
-      ) : (
-        /* Desktop - single viewport-contained layout */
-        <DesktopLayout onGetStarted={handleGetStarted} />
-      )}
+      {/* Mobile - swipeable 3-screen experience */}
+      <SwipeableCards
+        className="relative z-10 flex-1 min-h-0"
+        dotClassName="pb-1"
+      >
+        <HeroScreen onGetStarted={handleGetStarted} />
+        <PillarsScreen />
+        <JourneyScreen onGetStarted={handleGetStarted} />
+      </SwipeableCards>
 
       {/* Footer - always visible */}
       <footer className="relative z-10 px-5 sm:px-8 py-3 text-center flex-shrink-0">

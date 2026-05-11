@@ -6,7 +6,7 @@ import { MobileMemoryDashboard } from "@/components/memory-web/MobileMemoryDashb
 import { DesktopMemoryDashboard } from "@/components/memory-web/DesktopMemoryDashboard"
 import { OnboardingInterview } from "@/components/onboarding/OnboardingInterview"
 import { BottomNav } from "@/components/memory-web/BottomNav"
-import { DesktopSidebar } from "@/components/memory-web/DesktopSidebar"
+import { DesktopShell } from "@/components/layout/DesktopShell"
 import { AppHeader } from "@/components/memory-web/AppHeader"
 import { Button } from "@/components/ui/button"
 import { useDevice } from "@/hooks/useDevice"
@@ -127,17 +127,12 @@ export default function Dashboard() {
       )
     }
     return (
-      <div className="min-h-screen bg-background">
-        <DesktopSidebar />
-        <main className="ml-64 min-h-screen">
-          {onboardingBanner}
-          <div className="max-w-4xl mx-auto px-8 py-8">
-            <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
-              <EdgeViewLazy />
-            </React.Suspense>
-          </div>
-        </main>
-      </div>
+      <DesktopShell eyebrow="Edge" title="Strategic thinking">
+        {onboardingBanner}
+        <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
+          <EdgeViewLazy />
+        </React.Suspense>
+      </DesktopShell>
     )
   }
 
