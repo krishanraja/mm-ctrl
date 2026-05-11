@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Home,
@@ -25,20 +25,7 @@ import {
   CommandShortcut,
 } from '@/components/ui/command';
 import { useAuth } from '@/components/auth/AuthProvider';
-
-type CommandPaletteContextValue = {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  toggle: () => void;
-};
-
-const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(null);
-
-export function useCommandPalette() {
-  const ctx = useContext(CommandPaletteContext);
-  if (!ctx) throw new Error('useCommandPalette must be used within CommandPaletteProvider');
-  return ctx;
-}
+import { CommandPaletteContext, useCommandPalette } from './useCommandPalette';
 
 export function CommandPaletteProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
