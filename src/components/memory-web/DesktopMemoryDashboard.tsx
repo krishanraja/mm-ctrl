@@ -20,11 +20,13 @@ import {
   TrendingUp,
   Shield,
   Eye,
-  ChevronDown,
   Copy,
   Check,
   Loader2,
   FileText,
+  Radio,
+  ArrowUpRight,
+  Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -33,11 +35,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useVoice } from '@/hooks/useVoice';
 import { useMemoryExport } from '@/hooks/useMemoryExport';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
-import { DesktopSidebar } from './DesktopSidebar';
+import { DesktopShell } from '@/components/layout/DesktopShell';
 import { MemoryWebVisualization } from './MemoryWebVisualization';
-import { BriefingCard } from '@/components/dashboard/BriefingCard';
-import { BriefingSheet } from '@/components/briefing/BriefingSheet';
 import { SeedBeatsPrompt } from '@/components/briefing/SeedBeatsPrompt';
+import { BriefingSheet } from '@/components/briefing/BriefingSheet';
 import { TranscriptReviewPanel } from '@/components/voice/TranscriptReviewPanel';
 import { useTodaysBriefing, useGenerateBriefing } from '@/hooks/useBriefing';
 import { useBriefingContext } from '@/contexts/BriefingContext';
@@ -54,12 +55,12 @@ const TEMP_PILL_STYLES: Record<Temperature, string> = {
   cold: 'bg-slate-500/10 text-slate-400',
 };
 
-const CATEGORY_CONFIG: Record<FactCategory, { icon: typeof User; label: string; gradient: string; bg: string }> = {
-  identity: { icon: User, label: 'Identity', gradient: 'from-violet-500 to-purple-600', bg: 'bg-violet-500/10 text-violet-400' },
-  business: { icon: Briefcase, label: 'Business', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-500/10 text-blue-400' },
-  objective: { icon: Target, label: 'Goals', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-500/10 text-emerald-400' },
-  blocker: { icon: AlertTriangle, label: 'Challenges', gradient: 'from-red-500 to-orange-600', bg: 'bg-red-500/10 text-red-400' },
-  preference: { icon: Settings, label: 'Preferences', gradient: 'from-amber-500 to-yellow-600', bg: 'bg-amber-500/10 text-amber-400' },
+const CATEGORY_CONFIG: Record<FactCategory, { icon: typeof User; label: string; gradient: string; bg: string; dot: string }> = {
+  identity: { icon: User, label: 'Identity', gradient: 'from-violet-500 to-purple-600', bg: 'bg-violet-500/10 text-violet-400', dot: 'bg-violet-400' },
+  business: { icon: Briefcase, label: 'Business', gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-500/10 text-blue-400', dot: 'bg-blue-400' },
+  objective: { icon: Target, label: 'Goals', gradient: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-500/10 text-emerald-400', dot: 'bg-emerald-400' },
+  blocker: { icon: AlertTriangle, label: 'Challenges', gradient: 'from-red-500 to-orange-600', bg: 'bg-red-500/10 text-red-400', dot: 'bg-red-400' },
+  preference: { icon: Settings, label: 'Preferences', gradient: 'from-amber-500 to-yellow-600', bg: 'bg-amber-500/10 text-amber-400', dot: 'bg-amber-400' },
 };
 
 const PATTERN_CONFIG: Record<PatternType, { label: string; color: string }> = {
@@ -87,24 +88,27 @@ function FactCard({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-lg border border-border bg-card hover:border-accent/30 transition-colors group cursor-pointer"
+      className="rounded-lg border border-border/60 bg-card hover:border-accent/30 transition-colors group cursor-pointer"
       onClick={() => setExpanded(!expanded)}
     >
-      <div className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {fact.fact_label}
-          </h4>
-          <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="p-3.5">
+        <div className="flex items-start justify-between gap-2 mb-1.5">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className={cn('h-1.5 w-1.5 rounded-full flex-shrink-0', config?.dot)} />
+            <h4 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">
+              {fact.fact_label}
+            </h4>
+          </div>
+          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
             {fact.verification_status !== 'verified' && (
               <button
                 onClick={(e) => { e.stopPropagation(); onVerify?.(fact.id); }}
                 className="p-1 rounded hover:bg-secondary text-emerald-500"
                 title="Verify"
               >
-                <CheckCircle2 className="h-3.5 w-3.5" />
+                <CheckCircle2 className="h-3 w-3" />
               </button>
             )}
             <button
@@ -112,33 +116,35 @@ function FactCard({
               className="p-1 rounded hover:bg-secondary text-muted-foreground"
               title="Edit"
             >
-              <Edit3 className="h-3.5 w-3.5" />
+              <Edit3 className="h-3 w-3" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onDelete?.(fact.id); }}
               className="p-1 rounded hover:bg-secondary text-red-400"
               title="Delete"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-3 w-3" />
             </button>
           </div>
         </div>
-        <p className="text-sm text-foreground leading-relaxed">{fact.fact_value}</p>
-        <div className="flex items-center flex-wrap gap-1.5 mt-3">
-          <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-medium', config?.bg)}>
-            {fact.fact_category}
-          </span>
-          <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-medium', TEMP_PILL_STYLES[fact.temperature])}>
+        <p className="text-sm text-foreground leading-relaxed line-clamp-3 group-hover:line-clamp-none">
+          {fact.fact_value}
+        </p>
+        <div className="flex items-center flex-wrap gap-1 mt-2">
+          <span className={cn('text-[9px] px-1.5 py-0.5 rounded font-medium', TEMP_PILL_STYLES[fact.temperature])}>
             {fact.temperature}
           </span>
           {fact.verification_status === 'verified' && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-emerald-500/10 text-emerald-400">
+            <span className="text-[9px] px-1.5 py-0.5 rounded font-medium bg-emerald-500/10 text-emerald-400">
               verified
             </span>
           )}
+          <span className="text-[9px] text-muted-foreground/50 ml-auto">
+            {Math.round(fact.confidence_score * 100)}%
+          </span>
         </div>
         <AnimatePresence>
-          {expanded && (
+          {expanded && fact.fact_context && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
@@ -146,16 +152,9 @@ function FactCard({
               transition={{ duration: 0.15 }}
               className="overflow-hidden"
             >
-              <div className="pt-3 mt-3 border-t border-border space-y-1.5">
-                {fact.fact_context && (
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-medium">Context:</span> {fact.fact_context}
-                  </p>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-medium">Confidence:</span> {Math.round(fact.confidence_score * 100)}%
-                </p>
-              </div>
+              <p className="pt-2.5 mt-2.5 border-t border-border/60 text-xs text-muted-foreground">
+                {fact.fact_context}
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -164,15 +163,208 @@ function FactCard({
   );
 }
 
+/* ─── Right rail components ────────────────────────────────────── */
+
+function RailBriefingSlot({
+  todaysBriefing,
+  briefingLoading,
+  generating,
+  phase,
+  onGenerate,
+  onPlay,
+}: {
+  todaysBriefing: ReturnType<typeof useTodaysBriefing>['briefing'];
+  briefingLoading: boolean;
+  generating: boolean;
+  phase: string | null;
+  onGenerate: () => void;
+  onPlay: () => void;
+}) {
+  return (
+    <div className="border-b border-border/60 p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <Radio className="h-3.5 w-3.5 text-accent" />
+        <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+          Today's Briefing
+        </h3>
+      </div>
+      <AnimatePresence mode="wait">
+        {todaysBriefing && !briefingLoading ? (
+          <motion.div
+            key="ready"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-3"
+          >
+            <p className="text-sm text-foreground leading-snug line-clamp-3">
+              {todaysBriefing.headline || 'Your personalised briefing is ready.'}
+            </p>
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+              <span>
+                {todaysBriefing.audio_duration_seconds
+                  ? `${Math.ceil(todaysBriefing.audio_duration_seconds / 60)} min`
+                  : '~3 min'}
+              </span>
+              <button
+                onClick={onPlay}
+                className="px-3 py-1.5 rounded-md bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90"
+              >
+                Play
+              </button>
+            </div>
+          </motion.div>
+        ) : generating ? (
+          <motion.div
+            key="generating"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-2"
+          >
+            <p className="text-sm text-foreground">Preparing your briefing</p>
+            <p className="text-[11px] text-muted-foreground">
+              {phase === 'scanning'
+                ? 'Reading your profile'
+                : phase === 'personalising'
+                ? 'Searching today\'s news'
+                : 'Almost ready...'}
+            </p>
+            <div className="h-1 rounded-full bg-accent/15 overflow-hidden">
+              <motion.div
+                className="h-full bg-accent"
+                initial={{ width: '5%' }}
+                animate={{ width: '85%' }}
+                transition={{ duration: 18, ease: 'linear' }}
+              />
+            </div>
+          </motion.div>
+        ) : !briefingLoading ? (
+          <motion.div
+            key="cta"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-3"
+          >
+            <p className="text-sm text-foreground leading-snug">
+              Personalised AI news in your own voice.
+            </p>
+            <button
+              onClick={onGenerate}
+              className="w-full px-3 py-2 rounded-md bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90"
+            >
+              Generate today
+            </button>
+          </motion.div>
+        ) : (
+          <div className="h-12 rounded-md bg-secondary/40 animate-pulse" />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function RailQuickActions({
+  onQuickExport,
+  onImport,
+  isExporting,
+  copied,
+  navigate,
+}: {
+  onQuickExport: () => void;
+  onImport: () => void;
+  isExporting: boolean;
+  copied: boolean;
+  navigate: ReturnType<typeof useNavigate>;
+}) {
+  return (
+    <div className="border-b border-border/60 p-5">
+      <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+        Quick actions
+      </h3>
+      <div className="space-y-1.5">
+        <button
+          onClick={onQuickExport}
+          disabled={isExporting}
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md hover:bg-secondary/60 text-left text-sm group"
+        >
+          {copied ? (
+            <Check className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0" />
+          ) : (
+            <Copy className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground flex-shrink-0" />
+          )}
+          <span className="text-foreground flex-1">
+            {copied ? 'Copied to clipboard' : 'Copy context to clipboard'}
+          </span>
+        </button>
+        <button
+          onClick={() => navigate('/context')}
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md hover:bg-secondary/60 text-left text-sm group"
+        >
+          <Download className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground flex-shrink-0" />
+          <span className="text-foreground flex-1">Open Export wizard</span>
+          <ArrowUpRight className="h-3 w-3 text-muted-foreground/40" />
+        </button>
+        <button
+          onClick={onImport}
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md hover:bg-secondary/60 text-left text-sm group"
+        >
+          <Upload className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground flex-shrink-0" />
+          <span className="text-foreground flex-1">Import markdown</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RailCoverage({ stats }: { stats: ReturnType<typeof useMemoryWeb>['stats'] }) {
+  const total = stats?.total_facts || 0;
+  return (
+    <div className="border-b border-border/60 p-5">
+      <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+        Coverage
+      </h3>
+      <div className="space-y-2">
+        {(Object.entries(stats?.category_distribution || {}) as [FactCategory, number][])
+          .sort((a, b) => b[1] - a[1])
+          .map(([cat, count]) => {
+            const config = CATEGORY_CONFIG[cat];
+            if (!config) return null;
+            const pct = total > 0 ? (count / total) * 100 : 0;
+            return (
+              <div key={cat} className="flex items-center gap-2.5">
+                <span className="text-xs text-muted-foreground w-16 truncate">
+                  {config.label}
+                </span>
+                <div className="flex-1 h-1.5 rounded-full bg-muted/60 overflow-hidden">
+                  <motion.div
+                    className={cn('h-full rounded-full bg-gradient-to-r', config.gradient)}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.8 }}
+                  />
+                </div>
+                <span className="text-xs font-mono text-foreground/70 w-5 text-right">
+                  {count}
+                </span>
+              </div>
+            );
+          })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main dashboard ───────────────────────────────────────────── */
+
 export function DesktopMemoryDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const {
     facts,
     patterns,
-    decisions,
     stats,
-    budget,
     delta,
     isLoading,
     editFact,
@@ -180,13 +372,13 @@ export function DesktopMemoryDashboard() {
     verifyFact,
     submitInput,
   } = useMemoryWeb();
-  const { exportResult, isExporting, generateExport, copyToClipboard } = useMemoryExport();
+  const { isExporting, generateExport, copyToClipboard } = useMemoryExport();
   const { briefing: todaysBriefing, loading: briefingLoading, refetch: refetchBriefing } = useTodaysBriefing();
   const { setBriefing, setSheetOpen, playback } = useBriefingContext();
   const { generate, generating, phase } = useGenerateBriefing();
   const hasData = facts.length > 0;
+  const { toast } = useToast();
 
-  // Sync briefing into context
   useEffect(() => {
     if (todaysBriefing) setBriefing(todaysBriefing);
   }, [todaysBriefing, setBriefing]);
@@ -203,7 +395,6 @@ export function DesktopMemoryDashboard() {
     await refetchBriefing();
   };
 
-  const { toast } = useToast();
   const [inputText, setInputText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quickExportCopied, setQuickExportCopied] = useState(false);
@@ -241,6 +432,21 @@ export function DesktopMemoryDashboard() {
 
   const { triggerImport, handleFiles, isImporting, fileInputProps } = useMarkdownImport();
 
+  // Wire up cmd-K actions
+  useEffect(() => {
+    const onVoice = () => {
+      if (!isRecording) startRecording();
+    };
+    const onGen = () => handleGenerateBriefing();
+    window.addEventListener('mm:capture-voice', onVoice);
+    window.addEventListener('mm:generate-briefing', onGen);
+    return () => {
+      window.removeEventListener('mm:capture-voice', onVoice);
+      window.removeEventListener('mm:generate-briefing', onGen);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRecording]);
+
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -250,7 +456,6 @@ export function DesktopMemoryDashboard() {
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Only leave if we're exiting the container (not entering a child)
     if (e.currentTarget === e.target) {
       setIsDragOver(false);
     }
@@ -282,12 +487,12 @@ export function DesktopMemoryDashboard() {
     try {
       const result = await submitInput(text);
       if (result?.success) {
-        toast({ title: 'Processed', description: result.error || 'Your input has been added to your Memory Web.' });
+        toast({ title: 'Added to your Memory Web', description: result.error || undefined });
       } else {
         toast({ title: 'Processing failed', description: result?.error || 'Please try again.', variant: 'destructive' });
       }
     } catch {
-      toast({ title: 'Something went wrong', description: 'Could not process your input. Please try again.', variant: 'destructive' });
+      toast({ title: 'Something went wrong', variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -313,17 +518,56 @@ export function DesktopMemoryDashboard() {
   const blindspotPatterns = patterns.filter((p) => p.pattern_type === 'blindspot');
   const otherPatterns = patterns.filter((p) => p.pattern_type !== 'strength' && p.pattern_type !== 'blindspot');
 
+  const rightRail = hasData ? (
+    <div className="flex flex-col">
+      <RailBriefingSlot
+        todaysBriefing={todaysBriefing}
+        briefingLoading={briefingLoading}
+        generating={generating}
+        phase={phase}
+        onGenerate={handleGenerateBriefing}
+        onPlay={handlePlayBriefing}
+      />
+      <RailQuickActions
+        onQuickExport={handleQuickExport}
+        onImport={triggerImport}
+        isExporting={isExporting}
+        copied={quickExportCopied}
+        navigate={navigate}
+      />
+      <RailCoverage stats={stats} />
+      {delta && delta.new_facts > 0 && (
+        <div className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Activity className="h-3.5 w-3.5 text-accent" />
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Activity
+            </h3>
+          </div>
+          <p className="text-sm text-foreground">
+            <span className="text-accent font-medium">+{delta.new_facts}</span> facts
+            {delta.new_patterns > 0 && (
+              <>
+                {', '}
+                <span className="text-accent font-medium">+{delta.new_patterns}</span> patterns
+              </>
+            )}
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-1">{delta.period}</p>
+        </div>
+      )}
+    </div>
+  ) : undefined;
+
   return (
     <div
-      className="min-h-screen bg-background relative"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {/* Hidden file input */}
       <input {...fileInputProps} />
 
-      {/* Drag-and-drop overlay */}
+      {/* Drag overlay */}
       <AnimatePresence>
         {isDragOver && (
           <motion.div
@@ -331,21 +575,14 @@ export function DesktopMemoryDashboard() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
-            onDragOver={handleDragOver}
-            onDragLeave={(e) => { e.preventDefault(); setIsDragOver(false); }}
-            onDrop={handleDrop}
           >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="flex flex-col items-center gap-4 p-12 rounded-3xl border-2 border-dashed border-accent/50 bg-accent/5"
-            >
+            <div className="flex flex-col items-center gap-4 p-12 rounded-3xl border-2 border-dashed border-accent/50 bg-accent/5">
               <Upload className="h-12 w-12 text-accent" />
               <div className="text-center">
                 <p className="text-lg font-semibold text-foreground">Drop your file to import</p>
                 <p className="text-sm text-muted-foreground mt-1">Supports .md and .txt files</p>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -359,402 +596,265 @@ export function DesktopMemoryDashboard() {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
           >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="flex flex-col items-center gap-4 p-12"
-            >
+            <div className="flex flex-col items-center gap-4 p-12">
               <Loader2 className="h-10 w-10 text-accent animate-spin" />
-              <div className="text-center">
-                <p className="text-lg font-semibold text-foreground">Extracting memories...</p>
-                <p className="text-sm text-muted-foreground mt-1">AI is reading your document</p>
-              </div>
-            </motion.div>
+              <p className="text-lg font-semibold text-foreground">Extracting memories...</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <DesktopSidebar />
-
-      <main className="ml-64 min-h-screen">
-        <div className="max-w-[1440px] mx-auto px-6 py-6 space-y-5">
-          {/* Header Row */}
-          <div className="flex items-start justify-between">
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-2xl font-bold text-foreground"
-              >
-                {greeting}{firstName ? `, ${firstName}` : ''}
-              </motion.h1>
-              {delta && delta.new_facts > 0 && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-sm text-muted-foreground mt-1"
-                >
-                  <span className="text-accent font-medium">+{delta.new_facts} facts</span>
-                  {delta.new_patterns > 0 && <>, <span className="text-accent font-medium">+{delta.new_patterns} patterns</span></>}
-                  {' '}{delta.period}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Quick Export Button */}
-            {hasData && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+      <DesktopShell
+        eyebrow={greeting + (firstName ? `, ${firstName}` : '')}
+        title="Memory Web"
+        actions={
+          hasData ? (
+            <>
+              <div className="hidden lg:flex items-center gap-3 text-xs text-muted-foreground mr-2 px-3 border-r border-border/60">
+                <span>
+                  <span className="text-foreground font-semibold">{stats?.total_facts || 0}</span>{' '}
+                  facts
+                </span>
+                <span>
+                  <span className="text-foreground font-semibold">{stats?.patterns_count || 0}</span>{' '}
+                  patterns
+                </span>
+                <span>
+                  Health{' '}
+                  <span className="text-emerald-400 font-semibold">
+                    {stats?.health_score || 0}%
+                  </span>
+                </span>
+              </div>
+              <button
                 onClick={handleQuickExport}
                 disabled={isExporting}
                 className={cn(
-                  'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all',
+                  'inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold transition-colors',
                   quickExportCopied
-                    ? 'bg-emerald-500/20 text-emerald-400'
-                    : 'bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20',
+                    ? 'bg-emerald-500/15 text-emerald-400'
+                    : 'bg-accent text-accent-foreground hover:bg-accent/90',
                 )}
               >
-                {quickExportCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {quickExportCopied ? 'Copied!' : isExporting ? 'Generating...' : 'Quick Export'}
-              </motion.button>
+                {quickExportCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                {quickExportCopied ? 'Copied' : 'Quick export'}
+              </button>
+            </>
+          ) : null
+        }
+        rightRail={rightRail}
+      >
+        <div className="space-y-6">
+          {/* Input bar — sticky-feeling, primary action */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm hover:border-accent/30 focus-within:border-accent/40 transition-colors">
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={!!pendingReview || isVoiceProcessing}
+                className={cn(
+                  'flex-shrink-0 p-2 rounded-lg transition-colors',
+                  isRecording
+                    ? 'bg-red-500/10 text-red-400 animate-pulse'
+                    : 'hover:bg-secondary text-muted-foreground hover:text-foreground',
+                  (pendingReview || isVoiceProcessing) && 'opacity-50 cursor-not-allowed',
+                )}
+                title={isRecording ? 'Stop recording' : 'Start recording'}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+              <button
+                onClick={triggerImport}
+                disabled={isImporting}
+                className="flex-shrink-0 p-2 rounded-lg transition-colors hover:bg-secondary text-muted-foreground hover:text-foreground"
+                title="Import markdown or text file"
+              >
+                <Upload className="h-4 w-4" />
+              </button>
+              <div className="w-px h-5 bg-border flex-shrink-0" />
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={
+                  hasData
+                    ? 'Type a thought, paste a note, or drop a markdown file...'
+                    : 'Tell me about your role, company, and goals - or drop a .md file...'
+                }
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
+              />
+              <kbd className="hidden sm:inline-flex items-center justify-center h-5 px-1.5 rounded border border-border bg-background text-[10px] font-mono text-muted-foreground">
+                Enter
+              </kbd>
+              <button
+                onClick={handleSubmit}
+                disabled={!inputText.trim() || isSubmitting || !!pendingReview}
+                className={cn(
+                  'flex-shrink-0 p-2 rounded-lg transition-colors',
+                  isSubmitting
+                    ? 'text-accent animate-pulse cursor-wait'
+                    : inputText.trim()
+                    ? 'text-accent hover:bg-accent/10'
+                    : 'text-muted-foreground/40 cursor-not-allowed',
+                )}
+              >
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </button>
+            </div>
+            {(isRecording || isVoiceProcessing) && browserCaptionPreview ? (
+              <p className="text-[10px] text-muted-foreground px-1 italic line-clamp-2">
+                {isVoiceProcessing ? 'Preview (may differ): ' : 'Live caption (approx.): '}
+                {browserCaptionPreview}
+              </p>
+            ) : null}
+            {pendingReview && (
+              <TranscriptReviewPanel
+                transcript={pendingReview.transcript}
+                rawTranscript={pendingReview.rawTranscript}
+                refined={pendingReview.refined}
+                editedText={editDesktopReviewText}
+                onEditedTextChange={setEditDesktopReviewText}
+                onConfirm={handleConfirmDesktopReview}
+                onDismiss={() => dismissPendingReview()}
+                confirmLabel="Insert into field"
+                className="border-border"
+              />
             )}
           </div>
 
-          {/* Input Bar - Voice, Text, Import */}
-          <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
-            <button
-              onClick={isRecording ? stopRecording : startRecording}
-              disabled={!!pendingReview || isVoiceProcessing}
-              className={cn(
-                'flex-shrink-0 p-2 rounded-lg transition-colors',
-                isRecording
-                  ? 'bg-red-500/10 text-red-400 animate-pulse'
-                  : 'hover:bg-secondary text-muted-foreground hover:text-foreground',
-                (pendingReview || isVoiceProcessing) && 'opacity-50 cursor-not-allowed',
-              )}
-              title={isRecording ? 'Stop recording' : 'Start recording'}
-            >
-              <Mic className="h-4 w-4" />
-            </button>
-            <button
-              onClick={triggerImport}
-              disabled={isImporting}
-              className="flex-shrink-0 p-2 rounded-lg transition-colors hover:bg-secondary text-muted-foreground hover:text-foreground"
-              title="Import markdown or text file"
-            >
-              <Upload className="h-4 w-4" />
-            </button>
-            <div className="w-px h-5 bg-border flex-shrink-0" />
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={hasData
-                ? 'Type a thought, or drop a markdown file anywhere...'
-                : 'Tell me about your role, company, and goals - or drop a .md file...'}
-              className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
-            />
-            <button
-              onClick={handleSubmit}
-              disabled={!inputText.trim() || isSubmitting || !!pendingReview}
-              className={cn(
-                'flex-shrink-0 p-2 rounded-lg transition-colors',
-                isSubmitting ? 'text-accent animate-pulse cursor-wait' :
-                inputText.trim() ? 'text-accent hover:bg-accent/10' : 'text-muted-foreground/40 cursor-not-allowed',
-              )}
-            >
-              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            </button>
-          </div>
-          {(isRecording || isVoiceProcessing) && browserCaptionPreview ? (
-            <p className="text-[10px] text-muted-foreground px-1 italic line-clamp-2">
-              {isVoiceProcessing ? 'Preview (may differ): ' : 'Live caption (approx.): '}
-              {browserCaptionPreview}
-            </p>
-          ) : null}
-          {pendingReview && (
-            <TranscriptReviewPanel
-              transcript={pendingReview.transcript}
-              rawTranscript={pendingReview.rawTranscript}
-              refined={pendingReview.refined}
-              editedText={editDesktopReviewText}
-              onEditedTextChange={setEditDesktopReviewText}
-              onConfirm={handleConfirmDesktopReview}
-              onDismiss={() => dismissPendingReview()}
-              confirmLabel="Insert into field"
-              className="border-border"
-            />
-          )}
-          </div>
-
-          {/* Briefing area - fixed height slot, three states */}
-          {hasData && (
-            <div className="relative z-20">
-              <AnimatePresence mode="wait">
-                {todaysBriefing && !briefingLoading ? (
-                  <motion.div
-                    key="briefing-card"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="space-y-2"
-                  >
-                    {/* v2 cold-start: suggest industry beats until the user has declared interests. */}
-                    <SeedBeatsPrompt />
-                    <BriefingCard
-                      briefing={todaysBriefing}
-                      hasListened={playback.hasListened}
-                      onPlay={handlePlayBriefing}
-                    />
-                  </motion.div>
-                ) : generating ? (
-                  <motion.div
-                    key="generating-banner"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-accent animate-pulse" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground whitespace-nowrap">Preparing your briefing</p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {phase === 'scanning' ? 'Reading your profile'
-                            : phase === 'personalising' ? 'Searching today\'s news'
-                            : 'Almost ready...'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="relative flex-shrink-0 w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold overflow-hidden text-center">
-                      <motion.div
-                        className="absolute inset-0 bg-accent-foreground/15 rounded-xl"
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 15, ease: "linear" }}
-                        style={{ transformOrigin: "left" }}
-                      />
-                      <span className="relative z-10">
-                        {phase === 'scanning' ? 'Reading profile...'
-                          : phase === 'personalising' ? 'Searching news...'
-                          : 'Preparing...'}
-                      </span>
-                    </div>
-                  </motion.div>
-                ) : !briefingLoading ? (
-                  <motion.div
-                    key="generate-cta"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="rounded-2xl border border-accent/20 bg-accent/5 p-5 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-accent" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground whitespace-nowrap">Your Daily Briefing</p>
-                        <p className="text-xs text-muted-foreground truncate">Personalised AI news, in your voice</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleGenerateBriefing}
-                      className="w-[160px] py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-colors text-center"
-                    >
-                      Generate Briefing
-                    </button>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </div>
-          )}
+          {/* Seed beats prompt for cold-start interests */}
+          {hasData && <SeedBeatsPrompt />}
 
           {isLoading && (
-            <div className="flex items-center justify-center py-12">
+            <div className="flex items-center justify-center py-16">
               <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
             </div>
           )}
 
           {!isLoading && hasData && (
             <>
-              {/* Main Dashboard Grid: Viz + Stats side by side */}
-              <div className="grid grid-cols-4 gap-5">
-                {/* Memory Web Visualization - takes 3/4 */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="col-span-3 rounded-2xl border border-border bg-card overflow-hidden"
-                >
-                  <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {/* Memory Web - hero canvas */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-border/60 bg-card/60 overflow-hidden shadow-sm"
+              >
+                <div className="px-5 py-3 border-b border-border/60 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Brain className="h-4 w-4 text-accent" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">
                       Memory Web
                     </h3>
-                    <span className="text-[10px] text-muted-foreground/50">Click a node to explore</span>
+                    <span className="text-[10px] text-muted-foreground/60 ml-2">
+                      {facts.length} nodes - click to explore
+                    </span>
                   </div>
-                  <div className="h-[calc(100vh-320px)] min-h-[420px] max-h-[700px] relative">
-                    <MemoryWebVisualization facts={facts} />
+                  <div className="flex items-center gap-1.5">
+                    {(Object.keys(CATEGORY_CONFIG) as FactCategory[]).map((cat) => {
+                      const c = CATEGORY_CONFIG[cat];
+                      const count = stats?.category_distribution?.[cat] || 0;
+                      if (count === 0) return null;
+                      return (
+                        <div
+                          key={cat}
+                          className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]"
+                          title={`${c.label}: ${count}`}
+                        >
+                          <span className={cn('h-1.5 w-1.5 rounded-full', c.dot)} />
+                          <span className="text-muted-foreground/70">{count}</span>
+                        </div>
+                      );
+                    })}
                   </div>
-                </motion.div>
-
-                {/* Stats Column - takes 1/3 */}
-                <div className="space-y-4">
-                  {/* Clone Health */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl bg-gradient-to-br from-accent/10 via-purple-500/5 to-transparent border border-accent/20 p-5"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Brain className="h-4 w-4 text-accent" />
-                        <span className="text-xs font-semibold uppercase tracking-wider text-accent">
-                          Health
-                        </span>
-                      </div>
-                      <span className="text-3xl font-bold text-foreground">{stats?.health_score || 0}%</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                      <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-accent to-purple-500"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${stats?.health_score || 0}%` }}
-                        transition={{ duration: 1.2, ease: 'easeOut' }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3 text-xs text-muted-foreground">
-                      <span>{stats?.total_facts || 0} facts</span>
-                      <span>{stats?.verified_count || 0} verified</span>
-                      <span>{stats?.patterns_count || 0} patterns</span>
-                      <span>{stats?.decisions_count || 0} decisions</span>
-                    </div>
-                  </motion.div>
-
-                  {/* Category breakdown */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="rounded-2xl border border-border bg-card p-5"
-                  >
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                      Coverage
-                    </h3>
-                    <div className="space-y-2.5">
-                      {(Object.entries(stats?.category_distribution || {}) as [FactCategory, number][])
-                        .sort((a, b) => b[1] - a[1])
-                        .map(([cat, count]) => {
-                          const config = CATEGORY_CONFIG[cat];
-                          if (!config) return null;
-                          const max = Math.max(...Object.values(stats?.category_distribution || { x: 1 }));
-                          const pct = max > 0 ? (count / max) * 100 : 0;
-                          return (
-                            <div key={cat} className="flex items-center gap-3">
-                              <span className="text-xs text-muted-foreground w-20">{config.label}</span>
-                              <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                                <motion.div
-                                  className={cn('h-full rounded-full bg-gradient-to-r', config.gradient)}
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${pct}%` }}
-                                  transition={{ duration: 0.8 }}
-                                />
-                              </div>
-                              <span className="text-xs font-bold text-foreground w-6 text-right">{count}</span>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </motion.div>
                 </div>
-              </div>
+                <div className="h-[clamp(420px,_calc(100vh-360px),_640px)] relative">
+                  <MemoryWebVisualization facts={facts} />
+                </div>
+              </motion.div>
 
-              {/* Skills & Patterns Section */}
+              {/* Patterns - 3 columns */}
               {patterns.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.1 }}
                 >
                   <div className="flex items-center gap-2 mb-4">
-                    <Zap className="h-4 w-4 text-amber-400" />
-                    <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">
+                    <Zap className="h-3.5 w-3.5 text-amber-400" />
+                    <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground">
                       Skills & Patterns
                     </h2>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    {/* Strengths Column */}
-                    <div>
-                      <h4 className="text-xs font-semibold text-emerald-400 mb-2 flex items-center gap-1.5">
+                  <div className="grid grid-cols-3 gap-3">
+                    {/* Strengths */}
+                    <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/[0.03] p-4">
+                      <h4 className="text-xs font-semibold text-emerald-400 mb-2.5 flex items-center gap-1.5">
                         <TrendingUp className="h-3 w-3" /> Strengths to 10X
                       </h4>
                       <div className="space-y-2">
-                        {strengthPatterns.length > 0 ? strengthPatterns.slice(0, 4).map((p) => (
-                          <div key={p.id} className="rounded-lg border border-emerald-500/10 bg-emerald-500/5 p-3">
-                            <p className="text-xs text-foreground leading-relaxed">{p.pattern_text}</p>
-                            <span className="text-[10px] text-emerald-400 mt-1 block">
-                              {Math.round(p.confidence * 100)}% confidence
-                            </span>
-                          </div>
-                        )) : (
-                          <p className="text-xs text-muted-foreground/50 py-4 text-center">
-                            Share more about your successes to discover strengths
+                        {strengthPatterns.length > 0 ? (
+                          strengthPatterns.slice(0, 4).map((p) => (
+                            <div key={p.id} className="rounded-md bg-emerald-500/[0.05] border border-emerald-500/10 p-2.5">
+                              <p className="text-xs text-foreground leading-relaxed">{p.pattern_text}</p>
+                              <span className="text-[10px] text-emerald-400 mt-1 block">
+                                {Math.round(p.confidence * 100)}% confidence
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-xs text-muted-foreground/50 py-3 text-center">
+                            Share more wins to discover strengths
                           </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Blind Spots Column */}
-                    <div>
-                      <h4 className="text-xs font-semibold text-amber-400 mb-2 flex items-center gap-1.5">
+                    {/* Blind Spots */}
+                    <div className="rounded-xl border border-amber-500/15 bg-amber-500/[0.03] p-4">
+                      <h4 className="text-xs font-semibold text-amber-400 mb-2.5 flex items-center gap-1.5">
                         <Shield className="h-3 w-3" /> Blind Spots
                       </h4>
                       <div className="space-y-2">
-                        {blindspotPatterns.length > 0 ? blindspotPatterns.slice(0, 4).map((p) => (
-                          <div key={p.id} className="rounded-lg border border-amber-500/10 bg-amber-500/5 p-3">
-                            <p className="text-xs text-foreground leading-relaxed">{p.pattern_text}</p>
-                            <span className="text-[10px] text-amber-400 mt-1 block">
-                              {Math.round(p.confidence * 100)}% confidence
-                            </span>
-                          </div>
-                        )) : (
-                          <p className="text-xs text-muted-foreground/50 py-4 text-center">
+                        {blindspotPatterns.length > 0 ? (
+                          blindspotPatterns.slice(0, 4).map((p) => (
+                            <div key={p.id} className="rounded-md bg-amber-500/[0.05] border border-amber-500/10 p-2.5">
+                              <p className="text-xs text-foreground leading-relaxed">{p.pattern_text}</p>
+                              <span className="text-[10px] text-amber-400 mt-1 block">
+                                {Math.round(p.confidence * 100)}% confidence
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-xs text-muted-foreground/50 py-3 text-center">
                             Narrate more to uncover blind spots
                           </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Other Patterns Column */}
-                    <div>
-                      <h4 className="text-xs font-semibold text-purple-400 mb-2 flex items-center gap-1.5">
-                        <Eye className="h-3 w-3" /> Behaviors & Preferences
+                    {/* Behaviors */}
+                    <div className="rounded-xl border border-purple-500/15 bg-purple-500/[0.03] p-4">
+                      <h4 className="text-xs font-semibold text-purple-400 mb-2.5 flex items-center gap-1.5">
+                        <Eye className="h-3 w-3" /> Behaviors
                       </h4>
                       <div className="space-y-2">
-                        {otherPatterns.length > 0 ? otherPatterns.slice(0, 4).map((p) => {
-                          const config = PATTERN_CONFIG[p.pattern_type] || PATTERN_CONFIG.behavior;
-                          return (
-                            <div key={p.id} className="rounded-lg border border-purple-500/10 bg-purple-500/5 p-3">
-                              <div className="flex items-center gap-1.5 mb-1">
-                                <span className={cn('text-[9px] px-1.5 py-0.5 rounded-full font-semibold', config.color)}>
-                                  {config.label}
-                                </span>
+                        {otherPatterns.length > 0 ? (
+                          otherPatterns.slice(0, 4).map((p) => {
+                            const config = PATTERN_CONFIG[p.pattern_type] || PATTERN_CONFIG.behavior;
+                            return (
+                              <div key={p.id} className="rounded-md bg-purple-500/[0.05] border border-purple-500/10 p-2.5">
+                                <div className="flex items-center gap-1.5 mb-1">
+                                  <span className={cn('text-[9px] px-1.5 py-0.5 rounded font-semibold', config.color)}>
+                                    {config.label}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-foreground leading-relaxed">{p.pattern_text}</p>
                               </div>
-                              <p className="text-xs text-foreground leading-relaxed">{p.pattern_text}</p>
-                            </div>
-                          );
-                        }) : (
-                          <p className="text-xs text-muted-foreground/50 py-4 text-center">
-                            More narration reveals your patterns
+                            );
+                          })
+                        ) : (
+                          <p className="text-xs text-muted-foreground/50 py-3 text-center">
+                            More narration reveals patterns
                           </p>
                         )}
                       </div>
@@ -763,20 +863,31 @@ export function DesktopMemoryDashboard() {
                 </motion.div>
               )}
 
-              {/* Facts Grid */}
+              {/* Facts grid - denser, 4 cols */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.15 }}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">
-                    Memory Web Facts
-                  </h2>
-                  <span className="text-xs text-muted-foreground">{facts.length} total</span>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                    <h2 className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                      Facts
+                    </h2>
+                    <span className="text-[10px] text-muted-foreground/60">
+                      {facts.length} total
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => navigate('/memory')}
+                    className="text-[11px] text-accent hover:underline"
+                  >
+                    View all →
+                  </button>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  {facts.slice(0, 18).map((fact) => (
+                <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2.5">
+                  {facts.slice(0, 24).map((fact) => (
                     <FactCard
                       key={fact.id}
                       fact={fact}
@@ -786,87 +897,58 @@ export function DesktopMemoryDashboard() {
                     />
                   ))}
                 </div>
-                {facts.length > 18 && (
-                  <button
-                    onClick={() => navigate('/memory')}
-                    className="w-full mt-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
-                  >
-                    View all {facts.length} facts →
-                  </button>
-                )}
-              </motion.div>
-
-              {/* Full Export CTA */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="rounded-2xl bg-gradient-to-r from-accent/10 via-purple-500/10 to-emerald-500/10 border border-accent/20 p-6 text-center"
-              >
-                <Download className="h-6 w-6 text-accent mx-auto mb-3" />
-                <h3 className="text-base font-bold text-foreground mb-1">
-                  Export Your Context
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                  One click to ChatGPT, Claude, Gemini, Cursor, or any AI tool.
-                </p>
-                <button
-                  onClick={() => navigate('/context')}
-                  className="px-6 py-2.5 rounded-xl bg-accent text-accent-foreground font-semibold text-sm shadow-lg shadow-accent/20 hover:bg-accent/90 transition-colors"
-                >
-                  Go to Export Center
-                </button>
               </motion.div>
             </>
           )}
 
-          {/* Empty State */}
+          {/* Empty state */}
           {!isLoading && !hasData && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center py-16 space-y-6"
+              className="rounded-3xl border border-dashed border-border bg-card/30 py-20 px-8 text-center"
             >
-              <Brain className="h-16 w-16 text-muted-foreground/15 mx-auto" />
-              <h2 className="text-lg font-bold text-foreground">Your Memory Web is empty</h2>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Start by voicing your thoughts about your role, company, goals, and challenges. Use the input above.
-                The more you share, the smarter your AI context gets.
+              <Brain className="h-12 w-12 text-muted-foreground/30 mx-auto mb-5" />
+              <h2 className="text-xl font-bold text-foreground mb-2">
+                Your Memory Web is empty
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-6">
+                Start by voicing your thoughts about your role, company, goals, and
+                challenges. The more you share, the smarter your AI context gets.
               </p>
-              <p className="text-xs text-muted-foreground/50">
-                Try: "I'm a VP of Engineering at a Series B startup. My biggest challenge is..."
+              <p className="text-xs text-muted-foreground/60 max-w-md mx-auto mb-8">
+                Try: "I'm a VP of Engineering at a Series B startup. My biggest
+                challenge right now is..."
               </p>
-
-              {/* Import CTA */}
-              <div className="pt-2">
-                <div className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                  <div className="h-px w-8 bg-border" />
-                  or jumpstart with existing notes
-                  <div className="h-px w-8 bg-border" />
-                </div>
-                <div>
-                  <button
-                    onClick={triggerImport}
-                    disabled={isImporting}
-                    className={cn(
-                      'inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all',
-                      'border border-accent/30 bg-accent/5 text-accent hover:bg-accent/10',
-                    )}
-                  >
-                    <FileText className="h-4 w-4" />
-                    Import a markdown file
-                  </button>
-                  <p className="text-xs text-muted-foreground/50 mt-2">
-                    Drop a .md or .txt file anywhere on this page
-                  </p>
-                </div>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => startRecording()}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/20 hover:bg-accent/90"
+                >
+                  <Mic className="h-4 w-4" />
+                  Voice a thought
+                </button>
+                <button
+                  onClick={triggerImport}
+                  disabled={isImporting}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-semibold text-foreground hover:bg-secondary"
+                >
+                  <FileText className="h-4 w-4" />
+                  Import markdown
+                </button>
               </div>
+              <p className="text-[11px] text-muted-foreground/40 mt-4">
+                Tip: press{' '}
+                <kbd className="px-1.5 py-0.5 rounded border border-border bg-secondary text-[10px] font-mono">
+                  ⌘K
+                </kbd>{' '}
+                anytime to jump or run actions.
+              </p>
             </motion.div>
           )}
         </div>
-      </main>
+      </DesktopShell>
 
-      {/* Briefing Sheet (shared between mobile and desktop) */}
       <BriefingSheet />
     </div>
   );

@@ -38,8 +38,8 @@ const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 function LoadingPage() {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#00D9B6]" />
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-accent" />
     </div>
   )
 }

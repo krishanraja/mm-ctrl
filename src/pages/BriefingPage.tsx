@@ -1,6 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Radio, Sparkles, Play, Clock, ChevronDown } from "lucide-react";
+import {
+  Radio,
+  Sparkles,
+  Play,
+  Clock,
+  ChevronDown,
+  Settings2,
+  Plus,
+  Calendar,
+  RefreshCw,
+  PauseCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +28,8 @@ import {
 import { InterestsSheet } from "@/components/briefing/InterestsSheet";
 import { BottomNav } from "@/components/memory-web/BottomNav";
 import { AppHeader } from "@/components/memory-web/AppHeader";
+import { DesktopShell } from "@/components/layout/DesktopShell";
+import { useDevice } from "@/hooks/useDevice";
 import {
   useTodaysBriefing,
   useGenerateBriefing,
@@ -29,6 +42,7 @@ import { BRIEFING_TYPES } from "@/types/briefing";
 import type { Briefing, BriefingType } from "@/types/briefing";
 
 function BriefingPage() {
+  const { isMobile } = useDevice();
   const {
     briefing: defaultBriefing,
     briefings,
@@ -53,10 +67,6 @@ function BriefingPage() {
     refetch: refetchSuggestions,
   } = useSuggestedInterests();
 
-  // Briefing generation only fires from an explicit user gesture. Before the
-  // user has 3+ declared interests the briefing would be generic, so we
-  // surface the cold-start "Pick a few topics first" CTA instead of a
-  // generation button.
   const hasDeclaredOrInferred = declaredInterests.length >= 3;
 
   const { generate, generating, phase, sparseProfile, clearSparseProfile } = useGenerateBriefing();
@@ -69,6 +79,14 @@ function BriefingPage() {
   useEffect(() => {
     if (defaultBriefing) setBriefing(defaultBriefing);
   }, [defaultBriefing, setBriefing]);
+
+  // Listen for command palette "generate today's briefing"
+  useEffect(() => {
+    const onGen = () => handleGenerateToday();
+    window.addEventListener("mm:generate-briefing", onGen);
+    return () => window.removeEventListener("mm:generate-briefing", onGen);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePlayBriefing = (b: Briefing) => {
     setBriefing(b);
@@ -98,7 +116,6 @@ function BriefingPage() {
     }
   };
 
-  // Explicit primary action: user decides when today's briefing is generated.
   const handleGenerateToday = async () => {
     const id = await generate("default");
     if (id) {
@@ -106,8 +123,6 @@ function BriefingPage() {
     }
   };
 
-  // Voice nudge that classifies as `request_custom` opens the custom sheet
-  // pre-filled with the requested prompt so the user just confirms.
   const handleVoiceCustomRequest = (prompt: string) => {
     setPresetCustomPrompt(prompt);
     setCustomSheetOpen(true);
@@ -120,8 +135,6 @@ function BriefingPage() {
   const isGenerating = generating;
   const currentPhase = phase;
 
-  // "Earlier this week" = briefings older than today's default that aren't
-  // custom. We bucket by ISO date so timezones don't shuffle them around.
   const earlierBriefings = useMemo(() => {
     const todayKey = new Date().toISOString().slice(0, 10);
     return briefings.filter((b) => {
@@ -153,115 +166,431 @@ function BriefingPage() {
     return "Ready when you are";
   })();
 
-  return (
-    <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
-      <AppHeader />
+  /* ─── Mobile layout (unchanged) ──────────────────────────────── */
+  if (isMobile) {
+    return (
+      <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
+        <AppHeader />
 
-      <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-24 scrollbar-hide">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-4 py-4"
-        >
-          {/* 1. Header with live status */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
-                <Radio className="w-4.5 h-4.5 text-accent" />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-lg font-semibold text-foreground truncate">
-                  Your Briefing
-                </h1>
-                <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                  <span
-                    className={cn(
-                      "inline-block w-1.5 h-1.5 rounded-full",
-                      isGenerating
-                        ? "bg-amber-500 animate-pulse"
-                        : defaultBriefing
-                        ? "bg-emerald-500"
-                        : "bg-muted-foreground/40",
-                    )}
-                  />
-                  {liveStatus}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setInterestsSheetOpen(true)}
-              className="gap-1 text-xs h-8"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              Tune
-            </Button>
-          </div>
-
-          {/* 2. Hero card OR pre-personalisation OR cold-start */}
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
-            </div>
-          ) : !hasData ? (
-            <div className="text-center py-12">
-              <Radio className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">
-                Tell us about yourself first
-              </p>
-              <p className="text-xs text-muted-foreground/60 mt-1">
-                Once you share your role and goals, we will generate your
-                personalised daily briefing
-              </p>
-            </div>
-          ) : !hasDeclaredOrInferred &&
-            !defaultBriefing &&
-            !suggestionsLoading &&
-            suggestions.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-accent/30 bg-accent/5 p-4 space-y-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-accent" />
+        <main className="flex-1 min-h-0 overflow-y-auto px-4 pb-24 scrollbar-hide">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-4 py-4"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                  <Radio className="w-4.5 h-4.5 text-accent" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">
-                    Pick a few topics first
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    We need 3+ interests to make this feel like your
-                    briefing.
+                  <h1 className="text-lg font-semibold text-foreground truncate">
+                    Your Briefing
+                  </h1>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                    <span
+                      className={cn(
+                        "inline-block w-1.5 h-1.5 rounded-full",
+                        isGenerating
+                          ? "bg-amber-500 animate-pulse"
+                          : defaultBriefing
+                          ? "bg-emerald-500"
+                          : "bg-muted-foreground/40",
+                      )}
+                    />
+                    {liveStatus}
                   </p>
                 </div>
               </div>
               <Button
-                onClick={() => setInterestsSheetOpen(true)}
+                variant="ghost"
                 size="sm"
-                className="w-full"
+                onClick={() => setInterestsSheetOpen(true)}
+                className="gap-1 text-xs h-8"
               >
-                Choose what you want briefed on
+                <Sparkles className="w-3.5 h-3.5" />
+                Tune
               </Button>
-            </motion.div>
-          ) : !defaultBriefing && isGenerating ? (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-accent/20 bg-accent/5 p-4"
+            </div>
+
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+              </div>
+            ) : !hasData ? (
+              <div className="text-center py-12">
+                <Radio className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  Tell us about yourself first
+                </p>
+              </div>
+            ) : !hasDeclaredOrInferred && !defaultBriefing && !suggestionsLoading && suggestions.length === 0 ? (
+              <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="w-5 h-5 text-accent" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Pick a few topics first</p>
+                    <p className="text-xs text-muted-foreground">We need 3+ interests to make this feel like yours.</p>
+                  </div>
+                </div>
+                <Button onClick={() => setInterestsSheetOpen(true)} size="sm" className="w-full">
+                  Choose what you want briefed on
+                </Button>
+              </div>
+            ) : !defaultBriefing && hasDeclaredOrInferred ? (
+              <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4 space-y-3">
+                <div className="flex items-center gap-3">
+                  <Radio className="w-5 h-5 text-accent" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Today's briefing is ready to generate</p>
+                    <p className="text-xs text-muted-foreground">
+                      Drawn from {declaredInterests.length} interests, {facts.length} memories - ~30s
+                    </p>
+                  </div>
+                </div>
+                <Button onClick={handleGenerateToday} size="sm" className="w-full">
+                  Generate today's briefing
+                </Button>
+              </div>
+            ) : defaultBriefing ? (
+              <BriefingCard
+                briefing={defaultBriefing}
+                hasListened={playback.hasListened}
+                onPlay={() => handlePlayBriefing(defaultBriefing)}
+                onRefresh={handleRefreshBriefing}
+                refreshing={refreshingBriefing}
+                onCustomBriefing={() => setCustomSheetOpen(true)}
+                customBriefingCount={customBriefings.length}
+              />
+            ) : null}
+
+            {hasData && (
+              <VoiceSteerBar
+                briefingId={defaultBriefing?.id ?? null}
+                onCustomRequest={handleVoiceCustomRequest}
+                onApplied={handleNudgeApplied}
+              />
+            )}
+
+            <SuggestedInterestsCard
+              suggestions={suggestions}
+              loading={suggestionsLoading}
+              onAccept={acceptSuggestion}
+              onDismiss={dismissSuggestion}
+              onAcceptAll={acceptAllSuggestions}
+            />
+
+            {hasData && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                    In this briefing
+                  </p>
+                  {declaredInterests.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setInterestsSheetOpen(true)}
+                      className="text-[11px] text-accent hover:underline"
+                    >
+                      Manage
+                    </button>
+                  )}
+                </div>
+                <InterestChipsRow
+                  interests={declaredInterests}
+                  loading={interestsLoading}
+                  onRemove={removeInterest}
+                  onAdd={() => setInterestsSheetOpen(true)}
+                  emptyHint="No interests yet - voice steer above or tap Tune."
+                />
+              </div>
+            )}
+
+            {customBriefings.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider px-1">
+                  Custom Briefings Today
+                </p>
+                {customBriefings.map((b) => {
+                  const typeConfig = BRIEFING_TYPES.find((t) => t.type === b.briefing_type);
+                  const durationMin = b.audio_duration_seconds
+                    ? Math.ceil(b.audio_duration_seconds / 60)
+                    : 3;
+                  return (
+                    <Card
+                      key={b.id}
+                      className="cursor-pointer hover:border-accent/30 transition-colors"
+                      onClick={() => handlePlayBriefing(b)}
+                    >
+                      <CardContent className="p-3 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                          <Play className="w-3.5 h-3.5 text-accent fill-accent" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-foreground">
+                              {typeConfig?.label || b.briefing_type}
+                            </p>
+                            <Badge variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
+                              {durationMin} min
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+
+            {earlierBriefings.length > 0 && (
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setShowHistory((v) => !v)}
+                  className="flex items-center justify-between w-full px-1"
+                >
+                  <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                    Earlier this week ({earlierBriefings.length})
+                  </p>
+                  <ChevronDown
+                    className={cn(
+                      "w-3.5 h-3.5 text-muted-foreground transition-transform",
+                      showHistory && "rotate-180",
+                    )}
+                  />
+                </button>
+                {showHistory && (
+                  <div className="space-y-1.5">
+                    {earlierBriefings.map((b) => {
+                      const created = new Date(b.created_at);
+                      const dayLabel = created.toLocaleDateString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      });
+                      return (
+                        <Card
+                          key={b.id}
+                          className="cursor-pointer hover:border-accent/30 transition-colors"
+                          onClick={() => handlePlayBriefing(b)}
+                        >
+                          <CardContent className="p-3 flex items-center gap-3">
+                            <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium text-foreground">{dayLabel}</p>
+                            </div>
+                            <Play className="w-3.5 h-3.5 text-accent fill-accent shrink-0" />
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </motion.div>
+        </main>
+
+        <MiniPlayer />
+        <BottomNav />
+        <BriefingSheet />
+        <CustomBriefingSheet
+          isOpen={customSheetOpen}
+          onClose={() => {
+            setCustomSheetOpen(false);
+            setPresetCustomPrompt(null);
+          }}
+          onGenerate={handleCustomGenerate}
+          isGenerating={generating}
+          initialContext={presetCustomPrompt ?? undefined}
+        />
+        <InterestsSheet
+          open={interestsSheetOpen}
+          onOpenChange={setInterestsSheetOpen}
+          onSaved={() => {
+            void refetchInterests();
+            void refetchSuggestions();
+          }}
+        />
+      </div>
+    );
+  }
+
+  /* ─── Desktop layout: hero player + side rails ─────────────── */
+
+  const rightRail = (
+    <div className="flex flex-col">
+      {/* Interests */}
+      <div className="border-b border-border/60 p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-accent" />
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Your interests
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setInterestsSheetOpen(true)}
+            className="text-[11px] text-accent hover:underline"
+          >
+            Manage
+          </button>
+        </div>
+        <InterestChipsRow
+          interests={declaredInterests}
+          loading={interestsLoading}
+          onRemove={removeInterest}
+          onAdd={() => setInterestsSheetOpen(true)}
+          emptyHint="No interests yet - voice steer or tap Manage."
+        />
+      </div>
+
+      {/* Suggested */}
+      {(suggestions.length > 0 || suggestionsLoading) && (
+        <div className="border-b border-border/60 p-5">
+          <SuggestedInterestsCard
+            suggestions={suggestions}
+            loading={suggestionsLoading}
+            onAccept={acceptSuggestion}
+            onDismiss={dismissSuggestion}
+            onAcceptAll={acceptAllSuggestions}
+          />
+        </div>
+      )}
+
+      {/* Earlier */}
+      {earlierBriefings.length > 0 && (
+        <div className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+            <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Earlier this week
+            </h3>
+          </div>
+          <div className="space-y-1.5">
+            {earlierBriefings.slice(0, 6).map((b) => {
+              const created = new Date(b.created_at);
+              const dayLabel = created.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              });
+              const minutes = b.audio_duration_seconds
+                ? Math.ceil(b.audio_duration_seconds / 60)
+                : 3;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => handlePlayBriefing(b)}
+                  className="w-full flex items-center gap-3 px-2.5 py-2 rounded-md hover:bg-secondary/60 transition-colors text-left group"
+                >
+                  <Clock className="w-3.5 h-3.5 text-muted-foreground/60 group-hover:text-accent flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium text-foreground">{dayLabel}</p>
+                    <p className="text-[10px] text-muted-foreground line-clamp-1">
+                      {b.headline || `${minutes} min briefing`}
+                    </p>
+                  </div>
+                  <Play className="w-3 h-3 text-muted-foreground/40 group-hover:text-accent fill-current flex-shrink-0" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      <DesktopShell
+        eyebrow="Briefing"
+        title={
+          <span className="flex items-center gap-2">
+            <span
+              className={cn(
+                "inline-block w-1.5 h-1.5 rounded-full",
+                isGenerating
+                  ? "bg-amber-500 animate-pulse"
+                  : defaultBriefing
+                  ? "bg-emerald-500"
+                  : "bg-muted-foreground/40",
+              )}
+            />
+            <span>{liveStatus}</span>
+          </span>
+        }
+        actions={
+          <>
+            <button
+              onClick={() => setCustomSheetOpen(true)}
+              className="hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-secondary transition-colors"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Radio className="w-5 h-5 text-accent animate-pulse" />
+              <Plus className="h-3.5 w-3.5" />
+              Custom briefing
+            </button>
+            <button
+              onClick={() => setInterestsSheetOpen(true)}
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+              Tune
+            </button>
+          </>
+        }
+        rightRail={rightRail}
+      >
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Hero state */}
+          {loading ? (
+            <div className="flex items-center justify-center py-24">
+              <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            </div>
+          ) : !hasData ? (
+            <div className="rounded-3xl border border-dashed border-border bg-card/30 py-20 text-center">
+              <Radio className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+              <p className="text-lg font-semibold text-foreground mb-2">
+                Tell us about yourself first
+              </p>
+              <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                Once you share your role and goals in your Memory Web, we'll
+                generate your personalised daily briefing.
+              </p>
+            </div>
+          ) : !hasDeclaredOrInferred && !defaultBriefing && !suggestionsLoading && suggestions.length === 0 ? (
+            <div className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-8">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-6 h-6 text-accent" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold text-foreground mb-1">
+                    Pick a few topics first
+                  </h2>
+                  <p className="text-sm text-muted-foreground mb-5">
+                    We need 3+ interests to make this feel like your briefing,
+                    not a generic news feed.
+                  </p>
+                  <Button onClick={() => setInterestsSheetOpen(true)}>
+                    Choose what you want briefed on
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : !defaultBriefing && isGenerating ? (
+            <div className="rounded-2xl border border-accent/30 bg-accent/5 p-8">
+              <div className="flex items-center gap-4 mb-5">
+                <div className="w-14 h-14 rounded-2xl bg-accent/15 flex items-center justify-center">
+                  <Radio className="w-7 h-7 text-accent animate-pulse" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <h2 className="text-xl font-semibold text-foreground">
                     Generating today's briefing
-                  </p>
-                  <p className="text-xs text-muted-foreground">
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
                     {currentPhase === "scanning"
                       ? "Reading your profile"
                       : currentPhase === "personalising"
@@ -270,85 +599,95 @@ function BriefingPage() {
                   </p>
                 </div>
               </div>
-              <motion.div className="mt-3 h-1 rounded-full bg-accent/20 overflow-hidden">
+              <div className="h-1.5 rounded-full bg-accent/15 overflow-hidden">
                 <motion.div
                   className="h-full bg-accent rounded-full"
                   initial={{ width: "5%" }}
                   animate={{ width: "85%" }}
                   transition={{ duration: 20, ease: "linear" }}
                 />
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           ) : !defaultBriefing && sparseProfile ? (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 space-y-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-amber-500" />
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-8">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-6 h-6 text-amber-500" />
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold text-foreground mb-1">
                     A little more signal, and your briefing lands
-                  </p>
-                  <p className="text-xs text-muted-foreground">
+                  </h2>
+                  <p className="text-sm text-muted-foreground mb-5">
                     {sparseProfile.missing.length > 0
                       ? `Add ${sparseProfile.missing.slice(0, 2).join(" and ")} so today's briefing is actually about you.`
                       : sparseProfile.message}
                   </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => {
+                        clearSparseProfile();
+                        setInterestsSheetOpen(true);
+                      }}
+                    >
+                      Add interests
+                    </Button>
+                    <Button onClick={clearSparseProfile} variant="ghost">
+                      Dismiss
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => {
-                    clearSparseProfile();
-                    setInterestsSheetOpen(true);
-                  }}
-                  size="sm"
-                  className="flex-1"
-                >
-                  Add interests
-                </Button>
-                <Button
-                  onClick={clearSparseProfile}
-                  size="sm"
-                  variant="ghost"
-                >
-                  Dismiss
-                </Button>
-              </div>
-            </motion.div>
+            </div>
           ) : !defaultBriefing && hasDeclaredOrInferred ? (
             <motion.div
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-accent/30 bg-accent/5 p-4 space-y-3"
+              className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/10 via-card to-card p-8 shadow-xl shadow-accent/5"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center">
-                  <Radio className="w-5 h-5 text-accent" />
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-accent/15 flex items-center justify-center flex-shrink-0">
+                  <Radio className="w-7 h-7 text-accent" />
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-foreground mb-1">
                     Today's briefing is ready to generate
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Drawn from {declaredInterests.length}{" "}
-                    {declaredInterests.length === 1 ? "interest" : "interests"}
-                    {facts.length > 0 && `, ${facts.length} ${facts.length === 1 ? "memory" : "memories"}`}
-                    {" · ~30s"}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Drawn from{" "}
+                    <span className="text-foreground font-medium">
+                      {declaredInterests.length}{" "}
+                      {declaredInterests.length === 1 ? "interest" : "interests"}
+                    </span>
+                    {facts.length > 0 && (
+                      <>
+                        {" and "}
+                        <span className="text-foreground font-medium">
+                          {facts.length} {facts.length === 1 ? "memory" : "memories"}
+                        </span>
+                      </>
+                    )}
+                    {" - takes ~30 seconds"}
                   </p>
                 </div>
               </div>
-              <Button
-                onClick={handleGenerateToday}
-                size="sm"
-                className="w-full"
-              >
-                Generate today's briefing
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleGenerateToday}
+                  size="lg"
+                  className="px-6 h-11 text-sm font-semibold bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20"
+                >
+                  Generate today's briefing
+                </Button>
+                <Button
+                  onClick={() => setCustomSheetOpen(true)}
+                  variant="ghost"
+                  size="lg"
+                  className="h-11 text-sm"
+                >
+                  Pick a different type
+                </Button>
+              </div>
             </motion.div>
           ) : defaultBriefing ? (
             <BriefingCard
@@ -362,7 +701,7 @@ function BriefingPage() {
             />
           ) : null}
 
-          {/* 3. Voice Steer bar — the hero CTA */}
+          {/* Voice steer - hero CTA */}
           {hasData && (
             <VoiceSteerBar
               briefingId={defaultBriefing?.id ?? null}
@@ -371,168 +710,89 @@ function BriefingPage() {
             />
           )}
 
-          {/* 4. Suggested interests (auto-inferred, conditional) */}
-          <SuggestedInterestsCard
-            suggestions={suggestions}
-            loading={suggestionsLoading}
-            onAccept={acceptSuggestion}
-            onDismiss={dismissSuggestion}
-            onAcceptAll={acceptAllSuggestions}
-          />
-
-          {/* 5. What's in this briefing — chip row */}
-          {hasData && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between px-1">
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                  In this briefing
-                </p>
-                {declaredInterests.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setInterestsSheetOpen(true)}
-                    className="text-[11px] text-accent hover:underline"
-                  >
-                    Manage
-                  </button>
-                )}
-              </div>
-              <InterestChipsRow
-                interests={declaredInterests}
-                loading={interestsLoading}
-                onRemove={removeInterest}
-                onAdd={() => setInterestsSheetOpen(true)}
-                emptyHint="No interests yet — voice steer above or tap Tune."
-              />
-            </div>
-          )}
-
-          {/* 6. Custom briefings today */}
+          {/* Today's custom briefings */}
           {customBriefings.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider px-1">
-                Custom Briefings Today
-              </p>
-              {customBriefings.map((b) => {
-                const typeConfig = BRIEFING_TYPES.find(
-                  (t) => t.type === b.briefing_type,
-                );
-                const durationMin = b.audio_duration_seconds
-                  ? Math.ceil(b.audio_duration_seconds / 60)
-                  : 3;
-                return (
-                  <motion.div
-                    key={b.id}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    <Card
-                      className="cursor-pointer hover:border-accent/30 transition-colors"
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <PauseCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                  Custom briefings today
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {customBriefings.map((b) => {
+                  const typeConfig = BRIEFING_TYPES.find((t) => t.type === b.briefing_type);
+                  const durationMin = b.audio_duration_seconds
+                    ? Math.ceil(b.audio_duration_seconds / 60)
+                    : 3;
+                  return (
+                    <motion.button
+                      key={b.id}
                       onClick={() => handlePlayBriefing(b)}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:border-accent/30 hover:bg-card/80 transition-colors text-left group"
                     >
-                      <CardContent className="p-3 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                          <Play className="w-3.5 h-3.5 text-accent fill-accent" />
+                      <div className="w-9 h-9 rounded-lg bg-accent/10 group-hover:bg-accent/20 flex items-center justify-center flex-shrink-0 transition-colors">
+                        <Play className="w-3.5 h-3.5 text-accent fill-accent" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {typeConfig?.label || b.briefing_type}
+                          </p>
+                          <Badge variant="secondary" className="text-[10px] font-normal px-1.5 py-0">
+                            {durationMin} min
+                          </Badge>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-foreground">
-                              {typeConfig?.label || b.briefing_type}
-                            </p>
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] font-normal px-1.5 py-0"
-                            >
-                              {durationMin} min
-                            </Badge>
-                          </div>
-                          {b.custom_context && (
-                            <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5 italic">
-                              {b.custom_context}
-                            </p>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
+                        {b.custom_context && (
+                          <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                            {b.custom_context}
+                          </p>
+                        )}
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* 7. Earlier this week (collapsed) */}
-          {earlierBriefings.length > 0 && (
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => setShowHistory((v) => !v)}
-                className="flex items-center justify-between w-full px-1"
-              >
-                <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                  Earlier this week ({earlierBriefings.length})
-                </p>
-                <ChevronDown
-                  className={cn(
-                    "w-3.5 h-3.5 text-muted-foreground transition-transform",
-                    showHistory && "rotate-180",
-                  )}
-                />
-              </button>
-              {showHistory && (
-                <div className="space-y-1.5">
-                  {earlierBriefings.map((b) => {
-                    const created = new Date(b.created_at);
-                    const dayLabel = created.toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    });
-                    const minutes = b.audio_duration_seconds
-                      ? Math.ceil(b.audio_duration_seconds / 60)
-                      : 3;
-                    return (
-                      <Card
-                        key={b.id}
-                        className="cursor-pointer hover:border-accent/30 transition-colors"
-                        onClick={() => handlePlayBriefing(b)}
-                      >
-                        <CardContent className="p-3 flex items-center gap-3">
-                          <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-foreground">
-                              {dayLabel}
-                            </p>
-                            <p className="text-[10px] text-muted-foreground line-clamp-1">
-                              {b.headline || `${minutes} min briefing`}
-                            </p>
-                          </div>
-                          <Play className="w-3.5 h-3.5 text-accent fill-accent shrink-0" />
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 8. More options */}
+          {/* More actions */}
           {hasData && (
-            <div className="pt-1">
+            <div className="flex items-center justify-center gap-6 pt-2">
               <button
                 type="button"
                 onClick={() => setCustomSheetOpen(true)}
-                className="text-[11px] text-muted-foreground hover:text-accent transition-colors"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition-colors"
               >
-                More options →
+                <Plus className="h-3 w-3" />
+                Custom briefing type
               </button>
+              {defaultBriefing && (
+                <button
+                  type="button"
+                  onClick={handleRefreshBriefing}
+                  disabled={refreshingBriefing}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-accent transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={cn("h-3 w-3", refreshingBriefing && "animate-spin")} />
+                  Regenerate today
+                </button>
+              )}
+              <span className="text-xs text-muted-foreground/60">
+                Press{" "}
+                <kbd className="px-1.5 py-0.5 rounded border border-border bg-secondary text-[10px] font-mono">
+                  ⌘K
+                </kbd>{" "}
+                to jump anywhere
+              </span>
             </div>
           )}
-        </motion.div>
-      </main>
+        </div>
+      </DesktopShell>
 
       <MiniPlayer />
-      <BottomNav />
       <BriefingSheet />
       <CustomBriefingSheet
         isOpen={customSheetOpen}
@@ -552,7 +812,7 @@ function BriefingPage() {
           void refetchSuggestions();
         }}
       />
-    </div>
+    </>
   );
 }
 
