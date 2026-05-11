@@ -14,10 +14,16 @@
  *      already confirmed elsewhere.
  */
 
+export interface SkillSeedContext {
+  kind: "blocker" | "decision" | "mission" | "briefing_segment" | "example";
+  text: string;
+}
+
 export interface SkillPromptInputs {
   transcript: string;
   memoryContext: string;
   profileContext: string;
+  seed?: SkillSeedContext;
 }
 
 export function buildSkillSystemPrompt(): string {
@@ -28,8 +34,23 @@ export function buildSkillUserPrompt({
   transcript,
   memoryContext,
   profileContext,
+  seed,
 }: SkillPromptInputs): string {
-  return [
+  const lines: string[] = [];
+
+  if (seed && seed.text.trim().length > 0) {
+    // The leader tapped a specific pain to seed this skill. Anchoring the
+    // extraction in their declared pain raises trigger quality because the
+    // description ends up using their actual language. Without this, the LLM
+    // sometimes hallucinates a more abstract trigger from the transcript.
+    lines.push(
+      `SEED_PAIN (the leader explicitly chose this ${describeKind(seed.kind)} as the trigger for this skill — anchor the skill in solving it):`,
+      `"""${seed.text.trim()}"""`,
+      ``,
+    );
+  }
+
+  lines.push(
     `TRANSCRIPT (the leader's voice description of their workflow):`,
     `"""${transcript.trim()}"""`,
     ``,
@@ -39,8 +60,31 @@ export function buildSkillUserPrompt({
     `EDGE_PROFILE:`,
     profileContext.trim() || "(no edge profile available)",
     ``,
+  );
+
+  if (seed) {
+    lines.push(
+      `IMPORTANT: Because SEED_PAIN was provided, the resulting skill description MUST use the leader's actual SEED_PAIN language as trigger phrases. The "## When this skill activates" section MUST reference the SEED_PAIN directly. Do not produce a generic skill when a SEED_PAIN is supplied.`,
+      ``,
+    );
+  }
+
+  lines.push(
     `Apply the Three Honest Tests, then generate the skill (or route to a different output type). Return ONLY the JSON object described in the system prompt.`,
-  ].join("\n");
+  );
+
+  return lines.join("\n");
+}
+
+function describeKind(kind: SkillSeedContext["kind"]): string {
+  switch (kind) {
+    case "blocker": return "blocker / challenge from their profile";
+    case "decision": return "active decision on their desk";
+    case "mission": return "active mission / priority";
+    case "briefing_segment": return "briefing segment they flagged as a decision trigger";
+    case "example": return "starter example they picked";
+    default: return "pain point";
+  }
 }
 
 const SYSTEM_PROMPT = `You are an expert Agent Skill architect. Your job is to take a leader's voice transcript about a repetitive workflow and convert it into a production-ready Agent Skill that follows the agentskills.io open standard.
