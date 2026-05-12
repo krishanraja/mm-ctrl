@@ -117,7 +117,7 @@ export default function Dashboard() {
         <div className="h-screen-safe overflow-hidden flex flex-col bg-background">
           <AppHeader />
           {onboardingBanner}
-          <div className="flex-1 overflow-y-auto px-4 py-4 pb-24">
+          <div data-edge-scroll className="flex-1 overflow-y-auto px-4 py-4 pb-44">
             <React.Suspense fallback={<div className="flex items-center justify-center py-20">Loading...</div>}>
               <EdgeViewLazy />
             </React.Suspense>

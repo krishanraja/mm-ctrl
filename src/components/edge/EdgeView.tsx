@@ -303,7 +303,7 @@ export default function EdgeView() {
             </div>
 
             {/* Cycling blurred artifact preview */}
-            <div className="relative rounded-xl border border-border overflow-hidden">
+            <div className="relative rounded-xl border border-border overflow-hidden h-24">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={teaserKey}
@@ -311,7 +311,7 @@ export default function EdgeView() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.3 }}
-                  className="p-3 max-h-24 overflow-hidden text-xs"
+                  className="absolute inset-0 p-3 overflow-hidden text-xs"
                   dangerouslySetInnerHTML={{ __html: renderMarkdown(teaserContent) }}
                 />
               </AnimatePresence>

@@ -30,9 +30,9 @@ export function StrengthPill({ strength, onFeedback, isPaid, onAction }: Props) 
         onClick={() => setExpanded(!expanded)}
         className={cn(
           'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-left transition-colors',
-          'bg-gradient-to-r from-teal-500/10 to-emerald-500/10',
-          'hover:from-teal-500/15 hover:to-emerald-500/15',
-          expanded && 'rounded-b-none',
+          'border border-teal-500/30 bg-teal-500/15 hover:bg-teal-500/25',
+          'dark:border-teal-400/30 dark:bg-teal-400/15 dark:hover:bg-teal-400/25',
+          expanded && 'rounded-b-none border-b-transparent dark:border-b-transparent',
         )}
       >
         <span className="text-sm font-medium text-foreground truncate">{strength.label}</span>
@@ -55,7 +55,7 @@ export function StrengthPill({ strength, onFeedback, isPaid, onAction }: Props) 
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: 'easeInOut' }}
-            className="overflow-hidden bg-gradient-to-b from-teal-500/5 to-transparent"
+            className="overflow-hidden border-x border-b border-teal-500/30 dark:border-teal-400/30 bg-teal-500/8 dark:bg-teal-400/8 rounded-b-xl"
           >
             <div className="px-3 pb-3 space-y-3">
               {/* Summary */}
