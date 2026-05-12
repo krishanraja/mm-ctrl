@@ -1,7 +1,9 @@
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, ClipboardList, Upload, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useRevealOnMount } from '@/hooks/useRevealOnMount';
 import type { IntelligenceGap, GapResolution } from '@/types/edge';
 
 interface Props {
@@ -20,9 +22,12 @@ const RESOLUTION_CONFIG: Record<GapResolution, { icon: typeof Mic; label: string
 export function SmartProbeCard({ gap, onDismiss, onAction }: Props) {
   const config = RESOLUTION_CONFIG[gap.resolution];
   const Icon = config.icon;
+  const containerRef = useRef<HTMLDivElement>(null);
+  useRevealOnMount(containerRef);
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 0, scale: 0.96, y: 8 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: -8 }}

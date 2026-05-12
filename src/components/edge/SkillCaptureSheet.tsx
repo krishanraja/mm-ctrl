@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, MessageSquare, Loader2, Send, Zap, Sparkles, AlertTriangle, X } from "lucide-react";
 import {
@@ -82,6 +82,26 @@ export function SkillCaptureSheet({
   initialSeed,
 }: SkillCaptureSheetProps) {
   const isMobile = useIsMobile();
+
+  // Save the dashboard scroll container's position when the sheet opens, and
+  // restore it after the sheet closes. Without this, opening the sheet on
+  // mobile and dismissing it can leave the page scrolled to an unrelated spot
+  // because content underneath re-rendered (e.g. data refetches).
+  const savedScrollRef = useRef<number | null>(null);
+  useEffect(() => {
+    const scroller = document.querySelector<HTMLElement>("[data-edge-scroll]");
+    if (isOpen) {
+      if (scroller) savedScrollRef.current = scroller.scrollTop;
+      return;
+    }
+    const target = savedScrollRef.current;
+    if (target == null || !scroller) return;
+    const raf = requestAnimationFrame(() => {
+      scroller.scrollTop = target;
+      savedScrollRef.current = null;
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen]);
 
   if (isMobile) {
     return (
@@ -295,7 +315,7 @@ function CaptureContent({
               <p className="text-[11px] uppercase tracking-wider font-medium opacity-70">
                 {seedKindLabel(activeSeed.kind)}
               </p>
-              <p className="text-sm text-foreground leading-snug mt-0.5">
+              <p className="text-sm leading-snug mt-0.5">
                 {activeSeed.text}
               </p>
             </div>
@@ -325,9 +345,7 @@ function CaptureContent({
                 onClick={() => handlePickPain(pain)}
                 className={cn(
                   "px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors text-left max-w-full",
-                  pain.kind === "blocker"
-                    ? "border-orange-200/60 bg-orange-50/40 text-orange-700 hover:bg-orange-50"
-                    : "border-blue-200/60 bg-blue-50/40 text-blue-700 hover:bg-blue-50",
+                  painChipTone(pain.kind),
                 )}
                 title={pain.text}
               >
@@ -601,14 +619,20 @@ function seedKindLabel(kind: SkillSeed["kind"]): string {
 function seedTone(kind: SkillSeed["kind"]): string {
   switch (kind) {
     case "blocker":
-      return "border-orange-200/60 bg-orange-50/50 text-orange-900";
+      return "border-orange-500/30 bg-orange-500/15 text-orange-900 dark:text-orange-100";
     case "decision":
     case "briefing_segment":
-      return "border-blue-200/60 bg-blue-50/50 text-blue-900";
+      return "border-blue-500/30 bg-blue-500/15 text-blue-900 dark:text-blue-100";
     case "mission":
-      return "border-emerald-200/60 bg-emerald-50/50 text-emerald-900";
+      return "border-emerald-500/30 bg-emerald-500/15 text-emerald-900 dark:text-emerald-100";
     case "example":
     default:
-      return "border-accent/20 bg-accent/5 text-foreground";
+      return "border-accent/30 bg-accent/15 text-foreground";
   }
+}
+
+function painChipTone(kind: SkillSeed["kind"]): string {
+  return kind === "blocker"
+    ? "border-orange-500/30 bg-orange-500/15 text-orange-700 hover:bg-orange-500/25 dark:text-orange-300"
+    : "border-blue-500/30 bg-blue-500/15 text-blue-700 hover:bg-blue-500/25 dark:text-blue-300";
 }

@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap, ArrowRight, AlertTriangle, Compass, Sparkles, Lock } from "lucide-react";
 import { useUserPains } from "@/hooks/useUserPains";
+import { useRevealOnMount } from "@/hooks/useRevealOnMount";
 import { cn } from "@/lib/utils";
 import type { SkillSeed } from "@/types/skill";
 
@@ -24,11 +26,13 @@ interface AutomatePainCardProps {
 export function AutomatePainCard({ isPaidUser, onUpgrade }: AutomatePainCardProps) {
   const navigate = useNavigate();
   const { pains, loading } = useUserPains(5);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hasContent = !loading && pains.length > 0;
+  useRevealOnMount(containerRef, hasContent);
 
   // No pains yet → no card. Edge view's existing CTAs cover the cold-start
   // case, and showing an empty automate panel would just take up real estate.
-  if (!loading && pains.length === 0) return null;
-  if (loading) return null;
+  if (!hasContent) return null;
 
   const handleSeedTap = (seed: SkillSeed) => {
     if (!isPaidUser) {
@@ -40,6 +44,7 @@ export function AutomatePainCard({ isPaidUser, onUpgrade }: AutomatePainCardProp
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
@@ -92,8 +97,8 @@ export function AutomatePainCard({ isPaidUser, onUpgrade }: AutomatePainCardProp
               className={cn(
                 "group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors max-w-full",
                 pain.kind === "blocker"
-                  ? "border-orange-200/60 bg-orange-50/40 text-orange-700 hover:bg-orange-50"
-                  : "border-blue-200/60 bg-blue-50/40 text-blue-700 hover:bg-blue-50",
+                  ? "border-orange-500/30 bg-orange-500/15 text-orange-700 hover:bg-orange-500/25 dark:text-orange-300"
+                  : "border-blue-500/30 bg-blue-500/15 text-blue-700 hover:bg-blue-500/25 dark:text-blue-300",
               )}
               title={pain.text}
             >
