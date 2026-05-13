@@ -6,6 +6,27 @@ For the full design narrative behind each phase, see [`project-documentation/HIS
 
 ---
 
+## [5.2] — 2026-05 — Phase 8: Agent Skill Builder + World-Class Desktop Redesign
+
+### Added
+- **Agent Skill Builder** (PR #103): new edge function `generate-skill-export` (Edge Pro gated) implementing the full voice-to-Skill pipeline. Three Honest Tests triage gate routes Memory Facts / Custom Instructions / Saved Styles to the right surface instead of generating junk. Quality gate enforces 5+ trigger phrases, push language, third-person voice, body under 500 lines, imperative voice, required sections, valid name format. ZIP packaging follows the agentskills.io standard (`SKILL.md` + `references/` + test prompts + install guide). New `skill_exports` table with RLS + per-user log. Frontend: `SkillExportCard` on `/context` Step 1, `SkillCaptureSheet` (voice/text), `SkillPreviewSheet` (download + quality checklist + install guide for Claude Code / Claude.ai / Cursor). New hook `useSkillExport`.
+- **World-class desktop UI redesign** (PR #104): unified desktop-native shell. New `AuthedLayoutRoute` wrapping authenticated routes in `CommandPaletteProvider`. Cmd/Ctrl+K Command Palette. Sticky top bar with page eyebrow + title + actions. Optional right rail. Refined sidebar with user footer + keyboard hints. Landing, Dashboard, Briefing, Export wizard all reworked. Mobile paths preserved. Pages opt into command-palette actions via custom `mm:capture-voice` and `mm:generate-briefing` window events.
+- **Pain-anchored Skill entry points** (PR #105): `AutomatePainCard` on Edge view (chip row of blockers + active decisions), zap button on Memory Web blocker cards, zap button on Briefing `decision_trigger` segments (v1 + v2). Each entry point hands a `SkillSeed` via `location.state` to `/context`, which auto-opens `SkillCaptureSheet` pre-anchored. New hook `useUserPains` returns top blockers + active decisions for seeding.
+- **Contrast + scroll polish** (PR #106): solid /15 tints + visible borders on warm pills + Skill Builder seed banner / pain picker. Dashboard Edge mobile scroller clears the floating mic FAB. Save/restore dashboard scroll position around `SkillCaptureSheet`. New hook `useRevealOnMount` for smooth below-the-fold reveals.
+
+### Changed
+- **Edge Pro** ($9/month) now also includes unlimited Agent Skill Builder generation + Custom Voice Export. No price change.
+- `/context` Step 1: `SkillExportCard` promoted above the Custom Voice card; "Custom via Voice" renamed to "Custom context export" (was misleadingly claiming to produce a skill).
+- `generate-skill-export` accepts optional `seed { kind, text }` in body; prompt grounds extraction in the leader's actual pain language when present.
+
+### Verified counts at end of phase
+- 74 edge functions
+- 51 hooks
+- 98 migrations
+- 5 Vitest specs + 6 Playwright e2e specs
+
+---
+
 ## [5.1] — 2026-04 — Phase 7: Six-Week Audit Hardening
 
 The product survived six thematic audit weeks, each shipped as its own PR with a clear boundary.

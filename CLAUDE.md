@@ -43,15 +43,16 @@
 ## Architecture Quick Reference
 
 - **Dashboard** (`/dashboard`) is the main hub - shows Memory Web (default) or Edge (`?view=edge`)
-- Desktop: sidebar navigation (`DesktopSidebar`) + main content area
-- Mobile: bottom nav (`BottomNav`) + full-screen views
+- Desktop: world-class desktop shell with `DesktopSidebar`, sticky top bar, optional right rail, and global Command Palette (Cmd/Ctrl+K). Authenticated routes wrapped by `AuthedLayoutRoute` / `CommandPaletteProvider`.
+- Mobile: bottom nav (`BottomNav`) + full-screen views, floating voice FAB
 - Legacy routes (`/today`, `/voice`, `/pulse`, `/diagnostic`, `/think`) all redirect to `/dashboard`
 - AI: Vertex AI Gemini 2.0 Flash primary, OpenAI GPT-4o fallback, static tertiary
-- **74 edge functions** in `supabase/functions/` (verified 2026-04-26)
-- **48 custom hooks** in `src/hooks/`
-- **97 migrations** applied via Supabase Management API
+- **74 edge functions** in `supabase/functions/` (verified 2026-05-13; latest: `generate-skill-export`)
+- **51 custom hooks** in `src/hooks/`
+- **98 migrations** applied via Supabase Management API
 - DB extensions in use: pgvector, pgcrypto, pg_cron
 - Briefing v2 pipeline: lens → planner → fan-out (Perplexity/Tavily/Brave, 12s cap) → embed dedupe + score → curate → script (gpt-4o) → audio (ElevenLabs)
+- Skill Builder pipeline (`/context` step 1, Edge Pro gated): voice/text → Three Honest Tests triage → OpenAI JSON-mode extraction → quality gate → agentskills.io-compliant ZIP download. Pain-anchored entry points (Edge view `AutomatePainCard`, Memory blocker zap, Briefing decision_trigger zap) pass a `SkillSeed` via location state and pre-open `SkillCaptureSheet`.
 - All external API calls wrapped via `_shared/with-timeout.ts`. Structured logs via `_shared/logger.ts`. Stripe webhooks signature-verified + idempotent.
 
 ## Key Conventions

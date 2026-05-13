@@ -2,7 +2,7 @@
 
 Expected outcomes and success metrics for CTRL users. Every outcome ties back to **decision speed** and **auditable relevance**.
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
@@ -111,6 +111,12 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 - Used Edge to generate a board memo, strategy doc, or email in their own register.
 - ~25-30% of engaged users convert to Edge Pro at $9/month within 30 days.
 
+**First Agent Skill Shipped**
+- The leader has hit a pain-anchored zap (Edge `AutomatePainCard`, Memory blocker, Briefing `decision_trigger`) at least once and generated their first Agent Skill.
+- ZIP downloaded and installed into Claude Code / Claude.ai / Cursor — they paste a test prompt and watch the skill auto-trigger. That moment ("the skill just fired in my Claude with my voice") is the second "aha" after the first Context Export.
+- The Three Honest Tests gate routed at least one input to Memory Web or Custom Instructions instead of generating a junk skill — they learn to trust the triage, not work around it.
+- ~15-20% of Edge Pro users have at least one shipped skill within 30 days of subscribing.
+
 **What Leaders Say:**
 - "My CFO asked how I prepared that board memo so fast. I just smiled."
 - "I killed an AI project this week that would have wasted six months. I knew the right questions to ask."
@@ -124,6 +130,7 @@ Expected outcomes and success metrics for CTRL users. Every outcome ties back to
 - 50%+ report saving 30+ minutes per week on AI-related context setup
 - 40%+ use the Ban action at least once in first 30 days (semantic feedback working)
 - 70%+ of v2 briefings have every segment carrying a `matched_profile_fact` (evidence coverage)
+- 15-20% of Edge Pro users have shipped at least one Agent Skill within 30 days of subscribing
 
 ---
 

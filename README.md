@@ -137,17 +137,18 @@ Commit to action items from your diagnostic. Track progress through check-ins. A
 | Payments | Stripe (signature-verified, idempotent) |
 | Email | Resend |
 | DB extensions | pgvector, pgcrypto, pg_cron |
-| Tests | Vitest (unit + shared, 6 specs), Playwright (e2e, 6 specs) |
+| Tests | Vitest (unit + shared, 5 specs), Playwright (e2e, 6 specs) |
 | Hosting | Vercel (frontend), Supabase Cloud (backend) |
 | Node.js | `>=22 <24` |
 
-### Verified counts (2026-04-26)
+### Verified counts (2026-05-13)
 - 74 Supabase edge functions
-- 48 React custom hooks
-- 97 PostgreSQL migrations applied
+- 51 React custom hooks
+- 98 PostgreSQL migrations applied
 - 25 top-level page components
 - 11 active routes (+ 5 legacy redirects to `/dashboard`)
 - 6 audit-week tracks shipped (revenue path, data path, UX, reliability, observability, cleanup)
+- Phase 8 shipped: Agent Skill Builder (voice-to-Claude-Skill, Edge Pro) + world-class desktop UI redesign with Cmd/Ctrl+K Command Palette + pain-anchored Skill entry points
 
 ---
 
@@ -193,7 +194,7 @@ src/
 │   ├── ai-chat/         # AI interaction
 │   ├── diagnostic/      # Assessment components
 │   └── ... (operator, progress, provocation, pulse, team-instructions, etc.)
-├── hooks/               # 48 custom React hooks
+├── hooks/               # 51 custom React hooks (incl. useSkillExport, useUserPains, useRevealOnMount)
 ├── pages/               # 25 page components (many are legacy redirects)
 ├── contexts/            # AppState, Assessment, Auth, Theme
 ├── types/               # TypeScript types
@@ -214,12 +215,13 @@ supabase/
 │   ├── ai-generate/              # Vertex primary, OpenAI fallback, static tertiary
 │   ├── memory-crud/, memory-export/, memory-lifecycle/, memory-settings/, memory-synthesize/
 │   ├── edge-generate/            # Edge artifact generation
+│   ├── generate-skill-export/    # Agent Skill Builder pipeline (Edge Pro): triage gate -> LLM -> quality gate -> ZIP (Phase 8)
 │   ├── deliver-edge-artifact/    # Email delivery (Pro)
 │   ├── create-edge-subscription/, create-billing-portal-session/
 │   ├── stripe-webhook/           # Signature-verified, idempotent
 │   ├── voice-transcribe/         # Whisper
 │   └── ... (74 total)
-├── migrations/          # 97 PostgreSQL migrations
+├── migrations/          # 98 PostgreSQL migrations (incl. 20260508 create_skill_exports)
 ├── email-templates/     # Auth email templates
 └── config.toml
 ```

@@ -2,7 +2,7 @@
 
 Key architectural and product decisions with rationale.
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
@@ -264,3 +264,31 @@ Key architectural and product decisions with rationale.
 **Rationale**: 80% unit-test coverage on a feature that doesn't exist in production is theatre. 6 e2e specs that prove the parts of the product a leader would notice are bug-free is real.
 **Trade-off**: Some breadth deferred vs tested confidence in the parts that matter.
 **Outcome**: ✅ 6 e2e specs live (`tests/`). Vitest unit coverage remains light by design.
+
+## Decision 38: Three Honest Tests Triage Gate Before Skill Generation
+**Date**: May 2026 (Phase 8 — PR #103)
+**Decision**: The Skill Builder runs an LLM-driven triage gate BEFORE extraction. If the input is really a Memory Web fact, a Custom Instruction, or a Saved Style, we return `{ triage: { passed: false, result, reasoning } }` with no skill, route the leader to the right surface, and still log the attempt in `skill_exports` for analytics.
+**Rationale**: Generic "AI workflow / automation / skill generator" tools generate something from any input. That destroys trust the first time a leader feeds them a one-off fact and gets back a malformed pseudo-skill. The triage gate is a respect-for-time signal: CTRL refuses to produce junk and tells the leader exactly where their input belongs instead. This is also the line that separates "another macro tool" from "a triage-aware piece of agent infrastructure" in the sales narrative.
+**Trade-off**: ~2x LLM token cost per generation (triage call + extraction call combined, even though we currently run them in one JSON-mode call). One extra unhappy path (triage-failed UI) to design.
+**Outcome**: ✅ Triage routing live. The "Three Honest Tests" phrase is now an asset in sales copy (see `SALES_BRIEF.md` "Triage You Can Trust" angle).
+
+## Decision 39: agentskills.io ZIP Output, Not Saved Prompts
+**Date**: May 2026 (Phase 8 — PR #103)
+**Decision**: The Skill Builder output is an agentskills.io-compliant ZIP (single root folder, `SKILL.md` + `references/` + `01-test-prompts.txt` + `02-maintenance-card.txt` + `03-install-guide.txt`) the leader drops into `~/.claude/skills/`. NOT a "save this prompt to your library" affordance.
+**Rationale**: A saved prompt is dead context — the leader has to remember to paste it. An installed Agent Skill auto-triggers whenever the team's language matches, across Claude Code, Claude.ai, and Cursor. The leverage compounds without the leader doing anything. This also positions CTRL as a generator of *real agent infrastructure*, not a fancier prompt library.
+**Trade-off**: Higher implementation cost (ZIP packaging, install guides per tool, quality gate to ensure the output is actually agent-deployable). The user has to know how to install a Claude Skill (we mitigate with the install guide inside every ZIP).
+**Outcome**: ✅ Live. Differentiator vs. "saved prompts" tools is sharp and pitchable.
+
+## Decision 40: Pain-Anchored Entry Points (Not a Standalone /context Trip)
+**Date**: May 2026 (Phase 8 — PR #105)
+**Decision**: Surface "automate this" entry points on every page where a pain shows up — Edge view `AutomatePainCard` chip row of blockers + active decisions, zap button on Memory Web blocker cards, zap button on Briefing `decision_trigger` segments. Each entry point hands a `SkillSeed` via `location.state` to `/context`, which auto-opens `SkillCaptureSheet` pre-anchored.
+**Rationale**: Discovery is a feature. A Skill Builder buried as the third card on `/context` would be used once a quarter. Entry points on every page where the pain shows up make it a weekly reflex. The seed also grounds extraction in the leader's actual pain language so the trigger phrases match how their team actually talks, not an LLM's abstract reconstruction.
+**Trade-off**: Three new UI surfaces to maintain. Need a hook (`useUserPains`) that aggregates pains from Memory Web + decisions.
+**Outcome**: ✅ Live. Sales narrative gained "pain-anchored" as a phrase and a proof point.
+
+## Decision 41: Desktop-Native Shell with Command Palette
+**Date**: May 2026 (Phase 8 — PR #104)
+**Decision**: Replace the stretched-mobile desktop layout with a unified desktop-native shell: `AuthedLayoutRoute` wrapping authenticated routes in `CommandPaletteProvider`, Cmd/Ctrl+K Command Palette, sticky top bar with page eyebrow + title + actions, optional right rail, refined sidebar with user footer + keyboard hints. Pages opt into palette actions via custom `mm:capture-voice` and `mm:generate-briefing` window events.
+**Rationale**: Executive buyers judge desktop polish. The product was being demoed on desktop in every sales call, and the stretched-mobile feel undercut the premium positioning. Cmd+K is also the most pitchable desktop affordance in modern productivity software.
+**Trade-off**: Mobile and desktop paths are now genuinely different (mobile preserved unchanged on Landing, Briefing, Dashboard). Higher maintenance cost.
+**Outcome**: ✅ Live. The desktop demo experience now matches the rest of the product's premium bar.

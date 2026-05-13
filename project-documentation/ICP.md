@@ -1,6 +1,6 @@
 # Ideal Customer Profile
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
@@ -56,6 +56,12 @@ This is the buyer the product is designed for, the persona sales/marketing AI ag
 7. Twitter/X, LinkedIn, and Substack take 30+ minutes a day and produce one or two useful insights at best.
 8. Existing "personalized" feeds (Feedly, Techmeme, morning briefs) serve everyone the same stories with light reordering. The personalization is theatre.
 9. By the time a story is relevant, it's already late. Decision-relevant intel needs to surface in the same morning, anchored to a specific call on their desk.
+
+**Repetition Pain (CTRL Skill Builder solves this — Edge Pro)**
+10. Runs the same 3-5 workflows every week: Monday board update, Friday hiring sync, monthly investor update, RFP triage, weekly metrics review.
+11. Every iteration is re-typed from a blank prompt, even after building a rich Memory Web and exporting context. The repetition tax compounds.
+12. Has tried "save this prompt to a library" tools — dead context they have to remember to paste. Has tried generic macro / automation tools — they generate junk from any input because there's no triage gate.
+13. Wants permanent agent infrastructure they own (an installable Claude Skill in `~/.claude/skills/`), not a saved prompt or a brittle no-code automation. Pain signal: "I've explained this exact format to Claude 12 times this quarter."
 
 **Strategic Pain (Secondary — compounds over time)**
 10. Cannot distinguish real AI value from vendor theatre in proposals and pitches.
