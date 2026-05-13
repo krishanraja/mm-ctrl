@@ -27,6 +27,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
+import { useProfileBasics } from '@/hooks/useProfileBasics';
 import { renderMarkdown } from '@/lib/renderMarkdown';
 import { EDGE_PRO_PRICE_LABEL } from '@/constants/billing';
 
@@ -46,6 +47,31 @@ export const SAMPLE_ARTIFACTS: Record<string, string> = {
   systemize: `## Framework: High-Trust Team Building\n\n### The 4-Layer Model\n\nBased on your demonstrated pattern of building high-performing teams, here is your instinct codified:\n\n1. **Safety First** - establish psychological safety before pushing for performance\n2. **Clarity of Ownership** - every initiative has exactly one DRI\n3. **Rhythm over Rules** - weekly standups, monthly retros, quarterly planning`,
   teach: `## Teaching Doc: Strategic Thinking\n\n### How I Approach Big-Picture Decisions\n\nWhen I face a strategic decision, I follow a pattern that has served me well:\n\n1. **Frame the decision** - write down the actual question in one sentence\n2. **Map the stakeholders** - who is affected and what do they need?\n3. **Identify the reversibility** - is this a one-way or two-way door?`,
 };
+
+// Personalised one-liner shown above the blurred sample so the leader can
+// see this isn't a stock screenshot — it's what THEIR artifact would look
+// like. Falls back to null if we can't infer a sensible line.
+function personalisedTeaser(sampleKey: string | null, company: string): string | null {
+  const quarter = Math.ceil((new Date().getMonth() + 1) / 3);
+  switch (sampleKey) {
+    case 'board_memo':
+      return `Board memo for ${company}, Q${quarter}`;
+    case 'strategy_doc':
+      return `Strategy doc for ${company}, Q${quarter}`;
+    case 'email':
+      return `Email draft for ${company}`;
+    case 'meeting_agenda':
+      return `Leadership agenda for ${company}`;
+    case 'template':
+      return `Weekly template for ${company}`;
+    case 'systemize':
+      return `Leadership framework for ${company}`;
+    case 'teach':
+      return `Teaching doc for ${company}`;
+    default:
+      return null;
+  }
+}
 
 // Match a paywall capability string to a sample key
 function findSampleKey(capability?: string): string | null {
@@ -82,6 +108,8 @@ function PaywallContent({
   onSubscribe: () => void;
   isProcessing: boolean;
 }) {
+  const { companyName } = useProfileBasics();
+
   return (
     <div className="space-y-5">
       {/* Header icon */}
@@ -99,11 +127,15 @@ function PaywallContent({
         </div>
       </div>
 
-      {/* Blurred sample artifact preview */}
+      {/* Blurred sample artifact preview — personalised when we have the
+          leader's company name. Generic sample if not. */}
       {(() => {
         const sampleKey = findSampleKey(capability);
         const sampleContent = sampleKey ? SAMPLE_ARTIFACTS[sampleKey] : null;
         if (!sampleContent) return null;
+        const personalisedLine = companyName
+          ? personalisedTeaser(sampleKey, companyName)
+          : null;
         return (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
@@ -111,6 +143,13 @@ function PaywallContent({
             transition={{ delay: 0.15 }}
             className="relative rounded-xl border border-border overflow-hidden"
           >
+            {personalisedLine && (
+              <div className="px-4 pt-3 pb-1 bg-accent/5 border-b border-border">
+                <p className="text-[11px] font-medium text-accent">
+                  {personalisedLine}
+                </p>
+              </div>
+            )}
             <div
               className="p-4 max-h-32 overflow-hidden text-xs"
               dangerouslySetInnerHTML={{ __html: renderMarkdown(sampleContent) }}
