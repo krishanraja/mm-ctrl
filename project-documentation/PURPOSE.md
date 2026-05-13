@@ -1,6 +1,6 @@
 # Purpose
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
@@ -17,6 +17,7 @@ It **is**:
 - A portable context system that exports to ChatGPT, Claude, Gemini, Cursor, Claude Code, and any LLM
 - A daily evidence-based audio Briefing (3 minutes) that anchors every story to something specific in your profile
 - An "Edge" leadership amplifier that turns your strengths into systems and covers your weaknesses with on-demand artifacts (board memos, strategy docs, emails, meeting agendas)
+- An Agent Skill Builder that turns one weekly workflow into a downloadable, agentskills.io-compliant Claude Skill the leader drops into `~/.claude/skills/` and forgets — it auto-triggers whenever the team's language matches. With a Three Honest Tests triage gate that refuses to generate junk skills from inputs that are really Memory Web facts, Custom Instructions, or Saved Styles.
 - Built-in thinking tools — Decision Advisor, Meeting Prep, Prompt Coach — that already know your world
 - Self-contained — no integrations with Slack, email, calendar, or any other tool. Your context comes from what you choose to share, nothing else.
 - A pattern detection system that surfaces strengths to amplify and blind spots to close
@@ -52,6 +53,12 @@ Every minute a leader spends setting up AI context is a minute not spent decidin
 - Leaders waste 30+ minutes a day scrolling for the 3 stories that actually matter to their world
 - "Personalized" AI feeds personalize on engagement, not priorities. They optimize for clicks, not decisions.
 
+**The third tax — the repetition tax:**
+- Leaders run the same 3-5 workflows every week (Monday board update, Friday hiring sync, monthly investor update, RFP triage)
+- Every iteration is re-typed from a blank prompt, even by leaders with a rich Memory Web
+- The "automation" tools that promise to fix this generate junk from any input — they don't triage whether the input is even a workflow
+- Hours of weekly leverage left on the table because there is no triage-aware, agent-native skill builder for executives
+
 **What leaders actually need:**
 1. **Context that travels** — One source of truth about them that works across every AI tool
 2. **Instant depth** — AI that starts from deep knowledge of their world, not a blank prompt
@@ -65,7 +72,8 @@ Every minute a leader spends setting up AI context is a minute not spent decidin
 3. **Export anywhere** — One click to ChatGPT, Claude, Gemini, Cursor, Claude Code, raw markdown
 4. **Decide faster** — Decision Advisor, Meeting Prep, and Edge already know your context
 5. **Hear your world every morning** — 3-minute audio Briefing where every segment shows "Anchored to: <your priority>"
-6. **Compound over time** — The Memory Web deepens. Every AI interaction gets sharper. Decision speed accelerates.
+6. **Automate the repetitive ones** — Talk through one weekly workflow. CTRL hands you a Claude Skill ZIP that auto-triggers whenever your team's language matches. The Three Honest Tests gate refuses to generate junk skills from non-workflow inputs.
+7. **Compound over time** — The Memory Web deepens. Every AI interaction gets sharper. Every weekly ritual becomes permanent agent infrastructure. Decision speed accelerates.
 
 The critical insight: CTRL doesn't replace any AI tool. It makes every AI tool a leader already uses dramatically faster to value.
 
@@ -127,7 +135,9 @@ Use these when generating outbound, ad copy, or social posts:
 - **Privacy hook**: "No integrations. No plugins. No enterprise security review. You talk to it; that's the whole connection."
 - **Time anchor**: "2 minutes to first export. 3 minutes a day for your Briefing. Replaces 30+ minutes of AI context setup and 30+ minutes of scrolling."
 - **Compounding hook**: "Every conversation makes your AI double sharper. The gap between you and leaders using AI generically widens daily."
-- **Pricing anchors**: Free for the core (Memory Web, Context Export, basic Briefing). $49 for the full Diagnostic. $9/month for Edge Pro (premium briefings + on-demand artifacts).
+- **Repetition-tax hook**: "Every leader runs 3-5 workflows every week. The Skill Builder turns one of them into a Claude Skill in two minutes. Drop it into `~/.claude/skills/` and forget it."
+- **Triage hook**: "Three Honest Tests. CTRL refuses to generate a skill when your input is really a fact, a tone preference, or a writing style. The respect for your time is the product."
+- **Pricing anchors**: Free for the core (Memory Web, Context Export, basic Briefing). $49 for the full Diagnostic. $9/month for Edge Pro (premium briefings + on-demand artifacts + unlimited Agent Skill Builder + Custom Voice Export).
 
 ## Measurement of Success
 

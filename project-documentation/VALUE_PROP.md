@@ -2,7 +2,7 @@
 
 Clear value propositions for each audience. Every claim ties back to one thing: **decision speed**.
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
@@ -14,13 +14,13 @@ Clear value propositions for each audience. Every claim ties back to one thing: 
 
 **Who**: Are making dozens of decisions per week and cannot afford to re-explain their world to AI every single time
 
-**CTRL**: Is a portable AI context platform with a daily evidence-based intelligence Briefing
+**CTRL**: Is a portable AI context platform with a daily evidence-based intelligence Briefing and a voice-to-Agent-Skill builder
 
-**That**: Builds your AI double from two minutes of natural conversation, exports your full context to any AI tool, and delivers 3 minutes of audio every morning anchored to your real priorities — so every interaction starts from depth, not from scratch
+**That**: Builds your AI double from two minutes of natural conversation, exports your full context to any AI tool, delivers 3 minutes of audio every morning anchored to your real priorities, and turns the workflows you already repeat every week into downloadable Claude Skills — so every interaction starts from depth, not from scratch
 
-**Unlike**: Custom GPTs (locked to one platform), manual system prompts (hours of work), AI courses (theory, not speed), or news feeds (everyone gets the same stories)
+**Unlike**: Custom GPTs (locked to one platform), manual system prompts (hours of work), AI courses (theory, not speed), news feeds (everyone gets the same stories), or generic macro / automation tools (no triage gate — they happily generate junk skills from any input)
 
-**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours, plus built-in thinking tools and a daily audio briefing that already knows your world and cut the path to decisions
+**We**: Give you a portable AI double that makes ChatGPT, Claude, Gemini, and every other tool instantly yours, plus built-in thinking tools, a daily audio briefing that already knows your world, and a Skill Builder that converts one weekly workflow into permanent agent infrastructure you own
 
 ### The Flywheel
 
@@ -53,7 +53,15 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 - "Your strengths sharpened, your weaknesses covered."
 - AI synthesizes your Memory Web + assessment data into an actionable leadership profile: strengths to amplify (Sharpen) and weaknesses to compensate for (Cover).
 - On-demand artifacts in your register: board memos, strategy docs, emails, meeting agendas, frameworks, templates.
-- Edge Pro ($9/month) unlocks unlimited generation + email delivery.
+- Edge Pro ($9/month) unlocks unlimited generation + email delivery + all 7 briefing types + unlimited Agent Skill Builder.
+
+**Agent Skill Builder (Edge Pro)**
+- "Describe one weekly workflow out loud. Get a Claude Skill that auto-triggers whenever your team's language matches."
+- The output is a downloadable, agentskills.io-compliant ZIP. Drop it into `~/.claude/skills/` and forget it. The skill fires whenever a triggering phrase appears in Claude Code, Claude.ai, or Cursor.
+- **Three Honest Tests triage gate**: if your input is really a Memory Web fact, a Custom Instruction, or a Saved Style, CTRL routes you to the right surface instead of generating a junk skill.
+- **Pain-anchored entry points**: every blocker in Edge view, every Memory Web blocker card, and every Briefing decision-trigger segment has a one-tap zap into the Skill Builder pre-seeded with that pain.
+- Quality gate enforces 5+ trigger phrases, push language, third-person voice, body under 500 lines, imperative voice, required sections, valid name format. Skills you can actually deploy, not drafts you have to clean up.
+- Five archetypes covered: decision-framework, voice-lock, reporting-engine, tool-integration, getting-started.
 
 **Decision Advisor**
 - "Ask a hard question. Get an answer that knows your context."
@@ -88,6 +96,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 | **AI Consultants** | $15K+ engagement, creates dependency | Self-serve. Leader owns their data. No dependency. No delay. |
 | **AI Context Tools (Notion AI, Mem, Rewind)** | Connect to Slack, email, calendar — require enterprise approvals, read your whole computer | Self-contained. You talk to it. No integrations. No permissions. No IT review. |
 | **Morning Briefs (Axios, Morning Brew, Techmeme, Feedly)** | Same stories for everyone, light algorithmic reorder | Custom lens per user per briefing type per day. Every segment shows the specific profile fact it was anchored to. |
+| **Macro / Automation / Skill-generation tools** | Generate something from any input, no validation | Three Honest Tests triage gate refuses to generate junk skills; quality gate validates output. agentskills.io-compliant ZIPs that drop into `~/.claude/skills/` and auto-trigger across Claude Code, Claude.ai, and Cursor. |
 | **Doing Nothing** | Re-explain yourself to AI every time. Decisions slow. | Set it once. Works everywhere. Gets better over time. Decisions accelerate. |
 
 ### Why Leaders Choose CTRL
@@ -186,9 +195,9 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 
 ### What Binds All Three
 
-**Problem**: Leaders use AI but every conversation starts from zero. This kills decision speed. Teams can't align on AI decisions. Portfolios lack visibility into where velocity is being lost.
+**Problem**: Leaders use AI but every conversation starts from zero. This kills decision speed. The repetitive workflows leaders run every week (board updates, hiring syncs, RFP triage) are re-typed from scratch every time. Teams can't align on AI decisions. Portfolios lack visibility into where velocity is being lost.
 
-**Solution**: CTRL provides portable AI context (Memory Web + Export), evidence-based daily intelligence (Briefing v2), a leadership amplifier (Edge), and structured thinking tools that eliminate the zero-context tax and accelerate the path from question to decision.
+**Solution**: CTRL provides portable AI context (Memory Web + Export), evidence-based daily intelligence (Briefing v2), a leadership amplifier (Edge), an Agent Skill Builder (voice-to-Claude-Skill), and structured thinking tools that eliminate the zero-context tax and accelerate the path from question to decision.
 
 **Differentiation**: We don't teach AI. We don't implement AI. We make every AI tool a leader already uses dramatically faster to value by automating context — and we prove the relevance with auditable anchors.
 
@@ -232,7 +241,7 @@ The more you use CTRL, the richer your Memory Web becomes. The richer your Memor
 | **Full Diagnostic** | $49 one-time | Complete tensions, risk signals, org scenarios, full thinking tools library | Leaders who want a one-shot deep audit |
 | **Deep Context Upgrade** | $29 one-time | Enhanced company-context enrichment for sharper AI output | Leaders pre-meeting prep / strategy sprints |
 | **Diagnostic + Deep Context Bundle** | $69 one-time | Both above. Saves $10 vs buying separately. | Default upsell once Memory Web is built |
-| **Edge Pro** | $9/month | Unlimited Edge artifacts (board memos, strategy docs, emails, agendas), all 7 Briefing types (incl. Boardroom Prep, Vendor Landscape, Competitive Intel, AI Model Landscape, Custom Voice), email delivery | Leaders who treat AI as part of their weekly cadence |
+| **Edge Pro** | $9/month | Unlimited Edge artifacts (board memos, strategy docs, emails, agendas), all 7 Briefing types (incl. Boardroom Prep, Vendor Landscape, Competitive Intel, AI Model Landscape, Custom Voice), email delivery, unlimited Agent Skill Builder generation, Custom Voice Export | Leaders who treat AI as part of their weekly cadence |
 | **Bootcamp** | $15K-$50K | 4-hour executive sprint + pilot charter + provocation report | Exec teams |
 | **Portfolio** | $5K-$25K | Heatmap + offer pack across portfolio companies | VCs / PE / consultants |
 
@@ -249,4 +258,6 @@ Pick the right hook for the audience and channel:
 - **For boardroom-pressure audiences**: "Walk into your next board meeting fluent in your AI strategy. Or be the one being briefed."
 - **For peer-comparison audiences**: "Somewhere, a leader in your space is making AI-assisted decisions in seconds because their AI already knows their world. CTRL is how."
 - **For builder/operator audiences**: "Built by Krish Raja — 16 years monetizing emerging tech, $0 → $12M ARR at Captify, $9M → $61M data revenue at Nine. The tool he wished existed when running real P&Ls."
-- **CTA progression**: Free signup → first export in 2 min → seed beats accepted → first Briefing → Diagnostic upsell → Edge Pro upsell.
+- **For Claude / Cursor / Claude Code power users**: "CTRL is the first tool that turns your weekly leader workflows into agentskills.io-compliant Skills you drop into `~/.claude/skills/`. Two minutes of voice. Permanent leverage. Triage gate refuses to generate junk."
+- **For "automation fatigue" audiences**: "Most automation tools generate something whether your input was a real workflow or not. CTRL's Three Honest Tests triage gate refuses to generate a skill from a fact, a tone preference, or a writing style. The respect for your time is the product."
+- **CTA progression**: Free signup → first export in 2 min → seed beats accepted → first Briefing → Diagnostic upsell → Edge Pro upsell (Briefing types + Skill Builder + Custom Voice Export).

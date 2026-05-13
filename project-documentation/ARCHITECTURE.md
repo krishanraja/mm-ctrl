@@ -2,9 +2,9 @@
 
 Complete system architecture and data flow documentation.
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
-> **Verified counts (2026-04-26)**: 74 edge functions, 48 hooks, 97 migrations, 6 e2e specs, 6 vitest specs, pgvector + pgcrypto + pg_cron extensions enabled, 6 audit-week tracks shipped (revenue path, data path, UX, reliability, observability, cleanup).
+> **Verified counts (2026-05-13)**: 74 edge functions, 51 hooks, 98 migrations, 6 e2e specs, 5 vitest specs, pgvector + pgcrypto + pg_cron extensions enabled, 6 audit-week tracks shipped (revenue path, data path, UX, reliability, observability, cleanup), Phase 8 shipped (Skill Builder + world-class desktop UI redesign + pain-anchored entry points).
 
 ---
 
@@ -73,8 +73,9 @@ src/
 │   │   ├── IntelligencePanel.tsx
 │   │   ├── RecentFactsFeed.tsx
 │   │   ├── PatternInsightCard.tsx
+│   │   ├── SkillExportCard.tsx    # /context Step 1 entry-point card for the Skill Builder (Edge Pro gated) (v5.2)
 │   │   └── GettingSmarterBanner.tsx
-│   ├── edge/                  # Edge: Leadership Amplifier (new feature)
+│   ├── edge/                  # Edge: Leadership Amplifier + Skill Builder UI
 │   │   ├── EdgeView.tsx           # Main Edge view (strengths/weaknesses/gaps)
 │   │   ├── EdgeProfileCard.tsx    # Profile summary card
 │   │   ├── EdgeOnboarding.tsx     # First-time Edge experience
@@ -85,7 +86,12 @@ src/
 │   │   ├── DraftSheet.tsx         # Artifact preview/generation sheet
 │   │   ├── ArtifactPreview.tsx    # Generated artifact display
 │   │   ├── FeedbackButtons.tsx    # Strength/weakness feedback
-│   │   └── SendToInboxButton.tsx  # Email delivery
+│   │   ├── SendToInboxButton.tsx  # Email delivery
+│   │   ├── AutomatePainCard.tsx   # Skill Builder pain-anchored entry chip row (v5.2)
+│   │   ├── SkillCaptureSheet.tsx  # Voice/text Skill Builder capture (bottom sheet on mobile, dialog on desktop) (v5.2)
+│   │   ├── SkillPreviewSheet.tsx  # Generated skill preview + ZIP download + install guide (v5.2)
+│   │   ├── SkillQualityGate.tsx   # Quality checklist display (v5.2)
+│   │   └── SkillInstallGuide.tsx  # Per-tool install instructions (Claude Code / Claude.ai / Cursor) (v5.2)
 │   ├── action/                # Weekly action components
 │   ├── ai-chat/               # AI chat components
 │   ├── analytics/             # Analytics components
@@ -138,7 +144,7 @@ src/
 ├── contexts/
 │   ├── AppStateContext.tsx    # Global app state management
 │   └── AssessmentContext.tsx  # Assessment flow state
-├── hooks/                     # 48 custom hooks
+├── hooks/                     # 51 custom hooks
 │   ├── useStructuredAssessment.ts
 │   ├── useRealtimeAssessment.ts
 │   ├── useAILiteracyAssessment.ts
@@ -147,6 +153,9 @@ src/
 │   ├── useDevice.ts
 │   ├── useEdge.ts             # Edge profile data + synthesis
 │   ├── useEdgeSubscription.ts # Edge Pro subscription state
+│   ├── useSkillExport.ts      # Skill Builder pipeline (v5.2) — wraps generate-skill-export, decodes base64 ZIP into a Blob
+│   ├── useUserPains.ts        # Top blockers + active decisions, drives pain-anchored entry points (v5.2)
+│   ├── useRevealOnMount.ts    # Smooth reveal helper for below-the-fold components (v5.2)
 │   ├── useMemoryQueries.ts    # Memory Center queries
 │   ├── useMemoryWeb.ts        # Memory Web dashboard data
 │   ├── useMemoryExport.ts     # Context export logic
@@ -282,8 +291,20 @@ Using React Router v6 with `createBrowserRouter` and lazy loading (defined in `s
 All active pages are lazy-loaded with `React.lazy()` and wrapped in `<Suspense>` boundaries.
 
 **Navigation:**
-- **Desktop**: Fixed left sidebar (264px) - `memory-web/DesktopSidebar.tsx` with CTRL logo, 4 nav items (Home, Edge, Memory Web, Export to AI), settings, sign out
+- **Desktop**: Fixed left sidebar (264px) - `memory-web/DesktopSidebar.tsx` with CTRL logo, 4 nav items (Home, Edge, Memory Web, Export to AI), settings, sign out, user footer + keyboard hints (v5.2)
 - **Mobile**: Bottom nav bar - `memory-web/BottomNav.tsx` with 4 tabs (Home, Edge, Memory, Export)
+
+### Desktop Shell (v5.2)
+
+Authenticated routes wrap in `AuthedLayoutRoute` which mounts `CommandPaletteProvider` plus a sticky top bar with page eyebrow + title + actions, and supports an optional right rail that pages opt into.
+
+- **Command Palette** — `Cmd/Ctrl + K`. Pages opt into actions via two custom window events:
+  - `mm:capture-voice` — fired from the palette to open the active page's voice capture flow
+  - `mm:generate-briefing` — fired to kick off a briefing generation from anywhere
+- **Right rail (opt-in)** — Briefing surfaces (interests, suggestions, weekly history), Export wizard (step progress, current selection, contextual pro tip), Memory Web dashboard (today's briefing slot, quick actions, coverage bars, activity).
+- **Landing page (desktop)** — bold asymmetric hero with animated Memory Web preview, sticky top nav with section anchors, multi-section scroll (how it works, three pillars, briefing teaser, privacy), final CTA. Mobile preserves the swipeable three-card experience.
+
+The shell exists to make the product feel like a desktop-native tool, not stretched mobile markup. This was Phase 8's UX answer to "executive buyers judge by surface polish."
 
 ---
 
@@ -708,6 +729,17 @@ training_material                       -- YAML voice guide, single source of tr
 ├── scope (global | cohort | user), user_id (optional), version
 ├── body_raw (TEXT YAML), body_parsed (JSONB)
 └── is_active
+
+skill_exports                           -- Skill Builder log (Phase 8)
+├── id (PK, uuid), user_id (FK auth.users, ON DELETE CASCADE)
+├── skill_name, description, transcript
+├── triage_result ('skill' | 'custom_instruction' | 'memory_fact' | 'saved_style' | 'failed')
+├── body_content, references_json (JSONB), test_prompts (TEXT[])
+├── quality_gate (JSONB), archetype, version (default 1)
+├── zip_path (reserved for future Storage upload), created_at
+  - One row per generation attempt, including failed-triage cases
+  - RLS: owner-read + owner-insert
+  - Indexed on user_id and created_at DESC
 ```
 
 **PostgreSQL Extensions (required):**
@@ -719,7 +751,7 @@ training_material                       -- YAML voice guide, single source of tr
 
 **Location**: `supabase/functions/`
 
-**Total**: 74 edge functions in `supabase/functions/` plus a `_shared/` module directory. The Briefing subsystem (Phase 6) added seven functions (`generate-briefing`, `synthesize-briefing`, `briefing-diagnose`, `get-industry-seeds`, `briefing-kill-lens-item`, `briefing-aggregate-feedback`, `infer-briefing-interests`, `nudge-briefing`) plus shared modules (`briefing-lens`, `briefing-scoring`, `briefing-curation`, `user-context`, `lens-signature`, `with-timeout`, `logger`).
+**Total**: 74 edge functions in `supabase/functions/` plus a `_shared/` module directory. The Briefing subsystem (Phase 6) added seven functions (`generate-briefing`, `synthesize-briefing`, `briefing-diagnose`, `get-industry-seeds`, `briefing-kill-lens-item`, `briefing-aggregate-feedback`, `infer-briefing-interests`, `nudge-briefing`) plus shared modules (`briefing-lens`, `briefing-scoring`, `briefing-curation`, `user-context`, `lens-signature`, `with-timeout`, `logger`). Phase 8 added one function (`generate-skill-export`, four internal files) backing the Skill Builder pipeline.
 
 **Production hardening (Audit Weeks 1-6, April 2026):**
 - All external API calls now wrapped with `_shared/with-timeout.ts` (timeouts + retries, tested)
@@ -826,6 +858,16 @@ training_material                       -- YAML voice guide, single source of tr
 #### Additional Functions
 
 53. **enrich-company-context** - Enrich company data for contextual AI responses
+
+#### Skill Builder Subsystem (Phase 8, May 2026)
+
+60. **generate-skill-export** — Voice-to-Agent-Skill pipeline. Edge Pro gated. Internal modules:
+    - `index.ts` — orchestrator: Edge Pro gate → memory context build → triage LLM call → quality-gate validation → ZIP packaging → `skill_exports` insert
+    - `prompt.ts` — system + user prompts encoding the Three Honest Tests triage rules + extraction rules. Forwards optional `SkillSeed` (kind + text) so extraction grounds in the leader's actual pain language.
+    - `quality-gate.ts` — deterministic validator: 5+ trigger phrases, push language, third-person voice, body under 500 lines, imperative voice, required sections, no bare MUST/NEVER, valid name format. Returns `{ checks: [...], summary: { passed, total } }`. Only the name-format check is a hard fail; everything else is advisory and surfaced to the user.
+    - `zip.ts` — agentskills.io-compliant packager. Single root folder, `SKILL.md` + `references/` + `01-test-prompts.txt` + `02-maintenance-card.txt` + `03-install-guide.txt`. Returns base64 + byte length.
+
+    Triage routing: when the input is really a Memory Fact / Custom Instruction / Saved Style, the function returns `{ triage: { passed: false, result, reasoning } }` (200 OK, no skill). The attempt is still logged in `skill_exports` with `triage_result` set accordingly so we can learn from misses without re-running the LLM.
 
 **Shared Modules** (`supabase/functions/_shared/`):
 - `context-builder.ts` / `memory-context-builder.ts` — LLM context construction

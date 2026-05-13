@@ -2,21 +2,22 @@
 
 Complete feature inventory across all three CTRL tools.
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 > **For sales/marketing AI agents**: every major feature in this doc has a "Sales Anchor" callout. Pull those into outbound copy. Every feature is shipped, deployed, and observable in production unless explicitly marked `[planned]`.
 
 ---
 
-## Repo at a glance (verified 2026-04-26)
+## Repo at a glance (verified 2026-05-13)
 
-- **74 Supabase edge functions** (Deno runtime), grouped: 7 briefing, 5 memory, 5 AI generation, 4 billing, 6 diagnostic, 8 email, 9 enrichment, 11 leadership/missions/observability/voice, plus shared modules
-- **48 React hooks** under `src/hooks/`
-- **97 PostgreSQL migrations** applied to remote
+- **74 Supabase edge functions** (Deno runtime), grouped: 7 briefing, 5 memory, 5 AI generation, 4 billing, 6 diagnostic, 8 email, 9 enrichment, 11 leadership/missions/observability/voice, 1 skill builder (`generate-skill-export`), plus shared modules
+- **51 React hooks** under `src/hooks/` (added in v5.2: `useSkillExport`, `useUserPains`, `useRevealOnMount`)
+- **98 PostgreSQL migrations** applied to remote (added in v5.2: `20260508000000_create_skill_exports.sql`)
 - **PostgreSQL extensions in use**: pgvector, pgcrypto, pg_cron
 - **6 audit-week tracks shipped** (PR #93-#101): revenue path, data path, UX, reliability, observability, cleanup. See `HISTORY.md` Phase 7.
+- **Desktop UI redesign shipped** (PR #104, Phase 8): unified desktop-native shell — sticky top bar with page eyebrow + title + actions, optional right rail for context, Cmd/Ctrl+K Command Palette across all authenticated routes. No more stretched mobile markup on desktop.
 - **CI gates blocking on PRs**: typecheck (tsc --noEmit), full Vite build, ESLint on PR diff
-- **Tests**: 6 Vitest unit/shared + 6 Playwright e2e (auth-journeys, briefing-journey, briefing-rate-limits, sparse-profile, account-deletion, stripe-webhook-idempotency)
+- **Tests**: 5 Vitest unit/shared + 6 Playwright e2e (auth-journeys, briefing-journey, briefing-rate-limits, sparse-profile, account-deletion, stripe-webhook-idempotency)
 
 ---
 
@@ -216,6 +217,8 @@ Edge analyzes everything CTRL knows about a leader and surfaces:
 - Email delivery via `deliver-edge-artifact`
 - All capability types
 - All 7 briefing types (incl. Boardroom Prep, Vendor Landscape, Competitive Intel, AI Model Landscape, Custom Voice)
+- **Unlimited Agent Skill Builder generation** (`generate-skill-export`) — voice-to-Skill ZIP, downloadable into `~/.claude/skills/`
+- Custom Voice Export (`generate-custom-export`)
 - Subscription management UI via `create-billing-portal-session`
 - Stripe webhook idempotency table (`stripe_events_processed`) prevents double-charges (Audit Week 1)
 
@@ -450,6 +453,134 @@ The headline differentiator: export your Memory Web as formatted context to any 
 
 **Hooks**
 - `useMemoryExport.ts`: Export generation, format selection, and clipboard integration
+
+---
+
+## Agent Skill Builder: Voice-to-Skill Pipeline (Edge Pro)
+
+### Overview
+
+Turns a repetitive leader workflow into a downloadable, **agentskills.io-compliant** Agent Skill the leader drops into `~/.claude/skills/`. The leader describes (voice or text) one thing they do at least weekly. CTRL extracts the trigger, the steps, the format constraints, and packages it as a ZIP that auto-triggers in Claude Code / Claude.ai / Cursor whenever their language matches.
+
+This is the third surface on the Context Export page (`/context`). Two minutes describing a Monday-morning ritual is enough to generate a permanent piece of agent infrastructure the leader owns.
+
+**Pages / surfaces:**
+- `/context` (Step 1) — `SkillExportCard` promoted above the Custom Voice card, gated behind Edge Pro
+- Edge view (`/dashboard?view=edge`) — `AutomatePainCard` chip row of declared blockers + active decisions
+- Memory Web blocker cards — zap button on each blocker
+- Briefing — zap button on every `decision_trigger` segment (v1 + v2)
+
+All four entry points hand the user's already-declared pain to the Skill Builder via a `SkillSeed`, navigate to `/context`, and auto-open `SkillCaptureSheet` pre-anchored. The LLM grounds extraction in the leader's actual words instead of inventing an abstract trigger.
+
+### The Pipeline (shipped May 2026)
+
+Seven stages, all running inside `generate-skill-export/index.ts`:
+
+| Stage | What it does | Model / Tool |
+|---|---|---|
+| 1. Edge Pro gate | Verify `edge_subscriptions.status` is `active` or `past_due` | Postgres |
+| 2. Context build | Pull Memory Web facts + edge profile strengths/weaknesses for grounding | `buildMemoryContext` (3000 token budget) |
+| 3. Triage (Three Honest Tests) | Decide whether the input is really a skill, a Memory Web fact, a Custom Instruction, or a Saved Style. Triage failures route the input to the right surface and are still logged in `skill_exports` for analytics. | OpenAI JSON mode (gpt-4o), temperature 0.3 |
+| 4. Extraction | Generate skill name, description, body, references, test prompts, gotchas, archetype | OpenAI JSON mode |
+| 5. Quality gate | Validate 5+ trigger phrases, push language, third-person voice, body under 500 lines, imperative voice, required sections, no bare MUST/NEVER, valid name format | `runQualityGate` (deterministic) |
+| 6. ZIP assembly | Build the agentskills.io standard bundle: single root folder, `SKILL.md` + `references/` + `01-test-prompts.txt` + `02-maintenance-card.txt` + `03-install-guide.txt` | `buildSkillZip` (Deno + JSZip) |
+| 7. Persist | Insert into `skill_exports` (one row per attempt, including failed triage), return base64 ZIP inline | Supabase service role |
+
+The Three Honest Tests triage is the value-prop differentiator: when a leader describes a one-time fact ("I worked at Microsoft in 2010"), CTRL routes that to Memory Web rather than generating a useless skill. When they describe a tone preference ("I always write in plain English"), it routes to Custom Instructions. Skills only get generated when the input is a repeatable, triggerable workflow.
+
+### Skill Archetypes
+
+Every generated skill is tagged with one of five archetypes (used for analytics and for tuning future routing):
+
+- **decision-framework** — recurring decision templates (e.g. RFP triage, hire/no-hire)
+- **voice-lock** — exec writing patterns that must hold across many outputs (e.g. board update voice)
+- **reporting-engine** — periodic structured reports (e.g. weekly hiring sync, investor update)
+- **tool-integration** — workflows that bridge external systems
+- **getting-started** — onboarding / first-touch skills
+
+### Pain-Anchored Entry Points
+
+Skill creation is a reflex on the page where the pain shows up, not a standalone trip to `/context`:
+
+| Entry point | Component | Seed kind |
+|---|---|---|
+| Edge view chip row | `AutomatePainCard` | `blocker` or `decision` |
+| Memory Web blocker card | Zap button on `MemoryItemCard` | `blocker` |
+| Briefing decision-trigger segment | Zap button on `BriefingCard` and `SegmentCard` | `briefing_segment` |
+| Curated examples (cold-start fallback) | `SkillCaptureSheet` chips | `example` |
+
+The seed flows: entry point → `useNavigate('/context', { state: { skillSeed } })` → `ContextExport` page detects and auto-opens `SkillCaptureSheet` with a pre-filled scaffold. The user only adds the steps they follow today; the leading pain is already there.
+
+### The SkillCaptureSheet (mobile bottom sheet / desktop dialog)
+
+- Voice mode (default when no seed): up to 5 minutes of recording, OpenAI Whisper transcript, optional review/edit before submit
+- Text mode (default when arriving with a seed): pre-filled scaffold built from the seed text
+- Pain picker chip row when no seed is provided (pulls top 5 from `useUserPains`)
+- Curated example chips fallback when the leader has no declared pains yet (Monday board update, Weekly hiring sync, RFP triage, Investor update)
+- 20-character minimum on the description
+
+### The SkillPreviewSheet
+
+- Skill description and archetype
+- Big Download CTA (decodes the base64 ZIP into a Blob in-browser)
+- Quality gate checklist (passed / total, per-check detail)
+- Test prompts with copy buttons (the leader pastes these into Claude to verify the skill triggers)
+- Install guide accordion: Claude Code (`~/.claude/skills/`), Claude.ai (uploaded skills), Cursor
+
+### Triage Routing
+
+When the triage gate decides the input isn't a skill, the response is:
+
+```
+{ triage: { passed: false, result: "memory_fact" | "custom_instruction" | "saved_style", reasoning: "..." } }
+```
+
+The UI surfaces the routing decision so the leader knows exactly what to do with their input. No skill is generated. The attempt is still logged in `skill_exports` so we can learn from the misses without re-running the LLM.
+
+### Data Architecture
+
+**Table** (`20260508000000_create_skill_exports.sql`):
+
+```
+skill_exports
+├── id (PK, uuid)
+├── user_id (FK auth.users, ON DELETE CASCADE)
+├── skill_name (TEXT)
+├── description (TEXT)
+├── transcript (TEXT) — original input, kept for analytics
+├── triage_result (TEXT: 'skill' | 'custom_instruction' | 'memory_fact' | 'saved_style' | 'failed')
+├── body_content (TEXT, null on failed triage)
+├── references_json (JSONB)
+├── test_prompts (TEXT[])
+├── quality_gate (JSONB) — full checklist result
+├── archetype (TEXT) — one of the 5 archetypes above
+├── version (INT) — supports skill iteration
+├── zip_path (TEXT) — null today; reserved for future Storage upload + shareable links
+└── created_at (TIMESTAMPTZ)
+```
+
+RLS: owner-read, owner-insert. Indexed on `user_id` and `created_at DESC`.
+
+**Edge Function:**
+- `generate-skill-export` — the whole pipeline. Edge Pro gated (`active` or `past_due` grace). 4 internal files: `index.ts`, `prompt.ts` (system + user prompts encoding the triage rules + extraction rules), `quality-gate.ts` (deterministic validator), `zip.ts` (agentskills.io packager).
+
+**Hooks:**
+- `useSkillExport` — wraps the edge function. Manages full lifecycle: call, parse, decode the base64 ZIP into a downloadable Blob.
+- `useUserPains` — returns the top N blockers + active decisions from the leader's Memory Web for seeding entry points.
+
+**Components** (`src/components/edge/` + `src/components/memory-web/`):
+- `SkillExportCard` — entry-point card on `/context`
+- `SkillCaptureSheet` — voice/text capture, bottom sheet on mobile, dialog on desktop
+- `SkillPreviewSheet` — preview + download CTA + install guide
+- `SkillQualityGate` — quality checklist display
+- `SkillInstallGuide` — per-tool install instructions
+- `AutomatePainCard` — pain-anchored entry chip row on Edge view
+
+### Edge Pro Gating
+
+Same paywall as `generate-custom-export`. Free users see the locked `SkillExportCard` with a "Pro" badge that opens the Stripe checkout via `useEdgeSubscription.subscribe`. Subscribers get unlimited skill generation.
+
+**Sales Anchor — Skill Builder**: "Describe one weekly workflow out loud. CTRL hands you a Claude Skill that auto-triggers whenever your team's language matches. Two minutes of speaking. Permanent leverage. Drop it in `~/.claude/skills/` and forget it."
 
 ---
 
@@ -1206,12 +1337,15 @@ A condensed list of one-liners pullable for outbound. Each tied to a real shippe
 
 - **Memory Web**: "Talk for two minutes. Get a portable AI double that works in every AI tool."
 - **Context Export**: "One click. ChatGPT, Claude, Gemini, Cursor, Claude Code — all of them. Yours."
+- **Skill Builder (Agent Skill Builder)**: "Describe one weekly workflow out loud. CTRL hands you a Claude Skill that auto-triggers whenever your team's language matches. Permanent leverage from two minutes of speaking."
 - **Daily Briefing v2**: "Three minutes of audio. Every story anchored to a specific priority on your desk. No mystery algorithm."
 - **Edge — Sharpen/Cover**: "Your strengths systemized. Your weaknesses covered. Board memos and strategy docs in your register, on demand."
 - **Decision Advisor**: "Ask a hard question. Get an answer that already knows your context."
 - **Meeting Prep**: "Walk in briefed by an AI that knows your team, your priorities, and your last decision."
 - **Diagnostic**: "10 minutes. Six dimensions. The questions your board will ask you. $49."
-- **Edge Pro**: "$9/month. Less than a coffee. More leverage than your last consulting hour."
+- **Edge Pro**: "$9/month. Less than a coffee. More leverage than your last consulting hour. Unlimited Agent Skills, all 7 briefing types, board memos in your register."
 - **Privacy**: "No Slack. No email. No calendar. You talk to it. That's the whole connection."
 - **Auditable AI**: "Every Briefing segment shows the profile fact that earned it the slot. No black box."
 - **Hardened production**: "6 audit weeks shipped. Stripe sig + idempotency. End-to-end deletion. Structured logging. E2E tests."
+- **Desktop polish (v5.2)**: "Cmd+K opens a global launcher. Sticky top bar, right rail for context, sidebar with keyboard hints. Built like a desktop product, not stretched mobile."
+- **Triage you can trust**: "Skill Builder won't generate a junk skill. The Three Honest Tests gate routes Memory Facts, Custom Instructions, and Saved Styles to the right surface instead."
