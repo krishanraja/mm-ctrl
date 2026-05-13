@@ -159,13 +159,24 @@ function CaptureContent({
   generationError: string | null;
   initialSeed?: SkillSeed | null;
 }) {
-  // When the user arrives with a pre-anchored pain, default to text mode +
-  // pre-populate a scaffold so they only have to fill in the steps. Voice is
-  // still one tap away. With no seed, voice stays the default (existing UX).
-  const [inputMode, setInputMode] = useState<InputMode>(initialSeed ? "text" : "voice");
-  const [textInput, setTextInput] = useState<string>(() =>
-    initialSeed ? scaffoldForSeed(initialSeed) : "",
+  const isMobile = useIsMobile();
+
+  // Default modality: on mobile, voice is faster than typing — even for seeded
+  // entries. On desktop with a seed, text-default (a keyboard is faster than
+  // dictating in a quiet office). No seed: voice default everywhere.
+  const [inputMode, setInputMode] = useState<InputMode>(
+    initialSeed && !isMobile ? "text" : "voice",
   );
+  // Structured text fields (replace the bracket-scaffold for seeded entries).
+  // For example seeds, the scaffold IS the starter text — fall back to one
+  // field by storing it in stepsInput.
+  const [stepsInput, setStepsInput] = useState<string>(() =>
+    initialSeed?.kind === "example" ? initialSeed.text : "",
+  );
+  const [outputInput, setOutputInput] = useState<string>("");
+  // Legacy single textarea (used when there's no active seed — the user is
+  // describing a fresh workflow with one open text field).
+  const [textInput, setTextInput] = useState<string>("");
   const [voiceTranscript, setVoiceTranscript] = useState<string | null>(null);
   const [captureState, setCaptureState] = useState<CaptureState>("idle");
   const [editReviewText, setEditReviewText] = useState("");
@@ -175,15 +186,17 @@ function CaptureContent({
 
   // If the parent re-opens the sheet with a different seed (e.g. user
   // navigates to /context twice from different entry points), refresh the
-  // scaffold without dropping their typed content if they haven't seeded yet.
+  // capture inputs to match the new anchor.
   useEffect(() => {
     if (!initialSeed) return;
     if (activeSeed?.text === initialSeed.text && activeSeed?.kind === initialSeed.kind) return;
     setActiveSeed(initialSeed);
-    setInputMode("text");
-    setTextInput(scaffoldForSeed(initialSeed));
+    setInputMode(isMobile ? "voice" : "text");
+    setStepsInput(initialSeed.kind === "example" ? initialSeed.text : "");
+    setOutputInput("");
+    setTextInput("");
     setVoiceTranscript(null);
-  }, [initialSeed, activeSeed?.text, activeSeed?.kind]);
+  }, [initialSeed, activeSeed?.text, activeSeed?.kind, isMobile]);
 
   const visiblePains = useMemo(() => {
     // Drop the currently-anchored seed from the picker so it doesn't show up
@@ -196,20 +209,28 @@ function CaptureContent({
 
   const handlePickPain = useCallback((seed: SkillSeed) => {
     setActiveSeed(seed);
-    setInputMode("text");
-    setTextInput(scaffoldForSeed(seed));
+    setInputMode(isMobile ? "voice" : "text");
+    setStepsInput("");
+    setOutputInput("");
+    setTextInput("");
     setVoiceTranscript(null);
-  }, []);
+  }, [isMobile]);
 
   const handleClearSeed = useCallback(() => {
     setActiveSeed(null);
+    setStepsInput("");
+    setOutputInput("");
     setTextInput("");
   }, []);
 
   const handleExample = useCallback((scaffold: string, label: string) => {
     setActiveSeed({ kind: "example", text: scaffold, label });
     setInputMode("text");
-    setTextInput(scaffold);
+    // Examples are full starter text — drop them into the single textarea
+    // path. They have no separate steps/output split.
+    setStepsInput(scaffold);
+    setOutputInput("");
+    setTextInput("");
     setVoiceTranscript(null);
   }, []);
 
@@ -258,8 +279,36 @@ function CaptureContent({
     await confirmPendingTranscript(editReviewText);
   }, [confirmPendingTranscript, editReviewText]);
 
-  const inputText = inputMode === "voice" ? voiceTranscript : textInput.trim();
-  const canSubmit = !!inputText && inputText.length >= 20 && !isGenerating;
+  // Submission text by mode:
+  // - voice: whatever the leader narrated.
+  // - text + seeded real pain: stitch the two structured fields together so
+  //   the LLM gets the same shape it used to receive from scaffoldForSeed,
+  //   but with no bracket placeholders. Only the leader's words go in.
+  // - text + example seed: the example text is already a complete starter,
+  //   stored in stepsInput.
+  // - text + no seed: a single open textarea (existing behaviour).
+  const isStructuredSeed = !!activeSeed && activeSeed.kind !== "example";
+  const userCharCount = isStructuredSeed
+    ? stepsInput.trim().length + outputInput.trim().length
+    : (activeSeed ? stepsInput.trim().length : textInput.trim().length);
+
+  const buildTextPayload = useCallback((): string => {
+    if (isStructuredSeed && activeSeed) {
+      return composeSeededPayload(activeSeed, stepsInput, outputInput);
+    }
+    if (activeSeed?.kind === "example") {
+      return stepsInput.trim();
+    }
+    return textInput.trim();
+  }, [activeSeed, isStructuredSeed, stepsInput, outputInput, textInput]);
+
+  const inputText = inputMode === "voice" ? voiceTranscript : buildTextPayload();
+  const canSubmit =
+    !!inputText &&
+    !isGenerating &&
+    (inputMode === "voice"
+      ? inputText.length >= 20
+      : userCharCount >= 20);
 
   const handleSubmit = useCallback(() => {
     if (!inputText) return;
@@ -300,32 +349,46 @@ function CaptureContent({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             className={cn(
-              "rounded-xl border p-3 flex items-start gap-2.5",
+              "rounded-xl border p-3 space-y-2",
               seedTone(activeSeed.kind),
             )}
           >
-            <div className="flex-shrink-0 mt-0.5">
-              {activeSeed.kind === "example" ? (
-                <Sparkles className="h-4 w-4" />
-              ) : (
-                <AlertTriangle className="h-4 w-4" />
-              )}
+            <div className="flex items-start gap-2.5">
+              <div className="flex-shrink-0 mt-0.5">
+                {activeSeed.kind === "example" ? (
+                  <Sparkles className="h-4 w-4" />
+                ) : (
+                  <AlertTriangle className="h-4 w-4" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] uppercase tracking-wider font-medium opacity-70">
+                  {seedKindLabel(activeSeed.kind)}
+                </p>
+                <p className="text-sm leading-snug mt-0.5">
+                  {activeSeed.text}
+                </p>
+              </div>
+              <button
+                onClick={handleClearSeed}
+                aria-label="Clear seed"
+                className="p-1 rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors flex-shrink-0"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] uppercase tracking-wider font-medium opacity-70">
-                {seedKindLabel(activeSeed.kind)}
+            {/* "What you'll get" preview — sets expectation upfront so the
+                leader knows the shape of the output before filling fields. */}
+            {activeSeed.kind !== "example" && (
+              <p className="text-[11px] opacity-80 leading-snug pl-6">
+                We'll build a Claude skill called{" "}
+                <span className="font-semibold">
+                  &ldquo;{inferSkillName(activeSeed)}&rdquo;
+                </span>
+                {" "}that triggers when you say the trigger phrase. You can
+                rename and edit before download.
               </p>
-              <p className="text-sm leading-snug mt-0.5">
-                {activeSeed.text}
-              </p>
-            </div>
-            <button
-              onClick={handleClearSeed}
-              aria-label="Clear seed"
-              className="p-1 rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors flex-shrink-0"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -519,27 +582,90 @@ function CaptureContent({
             exit={{ opacity: 0, y: -8 }}
             className="space-y-3"
           >
-            <p className="text-sm text-muted-foreground">
-              Describe a workflow you do at least weekly. Include what triggers it,
-              the steps you follow, and the format you want the output in.
-            </p>
-            <textarea
-              value={textInput}
-              onChange={(e) => setTextInput(e.target.value)}
-              placeholder={'e.g. "Every Monday I take my sales team Slack updates and turn them into a board update. Format is exec summary first, then pipeline, then risks. My investors hate bullet points."'}
-              autoFocus
-              rows={6}
-              className={cn(
-                "w-full px-4 py-3 rounded-xl",
-                "bg-foreground/5 border border-foreground/10",
-                "text-foreground placeholder:text-foreground/30",
-                "focus:outline-none focus:ring-2 focus:ring-accent/30",
-                "resize-none text-sm",
-              )}
-            />
-            <p className="text-[11px] text-muted-foreground/70">
-              {textInput.trim().length}/20 characters minimum
-            </p>
+            {isStructuredSeed ? (
+              // Seeded real pain: two labeled fields beat a single bracket
+              // scaffold. The leader fills in their actual procedure instead
+              // of editing placeholder text in brackets.
+              <>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="skill-steps"
+                    className="text-xs font-medium text-foreground"
+                  >
+                    How you handle it today
+                  </label>
+                  <textarea
+                    id="skill-steps"
+                    value={stepsInput}
+                    onChange={(e) => setStepsInput(e.target.value)}
+                    placeholder="Walk me through the steps you take now"
+                    autoFocus
+                    rows={3}
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl",
+                      "bg-foreground/5 border border-foreground/10",
+                      "text-foreground placeholder:text-foreground/30",
+                      "focus:outline-none focus:ring-2 focus:ring-accent/30",
+                      "resize-none text-sm",
+                    )}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="skill-output"
+                    className="text-xs font-medium text-foreground"
+                  >
+                    What output you want
+                  </label>
+                  <textarea
+                    id="skill-output"
+                    value={outputInput}
+                    onChange={(e) => setOutputInput(e.target.value)}
+                    placeholder="A 3-bullet summary, a 200-word email, a slide outline..."
+                    rows={2}
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl",
+                      "bg-foreground/5 border border-foreground/10",
+                      "text-foreground placeholder:text-foreground/30",
+                      "focus:outline-none focus:ring-2 focus:ring-accent/30",
+                      "resize-none text-sm",
+                    )}
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground/70">
+                  {userCharCount}/20 characters minimum
+                </p>
+              </>
+            ) : (
+              // No seed (or example seed): single open textarea, same as before.
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Describe a workflow you do at least weekly. Include what triggers it,
+                  the steps you follow, and the format you want the output in.
+                </p>
+                <textarea
+                  value={activeSeed?.kind === "example" ? stepsInput : textInput}
+                  onChange={(e) =>
+                    activeSeed?.kind === "example"
+                      ? setStepsInput(e.target.value)
+                      : setTextInput(e.target.value)
+                  }
+                  placeholder={'e.g. "Every Monday I take my sales team Slack updates and turn them into a board update. Format is exec summary first, then pipeline, then risks. My investors hate bullet points."'}
+                  autoFocus
+                  rows={6}
+                  className={cn(
+                    "w-full px-4 py-3 rounded-xl",
+                    "bg-foreground/5 border border-foreground/10",
+                    "text-foreground placeholder:text-foreground/30",
+                    "focus:outline-none focus:ring-2 focus:ring-accent/30",
+                    "resize-none text-sm",
+                  )}
+                />
+                <p className="text-[11px] text-muted-foreground/70">
+                  {userCharCount}/20 characters minimum
+                </p>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -585,13 +711,14 @@ function CaptureContent({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function scaffoldForSeed(seed: SkillSeed): string {
-  // For "example" seeds the scaffold IS the full starter text — just return it.
-  if (seed.kind === "example") return seed.text;
-
-  // For real pains, build a prompt the user can fill in. We frame it as
-  // open-ended ("walk me through...") because the LLM only generates a useful
-  // skill when the leader describes their actual procedure, not just the pain.
+function composeSeededPayload(
+  seed: SkillSeed,
+  steps: string,
+  output: string,
+): string {
+  // Same shape as the old scaffoldForSeed output, but with the leader's own
+  // words replacing the [bracket] placeholders. Empty sections are omitted so
+  // the LLM doesn't see "Here is how I handle it: (blank)".
   const lead =
     seed.kind === "blocker"
       ? `One thing I keep getting stuck on: ${seed.text}`
@@ -603,15 +730,28 @@ function scaffoldForSeed(seed: SkillSeed): string {
       ? `A briefing flagged this as a decision trigger for me: ${seed.text}`
       : seed.text;
 
-  return [
-    lead,
-    ``,
-    `Here is how I currently handle it:`,
-    `[add the steps you follow today]`,
-    ``,
-    `The format / output I want:`,
-    `[describe the shape - paragraphs, bullets, sections, length]`,
-  ].join("\n");
+  const parts: string[] = [lead];
+  const trimmedSteps = steps.trim();
+  const trimmedOutput = output.trim();
+  if (trimmedSteps) {
+    parts.push("", "Here is how I currently handle it:", trimmedSteps);
+  }
+  if (trimmedOutput) {
+    parts.push("", "The format / output I want:", trimmedOutput);
+  }
+  return parts.join("\n");
+}
+
+/**
+ * Short, human-readable name for the skill we're about to build. Shown in the
+ * "What you'll get" preview — set expectation, not contract. The real name is
+ * decided by the LLM during generation.
+ */
+function inferSkillName(seed: SkillSeed): string {
+  const source = seed.label?.trim() || seed.text.trim();
+  const cleaned = source.replace(/^\s*(I |we |the |a |an )/i, "");
+  const words = cleaned.split(/\s+/).slice(0, 5).join(" ");
+  return words.length > 0 ? words : "Your custom skill";
 }
 
 function seedKindLabel(kind: SkillSeed["kind"]): string {

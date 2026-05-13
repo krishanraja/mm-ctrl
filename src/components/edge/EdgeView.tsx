@@ -269,6 +269,18 @@ export default function EdgeView() {
           </div>
         </motion.div>
 
+        {/* Skill Builder entry: the headline value prop for a busy CEO comes
+            BEFORE the strengths/weaknesses analysis. Renders even when the
+            leader has no declared pains yet (static "voice a recurring pain"
+            card) so the feature is always discoverable. */}
+        <AutomatePainCard
+          isPaidUser={hasAccess}
+          onUpgrade={() => {
+            setPaywallCapability('Skill Builder');
+            setPaywallOpen(true);
+          }}
+        />
+
         {/* Profile Card: Expandable Strengths + Weaknesses pills */}
         <EdgeProfileCard
           strengths={strengths}
@@ -276,17 +288,6 @@ export default function EdgeView() {
           onFeedback={submitFeedback}
           isPaid={hasAccess}
           onAction={handleAction}
-        />
-
-        {/* Skill Builder entry: pains the leader has already declared, one
-            tap away from being turned into a triggered skill. Self-hides
-            when the leader has no pains yet. */}
-        <AutomatePainCard
-          isPaidUser={hasAccess}
-          onUpgrade={() => {
-            setPaywallCapability('Skill Builder');
-            setPaywallOpen(true);
-          }}
         />
 
         {/* Ambient Pro teaser - free users only */}
