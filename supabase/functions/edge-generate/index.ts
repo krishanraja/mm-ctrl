@@ -277,6 +277,33 @@ ${config.outputGuidance}`;
       console.error("Failed to store edge action:", insertError);
     }
 
+    // Also persist in the unified generated_artifacts table so the Library
+    // tab on /memory can surface drafts and frameworks alongside skills.
+    // Quiet on failure — if the table doesn't exist yet (migration not
+    // applied), the user still gets their artifact in this response.
+    const isFramework =
+      capability === "systemize" || capability === "teach";
+    const { error: artifactError } = await serviceClient
+      .from("generated_artifacts")
+      .insert({
+        user_id: user.id,
+        kind: isFramework ? "framework" : "draft",
+        name: config.title,
+        body: aiResponse.content,
+        metadata: {
+          capability,
+          action_type: actionType,
+          target_key: targetKey,
+          edge_action_id: action?.id || null,
+        },
+      });
+    if (artifactError) {
+      console.warn(
+        "edge-generate: generated_artifacts insert failed",
+        artifactError,
+      );
+    }
+
     // If email delivery requested, trigger it in the background
     if (deliverToEmail && action?.id) {
       fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/deliver-edge-artifact`, {

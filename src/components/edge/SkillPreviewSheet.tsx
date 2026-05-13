@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check, X, Download, Zap, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, Check, X, Download, Zap, Sparkles, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -124,11 +124,17 @@ function PreviewContent({
           <h3 className="text-base font-bold text-foreground truncate">
             {skill.name}
           </h3>
-          {skill.archetype && (
-            <p className="text-[11px] text-muted-foreground capitalize">
-              {String(skill.archetype).replace(/-/g, " ")}
-            </p>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            {skill.archetype && (
+              <p className="text-[11px] text-muted-foreground capitalize">
+                {String(skill.archetype).replace(/-/g, " ")}
+              </p>
+            )}
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-medium">
+              <CheckCircle2 className="w-2.5 h-2.5" />
+              Saved to Library
+            </span>
+          </div>
         </div>
       </div>
 
