@@ -4,7 +4,7 @@ import { useAuth } from '@/components/auth/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/hooks/use-toast'
-import { LogOut, Loader2, Sparkles } from 'lucide-react'
+import { LogOut, Loader2, Sparkles, Shield, ArrowUpRight } from 'lucide-react'
 
 export function AccountTab() {
   const { user, signOut } = useAuth()
@@ -41,6 +41,24 @@ export function AccountTab() {
           <label className="text-sm text-muted-foreground">Email</label>
           <p className="text-foreground">{user?.email}</p>
         </div>
+      </div>
+
+      <div className="bg-card border border-border p-6 rounded-lg">
+        <h3 className="text-lg font-semibold text-foreground mb-1">Security &amp; compliance</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          See our SOC 2, HIPAA, GDPR, CCPA, and ISO 27001 controls, plus the
+          full list of subprocessors.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/compliance')}
+          className="gap-2"
+        >
+          <Shield className="h-4 w-4" />
+          Open compliance page
+          <ArrowUpRight className="h-3.5 w-3.5" />
+        </Button>
       </div>
 
       <div className="bg-card border border-border p-6 rounded-lg">

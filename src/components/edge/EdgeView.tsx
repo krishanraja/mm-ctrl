@@ -223,7 +223,9 @@ export default function EdgeView() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-foreground">Your Edge</h2>
-                <p className="text-xs text-muted-foreground">Based on your Memory Web</p>
+                <p className="text-xs text-muted-foreground">
+                  Drafts, frameworks, and skills built from your Memory Web.
+                </p>
               </div>
             </div>
             <button

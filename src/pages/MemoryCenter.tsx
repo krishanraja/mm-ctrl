@@ -240,6 +240,12 @@ export default function MemoryCenter() {
         onExport={() => navigate('/context')}
       />
 
+      <div className="flex-shrink-0 px-5 pt-1 pb-0.5">
+        <p className="text-[11px] text-muted-foreground/80 leading-tight">
+          Browse and edit every fact CTRL knows about you.
+        </p>
+      </div>
+
       {stats && (
         <div className="flex-shrink-0 px-5 pb-1.5">
           <p className="text-[11px] text-muted-foreground leading-tight">
