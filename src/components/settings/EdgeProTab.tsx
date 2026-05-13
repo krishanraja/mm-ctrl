@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription'
+import { EDGE_PRO_PRICE_LONG } from '@/constants/billing'
 import {
   Loader2,
   Mail,
@@ -213,7 +214,7 @@ export function EdgeProTab() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Plan</p>
-                <p className="font-medium text-foreground">Edge Pro · $9 / month</p>
+                <p className="font-medium text-foreground">Edge Pro · {EDGE_PRO_PRICE_LONG}</p>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-2 pt-2">
@@ -277,7 +278,7 @@ export function EdgeProTab() {
               ) : (
                 <Crown className="h-4 w-4" />
               )}
-              Subscribe — $9 / month
+              Subscribe — {EDGE_PRO_PRICE_LONG}
             </Button>
             {subscription?.stripe_customer_id && (
               <Button

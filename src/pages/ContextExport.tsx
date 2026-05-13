@@ -147,9 +147,18 @@ export default function ContextExport() {
   // We consume the seed once, open the capture sheet pre-anchored, and clear
   // the route state so a refresh doesn't replay it.
   useEffect(() => {
-    const seedFromState = (location.state as { seed?: SkillSeed } | null)?.seed;
-    if (seedFromState && seedFromState.text) {
-      setSkillSeed(seedFromState);
+    const state = location.state as
+      | { seed?: SkillSeed; openSkillBuilder?: boolean }
+      | null;
+    if (state?.seed && state.seed.text) {
+      setSkillSeed(state.seed);
+      skillExport.reset();
+      setSkillCaptureOpen(true);
+      navigate(location.pathname, { replace: true, state: null });
+    } else if (state?.openSkillBuilder) {
+      // No-seed entry: open the capture sheet so the leader can voice a fresh
+      // pain. The sheet renders its own pain-picker / examples row.
+      setSkillSeed(null);
       skillExport.reset();
       setSkillCaptureOpen(true);
       navigate(location.pathname, { replace: true, state: null });

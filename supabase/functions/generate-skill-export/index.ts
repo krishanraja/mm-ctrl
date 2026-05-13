@@ -267,6 +267,31 @@ Deno.serve(async (req) => {
       .select("id, created_at")
       .single();
 
+    // Also persist in the unified generated_artifacts table so the Library
+    // tab on /memory can surface it alongside drafts, frameworks, exports,
+    // and custom briefings. Quiet on failure — if the table doesn't exist
+    // yet (migration not yet applied), the user still gets their skill.
+    const { error: artifactInsertError } = await serviceClient
+      .from("generated_artifacts")
+      .insert({
+        user_id: user.id,
+        kind: "skill",
+        name: skill.name,
+        body: skill.body,
+        metadata: {
+          archetype: skill.archetype || null,
+          zip_filename: `${skill.name}.zip`,
+          skill_export_id: insertRow?.id || null,
+          test_prompts: skill.test_prompts || [],
+        },
+      });
+    if (artifactInsertError) {
+      console.warn(
+        "generate-skill-export: generated_artifacts insert failed",
+        artifactInsertError,
+      );
+    }
+
     return jsonResponse({
       triage: parsed.triage,
       skill: {

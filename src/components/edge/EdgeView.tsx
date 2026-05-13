@@ -18,7 +18,8 @@ import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
 import { EdgeProfileCard } from './EdgeProfileCard';
 import { SmartProbeCard } from './SmartProbeCard';
 import { EdgeOnboarding } from './EdgeOnboarding';
-import { EdgePaywall, SAMPLE_ARTIFACTS } from './EdgePaywall';
+import { EdgePaywall } from './EdgePaywall';
+import { SAMPLE_ARTIFACTS } from './sampleArtifacts';
 import { DraftSheet } from './DraftSheet';
 import { ArtifactPreview } from './ArtifactPreview';
 import { AutomatePainCard } from './AutomatePainCard';
@@ -223,7 +224,9 @@ export default function EdgeView() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-foreground">Your Edge</h2>
-                <p className="text-xs text-muted-foreground">Based on your Memory Web</p>
+                <p className="text-xs text-muted-foreground">
+                  Drafts, frameworks, and skills built from your Memory Web.
+                </p>
               </div>
             </div>
             <button
@@ -269,6 +272,18 @@ export default function EdgeView() {
           </div>
         </motion.div>
 
+        {/* Skill Builder entry: the headline value prop for a busy CEO comes
+            BEFORE the strengths/weaknesses analysis. Renders even when the
+            leader has no declared pains yet (static "voice a recurring pain"
+            card) so the feature is always discoverable. */}
+        <AutomatePainCard
+          isPaidUser={hasAccess}
+          onUpgrade={() => {
+            setPaywallCapability('Skill Builder');
+            setPaywallOpen(true);
+          }}
+        />
+
         {/* Profile Card: Expandable Strengths + Weaknesses pills */}
         <EdgeProfileCard
           strengths={strengths}
@@ -276,17 +291,6 @@ export default function EdgeView() {
           onFeedback={submitFeedback}
           isPaid={hasAccess}
           onAction={handleAction}
-        />
-
-        {/* Skill Builder entry: pains the leader has already declared, one
-            tap away from being turned into a triggered skill. Self-hides
-            when the leader has no pains yet. */}
-        <AutomatePainCard
-          isPaidUser={hasAccess}
-          onUpgrade={() => {
-            setPaywallCapability('Skill Builder');
-            setPaywallOpen(true);
-          }}
         />
 
         {/* Ambient Pro teaser - free users only */}
@@ -369,7 +373,7 @@ export default function EdgeView() {
             )}
           >
             <PenTool className="h-4 w-4" />
-            Draft Something
+            Draft an email or memo
           </button>
           <button
             onClick={() => handleQuickAction('framework')}
@@ -379,7 +383,7 @@ export default function EdgeView() {
             )}
           >
             <Layers className="h-4 w-4" />
-            Build a Framework
+            Build a decision framework
           </button>
         </motion.div>
       </div>

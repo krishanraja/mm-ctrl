@@ -152,29 +152,30 @@ function CustomBriefingContent({
                   : "Add context to tailor this briefing (optional)"}
               </p>
 
-              {/* Voice / Text toggle */}
-              <div className="flex items-center gap-1.5 mb-2">
+              {/* Voice / Text segmented control — equal weight. */}
+              <div className="grid grid-cols-2 gap-1 p-1 mb-2 rounded-lg bg-foreground/5 border border-foreground/10">
+                <button
+                  onClick={() => setInputMode("voice")}
+                  className={cn(
+                    "flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors",
+                    inputMode === "voice"
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Mic className="w-3 h-3" />
+                  Voice
+                </button>
                 <button
                   onClick={() => setInputMode("text")}
                   className={cn(
-                    "text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors",
+                    "flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium transition-colors",
                     inputMode === "text"
-                      ? "bg-accent/10 text-accent"
+                      ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   Type
-                </button>
-                <button
-                  onClick={() => setInputMode("voice")}
-                  className={cn(
-                    "text-[10px] font-medium px-2.5 py-1 rounded-full transition-colors",
-                    inputMode === "voice"
-                      ? "bg-accent/10 text-accent"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Voice
                 </button>
               </div>
 

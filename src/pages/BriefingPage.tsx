@@ -219,11 +219,22 @@ function BriefingPage() {
                 <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
               </div>
             ) : !hasData ? (
-              <div className="text-center py-12">
-                <Radio className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">
-                  Tell us about yourself first
-                </p>
+              <div className="flex flex-col items-center text-center py-10 gap-3">
+                <Radio className="w-10 h-10 text-muted-foreground/30" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-foreground">
+                    Tell us about yourself first
+                  </p>
+                  <p className="text-xs text-muted-foreground max-w-xs">
+                    Pick 3 topics and we'll build a briefing in your voice.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => setInterestsSheetOpen(true)}
+                >
+                  Pick 3 interests now
+                </Button>
               </div>
             ) : !hasDeclaredOrInferred && !defaultBriefing && !suggestionsLoading && suggestions.length === 0 ? (
               <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4 space-y-3">
@@ -550,15 +561,17 @@ function BriefingPage() {
               <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
             </div>
           ) : !hasData ? (
-            <div className="rounded-3xl border border-dashed border-border bg-card/30 py-20 text-center">
+            <div className="rounded-3xl border border-dashed border-border bg-card/30 py-16 text-center">
               <Radio className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
               <p className="text-lg font-semibold text-foreground mb-2">
                 Tell us about yourself first
               </p>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Once you share your role and goals in your Memory Web, we'll
-                generate your personalised daily briefing.
+              <p className="text-sm text-muted-foreground max-w-md mx-auto mb-5">
+                Pick 3 topics and we'll build a briefing in your voice.
               </p>
+              <Button onClick={() => setInterestsSheetOpen(true)}>
+                Pick 3 interests now
+              </Button>
             </div>
           ) : !hasDeclaredOrInferred && !defaultBriefing && !suggestionsLoading && suggestions.length === 0 ? (
             <div className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/10 to-transparent p-8">

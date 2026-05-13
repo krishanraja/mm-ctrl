@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
-import { X, Play, Pause, RefreshCw } from "lucide-react";
+import { X, Play, Pause, RefreshCw, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useBriefingContext } from "@/contexts/BriefingContext";
@@ -41,6 +41,22 @@ export function BriefingSheet() {
   const { keyboardHeight } = useVisualViewport();
   const scrollRef = useRef<HTMLDivElement>(null);
   const segmentRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Voice-commands hint: shown once on first sheet open, dismissable. A busy
+  // CEO would never discover the playback voice commands (pause / next /
+  // faster / slower) from an unlabeled mic icon.
+  const [voiceHintDismissed, setVoiceHintDismissed] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.localStorage.getItem("briefing.voice.hint.seen") === "1";
+  });
+  const dismissVoiceHint = () => {
+    setVoiceHintDismissed(true);
+    try {
+      window.localStorage.setItem("briefing.voice.hint.seen", "1");
+    } catch {
+      /* localStorage unavailable */
+    }
+  };
 
   // Auto-scroll to current segment
   useEffect(() => {
@@ -164,6 +180,27 @@ export function BriefingSheet() {
 
             {/* Player controls (fixed) */}
             <div className="px-4 py-4 border-b border-border flex-shrink-0">
+              {!voiceHintDismissed && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-3 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-accent/10 border border-accent/20"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Mic className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                    <p className="text-[11px] text-foreground leading-snug">
+                      Try saying &ldquo;pause&rdquo;, &ldquo;next&rdquo;, or &ldquo;faster&rdquo;.
+                    </p>
+                  </div>
+                  <button
+                    onClick={dismissVoiceHint}
+                    aria-label="Dismiss voice hint"
+                    className="p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors flex-shrink-0"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </motion.div>
+              )}
               {/* Play button + speed */}
               <div className="flex items-center justify-center gap-4 mb-3">
                 <button

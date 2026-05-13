@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Plus, Shield, Download, ArrowUpRight, FileText, CheckCircle2, Flame, Thermometer } from 'lucide-react';
+import { Brain, Plus, Shield, Download, ArrowUpRight, FileText, CheckCircle2, Flame, Thermometer, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MemoryErrorBoundary } from '@/components/memory/MemoryErrorBoundary';
@@ -12,6 +12,8 @@ import { PrivacyControlsPanel } from '@/components/memory/PrivacyControlsPanel';
 import { ExportImportPanel } from '@/components/memory/ExportImportPanel';
 import { VerificationBanner } from '@/components/memory/VerificationBanner';
 import { VerificationSwipeStack } from '@/components/memory/VerificationSwipeStack';
+import { LibraryTab } from '@/components/library/LibraryTab';
+import { useGeneratedArtifacts } from '@/hooks/useGeneratedArtifacts';
 import { useDevice } from '@/hooks/useDevice';
 import { useMemoryWeb } from '@/hooks/useMemoryWeb';
 import { useMarkdownImport } from '@/hooks/useMarkdownImport';
@@ -42,6 +44,7 @@ export default function MemoryCenter() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { triggerImport, isImporting, fileInputProps } = useMarkdownImport();
+  const { artifacts: libraryArtifacts } = useGeneratedArtifacts();
 
   const handleEditMemory = (memory: UserMemoryFact) => {
     setSelectedMemory(memory);
@@ -73,6 +76,15 @@ export default function MemoryCenter() {
               <Brain className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
               All Facts
             </TabsTrigger>
+            <TabsTrigger value="library" className="text-xs px-3">
+              <Layers className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
+              Library
+              {libraryArtifacts.length > 0 && (
+                <span className="ml-1 text-muted-foreground">
+                  ({libraryArtifacts.length})
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="privacy" className="text-xs px-3">
               <Shield className="h-3.5 w-3.5 mr-1 hidden sm:inline" />
               Privacy
@@ -89,6 +101,10 @@ export default function MemoryCenter() {
               onAddMemory={() => setIsAddOpen(true)}
               onQuickVerify={quickVerify}
             />
+          </TabsContent>
+
+          <TabsContent value="library" className="mt-2 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
+            <LibraryTab />
           </TabsContent>
 
           <TabsContent value="privacy" className="mt-2 flex-1 overflow-y-auto scrollbar-hide overscroll-contain min-h-0">
@@ -223,6 +239,12 @@ export default function MemoryCenter() {
         onAdd={() => setIsAddOpen(true)}
         onExport={() => navigate('/context')}
       />
+
+      <div className="flex-shrink-0 px-5 pt-1 pb-0.5">
+        <p className="text-[11px] text-muted-foreground/80 leading-tight">
+          Browse and edit every fact CTRL knows about you.
+        </p>
+      </div>
 
       {stats && (
         <div className="flex-shrink-0 px-5 pb-1.5">

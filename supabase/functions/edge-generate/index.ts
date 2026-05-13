@@ -1,5 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { buildMemoryContext } from "../_shared/memory-context-builder.ts";
+import {
+  buildMemoryContext,
+  type MemoryContextOptions,
+} from "../_shared/memory-context-builder.ts";
 import { callOpenAI, selectModel } from "../_shared/openai-utils.ts";
 
 const corsHeaders = {
@@ -193,7 +196,7 @@ Deno.serve(async (req) => {
     const memoryResult = await buildMemoryContext(supabase, user.id, {
       includeWarm: true,
       format: "markdown",
-      useCase: config.useCase as any,
+      useCase: config.useCase as MemoryContextOptions["useCase"],
       maxTokens: 4000,
     });
 
@@ -208,7 +211,10 @@ Deno.serve(async (req) => {
     let targetContext = "";
     if (edgeProfile) {
       const allItems = [...(edgeProfile.strengths || []), ...(edgeProfile.weaknesses || [])];
-      const target = allItems.find((item: any) => item.key === targetKey);
+      const target = allItems.find(
+        (item: { key: string; label?: string; summary?: string }) =>
+          item.key === targetKey,
+      );
       if (target) {
         targetContext = `\nTHIS IS FOR: ${target.label} - ${target.summary}`;
       }
@@ -275,6 +281,33 @@ ${config.outputGuidance}`;
 
     if (insertError) {
       console.error("Failed to store edge action:", insertError);
+    }
+
+    // Also persist in the unified generated_artifacts table so the Library
+    // tab on /memory can surface drafts and frameworks alongside skills.
+    // Quiet on failure — if the table doesn't exist yet (migration not
+    // applied), the user still gets their artifact in this response.
+    const isFramework =
+      capability === "systemize" || capability === "teach";
+    const { error: artifactError } = await serviceClient
+      .from("generated_artifacts")
+      .insert({
+        user_id: user.id,
+        kind: isFramework ? "framework" : "draft",
+        name: config.title,
+        body: aiResponse.content,
+        metadata: {
+          capability,
+          action_type: actionType,
+          target_key: targetKey,
+          edge_action_id: action?.id || null,
+        },
+      });
+    if (artifactError) {
+      console.warn(
+        "edge-generate: generated_artifacts insert failed",
+        artifactError,
+      );
     }
 
     // If email delivery requested, trigger it in the background
