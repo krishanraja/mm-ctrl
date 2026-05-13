@@ -4,7 +4,7 @@ import { useAuth } from '@/components/auth/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/hooks/use-toast'
-import { LogOut, Loader2 } from 'lucide-react'
+import { LogOut, Loader2, Sparkles } from 'lucide-react'
 
 export function AccountTab() {
   const { user, signOut } = useAuth()
@@ -41,6 +41,34 @@ export function AccountTab() {
           <label className="text-sm text-muted-foreground">Email</label>
           <p className="text-foreground">{user?.email}</p>
         </div>
+      </div>
+
+      <div className="bg-card border border-border p-6 rounded-lg">
+        <h3 className="text-lg font-semibold text-foreground mb-1">Replay setup tour</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Show the welcome banner again on the dashboard so you can re-run the
+          one-minute guided setup.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            try {
+              window.localStorage.removeItem('mindmaker_onboarded')
+            } catch {
+              /* localStorage unavailable */
+            }
+            toast({
+              title: 'Tour reset',
+              description: 'The welcome banner will be back on the dashboard.',
+            })
+            window.location.assign('/dashboard')
+          }}
+          className="gap-2"
+        >
+          <Sparkles className="h-4 w-4" />
+          Replay setup tour
+        </Button>
       </div>
 
       <div className="bg-card border border-border p-6 rounded-lg">

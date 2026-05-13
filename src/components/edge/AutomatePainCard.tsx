@@ -72,7 +72,7 @@ export function AutomatePainCard({ isPaidUser, onUpgrade }: AutomatePainCardProp
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="text-sm font-semibold text-foreground">
-                Automate one of these
+                Automate a recurring pain
               </h3>
               {!isPaidUser && (
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent">
@@ -80,8 +80,8 @@ export function AutomatePainCard({ isPaidUser, onUpgrade }: AutomatePainCardProp
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-muted-foreground leading-snug">
-              Turn a pain you've already told us about into a Claude skill.
+            <p className="text-xs text-muted-foreground leading-snug">
+              In about 60 seconds we'll turn it into a Claude skill that runs whenever you say the trigger.
             </p>
           </div>
         </div>
@@ -104,7 +104,7 @@ export function AutomatePainCard({ isPaidUser, onUpgrade }: AutomatePainCardProp
             >
               <Icon className="w-3 h-3 flex-shrink-0" />
               <span className="line-clamp-1">{pain.label ?? pain.text}</span>
-              <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0" />
+              <ArrowRight className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity flex-shrink-0" />
             </button>
           );
         })}

@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEdgeSubscription } from '@/hooks/useEdgeSubscription';
 import { renderMarkdown } from '@/lib/renderMarkdown';
+import { EDGE_PRO_PRICE_LABEL } from '@/constants/billing';
 
 interface EdgePaywallProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ const BENEFITS = [
   { icon: FileText, text: 'All artifact types: agendas, templates, board memos' },
 ];
 
-const PRICE = '$29/mo';
+const PRICE = EDGE_PRO_PRICE_LABEL;
 
 function PaywallContent({
   capability,

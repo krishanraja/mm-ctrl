@@ -377,6 +377,34 @@ function CaptureContent({
         </div>
       )}
 
+      {/* Input mode segmented control — equal weight, no buried toggle. */}
+      <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-foreground/5 border border-foreground/10">
+        <button
+          onClick={() => setInputMode("voice")}
+          className={cn(
+            "flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+            inputMode === "voice"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <Mic className="w-3.5 h-3.5" />
+          Voice
+        </button>
+        <button
+          onClick={() => setInputMode("text")}
+          className={cn(
+            "flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
+            inputMode === "text"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <MessageSquare className="w-3.5 h-3.5" />
+          Text
+        </button>
+      </div>
+
       {/* Voice input */}
       <AnimatePresence mode="wait">
         {inputMode === "voice" && (
@@ -480,13 +508,6 @@ function CaptureContent({
               )}
             </div>
 
-            <button
-              onClick={() => setInputMode("text")}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors mx-auto"
-            >
-              <MessageSquare className="w-3 h-3" />
-              Type instead
-            </button>
           </motion.div>
         )}
 
@@ -516,21 +537,9 @@ function CaptureContent({
                 "resize-none text-sm",
               )}
             />
-            <div className="flex items-center justify-between">
-              <p className="text-[11px] text-muted-foreground/70">
-                {textInput.trim().length}/20 characters minimum
-              </p>
-              <button
-                onClick={() => {
-                  setInputMode("voice");
-                  setTextInput("");
-                }}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-              >
-                <Mic className="w-3 h-3" />
-                Switch to voice
-              </button>
-            </div>
+            <p className="text-[11px] text-muted-foreground/70">
+              {textInput.trim().length}/20 characters minimum
+            </p>
           </motion.div>
         )}
       </AnimatePresence>

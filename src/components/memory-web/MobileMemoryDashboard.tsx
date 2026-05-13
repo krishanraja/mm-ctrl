@@ -529,7 +529,9 @@ export function MobileMemoryDashboard() {
                   className="flex flex-col items-center gap-2 py-2"
                 >
                   <p className="text-xs text-foreground/60">
-                    {hasData ? 'Voice another thought' : 'Start your Memory Web'}
+                    {hasData
+                      ? 'Add a fact about you, your team, or your work'
+                      : 'Tell us about your role to start your Memory Web'}
                   </p>
 
                   {/* Animated mic button with glow rings */}

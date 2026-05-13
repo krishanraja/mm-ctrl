@@ -369,7 +369,7 @@ export default function EdgeView() {
             )}
           >
             <PenTool className="h-4 w-4" />
-            Draft Something
+            Draft an email or memo
           </button>
           <button
             onClick={() => handleQuickAction('framework')}
@@ -379,7 +379,7 @@ export default function EdgeView() {
             )}
           >
             <Layers className="h-4 w-4" />
-            Build a Framework
+            Build a decision framework
           </button>
         </motion.div>
       </div>
