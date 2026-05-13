@@ -2,13 +2,13 @@
 
 **For outbound sales agents (human and AI). Read this before writing any email, post, or DM.**
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
 ## The One-Liner
 
-CTRL builds a portable AI double of you in 2 minutes. Every AI tool you use — ChatGPT, Claude, Gemini — instantly knows your context, your goals, and how you think. Plus a 3-minute daily audio briefing tuned to YOUR world. You decide faster. Full stop.
+CTRL builds a portable AI double of you in 2 minutes. Every AI tool you use — ChatGPT, Claude, Gemini — instantly knows your context, your goals, and how you think. Plus a 3-minute daily audio briefing tuned to YOUR world. Plus a Skill Builder that turns one weekly workflow into a Claude Skill you drop into `~/.claude/skills/` and forget. You decide faster. Full stop.
 
 ---
 
@@ -34,7 +34,8 @@ There's a second tax: the **noise tax**. Newsletters and feeds serve everyone th
 2. **CTRL builds your Memory Web** — AI extracts structured facts about you: identity, business context, objectives, blockers, decision patterns, preferences.
 3. **Export to any AI tool** — One click. Your context is formatted for ChatGPT, Claude, Gemini, Cursor, or any LLM.
 4. **Hear your world every morning** — A 3-minute audio briefing built from your active decisions, missions, watchlist, and declared interests. Every story shows the specific profile item it's anchored to.
-5. **Every AI interaction starts from you** — From the first word. No re-explaining. The AI knows your world.
+5. **Automate the repetitive ones** — Pick one workflow you do every week (board update, hiring sync, RFP triage). Talk through it for two minutes. CTRL hands you a downloadable Claude Skill that auto-triggers whenever your team's language matches.
+6. **Every AI interaction starts from you** — From the first word. No re-explaining. The AI knows your world.
 
 The result: faster from question to decision. Every time. Across every tool.
 
@@ -127,7 +128,17 @@ AI synthesizes the user's Memory Web and assessment data into an actionable lead
 - Interactive strength/weakness pills with feedback loops
 - Intelligence gap detection with guided resolution
 
-Edge Pro ($9/month) unlocks unlimited artifact generation + email delivery.
+Edge Pro ($9/month) unlocks unlimited artifact generation, email delivery, all 7 briefing types, **and unlimited Agent Skill Builder generation**.
+
+### Agent Skill Builder (Edge Pro)
+Voice-to-Skill pipeline that converts one weekly workflow into a downloadable, agentskills.io-compliant Claude Skill the leader drops into `~/.claude/skills/`.
+
+- **Pain-anchored entry points everywhere**: tap a blocker in Edge view, tap the zap on a Memory Web blocker card, or tap the zap on a Briefing decision-trigger segment. The pain becomes the seed.
+- **Three Honest Tests triage gate**: if the input is really a Memory Web fact, a Custom Instruction, or a Saved Style, CTRL routes it to the right surface instead of generating a junk skill. This is the difference between "another macro tool" and "a triage system that respects your time."
+- **Quality gate**: 5+ trigger phrases, push language, third-person voice, body under 500 lines, imperative voice, required sections — validated before you download.
+- **Installs in three places**: Claude Code, Claude.ai, and Cursor (with copy-paste install instructions inside the preview sheet).
+
+Two minutes describing a Monday-morning ritual is enough to build permanent agent infrastructure the leader owns. The Skill triggers automatically whenever the leader's team uses the same language. This is the third killer feature on `/context`, alongside Context Export and Custom Voice Export.
 
 ### Decision Advisor
 AI that already knows your context helps you think through hard calls. No setup. No preamble. Ask the question, get an answer that accounts for your business, your constraints, your priorities.
@@ -186,7 +197,7 @@ AI identifies strengths to amplify and blind spots to close. Personalized patter
 | **Full Diagnostic** | $49 one-time | Full tensions/risks/scenarios, complete thinking tools library |
 | **Deep Context Upgrade** | $29 one-time | Enhanced company-context enrichment |
 | **Diagnostic + Deep Context Bundle** | $69 one-time | Both above. Saves $10. The default upsell. |
-| **Edge Pro** | $9/month | Unlimited Edge artifacts, all 7 briefing types, email delivery |
+| **Edge Pro** | $9/month | Unlimited Edge artifacts, all 7 briefing types, email delivery, unlimited Agent Skill Builder generation, Custom Voice Export |
 | **Bootcamp** (Teams) | $15K-$50K | 4-hour exec sprint + pilot charter |
 | **Portfolio** (Partners) | $5K-$25K | Heatmap + offer pack |
 
@@ -201,7 +212,7 @@ AI identifies strengths to amplify and blind spots to close. Personalized patter
 - **Self-contained** — no Slack/email/calendar access, no enterprise security review
 - **Encrypted at rest** (AES-256-GCM); user controls retention; data never trains any AI model
 - **Portable** — not locked to any AI provider or platform
-- **74 edge functions, 48 hooks, 97 migrations live** — this is not a prototype
+- **74 edge functions, 51 hooks, 98 migrations live** — this is not a prototype
 - **Audit weeks 1-6 shipped** (revenue path, data path, UX, reliability, observability, cleanup): timeouts + retries on external APIs, mandatory Stripe signature verification + idempotency, structured edge-function logger, e2e test contracts
 - **Built by Krish Raja** — operator experience: Microsoft (2010), MD at Captify ($0→$12M ARR), data revenue at Nine Entertainment ($9M→$61M). Now CEO of Mindmaker, running a multi-agent OS that automates the output of a 30-person team.
 - Context export produces richer, more structured prompts than most leaders write by hand in an hour
@@ -238,7 +249,13 @@ Leaders are getting tired of mystery algorithms. ChatGPT, LinkedIn, everywhere �
 Most AI context tools want access to your Slack, email, calendar, and browser. That means enterprise security reviews, IT approvals, and someone else reading your data. CTRL takes a different approach: you just talk to it. No integrations. No plugins. No permissions. Your context is built from what you choose to share — nothing else. The most private AI double you can build.
 
 ### The "Edge Pro Upgrade" Angle (for active free users)
-You've built your Memory Web. You've exported to Claude. Now skip the blank page entirely. Edge Pro generates board memos, strategy docs, emails, and meeting agendas in your register, anytime, for $9/month. Less than a coffee. More leverage than your last consulting hour.
+You've built your Memory Web. You've exported to Claude. Now skip the blank page entirely. Edge Pro generates board memos, strategy docs, emails, and meeting agendas in your register, anytime, for $9/month. Less than a coffee. More leverage than your last consulting hour. Plus unlimited Agent Skill Builder generation — turn the workflows you already repeat every week into Claude Skills that fire automatically.
+
+### The "Stop Repeating Yourself" Angle (Skill Builder)
+Every leader has 3-5 workflows they do every week. The Monday board update. The Friday hiring sync. The RFP triage. The investor update. Every time, blank page, full context, full instructions. CTRL takes one of them at a time and turns it into a Claude Skill in 2 minutes of voice. Drop the ZIP into `~/.claude/skills/`. The skill auto-fires the moment your team's language matches. You stop repeating yourself. Your leverage compounds.
+
+### The "Triage You Can Trust" Angle
+Most "AI workflow" tools generate something whether your input was a real workflow or not. CTRL is the opposite. The Skill Builder runs Three Honest Tests before extracting anything: is this a repeatable workflow, or just a fact, a tone preference, or a writing style? If it's not a workflow, CTRL tells you, routes you to the right surface, and doesn't generate junk. Respect for your time, baked in.
 
 ---
 
@@ -277,6 +294,15 @@ No. Your Memory Web is yours. It's encrypted at rest, never used as training dat
 **"Is the briefing accurate?"**
 Auditable. Every segment shows the specific profile fact and the cosine relevance score that earned it the slot. If you disagree, Ban it — it dies semantically (related topics die too) and the kill persists forever. There is no black box.
 
+**"What's the difference between Skill Builder and a macro / automation tool / GPT?"**
+Three things. (1) **Triage first**: the Three Honest Tests gate refuses to generate a skill when your input is really a fact, a tone preference, or a style. Most tools generate junk; CTRL refuses. (2) **agentskills.io-compliant**: the output is a ZIP that drops straight into `~/.claude/skills/` and auto-triggers in Claude Code, Claude.ai, and Cursor — it is real agent infrastructure, not a saved prompt. (3) **Pain-anchored entry points**: you don't need to remember to use the Skill Builder. Every blocker on Edge, every Memory Web blocker card, every Briefing decision-trigger segment has a one-tap zap that hands the pain straight into the pipeline.
+
+**"Will Skill Builder replace my Claude Custom Instructions?"**
+No, and that's the point. The triage gate decides what your input actually is. If it's a workflow → Skill. If it's a tone/voice/style preference → it routes you to Custom Instructions. If it's a fact about you → it routes you to Memory Web. CTRL stays in its lane and points you at the right tool for the other lanes.
+
+**"How do I install an Agent Skill?"**
+Download the ZIP from the preview sheet. The bundle includes a `03-install-guide.txt` with copy-paste instructions for Claude Code (`~/.claude/skills/<skill-name>/`), Claude.ai (upload via the Skills UI), and Cursor. There's also a `01-test-prompts.txt` of phrases that should auto-trigger the skill so you can verify it works in 60 seconds.
+
 ---
 
 ## Key URLs
@@ -297,6 +323,9 @@ Auditable. Every segment shows the specific profile fact and the cosine relevanc
 - "Memory Web" not "database" or "profile"
 - "AI double" not "AI assistant" or "AI agent"
 - "Thinking tools" not "prompt library"
+- "Agent Skill" or "Skill" not "macro", "automation script", or "workflow template"
+- "Three Honest Tests" — use this phrase to explain why CTRL refuses to generate junk skills
+- "Pain-anchored" — use when explaining the entry points on Edge / Memory / Briefing
 - "Zero-context tax" — use this phrase, it lands
 - "Auditable relevance" — use when discussing the Briefing
 - Every claim should make someone want to write an email

@@ -2,7 +2,7 @@
 
 Evolution of CTRL (originally Mindmaker) and major product pivots.
 
-**Last Updated:** 2026-04-26
+**Last Updated:** 2026-05-13
 
 ---
 
@@ -233,6 +233,7 @@ Evolution of CTRL (originally Mindmaker) and major product pivots.
 | 4.1 | Mar 2026 | Rebrand from Mindmaker to CTRL: "Clarity for Leaders" |
 | 5.0 | Apr 2026 | Briefing v2: evidence-based relevance lens + pgvector + four-part learning loop (Interests, industry seeds, explicit kill, nightly aggregator) |
 | 5.1 | Apr 2026 | Phase 7 — six audit-week tracks shipped: revenue path, data path, UX, reliability, observability, cleanup. Hardened production platform. |
+| 5.2 | May 2026 | Phase 8 — Agent Skill Builder (voice-to-Claude-Skill pipeline, Edge Pro), world-class desktop UI redesign with Command Palette, pain-anchored Skill entry points on Edge / Memory / Briefing. |
 
 ---
 
@@ -356,3 +357,103 @@ By mid-April 2026, the product surface area had grown to 74 edge functions, 48 h
 - 0 known data-leak vectors
 - Structured logs in production, queryable per user / function / duration
 - This is the version sales/marketing AI agents can confidently sell — not "we plan to harden it" but "the audit is shipped and the tests prove it."
+
+---
+
+## Phase 8: Agent Skill Builder + Desktop Redesign (May 2026)
+
+### Context
+
+By the end of Phase 7 the product was hardened but still single-loop: Memory Web feeds Context Export, Context Export feeds AI tools, AI tools accelerate decisions. The Briefing closed the daily loop. But the *weekly* loop — the leader's recurring rituals (Monday board update, Friday hiring sync, monthly investor update, RFP triage) — was still re-typed from a blank prompt every time, even by leaders with a rich Memory Web. The next leverage move was obvious: convert one weekly workflow into a permanent, downloadable Claude Skill the leader installs once and forgets.
+
+Separately, the desktop experience had drifted into "stretched mobile markup" and started to feel below the executive-grade bar set by the rest of the product. Executive buyers judge by surface polish, and the desktop shell was the surface most demoed in sales calls.
+
+Phase 8 shipped both: the Agent Skill Builder and a desktop UI redesign.
+
+### Sub-track 1 — Agent Skill Builder (PR #103, merged 2026-05-04)
+
+**What shipped:**
+
+- New edge function `generate-skill-export` (Edge Pro gated) implementing the full pipeline: Edge Pro gate → memory context build (3000 tokens) → triage LLM call (Three Honest Tests) → quality-gate validation → ZIP packaging → `skill_exports` insert.
+- The Three Honest Tests triage gate decides whether the input is really a skill, a Memory Web fact, a Custom Instruction, or a Saved Style. Triage failures route the input to the right surface and are still logged in `skill_exports` for analytics.
+- Quality gate enforces: 5+ trigger phrases, push language, third-person voice, body under 500 lines, imperative voice, required sections, no bare MUST/NEVER, valid name format. Only the name-format check is a hard fail; everything else is advisory and surfaced to the user.
+- ZIP packaging follows the **agentskills.io standard**: single root folder, `SKILL.md` + `references/` + `01-test-prompts.txt` + `02-maintenance-card.txt` + `03-install-guide.txt`.
+- New `skill_exports` table (migration `20260508000000_create_skill_exports.sql`): per-user log of every generation attempt including failed-triage cases, with RLS, archetype tagging, and quality-gate snapshot.
+- Frontend: `SkillExportCard` on Step 1 of `/context` (promoted above the Custom Voice card), `SkillCaptureSheet` (voice up to 5 min or text, 20-char minimum, mobile bottom sheet / desktop dialog), `SkillPreviewSheet` (description, download CTA, quality-gate checklist, test prompts with copy buttons, install guide accordion for Claude Code / Claude.ai / Cursor, collapsible SKILL.md preview).
+- New hook `useSkillExport` wraps the edge function and decodes the base64 ZIP into a downloadable Blob.
+
+**Why it mattered:** The product moved from "make every AI conversation faster" to "make every AI conversation faster AND turn your weekly rituals into permanent agent infrastructure." The Three Honest Tests gate was the differentiator vs. generic macro / automation tools: most generate something from any input; CTRL refuses to generate junk and routes the leader to the right surface instead.
+
+### Sub-track 2 — World-Class Desktop Redesign (PR #104, merged 2026-05-06)
+
+**What shipped:**
+
+Desktop now uses a unified, desktop-native shell instead of stretched mobile markup. New primitives:
+
+- **`AuthedLayoutRoute`** wraps authenticated routes in `CommandPaletteProvider`.
+- **Command Palette** — global Cmd/Ctrl+K launcher. Pages opt into actions via custom `mm:capture-voice` and `mm:generate-briefing` window events.
+- **Refined sidebar** with user footer + keyboard hints.
+- **Sticky top bar** with page eyebrow + title + actions.
+- **Optional right rail** for context that pages opt into.
+
+Pages reworked:
+
+- **Landing** — bold asymmetric hero with animated Memory Web preview, sticky top nav with section anchors, multi-section scroll (how it works, three pillars, briefing teaser, privacy), final CTA. Mobile keeps the swipeable three-card experience.
+- **Dashboard (Memory Web)** — three-pane layout: rail nav, main canvas with big visualization + denser 3/4-column facts grid + pattern columns, right rail with today's briefing slot, quick actions, coverage bars, activity.
+- **Briefing** — brand-new desktop layout with hero player area, voice-steer bar, custom briefings strip, and a side rail for interests, suggestions, and weekly history. Mobile path preserved.
+- **Export wizard** — side rail shows step progress, current selection, and a contextual pro tip; wider main column for breathing room.
+
+**Why it mattered:** Executive buyers judge desktop polish; this closed the gap.
+
+### Sub-track 3 — Pain-Anchored Skill Entry Points (PR #105, merged 2026-05-09)
+
+**What shipped:**
+
+Skill creation became a reflex on the page where the pain shows up, not a generic trip to `/context`:
+
+- **`AutomatePainCard`** on Edge view — chip row of declared blockers + active decisions.
+- **Zap button** on Memory Web blocker cards.
+- **Zap button** on `BriefingCard` `decision_trigger` segments (v1 + v2).
+
+All four entry points hand a `SkillSeed` (`{ kind, text }`) to the Skill Builder via `location.state` to `/context`, which auto-opens `SkillCaptureSheet` pre-anchored. The LLM grounds extraction in the leader's actual words.
+
+Sheet upgrades:
+- Pain picker chip row when no seed is provided (top 5 from `useUserPains`).
+- Curated example chips fallback when the leader has no declared pains yet (Monday board update, Weekly hiring sync, RFP triage, Investor update).
+- Seed banner + pre-filled scaffold so the user only fills in the steps.
+
+Edge function changes:
+- Accept optional `seed { kind, text }` in body and forward to the LLM prompt.
+- Prompt anchors extraction in the seed pain when present so the trigger language matches the leader's actual words instead of an abstract trigger.
+
+Discovery + copy fixes:
+- `SkillExportCard` CTA: "Create Agent Skill" → "Automate a weekly pain".
+- `/context` Step 1: `SkillExportCard` promoted above the Custom Voice card.
+- "Custom via Voice" renamed to "Custom context export" (was misleadingly claiming to produce a skill).
+
+New hook: **`useUserPains`** returns the top N blockers + active decisions from the leader's Memory Web for seeding entry points.
+
+**Why it mattered:** Discoverability is a feature. A Skill Builder buried on `/context` would have been used once a quarter; entry points on every page where the pain shows up make it a weekly habit.
+
+### Sub-track 4 — Contrast + Scroll Polish (PR #106, merged 2026-05-11)
+
+**What shipped:**
+
+- Solid /15 tints and visible borders on `GapPill`, `StrengthPill`, `AutomatePainCard` chips, and `SkillCaptureSheet` seed banner + pain picker so warm pills are legible in both modes.
+- Dropped `text-foreground` from the active-seed banner so seed text inherits the orange/blue/emerald tone and stops rendering white on tan in dark mode.
+- `pb-44` + `data-edge-scroll` on the Dashboard Edge mobile scroller so the quick-action row clears the floating mic FAB.
+- Save and restore dashboard scroll position around `SkillCaptureSheet` so closing the sheet doesn't leave the page in an unrelated spot.
+- Pinned the Pro teaser preview to `h-24` with absolute children so its 5-second content swap stops nudging surrounding layout.
+- New hook **`useRevealOnMount`** smoothly reveals `SmartProbeCard` and `AutomatePainCard` when they mount below the fold.
+
+**Why it mattered:** The Skill Builder UX surfaced contrast and scroll-restoration issues that existed pre-Phase-8 but weren't visible until the warm pill ecosystem expanded.
+
+### Outcomes from Phase 8
+
+- 4 PRs merged: #103 (Skill Builder), #104 (desktop redesign), #105 (pain-anchored entry points), #106 (contrast + scroll polish)
+- 1 new edge function (`generate-skill-export`, 4 internal files, 1035 LOC)
+- 3 new hooks (`useSkillExport`, `useUserPains`, `useRevealOnMount`) — total now 51
+- 1 new migration (`20260508000000_create_skill_exports.sql`) — total now 98
+- 5 new components in `src/components/edge/` for the Skill Builder UX + 1 in `src/components/memory-web/`
+- Desktop now feels like a desktop product, not stretched mobile markup
+- Edge Pro upsell strengthened materially: the same $9/month now includes unlimited Agent Skill Builder generation alongside the existing Edge artifacts + 7 briefing types + Custom Voice Export. No price change.
