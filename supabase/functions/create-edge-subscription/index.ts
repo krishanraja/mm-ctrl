@@ -1,5 +1,10 @@
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  EDGE_PRO_CURRENCY,
+  EDGE_PRO_INTERVAL,
+  EDGE_PRO_UNIT_AMOUNT_CENTS,
+} from "../_shared/edge-pricing.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,8 +13,6 @@ const corsHeaders = {
 
 const EDGE_PRO_PRICE_ID_ENV = Deno.env.get("STRIPE_EDGE_PRO_PRICE_ID");
 const EDGE_PRO_PRODUCT_NAME = "Edge Pro";
-const EDGE_PRO_UNIT_AMOUNT = 900; // $9.00/month in cents
-const EDGE_PRO_INTERVAL = "month" as const;
 
 // Self-healing price lookup: if STRIPE_EDGE_PRO_PRICE_ID is not set, look up
 // (or create) the "Edge Pro" product and its recurring monthly price.
@@ -37,15 +40,15 @@ async function resolveEdgeProPriceId(stripe: Stripe): Promise<string> {
   const existing = prices.data.find(
     (p) =>
       p.recurring?.interval === EDGE_PRO_INTERVAL &&
-      p.unit_amount === EDGE_PRO_UNIT_AMOUNT &&
-      p.currency === "usd",
+      p.unit_amount === EDGE_PRO_UNIT_AMOUNT_CENTS &&
+      p.currency === EDGE_PRO_CURRENCY,
   );
   if (existing) return existing.id;
 
   const created = await stripe.prices.create({
     product: product.id,
-    unit_amount: EDGE_PRO_UNIT_AMOUNT,
-    currency: "usd",
+    unit_amount: EDGE_PRO_UNIT_AMOUNT_CENTS,
+    currency: EDGE_PRO_CURRENCY,
     recurring: { interval: EDGE_PRO_INTERVAL },
     metadata: { product: "edge_pro" },
   });
