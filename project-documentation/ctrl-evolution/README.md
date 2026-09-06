@@ -32,6 +32,8 @@ Sovereign AI fluency is now foundational: role-appropriate firsthand experience 
 
 The working capability model is calibrated system judgement at the level of real work: notice the task and information movement; improve data readiness; decide what to delegate and what to retain; specify and receive the handoff; ask for reflection; inspect, validate and independently verify; correct the result; and encode what was learned. The target is not maximum automation. Correct non-delegation, anticipatory error detection and preserved taste are positive evidence of fluency. A provisional diagnostic hypothesis is that these behaviours predict held-out work quality better than tool familiarity or self-reported confidence, but CTRL must test that without covert click tracking or surveillance.
 
+The target operating model is attention reallocation. Governed AI carries data movement, manipulation, enrichment, analysis and administrative information transport. Humans move into standards, judgement, customers and stakeholders, strategic movement, distinctive final craft and named accountability. For consequential work, an independent AI pass may add validation and verification evidence, but the human must critically assess both the output and its audit. Model agreement never becomes release authority.
+
 The first wedge is leader adaptation, followed by organisation now/next/not-yet pacing; live AI-initiative triage remains conditional. CTRL may support work and role design but must not evaluate named people or recommend employment actions. A leader-owned Private Leader Brain and a company transition map remain separately permissioned assets.
 
 **NON_GOALS:**
@@ -61,11 +63,13 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 **AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. Append-only discovery and redacted snapshot maintenance remain authorised. Broader product implementation, material visual construction, main-branch merge, capability restoration and public release require their own scoped gates.
 
+**POST_REBUILD_REQUIREMENT:** The rebuilt UI and product marketing must make the complete calibrated-system-judgement loop a core, human-centred USP. Users should feel the movement from invisible information logistics to better human standards, relationships, strategy, distinctive quality and accountability without being shown a technical checklist. The expression must be tested, but the underlying capability cannot be lost or demoted.
+
 **ACTIVE_CASE:** Whether to reorient marketing completely around AI and redesign the division around high-agency, high-taste judgement and systems-administration capabilities. Treat marketing strategy, future operating model and current-team transition as three coupled but distinct decisions. The founder reports reluctance to change and mid-level staff spending entire weeks producing LinkedIn posts. Leadership had not yet committed the new strategy or changed incentives and success measures beyond encouraging greater Claude use. The evidence therefore supports strategic and operating-system ambiguity more strongly than it supports replacing current people.
 
-The founder has corrected the loop's outcome-first premise. The decisive experience was not primarily a missing marketing outcome: firsthand AI fluency revealed a radically different production possibility, while day-to-day work remained in the old paradigm. That possibility-perception gap is causally prior. The fluency mechanism is now concrete: continuous attention to task steps, copy-paste and information movement, input quality, delegation boundaries, returned work, verification and correction. It taught the founder both what AI could absorb and where contextual validity, factual accuracy, creative direction, brand meaning, taste and judgement could not be handed off blindly.
+The founder has corrected the loop's outcome-first premise. The decisive experience was not primarily a missing marketing outcome: firsthand AI fluency revealed a radically different production possibility, while day-to-day work remained in the old paradigm. That possibility-perception gap is causally prior. The target hour now has a concrete division of labour: AI handles governed information logistics and administration; the human enforces standards, spends reclaimed attention with customers and stakeholders, moves the strategic goal, performs the distinctive final mile, critically evaluates an independent AI audit and owns the result.
 
-**NEXT_ACTION:** Describe one excellent hour in the target marketing organisation: what the human does, what AI does invisibly, and what the human must inspect or decide before consequential work ships (`Q-054`).
+**NEXT_ACTION:** Identify the smallest five-minute input and receipt that makes a leader feel the gap between their current hour and an AI-native hour and gives them something they cannot unsee (`Q-055`).
 
 ## Current strategic synthesis through G11
 
@@ -74,6 +78,8 @@ The founder has corrected the loop's outcome-first premise. The decisive experie
 | Where to play | AI-transition decisions for decision-owning leaders inside the Mindmake thirty-day proof | A bounded domain is commercially coherent and can be evaluated; CTRL is not a generic business-decision chatbot. |
 | Value creation | Better category and organisational outcomes through a more capable leader | This stitches company-funded value to the leader-owned AI-brain promise. |
 | Foundational capability | Calibrated system judgement built through consequential work | Fluency is the observable ability to notice, prepare, delegate or retain, inspect, verify, correct and learn while preserving taste—not operator-level tool mastery or automation volume. |
+| Target operating model | AI carries governed information logistics; humans own standards, relationships, strategy, distinctive final craft and accountability | The value is better allocation of scarce human attention, not simply fewer people or more generated output. |
+| Consequential assurance | Independent AI verification evidence plus critical human release judgement | A second model can expose gaps, but agreement between models cannot replace accountable human assessment. |
 | First wedge | Leader stop/start/delegate/learn/excellence, then organisation now/next/not-yet; live initiative triage conditional | It creates reusable capability before expanding into a broader decision portfolio. |
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
 | Evidence model | Flexible, consented, claim-type-specific orchestration; transcripts retain speaker, time, decision, context and provenance | The AI does the preparation without treating convenient context as reliable truth. |
@@ -154,13 +160,16 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-035` Orchestrate the ranked signature-magic sequence adaptively rather than forcing every moment into every interaction.
 - `D-036` Build sovereign, role-appropriate AI fluency through consequential work so leaders can perceive possibilities, judge quality, set the human–AI boundary and own strategy without turning CTRL into a generic tools course.
 - `D-037` Define fluency as a consequence-sensitive real-work loop of noticing, input preparation, delegation or retention, handoffs, inspection, reflection, verification, correction and encoded learning.
+- `D-038` Make the complete calibrated-system-judgement loop a core post-rebuild UI and product-marketing USP without exposing a technical checklist.
+- `D-039` Use attention reallocation, rather than maximum automation, as the target operating model for CTRL-supported AI transition.
+- `D-040` Treat independent AI review as inspectable evidence while a human critically assesses the work and audit and retains final release accountability.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 212
-- SHA-256: `59f0c5daf8ee2965e13e8bae431edf6f059a4268fba5c2e21fb42aa65b2870c1`
+- Rows: 219
+- SHA-256: `df22c7165a1f3ca4ad5d6a6e5e3dd0b11854af0f4b02c7e358bdcd225ad1398e`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
