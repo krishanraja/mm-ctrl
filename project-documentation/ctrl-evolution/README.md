@@ -69,7 +69,9 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 The founder has corrected the loop's outcome-first premise. The decisive experience was not primarily a missing marketing outcome: firsthand AI fluency revealed a radically different production possibility, while day-to-day work remained in the old paradigm. That possibility-perception gap is causally prior. The target hour now has a concrete division of labour: AI handles governed information logistics and administration; the human enforces standards, spends reclaimed attention with customers and stakeholders, moves the strategic goal, performs the distinctive final mile, critically evaluates an independent AI audit and owns the result.
 
-**NEXT_ACTION:** Identify the smallest five-minute input and receipt that makes a leader feel the gap between their current hour and an AI-native hour and gives them something they cannot unsee (`Q-055`).
+The first grounded exemplar is an hour-long synchronous meeting to brainstorm one social post. A criteria-, voice- and tone-governed system could generate genuinely divergent directions before the workday, allowing any human discussion to start with comparison, rejection, combination and direction choice. The standard is better ideas faster—not more, worse or cosmetically similar ideas faster. This remains a workflow exemplar rather than proof that every brainstorm should be automated.
+
+**NEXT_ACTION:** Identify what the prepared option set must demonstrate for the founder to trust its voice, strategic usefulness and genuine divergence rather than dismiss it as polished generic AI content (`Q-056`).
 
 ## Current strategic synthesis through G11
 
@@ -80,6 +82,7 @@ The founder has corrected the loop's outcome-first premise. The decisive experie
 | Foundational capability | Calibrated system judgement built through consequential work | Fluency is the observable ability to notice, prepare, delegate or retain, inspect, verify, correct and learn while preserving taste—not operator-level tool mastery or automation volume. |
 | Target operating model | AI carries governed information logistics; humans own standards, relationships, strategy, distinctive final craft and accountability | The value is better allocation of scarce human attention, not simply fewer people or more generated output. |
 | Consequential assurance | Independent AI verification evidence plus critical human release judgement | A second model can expose gaps, but agreement between models cannot replace accountable human assessment. |
+| Prepared collaboration | Generate standards-governed divergent options before suitable meetings; begin human collaboration at the judgement boundary | The aim is better ideas and better use of attention, not content volume or the elimination of every live brainstorm. |
 | First wedge | Leader stop/start/delegate/learn/excellence, then organisation now/next/not-yet; live initiative triage conditional | It creates reusable capability before expanding into a broader decision portfolio. |
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
 | Evidence model | Flexible, consented, claim-type-specific orchestration; transcripts retain speaker, time, decision, context and provenance | The AI does the preparation without treating convenient context as reliable truth. |
@@ -163,13 +166,14 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-038` Make the complete calibrated-system-judgement loop a core post-rebuild UI and product-marketing USP without exposing a technical checklist.
 - `D-039` Use attention reallocation, rather than maximum automation, as the target operating model for CTRL-supported AI transition.
 - `D-040` Treat independent AI review as inspectable evidence while a human critically assesses the work and audit and retains final release accountability.
+- `D-041` Prepare genuinely divergent, standards-governed options before suitable collaboration so human time begins at comparative judgement and direction choice; evaluate against better ideas faster.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 219
-- SHA-256: `df22c7165a1f3ca4ad5d6a6e5e3dd0b11854af0f4b02c7e358bdcd225ad1398e`
+- Rows: 224
+- SHA-256: `97b67aee8cedef58bd6b098939cf4883b107d261d4f5dbd6cebb4450d1838b5c`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
