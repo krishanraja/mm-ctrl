@@ -30,6 +30,8 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 Sovereign AI fluency is now foundational: role-appropriate firsthand experience must let the leader perceive newly possible work, distinguish impressive output from valuable output, set the human–AI boundary, form a falsifiable operating thesis and retain accountable judgement. CTRL should build and test that fluency through consequential real work, not become a generic tools course or imply that an AI-active leader is infallible.
 
+The working capability model is calibrated system judgement at the level of real work: notice the task and information movement; improve data readiness; decide what to delegate and what to retain; specify and receive the handoff; ask for reflection; inspect, validate and independently verify; correct the result; and encode what was learned. The target is not maximum automation. Correct non-delegation, anticipatory error detection and preserved taste are positive evidence of fluency. A provisional diagnostic hypothesis is that these behaviours predict held-out work quality better than tool familiarity or self-reported confidence, but CTRL must test that without covert click tracking or surveillance.
+
 The first wedge is leader adaptation, followed by organisation now/next/not-yet pacing; live AI-initiative triage remains conditional. CTRL may support work and role design but must not evaluate named people or recommend employment actions. A leader-owned Private Leader Brain and a company transition map remain separately permissioned assets.
 
 **NON_GOALS:**
@@ -61,9 +63,9 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 **ACTIVE_CASE:** Whether to reorient marketing completely around AI and redesign the division around high-agency, high-taste judgement and systems-administration capabilities. Treat marketing strategy, future operating model and current-team transition as three coupled but distinct decisions. The founder reports reluctance to change and mid-level staff spending entire weeks producing LinkedIn posts. Leadership had not yet committed the new strategy or changed incentives and success measures beyond encouraging greater Claude use. The evidence therefore supports strategic and operating-system ambiguity more strongly than it supports replacing current people.
 
-The founder has corrected the loop's outcome-first premise. The decisive experience was not primarily a missing marketing outcome: firsthand AI fluency revealed a radically different production possibility, while day-to-day work remained in the old paradigm. That possibility-perception gap is causally prior. The next task is to describe the newly visible operating reality, then translate it into strategy, measures, incentives, work design and a fair capability-transition test.
+The founder has corrected the loop's outcome-first premise. The decisive experience was not primarily a missing marketing outcome: firsthand AI fluency revealed a radically different production possibility, while day-to-day work remained in the old paradigm. That possibility-perception gap is causally prior. The fluency mechanism is now concrete: continuous attention to task steps, copy-paste and information movement, input quality, delegation boundaries, returned work, verification and correction. It taught the founder both what AI could absorb and where contextual validity, factual accuracy, creative direction, brand meaning, taste and judgement could not be handed off blindly.
 
-**NEXT_ACTION:** Describe the operating reality that firsthand AI fluency made visible, without reducing it to tools or jumping to workforce conclusions (`Q-053`).
+**NEXT_ACTION:** Describe one excellent hour in the target marketing organisation: what the human does, what AI does invisibly, and what the human must inspect or decide before consequential work ships (`Q-054`).
 
 ## Current strategic synthesis through G11
 
@@ -71,7 +73,7 @@ The founder has corrected the loop's outcome-first premise. The decisive experie
 |---|---|---|
 | Where to play | AI-transition decisions for decision-owning leaders inside the Mindmake thirty-day proof | A bounded domain is commercially coherent and can be evaluated; CTRL is not a generic business-decision chatbot. |
 | Value creation | Better category and organisational outcomes through a more capable leader | This stitches company-funded value to the leader-owned AI-brain promise. |
-| Foundational capability | Sovereign, role-appropriate AI fluency built through consequential work | A leader cannot responsibly set AI-era strategy for a possibility space they cannot personally perceive or judge; this is accountable judgement, not operator-level tool mastery. |
+| Foundational capability | Calibrated system judgement built through consequential work | Fluency is the observable ability to notice, prepare, delegate or retain, inspect, verify, correct and learn while preserving taste—not operator-level tool mastery or automation volume. |
 | First wedge | Leader stop/start/delegate/learn/excellence, then organisation now/next/not-yet; live initiative triage conditional | It creates reusable capability before expanding into a broader decision portfolio. |
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
 | Evidence model | Flexible, consented, claim-type-specific orchestration; transcripts retain speaker, time, decision, context and provenance | The AI does the preparation without treating convenient context as reliable truth. |
@@ -151,13 +153,14 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-034` Use the minimum helpful interruption; “interesting” alone does not earn the right to interrupt.
 - `D-035` Orchestrate the ranked signature-magic sequence adaptively rather than forcing every moment into every interaction.
 - `D-036` Build sovereign, role-appropriate AI fluency through consequential work so leaders can perceive possibilities, judge quality, set the human–AI boundary and own strategy without turning CTRL into a generic tools course.
+- `D-037` Define fluency as a consequence-sensitive real-work loop of noticing, input preparation, delegation or retention, handoffs, inspection, reflection, verification, correction and encoded learning.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 206
-- SHA-256: `e162f89398f524891cdad59a8476a9d0dc3dea1eae341ec0b00c207447ba1a3a`
+- Rows: 212
+- SHA-256: `59f0c5daf8ee2965e13e8bae431edf6f059a4268fba5c2e21fb42aa65b2870c1`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
