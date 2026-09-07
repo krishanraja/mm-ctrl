@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** `D-055` closes G12 and locks the Living Map hybrid as the governing Brain direction. The G13 physical contract and executable reference proof are complete: one versioned kernel drives the portrait and Living Map; nine fixtures block unsupported relationships, evidence-audience expansion, private leakage, proposed truth, disputed steering and incomplete repair; and a 120-item, 180-relationship projection is deterministic under reordered input. The first My Brain concept round was rejected before founder review because all three independent generators converged on the same fold metaphor. A final targeted divergence round is active. Production schema changes, GitHub App or customer-repository creation, implementation and release remain paused.
+**CURRENT_PHASE:** `D-055` closes G12 and locks the Living Map hybrid as the governing Brain direction. The G13 physical contract and executable reference proof are complete: one versioned kernel drives the portrait and Living Map; nine fixtures block unsupported relationships, evidence-audience expansion, private leakage, proposed truth, disputed steering and incomplete repair; and a 120-item, 180-relationship projection is deterministic under reordered input. The first My Brain concept round was rejected before founder review because all three independent generators converged on the same fold metaphor. A targeted second round produced three structurally distant concepts. Two blinded judges split between The Wake and The Fixed Point; a fresh blinded tiebreak selected The Wake by 92 to 91 with strict anti-causality conditions. The resulting functional G13 proof passes mobile and desktop checks and is ready for the founder's cold reaction. Production schema changes, GitHub App or customer-repository creation, implementation and release remain paused.
 
 **SOURCE_LAYERS:**
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Complete the final targeted My Brain divergence round, prove pairwise conceptual distance, obtain two independent blinded judgments, synthesize one feasible concept against the G13 fixtures and render it for the founder's cold reaction. Stop before production UI implementation.
+**NEXT_ACTION:** Obtain the founder's cold reaction to the functional G13 Living Brain proof. If the experience proves the product logic and avoids false causality, record the material-surface decision and define the next implementation gate. If it does not, use The Fixed Point as the approved fallback territory. Stop before production UI implementation.
 
 ## Current strategic synthesis through G12
 
@@ -140,7 +140,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [G12 living Brain domain and user model](living-brain-domain-and-user-model.md): founder-approved Living Map hybrid, customer mental model, canonical domain kernel, learning authority, correction cascade, taste preservation, portability and V1 proof boundary; now the governing input to G13 contract and proof work.
 - [G13 Living Brain physical contract](g13-living-brain-physical-contract.md): versioned physical topology, evidence and audience boundaries, deterministic portrait and map projection, semantic visual grammar, correction and repair cascade, storage mapping, legacy adapter boundary and the next material-surface gate.
 - [G13 machine contract](g13-living-brain-contract.json) and [proof fixtures](g13-living-brain-proof-fixtures.json): seventeen enforceable invariants and nine executable cases, including deterministic scale at 120 items and 180 relationships. Run with `npm run brain:g13:check`.
-- G13 My Brain divergence: [sanitized brief](design/g13-my-brain-sanitized-brief.md), independently generated round 1 [A](design/g13-concept-a.md), [B](design/g13-concept-b.md) and [C](design/g13-concept-c.md), and the [diversity failure record](design/g13-round-1-diversity-failure.md). The convergent set was rejected before founder review; final targeted divergence is active.
+- G13 My Brain divergence and proof: [sanitized brief](design/g13-my-brain-sanitized-brief.md), rejected round 1 [A](design/g13-concept-a.md), [B](design/g13-concept-b.md) and [C](design/g13-concept-c.md), [diversity failure](design/g13-round-1-diversity-failure.md), structurally distant round 2 [spatial](design/g13-concept-s.md), [temporal](design/g13-concept-t.md) and [fixed-object](design/g13-concept-l.md), [distance record](design/g13-round-2-diversity-record.md), blinded [Judge 1](design/g13-judge-1-verdict.md), [Judge 2](design/g13-judge-2-verdict.md), [tiebreak](design/g13-tiebreak-verdict.md), [synthesis](design/g13-my-brain-synthesis-record.md), [functional proof](design/g13-living-brain-proof-r1.html) and [rendered QA record](design/g13-living-brain-qa-record.md).
 
 ## Ikigai alignment
 
@@ -169,7 +169,7 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 | Verify high-confidence trust findings against live bundles | Complete |
 | Apply and verify production trust containment | Complete |
 | Complete founder product interview | In progress |
-| Produce decision-complete product corpus and architecture | In progress: G13 physical contract and headless proof complete; material My Brain divergence active |
+| Produce decision-complete product corpus and architecture | In progress: G13 physical contract, headless proof, material divergence, synthesis and rendered proof complete; founder cold review pending |
 | Diverge, render and approve first material surface | Complete: R3 direction approved with implementation corrections |
 | Implement and independently verify vertical slice | Pending |
 

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CTRL · My Brain · G13 proof</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #0a100d;
+      --raised: #111a16;
+      --raised-2: #16221c;
+      --line: #294036;
+      --line-soft: #1e3028;
+      --paper: #f1efe5;
+      --muted: #9baaa2;
+      --mint: #89e7ba;
+      --amber: #e3aa52;
+      --danger: #ef927f;
+      --blue: #9abbe8;
+      --serif: "Newsreader", "Source Serif 4", Georgia, serif;
+      --sans: "Archivo", Inter, Arial, sans-serif;
+      --mono: "IBM Plex Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--ink); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% -20%, rgba(137,231,186,.08), transparent 35rem),
+        var(--ink);
+      color: var(--paper);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(100%, 1120px);
+      min-height: 100vh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 196px;
+    }
+    .app {
+      min-height: 100vh;
+      border-inline: 1px solid var(--line-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .topbar {
+      height: 70px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font: 700 13px/1 var(--mono);
+      letter-spacing: .08em;
+    }
+    .brand-mark { width: 23px; height: 23px; color: var(--amber); }
+    .context-label {
+      color: var(--muted);
+      font: 500 10px/1 var(--mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .view {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 46px 46px 110px;
+      animation: enter .38s cubic-bezier(.22,.8,.25,1) both;
+    }
+    .view[hidden] { display: none; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+      color: var(--mint);
+      font: 600 10px/1.2 var(--mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 18px;
+      border-top: 1px solid currentColor;
+    }
+    h1, h2, p { margin-top: 0; }
+    h1 {
+      max-width: 650px;
+      margin-bottom: 22px;
+      font: 400 clamp(36px, 5vw, 58px)/1.04 var(--serif);
+      letter-spacing: -.035em;
+    }
+    h2 {
+      margin-bottom: 14px;
+      font: 400 30px/1.08 var(--serif);
+      letter-spacing: -.025em;
+    }
+    .lede {
+      max-width: 570px;
+      margin-bottom: 32px;
+      color: #c3ccc7;
+      font: 400 16px/1.58 var(--serif);
+    }
+    .now-line {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 18px;
+      align-items: stretch;
+      margin: 34px 0;
+    }
+    .time-axis {
+      position: relative;
+      min-height: 236px;
+      color: var(--muted);
+      font: 500 9px/1 var(--mono);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .time-axis::before {
+      content: "";
+      position: absolute;
+      left: 34px;
+      top: 3px;
+      bottom: 3px;
+      border-left: 1px solid var(--line);
+    }
+    .now-dot {
+      position: absolute;
+      left: 29px;
+      top: 31px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 0 1px var(--mint), 0 0 24px rgba(137,231,186,.22);
+    }
+    .now-word { position: absolute; top: 31px; left: 0; transform: translateY(1px); }
+    .past-word { position: absolute; bottom: 0; left: 1px; }
+    .call-card {
+      border-top: 1px solid var(--mint);
+      border-bottom: 1px solid var(--line);
+      padding: 24px 0 27px;
+    }
+    .call-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font: 500 10px/1 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .icon { width: 17px; height: 17px; flex: 0 0 auto; }
+    .call-text {
+      margin: 0;
+      font: 400 26px/1.25 var(--serif);
+      letter-spacing: -.018em;
+    }
+    .call-note {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font: 400 12px/1.5 var(--sans);
+    }
+    .primary, .secondary, .choice {
+      border: 0;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 20px;
+      border-radius: 3px;
+      background: var(--paper);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .primary:hover, .choice:hover { transform: translateY(-1px); }
+    .primary svg { width: 17px; height: 17px; }
+    .secondary {
+      min-height: 42px;
+      padding: 0 2px;
+      background: transparent;
+      color: var(--paper);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+    }
+    .action-row { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+
+    .record-stack { margin: 30px 0 34px; }
+    .record {
+      position: relative;
+      padding: 22px 22px 23px 48px;
+      border: 1px solid var(--line);
+      background: rgba(17,26,22,.62);
+    }
+    .record + .record { margin-top: 28px; }
+    .record + .record::before {
+      content: "supports";
+      position: absolute;
+      top: -21px;
+      left: 33px;
+      padding: 3px 7px;
+      background: var(--ink);
+      color: var(--amber);
+      font: 500 9px/1 var(--mono);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .record + .record::after {
+      content: "";
+      position: absolute;
+      top: -29px;
+      left: 29px;
+      height: 28px;
+      border-left: 1px solid var(--amber);
+    }
+    .record-icon {
+      position: absolute;
+      left: 18px;
+      top: 22px;
+      width: 18px;
+      height: 18px;
+      color: var(--amber);
+    }
+    .record-kind {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font: 500 9px/1 var(--mono);
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .record-text { margin: 0; font: 400 18px/1.34 var(--serif); }
+    .meaning {
+      margin-top: 11px;
+      padding-top: 11px;
+      border-top: 1px solid var(--line-soft);
+      color: #aebbb4;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .co-presence {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 16px;
+      color: var(--muted);
+      font: 500 9px/1.2 var(--mono);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .co-presence::before { content: ""; width: 12px; border-top: 1px dotted var(--muted); }
+
+    .source-sheet {
+      margin: 30px 0 34px;
+      border-left: 2px solid var(--amber);
+      background: var(--raised);
+      padding: 26px;
+    }
+    .source-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font: 500 9px/1.35 var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .source-id { color: var(--amber); }
+    .source-quote {
+      margin: 0;
+      color: var(--paper);
+      font: 400 23px/1.35 var(--serif);
+    }
+    .source-foot {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 25px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .source-foot strong { display: block; color: #d9ddd9; margin-bottom: 3px; font-size: 10px; }
+
+    .check-card {
+      margin: 30px 0;
+      padding: 26px;
+      border: 1px solid var(--line);
+      background: var(--raised);
+    }
+    .check-card blockquote { margin: 0; font: 400 23px/1.35 var(--serif); }
+    .choices { display: grid; gap: 10px; margin-top: 24px; }
+    .choice {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 56px;
+      padding: 13px 16px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: transparent;
+      text-align: left;
+      font-size: 13px;
+    }
+    .choice:hover { border-color: var(--mint); background: rgba(137,231,186,.035); }
+    .choice-mark {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--muted);
+      font: 500 10px/1 var(--mono);
+    }
+    .choice small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      margin: 29px 0;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+    .version { background: var(--raised); padding: 22px; }
+    .version.old { color: #9ba49f; }
+    .version.new { box-shadow: inset 0 2px 0 var(--mint); }
+    .version-label {
+      display: block;
+      margin-bottom: 13px;
+      color: var(--muted);
+      font: 500 9px/1 var(--mono);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .version p { margin: 0; font: 400 17px/1.4 var(--serif); }
+    .version-tag {
+      display: inline-block;
+      margin-top: 15px;
+      color: var(--mint);
+      font: 500 9px/1 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+    .impact-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 30px; }
+    .impact-title {
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font: 500 9px/1 var(--mono);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .impact-list { list-style: none; margin: 0; padding: 0; }
+    .impact-list li {
+      display: flex;
+      gap: 9px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .impact-list svg { width: 15px; height: 15px; flex: 0 0 auto; color: var(--mint); }
+    .review li svg { color: var(--amber); }
+
+    .receipt {
+      margin: 30px 0 34px;
+      border-top: 1px solid var(--mint);
+      border-bottom: 1px solid var(--line);
+    }
+    .receipt-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 58px;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 12px;
+    }
+    .receipt-row:last-child { border-bottom: 0; }
+    .receipt-row svg { width: 17px; height: 17px; }
+    .receipt-state { color: var(--muted); font: 500 9px/1 var(--mono); text-transform: uppercase; }
+    .receipt-state.done { color: var(--mint); }
+    .receipt-state.review { color: var(--amber); }
+
+    .brain-view { width: 100%; max-width: none; padding: 28px 32px 92px; }
+    .brain-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .brain-title h1 { margin: 0; font-size: clamp(32px, 4vw, 49px); }
+    .brain-title p { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+    .mode-switch { display: flex; border-bottom: 1px solid var(--line); }
+    .mode-button {
+      border: 0;
+      border-bottom: 2px solid transparent;
+      min-height: 44px;
+      padding: 10px 12px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: 600 10px/1 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .mode-button.active { color: var(--paper); border-color: var(--mint); }
+    .map-wrap { display: grid; grid-template-columns: minmax(0,1fr) 238px; gap: 18px; }
+    .map-field {
+      position: relative;
+      min-height: 530px;
+      overflow: hidden;
+      border: 1px solid var(--line-soft);
+      background:
+        linear-gradient(rgba(41,64,54,.17) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(41,64,54,.17) 1px, transparent 1px),
+        radial-gradient(circle at 50% 44%, rgba(137,231,186,.055), transparent 14rem),
+        var(--ink);
+      background-size: 44px 44px, 44px 44px, auto, auto;
+    }
+    .map-field::before {
+      content: "Distance shows layout, not meaning";
+      position: absolute;
+      bottom: 13px;
+      left: 15px;
+      z-index: 4;
+      color: #718078;
+      font: 500 8px/1 var(--mono);
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+    .edges { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .edge { fill: none; stroke: var(--line); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+    .edge.active { stroke: var(--amber); }
+    .edge-label {
+      position: absolute;
+      z-index: 3;
+      padding: 4px 7px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--ink);
+      color: var(--muted);
+      font: 500 8px/1 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+    .edge-label.active { border-color: #765d32; color: var(--amber); }
+    .node {
+      position: absolute;
+      z-index: 2;
+      width: 132px;
+      min-height: 65px;
+      transform: translate(-50%, -50%);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: rgba(17,26,22,.96);
+      padding: 11px;
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 0 12px 32px rgba(0,0,0,.2);
+    }
+    .node:hover, .node.selected { border-color: var(--mint); }
+    .node.focus {
+      width: 154px;
+      border-color: var(--mint);
+      box-shadow: 0 0 0 7px rgba(137,231,186,.045), 0 17px 45px rgba(0,0,0,.35);
+    }
+    .node-kind { display: block; margin-bottom: 7px; color: var(--muted); font: 500 8px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .node.focus .node-kind { color: var(--mint); }
+    .node-text { display: block; font: 400 11px/1.35 var(--serif); }
+    .node-version { display: block; margin-top: 6px; color: #6f7c75; font: 500 8px/1 var(--mono); }
+    .node.decision { left: 50%; top: 47%; }
+    .node.aim { left: 20%; top: 17%; }
+    .node.standard { left: 77%; top: 17%; }
+    .node.tension { left: 20%; top: 73%; }
+    .node.voice { left: 77%; top: 73%; }
+    .map-side { border-top: 1px solid var(--line); padding-top: 18px; }
+    .map-side-label { color: var(--mint); font: 500 9px/1 var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+    .map-side h3 { margin: 13px 0 10px; font: 400 21px/1.2 var(--serif); }
+    .map-side p { color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .relation-list { list-style: none; padding: 0; margin: 22px 0; }
+    .relation-list li { padding: 11px 0; border-top: 1px solid var(--line-soft); font-size: 10px; line-height: 1.45; }
+    .relation-list strong { color: var(--amber); font: 500 8px/1 var(--mono); text-transform: uppercase; letter-spacing: .04em; }
+    .find-row { display: grid; gap: 9px; }
+    .find-row .primary { width: 100%; min-height: 45px; }
+    .portrait { display: none; max-width: 680px; margin: 28px auto 0; }
+    .portrait.active { display: block; }
+    .map-wrap.hidden { display: none; }
+    .portrait-call { padding: 25px 0; border-top: 1px solid var(--mint); border-bottom: 1px solid var(--line); }
+    .portrait-call + .portrait-call { border-top: 0; }
+    .portrait-call small { color: var(--muted); font: 500 8px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+    .portrait-call p { margin: 11px 0 0; font: 400 21px/1.35 var(--serif); }
+
+    .proof-rail {
+      min-height: 100vh;
+      padding: 23px 18px;
+      border-right: 1px solid var(--line-soft);
+      background: #0c1410;
+    }
+    .proof-rail h2 { margin: 0 0 8px; color: var(--paper); font: 600 10px/1.2 var(--mono); text-transform: uppercase; letter-spacing: .1em; }
+    .proof-rail > p { margin: 0 0 20px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .step-list { display: grid; gap: 3px; }
+    .step-jump {
+      display: grid;
+      grid-template-columns: 19px 1fr;
+      align-items: center;
+      gap: 7px;
+      min-height: 33px;
+      padding: 0 7px;
+      border: 0;
+      border-left: 1px solid var(--line);
+      background: transparent;
+      color: #75827b;
+      text-align: left;
+      cursor: pointer;
+      font: 500 9px/1.2 var(--mono);
+    }
+    .step-jump span:first-child { font-size: 8px; }
+    .step-jump.active { color: var(--paper); border-color: var(--mint); background: rgba(137,231,186,.035); }
+    .proof-note { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line-soft); color: #607068; font: 500 8px/1.45 var(--mono); }
+    .live-region { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    @keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 760px) {
+      .shell { display: block; }
+      .proof-rail { display: none; }
+      .app { width: 100%; border: 0; }
+      .topbar { height: 61px; padding: 0 19px; }
+      .view { padding: 34px 20px 94px; }
+      h1 { font-size: 39px; }
+      .lede { font-size: 15px; }
+      .now-line { grid-template-columns: 45px 1fr; gap: 12px; }
+      .time-axis::before { left: 29px; }
+      .now-dot { left: 24px; }
+      .call-text { font-size: 23px; }
+      .record { padding-left: 43px; }
+      .source-sheet, .check-card { padding: 21px; }
+      .source-quote { font-size: 21px; }
+      .before-after, .impact-columns { grid-template-columns: 1fr; }
+      .brain-view { padding: 24px 14px 80px; }
+      .brain-head { align-items: start; flex-direction: column; }
+      .map-wrap { grid-template-columns: 1fr; }
+      .map-field { min-height: 530px; }
+      .node { width: 105px; padding: 9px; }
+      .node.focus { width: 130px; }
+      .node-text { font-size: 10px; }
+      .node.aim, .node.tension { left: 19%; }
+      .node.standard, .node.voice { left: 81%; }
+      .edge-label.tension-label { left: 17% !important; }
+      .map-side { padding: 18px 4px 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <symbol id="i-mark" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="4.5" fill="none" stroke="currentColor" transform="rotate(35 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4.5" fill="none" stroke="currentColor" transform="rotate(-35 12 12)"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-call" viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3V5Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 9h8m-8 3h5" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-standard" viewBox="0 0 24 24"><path d="M6 3h12v18H6zM9 8h6m-6 4h6m-6 4h4" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-review" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 7v6m0 3h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2" fill="none" stroke="currentColor"/><circle cx="18" cy="6" r="2" fill="none" stroke="currentColor"/><circle cx="18" cy="18" r="2" fill="none" stroke="currentColor"/><path d="m8 11 8-4m-8 6 8 4" fill="none" stroke="currentColor"/></symbol>
+  </svg>
+
+  <main class="shell">
+    <section class="app" aria-label="CTRL My Brain product proof">
+      <header class="topbar">
+        <div class="brand"><svg class="brand-mark"><use href="#i-mark"/></svg>CTRL</div>
+        <div class="context-label" id="contextLabel">My calls · Now</div>
+      </header>
+
+      <section class="view" data-screen="call">
+        <div class="eyebrow">A call you own</div>
+        <h1>This is where your thinking moved.</h1>
+        <p class="lede">A consequential call, held in the moment you made it. CTRL has kept the surrounding material separate until it can say exactly how it relates.</p>
+        <div class="now-line">
+          <div class="time-axis"><span class="now-word">Now</span><span class="now-dot"></span><span class="past-word">Earlier</span></div>
+          <article class="call-card">
+            <div class="call-meta"><svg class="icon"><use href="#i-call"/></svg>Decision · 7 September</div>
+            <p class="call-text">Redesign the work before making any conclusion about the people.</p>
+            <p class="call-note">Recorded from your strategy session. Owned by you.</p>
+          </article>
+        </div>
+        <button class="primary" data-next="recorded">See what was recorded with this call <svg><use href="#i-arrow"/></svg></button>
+      </section>
+
+      <section class="view" data-screen="recorded" hidden>
+        <div class="eyebrow">Recorded context</div>
+        <h1>Two parts of your Brain were present.</h1>
+        <p class="lede">Being present does not mean CTRL has invented a causal story. One relationship is supported by evidence. The decision remains unlinked.</p>
+        <div class="record-stack">
+          <article class="record">
+            <svg class="record-icon"><use href="#i-pin"/></svg>
+            <span class="record-kind">Aim · recorded with this call</span>
+            <p class="record-text">Build a marketing organisation capable of shaping an AI-native category.</p>
+          </article>
+          <article class="record">
+            <svg class="record-icon"><use href="#i-standard"/></svg>
+            <span class="record-kind">Standard · recorded with this call</span>
+            <p class="record-text">Before consequential work ships, the human owns the final judgement and finish.</p>
+            <p class="meaning">Relationship meaning: human release judgement protects the quality of AI-native category work.</p>
+          </article>
+          <span class="co-presence">The decision has no asserted relationship yet</span>
+        </div>
+        <button class="primary" data-next="source">See the source <svg><use href="#i-arrow"/></svg></button>
+      </section>
+
+      <section class="view" data-screen="source" hidden>
+        <div class="eyebrow">Evidence</div>
+        <h1>The exact words behind the standard.</h1>
+        <div class="source-sheet">
+          <div class="source-head"><span>Interview · 7 September</span><span class="source-id">SRC-019 · Assertion 14</span></div>
+          <blockquote class="source-quote">“Before anything consequential ships, the human must do the last 20%: polish, edit, rewrite and iterate.”</blockquote>
+          <div class="source-foot">
+            <div><strong>Stored as</strong>Direct statement, owned by you</div>
+            <div><strong>Used by</strong>Standard v1 and one supported relationship</div>
+          </div>
+        </div>
+        <button class="primary" data-next="check">Check this standard <svg><use href="#i-arrow"/></svg></button>
+      </section>
+
+      <section class="view" data-screen="check" hidden>
+        <div class="eyebrow">Why this is in focus</div>
+        <h1>Does this still mean what you mean?</h1>
+        <p class="lede">It now shapes how CTRL interprets consequential AI work. A small distinction here changes what the Brain should use later.</p>
+        <div class="check-card">
+          <blockquote>Before consequential work ships, the human owns the final judgement and finish.</blockquote>
+          <div class="choices">
+            <button class="choice" data-next="receipt"><span class="choice-mark">1</span><span>Still right<small>Keep the current meaning</small></span></button>
+            <button class="choice" data-next="correct"><span class="choice-mark">2</span><span>Too broad<small>Narrow what counts as consequential</small></span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-screen="correct" hidden>
+        <div class="eyebrow">Narrow the meaning</div>
+        <h1>What must receive your final judgement?</h1>
+        <p class="lede">Choose the closest meaning. You can put it in your own words afterwards.</p>
+        <div class="choices">
+          <button class="choice" data-next="preview"><span class="choice-mark">A</span><span>Only work that leaves the business<small>Externally consequential output</small></span></button>
+          <button class="choice" data-next="preview"><span class="choice-mark">B</span><span>Anything that changes a strategic commitment<small>Internal or external</small></span></button>
+          <button class="choice" data-next="preview"><span class="choice-mark">C</span><span>Any work another person will act on<small>Broader operational threshold</small></span></button>
+        </div>
+      </section>
+
+      <section class="view" data-screen="preview" hidden>
+        <div class="eyebrow">Before you change it</div>
+        <h1>One correction. Four known consequences.</h1>
+        <div class="before-after">
+          <article class="version old"><span class="version-label">Past · v1 preserved</span><p>Before consequential work ships, the human owns the final judgement and finish.</p><span class="version-tag">Historical uses remain visible</span></article>
+          <article class="version new"><span class="version-label">From now on · v2</span><p>Before externally consequential work ships, the human owns final judgement and finish; reversible internal drafts may remain delegated.</p><span class="version-tag">Proposed current meaning</span></article>
+        </div>
+        <div class="impact-columns">
+          <section><div class="impact-title">Updates now</div><ul class="impact-list"><li><svg><use href="#i-check"/></svg>My calls portrait</li><li><svg><use href="#i-check"/></svg>Living Map</li></ul></section>
+          <section><div class="impact-title">Needs your review</div><ul class="impact-list review"><li><svg><use href="#i-review"/></svg>Board brief</li><li><svg><use href="#i-review"/></svg>Shared release</li></ul></section>
+        </div>
+        <button class="primary" data-next="receipt">Use this meaning <svg><use href="#i-arrow"/></svg></button>
+      </section>
+
+      <section class="view" data-screen="receipt" hidden>
+        <div class="eyebrow">Repair receipt</div>
+        <h1>Your Brain now uses the narrower standard.</h1>
+        <p class="lede">The earlier wording remains part of the record. Current surfaces have moved to v2. Work that may already have influenced someone is waiting for you.</p>
+        <div class="receipt">
+          <div class="receipt-row"><svg><use href="#i-check"/></svg><span>My calls portrait rebuilt</span><span class="receipt-state done">Current</span></div>
+          <div class="receipt-row"><svg><use href="#i-check"/></svg><span>Living Map rebuilt</span><span class="receipt-state done">Current</span></div>
+          <div class="receipt-row"><svg><use href="#i-review"/></svg><span>Board brief</span><span class="receipt-state review">Review</span></div>
+          <div class="receipt-row"><svg><use href="#i-review"/></svg><span>Shared release</span><span class="receipt-state review">Review</span></div>
+        </div>
+        <button class="primary" data-next="map">See my Brain <svg><use href="#i-map"/></svg></button>
+      </section>
+
+      <section class="view brain-view" data-screen="map" hidden>
+        <div class="brain-head">
+          <div class="brain-title"><div class="eyebrow">Living Brain · current</div><h1>Your judgement, in motion.</h1><p>5 current items · 3 evidenced relationships · decision in focus</p></div>
+          <div class="mode-switch" role="tablist" aria-label="Brain view">
+            <button class="mode-button" role="tab" data-mode="portrait" aria-selected="false">My calls</button>
+            <button class="mode-button active" role="tab" data-mode="map" aria-selected="true">Living Map</button>
+          </div>
+        </div>
+        <div class="map-wrap" id="mapWrap">
+          <div class="map-field" aria-label="Living Map. Five items and three evidenced relationships.">
+            <svg class="edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path class="edge active" d="M 69 17 C 55 9, 42 9, 28 17"/>
+              <path class="edge" d="M 20 65 C 5 47, 6 27, 20 21"/>
+              <path class="edge" d="M 76 65 C 88 47, 88 31, 77 22"/>
+            </svg>
+            <span class="edge-label active" style="left:49%;top:11%">supports</span>
+            <span class="edge-label tension-label" style="left:8%;top:46%">in tension with</span>
+            <span class="edge-label" style="left:89%;top:46%">qualifies</span>
+            <button class="node focus decision selected" data-node="decision"><span class="node-kind">Decision · current focus</span><span class="node-text">Redesign the work before judging the people.</span><span class="node-version">DEC-041 · v1</span></button>
+            <button class="node aim" data-node="aim"><span class="node-kind">Aim</span><span class="node-text">Shape an AI-native category.</span><span class="node-version">AIM-006 · v3</span></button>
+            <button class="node standard" data-node="standard"><span class="node-kind">Standard</span><span class="node-text">Human judgement on work leaving the business.</span><span class="node-version">STD-014 · v2</span></button>
+            <button class="node tension" data-node="tension"><span class="node-kind">Tension</span><span class="node-text">Individual growth and company value.</span><span class="node-version">TEN-009 · v2</span></button>
+            <button class="node voice" data-node="voice"><span class="node-kind">Voice</span><span class="node-text">Reject generic certainty and homogeneous ideas.</span><span class="node-version">VOI-011 · v1</span></button>
+          </div>
+          <aside class="map-side" aria-live="polite">
+            <span class="map-side-label" id="nodeKind">Decision · current focus</span>
+            <h3 id="nodeTitle">Redesign the work before making any conclusion about the people.</h3>
+            <p id="nodeDetail">Recorded on 7 September from your strategy session. No relationship to another item has been asserted yet.</p>
+            <ul class="relation-list" id="relationList"><li><strong>No asserted edges</strong><br>The surrounding items were recorded with this call, not claimed as its causes.</li></ul>
+            <div class="find-row"><button class="primary" id="findButton">Find in my Brain</button><button class="secondary" data-next="call">Return to this decision</button></div>
+          </aside>
+        </div>
+        <div class="portrait" id="portrait">
+          <article class="portrait-call"><small>Now · decision</small><p>Redesign the work before making any conclusion about the people.</p></article>
+          <article class="portrait-call"><small>Current standard · v2</small><p>Before externally consequential work ships, the human owns final judgement and finish; reversible internal drafts may remain delegated.</p></article>
+          <article class="portrait-call"><small>Current aim · v3</small><p>Build a marketing organisation capable of shaping an AI-native category.</p></article>
+        </div>
+      </section>
+
+      <div class="live-region" id="liveRegion" aria-live="polite"></div>
+    </section>
+
+    <aside class="proof-rail" aria-label="Prototype state controls">
+      <h2>G13 proof states</h2>
+      <p>Prototype controls. Not part of the customer surface.</p>
+      <nav class="step-list">
+        <button class="step-jump active" data-jump="call"><span>01</span><span>Owned call</span></button>
+        <button class="step-jump" data-jump="recorded"><span>02</span><span>Recorded context</span></button>
+        <button class="step-jump" data-jump="source"><span>03</span><span>Evidence</span></button>
+        <button class="step-jump" data-jump="check"><span>04</span><span>Meaning check</span></button>
+        <button class="step-jump" data-jump="correct"><span>05</span><span>Correction</span></button>
+        <button class="step-jump" data-jump="preview"><span>06</span><span>Impact preview</span></button>
+        <button class="step-jump" data-jump="receipt"><span>07</span><span>Repair receipt</span></button>
+        <button class="step-jump" data-jump="map"><span>08</span><span>Living Map</span></button>
+      </nav>
+      <div class="proof-note">Headless fixture truth only. No production persistence, migration or release is implied.</div>
+    </aside>
+  </main>
+
+  <script>
+    const labels = {
+      call: 'My calls · Now', recorded: 'My calls · Context', source: 'Evidence · SRC-019',
+      check: 'Standard · Meaning check', correct: 'Standard · Correction',
+      preview: 'Standard · Impact preview', receipt: 'Brain · Repair receipt', map: 'My Brain · Living Map'
+    };
+    const nodeData = {
+      decision: { kind: 'Decision · current focus', title: 'Redesign the work before making any conclusion about the people.', detail: 'Recorded on 7 September from your strategy session. No relationship to another item has been asserted yet.', rel: '<li><strong>No asserted edges</strong><br>The surrounding items were recorded with this call, not claimed as its causes.</li>' },
+      aim: { kind: 'Aim · AIM-006 v3', title: 'Build a marketing organisation capable of shaping an AI-native category.', detail: 'A current ambition owned by you.', rel: '<li><strong>Supported by STD-014 v2</strong><br>Human release judgement protects consequential AI-native category work.</li><li><strong>In tension with TEN-009 v2</strong><br>Individual growth and company value have not yet been fully reconciled.</li>' },
+      standard: { kind: 'Standard · STD-014 v2', title: 'Human judgement on work that leaves the business.', detail: 'Corrected from v1. Earlier wording and uses remain visible.', rel: '<li><strong>Supports AIM-006 v3</strong><br>Human release judgement protects consequential AI-native category work.</li><li><strong>Qualified by VOI-011 v1</strong><br>Generic certainty is evidence that more judgement is needed.</li>' },
+      tension: { kind: 'Tension · TEN-009 v2', title: 'Individual growth and company value.', detail: 'A live tension, not a resolved conclusion.', rel: '<li><strong>In tension with AIM-006 v3</strong><br>The leader becomes more capable so the company can create greater value.</li>' },
+      voice: { kind: 'Voice · VOI-011 v1', title: 'Reject generic certainty and homogeneous ideas.', detail: 'A durable expression preference owned by you.', rel: '<li><strong>Qualifies STD-014 v2</strong><br>Final human judgement includes detecting generic, unsupported confidence.</li>' }
+    };
+    const screens = [...document.querySelectorAll('[data-screen]')];
+    const jumps = [...document.querySelectorAll('[data-jump]')];
+    const contextLabel = document.getElementById('contextLabel');
+    const liveRegion = document.getElementById('liveRegion');
+
+    function showScreen(name, push = true) {
+      if (!labels[name]) return;
+      screens.forEach(screen => { screen.hidden = screen.dataset.screen !== name; });
+      jumps.forEach(jump => jump.classList.toggle('active', jump.dataset.jump === name));
+      contextLabel.textContent = labels[name];
+      liveRegion.textContent = labels[name] + ' opened';
+      if (push) history.replaceState(null, '', '#' + name);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.addEventListener('click', event => {
+      const next = event.target.closest('[data-next]');
+      const jump = event.target.closest('[data-jump]');
+      if (next) showScreen(next.dataset.next);
+      if (jump) showScreen(jump.dataset.jump);
+    });
+
+    document.querySelectorAll('[data-node]').forEach(node => {
+      node.addEventListener('click', () => {
+        document.querySelectorAll('[data-node]').forEach(item => item.classList.remove('selected'));
+        node.classList.add('selected');
+        const data = nodeData[node.dataset.node];
+        document.getElementById('nodeKind').textContent = data.kind;
+        document.getElementById('nodeTitle').textContent = data.title;
+        document.getElementById('nodeDetail').textContent = data.detail;
+        document.getElementById('relationList').innerHTML = data.rel;
+      });
+    });
+
+    const mapWrap = document.getElementById('mapWrap');
+    const portrait = document.getElementById('portrait');
+    document.querySelectorAll('[data-mode]').forEach(button => {
+      button.addEventListener('click', () => {
+        const isMap = button.dataset.mode === 'map';
+        mapWrap.classList.toggle('hidden', !isMap);
+        portrait.classList.toggle('active', !isMap);
+        document.querySelectorAll('[data-mode]').forEach(item => {
+          const active = item === button;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+      });
+    });
+    document.getElementById('findButton').addEventListener('click', () => {
+      document.querySelector('[data-node="standard"]').click();
+      liveRegion.textContent = 'Standard found and opened';
+    });
+    showScreen(location.hash.slice(1) || 'call', false);
+  </script>
+</body>
+</html>
