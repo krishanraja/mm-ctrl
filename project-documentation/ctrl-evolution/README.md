@@ -36,6 +36,8 @@ The target operating model is attention reallocation. Governed AI carries data m
 
 Automation is enabling infrastructure, not the strategic altitude. CTRL should help willing, high-agency leaders perceive, design and govern future category and industry states. A first provisional pattern is provenance-aware cultural intelligence: mapping aggregate audience exposure to narratives, characters, theories and themes to reveal saturation, gaps and emerging adjacencies while keeping story, taste and strategic ownership human. The two-year change in expectations and acceptance is an explicit design assumption to test, not an established forecast or permission for manipulative targeting.
 
+CTRL must also be the antithesis of AI-mediated convergence. Prepared work should resist blind optimism, unreliable or absent numbers, homogeneous and box-standard thinking, historical-only pseudo-divergence, shallow affirmation and imported AI house styles. Meaningful variation requires different causal frames, evidence, strategic relevance and productive challenge—not cosmetic rewriting. Negative examples, rejection reasons and corrections belong in the brain alongside admired work. An obvious answer may still be right when the evidence supports it; anti-generic must not become novelty theatre or another formula.
+
 The first wedge is leader adaptation, followed by organisation now/next/not-yet pacing; live AI-initiative triage remains conditional. CTRL may support work and role design but must not evaluate named people or recommend employment actions. A leader-owned Private Leader Brain and a company transition map remain separately permissioned assets.
 
 **NON_GOALS:**
@@ -77,7 +79,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Identify what the prepared option set must demonstrate for the founder to trust its voice, strategic usefulness and genuine divergence rather than dismiss it as polished generic AI content (`Q-056`).
+**NEXT_ACTION:** Resolve whether collective learning is limited to patterns a leader explicitly publishes or may include private AI-proposed, de-identified patterns that require item-level approval (`Q-057`).
 
 ## Current strategic synthesis through G11
 
@@ -91,6 +93,10 @@ A higher-order marketing exemplar uses aggregate audience-exposure intelligence 
 | Target operating model | AI carries governed information logistics; humans own standards, relationships, strategy, distinctive final craft and accountability | The value is better allocation of scarce human attention, not simply fewer people or more generated output. |
 | Consequential assurance | Independent AI verification evidence plus critical human release judgement | A second model can expose gaps, but agreement between models cannot replace accountable human assessment. |
 | Prepared collaboration | Generate standards-governed divergent options before suitable meetings; begin human collaboration at the judgement boundary | The aim is better ideas and better use of attention, not content volume or the elimination of every live brainstorm. |
+| Idea quality | Evidence-bearing, numerically honest, challenger-minded and voice-sovereign options built from meaningfully different causal frames | More output is not more intelligence; CTRL must counter model and population-level convergence without rewarding arbitrary novelty. |
+| Memory compounding | Capture → distil → propose → approve → propagate → measure | Repeated patterns can become useful capability, but no model-detected pattern becomes durable truth or shared skill without scope, provenance and human authority. |
+| Cross-surface brain | One deliberate gesture into a sovereign brain and useful context returned inside the work | Continuity matters more than integration count; the leader should not have to operate a technical memory product. |
+| Collective intelligence | A permissioned, provenance-bearing pattern commons is provisional; pooled raw personal memory is rejected | Shared early sight may compound across leaders while personal judgement and taste remain personally owned. |
 | Cultural intelligence | Provenance-aware aggregate maps of audience exposure, narratives, saturation and gaps | This can create early sight for category strategy, but must resist biased inference, synthetic feedback loops, manipulation and creative homogenisation. |
 | First wedge | Leader stop/start/delegate/learn/excellence, then organisation now/next/not-yet; live initiative triage conditional | It creates reusable capability before expanding into a broader decision portfolio. |
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
@@ -100,7 +106,11 @@ A higher-order marketing exemplar uses aggregate audience-exposure intelligence 
 | Signature experience | Anticipate the next tension, remember what mattered, improve the human session, turn thought into action, retain corrections, connect category/company/self, sharpen the decision | “Magic” comes from earned continuity and consequence, not confident guessing or simulated personhood. |
 | Proof | Held-back new-decision performance first; reinvested capacity, transition-map quality and staff agency second; return pull is an adoption signal | This resists hindsight, luck, artifact completion and engagement vanity. |
 
-The remaining decision-critical tensions are explicit rather than smoothed over: adaptive magic versus reproducible evaluation; proactive “interestingness” versus protection of attention; automatic usefulness versus genuine privacy; and founder appetite for rich ranked elicitation versus target-user overwhelm. Each now has a test or flip rule in the canonical ledger.
+The remaining decision-critical tensions are explicit rather than smoothed over: adaptive magic versus reproducible evaluation; proactive “interestingness” versus protection of attention; automatic usefulness versus genuine privacy; collective learning versus personal sovereignty; anti-convergence versus novelty theatre; and founder appetite for rich ranked elicitation versus target-user overwhelm. Each now has a test or flip rule in the canonical ledger.
+
+## External concept assessments
+
+- [DeepLake Hivemind concept assessment](research/deeplake-hivemind-concept-assessment-2026-09-07.md): adapt trace-to-skill compounding and cross-agent continuity through a subject-owned propose–approve lifecycle; reject firehose capture, pooled raw memory, automatic skill propagation and efficiency-only success metrics; defer vendor adoption and broad integrations until a named retrieval or workflow test requires them.
 
 ## Ikigai alignment
 
@@ -178,13 +188,14 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-041` Prepare genuinely divergent, standards-governed options before suitable collaboration so human time begins at comparative judgement and direction choice; evaluate against better ideas faster.
 - `D-042` Build for willing, future-building leaders with the agency to redesign organisations, categories or industries; persuasion and administrative efficiency are not the primary proposition.
 - `D-043` Make evidence-aware visionary category and industry design CTRL's strategic altitude, with workflow automation remaining enabling infrastructure.
+- `D-044` Make CTRL the antithesis of AI-mediated convergence through evidence, numerical integrity, meaningful causal divergence, productive challenge and voice sovereignty.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 231
-- SHA-256: `a2c970e77a6d5f70f0ffc83d9366b2e4e38810cba5a5afb973fe16b039fe707b`
+- Rows: 241
+- SHA-256: `d522e9feb426980ac358bf1939f78e26c339d1b375629d9c893f1bc88fb402f1`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
