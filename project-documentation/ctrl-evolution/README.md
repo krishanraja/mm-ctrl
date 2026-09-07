@@ -129,6 +129,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Phase 2 evaluation and proof-fixture contract](phase-2-evaluation-fixture-contract.md): leakage-resistant comparator protocol, blocking invariants, quality rubric, Brain-attributable lift definition, self-healing proof and twelve machine-readable fixtures frozen before implementation and enforced by `npm run evals:check`.
 - [`phase-2-decision-traceability.json`](phase-2-decision-traceability.json): current-version mapping from every locked decision through `D-052` to its first-slice disposition, product surfaces, governing contract, fixture coverage, exit evidence and prevented regression.
 - [Phase 5 first-contrast sanitized divergence brief](design/phase-5-first-contrast-sanitized-brief.md): source-pinned mobile use moment, bounded test state, invariant product and trust rules, state range, brand and feasibility limits, three deliberately different generator territories and blinded judge rubric.
+- Phase 5 independent concept record: [Evidence Lens](design/candidate-a-evidence-lens.md), [The Second Reading](design/candidate-b-second-reading.md) and [The Evidence Bench](design/candidate-c-evidence-bench.md). Each was produced from the same sanitized brief without access to either alternative and remains unrendered, unselected and non-authoritative.
 
 ## Ikigai alignment
 
