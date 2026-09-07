@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** `D-052` locks the combined product rule: a governed versioned live Brain runtime, customer-owned GitHub or ZIP releases, and a five-minute human-first decision loop with no more than one optional inspectable Brain learning. The proof-bearing vertical-slice contract joins one real decision, useful contrast, independent challenge, owned call, later recall and deterministic portable release. Its evaluation pack freezes twelve proof cases and the strongest substitute comparisons; the repository validator enforces their structure, visible/hidden boundary, blocking-invariant coverage, decision lineage and canonical bytes. Phase 5 first-contrast R1 passed mechanical render checks but failed the founder product gate because it hid the product behind one polished state. The founder found the playable complete-loop R2 direction good and requested a bounded visual refinement. `D-053` now requires purposeful line iconography and quiet state-responsive motion while prohibiting sparkle symbols and decorative AI theatre. R3 is mechanically verified and awaiting founder judgement. Physical Brain schema work, GitHub App or customer-repository creation, production implementation and later material surfaces remain paused.
+**CURRENT_PHASE:** `D-054` closes the first material mock gate. The founder approved moving beyond the playable R3 complete-loop direction while binding two real-version corrections: repair alignment as a system and delete guff or reassurance copy that adds no action, evidence, state or meaning. The R1 product-proof hypothesis is resolved for the founder mock gate only; customer value, live intelligence and production quality remain unproved. `M-012` opens G12: define the smallest canonical living Brain domain and user-visible model that can support judgement, contradiction, governed learning, correction and portable releases without making the customer administer memory. Physical schema work, GitHub App or customer-repository creation and production implementation remain paused.
 
 **SOURCE_LAYERS:**
 
@@ -68,9 +68,9 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 **VERTICAL_SLICE (product rule locked; outcome unproven):** Voice or type a live AI-transition decision → capture the leader's provisional view → one adaptive contrast → targeted evidence and an independent AI view → accept/resist/correct → user-owned call → transparent brain proposal → later useful recall → portable version.
 
-**FIRST_SURFACE:** `Decide: playable five-minute loop`. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. The current UI's polish is the floor; the replacement must be more impressive through greater simplicity, intelligence, trust, empathy and visual craft. R3 lets a cold reviewer cause and observe the complete movement from prior view to challenge, evidence boundary, correction, owned call, optional Brain learning and portable receipt. Its icon and motion language clarifies that movement without becoming a separate decorative layer.
+**FIRST_SURFACE:** `Decide: playable five-minute loop`, direction approved in R3. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. The complete movement remains prior view, challenge, evidence boundary, correction, owned call, optional Brain learning and portable receipt. The real build must apply a coherent alignment grid and remove any copy that explains trust without adding useful information or control.
 
-**AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. D-050 authorises contract and concept work under the retained-capability transition. D-051 authorises rendered mocks at material-surface gates, not implementation of an unapproved mock. D-052 authorises sanitized three-spine divergence and one rendered first-surface synthesis. D-053 authorises the bounded R3 iconography and motion refinement only. Append-only discovery and redacted snapshot maintenance remain authorised. Physical product schema changes, GitHub integration or customer-repository creation, material visual implementation, main-branch merge, capability restoration and public release require their own scoped gates.
+**AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. D-050 authorises contract and concept work under the retained-capability transition. D-051 authorises rendered mocks at material-surface gates. D-052 locks the hybrid Brain and product rule. D-053 locks the visual language. D-054 closes the first material mock gate and authorises the next product and architecture decision only. Append-only discovery and redacted snapshot maintenance remain authorised. Physical product schema changes, GitHub integration or customer-repository creation, material visual implementation, main-branch merge, capability restoration and public release require their own scoped gates.
 
 **POST_REBUILD_REQUIREMENT:** The rebuilt UI and product marketing must make the complete calibrated-system-judgement loop a core, human-centred USP. Users should feel the movement from invisible information logistics to better human standards, relationships, strategy, distinctive quality and accountability without being shown a technical checklist. The expression must be tested, but the underlying capability cannot be lost or demoted.
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Present the mechanically verified R3 playable loop for Krish Raja's product and taste judgement. Production implementation remains gated.
+**NEXT_ACTION:** Synthesize the G12 living Brain domain, user-visible structure, learning lifecycle, self-healing boundary and portable representation from the completed founder evidence. Ask only the remaining route-changing product question after the proposed model is concrete.
 
 ## Current strategic synthesis through G11
 
@@ -135,7 +135,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - Phase 5 rejected first synthesis: [interactive Evidence Lens R1](design/first-contrast-mock-r1.html), its [primary 390 x 844 review frame](design/first-contrast-r1-390x844.png) and [render verification](design/phase-5-first-contrast-render-verification.md). It remains historical evidence: mechanically sound and visually polished, but rejected because it did not make the product or compounding Brain legible.
 - [Phase 5 complete-loop proof brief](design/phase-5-complete-loop-proof-brief.md): the R2 same-spine correction contract, causal state sequence, cold-review acceptance test and unchanged authority boundary.
 - Phase 5 playable R2: [complete-loop product proof](design/complete-loop-proof-r2.html), with [verification evidence](design/phase-5-complete-loop-proof-r2-verification.md). The founder found this direction good and requested more restrained visual life.
-- Phase 5 visual refinement R3: [playable product proof](design/complete-loop-proof-r3.html), with [verification evidence](design/phase-5-complete-loop-proof-r3-verification.md). It adds a coherent orbital Brain mark, decision-state icons and a quiet view-to-evidence-to-call signal without changing the validated causal loop.
+- Phase 5 visual refinement R3: [playable product proof](design/complete-loop-proof-r3.html), with [verification evidence](design/phase-5-complete-loop-proof-r3-verification.md) and the [founder gate record](design/phase-5-complete-loop-r3-founder-gate.md). Its direction is approved; alignment repair and zero-guff copy are binding implementation corrections.
 
 ## Ikigai alignment
 
@@ -164,8 +164,8 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 | Verify high-confidence trust findings against live bundles | Complete |
 | Apply and verify production trust containment | Complete |
 | Complete founder product interview | In progress |
-| Produce decision-complete product corpus and architecture | Pending |
-| Diverge, render and approve first material surface | In progress: R1 rejected, playable R2 active |
+| Produce decision-complete product corpus and architecture | In progress: G12 living Brain model active |
+| Diverge, render and approve first material surface | Complete: R3 direction approved with implementation corrections |
 | Implement and independently verify vertical slice | Pending |
 
 ## Locked product decisions
@@ -223,13 +223,14 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-051` Treat current polish as the minimum standard, surpass it through devastating simplicity and intelligence, and show every material surface as a rendered mock before implementation.
 - `D-052` Use a governed live Brain runtime, compile accepted state into customer-owned GitHub or ZIP releases, and prove it through one five-minute human-first loop with at most one optional inspectable learning.
 - `D-053` Use purposeful iconography and quiet state-responsive motion while prohibiting sparkle symbols and decorative AI motifs.
+- `D-054` Approve the R3 complete-loop direction; fix alignment and remove guff in the real implementation.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_type` and `record_key` using bytewise ordering and then by numeric version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field. The current snapshot was regenerated twice from identical allowlisted rows presented in ascending and reversed source order; the output bytes were identical.
 
-- Rows: 274
-- SHA-256: `5300b93824d5df1868a991249123e2b8586b7e6320a8258ae6d5cf2ec3941857`
+- Rows: 277
+- SHA-256: `989583cf7abb5dfafc505db7856d25a04139a14858e085ab9389388e3ed6778c`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.

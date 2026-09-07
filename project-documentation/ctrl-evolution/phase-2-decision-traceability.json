@@ -1,10 +1,10 @@
 {
   "schema_version": "ctrl.phase2.decision-traceability.v2",
   "status": "approved_product_rule",
-  "authority": "founder_approved_via_D-052_and_D-053",
+  "authority": "founder_approved_via_D-052_through_D-054",
   "source_of_truth": "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
-  "decision_range": "D-001..D-053",
-  "next_design_gate": "D-053 approves the visual refinement rule; production implementation remains gated on explicit founder approval of the R3 playable first surface.",
+  "decision_range": "D-001..D-054",
+  "next_design_gate": "D-054 closes the first material mock gate; production implementation remains gated while G12 defines the living Brain domain and user model.",
   "entries": [
     {
       "decision_id": "D-001",
@@ -1272,6 +1272,28 @@
       ],
       "exit_evidence": "The rendered playable surface uses one purposeful thin-line icon family and quiet state-responsive movement, contains no sparkle symbols or decorative AI motifs, preserves all meaning under reduced motion, and receives explicit founder approval.",
       "failure_if_lost": "CTRL either feels inert and generic or uses decorative AI spectacle that weakens clarity, restraint and trust."
+    },
+    {
+      "decision_id": "D-054",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "design_system",
+        "decision_loop",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md#binding-real-version-corrections",
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md#authority-boundary"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "deterministic",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "The eventual implementation preserves the approved R3 causal loop, passes a systematic optical-alignment review, removes the named reassurance sentence, and contains no helper copy without a clear action, evidence, state or meaning job.",
+      "failure_if_lost": "Prototype defects become product conventions, leaving visible misalignment and empty reassurance copy inside the supposedly magical experience."
     }
   ]
 }
