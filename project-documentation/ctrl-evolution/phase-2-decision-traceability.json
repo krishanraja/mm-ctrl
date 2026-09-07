@@ -1,10 +1,10 @@
 {
   "schema_version": "ctrl.phase2.decision-traceability.v2",
   "status": "approved_product_rule",
-  "authority": "founder_approved_via_D-052",
+  "authority": "founder_approved_via_D-052_and_D-053",
   "source_of_truth": "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
-  "decision_range": "D-001..D-052",
-  "next_design_gate": "D-052 approves the combined product rule; material implementation remains gated on explicit founder approval of the rendered first-surface synthesis.",
+  "decision_range": "D-001..D-053",
+  "next_design_gate": "D-053 approves the visual refinement rule; production implementation remains gated on explicit founder approval of the R3 playable first surface.",
   "entries": [
     {
       "decision_id": "D-001",
@@ -1250,6 +1250,28 @@
       ],
       "exit_evidence": "One designated user completes the human-first five-minute loop, receives no more than one inspectable learning proposal, and produces a deterministic Brain release that can be re-imported and used in two materially different agent environments without exposing runtime machinery.",
       "failure_if_lost": "GitHub becomes the live database, portability becomes a marketing claim without external use, or the first experience becomes capture-first and technically visible."
+    },
+    {
+      "decision_id": "D-053",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "design_system",
+        "decision_loop",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-proof-r3-verification.md#visual-system",
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-proof-r3-verification.md#runtime-evidence"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "deterministic",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "The rendered playable surface uses one purposeful thin-line icon family and quiet state-responsive movement, contains no sparkle symbols or decorative AI motifs, preserves all meaning under reduced motion, and receives explicit founder approval.",
+      "failure_if_lost": "CTRL either feels inert and generic or uses decorative AI spectacle that weakens clarity, restraint and trust."
     }
   ]
 }
