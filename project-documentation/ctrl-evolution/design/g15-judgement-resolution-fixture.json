@@ -1,0 +1,178 @@
+{
+  "fixture_version": "1.0.0",
+  "fixture_status": "synthetic_demo",
+  "as_of": "2026-09-08T08:30:00+01:00",
+  "disclosure": "Maya Chen, Aperture House, all evaluation events and all values are synthetic. They demonstrate the proposed measurement and experience contract, not real inference quality.",
+  "subject": {
+    "id": "SYN-CUST-014",
+    "display_name": "Maya Chen",
+    "role": "Founder and CEO",
+    "organisation": "Aperture House",
+    "proof_day": 11,
+    "proof_length_days": 30
+  },
+  "construct": {
+    "internal_name": "Judgement Resolution",
+    "human_expression": "Brain Resolution",
+    "contract_version": "0.1.0-provisional",
+    "validated_in_product": false,
+    "visible_percentage_default": false,
+    "overall_internal_value": 0.58,
+    "overall_internal_method": "importance_weighted_lower_quartile_of_eligible_territories",
+    "eligible_territory_count": 2,
+    "named_territory_count": 4,
+    "human_state": "coming_into_focus"
+  },
+  "current_portrait": {
+    "headline": "Your creative judgement is becoming transferable.",
+    "body": "The Brain can now recognise several kinds of polished work you would still reject, and it has started to carry the reason into unfamiliar launch decisions.",
+    "change_sentence": "One part became clearer. Another became more honest.",
+    "earned_sentence": "This now holds on unfamiliar examples.",
+    "honest_limit": "It still cannot reliably identify the first detail that tells you a direction is wrong.",
+    "healthy_uncertainty": "The interpretation that you resist delegation weakened after your correction. That reduced certainty and improved the Brain.",
+    "next_contrast": "Which direction is closer to something you would put your name to, and what would still stop you shipping it?"
+  },
+  "territories": [
+    {
+      "id": "JT-01",
+      "name": "Creative direction",
+      "importance": 1.0,
+      "scope_status": "subject_approved",
+      "eligibility": "eligible",
+      "state": "transferable",
+      "change_direction": "sharpened",
+      "score_internal": 0.63,
+      "weakest_dimension": "transfer",
+      "dimensions": {
+        "grounding": 0.88,
+        "discrimination": 0.76,
+        "calibration": 0.71,
+        "transfer": 0.63,
+        "adaptation": 0.82
+      },
+      "evidence_sentence": "Three unfamiliar launch directions were read correctly or deferred with appropriate uncertainty.",
+      "honest_limit": "Only one transfer attempt exists, and Maya still supplied the final edit.",
+      "source_refs": ["SRC-101", "SRC-102", "SRC-103", "SRC-105"],
+      "holdout_refs": ["HO-01", "HO-02", "HO-03", "HO-04"],
+      "transfer_refs": ["TR-01"],
+      "correction_refs": ["COR-01"]
+    },
+    {
+      "id": "JT-02",
+      "name": "Editorial voice",
+      "importance": 0.74,
+      "scope_status": "subject_approved",
+      "eligibility": "eligible",
+      "state": "tested",
+      "change_direction": "steady",
+      "score_internal": 0.58,
+      "weakest_dimension": "calibration",
+      "dimensions": {
+        "grounding": 0.79,
+        "discrimination": 0.69,
+        "calibration": 0.58,
+        "transfer": 0.62,
+        "adaptation": 0.73
+      },
+      "evidence_sentence": "The Brain distinguishes Maya's direct voice from generic authority in three held-out passages.",
+      "honest_limit": "Confidence is too high when a concise sentence could plausibly belong to many leaders.",
+      "source_refs": ["SRC-102", "SRC-103"],
+      "holdout_refs": ["HO-05", "HO-06", "HO-07"],
+      "transfer_refs": ["TR-02"],
+      "correction_refs": []
+    },
+    {
+      "id": "JT-03",
+      "name": "Delegation",
+      "importance": 0.86,
+      "scope_status": "subject_approved",
+      "eligibility": "repair_pending",
+      "state": "revising",
+      "change_direction": "softened",
+      "score_internal": null,
+      "weakest_dimension": "adaptation",
+      "dimensions": null,
+      "evidence_sentence": "A direct correction overturned the earlier claim that Maya fundamentally resists delegation.",
+      "honest_limit": "The replacement interpretation has not yet survived a held-out operating decision.",
+      "source_refs": ["SRC-101", "SRC-105"],
+      "holdout_refs": [],
+      "transfer_refs": [],
+      "correction_refs": ["COR-02"]
+    },
+    {
+      "id": "JT-04",
+      "name": "Life outside work",
+      "importance": null,
+      "scope_status": "intentionally_out_of_scope",
+      "eligibility": "not_scored",
+      "state": "private",
+      "change_direction": "none",
+      "score_internal": null,
+      "weakest_dimension": null,
+      "dimensions": null,
+      "evidence_sentence": "No evidence is requested or inferred here.",
+      "honest_limit": "This territory is outside the current proof by choice, not missing work.",
+      "source_refs": [],
+      "holdout_refs": [],
+      "transfer_refs": [],
+      "correction_refs": []
+    }
+  ],
+  "timeline": [
+    {
+      "brain_version": 1,
+      "proof_day": 2,
+      "date": "2026-08-29",
+      "state": "forming",
+      "headline": "The first contour appeared.",
+      "change": "Maya rejected polished work that created more options for her to rescue.",
+      "evidence_refs": ["SRC-101"]
+    },
+    {
+      "brain_version": 2,
+      "proof_day": 6,
+      "date": "2026-09-03",
+      "state": "tested",
+      "headline": "A preference became a distinction.",
+      "change": "Chosen and rejected work separated recognisable standards from generic polish.",
+      "evidence_refs": ["SRC-102", "SRC-104"]
+    },
+    {
+      "brain_version": 3,
+      "proof_day": 11,
+      "date": "2026-09-08",
+      "state": "transferable",
+      "headline": "The distinction travelled.",
+      "change": "The criteria held on unseen launch directions and one Brain-aided transfer attempt.",
+      "evidence_refs": ["HO-01", "HO-02", "HO-03", "HO-04", "TR-01", "COR-02"]
+    }
+  ],
+  "sources": [
+    {"id": "SRC-101", "kind": "consented_transcript", "date": "2026-08-29", "assertion": "I want them to bring me work that is nearly there, not more options I have to rescue."},
+    {"id": "SRC-102", "kind": "consented_transcript", "date": "2026-09-03", "assertion": "The launch was polished, but it could have belonged to anyone."},
+    {"id": "SRC-103", "kind": "customer_reply", "date": "2026-09-05", "assertion": "I do not want a rulebook so tight that the next good idea gets rejected for being new."},
+    {"id": "SRC-104", "kind": "operator_note", "date": "2026-09-03", "assertion": "Maya became precise only when comparing two concrete directions."},
+    {"id": "SRC-105", "kind": "voice_reflection", "date": "2026-09-07", "assertion": "I do not need the team to imitate me. I need them to notice what I notice before I have to fix it."}
+  ],
+  "holdouts": [
+    {"id": "HO-01", "territory_ref": "JT-01", "frozen_before_brain_version": 3, "candidate": "Polished category launch with no Aperture House-only point of view", "brain_action": "reject", "confidence": 0.83, "subject_action": "reject", "reason_match": "full"},
+    {"id": "HO-02", "territory_ref": "JT-01", "frozen_before_brain_version": 3, "candidate": "Surprising non-formulaic launch with limited precedent", "brain_action": "defer", "confidence": 0.46, "subject_action": "choose", "reason_match": "not_scored_due_to_defer"},
+    {"id": "HO-03", "territory_ref": "JT-01", "frozen_before_brain_version": 3, "candidate": "Distinctive launch whose visual system overwhelms the customer problem", "brain_action": "reject", "confidence": 0.71, "subject_action": "reject", "reason_match": "partial"},
+    {"id": "HO-04", "territory_ref": "JT-01", "frozen_before_brain_version": 3, "candidate": "Unexpected creator-led direction with a clear company-specific claim", "brain_action": "choose", "confidence": 0.66, "subject_action": "choose", "reason_match": "full"},
+    {"id": "HO-05", "territory_ref": "JT-02", "frozen_before_brain_version": 3, "candidate": "Short declarative copy that sounds generically commanding", "brain_action": "reject", "confidence": 0.74, "subject_action": "reject", "reason_match": "full"},
+    {"id": "HO-06", "territory_ref": "JT-02", "frozen_before_brain_version": 3, "candidate": "Longer editorial copy grounded in an uncomfortable specific observation", "brain_action": "choose", "confidence": 0.68, "subject_action": "choose", "reason_match": "full"},
+    {"id": "HO-07", "territory_ref": "JT-02", "frozen_before_brain_version": 3, "candidate": "Concise copy with plausible but not distinctive authority", "brain_action": "choose", "confidence": 0.77, "subject_action": "reject", "reason_match": "miss"}
+  ],
+  "transfers": [
+    {"id": "TR-01", "territory_ref": "JT-01", "kind": "blinded_paired_work", "brain_aided_result": "approved_with_final_edit", "no_brain_result": "rejected_as_interchangeable", "claim_status": "single_synthetic_attempt_not_efficacy_evidence"},
+    {"id": "TR-02", "territory_ref": "JT-02", "kind": "blinded_paired_work", "brain_aided_result": "preferred_with_revision", "no_brain_result": "rejected_as_generic_authority", "claim_status": "single_synthetic_attempt_not_efficacy_evidence"}
+  ],
+  "corrections": [
+    {"id": "COR-01", "territory_ref": "JT-01", "from": "distinctive means recognisably consistent", "to": "distinctive must remain recognisable without rejecting surprise", "repair_status": "complete"},
+    {"id": "COR-02", "territory_ref": "JT-03", "from": "Maya fundamentally resists delegation", "to": "Maya delegates generation but the evaluation standard remains hard to transfer", "repair_status": "holdout_pending"}
+  ],
+  "baselines": [
+    {"id": "BL-01", "name": "same model without Brain context", "required": true, "status": "synthetic_comparator_present"},
+    {"id": "BL-02", "name": "strong handcrafted context", "required": true, "status": "not_yet_run"}
+  ]
+}
