@@ -3,8 +3,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { consumeRequestRateLimit, isBearerRequest } from "../_shared/service-request.ts";
 import {
   VIDEO_RADAR_SCHEMA_VERSION,
-  buildVideoRadarCandidates,
-  type CachedHeadline,
+  buildVideoRadarCandidatesFromDays,
+  type CachedHeadlineDay,
   type CachedTrend,
 } from "../_shared/video-radar-contract.ts";
 
@@ -35,26 +35,27 @@ serve(async (req) => {
   const limit = clamp(url.searchParams.get("limit"));
 
   const [{ data: cache, error: cacheError }, { data: trends, error: trendsError }] = await Promise.all([
-    supabase.from("live_headlines_cache").select("briefing_date,payload,created_at").order("briefing_date", { ascending: false }).limit(1).maybeSingle(),
+    supabase.from("live_headlines_cache").select("briefing_date,payload,created_at").order("briefing_date", { ascending: false }).limit(4),
     supabase.from("news_trends").select("id,detected_on,category,title,summary,implication,evidence,source_count,momentum").eq("is_current", true).order("momentum", { ascending: false }).limit(8),
   ]);
   if (cacheError) return json({ error: "headline_cache_unavailable" }, 503);
   if (trendsError) console.warn("video radar trend read failed", trendsError.message);
 
-  const cacheRow = cache as { briefing_date?: string; payload?: CachedHeadline[]; created_at?: string } | null;
-  const briefingDate = cacheRow?.briefing_date || new Date(0).toISOString();
-  const candidates = await buildVideoRadarCandidates(
-    Array.isArray(cacheRow?.payload) ? cacheRow.payload : [],
-    briefingDate,
+  const cacheRows = (Array.isArray(cache) ? cache : []) as Array<CachedHeadlineDay & { created_at?: string }>;
+  const days = cacheRows
+    .filter((row) => typeof row.briefing_date === "string" && Array.isArray(row.payload))
+    .map((row) => ({ briefing_date: row.briefing_date, payload: row.payload }));
+  const candidates = await buildVideoRadarCandidatesFromDays(
+    days,
     Array.isArray(trends) ? trends as CachedTrend[] : [],
     limit,
   );
   const generatedAt = new Date();
-  const cacheCreatedAt = cacheRow?.created_at ? Date.parse(cacheRow.created_at) : Number.NaN;
+  const cacheCreatedAt = cacheRows[0]?.created_at ? Date.parse(cacheRows[0].created_at) : Number.NaN;
   return json({
     schema_version: VIDEO_RADAR_SCHEMA_VERSION,
     provider: "mm_ctrl",
-    provider_version: Deno.env.get("DENO_DEPLOYMENT_ID") || "video-radar-export-v1",
+    provider_version: Deno.env.get("DENO_DEPLOYMENT_ID") || "video-radar-export-v2",
     generated_at: generatedAt.toISOString(),
     source_age: Number.isFinite(cacheCreatedAt) ? Math.max(0, Math.round((generatedAt.getTime() - cacheCreatedAt) / 1000)) : 0,
     candidates,

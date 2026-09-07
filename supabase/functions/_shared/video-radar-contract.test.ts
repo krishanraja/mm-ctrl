@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { buildVideoRadarCandidates, headlineToRadar, trendToRadar } from './video-radar-contract';
+import { buildVideoRadarCandidates, buildVideoRadarCandidatesFromDays, headlineToRadar, trendToRadar } from './video-radar-contract';
 
 describe('video radar contract', () => {
   it('keeps the committed cross-repository fixture on schema major one', async () => {
@@ -11,8 +11,12 @@ describe('video radar contract', () => {
     expect(fixture.candidates[0].sensitivity).toBe('public');
   });
   it('maps the shared headline pool without exposing internal objects', async () => {
-    const candidate = await headlineToRadar({ id: 'raw-id', headline: 'Agent costs move into workflow design', say: 'The model bill is no longer the expensive part.', source: 'example.com', sourceCount: 3, url: 'https://example.com/story', category: 'economics', score: 12 }, '2026-08-28');
-    expect(candidate?.source_urls).toEqual(['https://example.com/story']);
+    const candidate = await headlineToRadar({ id: 'raw-id', headline: 'Agent costs move into workflow design', say: 'The model bill is no longer the expensive part.', source: 'example.com', sourceCount: 3, url: 'https://example.com/story', sourceUrls: ['https://second.test/story', 'https://third.test/story'], category: 'economics', score: 12 }, '2026-08-28');
+    expect(candidate?.source_urls).toEqual([
+      'https://example.com/story',
+      'https://second.test/story',
+      'https://third.test/story',
+    ]);
     expect(candidate?.corroboration).toBe(3);
     expect(candidate?.source_ref_hash).not.toContain('raw-id');
     expect(candidate?.sensitivity).toBe('public');
@@ -33,5 +37,26 @@ describe('video radar contract', () => {
     ], '2026-08-28', [], 1);
     expect(items).toHaveLength(1);
     expect(items[0]?.title).toBe('A stronger story');
+  });
+
+  it('merges repeated stories across the rolling daily window and retains new evidence', async () => {
+    const items = await buildVideoRadarCandidatesFromDays([
+      {
+        briefing_date: '2026-08-28',
+        payload: [{ id: 'new', headline: 'Inference pricing changes again', say: 'New', source: 'one.test', sourceCount: 2, url: 'https://one.test/story', sourceUrls: ['https://two.test/story'], category: 'economics', score: 8 }],
+      },
+      {
+        briefing_date: '2026-08-27',
+        payload: [{ id: 'old', headline: 'Inference pricing changes again', say: 'Old', source: 'one.test', sourceCount: 1, url: 'https://one.test/story', sourceUrls: ['https://three.test/story'], category: 'economics', score: 7 }],
+      },
+    ], [], 10);
+    expect(items).toHaveLength(1);
+    expect(items[0]?.summary).toBe('New');
+    expect(items[0]?.source_urls).toEqual([
+      'https://one.test/story',
+      'https://three.test/story',
+      'https://two.test/story',
+    ]);
+    expect(items[0]?.corroboration).toBe(3);
   });
 });
