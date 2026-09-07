@@ -2,7 +2,17 @@
 
 **Record revision:** `SR-001`
 
-**Status:** Selected for one provisional rendered mobile synthesis. This is not founder approval, implementation authority or release authority.
+**Status:** Rendered as R1, then rejected at the founder product gate. Retained as historical design evidence only. This is not implementation authority or release authority.
+
+## R1 founder gate
+
+The founder's immediate reaction was: "immediate reaction is that it looks nice but cant really gauge what you are building. i could have done that in canva myself in 30 sec and itd mean nothing"
+
+The failure is product proof, interaction and fidelity, not visual taste. R1 demonstrated that one contrast state could be styled and operated, but it did not demonstrate what CTRL does, where its intelligence appears, how the leader changes the result or what becomes more valuable next time. The artefact therefore failed despite passing its mechanical render gate.
+
+The next revision keeps the Evidence Lens only as a possible middle moment. It expands the proof to the complete causal loop already authorised by `D-052`: prior view, adaptive challenge, bounded evidence, correction, user-owned call, no more than one optional Brain learning and an inspectable portable receipt.
+
+This is same-spine rejection one. A second rejection of the same governing interaction requires fresh divergence rather than another polish pass.
 
 ## Selection record
 

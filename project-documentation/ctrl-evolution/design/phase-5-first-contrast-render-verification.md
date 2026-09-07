@@ -4,7 +4,13 @@
 
 **Artifact:** `first-contrast-mock-r1.html`
 
-**Status:** Browser-rendered provisional synthesis awaiting unanchored founder reaction. This is not production acceptance or implementation authority.
+**Status:** Mechanical checks passed. Founder product gate failed. The artefact is rejected historical evidence, not production acceptance or implementation authority.
+
+## Founder product gate
+
+Visual finish was acceptable. Product gaugeability failed. A cold reviewer could not tell what was being built or distinguish the prototype from a quickly composed static visual. R1 did not make the system's intelligence, causal response to user input, durable Brain change or future value observable.
+
+The pass criteria below remain valid mechanical evidence only. They cannot rescue the failed product verdict.
 
 ## Visible contract
 

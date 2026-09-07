@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** `D-052` locks the combined product rule: a governed versioned live Brain runtime, customer-owned GitHub or ZIP releases, and a five-minute human-first decision loop with no more than one optional inspectable Brain learning. The proof-bearing vertical-slice contract joins one real decision, useful contrast, independent challenge, owned call, later recall and deterministic portable release. Its evaluation pack freezes twelve proof cases and the strongest substitute comparisons; the repository validator enforces their structure, visible/hidden boundary, blocking-invariant coverage, decision lineage and canonical bytes. The machine-readable traceability matrix now maps every locked founder decision through `D-052` to product surfaces, governing contracts, proof and the failure it prevents. Phase 5 independent divergence is complete. A third blinded tiebreak selected the Evidence Lens for one rendered mobile first-contrast synthesis, with only a visibly unresolved unknown borrowed from the Evidence Bench. Physical Brain schema work, GitHub App or customer-repository creation, implementation and later material surfaces remain paused until the rendered first surface is explicitly founder-approved.
+**CURRENT_PHASE:** `D-052` locks the combined product rule: a governed versioned live Brain runtime, customer-owned GitHub or ZIP releases, and a five-minute human-first decision loop with no more than one optional inspectable Brain learning. The proof-bearing vertical-slice contract joins one real decision, useful contrast, independent challenge, owned call, later recall and deterministic portable release. Its evaluation pack freezes twelve proof cases and the strongest substitute comparisons; the repository validator enforces their structure, visible/hidden boundary, blocking-invariant coverage, decision lineage and canonical bytes. The machine-readable traceability matrix now maps every locked founder decision through `D-052` to product surfaces, governing contracts, proof and the failure it prevents. Phase 5 first-contrast R1 passed mechanical render checks but failed the founder product gate: it looked polished while leaving the product, intelligence and compounding Brain ungaugeable. A same-spine R2 revision is active as one playable complete-loop proof. Physical Brain schema work, GitHub App or customer-repository creation, production implementation and later material surfaces remain paused until that proof is explicitly founder-approved.
 
 **SOURCE_LAYERS:**
 
@@ -68,7 +68,7 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 **VERTICAL_SLICE (product rule locked; outcome unproven):** Voice or type a live AI-transition decision → capture the leader's provisional view → one adaptive contrast → targeted evidence and an independent AI view → accept/resist/correct → user-owned call → transparent brain proposal → later useful recall → portable version.
 
-**FIRST_SURFACE:** `Decide: first five-minute loop`. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. The current UI's polish is the floor; the replacement must be more impressive through greater simplicity, intelligence, trust, empathy and visual craft. The first rendered synthesis follows the approved vertical-slice contract and will be shown cold for explicit founder reaction before implementation.
+**FIRST_SURFACE:** `Decide: playable five-minute loop`. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. The current UI's polish is the floor; the replacement must be more impressive through greater simplicity, intelligence, trust, empathy and visual craft. R2 must let a cold reviewer cause and observe the complete movement from prior view to challenge, evidence boundary, correction, owned call, optional Brain learning and portable receipt. A static composition does not prove the product.
 
 **AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. D-050 authorises contract and concept work under the retained-capability transition. D-051 authorises rendered mocks at material-surface gates, not implementation of an unapproved mock. D-052 authorises sanitized three-spine divergence and one rendered first-surface synthesis. Append-only discovery and redacted snapshot maintenance remain authorised. Physical product schema changes, GitHub integration or customer-repository creation, material visual implementation, main-branch merge, capability restoration and public release require their own scoped gates.
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** `krish-design` creates the sanitized first-surface brief, runs three meaningfully different mobile interaction spines through two independent blinded judges, proves the selected synthesis feasible against current code and data, and presents one rendered first-contrast synthesis cold. Krish Raja then approves or corrects that material surface before implementation.
+**NEXT_ACTION:** Build and verify one self-contained synthetic R2 prototype of the complete five-minute loop. Selection, correction and optional learning must visibly change the result and future Brain state. Present it cold for Krish Raja's product judgement before any production implementation.
 
 ## Current strategic synthesis through G11
 
@@ -132,7 +132,8 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - Phase 5 independent concept record: [Evidence Lens](design/candidate-a-evidence-lens.md), [The Second Reading](design/candidate-b-second-reading.md) and [The Evidence Bench](design/candidate-c-evidence-bench.md). Each was produced from the same sanitized brief without access to either alternative and remains unrendered, unselected and non-authoritative.
 - Phase 5 blinded review record: [Judge 1](design/judge-1-verdict.md) selected The Second Reading; [Judge 2](design/judge-2-verdict.md) selected The Evidence Bench; the blind [Judge 3 tiebreak](design/judge-3-tiebreak-verdict.md) selected the Evidence Lens and found the Evidence Bench ineligible under the no-classification and evidence-integrity boundaries.
 - [Phase 5 first-contrast synthesis record](design/phase-5-first-contrast-synthesis-record.md): preserves the selection method, allowed borrowing, forbidden hybridisation, render acceptance tests and current authority boundary.
-- Phase 5 rendered synthesis: [interactive Evidence Lens R1](design/first-contrast-mock-r1.html), its [primary 390 x 844 review frame](design/first-contrast-r1-390x844.png) and [render verification](design/phase-5-first-contrast-render-verification.md). This is the current unapproved material-surface gate, not production UI.
+- Phase 5 rejected first synthesis: [interactive Evidence Lens R1](design/first-contrast-mock-r1.html), its [primary 390 x 844 review frame](design/first-contrast-r1-390x844.png) and [render verification](design/phase-5-first-contrast-render-verification.md). It remains historical evidence: mechanically sound and visually polished, but rejected because it did not make the product or compounding Brain legible.
+- [Phase 5 complete-loop proof brief](design/phase-5-complete-loop-proof-brief.md): the R2 same-spine correction contract, causal state sequence, cold-review acceptance test and unchanged authority boundary.
 
 ## Ikigai alignment
 
@@ -162,7 +163,7 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 | Apply and verify production trust containment | Complete |
 | Complete founder product interview | In progress |
 | Produce decision-complete product corpus and architecture | Pending |
-| Diverge, render and approve first material surface | Pending |
+| Diverge, render and approve first material surface | In progress: R1 rejected, playable R2 active |
 | Implement and independently verify vertical slice | Pending |
 
 ## Locked product decisions
@@ -223,8 +224,8 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 
 `ledger.snapshot.jsonl` is sorted by `record_type` and `record_key` using bytewise ordering and then by numeric version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field. The current snapshot was regenerated twice from identical allowlisted rows presented in ascending and reversed source order; the output bytes were identical.
 
-- Rows: 270
-- SHA-256: `a43a766246ba4645317ac7e66c9e64a34b7f7be9eae57be98cd6e929c4612348`
+- Rows: 272
+- SHA-256: `dd72f8854bc3173ec2b3b9b5dc44d4ebaf95dda6fb64e0d89d2d7fbcf5ff93d9`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
