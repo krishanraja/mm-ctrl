@@ -1,10 +1,10 @@
 {
-  "schema_version": "ctrl.phase2.decision-traceability.v1",
-  "status": "provisional",
-  "authority": "agent_synthesis_not_founder_approval",
+  "schema_version": "ctrl.phase2.decision-traceability.v2",
+  "status": "approved_product_rule",
+  "authority": "founder_approved_via_D-052",
   "source_of_truth": "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
-  "decision_range": "D-001..D-051",
-  "open_product_gate": "H-024 and the combined product rule remain provisional until explicit founder approval or correction.",
+  "decision_range": "D-001..D-052",
+  "next_design_gate": "D-052 approves the combined product rule; material implementation remains gated on explicit founder approval of the rendered first-surface synthesis.",
   "entries": [
     {
       "decision_id": "D-001",
@@ -1220,6 +1220,36 @@
       ],
       "exit_evidence": "Every material surface is rendered at the intended viewport, shown cold, explicitly locked and later verified against the implementation; current polish is only the floor.",
       "failure_if_lost": "The rebuild is either technically correct but joyless, or visually impressive but dishonest and burdensome."
+    },
+    {
+      "decision_id": "D-052",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "export",
+        "decision_loop",
+        "design_system"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/current-to-target-transition-architecture.md#runtime-and-portability-are-separate-roles",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#executive-contract",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#founder-approval-gate"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F10",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "fixture",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "One designated user completes the human-first five-minute loop, receives no more than one inspectable learning proposal, and produces a deterministic Brain release that can be re-imported and used in two materially different agent environments without exposing runtime machinery.",
+      "failure_if_lost": "GitHub becomes the live database, portability becomes a marketing claim without external use, or the first experience becomes capture-first and technically visible."
     }
   ]
 }

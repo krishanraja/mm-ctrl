@@ -224,4 +224,4 @@ The manifest contains fixture-pack hash, candidate revision, Brain version, mode
 
 This pack is ready for implementation use when its structure and coverage verify and the founder locks or corrects the governing product rule in the source contract. Product validity remains unproved.
 
-The next material action is still the same: after founder approval, `krish-design` receives the contract and fixture boundaries, performs three-spine divergence, and shows one mobile first-contrast synthesis cold. The fixture pack travels with that handoff so aesthetic ambition cannot weaken the proof standard.
+`D-052` now authorizes the next material action: `krish-design` receives the contract and fixture boundaries, performs three-spine divergence, and shows one mobile first-contrast synthesis cold. The fixture pack travels with that handoff so aesthetic ambition cannot weaken the proof standard. Implementation remains gated on explicit approval of the rendered synthesis.

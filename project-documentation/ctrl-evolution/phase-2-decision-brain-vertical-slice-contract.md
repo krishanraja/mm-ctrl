@@ -1,14 +1,14 @@
 # CTRL Phase 2 decision-to-Brain vertical-slice contract
 
-**Status:** Provisional architecture and experience contract for founder review. Not a schema migration, visual lock, implementation authorization or release plan.
+**Status:** Combined product rule approved as `D-052`; detailed mechanics remain a proof contract, not a schema migration, visual lock, implementation authorization or release plan.
 
 **Date:** 2026-09-07
 
-**Current source:** `08d36aada6ca7da27e7e6b74fa8e582ac4ac70bf`
+**Current source:** `22d9d8d962ccdff5c793e642672db78340674307`
 
-**Governing decisions:** `D-008`, `D-009`, `D-010`, `D-012`, `D-015`, `D-018`, `D-019`, `D-022`–`D-040`, `D-042`–`D-051`
+**Governing decisions:** `D-008`, `D-009`, `D-010`, `D-012`, `D-015`, `D-018`, `D-019`, `D-022`–`D-040`, `D-042`–`D-052`
 
-**Open architecture dependency:** `H-024`—the live Brain and the customer-owned portable Brain package have separate roles. This contract remains useful if that hypothesis changes, but its store-placement and export sections must be revised before implementation.
+**Approved architecture boundary:** `D-052` resolves `H-024` as product direction: the governed live Brain and customer-owned portable release have separate roles. Runtime performance, safe correction and erasure, deterministic re-import and external-agent value remain falsifiable implementation claims.
 
 ## Executive contract
 
@@ -54,7 +54,7 @@ This slice joins the three things that distinguish CTRL: consequential human–A
 
 ### AUTHORITY
 
-This artifact authorizes only continued provisional concept and test planning. It does not authorize production or staging schema changes, customer-data migration, GitHub App creation, customer repository creation, material visual implementation, main-branch merge, feature enablement or release. A rendered material surface requires a separate explicit founder lock; production actions require exact action-time approval.
+This artifact authorizes sanitized interaction divergence and one rendered first-surface synthesis. It does not authorize production or staging schema changes, customer-data migration, GitHub App creation, customer repository creation, material visual implementation, main-branch merge, feature enablement or release. The rendered material surface requires a separate explicit founder lock; production actions require exact action-time approval.
 
 ### VERIFICATION
 
@@ -410,7 +410,7 @@ These are logical boundaries, not approved physical table names.
 - validation and re-import result;
 - destination receipt for download or Git sync.
 
-## Store placement under `H-024`
+## Store placement approved by `D-052`
 
 | Object | Canonical live store | Other representation |
 |---|---|---|
@@ -646,7 +646,7 @@ Do not record cursor movement, keystroke content beyond submitted input, covert 
 
 ### Gate 0: contract and mock
 
-- Founder locks or corrects `H-024` and this contract.
+- `D-052` locks the combined product rule and store-role boundary.
 - `krish-design` performs valid three-spine divergence and adversarial judging.
 - One mobile first-contrast render is shown cold and explicitly locked.
 
@@ -730,28 +730,28 @@ Do not record cursor movement, keystroke content beyond submitted input, covert 
 
 ## Founder approval gate
 
-One material decision now gates concept divergence:
+`D-052` records the founder's approval of the combined product rule:
 
-> **Approve or correct this combined product rule:** CTRL's live Brain is a versioned, permissioned runtime; its GitHub/ZIP form is a customer-owned portable release. The first surface proves that system through one devastatingly simple five-minute decision loop whose first reveal is a useful contrast—not an AI recommendation—and whose only durable learning is one optional, inspectable proposal.
+> CTRL's live Brain is a versioned, permissioned runtime; its GitHub/ZIP form is a customer-owned portable release. The first surface proves that system through one devastatingly simple five-minute decision loop whose first reveal is a useful contrast, not an AI recommendation, and whose only durable learning is one optional, inspectable proposal.
 
-If approved, the next owner is `krish-design`. It receives a sanitized divergence brief for three conceptually distinct mobile interaction spines. No later surface, implementation or production change begins before one rendered first-contrast synthesis is shown cold and explicitly locked.
+The next owner is `krish-design`. It receives a sanitized divergence brief for three conceptually distinct mobile interaction spines. No later surface, implementation or production change begins before one rendered first-contrast synthesis is shown cold and explicitly locked.
 
 ## Resumable handoff
 
-**OUTCOME:** Provisional end-to-end contract for the first decision-to-Brain-to-recall-and-export slice.
+**OUTCOME:** Founder-approved product rule with a provisional proof contract for the first decision-to-Brain-to-recall-and-export slice.
 
-**PHASE:** Phase 4 surface map and vertical-slice gate; awaiting founder product-rule approval before Phase 5 concept divergence.
+**PHASE:** Phase 5 first material surface; sanitized concept divergence and rendered synthesis are active.
 
-**CURRENT TRUTH:** Transition posture and visual floor are locked through `D-050` and `D-051`; production remains at the separately audited main revision; no product schema, GitHub integration or visual mock has been created.
+**CURRENT TRUTH:** Transition posture, visual floor and combined product rule are locked through `D-052`; production remains at the separately audited main revision; no product schema, GitHub integration or visual mock has been created.
 
 **LOCKED:** Brain-first hierarchy, human-before-AI, user-owned call, adaptive depth, one-ask interaction, context circulation, trust boundaries, new-nervous-system transition and current-polish quality floor.
 
-**AUTHORITY:** Documentation, ledger maintenance and provisional concept planning only. Mock lock, implementation, external integration, production mutation and release remain separately gated.
+**AUTHORITY:** Documentation, ledger maintenance, sanitized three-spine divergence and one rendered first-surface synthesis. Mock lock, implementation, external integration, production mutation and release remain separately gated.
 
-**RISKS:** Unapproved storage boundary; adapter leakage; interview burden; false portability; polished surface masking weak data or intelligence.
+**RISKS:** Adapter leakage; interview burden; false portability; dual-representation drift; polished surface masking weak data or intelligence.
 
 **VERIFICATION:** Contract structure, repository evidence mapping, state coverage, ledger readback, deterministic snapshot and documentation checks must pass before delivery.
 
-**NEXT OWNER:** Krish Raja for the single governing rule above; then `krish-design`.
+**NEXT OWNER:** `krish-design`, followed by Krish Raja for cold rendered-surface review.
 
-**NEXT ACTION:** On approval, create the sanitized first-surface divergence brief and run three independent interaction spines before rendering one synthesis.
+**NEXT ACTION:** Create the sanitized first-surface divergence brief, run three independent interaction spines and two blinded judges, prove feasibility, then render and present one synthesis cold.

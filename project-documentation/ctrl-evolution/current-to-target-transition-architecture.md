@@ -263,7 +263,7 @@ A brain item is not merely a fact. It can be an objective, constraint, criterion
 
 ### Runtime and portability are separate roles
 
-The founder's customer-Brain storage question has been pressure-tested in [the current-source storage architecture brief](research/customer-brain-storage-architecture-brief-2026-09-07.md). The leading, still-provisional contract is:
+The founder's customer-Brain storage question has been pressure-tested in [the current-source storage architecture brief](research/customer-brain-storage-architecture-brief-2026-09-07.md). `D-052` locks this product-direction contract:
 
 - a versioned, tenant-isolated PostgreSQL domain is the canonical live Brain;
 - encrypted object storage holds raw transcripts, audio and source documents;
@@ -273,7 +273,7 @@ The founder's customer-Brain storage question has been pressure-tested in [the c
 - GitHub edits return as proposed changes and never silently overwrite the live Brain;
 - export boundaries follow one Brain and audience contract, not merely one CRM customer.
 
-GitHub is therefore a first-class ownership, inspection, iteration and handoff surface, not the sole transactional database. The non-technical user should encounter “keep your own copy” and a plain-language change receipt; commits, branches, schemas and sync conflicts stay beneath the product. No production store, GitHub App or customer repository is authorised by this provisional call.
+GitHub is therefore a first-class ownership, inspection, iteration and handoff surface, not the sole transactional database. The non-technical user should encounter “keep your own copy” and a plain-language change receipt; commits, branches, schemas and sync conflicts stay beneath the product. `D-052` authorizes interaction divergence and one rendered first-surface synthesis, not a production store, GitHub App or customer repository.
 
 ### What happens to existing data
 
@@ -500,10 +500,10 @@ That is how six months of engineering survives without six months of assumptions
 
 ## Founder approval gate
 
-The founder approved this transition verdict as `D-050`. The next move remains **not** a broad implementation sprint. The provisional [Phase 2 decision-to-Brain vertical-slice contract](phase-2-decision-brain-vertical-slice-contract.md) now specifies the first proof-bearing loop and reduces the next gate to one combined product rule.
+The founder approved the transition verdict as `D-050` and the combined product rule as `D-052`. The next move remains **not** a broad implementation sprint. The [Phase 2 decision-to-Brain vertical-slice contract](phase-2-decision-brain-vertical-slice-contract.md) specifies the first proof-bearing loop.
 
-The single decision for founder review is:
+The locked rule is:
 
 > Treat the versioned, permissioned live Brain as the runtime and GitHub/ZIP as its customer-owned portable release; prove both through one devastatingly simple five-minute decision loop whose first reveal is a useful contrast—not an AI recommendation—and whose only durable learning is one optional, inspectable proposal.
 
-If approved, `krish-design` should perform three-spine interaction divergence and produce one mobile first-contrast synthesis for cold founder review. No product schema, customer repository or material production surface is authorised by that approval.
+`krish-design` now performs three-spine interaction divergence and produces one mobile first-contrast synthesis for cold founder review. No product schema, customer repository or material production surface is authorised before that rendered synthesis receives a separate explicit lock.

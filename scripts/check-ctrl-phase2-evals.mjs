@@ -48,7 +48,7 @@ const expectedCriteria = [
 ];
 
 const expectedFixtureIds = Array.from({ length: 12 }, (_, index) => `F${String(index + 1).padStart(2, '0')}`);
-const expectedDecisionIds = Array.from({ length: 51 }, (_, index) => `D-${String(index + 1).padStart(3, '0')}`);
+const expectedDecisionIds = Array.from({ length: 52 }, (_, index) => `D-${String(index + 1).padStart(3, '0')}`);
 const allowedDispositions = new Set(['required_now', 'constrains_now', 'deferred_with_guardrail']);
 const allowedProductSurfaces = new Set([
   'advisor_workspace',
@@ -150,22 +150,22 @@ function validateTrace(trace, raw, ledgerDecisions) {
   const fail = (message) => failures.push(message);
 
   if (!isObject(trace)) return ['traceability root must be an object'];
-  if (!exactKeys(trace, ['schema_version', 'status', 'authority', 'source_of_truth', 'decision_range', 'open_product_gate', 'entries'])) {
+  if (!exactKeys(trace, ['schema_version', 'status', 'authority', 'source_of_truth', 'decision_range', 'next_design_gate', 'entries'])) {
     fail('traceability root fields changed');
   }
-  if (trace.schema_version !== 'ctrl.phase2.decision-traceability.v1') fail('traceability schema_version must remain v1');
-  if (trace.status !== 'provisional') fail('traceability status must remain provisional until the founder gate is recorded');
-  if (trace.authority !== 'agent_synthesis_not_founder_approval') fail('traceability authority must not imply founder approval');
+  if (trace.schema_version !== 'ctrl.phase2.decision-traceability.v2') fail('traceability schema_version must remain v2');
+  if (trace.status !== 'approved_product_rule') fail('traceability status must preserve the D-052 product-rule approval');
+  if (trace.authority !== 'founder_approved_via_D-052') fail('traceability authority must point to D-052');
   if (trace.source_of_truth !== ledgerRel) fail('traceability source_of_truth must remain the canonical ledger snapshot');
-  if (trace.decision_range !== 'D-001..D-051') fail('traceability decision_range must remain D-001..D-051');
-  if (trace.open_product_gate !== 'H-024 and the combined product rule remain provisional until explicit founder approval or correction.') {
-    fail('traceability must preserve the open H-024 founder gate');
+  if (trace.decision_range !== 'D-001..D-052') fail('traceability decision_range must remain D-001..D-052');
+  if (trace.next_design_gate !== 'D-052 approves the combined product rule; material implementation remains gated on explicit founder approval of the rendered first-surface synthesis.') {
+    fail('traceability must preserve the rendered first-surface implementation gate');
   }
 
   const entries = Array.isArray(trace.entries) ? trace.entries : [];
   const ids = entries.map((entry) => entry?.decision_id);
   if (ids.length !== expectedDecisionIds.length || !ids.every((id, index) => id === expectedDecisionIds[index])) {
-    fail('traceability entries must be ordered, unique and complete from D-001 through D-051');
+    fail('traceability entries must be ordered, unique and complete from D-001 through D-052');
   }
 
   for (const entry of entries) {
@@ -222,7 +222,7 @@ function validateTrace(trace, raw, ledgerDecisions) {
   }
 
   for (const id of expectedDecisionIds) if (!ledgerDecisions.has(id)) fail(`ledger snapshot is missing ${id}`);
-  if (ledgerDecisions.size !== expectedDecisionIds.length) fail('ledger decision set has drifted beyond D-001 through D-051 without a traceability update');
+  if (ledgerDecisions.size !== expectedDecisionIds.length) fail('ledger decision set has drifted beyond D-001 through D-052 without a traceability update');
 
   const serialized = JSON.stringify(trace);
   if (secretPattern.test(serialized)) fail('traceability contains credential-shaped content');
@@ -235,9 +235,9 @@ function validateTrace(trace, raw, ledgerDecisions) {
 
 function runTraceNegativeProbes(trace, ledgerDecisions) {
   const probes = [
-    ['missing D-051', (copy) => copy.entries.pop()],
+    ['missing D-052', (copy) => copy.entries.pop()],
     ['wrong D-017 version', (copy) => { copy.entries[16].decision_version = 1; }],
-    ['fabricated trace approval', (copy) => { copy.status = 'final'; copy.authority = 'founder_approved'; }],
+    ['lost founder decision authority', (copy) => { copy.status = 'provisional'; copy.authority = 'agent_synthesis_not_founder_approval'; }],
     ['unknown trace fixture', (copy) => { copy.entries[0].fixture_ids[0] = 'F99'; }],
     ['broken contract reference', (copy) => { copy.entries[0].contract_refs[0] = 'project-documentation/ctrl-evolution/README.md#not-a-real-heading'; }],
     ['unknown product surface', (copy) => { copy.entries[0].product_surfaces[0] = 'magic_dashboard'; }],
@@ -429,7 +429,7 @@ if (pack) {
     const hash = createHash('sha256').update(raw, 'utf8').digest('hex');
     const traceHash = createHash('sha256').update(traceRaw, 'utf8').digest('hex');
     console.log(`ok: CTRL Phase 2 fixture pack ${pack.fixtures.length} fixtures, ${pack.global_blocking_failures.length} blocking invariants`);
-    console.log(`ok: decision traceability ${trace.entries.length} locked decisions through D-051`);
+    console.log(`ok: decision traceability ${trace.entries.length} locked decisions through D-052`);
     console.log(`ok: ${probes.count + traceProbes.count} negative mutation probes rejected`);
     console.log(`ok: canonical fixture SHA-256 ${hash}`);
     console.log(`ok: canonical traceability SHA-256 ${traceHash}`);
