@@ -100,6 +100,27 @@ The product rule is therefore event-driven and selective. New evidence triggers 
 
 This is an operating-rhythm lock, not approval of the live-copilot interaction model or rendered cockpit.
 
+### Live-session assistance remains channel-agnostic
+
+The founder could not honestly rank three proposed live-session behaviours because practical participation may happen across a phone, WhatsApp, Slack, email or a combination, and different customers will provide different quantities and formats of evidence. That uncertainty is a requirement, not an unanswered preference to smooth over.
+
+V1 must therefore not depend on ambient live listening or connectors to every meeting and work platform. The provisional operating model is:
+
+1. prepare the sharpest route before the session from the governed Brain;
+2. allow Krish to ask privately for help during the session, with a tiny context update when the conversation has moved beyond known evidence;
+3. ingest the consented transcript or a fast post-session voice summary afterwards;
+4. show exactly what changed, what remains provisional and the best next intervention.
+
+Live ambient listening remains a later, explicit-consent enhancement. The material cockpit should test whether one private ask, one quietly maintained next-best question and one genuinely material intervention can coexist without becoming a distracting whisper feed. The exact during-session ranking remains open until a working interaction makes the trade-off concrete.
+
+### Product identity decision
+
+The founder is strongly considering replacing CTRL with **Mindy** so the product feels like a joint participant in the thirty-day proof: warmer, more magical, easier to address and more likely to elicit rich interaction. He also recognises that CTRL's terse technology-product identity may confer startup credibility and long-term category stretch.
+
+Research on 7 September 2026 found material same-category crowding for Mindy, including a current executive AI platform spanning decisions, specialist assistants, knowledge bases and AI-facilitated meetings. Human-computer interaction evidence supports socially fluent interaction more strongly than it supports a human name as a driver of consequential behaviour. A female-coded service identity also introduces stereotype and expectation risks.
+
+The founder accepted the asymmetric call on 7 September 2026: the **participant model is strategically valuable; Mindy is scrapped altogether as a candidate**. Mindmake remains the master brand, the customer's Living Brain remains the protagonist, and CTRL remains only a provisional system/build name. Final product naming will happen at the pre-launch GTM gate, when ownable candidates can be tested against tangible behaviour. Full findings, decision record and selection rules are preserved in [the G14 product-name research record](g14-name-research-findings.md).
+
 ### The near-term user model
 
 For the foreseeable future, the primary operator is Krish and the unit of work is one customer inside the Mindmake thirty-day proof. The customer's Brain is the governed object. The customer is an intentionally lightweight participant who contributes, corrects, reacts and benefits without administering a technical system. Future self-service is enabled by the same kernel but must not distort the near-term operator workflow.
@@ -167,6 +188,6 @@ The one-hour experience becomes valuable work, not the price of admission.
 
 ## Next material gate
 
-Resolve the live-session copilot boundary, then render and obtain a cold founder reaction to the first **Private Brain Builder** customer cockpit. It must lead with one supported customer intervention, show what is ready now and the best enrichment route behind it, preserve staged-versus-durable truth and visible richness upgrades, adapt to nonlinear discovery, and avoid becoming a project-management dashboard or distracting whisper feed.
+Render and obtain a cold founder reaction to the first **Private Brain Builder** customer cockpit using the provisional channel-agnostic live-session boundary. It must lead with one supported customer intervention, show what is ready now and the best enrichment route behind it, preserve staged-versus-durable truth and visible richness upgrades, adapt to nonlinear discovery, and avoid becoming a project-management dashboard or distracting whisper feed. The mock may express participant-like behaviour, but must not use Mindy or make CTRL's working name structurally difficult to replace at the pre-launch GTM gate.
 
 R2 remains locked as the Customer Brain expression. Implementation of the new operator information architecture must not begin before this material surface is approved.
