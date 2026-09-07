@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-08-21 against production readback through the Supabase management API
+Last verified: 2026-09-07 against the source tree at `edd9045` and a local run of the test suite; the production readback below through the Supabase management API dates from 2026-08-21 and has not been repeated since
 
 ## Production baseline
 
@@ -12,12 +12,24 @@ Last verified: 2026-08-21 against production readback through the Supabase manag
 | Source branch | `main` |
 | Application baseline | `19d80f36ecda990bce4c3e1e6d18c97387d9ed33` |
 | Vercel deployment | `dpl_24XfsypkNsxciZJ2Q1Arx3n8XNci`, READY in production at `19d80f36` |
-| Test suite | 891 tests in 55 files |
-| Edge Function directories | 115 excluding `_shared`, of 178 deployed on the shared project |
+| Test suite | 915 tests in 57 files, run locally at `edd9045` on 2026-09-07 |
+| Edge Function directories | 115 excluding `_shared`, of 178 deployed on the shared project (readback 2026-08-21) |
 | Hook files | 51 |
 | SQL migration files | 165 in the source tree |
 
 Current source inventory is 115 Edge Function directories excluding `_shared`, 51 hook files, and 165 SQL migration files.
+
+Commits since `19d80f36` changed one test file under `src/` and nothing else the browser build reads, so the served application is the same as the baseline above. Vercel builds every push to `main`, and the deployment identifier of the build at `edd9045` is not recorded here.
+
+## Edge Function changes after the 2026-08-21 release
+
+| Date | Change | Release status |
+|---|---|---|
+| 2026-08-28 | `video-radar-export` added (PR #371), a token-gated read-only export of the curation pool for the video studio | Merged. Deployment not recorded in this repository |
+| 2026-09-02 | `live-headlines` gained the `affects` and `stance` fields and the `?backfill=1` operator action (PRs #372, #373) | Deployed as `live-headlines` version 48 and verified by cache readback on 2026-09-02: 476 items, 473 classified, 12 `damage` items dropped, zero over-assigned or out-of-allowlist |
+| 2026-09-07 | `video-radar-export` reads four cached days and merges repeated sightings; `news-cluster` retains every article URL (PR #375) | Merged at `edd9045`. Deployment not recorded in this repository |
+
+The vocabulary at the end of this file applies: merged is not deployed, and deployed is not verified.
 
 ## Applied migration state, and why the ledger is not the answer
 

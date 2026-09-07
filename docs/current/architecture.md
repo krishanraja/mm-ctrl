@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-08-20 against production application baseline `b5770194b4646302f47e36655e389f7ec2eb43f8` and live readback through the Supabase management API
+Last verified: 2026-09-07 against the source tree at `edd9045`; the deployment counts below come from the management API readback of 2026-08-21 recorded in [release state](./release-state.md)
 
 CTRL is a Vite React application on Vercel with Supabase Auth, PostgreSQL, Edge Functions, Storage, Vault, and scheduled jobs. The architecture has one personal context substrate and one curation pool. Product surfaces are views over those shared systems.
 
@@ -41,15 +41,15 @@ The repository contains 115 Edge Function directories excluding `_shared`, 51 ho
 
 Read this before changing anything server-side.
 
-CTRL does not have a Supabase project to itself. Project `bkyuxvschuwngtcdhsyg`, named "Mindmaker AI", hosts CTRL alongside other Mindmaker surfaces. Verified on 2026-08-20, it carries **177 deployed Edge Functions, and CTRL accounts for 113 of them.** The other 64 belong to workshop and prework tooling, exec-pulse email, the Mindmaker site assistants (`mindy-chat`, `chat-with-krish`), lead capture, and document generation.
+CTRL does not have a Supabase project to itself. Project `bkyuxvschuwngtcdhsyg`, named "Mindmaker AI", hosts CTRL alongside other Mindmaker surfaces. Verified on 2026-08-21, it carried **178 deployed Edge Functions, and CTRL accounted for 114 of them.** The other 64 belong to workshop and prework tooling, exec-pulse email, the Mindmaker site assistants (`mindy-chat`, `chat-with-krish`), lead capture, and document generation.
 
 Three consequences that matter more than anything else on this page:
 
 1. **Deployed does not mean CTRL's.** A function visible in the Supabase dashboard may belong to another product. Only the 115 directories under `supabase/functions/` are this repository's to change, redeploy, or roll back.
-2. **Every function in this repository is live.** All 114 directories are deployed and ACTIVE except one, noted below. Several have no caller anywhere in this repository because they are invoked by cron, by an external webhook, or by a link in an email: `stripe-webhook` and `resend-webhook` are called by their providers, `decision-watch` and `capture-week` by pg_cron, `unsubscribe-briefing` by a recipient clicking a footer link. Absence of an in-repo caller is not evidence that a function is unused, and deleting one on that basis would remove production code that this repository is the only source for.
+2. **Every function in this repository is live.** 114 of the 115 directories were confirmed deployed and ACTIVE by readback on 2026-08-21. Several have no caller anywhere in this repository because they are invoked by cron, by an external webhook, or by a link in an email: `stripe-webhook` and `resend-webhook` are called by their providers, `decision-watch` and `capture-week` by pg_cron, `unsubscribe-briefing` by a recipient clicking a footer link. Absence of an in-repo caller is not evidence that a function is unused, and deleting one on that basis would remove production code that this repository is the only source for.
 3. **The database is shared too.** Tables, roles, and cron jobs outside CTRL's own migrations exist and are not this repository's to alter. Scope every migration to the objects CTRL owns.
 
-The one exception to "everything here is deployed" is `backfill-pseudonymise`, a one-off operator tool committed but not yet deployed.
+The one directory without a recorded deployment is `video-radar-export`, added on 2026-08-28 after that readback. `backfill-pseudonymise`, previously named here as undeployed, was deployed on 2026-08-21 (see [release state](./release-state.md#edge-function-release-2026-08-21)).
 
 The live cron schedule is recorded in [release state](./release-state.md), which is the authority for what is actually running rather than what a migration file requests.
 
@@ -104,6 +104,10 @@ source gather
 ```
 
 Control Center is an optional read-only source adapter inside `live-headlines`. It does not create another feed. Missing bridge configuration fails closed.
+
+Each cached card carries a subject (`category`) and, since 2026-09-02, two optional additive audience fields written by the same synthesis call: `affects` (which business divisions the story lands on) and `stance` (`opportunity`, `shift`, `risk` or `damage`). A `damage` item, one that reports harm with no move in it for the reader, is dropped before caching (`_shared/news-synthesis.ts`, `live-headlines/index.ts`). Older cache rows without the fields keep working.
+
+The pool has one consumer outside the app. `video-radar-export` (since 2026-08-28) maps the most recent cached days and the current `news_trends` rows into the video studio's candidate contract (`_shared/video-radar-contract.ts`), merging repeated sightings of one story and carrying every distinct public source URL. It is GET only, gated by a bearer token checked in the handler rather than a user JWT, rate limited, and returns only public signal fields. It never writes to the pool.
 
 ### Decision engine
 
