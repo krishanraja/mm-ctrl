@@ -134,28 +134,36 @@ Develop leaders who can see what AI changes, redesign the operating reality, pro
 
 Each answer should begin by acknowledging the valid job the alternative performs.
 
-**“Why not just use ChatGPT or Claude?”**  
+**“Why not just use ChatGPT or Claude?”**
+
 You should use the model you prefer. CTRL is not another foundation model. Its job is to create and maintain the portable judgement layer the model can use: why you made a call, what good looks like, what you rejected, where the rule breaks and what later happened. CTRL is unnecessary if ordinary conversational memory already gives you the continuity and quality you need.
 
-**“Claude already has Memory, Enterprise Search and Skills.”**  
+**“Claude already has Memory, Enterprise Search and Skills.”**
+
 It does, and those are formidable execution, retrieval and procedure layers. CTRL must add value by learning a leader-owned standard through consequential work, keeping it separate from company knowledge, testing it on new work and maintaining it without asking the leader to become a skill engineer. Claude can remain one of the places that brain works.
 
-**“I can put my rules in Markdown or build a Skill.”**  
+**“I can put my rules in Markdown or build a Skill.”**
+
 That is an excellent option for a stable workflow and a person willing to maintain it. CTRL's test is whether it can uncover the tacit criterion behind your corrections, preserve counterexamples and provenance, notice when a rule no longer applies, evaluate the package and update it with your authority—while making the technical layer disappear.
 
-**“We already have a company brain or enterprise search.”**  
+**“We already have a company brain or enterprise search.”**
+
 Keep it. Those systems are designed to locate and ground work in organisational knowledge. CTRL should use them as sources while owning a different problem: how a decision-owning leader develops and applies judgement about an AI-native future.
 
-**“Why not build this ourselves with RAG?”**  
+**“Why not build this ourselves with RAG?”**
+
 You can, especially if deep bespoke control is strategically important. Retrieval infrastructure does not by itself decide what deserves to become a standard, distinguish the leader's view from someone else's, preserve contradiction, propagate correction or prove better judgement. CTRL must productise those difficult layers and make them usable without a technical programme.
 
-**“Is this surveillance dressed up as personalisation?”**  
+**“Is this surveillance dressed up as personalisation?”**
+
 It becomes that if capture is broad, silent or detached from a specific benefit. CTRL's architecture instead requires deliberate or bounded sources, private staging, provenance, visible use, proportional approval, third-party minimisation and a real off-record path. These are acceptance criteria, not reassurance copy.
 
-**“Will it make everyone think the same way?”**  
+**“Will it make everyone think the same way?”**
+
 That is one of the central failure conditions. CTRL must retain negative taste, generate options from meaningfully different causal frames, expose evidence and uncertainty, protect the leader's voice and measure whether outputs converge. Shared patterns may challenge a leader; they cannot silently overwrite personal judgement.
 
-**“Does this replace a coach, adviser or chief of staff?”**  
+**“Does this replace a coach, adviser or chief of staff?”**
+
 No. The strongest design improves the room: it prepares the evidence and options, remembers the exact prior judgement, preserves corrections, and carries the useful residue forward. Humans retain relationship judgement, influence, final craft and accountability.
 
 ## Proof programme inherited by product and marketing
