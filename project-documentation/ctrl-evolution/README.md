@@ -26,13 +26,15 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 - External evidence: primary provenance, memory, personalization, decision-quality, reliance and human-feedback research.
 - Obsolete or quarantined: static assessment as default, value-after-data-extraction, answer vending, static persona as a sufficient brain, ownerless persistence, global personalized cache, silent self-rewrite and unearned diagnostic claims.
 
-**PRODUCT_TRUTH (locked through G11):** CTRL is a relationship-embedded AI-transition decision companion for decision-owning leaders. It helps a leader see something materially sharper about how AI changes their category, organisation, staff or own role within five useful minutes, own the call, and let a portable, inspectable model of their judgement grow as useful residue. Personal capability is the mechanism; better category and organisational outcomes are the company-funded value. It begins inside Mindmake's thirty-day proof, where it should improve client–Krish work and strengthen Krish backstage before asking the client to form a standalone product habit.
+**PRODUCT_TRUTH (locked through G11):** CTRL is a relationship-embedded AI-transition decision and category-design companion for leaders who already intend to build the future with AI. It helps a leader see something materially sharper about how AI changes their category, organisation, staff or own role within five useful minutes, imagine and test a more visionary operating reality, own the call, and let a portable, inspectable model of their judgement grow as useful residue. Personal capability is the mechanism; better category and organisational outcomes are the company-funded value. It begins inside Mindmake's thirty-day proof, where it should improve client–Krish work and strengthen Krish backstage before asking the client to form a standalone product habit.
 
 Sovereign AI fluency is now foundational: role-appropriate firsthand experience must let the leader perceive newly possible work, distinguish impressive output from valuable output, set the human–AI boundary, form a falsifiable operating thesis and retain accountable judgement. CTRL should build and test that fluency through consequential real work, not become a generic tools course or imply that an AI-active leader is infallible.
 
 The working capability model is calibrated system judgement at the level of real work: notice the task and information movement; improve data readiness; decide what to delegate and what to retain; specify and receive the handoff; ask for reflection; inspect, validate and independently verify; correct the result; and encode what was learned. The target is not maximum automation. Correct non-delegation, anticipatory error detection and preserved taste are positive evidence of fluency. A provisional diagnostic hypothesis is that these behaviours predict held-out work quality better than tool familiarity or self-reported confidence, but CTRL must test that without covert click tracking or surveillance.
 
 The target operating model is attention reallocation. Governed AI carries data movement, manipulation, enrichment, analysis and administrative information transport. Humans move into standards, judgement, customers and stakeholders, strategic movement, distinctive final craft and named accountability. For consequential work, an independent AI pass may add validation and verification evidence, but the human must critically assess both the output and its audit. Model agreement never becomes release authority.
+
+Automation is enabling infrastructure, not the strategic altitude. CTRL should help willing, high-agency leaders perceive, design and govern future category and industry states. A first provisional pattern is provenance-aware cultural intelligence: mapping aggregate audience exposure to narratives, characters, theories and themes to reveal saturation, gaps and emerging adjacencies while keeping story, taste and strategic ownership human. The two-year change in expectations and acceptance is an explicit design assumption to test, not an established forecast or permission for manipulative targeting.
 
 The first wedge is leader adaptation, followed by organisation now/next/not-yet pacing; live AI-initiative triage remains conditional. CTRL may support work and role design but must not evaluate named people or recommend employment actions. A leader-owned Private Leader Brain and a company transition map remain separately permissioned assets.
 
@@ -46,6 +48,8 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 - No graph/vector complexity without a named retrieval need.
 - No deep personal-memory collection before ownership, trust, lifecycle and erasure are sound.
 - No material visual implementation before concept divergence, a rendered mock and explicit founder approval.
+- No primary proposition based on persuading AI sceptics or automating administrative work.
+- No generic futurism, unsupported prediction or precision audience intelligence that becomes covert individual manipulation.
 
 **SURFACE_DEPENDENCIES:**
 
@@ -71,6 +75,8 @@ The founder has corrected the loop's outcome-first premise. The decisive experie
 
 The first grounded exemplar is an hour-long synchronous meeting to brainstorm one social post. A criteria-, voice- and tone-governed system could generate genuinely divergent directions before the workday, allowing any human discussion to start with comparison, rejection, combination and direction choice. The standard is better ideas faster—not more, worse or cosmetically similar ideas faster. This remains a workflow exemplar rather than proof that every brainstorm should be automated.
 
+A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
+
 **NEXT_ACTION:** Identify what the prepared option set must demonstrate for the founder to trust its voice, strategic usefulness and genuine divergence rather than dismiss it as polished generic AI content (`Q-056`).
 
 ## Current strategic synthesis through G11
@@ -78,11 +84,14 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 | Choice | Current call | Why it matters |
 |---|---|---|
 | Where to play | AI-transition decisions for decision-owning leaders inside the Mindmake thirty-day proof | A bounded domain is commercially coherent and can be evaluated; CTRL is not a generic business-decision chatbot. |
+| Target stance | Willing leaders who intend to redesign organisations, categories or industries with AI | CTRL is not built around persuading sceptics; intent, agency and accountable execution matter more than tool experience. |
 | Value creation | Better category and organisational outcomes through a more capable leader | This stitches company-funded value to the leader-owned AI-brain promise. |
+| Strategic altitude | Evidence-aware visionary category and industry design | Workflow efficiency earns evidence and attention, but the product must help leaders imagine, test and govern a different future rather than optimise only today's work. |
 | Foundational capability | Calibrated system judgement built through consequential work | Fluency is the observable ability to notice, prepare, delegate or retain, inspect, verify, correct and learn while preserving taste—not operator-level tool mastery or automation volume. |
 | Target operating model | AI carries governed information logistics; humans own standards, relationships, strategy, distinctive final craft and accountability | The value is better allocation of scarce human attention, not simply fewer people or more generated output. |
 | Consequential assurance | Independent AI verification evidence plus critical human release judgement | A second model can expose gaps, but agreement between models cannot replace accountable human assessment. |
 | Prepared collaboration | Generate standards-governed divergent options before suitable meetings; begin human collaboration at the judgement boundary | The aim is better ideas and better use of attention, not content volume or the elimination of every live brainstorm. |
+| Cultural intelligence | Provenance-aware aggregate maps of audience exposure, narratives, saturation and gaps | This can create early sight for category strategy, but must resist biased inference, synthetic feedback loops, manipulation and creative homogenisation. |
 | First wedge | Leader stop/start/delegate/learn/excellence, then organisation now/next/not-yet; live initiative triage conditional | It creates reusable capability before expanding into a broader decision portfolio. |
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
 | Evidence model | Flexible, consented, claim-type-specific orchestration; transcripts retain speaker, time, decision, context and provenance | The AI does the preparation without treating convenient context as reliable truth. |
@@ -167,13 +176,15 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-039` Use attention reallocation, rather than maximum automation, as the target operating model for CTRL-supported AI transition.
 - `D-040` Treat independent AI review as inspectable evidence while a human critically assesses the work and audit and retains final release accountability.
 - `D-041` Prepare genuinely divergent, standards-governed options before suitable collaboration so human time begins at comparative judgement and direction choice; evaluate against better ideas faster.
+- `D-042` Build for willing, future-building leaders with the agency to redesign organisations, categories or industries; persuasion and administrative efficiency are not the primary proposition.
+- `D-043` Make evidence-aware visionary category and industry design CTRL's strategic altitude, with workflow automation remaining enabling infrastructure.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 224
-- SHA-256: `97b67aee8cedef58bd6b098939cf4883b107d261d4f5dbd6cebb4450d1838b5c`
+- Rows: 231
+- SHA-256: `a2c970e77a6d5f70f0ffc83d9366b2e4e38810cba5a5afb973fe16b039fe707b`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
