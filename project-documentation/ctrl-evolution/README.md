@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** Founder alignment moving into current-to-target transition architecture. The context-circulation model is locked; competitive differentiation and proof requirements are recorded. Broader product implementation and material visual work remain paused until the transition brief converts present repository and deployed truth into an approved sequence.
+**CURRENT_PHASE:** Current-to-target transition architecture drafted for founder review. The production deployment, exact `main` source and live stored shape have been compared with the locked context-circulation model. The working verdict is a new product nervous system beside the current app, with proven capabilities retained through explicit adapters. Broader implementation and material visual work remain paused until the founder approves or corrects that transition verdict and the first proof-bearing vertical-slice contract.
 
 **SOURCE_LAYERS:**
 
@@ -66,9 +66,9 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 7. Return and outcome: the smallest useful recall, contrast, completion, preparation or reflection inside the work.
 8. Portable export: human-readable brain plus machine-readable provenance, versions and evaluation fixtures.
 
-**VERTICAL_SLICE (provisional):** Authorised context from a natural work moment → source and scope checks → live decision → minimum useful contrast → evidence-backed AI view → accept/resist/correct → user-owned call → transparent brain proposal → later useful recall → portable version.
+**VERTICAL_SLICE (provisional):** Voice or type a live AI-transition decision → capture the leader's provisional view → one adaptive contrast → targeted evidence and an independent AI view → accept/resist/correct → user-owned call → transparent brain proposal → later useful recall → portable version.
 
-**FIRST_SURFACE:** `Decide: first five-minute loop`. The Brain is the residue of useful work, not the first tax imposed on the user. Material visual work stays paused until founder direction is locked.
+**FIRST_SURFACE:** `Decide: first five-minute loop`. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. Material visual work stays paused until the transition verdict and vertical-slice contract are approved.
 
 **AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. Append-only discovery and redacted snapshot maintenance remain authorised. Broader product implementation, material visual construction, main-branch merge, capability restoration and public release require their own scoped gates.
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Capture the founder's guidance for moving from current product truth to the target state, then produce a current-to-target transition brief: live surface and capability inventory; keep/repair/retire/rebuild calls; dependency and trust order; proof-bearing vertical slices; and approval gates. Interaction divergence and rendering follow that structural brief, not precede it.
+**NEXT_ACTION:** Founder reviews the proposed [current-to-target transition architecture](current-to-target-transition-architecture.md), especially the “new product, proven organs” verdict. On approval or correction, produce the Phase 2 implementation contract for one decision-to-brain-to-recall vertical slice: user states, domain events, LLM task contracts, legacy adapters, trust tests, proof fixtures and feature-flagged rollout. Interaction divergence and rendering follow that contract, not precede it.
 
 ## Current strategic synthesis through G11
 
@@ -105,6 +105,8 @@ A higher-order marketing exemplar uses aggregate audience-exposure intelligence 
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
 | Evidence model | Flexible, consented, claim-type-specific orchestration; transcripts retain speaker, time, decision, context and provenance | The AI does the preparation without treating convenient context as reliable truth. |
 | Brain model | Learn all nine judgement dimensions progressively through real work | The brain becomes rich without an exhaustive or invasive upfront intake. |
+| Product hierarchy | Brain as organising intelligence; consequential work as the value loop; feed, audio and exports as downstream expressions | Content can help a decision or prepare attention, but cannot remain the product hero while the brain sits in a settings-like destination. |
+| Transition posture | New product nervous system, proven organs retained through adapters | Preserve production-hardening and evidence machinery without letting historical routes, schemas or prompts define the target experience. |
 | Ownership | Separate Private Leader Brain and company transition map; ambiguity stays private; genuine off-record leaves no durable trace | This reconciles personal ownership, company value and advisor continuity without pretending undo can unshare. |
 | Signature experience | Anticipate the next tension, remember what mattered, improve the human session, turn thought into action, retain corrections, connect category/company/self, sharpen the decision | “Magic” comes from earned continuity and consequence, not confident guessing or simulated personhood. |
 | Proof | Held-back new-decision performance first; reinvested capacity, transition-map quality and staff agency second; return pull is an adoption signal | This resists hindsight, luck, artifact completion and engagement vanity. |
@@ -119,6 +121,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 ## Product architecture
 
 - [Context circulation architecture](context-circulation-architecture.md): locked governing model with one provenance-rich context envelope beneath authorised work exhaust, deliberate signals, just-in-time retrieval and scoped streams; one governed path from private staging to proposed memory, useful return, correction and downstream repair.
+- [Current-to-target transition architecture](current-to-target-transition-architecture.md): production/source/data audit, retain/repair/retire/rebuild calls, target UX/data/AI architecture, migration phases, proof gates and the proposed “new product, proven organs” transition verdict.
 
 ## Ikigai alignment
 
