@@ -45,7 +45,7 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 ## What changed recently
 
 - 2026-09-07 **Radar evidence survives the rolling window** (PR #375, `edd9045`). Why: the studio export read one cached day, so a story that ran on several days arrived several times, each copy citing one link. It now reads four days and merges repeated sightings into one candidate carrying every distinct public URL. The code's own words: "The rolling window is evidence coverage, not permission to show the same event several times." No deployment readback yet.
-- 2026-09-07 **Docs steward adopted.** Why: the 2026-09-04 upload (`8174677`, 76 files, 19,720 lines) put six untitled dumps, twelve June surface maps and a production login and password into a public repo, and overwrote nine reconciled documents. All 64 loose files moved to history with banners, the nine restored, the credential removed (rotation still owed). `docs/history/LOG.md`.
+- 2026-09-07 **Docs steward adopted.** Why: the 2026-09-04 upload (`8174677`, 76 files, 19,720 lines) put six untitled dumps, twelve June surface maps and a production login and password into a public repo, and overwrote nine reconciled documents. All 64 loose files moved to history with banners, the nine restored, the credential removed. `docs/history/LOG.md`.
 - 2026-09-02 **Audience axis and stance on the headline pool** (PRs #372, #373). Why: `category` records only a story's subject, and the subject always wins, so only 23 of 488 cached items carried `org` and the audience a story lands on was never recorded. Each card gained `affects` and `stance`; a `damage` item (harm with no move in it for the reader) is dropped before caching. Backfill readback: 476 items, 473 classified, 12 dropped (`CHANGELOG.md`).
 - 2026-08-28 **Cached radar signals exported for the video studio** (PR #371). Why: the local Mindmake video studio needed the corroborated pool without a user JWT or the service role, so a dedicated GET-only function checks its own bearer token, rate limits, and "never returns service credentials" (`supabase/config.toml`). Directory count 114 to 115.
 - 2026-08-21 **Release to production, and two pseudonymiser defects the dry run caught** (`bac02d3`). 24 Edge Functions redeployed and confirmed ACTIVE by readback, 177 to 178 deployed; training material to global version 3 with 33 roles and 36 allowlist entries. The Supabase CLI could not reach `api.supabase.com` from the delivery environment, so `scripts/deploy-edge-function.mjs` does the CLI's job over the management API.
@@ -59,12 +59,10 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 
 ## What is next and what is waiting on Krish
 
-- Next single action: rotate the password that stood in `docs/BUILD-CHRONICLE.md` from 2026-09-04 to 2026-09-07. It is in public git history at `8174677` and removal does not undo that.
 - Waiting on Krish: a deployment readback for `video-radar-export` and the PR #375 change, then a line in `docs/current/release-state.md`.
 - Waiting on Krish: the product name. The fleet calls this "CTRL by Mindmake"; the repo's README title, `product.json` (`legal_entity`, `parent` link) and compliance pack say "Mindmaker". The steward does not change names or commercial claims.
 - Waiting on Krish: whether the corpus and course material archived today (the `doc-*`, syllabus and `DECISIONING CORPUS` files) belongs in another repository, and whether `docs/CTRL-BRAIN-ARCHITECTURE.md` (now in history) should be re-headed as a Reference for the brain migrations that cite it.
 - Waiting on Krish: three uploaded files outside the steward allowlist, `docs/_INTERROGATION_RESULTS.json`, `docs/check-standards.mjs` and `docs/ctrl-wordmark.png`.
-- Waiting on Krish: `CLAUDE_CODE_OAUTH_TOKEN` as an Actions secret so `.github/workflows/docs-steward.yml` can run unattended.
 
 ## Read next
 
