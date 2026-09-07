@@ -1,0 +1,158 @@
+{
+  "schema_version": "ctrl.living-brain.contract.v1",
+  "status": "approved_direction_physical_proof",
+  "authority": "D-055",
+  "canonical_kernel": [
+    "source",
+    "assertion",
+    "brain_item",
+    "decision",
+    "learning_proposal",
+    "correction_and_repair",
+    "release"
+  ],
+  "brain_item_types": [
+    "aim",
+    "standard",
+    "preference",
+    "pattern",
+    "example",
+    "tension",
+    "context"
+  ],
+  "human_views": [
+    "what_matters",
+    "how_i_judge",
+    "my_calls",
+    "unresolved",
+    "what_changed"
+  ],
+  "axes": {
+    "maturity": [
+      "staged",
+      "proposed",
+      "held",
+      "trusted"
+    ],
+    "standing": [
+      "current",
+      "disputed",
+      "superseded",
+      "retired",
+      "expired"
+    ],
+    "audience": [
+      "person_private",
+      "delivery_team_private",
+      "named_company_or_project",
+      "approved_pattern_commons",
+      "public_release"
+    ],
+    "consequence_permission": [
+      "personalise_presentation",
+      "suggest_or_retrieve",
+      "shape_reversible_work",
+      "confirm_before_consequential_use",
+      "prohibited_in_context"
+    ]
+  },
+  "epistemic_basis": [
+    "user_stated",
+    "user_demonstrated",
+    "observed",
+    "inferred",
+    "outcome_tested",
+    "external_claim"
+  ],
+  "relation_types": {
+    "supports": {
+      "directed": true,
+      "requires_evidence": true
+    },
+    "contradicts": {
+      "directed": false,
+      "requires_evidence": true
+    },
+    "qualifies": {
+      "directed": true,
+      "requires_evidence": true
+    },
+    "in_tension_with": {
+      "directed": false,
+      "requires_evidence": true
+    },
+    "depends_on": {
+      "directed": true,
+      "requires_evidence": true
+    },
+    "informs": {
+      "directed": true,
+      "requires_evidence": true
+    },
+    "exemplifies": {
+      "directed": true,
+      "requires_evidence": true
+    }
+  },
+  "projection_contract": {
+    "confident_maturity": [
+      "held",
+      "trusted"
+    ],
+    "confident_standing": [
+      "current"
+    ],
+    "portrait_card_budget": 12,
+    "map_orientation_budget": 18,
+    "map_neighbourhood_budget": 24,
+    "canonical_reference_format": "item:<brain_item_id>@v<version>",
+    "layout_links_are_semantic": false,
+    "distance_carries_semantic_meaning": false,
+    "node_size_meaning": "projection_relevance_only",
+    "semantic_zoom_levels": [
+      "orientation",
+      "neighbourhood",
+      "item_and_evidence"
+    ]
+  },
+  "repair_contract": {
+    "automatic_targets": [
+      "portrait_projection",
+      "map_projection",
+      "retrieval_index",
+      "cache"
+    ],
+    "human_review_targets": [
+      "delivered_consequential_output",
+      "shared_release",
+      "published_skill",
+      "another_subject_brain"
+    ],
+    "receipt_outcomes": [
+      "rebuilt",
+      "quarantined",
+      "review_required",
+      "unaffected_with_reason",
+      "erased"
+    ]
+  },
+  "invariants": [
+    "WORKSPACE_SCOPE_MATCH",
+    "ASSERTION_PROVENANCE_REQUIRED",
+    "DURABLE_HUMAN_AUTHORITY_REQUIRED",
+    "ITEM_VERSION_SEQUENCE_VALID",
+    "ONE_CURRENT_VERSION_PER_ITEM",
+    "CURRENT_RELATION_ENDPOINTS_CURRENT",
+    "RELATION_EVIDENCE_REQUIRED",
+    "EVIDENCE_AUDIENCE_CEILING",
+    "AUDIENCE_ACCESS_REQUIRED",
+    "PROPOSED_NOT_CONFIDENT",
+    "DISPUTED_NOT_STEERING",
+    "PROJECTION_CANONICAL_REF_PARITY",
+    "LAYOUT_LINKS_NON_SEMANTIC",
+    "CORRECTION_APPEND_ONLY",
+    "REPAIR_COVERAGE_COMPLETE",
+    "CONSEQUENTIAL_REPAIR_REQUIRES_HUMAN",
+    "DETERMINISTIC_PROJECTION"
+  ]
+}

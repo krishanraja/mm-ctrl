@@ -1,0 +1,868 @@
+{
+  "schema_version": "ctrl.living-brain.fixtures.v1",
+  "contract_ref": "project-documentation/ctrl-evolution/g13-living-brain-contract.json",
+  "base_state": {
+    "workspace": {
+      "id": "workspace-leader-1",
+      "subject_id": "person-leader-1",
+      "owner_id": "person-leader-1"
+    },
+    "sources": [
+      {
+        "id": "source-interview-1",
+        "workspace_id": "workspace-leader-1",
+        "source_type": "interview",
+        "actor_id": "person-leader-1",
+        "captured_at": "2026-09-07T10:00:00Z",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "purpose": "build_personal_brain",
+        "integrity_hash": "sha256:source-interview-1"
+      },
+      {
+        "id": "source-work-1",
+        "workspace_id": "workspace-leader-1",
+        "source_type": "work_artifact",
+        "actor_id": "person-leader-1",
+        "captured_at": "2026-09-07T11:00:00Z",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "purpose": "support_marketing_decision",
+        "integrity_hash": "sha256:source-work-1"
+      }
+    ],
+    "assertions": [
+      {
+        "id": "assertion-aim-1",
+        "workspace_id": "workspace-leader-1",
+        "source_id": "source-interview-1",
+        "subject_id": "person-leader-1",
+        "speaker_id": "person-leader-1",
+        "epistemic_basis": "user_stated",
+        "statement": "Build a marketing organisation capable of shaping an AI-native category.",
+        "source_span": {
+          "start": 0,
+          "end": 79,
+          "integrity_hash": "sha256:assertion-aim-1"
+        }
+      },
+      {
+        "id": "assertion-standard-1",
+        "workspace_id": "workspace-leader-1",
+        "source_id": "source-interview-1",
+        "subject_id": "person-leader-1",
+        "speaker_id": "person-leader-1",
+        "epistemic_basis": "user_stated",
+        "statement": "Before consequential work ships, the human owns the final judgement and finish.",
+        "source_span": {
+          "start": 80,
+          "end": 160,
+          "integrity_hash": "sha256:assertion-standard-1"
+        }
+      },
+      {
+        "id": "assertion-voice-1",
+        "workspace_id": "workspace-leader-1",
+        "source_id": "source-interview-1",
+        "subject_id": "person-leader-1",
+        "speaker_id": "person-leader-1",
+        "epistemic_basis": "user_stated",
+        "statement": "Reject clipped, bossy AI cadence and generic two-word sentence stacks.",
+        "source_span": {
+          "start": 161,
+          "end": 230,
+          "integrity_hash": "sha256:assertion-voice-1"
+        }
+      },
+      {
+        "id": "assertion-tension-1",
+        "workspace_id": "workspace-leader-1",
+        "source_id": "source-interview-1",
+        "subject_id": "person-leader-1",
+        "speaker_id": "person-leader-1",
+        "epistemic_basis": "user_stated",
+        "statement": "The Brain belongs to the leader while the company must receive material value.",
+        "source_span": {
+          "start": 231,
+          "end": 305,
+          "integrity_hash": "sha256:assertion-tension-1"
+        }
+      },
+      {
+        "id": "assertion-pattern-1",
+        "workspace_id": "workspace-leader-1",
+        "source_id": "source-work-1",
+        "subject_id": "person-leader-1",
+        "speaker_id": "system-observer",
+        "epistemic_basis": "observed",
+        "statement": "Prepared divergent options appear to improve the starting quality of brainstorms.",
+        "source_span": {
+          "start": 0,
+          "end": 78,
+          "integrity_hash": "sha256:assertion-pattern-1"
+        }
+      }
+    ],
+    "item_versions": [
+      {
+        "id": "item-version-aim-1",
+        "brain_item_id": "item-aim",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "item_type": "aim",
+        "meaning": "Build a marketing organisation capable of shaping an AI-native category.",
+        "human_views": [
+          "what_matters"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "trusted",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "confirm_before_consequential_use",
+        "applicability": {
+          "domains": [
+            "marketing"
+          ],
+          "roles": [
+            "leader"
+          ],
+          "tasks": [
+            "strategy"
+          ],
+          "conditions": [],
+          "exclusions": []
+        },
+        "evidence_assertion_ids": [
+          "assertion-aim-1"
+        ],
+        "counterevidence_assertion_ids": [],
+        "exceptions": [],
+        "confidence": {
+          "evidence_quality": 1,
+          "corroboration": 0.5,
+          "recency": 1,
+          "transfer": 0,
+          "human_confirmation": 1
+        },
+        "valid_from": "2026-09-07T10:00:00Z",
+        "valid_until": null,
+        "recorded_at": "2026-09-07T10:05:00Z",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "item-version-standard-1",
+        "brain_item_id": "item-standard",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "item_type": "standard",
+        "meaning": "Before consequential work ships, the human owns the final judgement and finish.",
+        "human_views": [
+          "how_i_judge"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "trusted",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "confirm_before_consequential_use",
+        "applicability": {
+          "domains": [],
+          "roles": [
+            "leader"
+          ],
+          "tasks": [
+            "release"
+          ],
+          "conditions": [],
+          "exclusions": []
+        },
+        "evidence_assertion_ids": [
+          "assertion-standard-1"
+        ],
+        "counterevidence_assertion_ids": [],
+        "exceptions": [],
+        "confidence": {
+          "evidence_quality": 1,
+          "corroboration": 0.5,
+          "recency": 1,
+          "transfer": 0.5,
+          "human_confirmation": 1
+        },
+        "valid_from": "2026-09-07T10:00:00Z",
+        "valid_until": null,
+        "recorded_at": "2026-09-07T10:05:00Z",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "item-version-voice-1",
+        "brain_item_id": "item-voice",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "item_type": "preference",
+        "meaning": "Prefer complete, human sentences over clipped, bossy AI cadence.",
+        "human_views": [
+          "how_i_judge"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "shape_reversible_work",
+        "applicability": {
+          "domains": [
+            "writing"
+          ],
+          "roles": [],
+          "tasks": [
+            "drafting"
+          ],
+          "conditions": [],
+          "exclusions": []
+        },
+        "evidence_assertion_ids": [
+          "assertion-voice-1"
+        ],
+        "counterevidence_assertion_ids": [],
+        "exceptions": [],
+        "confidence": {
+          "evidence_quality": 1,
+          "corroboration": 0.5,
+          "recency": 1,
+          "transfer": 0.5,
+          "human_confirmation": 1
+        },
+        "valid_from": "2026-09-07T10:00:00Z",
+        "valid_until": null,
+        "recorded_at": "2026-09-07T10:05:00Z",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "item-version-tension-1",
+        "brain_item_id": "item-tension",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "item_type": "tension",
+        "meaning": "Protect the leader's private Brain while creating visible company value.",
+        "human_views": [
+          "unresolved",
+          "what_matters"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "applicability": {
+          "domains": [
+            "product"
+          ],
+          "roles": [
+            "leader"
+          ],
+          "tasks": [
+            "strategy"
+          ],
+          "conditions": [],
+          "exclusions": []
+        },
+        "evidence_assertion_ids": [
+          "assertion-tension-1"
+        ],
+        "counterevidence_assertion_ids": [],
+        "exceptions": [],
+        "confidence": {
+          "evidence_quality": 1,
+          "corroboration": 0,
+          "recency": 1,
+          "transfer": 0,
+          "human_confirmation": 1
+        },
+        "valid_from": "2026-09-07T10:00:00Z",
+        "valid_until": null,
+        "recorded_at": "2026-09-07T10:05:00Z",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "item-version-context-1",
+        "brain_item_id": "item-context",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "item_type": "context",
+        "meaning": "The current priority is redesigning marketing around AI-native work.",
+        "human_views": [
+          "what_matters"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "applicability": {
+          "domains": [
+            "marketing"
+          ],
+          "roles": [
+            "leader"
+          ],
+          "tasks": [
+            "strategy"
+          ],
+          "conditions": [],
+          "exclusions": []
+        },
+        "evidence_assertion_ids": [
+          "assertion-aim-1"
+        ],
+        "counterevidence_assertion_ids": [],
+        "exceptions": [],
+        "confidence": {
+          "evidence_quality": 1,
+          "corroboration": 0,
+          "recency": 1,
+          "transfer": 0,
+          "human_confirmation": 1
+        },
+        "valid_from": "2026-09-07T10:00:00Z",
+        "valid_until": "2026-12-31T23:59:59Z",
+        "recorded_at": "2026-09-07T10:05:00Z",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "item-version-pattern-1",
+        "brain_item_id": "item-pattern",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "item_type": "pattern",
+        "meaning": "Prepared divergent options improve live brainstorm quality.",
+        "human_views": [
+          "how_i_judge"
+        ],
+        "epistemic_basis": "inferred",
+        "maturity": "proposed",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "applicability": {
+          "domains": [
+            "marketing"
+          ],
+          "roles": [],
+          "tasks": [
+            "brainstorming"
+          ],
+          "conditions": [],
+          "exclusions": []
+        },
+        "evidence_assertion_ids": [
+          "assertion-pattern-1"
+        ],
+        "counterevidence_assertion_ids": [],
+        "exceptions": [],
+        "confidence": {
+          "evidence_quality": 0.5,
+          "corroboration": 0,
+          "recency": 1,
+          "transfer": 0,
+          "human_confirmation": 0
+        },
+        "valid_from": "2026-09-07T11:00:00Z",
+        "valid_until": null,
+        "recorded_at": "2026-09-07T11:05:00Z",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      }
+    ],
+    "relations": [
+      {
+        "id": "relation-standard-aim-v1",
+        "relationship_id": "relationship-standard-aim",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "from_ref": "item:item-standard@v1",
+        "to_ref": "item:item-aim@v1",
+        "relation_type": "supports",
+        "meaning": "Human release judgement protects the quality of AI-native category work.",
+        "evidence_assertion_ids": [
+          "assertion-standard-1",
+          "assertion-aim-1"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "relation-tension-aim-v1",
+        "relationship_id": "relationship-tension-aim",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "from_ref": "item:item-tension@v1",
+        "to_ref": "item:item-aim@v1",
+        "relation_type": "in_tension_with",
+        "meaning": "Company value cannot silently absorb the leader's private judgement.",
+        "evidence_assertion_ids": [
+          "assertion-tension-1",
+          "assertion-aim-1"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      {
+        "id": "relation-voice-standard-v1",
+        "relationship_id": "relationship-voice-standard",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "from_ref": "item:item-voice@v1",
+        "to_ref": "item:item-standard@v1",
+        "relation_type": "qualifies",
+        "meaning": "Distinctive human voice is part of the final quality standard.",
+        "evidence_assertion_ids": [
+          "assertion-voice-1",
+          "assertion-standard-1"
+        ],
+        "epistemic_basis": "user_stated",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      }
+    ],
+    "decisions": [
+      {
+        "id": "decision-marketing-1",
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "owner_id": "person-leader-1",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "confirm_before_consequential_use",
+        "pressure": "How should marketing change for an AI-native category?",
+        "human_prior": "The current operating model is too slow and too homogeneous.",
+        "owned_call": "Redesign the work before making any conclusion about the people.",
+        "evidence_assertion_ids": [
+          "assertion-aim-1",
+          "assertion-standard-1"
+        ],
+        "decided_at": "2026-09-07T12:00:00Z"
+      }
+    ],
+    "learning_proposals": [
+      {
+        "id": "proposal-pattern-1",
+        "workspace_id": "workspace-leader-1",
+        "candidate_version_id": "item-version-pattern-1",
+        "status": "pending_human_review",
+        "proposed_from_assertion_ids": [
+          "assertion-pattern-1"
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "id": "dependency-portrait-standard",
+        "workspace_id": "workspace-leader-1",
+        "source_ref": "item:item-standard@v1",
+        "target_type": "portrait_projection",
+        "target_id": "portrait-current",
+        "consequence": "replaceable"
+      },
+      {
+        "id": "dependency-map-standard",
+        "workspace_id": "workspace-leader-1",
+        "source_ref": "item:item-standard@v1",
+        "target_type": "map_projection",
+        "target_id": "map-current",
+        "consequence": "replaceable"
+      },
+      {
+        "id": "dependency-output-standard",
+        "workspace_id": "workspace-leader-1",
+        "source_ref": "item:item-standard@v1",
+        "target_type": "delivered_consequential_output",
+        "target_id": "output-board-brief-1",
+        "consequence": "human_review"
+      },
+      {
+        "id": "dependency-release-standard",
+        "workspace_id": "workspace-leader-1",
+        "source_ref": "item:item-standard@v1",
+        "target_type": "shared_release",
+        "target_id": "release-1",
+        "consequence": "human_review"
+      }
+    ],
+    "corrections": [],
+    "repair_receipts": [],
+    "releases": []
+  },
+  "viewer": {
+    "person_id": "person-leader-1",
+    "subject_id": "person-leader-1",
+    "audience_grants": [
+      "person_private:person-leader-1"
+    ]
+  },
+  "task_context": {
+    "domain": "marketing",
+    "role": "leader",
+    "task": "strategy",
+    "consequential": true,
+    "as_of": "2026-09-08T10:00:00Z"
+  },
+  "fixtures": [
+    {
+      "id": "LB01",
+      "purpose": "The portrait and Living Map expose the same eligible canonical state.",
+      "mode": "project",
+      "expected": {
+        "portrait_refs": [
+          "decision:decision-marketing-1",
+          "item:item-aim@v1",
+          "item:item-context@v1",
+          "item:item-standard@v1",
+          "item:item-tension@v1",
+          "item:item-voice@v1"
+        ],
+        "map_node_refs": [
+          "decision:decision-marketing-1",
+          "item:item-aim@v1",
+          "item:item-context@v1",
+          "item:item-standard@v1",
+          "item:item-tension@v1",
+          "item:item-voice@v1"
+        ],
+        "semantic_edge_ids": [
+          "relation-standard-aim-v1",
+          "relation-tension-aim-v1",
+          "relation-voice-standard-v1"
+        ],
+        "omitted_refs": [
+          "item:item-pattern@v1"
+        ]
+      }
+    },
+    {
+      "id": "LB02",
+      "purpose": "A current semantic relationship without evidence is rejected.",
+      "mode": "inject_invalid_relation",
+      "relation": {
+        "id": "relation-unsupported",
+        "relationship_id": "relationship-unsupported",
+        "version": 1,
+        "workspace_id": "workspace-leader-1",
+        "from_ref": "item:item-context@v1",
+        "to_ref": "item:item-voice@v1",
+        "relation_type": "informs",
+        "meaning": "A plausible but unsupported link.",
+        "evidence_assertion_ids": [],
+        "epistemic_basis": "inferred",
+        "maturity": "held",
+        "standing": "current",
+        "audience": {
+          "kind": "person_private",
+          "scope_id": "person-leader-1"
+        },
+        "consequence_permission": "suggest_or_retrieve",
+        "predecessor_version_id": null,
+        "superseded_by_version_id": null
+      },
+      "expected_error_codes": [
+        "RELATION_EVIDENCE_REQUIRED"
+      ]
+    },
+    {
+      "id": "LB03",
+      "purpose": "A viewer without the private audience grant receives no Brain projection.",
+      "mode": "project_as_viewer",
+      "viewer": {
+        "person_id": "person-other-1",
+        "subject_id": "person-other-1",
+        "audience_grants": []
+      },
+      "expected": {
+        "portrait_refs": [],
+        "map_node_refs": [],
+        "semantic_edge_ids": []
+      }
+    },
+    {
+      "id": "LB04",
+      "purpose": "A direct correction appends a new version and repairs every known dependency.",
+      "mode": "apply_correction",
+      "correction": {
+        "id": "correction-standard-1",
+        "idempotency_key": "correction-standard-1",
+        "workspace_id": "workspace-leader-1",
+        "subject_id": "person-leader-1",
+        "actor_id": "person-leader-1",
+        "authority": "direct_human_correction",
+        "prior_version_id": "item-version-standard-1",
+        "reason": "The prior wording was too broad for reversible internal drafts.",
+        "new_version": {
+          "id": "item-version-standard-2",
+          "brain_item_id": "item-standard",
+          "version": 2,
+          "workspace_id": "workspace-leader-1",
+          "subject_id": "person-leader-1",
+          "owner_id": "person-leader-1",
+          "item_type": "standard",
+          "meaning": "Before externally consequential work ships, the human owns final judgement and finish; reversible internal drafts may remain delegated.",
+          "human_views": [
+            "how_i_judge",
+            "what_changed"
+          ],
+          "epistemic_basis": "user_stated",
+          "maturity": "trusted",
+          "standing": "current",
+          "audience": {
+            "kind": "person_private",
+            "scope_id": "person-leader-1"
+          },
+          "consequence_permission": "confirm_before_consequential_use",
+          "applicability": {
+            "domains": [],
+            "roles": [
+              "leader"
+            ],
+            "tasks": [
+              "release"
+            ],
+            "conditions": [
+              "externally consequential"
+            ],
+            "exclusions": [
+              "reversible internal draft"
+            ]
+          },
+          "evidence_assertion_ids": [
+            "assertion-standard-1"
+          ],
+          "counterevidence_assertion_ids": [],
+          "exceptions": [
+            "Reversible internal drafts may be delegated end to end."
+          ],
+          "confidence": {
+            "evidence_quality": 1,
+            "corroboration": 0.5,
+            "recency": 1,
+            "transfer": 0.5,
+            "human_confirmation": 1
+          },
+          "valid_from": "2026-09-08T09:15:00Z",
+          "valid_until": null,
+          "recorded_at": "2026-09-08T09:15:00Z",
+          "predecessor_version_id": "item-version-standard-1",
+          "superseded_by_version_id": null
+        },
+        "relation_replacements": [
+          {
+            "prior_relation_id": "relation-standard-aim-v1",
+            "new_relation": {
+              "id": "relation-standard-aim-v2",
+              "relationship_id": "relationship-standard-aim",
+              "version": 2,
+              "workspace_id": "workspace-leader-1",
+              "from_ref": "item:item-standard@v2",
+              "to_ref": "item:item-aim@v1",
+              "relation_type": "supports",
+              "meaning": "Human release judgement protects consequential AI-native category work.",
+              "evidence_assertion_ids": [
+                "assertion-standard-1",
+                "assertion-aim-1"
+              ],
+              "epistemic_basis": "user_stated",
+              "maturity": "held",
+              "standing": "current",
+              "audience": {
+                "kind": "person_private",
+                "scope_id": "person-leader-1"
+              },
+              "consequence_permission": "suggest_or_retrieve",
+              "predecessor_version_id": "relation-standard-aim-v1",
+              "superseded_by_version_id": null
+            }
+          },
+          {
+            "prior_relation_id": "relation-voice-standard-v1",
+            "new_relation": {
+              "id": "relation-voice-standard-v2",
+              "relationship_id": "relationship-voice-standard",
+              "version": 2,
+              "workspace_id": "workspace-leader-1",
+              "from_ref": "item:item-voice@v1",
+              "to_ref": "item:item-standard@v2",
+              "relation_type": "qualifies",
+              "meaning": "Distinctive human voice remains part of consequential final craft.",
+              "evidence_assertion_ids": [
+                "assertion-voice-1",
+                "assertion-standard-1"
+              ],
+              "epistemic_basis": "user_stated",
+              "maturity": "held",
+              "standing": "current",
+              "audience": {
+                "kind": "person_private",
+                "scope_id": "person-leader-1"
+              },
+              "consequence_permission": "suggest_or_retrieve",
+              "predecessor_version_id": "relation-voice-standard-v1",
+              "superseded_by_version_id": null
+            }
+          }
+        ],
+        "repairs": [
+          {
+            "dependency_id": "dependency-portrait-standard",
+            "outcome": "rebuilt",
+            "actor_type": "system"
+          },
+          {
+            "dependency_id": "dependency-map-standard",
+            "outcome": "rebuilt",
+            "actor_type": "system"
+          },
+          {
+            "dependency_id": "dependency-output-standard",
+            "outcome": "review_required",
+            "actor_type": "system"
+          },
+          {
+            "dependency_id": "dependency-release-standard",
+            "outcome": "review_required",
+            "actor_type": "system"
+          }
+        ]
+      },
+      "expected": {
+        "new_ref": "item:item-standard@v2",
+        "absent_ref": "item:item-standard@v1",
+        "semantic_edge_ids": [
+          "relation-standard-aim-v2",
+          "relation-tension-aim-v1",
+          "relation-voice-standard-v2"
+        ],
+        "repair_outcomes": [
+          "rebuilt",
+          "rebuilt",
+          "review_required",
+          "review_required"
+        ],
+        "idempotent": true
+      }
+    },
+    {
+      "id": "LB05",
+      "purpose": "A disputed item remains inspectable in history but cannot steer the current portrait or map.",
+      "mode": "dispute_item",
+      "item_version_id": "item-version-tension-1",
+      "expected": {
+        "omitted_ref": "item:item-tension@v1"
+      }
+    },
+    {
+      "id": "LB06",
+      "purpose": "A proposed inferred pattern cannot appear as accepted Brain truth.",
+      "mode": "assert_omitted",
+      "canonical_ref": "item:item-pattern@v1"
+    },
+    {
+      "id": "LB07",
+      "purpose": "Semantic zoom remains bounded and deterministic at representative scale.",
+      "mode": "generated_scale",
+      "recipe": {
+        "seed": "ctrl-living-brain-scale-1",
+        "item_count": 120,
+        "relation_count": 180,
+        "focus_ref": "item:scale-item-060@v1"
+      },
+      "expected": {
+        "orientation_max": 18,
+        "neighbourhood_max": 24,
+        "full_item_count": 120,
+        "deterministic_under_reordering": true
+      }
+    },
+    {
+      "id": "LB08",
+      "purpose": "Hub tethers support layout but never masquerade as semantic relationships.",
+      "mode": "layout_links",
+      "expected": {
+        "semantic": false,
+        "kind": "layout_tether"
+      }
+    },
+    {
+      "id": "LB09",
+      "purpose": "Evidence cannot be projected to a broader audience without an explicit item-level authorization.",
+      "mode": "broaden_relation_audience",
+      "relation_id": "relation-standard-aim-v1",
+      "audience": {
+        "kind": "public_release",
+        "scope_id": "public"
+      },
+      "expected_error_codes": [
+        "EVIDENCE_AUDIENCE_CEILING"
+      ]
+    }
+  ]
+}

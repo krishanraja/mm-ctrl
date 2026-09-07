@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** `D-055` closes G12 and locks the Living Map hybrid as the governing Brain direction. CTRL retains the current Brain's immersive visual signature as a semantically truthful projection, pairs it with a concise current portrait and inspectable evidence and evolution, and rebuilds the underlying living-judgement model around seven canonical concepts and four orthogonal authority axes. G13 is active for the physical domain contract, projection rules, semantic visual grammar and representative-volume proof fixtures. Production schema changes, GitHub App or customer-repository creation, implementation and release remain paused.
+**CURRENT_PHASE:** `D-055` closes G12 and locks the Living Map hybrid as the governing Brain direction. The G13 physical contract and executable reference proof are complete: one versioned kernel drives the portrait and Living Map; nine fixtures block unsupported relationships, evidence-audience expansion, private leakage, proposed truth, disputed steering and incomplete repair; and a 120-item, 180-relationship projection is deterministic under reordered input. The first My Brain concept round was rejected before founder review because all three independent generators converged on the same fold metaphor. A final targeted divergence round is active. Production schema changes, GitHub App or customer-repository creation, implementation and release remain paused.
 
 **SOURCE_LAYERS:**
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Specify the G13 physical Brain contract and proof fixtures: versioned entities and relationships, portrait and Living Map projection rules, semantic visual grammar, correction and repair cascades, and realistic-volume tests. Stop before production implementation and return for the next scoped gate with proof-bearing artifacts.
+**NEXT_ACTION:** Complete the final targeted My Brain divergence round, prove pairwise conceptual distance, obtain two independent blinded judgments, synthesize one feasible concept against the G13 fixtures and render it for the founder's cold reaction. Stop before production UI implementation.
 
 ## Current strategic synthesis through G12
 
@@ -138,6 +138,9 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - Phase 5 playable R2: [complete-loop product proof](design/complete-loop-proof-r2.html), with [verification evidence](design/phase-5-complete-loop-proof-r2-verification.md). The founder found this direction good and requested more restrained visual life.
 - Phase 5 visual refinement R3: [playable product proof](design/complete-loop-proof-r3.html), with [verification evidence](design/phase-5-complete-loop-proof-r3-verification.md) and the [founder gate record](design/phase-5-complete-loop-r3-founder-gate.md). Its direction is approved; alignment repair and zero-guff copy are binding implementation corrections.
 - [G12 living Brain domain and user model](living-brain-domain-and-user-model.md): founder-approved Living Map hybrid, customer mental model, canonical domain kernel, learning authority, correction cascade, taste preservation, portability and V1 proof boundary; now the governing input to G13 contract and proof work.
+- [G13 Living Brain physical contract](g13-living-brain-physical-contract.md): versioned physical topology, evidence and audience boundaries, deterministic portrait and map projection, semantic visual grammar, correction and repair cascade, storage mapping, legacy adapter boundary and the next material-surface gate.
+- [G13 machine contract](g13-living-brain-contract.json) and [proof fixtures](g13-living-brain-proof-fixtures.json): seventeen enforceable invariants and nine executable cases, including deterministic scale at 120 items and 180 relationships. Run with `npm run brain:g13:check`.
+- G13 My Brain divergence: [sanitized brief](design/g13-my-brain-sanitized-brief.md), independently generated round 1 [A](design/g13-concept-a.md), [B](design/g13-concept-b.md) and [C](design/g13-concept-c.md), and the [diversity failure record](design/g13-round-1-diversity-failure.md). The convergent set was rejected before founder review; final targeted divergence is active.
 
 ## Ikigai alignment
 
@@ -166,7 +169,7 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 | Verify high-confidence trust findings against live bundles | Complete |
 | Apply and verify production trust containment | Complete |
 | Complete founder product interview | In progress |
-| Produce decision-complete product corpus and architecture | In progress: G12 approved; G13 physical contract and proof fixtures active |
+| Produce decision-complete product corpus and architecture | In progress: G13 physical contract and headless proof complete; material My Brain divergence active |
 | Diverge, render and approve first material surface | Complete: R3 direction approved with implementation corrections |
 | Implement and independently verify vertical slice | Pending |
 
