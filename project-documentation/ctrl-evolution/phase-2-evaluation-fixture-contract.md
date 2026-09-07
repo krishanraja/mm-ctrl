@@ -10,7 +10,7 @@
 
 ## The outcome this pack protects
 
-The first CTRL slice must be able to show that a relevant, accepted model of a leader's judgement improves consequential thinking beyond what a strong general model or a technically competent static context package can do—without increasing leakage, false certainty, genericity, user burden or loss of human authority.
+The first CTRL slice must be able to show that a relevant, accepted model of a leader's judgement improves consequential thinking beyond what a strong general model or a technically competent static context package can do, without increasing leakage, false certainty, genericity, user burden or loss of human authority.
 
 This pack exists before implementation so the team cannot quietly redefine “good” around whatever the first build happens to produce.
 
