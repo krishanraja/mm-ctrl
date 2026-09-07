@@ -132,6 +132,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - Phase 5 independent concept record: [Evidence Lens](design/candidate-a-evidence-lens.md), [The Second Reading](design/candidate-b-second-reading.md) and [The Evidence Bench](design/candidate-c-evidence-bench.md). Each was produced from the same sanitized brief without access to either alternative and remains unrendered, unselected and non-authoritative.
 - Phase 5 blinded review record: [Judge 1](design/judge-1-verdict.md) selected The Second Reading; [Judge 2](design/judge-2-verdict.md) selected The Evidence Bench; the blind [Judge 3 tiebreak](design/judge-3-tiebreak-verdict.md) selected the Evidence Lens and found the Evidence Bench ineligible under the no-classification and evidence-integrity boundaries.
 - [Phase 5 first-contrast synthesis record](design/phase-5-first-contrast-synthesis-record.md): preserves the selection method, allowed borrowing, forbidden hybridisation, render acceptance tests and current authority boundary.
+- Phase 5 rendered synthesis: [interactive Evidence Lens R1](design/first-contrast-mock-r1.html), its [primary 390 x 844 review frame](design/first-contrast-r1-390x844.png) and [render verification](design/phase-5-first-contrast-render-verification.md). This is the current unapproved material-surface gate, not production UI.
 
 ## Ikigai alignment
 
