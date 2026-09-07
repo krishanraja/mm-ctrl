@@ -86,6 +86,20 @@ This makes the primary cockpit object a **customer intervention**, not a memory,
 
 This is a product-hierarchy lock, not approval of an information architecture or rendered surface.
 
+### Private Brain Builder operating rhythm
+
+The founder ranked the moments when the Brain Builder should do its best work:
+
+1. immediately after new evidence arrives, showing what changed;
+2. before a customer session, preparing the sharpest route;
+3. between sessions, surfacing only a material opportunity.
+
+During-session assistance remains admissible only if it acts as a genuine adaptive copilot inside the nonlinear conversation. Leader sessions routinely move away from the planned route, and that movement is part of the discovery evidence rather than noise to suppress.
+
+The product rule is therefore event-driven and selective. New evidence triggers synthesis and a change receipt. The next session triggers preparation. The interval between sessions may trigger an intervention only when its expected value clears the interruption threshold. A fixed interview script, continuous notification stream or system that tries to force the discussion back onto its original path violates the requirement.
+
+This is an operating-rhythm lock, not approval of the live-copilot interaction model or rendered cockpit.
+
 ### The near-term user model
 
 For the foreseeable future, the primary operator is Krish and the unit of work is one customer inside the Mindmake thirty-day proof. The customer's Brain is the governed object. The customer is an intentionally lightweight participant who contributes, corrects, reacts and benefits without administering a technical system. Future self-service is enabled by the same kernel but must not distort the near-term operator workflow.
@@ -153,6 +167,6 @@ The one-hour experience becomes valuable work, not the price of admission.
 
 ## Next material gate
 
-Resolve when the cockpit should come alive for Krish, then render and obtain a cold founder reaction to the first **Private Brain Builder** customer cockpit. It must lead with one supported customer intervention, show what is ready now and the best enrichment route behind it, preserve staged-versus-durable truth and visible richness upgrades, and avoid becoming a project-management dashboard.
+Resolve the live-session copilot boundary, then render and obtain a cold founder reaction to the first **Private Brain Builder** customer cockpit. It must lead with one supported customer intervention, show what is ready now and the best enrichment route behind it, preserve staged-versus-durable truth and visible richness upgrades, adapt to nonlinear discovery, and avoid becoming a project-management dashboard or distracting whisper feed.
 
 R2 remains locked as the Customer Brain expression. Implementation of the new operator information architecture must not begin before this material surface is approved.
