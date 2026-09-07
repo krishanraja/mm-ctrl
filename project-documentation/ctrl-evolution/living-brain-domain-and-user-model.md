@@ -1,8 +1,8 @@
 # CTRL living Brain domain and user model
 
-**Status:** Decision-ready recommendation for G12
+**Status:** Founder-approved governing direction for G13 contract and proof work
 
-**Authority:** Architecture and product-model work only. This document does not authorise a physical schema, production implementation, migration, repository creation or release.
+**Authority:** `D-055` authorises the Living Map hybrid as the governing Brain direction and closes G12. It authorises corpus, traceability, physical-contract and proof-fixture work only. It does not authorise a production schema change, migration, customer repository creation, implementation or release.
 
 **Purpose:** Define the smallest coherent model that lets CTRL learn how a person judges, return that intelligence during consequential work, repair itself when understanding changes and compile a useful brain the person can own.
 
@@ -18,7 +18,7 @@ The Brain should feel like a concise, living account of:
 
 It should not feel like a database, filing cabinet, graph, chat history, settings page or personality test.
 
-The primary experience is a current portrait of the person's operating judgement. Active decisions and unresolved tensions form the working surface. History, provenance and the changelog remain inspectable when they matter, but they are not the home screen.
+The primary everyday experience is a current portrait of the person's operating judgement. Active decisions and unresolved tensions form the working surface. The retained Living Map is the immersive spatial expression of the same accepted Brain state, not a second truth system. History, provenance and the changelog remain inspectable when they matter, but they are not the home screen.
 
 The simplest truthful promise is:
 
@@ -267,7 +267,16 @@ The dominant object is current consequential work, not the Brain inventory. The 
 
 ### My Brain
 
-The default view is a short current portrait using the five human sections. It leads with high-leverage, specific material, not counts. Each item can reveal source, applicability, exceptions, change history and where it has been used.
+My Brain combines two complementary lenses over one hidden kernel:
+
+- a short current portrait using the five human meanings for fast comprehension and action; and
+- a retained Living Map for immersive exploration, connection and visible growth.
+
+The portrait leads with high-leverage, specific material, not counts. Each item can reveal source, applicability, exceptions, change history and where it has been used.
+
+The Living Map is a signature product and marketing surface, but it must be semantically truthful. It may be spatially impressionistic and visually expressive; it may not imply a relationship, strength, certainty, causality or authority that the underlying model cannot support. Nodes and links are projections of versioned typed entities and relationships. Visual encoding must distinguish material concepts such as scope, standing, maturity, tension, evidence and change without asking the user to learn the ontology. Semantic zoom should move naturally from orientation, to meaningful neighbourhood, to inspectable item and evidence.
+
+The five human meanings are lenses rather than five mandatory tabs, and the map is another lens rather than the canonical store. Moving between portrait and map must preserve selection, context and meaning. A correction accepted in either lens must produce the same governed version and repair path. The user should experience one living Brain, not a dashboard beside a decorative graph.
 
 The section should support a few natural actions:
 
@@ -385,11 +394,13 @@ The model is ready for physical design only when fixtures prove:
 - the person can understand and correct the visible Brain without learning the ontology; and
 - the system asks fewer questions when it has enough evidence, not merely more personalised questions.
 
-## Recommendation to lock
+## Approved governing direction
 
-Adopt this model as the governing G12 direction:
+`D-055` adopts this model as the governing direction and closes G12:
 
 - **The user sees five human views:** what matters, how I judge, my calls, unresolved and what changed.
+- **The current portrait and Living Map are complementary projections of the same accepted Brain state.**
+- **The Living Map remains immersive and expressive while every visible semantic claim stays supported by typed, versioned data.**
 - **The system runs seven canonical concepts:** source, assertion, Brain item, decision, learning proposal, correction and repair, and release.
 - **Maturity, standing, audience and consequence permission are orthogonal.**
 - **The Brain learns through contrastive evidence and proportionate authority, not transcript volume or silent inference.**
@@ -398,7 +409,6 @@ Adopt this model as the governing G12 direction:
 
 This is a narrowing architecture, not a request to add seven new top-level product areas. Its purpose is to make the product simpler to use and harder to corrupt.
 
-## Remaining founder correction
+## Next proof gate
 
-The proposed experience assumes that **My Brain opens as a concise current portrait**, with active decisions and tensions as the working layer and history as inspectable evidence. The route should change only if that hierarchy feels fundamentally wrong, not merely because individual labels need refinement.
-
+G13 must translate the approved direction into a physical domain contract, projection rules, semantic visual grammar and representative-volume fixtures before product implementation. The proof must show that the concise portrait and Living Map remain consistent through learning, correction, authority changes and repair; that the map stays understandable at realistic scale; and that no unsupported visual relationship can masquerade as Brain truth.

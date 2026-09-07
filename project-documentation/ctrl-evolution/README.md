@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** `D-054` closes the first material mock gate. The founder approved moving beyond the playable R3 complete-loop direction while binding two real-version corrections: repair alignment as a system and delete guff or reassurance copy that adds no action, evidence, state or meaning. G12 now has a decision-ready [living Brain domain and user model](living-brain-domain-and-user-model.md): five human views backed by seven canonical concepts, four orthogonal authority axes, contrastive learning, receipted repair and a round-trippable portable release. It remains a recommendation until founder correction or approval. Physical schema work, GitHub App or customer-repository creation and production implementation remain paused.
+**CURRENT_PHASE:** `D-055` closes G12 and locks the Living Map hybrid as the governing Brain direction. CTRL retains the current Brain's immersive visual signature as a semantically truthful projection, pairs it with a concise current portrait and inspectable evidence and evolution, and rebuilds the underlying living-judgement model around seven canonical concepts and four orthogonal authority axes. G13 is active for the physical domain contract, projection rules, semantic visual grammar and representative-volume proof fixtures. Production schema changes, GitHub App or customer-repository creation, implementation and release remain paused.
 
 **SOURCE_LAYERS:**
 
@@ -26,7 +26,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 - External evidence: primary provenance, memory, personalization, decision-quality, reliance and human-feedback research.
 - Obsolete or quarantined: static assessment as default, value-after-data-extraction, answer vending, static persona as a sufficient brain, ownerless persistence, global personalized cache, silent self-rewrite and unearned diagnostic claims.
 
-**PRODUCT_TRUTH (locked through G11):** CTRL is a relationship-embedded AI-transition decision and category-design companion for leaders who already intend to build the future with AI. It helps a leader see something materially sharper about how AI changes their category, organisation, staff or own role within five useful minutes, imagine and test a more visionary operating reality, own the call, and let a portable, inspectable model of their judgement grow as useful residue. Personal capability is the mechanism; better category and organisational outcomes are the company-funded value. It begins inside Mindmake's thirty-day proof, where it should improve client–Krish work and strengthen Krish backstage before asking the client to form a standalone product habit.
+**PRODUCT_TRUTH (locked through G12):** CTRL is a relationship-embedded AI-transition decision and category-design companion for leaders who already intend to build the future with AI. It helps a leader see something materially sharper about how AI changes their category, organisation, staff or own role within five useful minutes, imagine and test a more visionary operating reality, own the call, and let a portable, inspectable model of their judgement grow as useful residue. Personal capability is the mechanism; better category and organisational outcomes are the company-funded value. It begins inside Mindmake's thirty-day proof, where it should improve client–Krish work and strengthen Krish backstage before asking the client to form a standalone product habit.
 
 Sovereign AI fluency is now foundational: role-appropriate firsthand experience must let the leader perceive newly possible work, distinguish impressive output from valuable output, set the human–AI boundary, form a falsifiable operating thesis and retain accountable judgement. CTRL should build and test that fluency through consequential real work, not become a generic tools course or imply that an AI-active leader is infallible.
 
@@ -70,7 +70,7 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 **FIRST_SURFACE:** `Decide: playable five-minute loop`, direction approved in R3. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. The complete movement remains prior view, challenge, evidence boundary, correction, owned call, optional Brain learning and portable receipt. The real build must apply a coherent alignment grid and remove any copy that explains trust without adding useful information or control.
 
-**AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. D-050 authorises contract and concept work under the retained-capability transition. D-051 authorises rendered mocks at material-surface gates. D-052 locks the hybrid Brain and product rule. D-053 locks the visual language. D-054 closes the first material mock gate and authorises the next product and architecture decision only. Append-only discovery and redacted snapshot maintenance remain authorised. Physical product schema changes, GitHub integration or customer-repository creation, material visual implementation, main-branch merge, capability restoration and public release require their own scoped gates.
+**AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. D-050 authorises contract and concept work under the retained-capability transition. D-051 authorises rendered mocks at material-surface gates. D-052 locks the hybrid Brain and product rule. D-053 locks the visual language. D-054 closes the first material mock gate. D-055 locks the Living Map hybrid and authorises the G13 physical contract and proof-fixture work only. Append-only discovery and redacted snapshot maintenance remain authorised. Physical product schema changes, GitHub integration or customer-repository creation, material visual implementation, main-branch merge, capability restoration and public release require their own scoped gates.
 
 **POST_REBUILD_REQUIREMENT:** The rebuilt UI and product marketing must make the complete calibrated-system-judgement loop a core, human-centred USP. Users should feel the movement from invisible information logistics to better human standards, relationships, strategy, distinctive quality and accountability without being shown a technical checklist. The expression must be tested, but the underlying capability cannot be lost or demoted.
 
@@ -82,9 +82,9 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Founder correction or approval of the proposed G12 Brain hierarchy. If the route holds, lock it and translate it into the first physical domain contract and proof fixtures under a separate implementation gate.
+**NEXT_ACTION:** Specify the G13 physical Brain contract and proof fixtures: versioned entities and relationships, portrait and Living Map projection rules, semantic visual grammar, correction and repair cascades, and realistic-volume tests. Stop before production implementation and return for the next scoped gate with proof-bearing artifacts.
 
-## Current strategic synthesis through G11
+## Current strategic synthesis through G12
 
 | Choice | Current call | Why it matters |
 |---|---|---|
@@ -105,6 +105,7 @@ A higher-order marketing exemplar uses aggregate audience-exposure intelligence 
 | Operating model | Client-plus-Krish and backstage value first; solo use only when exceptionally fast, obvious and additive | The existing trusted relationship is the fastest route to value and better evidence. |
 | Evidence model | Flexible, consented, claim-type-specific orchestration; transcripts retain speaker, time, decision, context and provenance | The AI does the preparation without treating convenient context as reliable truth. |
 | Brain model | Learn all nine judgement dimensions progressively through real work | The brain becomes rich without an exhaustive or invasive upfront intake. |
+| Brain experience | Concise current portrait plus an immersive, semantically truthful Living Map over one hidden kernel | The portrait makes the Brain immediately useful; the map makes connection, growth and product magic tangible without becoming a decorative or misleading second truth system. |
 | Product hierarchy | Brain as organising intelligence; consequential work as the value loop; feed, audio and exports as downstream expressions | Content can help a decision or prepare attention, but cannot remain the product hero while the brain sits in a settings-like destination. |
 | Transition posture | New product nervous system, proven organs retained through adapters | Preserve production-hardening and evidence machinery without letting historical routes, schemas or prompts define the target experience. |
 | Visual standard | Current polish is the minimum; the new experience must be more impressive through devastating simplicity, intelligence, trust, empathy and craft | Existing visual quality is preserved as a standard, not by retaining the current information architecture. Purposeful line icons and quiet state-responsive motion may make intelligence feel alive; sparkle symbols, decorative AI motifs and animation without meaning are prohibited. |
@@ -127,7 +128,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Current-to-target transition architecture](current-to-target-transition-architecture.md): production/source/data audit, retain/repair/retire/rebuild calls, target UX/data/AI architecture, migration phases, proof gates and the proposed “new product, proven organs” transition verdict.
 - [Phase 2 decision-to-Brain vertical-slice contract](phase-2-decision-brain-vertical-slice-contract.md): founder-approved product rule with provisional end-to-end state, authority, domain-event, LLM-task, adapter, evaluation, recovery, portability and rollout mechanics for the first proof-bearing slice.
 - [Phase 2 evaluation and proof-fixture contract](phase-2-evaluation-fixture-contract.md): leakage-resistant comparator protocol, blocking invariants, quality rubric, Brain-attributable lift definition, self-healing proof and twelve machine-readable fixtures frozen before implementation and enforced by `npm run evals:check`.
-- [`phase-2-decision-traceability.json`](phase-2-decision-traceability.json): current-version mapping from every locked decision through `D-052` to its first-slice disposition, product surfaces, governing contract, fixture coverage, exit evidence and prevented regression.
+- [`phase-2-decision-traceability.json`](phase-2-decision-traceability.json): current-version mapping from every locked decision through `D-055` to its first-slice disposition, product surfaces, governing contract, fixture coverage, exit evidence and prevented regression.
 - [Phase 5 first-contrast sanitized divergence brief](design/phase-5-first-contrast-sanitized-brief.md): source-pinned mobile use moment, bounded test state, invariant product and trust rules, state range, brand and feasibility limits, three deliberately different generator territories and blinded judge rubric.
 - Phase 5 independent concept record: [Evidence Lens](design/candidate-a-evidence-lens.md), [The Second Reading](design/candidate-b-second-reading.md) and [The Evidence Bench](design/candidate-c-evidence-bench.md). Each was produced from the same sanitized brief without access to either alternative and remains unrendered, unselected and non-authoritative.
 - Phase 5 blinded review record: [Judge 1](design/judge-1-verdict.md) selected The Second Reading; [Judge 2](design/judge-2-verdict.md) selected The Evidence Bench; the blind [Judge 3 tiebreak](design/judge-3-tiebreak-verdict.md) selected the Evidence Lens and found the Evidence Bench ineligible under the no-classification and evidence-integrity boundaries.
@@ -136,7 +137,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Phase 5 complete-loop proof brief](design/phase-5-complete-loop-proof-brief.md): the R2 same-spine correction contract, causal state sequence, cold-review acceptance test and unchanged authority boundary.
 - Phase 5 playable R2: [complete-loop product proof](design/complete-loop-proof-r2.html), with [verification evidence](design/phase-5-complete-loop-proof-r2-verification.md). The founder found this direction good and requested more restrained visual life.
 - Phase 5 visual refinement R3: [playable product proof](design/complete-loop-proof-r3.html), with [verification evidence](design/phase-5-complete-loop-proof-r3-verification.md) and the [founder gate record](design/phase-5-complete-loop-r3-founder-gate.md). Its direction is approved; alignment repair and zero-guff copy are binding implementation corrections.
-- [G12 living Brain domain and user model](living-brain-domain-and-user-model.md): decision-ready recommendation for the customer mental model, canonical domain kernel, learning authority, correction cascade, taste preservation, portability and V1 proof boundary.
+- [G12 living Brain domain and user model](living-brain-domain-and-user-model.md): founder-approved Living Map hybrid, customer mental model, canonical domain kernel, learning authority, correction cascade, taste preservation, portability and V1 proof boundary; now the governing input to G13 contract and proof work.
 
 ## Ikigai alignment
 
@@ -165,7 +166,7 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 | Verify high-confidence trust findings against live bundles | Complete |
 | Apply and verify production trust containment | Complete |
 | Complete founder product interview | In progress |
-| Produce decision-complete product corpus and architecture | In progress: G12 living Brain model active |
+| Produce decision-complete product corpus and architecture | In progress: G12 approved; G13 physical contract and proof fixtures active |
 | Diverge, render and approve first material surface | Complete: R3 direction approved with implementation corrections |
 | Implement and independently verify vertical slice | Pending |
 
@@ -225,13 +226,14 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-052` Use a governed live Brain runtime, compile accepted state into customer-owned GitHub or ZIP releases, and prove it through one five-minute human-first loop with at most one optional inspectable learning.
 - `D-053` Use purposeful iconography and quiet state-responsive motion while prohibiting sparkle symbols and decorative AI motifs.
 - `D-054` Approve the R3 complete-loop direction; fix alignment and remove guff in the real implementation.
+- `D-055` Retain the immersive Living Map as a semantically truthful projection; pair it with a concise current portrait and inspectable evidence and evolution while rebuilding the underlying living-judgement model.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_type` and `record_key` using bytewise ordering and then by numeric version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field. The current snapshot was regenerated twice from identical allowlisted rows presented in ascending and reversed source order; the output bytes were identical.
 
-- Rows: 279
-- SHA-256: `ab88039f414c48aa47aaf7a127b8fc252739c7616330eab93f23ca7bac7b3009`
+- Rows: 282
+- SHA-256: `6bb374cec9b4e8ce696a9d42d45acdf71ab166c1e140f8b065b12009dd016be0`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.

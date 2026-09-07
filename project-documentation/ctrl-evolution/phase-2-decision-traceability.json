@@ -1,10 +1,10 @@
 {
   "schema_version": "ctrl.phase2.decision-traceability.v2",
   "status": "approved_product_rule",
-  "authority": "founder_approved_via_D-052_through_D-054",
+  "authority": "founder_approved_via_D-052_through_D-055",
   "source_of_truth": "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
-  "decision_range": "D-001..D-054",
-  "next_design_gate": "D-054 closes the first material mock gate; production implementation remains gated while G12 defines the living Brain domain and user model.",
+  "decision_range": "D-001..D-055",
+  "next_design_gate": "D-055 closes G12 and authorises the G13 physical Brain contract and proof fixtures; production implementation remains gated.",
   "entries": [
     {
       "decision_id": "D-001",
@@ -516,7 +516,7 @@
         "company_map"
       ],
       "contract_refs": [
-        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g11",
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
         "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#strategy-brief"
       ],
       "fixture_ids": [
@@ -836,7 +836,7 @@
         "positioning"
       ],
       "contract_refs": [
-        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g11",
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
         "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
       ],
       "fixture_ids": [
@@ -862,7 +862,7 @@
         "evaluation"
       ],
       "contract_refs": [
-        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g11",
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
         "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#event-sequence"
       ],
       "fixture_ids": [
@@ -913,7 +913,7 @@
         "positioning"
       ],
       "contract_refs": [
-        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g11",
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
         "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
       ],
       "fixture_ids": [
@@ -1012,7 +1012,7 @@
         "positioning"
       ],
       "contract_refs": [
-        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g11",
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
         "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
       ],
       "fixture_ids": [
@@ -1294,6 +1294,37 @@
       ],
       "exit_evidence": "The eventual implementation preserves the approved R3 causal loop, passes a systematic optical-alignment review, removes the named reassurance sentence, and contains no helper copy without a clear action, evidence, state or meaning job.",
       "failure_if_lost": "Prototype defects become product conventions, leaving visible misalignment and empty reassurance copy inside the supposedly magical experience."
+    },
+    {
+      "decision_id": "D-055",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "design_system",
+        "decision_loop",
+        "export"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#the-product-answer",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#my-brain",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#approved-governing-direction",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#next-proof-gate"
+      ],
+      "fixture_ids": [
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "fixture",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "The portrait and Living Map project the same accepted Brain state, visible relationships never exceed typed evidence, corrections propagate consistently across both lenses, and representative-volume testing preserves comprehension, semantic zoom and inspectability.",
+      "failure_if_lost": "CTRL either discards its strongest immersive signature or preserves a decorative graph that contradicts the Brain, overclaims relationships, hides authority and makes correction unreliable."
     }
   ]
 }
