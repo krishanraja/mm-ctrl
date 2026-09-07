@@ -88,7 +88,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Obtain the founder's cold reaction to the verified G14 R1 Private Brain Builder proof. Stop before implementation, production mutation, deployment or release.
+**NEXT_ACTION:** Define and test one non-tacky longitudinal Brain progress construct against representative synthetic data, then run three-way concept divergence and present only the strongest verified material expression. The G14 R1 founder reaction remains open. Stop before implementation, production mutation, deployment or release.
 
 ## Current strategic synthesis through G12
 
@@ -151,6 +151,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - G14 founder build calibration: [direct rankings, verbatim notes, synthesis, challenge and assumptions](design/g14-founder-build-calibration.md). This establishes the near-term operator/customer split and the Private Brain Builder as the next material gate without reopening R2.
 - G14 product identity decision: [research brief](design/g14-name-research-brief.md) and [findings, strategic challenge, decision record and pre-launch test](design/g14-name-research-findings.md). The participant model is retained; Mindy is scrapped; CTRL remains provisional; final naming is deferred to the pre-launch GTM gate.
 - G14 Private Brain Builder: [sanitized material-surface brief](design/g14-private-brain-builder-sanitized-brief.md); divergent [Intervention Lens](design/g14-concept-a-intervention-lens.md), [Living Portrait Console](design/g14-concept-b-living-portrait-console.md) and [Session Rehearsal](design/g14-concept-c-session-rehearsal.md); [distance record](design/g14-concept-distance-record.md); independent [Judge 1](design/g14-judge-1-verdict.md) and [Judge 2](design/g14-judge-2-verdict.md) verdicts; advisory [What Would Krish Do verdict](design/g14-wwkd-verdict.md); [selection and synthesis](design/g14-private-brain-builder-synthesis-record.md); [synthetic fixture](design/g14-private-brain-builder-fixture.json); [playable R1 proof](design/g14-private-brain-builder-proof-r1.html); and [browser QA record](design/g14-private-brain-builder-r1-qa-record.md). R1 is verified locally and awaits a cold founder reaction; implementation remains gated by founder approval.
+- G15 Brain progress metric: [Judgement Resolution research brief](research/g15-judgement-resolution-research-brief.md). The provisional construct, representative fixture, three materially different experience spines, judging and one verified render are now authorised as bounded concept work. No production score, implementation or customer-facing claim is authorised.
 
 ## Ikigai alignment
 
