@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** Founder alignment (Build Apps with Krish, Phase 2), G11 real-decision loop in progress. Broader product implementation and material visual work remain paused until the first-loop, delivery, export and validation choices are closed.
+**CURRENT_PHASE:** Founder alignment moving into current-to-target transition architecture. The context-circulation model is locked; competitive differentiation and proof requirements are recorded. Broader product implementation and material visual work remain paused until the transition brief converts present repository and deployed truth into an approved sequence.
 
 **SOURCE_LAYERS:**
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Founder reviews the provisional context-circulation architecture as one governing product model. If accepted, lock it and run the required three-spine interaction divergence before rendering one synthesis; do not ask another abstract channel-choice question.
+**NEXT_ACTION:** Capture the founder's guidance for moving from current product truth to the target state, then produce a current-to-target transition brief: live surface and capability inventory; keep/repair/retire/rebuild calls; dependency and trust order; proof-bearing vertical slices; and approval gates. Interaction divergence and rendering follow that structural brief, not precede it.
 
 ## Current strategic synthesis through G11
 
@@ -114,10 +114,11 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 ## External concept assessments
 
 - [DeepLake Hivemind concept assessment](research/deeplake-hivemind-concept-assessment-2026-09-07.md): adapt trace-to-skill compounding and cross-agent continuity through a subject-owned propose–approve lifecycle; reject firehose capture, pooled raw memory, automatic skill propagation and efficiency-only success metrics; defer vendor adoption and broad integrations until a named retrieval or workflow test requires them.
+- [Competitive moat architecture](research/competitive-moat-architecture-2026-09-07.md): distinguishes table stakes from differentiated capability and potential moat; maps the strongest substitute classes; preserves honest objection handling; and binds product-marketing claims to mechanisms, tests and evidence.
 
-## Product architecture drafts
+## Product architecture
 
-- [Context circulation architecture](context-circulation-architecture.md): one provenance-rich context envelope beneath authorised work exhaust, deliberate signals, just-in-time retrieval and scoped streams; one governed path from private staging to proposed memory, useful return, correction and downstream repair.
+- [Context circulation architecture](context-circulation-architecture.md): locked governing model with one provenance-rich context envelope beneath authorised work exhaust, deliberate signals, just-in-time retrieval and scoped streams; one governed path from private staging to proposed memory, useful return, correction and downstream repair.
 
 ## Ikigai alignment
 
@@ -197,13 +198,15 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-043` Make evidence-aware visionary category and industry design CTRL's strategic altitude, with workflow automation remaining enabling infrastructure.
 - `D-044` Make CTRL the antithesis of AI-mediated convergence through evidence, numerical integrity, meaningful causal divergence, productive challenge and voice sovereignty.
 - `D-045` Permit private AI proposals for collective learning, but require explicit item-level approval before any pattern leaves the personal brain or enters the shared commons.
+- `D-046` Lock context circulation as CTRL's governing architecture for how authorised context enters, becomes trustworthy and returns to consequential work.
+- `D-047` Preserve CTRL's architecture, USPs, substitute map, competitive-moat hypotheses and objection handling as durable product-marketing inputs, with future claims bound to mechanisms, tests and current evidence.
 
 ## Snapshot contract
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 245
-- SHA-256: `31f0033b87500a94f39e9ed9e78c7b8b4f6c1cbe11c3b09f9aaee6f719ed79d1`
+- Rows: 253
+- SHA-256: `e12a043c35d18f9f8e15178c296b58bba7b23be34b6d63c3a731f3ee2e6a77d6`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.

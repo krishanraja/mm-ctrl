@@ -1,6 +1,6 @@
 # CTRL context circulation architecture
 
-**Status:** Provisional product architecture for founder review
+**Status:** Locked governing product architecture (founder-approved 2026-09-07)
 
 **Phase:** Founder alignment moving into corpus and architecture
 
