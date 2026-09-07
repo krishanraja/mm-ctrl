@@ -500,10 +500,10 @@ That is how six months of engineering survives without six months of assumptions
 
 ## Founder approval gate
 
-The recommended next move is **not** a broad implementation sprint. It is to approve or correct this transition verdict, then specify and prototype Phase 2 as the first proof-bearing vertical slice.
+The founder approved this transition verdict as `D-050`. The next move remains **not** a broad implementation sprint. The provisional [Phase 2 decision-to-Brain vertical-slice contract](phase-2-decision-brain-vertical-slice-contract.md) now specifies the first proof-bearing loop and reduces the next gate to one combined product rule.
 
 The single decision for founder review is:
 
-> Build a new CTRL product nervous system beside the current app, retain proven capabilities through explicit adapters, and let the first complete decision-to-brain-to-recall loop earn the right to replace the existing home.
+> Treat the versioned, permissioned live Brain as the runtime and GitHub/ZIP as its customer-owned portable release; prove both through one devastatingly simple five-minute decision loop whose first reveal is a useful contrast—not an AI recommendation—and whose only durable learning is one optional, inspectable proposal.
 
-If approved, the next artifact should be an implementation-ready vertical-slice contract covering the user story, states, data events, LLM task contracts, legacy adapters, proof fixtures, trust gates and rollout flag. Interaction divergence and a rendered experience should follow from that contract before production code changes.
+If approved, `krish-design` should perform three-spine interaction divergence and produce one mobile first-contrast synthesis for cold founder review. No product schema, customer repository or material production surface is authorised by that approval.
