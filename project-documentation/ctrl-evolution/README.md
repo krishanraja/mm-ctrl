@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** Current-to-target transition architecture drafted for founder review. The production deployment, exact `main` source and live stored shape have been compared with the locked context-circulation model. The working verdict is a new product nervous system beside the current app, with proven capabilities retained through explicit adapters. Broader implementation and material visual work remain paused until the founder approves or corrects that transition verdict and the first proof-bearing vertical-slice contract.
+**CURRENT_PHASE:** The founder has approved the “new nervous system, proven organs” transition posture and made the current interface's polish the minimum quality floor rather than an interaction constraint. A current-source architecture pass recommends a versioned PostgreSQL live Brain, encrypted source vault, reconstructable retrieval projections and deterministic portable Brain package, with private GitHub sync as an optional customer-owned release surface. The first proof-bearing vertical-slice contract is next. Physical schema work, GitHub App or customer-repository creation and material visual rendering remain paused until the founder approves or corrects that storage boundary and the contract names the first surface rule.
 
 **SOURCE_LAYERS:**
 
@@ -68,9 +68,9 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 
 **VERTICAL_SLICE (provisional):** Voice or type a live AI-transition decision → capture the leader's provisional view → one adaptive contrast → targeted evidence and an independent AI view → accept/resist/correct → user-owned call → transparent brain proposal → later useful recall → portable version.
 
-**FIRST_SURFACE:** `Decide: first five-minute loop`. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. Material visual work stays paused until the transition verdict and vertical-slice contract are approved.
+**FIRST_SURFACE:** `Decide: first five-minute loop`. The Brain is the organising intelligence and visible continuity, but it grows as the residue of useful work rather than an upfront data tax. The existing content feed and audio briefing become downstream prepared outputs. The current UI's polish is the floor; the replacement must be more impressive through greater simplicity, intelligence, trust, empathy and visual craft. The first rendered synthesis follows the approved vertical-slice contract and will be shown cold for explicit founder reaction before implementation.
 
-**AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. Append-only discovery and redacted snapshot maintenance remain authorised. Broader product implementation, material visual construction, main-branch merge, capability restoration and public release require their own scoped gates.
+**AUTHORITY:** D-016 authorised the exact production trust containment, which is now live and independently verified. D-050 authorises provisional contract and concept work under the retained-capability transition. D-051 authorises rendered mocks at material-surface gates, not implementation of an unapproved mock. Append-only discovery and redacted snapshot maintenance remain authorised. Physical product schema changes, GitHub integration or customer-repository creation, material visual implementation, main-branch merge, capability restoration and public release require their own scoped gates.
 
 **POST_REBUILD_REQUIREMENT:** The rebuilt UI and product marketing must make the complete calibrated-system-judgement loop a core, human-centred USP. Users should feel the movement from invisible information logistics to better human standards, relationships, strategy, distinctive quality and accountability without being shown a technical checklist. The expression must be tested, but the underlying capability cannot be lost or demoted.
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Founder reviews the proposed [current-to-target transition architecture](current-to-target-transition-architecture.md), especially the “new product, proven organs” verdict. On approval or correction, produce the Phase 2 implementation contract for one decision-to-brain-to-recall vertical slice: user states, domain events, LLM task contracts, legacy adapters, trust tests, proof fixtures and feature-flagged rollout. Interaction divergence and rendering follow that contract, not precede it.
+**NEXT_ACTION:** Founder accepts or corrects the recommendation that GitHub be an optional customer-owned Brain release layer rather than the canonical runtime. Codex then finalises the Phase 2 implementation contract for one decision-to-Brain-to-recall vertical slice: user states, domain events, store roles, LLM task contracts, legacy adapters, trust tests, export proof, fixtures and feature-flagged rollout. Interaction divergence and one rendered synthesis follow the contract, not precede it.
 
 ## Current strategic synthesis through G11
 
@@ -107,6 +107,8 @@ A higher-order marketing exemplar uses aggregate audience-exposure intelligence 
 | Brain model | Learn all nine judgement dimensions progressively through real work | The brain becomes rich without an exhaustive or invasive upfront intake. |
 | Product hierarchy | Brain as organising intelligence; consequential work as the value loop; feed, audio and exports as downstream expressions | Content can help a decision or prepare attention, but cannot remain the product hero while the brain sits in a settings-like destination. |
 | Transition posture | New product nervous system, proven organs retained through adapters | Preserve production-hardening and evidence machinery without letting historical routes, schemas or prompts define the target experience. |
+| Visual standard | Current polish is the minimum; the new experience must be more impressive through devastating simplicity, intelligence, trust, empathy and craft | Existing visual quality is preserved as a standard, not by retaining the current information architecture. Every material surface is rendered and founder-approved before implementation. |
+| Brain storage | Versioned PostgreSQL live Brain + encrypted source vault + reconstructable retrieval + deterministic Git/ZIP package | GitHub is valuable for ownership, inspectability and handoff, but not as the sole transactional store. The export boundary follows a Brain and audience, not a CRM customer. This remains provisional pending founder approval. |
 | Ownership | Separate Private Leader Brain and company transition map; ambiguity stays private; genuine off-record leaves no durable trace | This reconciles personal ownership, company value and advisor continuity without pretending undo can unshare. |
 | Signature experience | Anticipate the next tension, remember what mattered, improve the human session, turn thought into action, retain corrections, connect category/company/self, sharpen the decision | “Magic” comes from earned continuity and consequence, not confident guessing or simulated personhood. |
 | Proof | Held-back new-decision performance first; reinvested capacity, transition-map quality and staff agency second; return pull is an adoption signal | This resists hindsight, luck, artifact completion and engagement vanity. |
@@ -117,6 +119,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 
 - [DeepLake Hivemind concept assessment](research/deeplake-hivemind-concept-assessment-2026-09-07.md): adapt trace-to-skill compounding and cross-agent continuity through a subject-owned propose–approve lifecycle; reject firehose capture, pooled raw memory, automatic skill propagation and efficiency-only success metrics; defer vendor adoption and broad integrations until a named retrieval or workflow test requires them.
 - [Competitive moat architecture](research/competitive-moat-architecture-2026-09-07.md): distinguishes table stakes from differentiated capability and potential moat; maps the strongest substitute classes; preserves honest objection handling; and binds product-marketing claims to mechanisms, tests and evidence.
+- [Customer Brain storage architecture](research/customer-brain-storage-architecture-brief-2026-09-07.md): recommends separating the canonical live Brain from its portable customer-owned package; assigns PostgreSQL, object storage, retrieval projections and optional private GitHub sync distinct roles; defines audience-based ownership, one-way-first reconciliation and a falsification test.
 
 ## Product architecture
 
@@ -203,13 +206,17 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 - `D-045` Permit private AI proposals for collective learning, but require explicit item-level approval before any pattern leaves the personal brain or enters the shared commons.
 - `D-046` Lock context circulation as CTRL's governing architecture for how authorised context enters, becomes trustworthy and returns to consequential work.
 - `D-047` Preserve CTRL's architecture, USPs, substitute map, competitive-moat hypotheses and objection handling as durable product-marketing inputs, with future claims bound to mechanisms, tests and current evidence.
+- `D-048` Make the Brain the organising intelligence; consequential work grows it while feed, audio and exports become downstream expressions.
+- `D-049` Judge every legacy flow, schema and interface by the target; retain only proven capability that serves it.
+- `D-050` Adopt the new-nervous-system, proven-organs transition posture.
+- `D-051` Treat current polish as the minimum standard, surpass it through devastating simplicity and intelligence, and show every material surface as a rendered mock before implementation.
 
 ## Snapshot contract
 
-`ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
+`ledger.snapshot.jsonl` is sorted by `record_type` and `record_key` using bytewise ordering and then by numeric version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field. The current snapshot was regenerated twice from identical allowlisted rows presented in ascending and reversed source order; the output bytes were identical.
 
-- Rows: 253
-- SHA-256: `e12a043c35d18f9f8e15178c296b58bba7b23be34b6d63c3a731f3ee2e6a77d6`
+- Rows: 265
+- SHA-256: `be7b077c108104c851b687727933d4107f352b1c0e682313adc6fc43b75ab159`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.

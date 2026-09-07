@@ -261,6 +261,20 @@ A brain item is not merely a fact. It can be an objective, constraint, criterion
 - user or independent grader outcome;
 - exported package manifest, provenance, tests and destination receipts.
 
+### Runtime and portability are separate roles
+
+The founder's customer-Brain storage question has been pressure-tested in [the current-source storage architecture brief](research/customer-brain-storage-architecture-brief-2026-09-07.md). The leading, still-provisional contract is:
+
+- a versioned, tenant-isolated PostgreSQL domain is the canonical live Brain;
+- encrypted object storage holds raw transcripts, audio and source documents;
+- full-text, vector and cache structures are disposable retrieval projections;
+- an allowlisted compiler creates deterministic human-readable and machine-readable Brain releases;
+- a customer may download a release or synchronise it to a private repository they own;
+- GitHub edits return as proposed changes and never silently overwrite the live Brain;
+- export boundaries follow one Brain and audience contract, not merely one CRM customer.
+
+GitHub is therefore a first-class ownership, inspection, iteration and handoff surface, not the sole transactional database. The non-technical user should encounter “keep your own copy” and a plain-language change receipt; commits, branches, schemas and sync conflicts stay beneath the product. No production store, GitHub App or customer repository is authorised by this provisional call.
+
 ### What happens to existing data
 
 Do not bulk-copy every legacy row into the new brain.
