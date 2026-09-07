@@ -29,6 +29,19 @@ The proof must lead with individual development rather than work management, exp
 - The share preview exposed six allowlisted choices, kept eight private meanings outside the portrait and included no send or publish control.
 - Hash-addressed refresh, reduced motion and a practical 42px minimum control target passed.
 
+## Founder approval
+
+**Status:** approved as the governing My Brain product, interaction and visual direction on 7 September 2026.
+
+The founder's unanchored reaction to the reviewed R2 artifact was: "this is awesome!"
+
+The lock applies to this artifact and its reviewed scope. Personal becoming remains the hero; the transparent, explorable Brain remains a useful showpiece; and evidence, standing, version, audience, correction and curated sharing remain structural rather than decorative. R1's sober, work-first hero treatment is superseded, but its truthful evidence, correction and repair mechanics carry forward underneath R2.
+
+- Artifact commit: `03830d6d18c91ad2a495f50cdfe2e61b872ac734`
+- Artifact SHA-256: `c00e6609aa7b0f1683097df6d4456944458ab94adc3a44640b83a491fef9b7ab`
+- Fixture SHA-256: `02fa968575d7000874f0f10a09123336ad6ec3f7bf373dcd351fbb7e7ef2b1b9`
+- Separately gated: production data, real authentication, schema mutation, implementation, deployment and release
+
 ## Corrections during QA
 
 1. Map nodes initially used their restrained 16 to 27px visual size as the hit target. The visible dots were retained while their interactive area was raised to 44px. The original and adjacent checks then passed.
