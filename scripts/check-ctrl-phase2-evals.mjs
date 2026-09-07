@@ -6,6 +6,8 @@ const root = process.cwd();
 const fixtureRel = 'project-documentation/ctrl-evolution/phase-2-evaluation-fixtures.json';
 const contractRel = 'project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md';
 const expectedSource = 'project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md';
+const traceRel = 'project-documentation/ctrl-evolution/phase-2-decision-traceability.json';
+const ledgerRel = 'project-documentation/ctrl-evolution/ledger.snapshot.jsonl';
 
 const expectedGlobalFailures = [
   'cross_subject_or_cross_audience_context_use',
@@ -46,6 +48,27 @@ const expectedCriteria = [
 ];
 
 const expectedFixtureIds = Array.from({ length: 12 }, (_, index) => `F${String(index + 1).padStart(2, '0')}`);
+const expectedDecisionIds = Array.from({ length: 51 }, (_, index) => `D-${String(index + 1).padStart(3, '0')}`);
+const allowedDispositions = new Set(['required_now', 'constrains_now', 'deferred_with_guardrail']);
+const allowedProductSurfaces = new Set([
+  'advisor_workspace',
+  'brain',
+  'category_intelligence',
+  'collective_intelligence',
+  'company_map',
+  'content_outputs',
+  'decision_entry',
+  'decision_loop',
+  'delivery_state',
+  'design_system',
+  'engagement_model',
+  'evaluation',
+  'evidence_orchestration',
+  'export',
+  'positioning',
+  'recall',
+]);
+const allowedProofTypes = new Set(['architecture', 'deterministic', 'fixture', 'human', 'longitudinal', 'release']);
 const secretPattern = /(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sbp_[A-Za-z0-9]{20,}|vcp_[A-Za-z0-9]{20,}|sk_(?:live|test)_[A-Za-z0-9]{16,})/;
 
 function isObject(value) {
@@ -67,6 +90,166 @@ function uniqueNonemptyStrings(value) {
     && value.length > 0
     && value.every((item) => typeof item === 'string' && item.trim().length > 0)
     && new Set(value).size === value.length;
+}
+
+function uniqueStrings(value, { allowEmpty = false } = {}) {
+  return Array.isArray(value)
+    && (allowEmpty || value.length > 0)
+    && value.every((item) => typeof item === 'string' && item.trim().length > 0)
+    && new Set(value).size === value.length;
+}
+
+function githubHeadingSlug(heading) {
+  return heading
+    .trim()
+    .toLowerCase()
+    .replace(/<[^>]*>/g, '')
+    .replace(/[`*~]/g, '')
+    .replace(/&amp;/g, '')
+    .replace(/[^\p{L}\p{N}\s_-]/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function markdownAnchors(path) {
+  const anchors = new Set();
+  const seen = new Map();
+  for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
+    const match = line.match(/^#{1,6}\s+(.+?)\s*#*$/);
+    if (!match) continue;
+    const base = githubHeadingSlug(match[1]);
+    if (!base) continue;
+    const duplicateIndex = seen.get(base) ?? 0;
+    seen.set(base, duplicateIndex + 1);
+    anchors.add(duplicateIndex === 0 ? base : `${base}-${duplicateIndex}`);
+  }
+  return anchors;
+}
+
+function parseLedgerDecisions(raw, failures) {
+  const current = new Map();
+  const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  for (let index = 0; index < lines.length; index += 1) {
+    let row;
+    try {
+      row = JSON.parse(lines[index]);
+    } catch (error) {
+      failures.push(`ledger snapshot row ${index + 1} is invalid JSON: ${error.message}`);
+      continue;
+    }
+    if (row?.record_type !== 'decision') continue;
+    const prior = current.get(row.record_key);
+    if (!prior || Number(row.version) > Number(prior.version)) current.set(row.record_key, row);
+  }
+  return current;
+}
+
+function validateTrace(trace, raw, ledgerDecisions) {
+  const failures = [];
+  const fail = (message) => failures.push(message);
+
+  if (!isObject(trace)) return ['traceability root must be an object'];
+  if (!exactKeys(trace, ['schema_version', 'status', 'authority', 'source_of_truth', 'decision_range', 'open_product_gate', 'entries'])) {
+    fail('traceability root fields changed');
+  }
+  if (trace.schema_version !== 'ctrl.phase2.decision-traceability.v1') fail('traceability schema_version must remain v1');
+  if (trace.status !== 'provisional') fail('traceability status must remain provisional until the founder gate is recorded');
+  if (trace.authority !== 'agent_synthesis_not_founder_approval') fail('traceability authority must not imply founder approval');
+  if (trace.source_of_truth !== ledgerRel) fail('traceability source_of_truth must remain the canonical ledger snapshot');
+  if (trace.decision_range !== 'D-001..D-051') fail('traceability decision_range must remain D-001..D-051');
+  if (trace.open_product_gate !== 'H-024 and the combined product rule remain provisional until explicit founder approval or correction.') {
+    fail('traceability must preserve the open H-024 founder gate');
+  }
+
+  const entries = Array.isArray(trace.entries) ? trace.entries : [];
+  const ids = entries.map((entry) => entry?.decision_id);
+  if (ids.length !== expectedDecisionIds.length || !ids.every((id, index) => id === expectedDecisionIds[index])) {
+    fail('traceability entries must be ordered, unique and complete from D-001 through D-051');
+  }
+
+  for (const entry of entries) {
+    const id = entry?.decision_id ?? '<unknown>';
+    if (!exactKeys(entry, ['decision_id', 'decision_version', 'disposition', 'product_surfaces', 'contract_refs', 'fixture_ids', 'proof_types', 'exit_evidence', 'failure_if_lost'])) {
+      fail(`${id}: traceability entry fields changed`);
+    }
+    if (!Number.isInteger(entry?.decision_version) || entry.decision_version < 1) fail(`${id}: decision_version must be a positive integer`);
+    if (!allowedDispositions.has(entry?.disposition)) fail(`${id}: invalid disposition`);
+
+    if (!uniqueStrings(entry?.product_surfaces)) fail(`${id}: product_surfaces must contain unique nonempty values`);
+    else for (const surface of entry.product_surfaces) if (!allowedProductSurfaces.has(surface)) fail(`${id}: unknown product surface ${surface}`);
+
+    if (!uniqueStrings(entry?.contract_refs)) fail(`${id}: contract_refs must contain unique nonempty values`);
+    else {
+      for (const ref of entry.contract_refs) {
+        const splitIndex = ref.lastIndexOf('#');
+        if (splitIndex <= 0 || splitIndex === ref.length - 1) {
+          fail(`${id}: contract reference must include a file and heading anchor: ${ref}`);
+          continue;
+        }
+        const rel = ref.slice(0, splitIndex);
+        const anchor = ref.slice(splitIndex + 1);
+        if (!rel.startsWith('project-documentation/ctrl-evolution/') || rel.includes('..') || !rel.endsWith('.md')) {
+          fail(`${id}: contract reference is outside the approved documentation boundary: ${ref}`);
+          continue;
+        }
+        const path = join(root, rel);
+        if (!existsSync(path)) {
+          fail(`${id}: contract file is missing: ${rel}`);
+          continue;
+        }
+        if (!markdownAnchors(path).has(anchor)) fail(`${id}: contract heading is missing: ${ref}`);
+      }
+    }
+
+    if (!uniqueStrings(entry?.fixture_ids, { allowEmpty: true })) fail(`${id}: fixture_ids must contain unique nonempty values`);
+    else for (const fixtureId of entry.fixture_ids) if (!expectedFixtureIds.includes(fixtureId)) fail(`${id}: unknown fixture ${fixtureId}`);
+
+    if (!uniqueStrings(entry?.proof_types)) fail(`${id}: proof_types must contain unique nonempty values`);
+    else for (const proofType of entry.proof_types) if (!allowedProofTypes.has(proofType)) fail(`${id}: unknown proof type ${proofType}`);
+
+    for (const field of ['exit_evidence', 'failure_if_lost']) {
+      if (typeof entry?.[field] !== 'string' || entry[field].trim().length === 0) fail(`${id}: ${field} must be a nonempty string`);
+    }
+
+    const decision = ledgerDecisions.get(id);
+    if (!decision) fail(`${id}: current decision is missing from the ledger snapshot`);
+    else {
+      if (decision.version !== entry.decision_version) fail(`${id}: traceability version ${entry.decision_version} does not match ledger version ${decision.version}`);
+      if (decision.state !== 'final' || decision.content?.state !== 'final') fail(`${id}: ledger decision is not final`);
+      if (decision.authority !== 'user') fail(`${id}: ledger decision does not have user authority`);
+    }
+  }
+
+  for (const id of expectedDecisionIds) if (!ledgerDecisions.has(id)) fail(`ledger snapshot is missing ${id}`);
+  if (ledgerDecisions.size !== expectedDecisionIds.length) fail('ledger decision set has drifted beyond D-001 through D-051 without a traceability update');
+
+  const serialized = JSON.stringify(trace);
+  if (secretPattern.test(serialized)) fail('traceability contains credential-shaped content');
+  if (/\u2014/.test(serialized)) fail('traceability contains an em dash');
+  if (/"(?:generated_at|exported_at|current_timestamp|run_timestamp)"\s*:/.test(serialized)) fail('traceability contains a volatile timestamp field');
+  if (raw !== null && raw !== `${JSON.stringify(trace, null, 2)}\n`) fail('traceability file must be canonical two-space JSON with one trailing newline');
+
+  return failures;
+}
+
+function runTraceNegativeProbes(trace, ledgerDecisions) {
+  const probes = [
+    ['missing D-051', (copy) => copy.entries.pop()],
+    ['wrong D-017 version', (copy) => { copy.entries[16].decision_version = 1; }],
+    ['fabricated trace approval', (copy) => { copy.status = 'final'; copy.authority = 'founder_approved'; }],
+    ['unknown trace fixture', (copy) => { copy.entries[0].fixture_ids[0] = 'F99'; }],
+    ['broken contract reference', (copy) => { copy.entries[0].contract_refs[0] = 'project-documentation/ctrl-evolution/README.md#not-a-real-heading'; }],
+    ['unknown product surface', (copy) => { copy.entries[0].product_surfaces[0] = 'magic_dashboard'; }],
+  ];
+
+  const failures = [];
+  for (const [name, mutate] of probes) {
+    const copy = structuredClone(trace);
+    mutate(copy);
+    if (validateTrace(copy, null, ledgerDecisions).length === 0) failures.push(`negative trace probe escaped validation: ${name}`);
+  }
+  return { failures, count: probes.length };
 }
 
 function validatePack(pack, raw = null) {
@@ -190,14 +373,19 @@ function runNegativeProbes(pack) {
 const fixturePath = join(root, fixtureRel);
 const contractPath = join(root, contractRel);
 const sourcePath = join(root, expectedSource);
+const tracePath = join(root, traceRel);
+const ledgerPath = join(root, ledgerRel);
 const failures = [];
 
-for (const [label, path] of [['fixture pack', fixturePath], ['evaluation contract', contractPath], ['source contract', sourcePath]]) {
+for (const [label, path] of [['fixture pack', fixturePath], ['evaluation contract', contractPath], ['source contract', sourcePath], ['decision traceability', tracePath], ['ledger snapshot', ledgerPath]]) {
   if (!existsSync(path)) failures.push(`${label} is missing`);
 }
 
 let raw = '';
 let pack = null;
+let traceRaw = '';
+let trace = null;
+let ledgerDecisions = new Map();
 if (existsSync(fixturePath)) {
   raw = readFileSync(fixturePath, 'utf8');
   try {
@@ -205,6 +393,24 @@ if (existsSync(fixturePath)) {
   } catch (error) {
     failures.push(`fixture JSON parse failed: ${error.message}`);
   }
+}
+
+if (existsSync(ledgerPath)) ledgerDecisions = parseLedgerDecisions(readFileSync(ledgerPath, 'utf8'), failures);
+
+if (existsSync(tracePath)) {
+  traceRaw = readFileSync(tracePath, 'utf8');
+  try {
+    trace = JSON.parse(traceRaw);
+  } catch (error) {
+    failures.push(`traceability JSON parse failed: ${error.message}`);
+  }
+}
+
+let traceProbes = { failures: [], count: 0 };
+if (trace) {
+  failures.push(...validateTrace(trace, traceRaw, ledgerDecisions));
+  traceProbes = runTraceNegativeProbes(trace, ledgerDecisions);
+  failures.push(...traceProbes.failures);
 }
 
 if (pack) {
@@ -221,9 +427,12 @@ if (pack) {
 
   if (!failures.length) {
     const hash = createHash('sha256').update(raw, 'utf8').digest('hex');
+    const traceHash = createHash('sha256').update(traceRaw, 'utf8').digest('hex');
     console.log(`ok: CTRL Phase 2 fixture pack ${pack.fixtures.length} fixtures, ${pack.global_blocking_failures.length} blocking invariants`);
-    console.log(`ok: ${probes.count} negative mutation probes rejected`);
+    console.log(`ok: decision traceability ${trace.entries.length} locked decisions through D-051`);
+    console.log(`ok: ${probes.count + traceProbes.count} negative mutation probes rejected`);
     console.log(`ok: canonical fixture SHA-256 ${hash}`);
+    console.log(`ok: canonical traceability SHA-256 ${traceHash}`);
   }
 }
 
