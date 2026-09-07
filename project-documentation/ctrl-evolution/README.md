@@ -134,6 +134,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Phase 5 first-contrast synthesis record](design/phase-5-first-contrast-synthesis-record.md): preserves the selection method, allowed borrowing, forbidden hybridisation, render acceptance tests and current authority boundary.
 - Phase 5 rejected first synthesis: [interactive Evidence Lens R1](design/first-contrast-mock-r1.html), its [primary 390 x 844 review frame](design/first-contrast-r1-390x844.png) and [render verification](design/phase-5-first-contrast-render-verification.md). It remains historical evidence: mechanically sound and visually polished, but rejected because it did not make the product or compounding Brain legible.
 - [Phase 5 complete-loop proof brief](design/phase-5-complete-loop-proof-brief.md): the R2 same-spine correction contract, causal state sequence, cold-review acceptance test and unchanged authority boundary.
+- Phase 5 playable R2: [complete-loop product proof](design/complete-loop-proof-r2.html), with [verification evidence](design/phase-5-complete-loop-proof-r2-verification.md). It is a synthetic, deterministic product proof awaiting cold founder judgement, not production UI.
 
 ## Ikigai alignment
 
