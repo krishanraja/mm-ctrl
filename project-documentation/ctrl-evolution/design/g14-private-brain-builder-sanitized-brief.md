@@ -129,4 +129,3 @@ The surface passes only after:
 - no console error, horizontal overflow, clipped primary action or inaccessible essential path remains;
 - every visible evidence-backed claim resolves to the fixture;
 - Krish gives an unanchored reaction to the rendered artifact.
-
