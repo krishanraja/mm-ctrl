@@ -230,8 +230,8 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 
 `ledger.snapshot.jsonl` is sorted by `record_type` and `record_key` using bytewise ordering and then by numeric version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field. The current snapshot was regenerated twice from identical allowlisted rows presented in ascending and reversed source order; the output bytes were identical.
 
-- Rows: 277
-- SHA-256: `989583cf7abb5dfafc505db7856d25a04139a14858e085ab9389388e3ed6778c`
+- Rows: 279
+- SHA-256: `ab88039f414c48aa47aaf7a127b8fc252739c7616330eab93f23ca7bac7b3009`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
