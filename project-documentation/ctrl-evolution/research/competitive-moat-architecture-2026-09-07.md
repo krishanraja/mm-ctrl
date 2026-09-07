@@ -57,7 +57,7 @@ The distinction matters. Features can be copied. A moat exists only when use cre
 | ChatGPT Company Knowledge | Permission-aware search and action across connected workplace sources inside a leading general assistant | Natural-language company search, citations, app ecosystem and model capability | Learning why this leader accepts, rejects or changes work and applying that standard with scope and consequence | Company Knowledge answers “what do we know?” CTRL must prove value on “how should I judge this, and what should change?” |
 | Glean, Notion AI, Microsoft 365 Copilot or Gemini Enterprise | Search scattered company information, ground answers and place AI inside the existing work suite | Enterprise indexing, permissions, knowledge retrieval, workflow integration and governance | Personal judgement ownership, negative taste, corrections, longitudinal outcomes and category-design learning | These products may remain the better system for company-wide knowledge retrieval. CTRL should integrate with them, not pretend to replace them. |
 | Agent Skills, Claude Skills or a GitHub folder of Markdown | Portable, transparent, version-controlled instructions and resources at very low cost | Control, inspectability, interoperability and excellent fit for stable repeatable workflows | Eliciting tacit standards from real work, distinguishing evidence from inference, resolving conflicts, measuring use and maintaining the package for a non-technical leader | For a technical user with a narrow stable workflow and appetite to maintain it, DIY may be sufficient. CTRL earns a premium only if the learning and upkeep feel nearly effortless and materially improve new work. |
-| Custom RAG, knowledge graph or agent build | Maximum control over data, models, retrieval, workflow and deployment | Bespoke scale, integration depth and infrastructure ownership | The productised method: what deserves memory, how judgement is represented, when it applies, who owns it, how it heals and how quality is evaluated | Infrastructure can reproduce CTRL if a company invests enough. CTRL's advantage must be time-to-trust, method, evidence corpus, evaluation and experience—not access to vectors or graphs. |
+| Custom RAG, knowledge graph or agent build | Maximum control over data, models, retrieval, workflow and deployment | Bespoke scale, integration depth and infrastructure ownership | The productised method: what deserves memory, how judgement is represented, when it applies, who owns it, how it heals and how quality is evaluated | Infrastructure can reproduce CTRL if a company invests enough. CTRL's advantage must be time-to-trust, method, evidence corpus, evaluation and experience, not access to vectors or graphs. |
 | Wiki, notes app or meeting-intelligence tool | Familiar capture, transcription, summaries and searchable records | Faithful record keeping, collaboration and low behaviour change | Turning records into scoped standards, decisions, contradictions and future interventions while preserving provenance | CTRL should use these records as sources. It must not become another place to dump notes. |
 | Executive coach, chief of staff or trusted adviser | Human empathy, tacit reading of a situation, challenge and accountability | Relationship nuance, judgement under ambiguity and real-world influence | Durable continuity between sessions, exhaustive retrieval, pattern preservation, preparation and portable residue owned by the leader | CTRL is strongest when it makes the human relationship better and preserves value after the room, not when it imitates or claims to replace the person. |
 | Internal AI-transformation programme or consultancy | Organisation-specific change design, facilitation and implementation capacity | Coalition building, incentives, governance and execution in the real organisation | A persistent personal capability layer that compounds after the engagement and follows the leader across tools and roles | CTRL is not the whole transformation. It should make leaders and advisers more capable and leave behind an owned brain rather than a static report. |
@@ -86,11 +86,11 @@ The leader owns a separately permissioned private brain. Company assets, shared 
 
 ### 5. Invisible context circulation
 
-CTRL's experience advantage comes from choosing the lowest-friction eligible route into and out of the brain—meeting residue, voice/share/upload, one missing-source request, or a proven scoped stream—then returning only a useful recall, contrast, completion, preparation or reflection. The moat is not the adapter. It is the policy and accumulated evidence that make the right intervention arrive without exposing the machinery.
+CTRL's experience advantage comes from choosing the lowest-friction eligible route into and out of the brain: meeting residue, voice/share/upload, one missing-source request, or a proven scoped stream, then returning only a useful recall, contrast, completion, preparation or reflection. The moat is not the adapter. It is the policy and accumulated evidence that make the right intervention arrive without exposing the machinery.
 
 ### 6. Relationship-led distribution and proof
 
-Mindmake gives CTRL access to consequential decisions, explicit standards and later outcomes in a trusted thirty-day loop. This can produce unusually high-quality labelled evidence and rapid correction—if the tool improves the work rather than extracts data from it. That service-to-software learning loop is difficult for a generic horizontal assistant to reproduce, but only while the customer receives immediate value and retains ownership.
+Mindmake gives CTRL access to consequential decisions, explicit standards and later outcomes in a trusted thirty-day loop. This can produce unusually high-quality labelled evidence and rapid correction if the tool improves the work rather than extracts data from it. That service-to-software learning loop is difficult for a generic horizontal assistant to reproduce, but only while the customer receives immediate value and retains ownership.
 
 ### 7. An approved pattern commons, later
 
@@ -100,7 +100,7 @@ With item-level permission, CTRL may eventually learn de-identified mechanisms a
 
 ### Core promise
 
-**The AI brain that learns how you judge—not just what you know.**
+**The AI brain that learns how you judge, not just what you know.**
 
 ### Human value
 
@@ -144,7 +144,7 @@ It does, and those are formidable execution, retrieval and procedure layers. CTR
 
 **“I can put my rules in Markdown or build a Skill.”**
 
-That is an excellent option for a stable workflow and a person willing to maintain it. CTRL's test is whether it can uncover the tacit criterion behind your corrections, preserve counterexamples and provenance, notice when a rule no longer applies, evaluate the package and update it with your authority—while making the technical layer disappear.
+That is an excellent option for a stable workflow and a person willing to maintain it. CTRL's test is whether it can uncover the tacit criterion behind your corrections, preserve counterexamples and provenance, notice when a rule no longer applies, evaluate the package and update it with your authority while making the technical layer disappear.
 
 **“We already have a company brain or enterprise search.”**
 
@@ -178,14 +178,14 @@ No. The strongest design improves the room: it prepares the evidence and options
 | Portable and user-owned | Successful human-readable export, complete provenance package, re-import and use in multiple agent environments, plus deletion/withdrawal verification |
 | Safe collective intelligence | Item-level consent receipts, de-identification attack testing, contribution withdrawal, provenance and demonstrated cross-leader lift |
 | Thoughtful and low-friction | Interruption yield, correction burden, return pull and qualitative evidence that users feel helped rather than monitored |
-| Company value | Traced changes to operating decisions, reinvested capacity, transition-map quality and accountable execution—not generated-output volume |
+| Company value | Traced changes to operating decisions, reinvested capacity, transition-map quality and accountable execution, not generated-output volume |
 
 ## Product implications
 
 1. Design the judgement schema, correction lineage and held-out evaluation fixtures before expanding connector breadth.
 2. Treat OpenAI, Anthropic and other models as replaceable reasoning and execution surfaces; never place the user's durable brain inside a single provider-only memory.
 3. Export to the open Agent Skills shape where useful, while keeping richer provenance, versions, evidence and evaluation alongside the generated `SKILL.md` package.
-4. Build against the hardest honest substitute: a motivated technical leader maintaining a strong Git repository of instructions, examples and evals—not against a blank chatbot.
+4. Build against the hardest honest substitute: a motivated technical leader maintaining a strong Git repository of instructions, examples and evals, not against a blank chatbot.
 5. Preserve a clear company/personal boundary so enterprise deployment does not destroy the candour that makes the brain useful.
 6. Make product marketing a projection of verified product truth. Every strong sentence should map to a mechanism, an acceptance test and current evidence state.
 
@@ -208,4 +208,4 @@ The competitive descriptions above rely primarily on current vendor documentatio
 
 ## Current truth boundary
 
-CTRL already contains substantial historical implementation around memory, decisions, briefings, exports and skill packages, but this document does not certify those surfaces as coherent, safe, delightful or production-ready. The next transition brief must compare the live repository and deployed behaviour with this target architecture, classify what can be retained, repaired, retired or rebuilt, and sequence proof-bearing vertical slices. Until then, this is the standard CTRL must reach—not a description of what a customer can buy today.
+CTRL already contains substantial historical implementation around memory, decisions, briefings, exports and skill packages, but this document does not certify those surfaces as coherent, safe, delightful or production-ready. The next transition brief must compare the live repository and deployed behaviour with this target architecture, classify what can be retained, repaired, retired or rebuilt, and sequence proof-bearing vertical slices. Until then, this is the standard CTRL must reach, not a description of what a customer can buy today.

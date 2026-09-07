@@ -30,7 +30,7 @@ The important distinction is:
 
 > The Brain lives in an open, portable domain model. CTRL operates the live version; GitHub can hold a customer-owned projection of every accepted release.
 
-This preserves the best part of the GitHub instinct—ownership, inspectability, iteration, version history and handoff—without forcing a source-code collaboration system to become a transactional, privacy-sensitive application database.
+This preserves the best part of the GitHub instinct: ownership, inspectability, iteration, version history and handoff, without forcing a source-code collaboration system to become a transactional, privacy-sensitive application database.
 
 ## The four-layer architecture
 
@@ -106,7 +106,7 @@ GitHub should be invisible until ownership or handoff becomes valuable. The user
 
 - “Your Brain is safe and up to date,” not commits and branches;
 - “Keep your own copy” or “Connect your repository,” not a mandatory developer setup step;
-- “I learned this from today's decision—keep, change or leave it out?” not a schema form;
+- “I learned this from today's decision. Keep, change or leave it out?” not a schema form;
 - “Version 7 is ready; three things changed” not a file diff unless they ask for it;
 - one tap or voice correction, followed by a visible repair receipt.
 

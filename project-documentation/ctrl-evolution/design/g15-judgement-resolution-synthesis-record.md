@@ -72,18 +72,17 @@ The one next action is `Shape the next test`.
 
 ### 22 to 30 seconds
 
-The proof asks one prospective question derived from the current interpretation:
+The proof presents two clearly labelled synthetic handoff briefs derived from the current interpretation. They are proposed work for a future contrast, not stored evidence about Maya.
 
-`What would someone need before you would trust them with the first pass?`
+`Which brief would you trust someone else to use without you in the room?`
 
-The proof offers four low-load response routes:
+The proof offers two credible routes and a refusal:
 
-- `Examples of good and bad`
-- `The first signs it is going wrong`
-- `A clear review boundary`
-- `Say it my way`
+- **Brief A:** `Give the team the intended feeling and audience. Let them find the visual route, then review the storyboard together.`
+- **Brief B:** `Give the team one chosen and one rejected reference. Name the first signs the work is drifting, then review after the first complete draft.`
+- `Neither is ready`
 
-These are proposed answer routes, not evidence already stored about Maya. Selecting one creates a local provisional contrast only. It cannot change the Brain, mark Delegation tested, or persist outside the proof.
+The routes make different trade-offs rather than placing an obviously correct answer beside a weak one. Selecting one creates a local provisional contrast only. It cannot change the Brain, mark Delegation tested, or persist outside the proof. An optional one-sentence or voice reason appears only after the choice.
 
 The receipt after selection says: `Next contrast staged. Nothing changes until it is tested against real work.`
 
@@ -94,7 +93,7 @@ One receipt owns the page. The interaction is read, inspect and shape the next t
 The user may:
 
 - inspect the earlier and current interpretations;
-- inspect exact provenance and audience;
+- inspect exact provenance available in the canonical fixture;
 - mark the current reading too broad or wrong;
 - reopen the earlier reading as unresolved;
 - stage one proposed contrast;
@@ -180,4 +179,3 @@ It also requires:
 ## Remaining risk
 
 The receipt can still become a tasteful activity feed. The render must make the changed interpretation and its consequence dominant, not the date or historical accumulation. If the page encourages collecting receipts, it fails even without a score.
-

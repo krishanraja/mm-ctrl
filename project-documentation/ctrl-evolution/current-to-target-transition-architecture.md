@@ -504,6 +504,6 @@ The founder approved the transition verdict as `D-050` and the combined product 
 
 The locked rule is:
 
-> Treat the versioned, permissioned live Brain as the runtime and GitHub/ZIP as its customer-owned portable release; prove both through one devastatingly simple five-minute decision loop whose first reveal is a useful contrast—not an AI recommendation—and whose only durable learning is one optional, inspectable proposal.
+> Treat the versioned, permissioned live Brain as the runtime and GitHub/ZIP as its customer-owned portable release; prove both through one devastatingly simple five-minute decision loop whose first reveal is a useful contrast, not an AI recommendation, and whose only durable learning is one optional, inspectable proposal.
 
 `krish-design` now performs three-spine interaction divergence and produces one mobile first-contrast synthesis for cold founder review. No product schema, customer repository or material production surface is authorised before that rendered synthesis receives a separate explicit lock.

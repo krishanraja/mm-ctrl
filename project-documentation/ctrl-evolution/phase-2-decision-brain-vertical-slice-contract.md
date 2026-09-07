@@ -495,7 +495,7 @@ Models are replaceable workers. Each task has a versioned input contract, valida
 
 ### Characterization before reuse
 
-Every retained primitive receives tests that freeze the valuable property—not the current implementation shape. If a replacement passes the property more simply, replace it. If an adapter forces semantic ambiguity, duplicate authority or visible technical burden, kill the adapter.
+Every retained primitive receives tests that freeze the valuable property, not the current implementation shape. If a replacement passes the property more simply, replace it. If an adapter forces semantic ambiguity, duplicate authority or visible technical burden, kill the adapter.
 
 ## First material mock contract
 
@@ -511,7 +511,7 @@ The first rendered primary state is the **first useful contrast on mobile**. It 
 - no dashboard, feed, graph, technical metadata, chat transcript wall or multi-card report;
 - visual and interaction craft exceeding the current production UI while feeling calmer and simpler.
 
-Three concept spines must differ in governing interaction metaphor, sequencing and state model—not merely layout or styling. Two fresh-context judges test conceptual distance, feasibility, trust, cognitive load and ability to support the full state range. One synthesized render is then shown cold to the founder.
+Three concept spines must differ in governing interaction metaphor, sequencing and state model, not merely layout or styling. Two fresh-context judges test conceptual distance, feasibility, trust, cognitive load and ability to support the full state range. One synthesized render is then shown cold to the founder.
 
 ## Evaluation programme
 
