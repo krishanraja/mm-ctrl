@@ -74,6 +74,18 @@ Treat this ordering as non-binding. The build sequence must follow technical and
 
 ## Product synthesis
 
+### Private Brain Builder priority
+
+The founder ranked the cockpit's primary hierarchy:
+
+1. the one thing the customer should be asked or do next;
+2. what is useful enough to bring to the customer now;
+3. the single best way to deepen the Brain next.
+
+This makes the primary cockpit object a **customer intervention**, not a memory, task, completeness score or system-health metric. The intervention must be traceable to client-ready Brain meaning and the evidence gap it can close. Brain enrichment is therefore purposeful: it exists to improve the next useful customer move, while ready-now value prevents the system from becoming an endless intake programme.
+
+This is a product-hierarchy lock, not approval of an information architecture or rendered surface.
+
 ### The near-term user model
 
 For the foreseeable future, the primary operator is Krish and the unit of work is one customer inside the Mindmake thirty-day proof. The customer's Brain is the governed object. The customer is an intentionally lightweight participant who contributes, corrects, reacts and benefits without administering a technical system. Future self-service is enabled by the same kernel but must not distort the near-term operator workflow.
@@ -141,6 +153,6 @@ The one-hour experience becomes valuable work, not the price of admission.
 
 ## Next material gate
 
-Render and obtain a cold founder reaction to the first **Private Brain Builder** customer cockpit. It must prove the state-dependent opening, one best enrichment move, useful-now value, staged-versus-durable truth, visible richness upgrades and a customer-facing intervention preview without becoming a project-management dashboard.
+Resolve when the cockpit should come alive for Krish, then render and obtain a cold founder reaction to the first **Private Brain Builder** customer cockpit. It must lead with one supported customer intervention, show what is ready now and the best enrichment route behind it, preserve staged-versus-durable truth and visible richness upgrades, and avoid becoming a project-management dashboard.
 
 R2 remains locked as the Customer Brain expression. Implementation of the new operator information architecture must not begin before this material surface is approved.
