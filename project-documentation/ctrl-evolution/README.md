@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** `D-054` closes the first material mock gate. The founder approved moving beyond the playable R3 complete-loop direction while binding two real-version corrections: repair alignment as a system and delete guff or reassurance copy that adds no action, evidence, state or meaning. The R1 product-proof hypothesis is resolved for the founder mock gate only; customer value, live intelligence and production quality remain unproved. `M-012` opens G12: define the smallest canonical living Brain domain and user-visible model that can support judgement, contradiction, governed learning, correction and portable releases without making the customer administer memory. Physical schema work, GitHub App or customer-repository creation and production implementation remain paused.
+**CURRENT_PHASE:** `D-054` closes the first material mock gate. The founder approved moving beyond the playable R3 complete-loop direction while binding two real-version corrections: repair alignment as a system and delete guff or reassurance copy that adds no action, evidence, state or meaning. G12 now has a decision-ready [living Brain domain and user model](living-brain-domain-and-user-model.md): five human views backed by seven canonical concepts, four orthogonal authority axes, contrastive learning, receipted repair and a round-trippable portable release. It remains a recommendation until founder correction or approval. Physical schema work, GitHub App or customer-repository creation and production implementation remain paused.
 
 **SOURCE_LAYERS:**
 
@@ -82,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Synthesize the G12 living Brain domain, user-visible structure, learning lifecycle, self-healing boundary and portable representation from the completed founder evidence. Ask only the remaining route-changing product question after the proposed model is concrete.
+**NEXT_ACTION:** Founder correction or approval of the proposed G12 Brain hierarchy. If the route holds, lock it and translate it into the first physical domain contract and proof fixtures under a separate implementation gate.
 
 ## Current strategic synthesis through G11
 
@@ -136,6 +136,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Phase 5 complete-loop proof brief](design/phase-5-complete-loop-proof-brief.md): the R2 same-spine correction contract, causal state sequence, cold-review acceptance test and unchanged authority boundary.
 - Phase 5 playable R2: [complete-loop product proof](design/complete-loop-proof-r2.html), with [verification evidence](design/phase-5-complete-loop-proof-r2-verification.md). The founder found this direction good and requested more restrained visual life.
 - Phase 5 visual refinement R3: [playable product proof](design/complete-loop-proof-r3.html), with [verification evidence](design/phase-5-complete-loop-proof-r3-verification.md) and the [founder gate record](design/phase-5-complete-loop-r3-founder-gate.md). Its direction is approved; alignment repair and zero-guff copy are binding implementation corrections.
+- [G12 living Brain domain and user model](living-brain-domain-and-user-model.md): decision-ready recommendation for the customer mental model, canonical domain kernel, learning authority, correction cascade, taste preservation, portability and V1 proof boundary.
 
 ## Ikigai alignment
 
