@@ -16,7 +16,7 @@ This is the canonical, resumable state for the CTRL product evolution. It preven
 
 **STATE_ROUTE:** `project-documentation/ctrl-evolution/README.md`
 
-**CURRENT_PHASE:** The founder has approved the “new nervous system, proven organs” transition posture and made the current interface's polish the minimum quality floor rather than an interaction constraint. The provisional first proof-bearing vertical-slice contract now joins one real decision, human-first contrast, independent challenge, owned call, zero-or-one Brain proposal, later recall and deterministic portable release. It also recommends a versioned PostgreSQL live Brain, encrypted source vault, reconstructable retrieval projections and optional customer-owned GitHub release. Physical schema work, GitHub App or customer-repository creation and material visual rendering remain paused until the founder approves or corrects the single combined product rule at the end of that contract.
+**CURRENT_PHASE:** The founder has approved the “new nervous system, proven organs” transition posture and made the current interface's polish the minimum quality floor rather than an interaction constraint. The provisional first proof-bearing vertical-slice contract now joins one real decision, human-first contrast, independent challenge, owned call, zero-or-one Brain proposal, later recall and deterministic portable release. Its companion evaluation pack freezes twelve proof cases and the strongest substitute comparisons before implementation. The architecture recommends a versioned PostgreSQL live Brain, encrypted source vault, reconstructable retrieval projections and optional customer-owned GitHub release. Physical schema work, GitHub App or customer-repository creation and material visual rendering remain paused until the founder approves or corrects the single combined product rule at the end of the slice contract.
 
 **SOURCE_LAYERS:**
 
@@ -126,6 +126,7 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Context circulation architecture](context-circulation-architecture.md): locked governing model with one provenance-rich context envelope beneath authorised work exhaust, deliberate signals, just-in-time retrieval and scoped streams; one governed path from private staging to proposed memory, useful return, correction and downstream repair.
 - [Current-to-target transition architecture](current-to-target-transition-architecture.md): production/source/data audit, retain/repair/retire/rebuild calls, target UX/data/AI architecture, migration phases, proof gates and the proposed “new product, proven organs” transition verdict.
 - [Phase 2 decision-to-Brain vertical-slice contract](phase-2-decision-brain-vertical-slice-contract.md): provisional end-to-end experience, state, authority, domain-event, LLM-task, adapter, evaluation, recovery, portability and rollout contract for the first proof-bearing slice.
+- [Phase 2 evaluation and proof-fixture contract](phase-2-evaluation-fixture-contract.md): leakage-resistant comparator protocol, blocking invariants, quality rubric, Brain-attributable lift definition, self-healing proof and twelve machine-readable fixtures frozen before implementation.
 
 ## Ikigai alignment
 
@@ -216,8 +217,8 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 
 `ledger.snapshot.jsonl` is sorted by `record_type` and `record_key` using bytewise ordering and then by numeric version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field. The current snapshot was regenerated twice from identical allowlisted rows presented in ascending and reversed source order; the output bytes were identical.
 
-- Rows: 267
-- SHA-256: `eec5d7805389997fcd8ae7f3e134652e126f5f8e85b69930c4f5bb792ebe5181`
+- Rows: 268
+- SHA-256: `4ca3c866c20da132f411b602b7d19e714be0a880a58c084849e64b4308713e4a`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
