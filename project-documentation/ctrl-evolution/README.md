@@ -38,6 +38,8 @@ Automation is enabling infrastructure, not the strategic altitude. CTRL should h
 
 CTRL must also be the antithesis of AI-mediated convergence. Prepared work should resist blind optimism, unreliable or absent numbers, homogeneous and box-standard thinking, historical-only pseudo-divergence, shallow affirmation and imported AI house styles. Meaningful variation requires different causal frames, evidence, strategic relevance and productive challenge—not cosmetic rewriting. Negative examples, rejection reasons and corrections belong in the brain alongside admired work. An obvious answer may still be right when the evidence supports it; anti-generic must not become novelty theatre or another formula.
 
+The cross-surface experience is provisionally designed as context circulation, not a single intake doorway. Authorised work exhaust, deliberate voice/share/upload signals, just-in-time retrieval and bounded ongoing streams enter one provenance-rich context envelope. CTRL privately stages and interprets them, asks only when uncertainty changes meaning, proposes what should endure and returns the smallest useful intervention where the leader can act. The first engineering slice may use only a few adapters, but that constraint cannot become the product model or force the leader to administer integrations.
+
 The first wedge is leader adaptation, followed by organisation now/next/not-yet pacing; live AI-initiative triage remains conditional. CTRL may support work and role design but must not evaluate named people or recommend employment actions. A leader-owned Private Leader Brain and a company transition map remain separately permissioned assets.
 
 **NON_GOALS:**
@@ -56,14 +58,15 @@ The first wedge is leader adaptation, followed by organisation now/next/not-yet 
 **SURFACE_DEPENDENCIES:**
 
 1. Trust substrate: invisible subject identity, permission, provenance, scoped cache, correction and erasure.
-2. Decide entry: guided help, something specific, or a quick exercise.
-3. Five-minute contrast loop: provisional human view, smallest useful contrast, independent AI view, reconciliation and owned call.
-4. Strategic receipt: immediate reflection, tension or preferred path, uncertainty and next move.
-5. Brain: inspectable criteria, evidence, context, contradictions and corrections.
-6. Return and outcome: revisit when a decision becomes live, an outcome lands or evidence conflicts.
-7. Portable export: human-readable brain plus machine-readable provenance, versions and evaluation fixtures.
+2. Context circulation: several natural work moments entering one source-, subject-, scope-, permission- and freshness-aware envelope.
+3. Decide entry: guided help, something specific, or a quick exercise.
+4. Five-minute contrast loop: provisional human view, smallest useful contrast, independent AI view, reconciliation and owned call.
+5. Strategic receipt: immediate reflection, tension or preferred path, uncertainty and next move.
+6. Brain: inspectable criteria, evidence, context, contradictions, negative examples and corrections.
+7. Return and outcome: the smallest useful recall, contrast, completion, preparation or reflection inside the work.
+8. Portable export: human-readable brain plus machine-readable provenance, versions and evaluation fixtures.
 
-**VERTICAL_SLICE (provisional):** Live decision → minimum useful contrast → evidence-backed AI view → accept/resist/correct → user-owned call → transparent, authorised brain update → portable version.
+**VERTICAL_SLICE (provisional):** Authorised context from a natural work moment → source and scope checks → live decision → minimum useful contrast → evidence-backed AI view → accept/resist/correct → user-owned call → transparent brain proposal → later useful recall → portable version.
 
 **FIRST_SURFACE:** `Decide: first five-minute loop`. The Brain is the residue of useful work, not the first tax imposed on the user. Material visual work stays paused until founder direction is locked.
 
@@ -79,7 +82,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Identify the first low-friction work moment that should feed high-quality evidence into CTRL during the Mindmake thirty-day proof (`Q-058`).
+**NEXT_ACTION:** Founder reviews the provisional context-circulation architecture as one governing product model. If accepted, lock it and run the required three-spine interaction divergence before rendering one synthesis; do not ask another abstract channel-choice question.
 
 ## Current strategic synthesis through G11
 
@@ -95,7 +98,7 @@ A higher-order marketing exemplar uses aggregate audience-exposure intelligence 
 | Prepared collaboration | Generate standards-governed divergent options before suitable meetings; begin human collaboration at the judgement boundary | The aim is better ideas and better use of attention, not content volume or the elimination of every live brainstorm. |
 | Idea quality | Evidence-bearing, numerically honest, challenger-minded and voice-sovereign options built from meaningfully different causal frames | More output is not more intelligence; CTRL must counter model and population-level convergence without rewarding arbitrary novelty. |
 | Memory compounding | Capture → distil → propose → approve → propagate → measure | Repeated patterns can become useful capability, but no model-detected pattern becomes durable truth or shared skill without scope, provenance and human authority. |
-| Cross-surface brain | One deliberate gesture into a sovereign brain and useful context returned inside the work | Continuity matters more than integration count; the leader should not have to operate a technical memory product. |
+| Cross-surface brain | Several natural work moments enter one trusted context envelope and useful intelligence returns inside the work | Continuity matters more than integration count; a small first build must not turn one adapter into the product model. |
 | Collective intelligence | CTRL may privately propose a de-identified pattern, but nothing enters the shared commons without item-level approval | Shared early sight may compound across leaders while personal judgement, taste and contribution authority remain personally owned. |
 | Cultural intelligence | Provenance-aware aggregate maps of audience exposure, narratives, saturation and gaps | This can create early sight for category strategy, but must resist biased inference, synthetic feedback loops, manipulation and creative homogenisation. |
 | First wedge | Leader stop/start/delegate/learn/excellence, then organisation now/next/not-yet; live initiative triage conditional | It creates reusable capability before expanding into a broader decision portfolio. |
@@ -111,6 +114,10 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 ## External concept assessments
 
 - [DeepLake Hivemind concept assessment](research/deeplake-hivemind-concept-assessment-2026-09-07.md): adapt trace-to-skill compounding and cross-agent continuity through a subject-owned propose–approve lifecycle; reject firehose capture, pooled raw memory, automatic skill propagation and efficiency-only success metrics; defer vendor adoption and broad integrations until a named retrieval or workflow test requires them.
+
+## Product architecture drafts
+
+- [Context circulation architecture](context-circulation-architecture.md): one provenance-rich context envelope beneath authorised work exhaust, deliberate signals, just-in-time retrieval and scoped streams; one governed path from private staging to proposed memory, useful return, correction and downstream repair.
 
 ## Ikigai alignment
 
@@ -195,8 +202,8 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 
 `ledger.snapshot.jsonl` is sorted by `record_key` using bytewise ordering and then by version. Every object is recursively key-sorted and encoded as UTF-8 with LF endings. It contains no export timestamp or other volatile field.
 
-- Rows: 243
-- SHA-256: `bdfc02d5f3d04aa46906d3dd1e4e47a7acef61b95eb387553826e0441256920d`
+- Rows: 245
+- SHA-256: `31f0033b87500a94f39e9ed9e78c7b8b4f6c1cbe11c3b09f9aaee6f719ed79d1`
 - Sidecar: `ledger.snapshot.sha256`
 
 Every answered interview batch is appended to Supabase as an idempotent version, read back with generated hashes, then regenerated here. Existing history is never rewritten.
