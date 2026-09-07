@@ -127,7 +127,8 @@ The remaining decision-critical tensions are explicit rather than smoothed over:
 - [Current-to-target transition architecture](current-to-target-transition-architecture.md): production/source/data audit, retain/repair/retire/rebuild calls, target UX/data/AI architecture, migration phases, proof gates and the proposed “new product, proven organs” transition verdict.
 - [Phase 2 decision-to-Brain vertical-slice contract](phase-2-decision-brain-vertical-slice-contract.md): founder-approved product rule with provisional end-to-end state, authority, domain-event, LLM-task, adapter, evaluation, recovery, portability and rollout mechanics for the first proof-bearing slice.
 - [Phase 2 evaluation and proof-fixture contract](phase-2-evaluation-fixture-contract.md): leakage-resistant comparator protocol, blocking invariants, quality rubric, Brain-attributable lift definition, self-healing proof and twelve machine-readable fixtures frozen before implementation and enforced by `npm run evals:check`.
-- [`phase-2-decision-traceability.json`](phase-2-decision-traceability.json): current-version mapping from every locked decision through `D-051` to its first-slice disposition, product surfaces, governing contract, fixture coverage, exit evidence and prevented regression.
+- [`phase-2-decision-traceability.json`](phase-2-decision-traceability.json): current-version mapping from every locked decision through `D-052` to its first-slice disposition, product surfaces, governing contract, fixture coverage, exit evidence and prevented regression.
+- [Phase 5 first-contrast sanitized divergence brief](design/phase-5-first-contrast-sanitized-brief.md): source-pinned mobile use moment, bounded test state, invariant product and trust rules, state range, brand and feasibility limits, three deliberately different generator territories and blinded judge rubric.
 
 ## Ikigai alignment
 
