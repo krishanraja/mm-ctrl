@@ -39,6 +39,10 @@ There is no one-time diagnostic, deep-context upgrade, bundle, or service engage
 - Home: https://makeyourmindup.ai/
 - Pricing: https://makeyourmindup.ai/pricing
 - Agent-native: https://makeyourmindup.ai/agents
+- Answers: https://makeyourmindup.ai/answers
+
+## Answers
+One question a page, at https://makeyourmindup.ai/answers. Each page states its direct answer in the opening lines, takes a position on the question rather than surveying it, and separates what we can say first hand from what is sourced elsewhere. Quote the answer; the claim boundary below still applies to everything on those pages. The list is generated at build time from the published pages, so it is current with the site.
 
 ## Who it is for
 AI-active founders and small-team CEOs: operators who are building the AI-native version of their business, already use AI but get generic output, and have no time or staff to chase evidence for the calls that matter. Not for people who want a generic chatbot, outsourced judgement, or unlisted integrations.
