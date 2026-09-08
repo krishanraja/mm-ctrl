@@ -151,6 +151,7 @@ const ProposalsPage = lazyWithRetry(() => import('@/pages/ProposalsPage'))
 // Local, synthetic implementation harness for the approved operator Decision
 // Bench. It remains unlinked and is not included in authenticated prefetching.
 const DecisionBenchPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionBenchPage'))
+const SyntheticPopulationLabPage = lazyWithRetry(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
 const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 /**
@@ -169,6 +170,8 @@ function preloadInitialRouteChunk() {
     warm(() => import('@/pages/Landing'))
   } else if (p.startsWith('/auth')) {
     warm(() => import('@/pages/Auth'))
+  } else if (p.startsWith('/operator/lab/synthetic-population/')) {
+    warm(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
   } else if (p.startsWith('/operator/customers/')) {
     warm(() => import('@/features/operator-brain/DecisionBenchPage'))
   } else {
@@ -238,6 +241,13 @@ function DecisionBenchGate() {
   return previewEnabled && isLockedFixture ? <DecisionBenchPage /> : <NotFound />
 }
 
+function SyntheticPopulationLabGate() {
+  const { accountId } = useParams()
+  const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
+  const fixtureExists = /^SYN-CUST-(?:10[1-9]|1[1-3]\d|14[0-8])$/.test(accountId ?? '')
+  return previewEnabled && fixtureExists ? <SyntheticPopulationLabPage /> : <NotFound />
+}
+
 export const router = createBrowserRouter([
   // Public routes
   {
@@ -265,6 +275,11 @@ export const router = createBrowserRouter([
     // Direct local route only. Synthetic fixture, no navigation entry and no persistence.
     path: '/operator/customers/:workspaceId/decisions/:decisionId',
     element: <LazyWrapper><DecisionBenchGate /></LazyWrapper>,
+  },
+  {
+    // Internal range harness. It is unlinked, non-indexable and accepts only explicit synthetic IDs.
+    path: '/operator/lab/synthetic-population/:accountId',
+    element: <LazyWrapper><SyntheticPopulationLabGate /></LazyWrapper>,
   },
   {
     // Agent-native marketing page (public): the read-only Memory Web MCP offering.

@@ -1,6 +1,6 @@
 # G18 synthetic population and edge-case lab
 
-Status: local deterministic corpus and test oracle complete; database seeding and UI range harness pending
+Status: deterministic corpus, test oracle and protected-preview UI range harness complete; database seeding and diagnostic model evaluation pending
 
 Date: 8 September 2026
 
@@ -93,6 +93,9 @@ The accounts cover:
 
 - `src/features/operator-brain/syntheticPopulation.ts`: typed curated population, deterministic IDs and volume expansion.
 - `src/features/operator-brain/syntheticPopulation.test.ts`: coverage, safety, identity, replay, adversarial-content and layout-range checks.
+- `src/features/operator-brain/SyntheticPopulationLabPage.tsx`: unlinked, non-indexable account, source-path and diagnostic-oracle inspector.
+- `src/features/operator-brain/SyntheticPopulationLabPage.test.tsx`: all-account render gate plus inert-adversarial-content and empty-state checks.
+- `/operator/lab/synthetic-population/:accountId`: synthetic-only preview route, available only in development or when the existing synthetic Decision Bench preview flag is enabled.
 - `npm run brain:g18:check`: focused deterministic gate.
 
 ## Next implementation sequence
@@ -100,8 +103,8 @@ The accounts cover:
 1. Seed the population only into the approved data-less Supabase branch after G16 migrations and the four-identity RLS suite pass.
 2. Preserve all source content through strict G17 encryption. Never place plaintext fixture content in production.
 3. Run the diagnostic against each oracle and score missing notices, prohibited inference, audience mistakes and next-move quality.
-4. Build an internal range harness that can switch account, viewer, UI state and viewport without changing product navigation.
-5. Render every approved Brain and Decision Bench surface at narrow and wide widths, including 200 percent zoom and reduced motion.
+4. Use the internal range harness to switch account and inspect the exact source path, expected processing outcome, diagnostic oracle and layout pressure without changing product navigation.
+5. Render the range harness and every approved Brain and Decision Bench surface at narrow and wide widths, including 200 percent zoom and reduced motion.
 6. Convert every located failure into the lowest shared contract, renderer, validator or processing repair plus a regression fixture.
 7. Keep real customer creation, public navigation and production seeding closed.
 
@@ -110,6 +113,6 @@ The accounts cover:
 - No Supabase branch or auth account has been created.
 - No fixture has been inserted into any database.
 - No diagnostic model has been run or judged against the oracles.
-- No current product route reads this population.
-- No UI result is claimed until the internal range harness is rendered and independently checked.
+- No current customer-facing product route reads this population. The unlinked preview-only lab reads it for quality assurance.
+- The React lab passes all-account render checks plus eight local and eight protected-preview browser acceptance checks across desktop, mobile, compact, multilingual, long-token and adversarial-content cases. Founder review remains required before merge.
 - The 48 accounts are curated coverage, not a claim that every future edge case is known. Every production failure class must add a fixture before repair is accepted.
