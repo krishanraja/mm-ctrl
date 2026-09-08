@@ -1,0 +1,108 @@
+{
+  "fixture_version": "1.0.0",
+  "fixture_status": "synthetic_demo",
+  "account": {
+    "email": "hello@krishraja.com",
+    "display_name": "Krish",
+    "brain_name": "Krish's Brain",
+    "audience": "private_to_subject"
+  },
+  "portrait": {
+    "as_of": "2026-09-07T18:50:00Z",
+    "headline": "You are becoming a builder of judgement, not simply a faster operator.",
+    "explanation": "Your strongest pattern is no longer using AI to complete more work. It is noticing what has become possible, deciding where human taste still matters, and turning that distinction into systems other people can use.",
+    "movement": {
+      "earlier": "Proving that AI could improve the output",
+      "now": "Redesigning how the work and the leader operate",
+      "becoming": "Building systems that transfer judgement without flattening individuality"
+    },
+    "lenses": [
+      {
+        "kind": "compounding_edge",
+        "label": "What is compounding",
+        "title": "Possibility detection",
+        "body": "You notice the hidden system inside ordinary work: every click, handoff, repeated explanation and weak information boundary becomes a design question.",
+        "item_refs": ["BI-002", "BI-004", "BI-010"]
+      },
+      {
+        "kind": "live_tension",
+        "label": "What still pulls",
+        "title": "Private fluency versus shared capability",
+        "body": "You can see the AI-native version of the work before the people around you can. The frustration is real, but replacing hesitation does not itself transfer your way of seeing.",
+        "item_refs": ["BI-005", "BI-017", "BI-019"]
+      },
+      {
+        "kind": "growth_frontier",
+        "label": "What to build next",
+        "title": "Make judgement teachable",
+        "body": "Your next edge is encoding standards, counterexamples and verification rituals so another high-agency person can produce work you would respect without becoming a copy of you.",
+        "item_refs": ["BI-003", "BI-009", "BI-010", "BI-018"]
+      }
+    ]
+  },
+  "sources": [
+    {"id":"SRC-001","kind":"interview","label":"Founder interview","observed_at":"2026-09-07","assertion":"AI fluency begins by noticing every click, copy-paste and information movement as a possible system."},
+    {"id":"SRC-002","kind":"interview","label":"Founder interview","observed_at":"2026-09-07","assertion":"AI cannot substitute for taste and judgement; the human remains accountable for the final output."},
+    {"id":"SRC-003","kind":"interview","label":"Founder interview","observed_at":"2026-09-07","assertion":"Changing someone's mind for them did not create real-world change without a committed strategy, incentives and measures."},
+    {"id":"SRC-004","kind":"interview","label":"Founder interview","observed_at":"2026-09-07","assertion":"CTRL should help willing leaders rebuild categories and industries rather than persuade sceptics or automate only administrative work."},
+    {"id":"SRC-005","kind":"interview","label":"Founder interview","observed_at":"2026-09-07","assertion":"Generic AI ideas reveal blind optimism, missing numbers, homogeneous thinking and historical-only divergence."},
+    {"id":"SRC-006","kind":"worked_example","label":"Social-post meeting example","observed_at":"2026-09-07","assertion":"A rubric-led option system can replace an hour-long brainstorm with varied, voice-faithful directions ready for human selection."},
+    {"id":"SRC-007","kind":"worked_example","label":"Audience intelligence example","observed_at":"2026-09-07","assertion":"Aggregate exposure to narratives and characters can inform more precise franchise strategy while creative judgement stays human."},
+    {"id":"SRC-008","kind":"selection","label":"Product direction selection","observed_at":"2026-09-07","assertion":"Personal capability is the mechanism through which the company receives category and organisational value."},
+    {"id":"SRC-009","kind":"correction","label":"Founder correction","observed_at":"2026-09-07","assertion":"The decisive experience was the gap between seeing what AI made possible and watching work continue in the old paradigm."},
+    {"id":"SRC-010","kind":"instruction","label":"Founder product instruction","observed_at":"2026-09-07","assertion":"The UI and product marketing must prioritise the complete human judgement and accountability loop."}
+  ],
+  "items": [
+    {"id":"BI-001","type":"becoming","cluster":"self","title":"Builder of judgement","statement":"Move from personal AI fluency to systems that help other people exercise stronger judgement.","standing":"current_synthesis","confidence":"supported","audience":"private","version":2,"source_refs":["SRC-001","SRC-002","SRC-003","SRC-008"],"x":50,"y":48,"shareable":true},
+    {"id":"BI-002","type":"edge","cluster":"self","title":"Possibility detection","statement":"See newly possible work before established operating habits make it obvious.","standing":"observed_pattern","confidence":"supported","audience":"private","version":1,"source_refs":["SRC-001","SRC-009"],"x":39,"y":31,"shareable":true},
+    {"id":"BI-003","type":"standard","cluster":"judgement","title":"Human release judgement","statement":"Externally consequential work receives human polish, verification and accountable release judgement.","standing":"accepted","confidence":"direct","audience":"private","version":2,"source_refs":["SRC-002","SRC-010"],"x":68,"y":24,"shareable":true},
+    {"id":"BI-004","type":"method","cluster":"fluency","title":"Notice the information movement","statement":"Treat clicks, copying, repeated explanation and data preparation as signals about the system beneath the task.","standing":"accepted","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-001"],"x":24,"y":24,"shareable":true},
+    {"id":"BI-005","type":"tension","cluster":"growth","title":"Possibility gap","statement":"Seeing the AI-native future before colleagues can makes old-paradigm work feel frustrating and jarring.","standing":"current_tension","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-009"],"x":20,"y":48,"shareable":false},
+    {"id":"BI-006","type":"ambition","cluster":"future","title":"Rebuild the category","statement":"Work with willing leaders who intend to design the future of their category or industry.","standing":"accepted","confidence":"direct","audience":"private","version":2,"source_refs":["SRC-004"],"x":81,"y":35,"shareable":true},
+    {"id":"BI-007","type":"belief","cluster":"judgement","title":"Reallocate attention","statement":"AI carries governed information logistics so humans can own standards, relationships, strategy and final craft.","standing":"accepted","confidence":"direct","audience":"private","version":2,"source_refs":["SRC-002","SRC-010"],"x":76,"y":54,"shareable":true},
+    {"id":"BI-008","type":"anti_standard","cluster":"taste","title":"Reject convergence","statement":"Blind optimism, missing numbers and homogeneous thinking are warning signs, not acceptable speed gains.","standing":"accepted","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-005"],"x":62,"y":75,"shareable":true},
+    {"id":"BI-009","type":"taste","cluster":"taste","title":"Voice sovereignty","statement":"A system should preserve the person's cadence, standards and exceptions rather than import a model's house style.","standing":"accepted","confidence":"supported","audience":"private","version":1,"source_refs":["SRC-002","SRC-005"],"x":45,"y":82,"shareable":true},
+    {"id":"BI-010","type":"frontier","cluster":"growth","title":"Make judgement teachable","statement":"Encode standards, anti-examples and verification so quality can travel without producing copies of the founder.","standing":"current_synthesis","confidence":"supported","audience":"private","version":1,"source_refs":["SRC-003","SRC-005","SRC-006"],"x":30,"y":70,"shareable":true},
+    {"id":"BI-011","type":"value","cluster":"self","title":"Attention with people","statement":"Reinvest automated administration into customers, the public and consequential stakeholders.","standing":"accepted","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-002"],"x":49,"y":16,"shareable":false},
+    {"id":"BI-012","type":"identity","cluster":"future","title":"Builder, not persuader","statement":"Build with leaders already committed to the future rather than making belief in AI the product problem.","standing":"accepted","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-004"],"x":88,"y":51,"shareable":true},
+    {"id":"BI-013","type":"decision","cluster":"work","title":"Redesign work before judging people","statement":"Change the operating system and measures before drawing conclusions about the people inside it.","standing":"owned_call","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-003","SRC-009"],"x":15,"y":66,"shareable":false},
+    {"id":"BI-014","type":"hypothesis","cluster":"work","title":"High agency and high taste","statement":"A future division may need high-agency, high-taste builders and strong systems administrators.","standing":"hypothesis","confidence":"provisional","audience":"private","version":1,"source_refs":["SRC-008"],"x":11,"y":83,"shareable":false},
+    {"id":"BI-015","type":"experiment","cluster":"work","title":"Prepared divergence","statement":"Generate genuinely different, rubric-governed options before a meeting so human time begins at comparison and judgement.","standing":"testable_pattern","confidence":"supported","audience":"private","version":1,"source_refs":["SRC-006"],"x":34,"y":91,"shareable":true},
+    {"id":"BI-016","type":"example","cluster":"future","title":"Cultural exposure intelligence","statement":"Map aggregate narrative exposure to reveal saturation, gaps and emerging adjacencies without automating creative ownership.","standing":"provisional_pattern","confidence":"example_only","audience":"private","version":1,"source_refs":["SRC-007"],"x":89,"y":69,"shareable":true},
+    {"id":"BI-017","type":"learning","cluster":"growth","title":"Belief change is insufficient","statement":"Changing a person's mind is not the same as changing the incentives, system and measures around their behaviour.","standing":"accepted_learning","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-003"],"x":15,"y":34,"shareable":true},
+    {"id":"BI-018","type":"boundary","cluster":"judgement","title":"Independent audit is evidence","statement":"A second AI can test the work, but model agreement never becomes release authority.","standing":"accepted","confidence":"direct","audience":"private","version":1,"source_refs":["SRC-002"],"x":75,"y":12,"shareable":true},
+    {"id":"BI-019","type":"tension","cluster":"growth","title":"Personal capability and company value","statement":"The Brain belongs to the leader, while the company pays for stronger category and organisational outcomes.","standing":"current_tension","confidence":"direct","audience":"private","version":2,"source_refs":["SRC-008"],"x":22,"y":58,"shareable":false},
+    {"id":"BI-020","type":"purpose","cluster":"future","title":"Build the thing that compounds people","statement":"Use CTRL to help capable people become more discerning, more agentic and harder to flatten into generic output.","standing":"current_synthesis","confidence":"supported","audience":"private","version":1,"source_refs":["SRC-004","SRC-005","SRC-010"],"x":71,"y":88,"shareable":true}
+  ],
+  "relationships": [
+    {"id":"REL-001","from":"BI-002","to":"BI-001","type":"supports","meaning":"Possibility detection is a repeated source of the builder-of-judgement synthesis.","evidence_refs":["SRC-001","SRC-009"]},
+    {"id":"REL-002","from":"BI-010","to":"BI-001","type":"develops","meaning":"Making judgement teachable is the next expression of the emerging identity.","evidence_refs":["SRC-003","SRC-006"]},
+    {"id":"REL-003","from":"BI-003","to":"BI-010","type":"constrains","meaning":"Teachable systems must retain accountable human release judgement.","evidence_refs":["SRC-002","SRC-010"]},
+    {"id":"REL-004","from":"BI-009","to":"BI-010","type":"qualifies","meaning":"Teaching judgement cannot flatten the learner into the founder's or model's voice.","evidence_refs":["SRC-005"]},
+    {"id":"REL-005","from":"BI-005","to":"BI-010","type":"creates_need_for","meaning":"The possibility gap creates the need to transfer ways of seeing, not only conclusions.","evidence_refs":["SRC-003","SRC-009"]},
+    {"id":"REL-006","from":"BI-017","to":"BI-013","type":"supports","meaning":"The limits of persuasion support redesigning the operating system before judging people.","evidence_refs":["SRC-003"]},
+    {"id":"REL-007","from":"BI-019","to":"BI-001","type":"in_tension_with","meaning":"Individual growth must create value for the paying company without surrendering personal ownership.","evidence_refs":["SRC-008"]},
+    {"id":"REL-008","from":"BI-004","to":"BI-002","type":"expresses","meaning":"Noticing information movement is how possibility detection appears in everyday work.","evidence_refs":["SRC-001"]},
+    {"id":"REL-009","from":"BI-007","to":"BI-003","type":"requires","meaning":"Attention reallocation remains safe only when human release judgement is explicit.","evidence_refs":["SRC-002"]},
+    {"id":"REL-010","from":"BI-018","to":"BI-003","type":"qualifies","meaning":"Independent AI audit adds evidence but cannot replace accountable release judgement.","evidence_refs":["SRC-002"]},
+    {"id":"REL-011","from":"BI-008","to":"BI-009","type":"protects","meaning":"Rejecting convergence protects the person's distinct voice and standards.","evidence_refs":["SRC-005"]},
+    {"id":"REL-012","from":"BI-015","to":"BI-010","type":"tests","meaning":"Prepared divergence tests whether judgement can be encoded without reducing variation.","evidence_refs":["SRC-006"]},
+    {"id":"REL-013","from":"BI-006","to":"BI-012","type":"supports","meaning":"The ambition to rebuild categories supports choosing committed builders over sceptic persuasion.","evidence_refs":["SRC-004"]},
+    {"id":"REL-014","from":"BI-016","to":"BI-006","type":"example_of","meaning":"Cultural exposure intelligence is one provisional expression of category-shaping work.","evidence_refs":["SRC-007"]},
+    {"id":"REL-015","from":"BI-008","to":"BI-015","type":"constrains","meaning":"Prepared options must diverge in reasoning, not only in wording.","evidence_refs":["SRC-005","SRC-006"]},
+    {"id":"REL-016","from":"BI-013","to":"BI-014","type":"holds_open","meaning":"Redesigning the work keeps the future team-composition hypothesis open rather than treating it as settled.","evidence_refs":["SRC-003"]},
+    {"id":"REL-017","from":"BI-011","to":"BI-007","type":"is_outcome_of","meaning":"More attention with people is one intended result of governed information logistics.","evidence_refs":["SRC-002"]},
+    {"id":"REL-018","from":"BI-020","to":"BI-006","type":"supports","meaning":"Compounding capable people supports the ambition to rebuild categories through willing leaders.","evidence_refs":["SRC-004","SRC-010"]}
+  ],
+  "corrections": [
+    {"id":"COR-001","item_ref":"BI-003","from_version":1,"to_version":2,"summary":"Narrowed consequential work to externally consequential work and allowed reversible internal drafts to remain delegated."},
+    {"id":"COR-002","item_ref":"BI-019","from_version":1,"to_version":2,"summary":"Reframed the tension so leader capability is the mechanism for company value rather than a competing objective."},
+    {"id":"COR-003","item_ref":"BI-001","from_version":1,"to_version":2,"summary":"Moved the central synthesis from faster AI operator to builder of transferable judgement."}
+  ],
+  "share_portrait": {
+    "title": "How I am learning to build with AI without surrendering judgement",
+    "subtitle": "A public-safe portrait selected from Krish's private CTRL Brain",
+    "item_refs": ["BI-001", "BI-002", "BI-003", "BI-006", "BI-008", "BI-010"],
+    "excluded_private_count": 8
+  }
+}

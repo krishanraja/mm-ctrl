@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a100d">
+  <title>CTRL complete loop, product proof R2</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #0a100d;
+      --ink-raised: #111a16;
+      --ink-soft: #16221c;
+      --line: #294036;
+      --line-strong: #3c594c;
+      --paper: #f1efe5;
+      --paper-soft: #c4cec7;
+      --muted: #81948a;
+      --amber: #e3aa52;
+      --amber-soft: #2a2115;
+      --mint: #89e7ba;
+      --mint-soft: #122b20;
+      --danger: #ef927f;
+      --sans: Archivo, "Arial Narrow", "Segoe UI", sans-serif;
+      --claim: Newsreader, Georgia, serif;
+      --body: "Source Serif 4", Georgia, serif;
+      --mono: "IBM Plex Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--ink); }
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, textarea { font: inherit; }
+    button { touch-action: manipulation; }
+    button:focus-visible, textarea:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--mint);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: min(100%, 1120px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 224px minmax(0, 1fr);
+    }
+
+    .rail {
+      min-height: 100dvh;
+      padding: 28px 24px;
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: var(--sans);
+    }
+
+    .wordmark {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .1em;
+    }
+
+    .proof-tag {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .rail-copy {
+      margin: 62px 0 28px;
+      color: var(--paper-soft);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .steps {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .step {
+      min-height: 38px;
+      padding: 10px 0 10px 17px;
+      border-left: 1px solid var(--line);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: .02em;
+    }
+
+    .step.active {
+      border-left: 2px solid var(--amber);
+      color: var(--paper);
+      font-weight: 700;
+      padding-left: 16px;
+    }
+
+    .step.done {
+      border-left-color: var(--mint);
+      color: var(--mint);
+    }
+
+    .brain-meter {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .brain-count {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--sans);
+    }
+
+    .brain-count strong {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .brain-count span {
+      color: var(--paper-soft);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+    }
+
+    .brain-note {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .main {
+      min-width: 0;
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .frame {
+      width: min(100%, 680px);
+      min-height: 100dvh;
+      padding: 32px 40px 42px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-chrome {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 40px;
+      margin-bottom: 22px;
+      font-family: var(--sans);
+    }
+
+    .mobile-brain {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--paper-soft);
+      background: transparent;
+      font-family: var(--sans);
+      font-size: 11px;
+    }
+
+    .pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 0 4px rgba(227,170,82,.1);
+    }
+
+    .screen {
+      display: none;
+      flex: 1;
+      animation: arrive .3s ease-out;
+    }
+    .screen.active { display: flex; flex-direction: column; }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stage {
+      margin: 0 0 18px;
+      color: var(--amber);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-family: var(--claim);
+      font-weight: 500;
+      letter-spacing: -.025em;
+    }
+
+    h1 { max-width: 590px; font-size: clamp(46px, 6vw, 68px); line-height: .98; }
+    h2 { max-width: 590px; font-size: clamp(38px, 5vw, 56px); line-height: 1.02; }
+
+    .lede {
+      max-width: 560px;
+      margin: 22px 0 28px;
+      color: var(--paper-soft);
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
+    .decision {
+      margin: 0;
+      padding: 23px 0;
+      border-top: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line-strong);
+    }
+
+    .decision-label, .micro-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      line-height: 1.3;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .decision-text {
+      margin: 0;
+      color: var(--paper);
+      font-family: var(--claim);
+      font-size: 24px;
+      line-height: 1.22;
+    }
+
+    .prior {
+      margin: 18px 0 0;
+      color: var(--paper-soft);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 28px;
+    }
+
+    .primary, .secondary, .voice, .text-action {
+      min-height: 52px;
+      border: 0;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    .primary {
+      flex: 1;
+      padding: 0 20px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .primary:hover { background: #ffffff; }
+
+    .primary.mint { background: var(--mint); }
+
+    .secondary {
+      padding: 0 19px;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--paper);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .voice {
+      width: 52px;
+      flex: 0 0 52px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--paper);
+    }
+
+    .voice svg { width: 19px; height: 19px; }
+
+    .quiet {
+      align-self: center;
+      min-height: 44px;
+      padding: 12px 8px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 9px;
+      margin-top: 8px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 72px;
+      padding: 15px 17px;
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--paper);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .choice:hover { border-color: var(--line-strong); background: var(--ink-raised); }
+    .choice.selected { border-color: var(--amber); background: var(--amber-soft); }
+
+    .choice-index {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .choice-copy strong {
+      display: block;
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .choice-copy small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .choice-arrow { color: var(--muted); font-size: 18px; }
+
+    .thinking {
+      display: none;
+      margin-top: 18px;
+      color: var(--amber);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .thinking.visible { display: block; }
+
+    .challenge {
+      margin: 22px 0 0;
+      padding: 22px 0 24px 22px;
+      border-left: 2px solid var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .challenge-text {
+      margin: 0;
+      color: var(--paper);
+      font-family: var(--claim);
+      font-size: 29px;
+      line-height: 1.17;
+    }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .evidence {
+      min-width: 0;
+      padding: 18px 18px 18px 0;
+    }
+    .evidence + .evidence { padding-left: 18px; border-left: 1px solid var(--line); }
+
+    .evidence p {
+      margin: 0;
+      color: var(--paper-soft);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .evidence.unknown .micro-label { color: var(--amber); }
+
+    .reaction-title {
+      margin: 21px 0 10px;
+      color: var(--paper-soft);
+      font-size: 14px;
+    }
+
+    .reaction-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .reaction {
+      min-height: 44px;
+      padding: 0 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--paper);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .reaction:hover { border-color: var(--amber); }
+
+    .correction {
+      display: none;
+      margin-top: 16px;
+      padding: 17px;
+      border: 1px solid var(--amber);
+      background: var(--amber-soft);
+    }
+    .correction.visible { display: block; }
+
+    textarea {
+      width: 100%;
+      min-height: 104px;
+      resize: vertical;
+      padding: 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 2px;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .correction .primary { width: 100%; margin-top: 10px; }
+
+    .call {
+      margin-top: 21px;
+      padding: 22px;
+      border: 1px solid var(--line-strong);
+      background: var(--ink-raised);
+    }
+
+    .call-text {
+      margin: 0;
+      font-family: var(--claim);
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    .why-changed {
+      display: none;
+      margin: 14px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--amber);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .why-changed.visible { display: block; }
+
+    .test {
+      margin-top: 17px;
+      padding: 0 0 0 18px;
+      border-left: 1px solid var(--mint);
+    }
+
+    .test p {
+      margin: 0;
+      color: var(--paper-soft);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .call-edit {
+      display: none;
+      margin-top: 12px;
+    }
+    .call-edit.visible { display: block; }
+
+    .inline-link {
+      min-height: 44px;
+      padding: 10px 0;
+      border: 0;
+      background: transparent;
+      color: var(--paper-soft);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 12px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .learning {
+      margin-top: 22px;
+      padding: 23px;
+      border: 1px solid var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .learning-text {
+      margin: 0;
+      color: var(--paper);
+      font-family: var(--claim);
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    .future-use {
+      margin: 16px 0 0;
+      padding-top: 15px;
+      border-top: 1px solid rgba(227,170,82,.3);
+      color: var(--paper-soft);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .three-actions {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .three-actions button { min-height: 52px; }
+
+    .learning-edit {
+      display: none;
+      margin-top: 14px;
+    }
+    .learning-edit.visible { display: block; }
+
+    .result-mark {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 23px;
+      border: 1px solid var(--mint);
+      border-radius: 50%;
+      color: var(--mint);
+      font-family: var(--sans);
+      font-size: 20px;
+    }
+
+    .outcome-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 25px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .outcome {
+      padding: 19px 18px 20px 0;
+    }
+    .outcome + .outcome { padding-left: 18px; border-left: 1px solid var(--line); }
+    .outcome p { margin: 0; color: var(--paper-soft); font-size: 14px; line-height: 1.4; }
+
+    .receipt {
+      margin-top: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .receipt summary {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--paper);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      list-style: none;
+    }
+    .receipt summary::-webkit-details-marker { display: none; }
+
+    .owned {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .owned::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--mint);
+    }
+
+    .receipt-body {
+      padding: 2px 0 18px;
+      color: var(--paper-soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .change-file {
+      margin: 13px 0 0;
+      padding: 13px;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+      background: #070b09;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 20;
+      max-width: calc(100vw - 32px);
+      padding: 12px 15px;
+      border: 1px solid var(--line-strong);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 8px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 760px) {
+      .app { display: block; width: min(100%, 430px); }
+      .rail { display: none; }
+      .main { display: block; }
+      .frame { width: 100%; padding: max(18px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom)); }
+      .mobile-chrome { display: flex; }
+      h1 { font-size: clamp(43px, 13vw, 56px); }
+      h2 { font-size: clamp(37px, 10.5vw, 46px); }
+      .lede { margin: 17px 0 22px; font-size: 16px; }
+      .decision { padding: 18px 0; }
+      .decision-text { font-size: 21px; }
+      .stage { margin-bottom: 13px; }
+      .choice { min-height: 67px; padding: 13px 14px; }
+      .challenge { margin-top: 16px; padding: 17px 0 19px 17px; }
+      .challenge-text { font-size: 24px; }
+      .evidence-grid { margin-top: 16px; }
+      .evidence { padding: 14px 12px 14px 0; }
+      .evidence + .evidence { padding-left: 12px; }
+      .evidence p { font-size: 13px; }
+      .call, .learning { margin-top: 16px; padding: 17px; }
+      .call-text, .learning-text { font-size: 23px; }
+      .actions, .three-actions { padding-top: 20px; }
+      .screen[data-screen="contrast"] .actions { margin-top: 0; }
+      .outcome-grid { margin-top: 20px; }
+      .outcome { padding: 15px 12px 16px 0; }
+      .outcome + .outcome { padding-left: 12px; }
+      .outcome p { font-size: 13px; }
+    }
+
+    @media (max-width: 370px) {
+      .frame { padding-left: 16px; padding-right: 16px; }
+      h1 { font-size: 41px; }
+      h2 { font-size: 36px; }
+      .choice { grid-template-columns: 24px 1fr auto; gap: 8px; }
+      .reaction { padding: 0 11px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="rail" aria-label="Decision progress">
+      <div class="brand"><span class="wordmark">CTRL</span><span class="proof-tag">Live proof</span></div>
+      <p class="rail-copy">Pressure-test a real decision. Keep only the judgement worth carrying forward.</p>
+      <ol class="steps">
+        <li class="step active" data-step="start">The decision</li>
+        <li class="step" data-step="question">Find the weak point</li>
+        <li class="step" data-step="contrast">Challenge the view</li>
+        <li class="step" data-step="call">Own the call</li>
+        <li class="step" data-step="learn">Choose what stays</li>
+      </ol>
+      <div class="brain-meter">
+        <div class="brain-count"><strong data-brain-count>14</strong><span>judgement signals</span></div>
+        <p class="brain-note" data-brain-note>Nothing changes without your say-so.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="frame">
+        <header class="mobile-chrome">
+          <span class="wordmark">CTRL</span>
+          <button class="mobile-brain" type="button" data-brain-button aria-label="Brain status">
+            <span class="pulse" aria-hidden="true"></span>
+            <span><b data-mobile-count>14</b> things understood</span>
+          </button>
+        </header>
+
+        <section class="screen active" data-screen="start" aria-labelledby="start-title">
+          <p class="stage">One real decision</p>
+          <h1 id="start-title">Pressure-test the call. Keep what proves useful.</h1>
+          <p class="lede">CTRL challenges your thinking, helps you own the next move, then remembers only what you choose.</p>
+          <div class="decision">
+            <span class="decision-label">The call on your desk</span>
+            <p class="decision-text">Should we completely reorient marketing around AI and redesign the division?</p>
+            <p class="prior"><strong>Your starting view:</strong> probably yes. The current team is hesitant, while too much time goes into work AI could prepare before anyone enters the room.</p>
+          </div>
+          <div class="actions">
+            <button class="primary" type="button" data-go="question">Challenge my view</button>
+            <button class="voice" type="button" data-voice aria-label="Use voice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="3" width="8" height="12" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"></path></svg>
+            </button>
+          </div>
+          <button class="quiet" type="button" data-toast="This proof uses one fixed decision so you can judge the complete loop.">Use another decision</button>
+        </section>
+
+        <section class="screen" data-screen="question" aria-labelledby="question-title">
+          <p class="stage">Find the weak point</p>
+          <h2 id="question-title">What would most change your call?</h2>
+          <p class="lede">Pick the uncertainty that deserves pressure, not the answer you prefer.</p>
+          <div class="choices" role="list">
+            <button class="choice" type="button" data-route="strategy">
+              <span class="choice-index">01</span>
+              <span class="choice-copy"><strong>What marketing is now for</strong><small>The future job before the future team.</small></span>
+              <span class="choice-arrow" aria-hidden="true">&#8594;</span>
+            </button>
+            <button class="choice" type="button" data-route="incentives">
+              <span class="choice-index">02</span>
+              <span class="choice-copy"><strong>Incentives and measures</strong><small>Whether the system still rewards the old work.</small></span>
+              <span class="choice-arrow" aria-hidden="true">&#8594;</span>
+            </button>
+            <button class="choice" type="button" data-route="capability">
+              <span class="choice-index">03</span>
+              <span class="choice-copy"><strong>Who can actually adapt</strong><small>Observed ability, not stated enthusiasm.</small></span>
+              <span class="choice-arrow" aria-hidden="true">&#8594;</span>
+            </button>
+            <button class="choice" type="button" data-route="sequence">
+              <span class="choice-index">04</span>
+              <span class="choice-copy"><strong>I am not sure yet</strong><small>Let CTRL find the decision order.</small></span>
+              <span class="choice-arrow" aria-hidden="true">&#8594;</span>
+            </button>
+          </div>
+          <p class="thinking" role="status">Rebuilding the challenge around your choice...</p>
+          <div class="actions">
+            <button class="secondary" type="button" data-go="start">Back</button>
+            <button class="voice" type="button" data-voice aria-label="Answer with voice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="3" width="8" height="12" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"></path></svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="contrast" aria-labelledby="contrast-title">
+          <p class="stage">A different reading</p>
+          <h2 id="contrast-title">The weak point is not where you put it.</h2>
+          <div class="challenge">
+            <p class="challenge-text" data-challenge></p>
+          </div>
+          <div class="evidence-grid">
+            <div class="evidence">
+              <span class="micro-label">What the record supports</span>
+              <p data-known></p>
+            </div>
+            <div class="evidence unknown">
+              <span class="micro-label">Still unknown</span>
+              <p data-unknown></p>
+            </div>
+          </div>
+          <p class="reaction-title">What is your read?</p>
+          <div class="reaction-row">
+            <button class="reaction" type="button" data-reaction="changed">That changes it</button>
+            <button class="reaction" type="button" data-reaction="resist">Not convinced</button>
+            <button class="reaction" type="button" data-reaction="correct">Correct CTRL</button>
+            <button class="reaction" type="button" data-reaction="irrelevant">Not relevant</button>
+          </div>
+          <div class="correction" data-correction>
+            <label class="micro-label" for="correction-text">What did CTRL get wrong?</label>
+            <textarea id="correction-text">The bigger issue is </textarea>
+            <button class="primary" type="button" data-use-correction>Use my correction</button>
+          </div>
+          <div class="actions">
+            <button class="quiet" type="button" data-go="question">Choose a different weak point</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="call" aria-labelledby="call-title">
+          <p class="stage">Your call, sharpened</p>
+          <h2 id="call-title">Make the decision smaller and harder.</h2>
+          <div class="call">
+            <span class="micro-label">The call now</span>
+            <p class="call-text" data-call></p>
+            <p class="why-changed" data-why-changed></p>
+            <button class="inline-link" type="button" data-edit-call>Edit this call</button>
+            <div class="call-edit" data-call-edit>
+              <label class="sr-only" for="call-textarea">Edit your call</label>
+              <textarea id="call-textarea"></textarea>
+              <button class="secondary" type="button" data-save-call>Use my wording</button>
+            </div>
+          </div>
+          <div class="test">
+            <span class="micro-label">The smallest useful test</span>
+            <p data-test></p>
+          </div>
+          <div class="actions">
+            <button class="primary" type="button" data-keep-call>Use this call</button>
+          </div>
+          <button class="quiet" type="button" data-go="contrast">Back to the challenge</button>
+        </section>
+
+        <section class="screen" data-screen="learn" aria-labelledby="learn-title">
+          <p class="stage">Your Brain asks permission</p>
+          <h2 id="learn-title">One thing may be worth carrying forward.</h2>
+          <p class="lede">This is a proposal, not a hidden update.</p>
+          <div class="learning">
+            <span class="micro-label">Proposed judgement principle</span>
+            <p class="learning-text" data-learning></p>
+            <p class="future-use"><strong>Next time:</strong> <span data-future></span></p>
+            <div class="learning-edit" data-learning-edit>
+              <label class="sr-only" for="learning-textarea">Edit the proposed Brain learning</label>
+              <textarea id="learning-textarea"></textarea>
+            </div>
+          </div>
+          <div class="three-actions">
+            <button class="primary mint" type="button" data-learn="keep">Keep it</button>
+            <button class="secondary" type="button" data-learn="edit">Edit</button>
+            <button class="secondary" type="button" data-learn="skip">Skip</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="finish" aria-labelledby="finish-title">
+          <div class="result-mark" aria-hidden="true">&#10003;</div>
+          <p class="stage" data-finish-stage>Decision complete</p>
+          <h2 id="finish-title" data-finish-title>Clearer now. Smarter next time.</h2>
+          <p class="lede" data-finish-lede></p>
+          <div class="outcome-grid">
+            <div class="outcome">
+              <span class="micro-label">The decision</span>
+              <p data-final-call></p>
+            </div>
+            <div class="outcome">
+              <span class="micro-label">The Brain</span>
+              <p data-final-brain></p>
+            </div>
+          </div>
+          <details class="receipt">
+            <summary><span class="owned">Your owned copy is ready</span><span aria-hidden="true">+</span></summary>
+            <div class="receipt-body">
+              The readable decision, evidence boundary, correction and approved learning are versioned together. You can take the copy with you.
+              <div class="change-file" data-receipt></div>
+            </div>
+          </details>
+          <div class="actions">
+            <button class="primary" type="button" data-restart>Try another route</button>
+          </div>
+          <button class="quiet" type="button" data-toast="The wider Brain view is the next material surface, after this loop is approved.">Open my Brain</button>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const routes = {
+      strategy: {
+        challenge: "You are making a team-shape decision before defining marketing's future job. That reverses the decision order.",
+        known: "The current workflow wastes human attention. AI can prepare varied, standards-governed options before the meeting.",
+        unknown: "Which outcomes the rebuilt marketing function must own, and which forms of human judgement create advantage.",
+        call: "Define marketing's AI-era job first. Redesign the division only after the new work, standards and accountable outcomes are explicit.",
+        test: "Write the future operating brief around three real outputs. For each, mark what AI prepares, what a human judges and who owns the result.",
+        learning: "Define the future job before judging the people or structure built for the old one.",
+        future: "CTRL will test operating-model clarity before treating an organisation chart as the answer."
+      },
+      incentives: {
+        challenge: "'Use Claude more' changes a tool count. It does not change what the organisation rewards, measures or ships.",
+        known: "People still spend an hour in a meeting to shape one social post. The old process remains the path of least resistance.",
+        unknown: "How behaviour changes when quality, speed, customer contact and accountable ownership replace activity as the measures.",
+        call: "Reorient marketing around a new operating standard, then change incentives and measures before drawing conclusions about adoption.",
+        test: "For ten working days, score one repeated workflow on quality, cycle time, customer contact and named ownership. Do not score AI usage.",
+        learning: "Treat tool usage as activity, not evidence of changed work or improved outcomes.",
+        future: "CTRL will ask what the system rewards before accepting an adoption problem at face value."
+      },
+      capability: {
+        challenge: "Hesitation under an uncommitted strategy may signal a capability problem. It does not prove a fixed one.",
+        known: "The existing shape produces avoidable work. One hour was spent brainstorming a post that could have arrived as varied options.",
+        unknown: "Who can set standards, judge AI work and take ownership once the strategy, incentives and operating method are clear.",
+        call: "Reorient marketing around AI, but test the current team under one explicit operating standard before deciding the final shape of the division.",
+        test: "Give each role one real workflow, a quality rubric and ten working days. Look for better judgement, faster learning and clear ownership, not enthusiasm.",
+        learning: "Test people under explicit strategy, incentives and standards before treating resistance as fixed capability.",
+        future: "CTRL will separate system ambiguity from demonstrated human capability before a people-shape decision."
+      },
+      sequence: {
+        challenge: "This is not one decision. It is three decisions pretending to be one: future strategy, operating model and people shape.",
+        known: "The current production model is wasteful, and firsthand AI fluency exposes a much more capable alternative.",
+        unknown: "The right future job of marketing, the system required to support it and which people can succeed inside that system.",
+        call: "Commit the future marketing strategy, define its operating model, then test capability. Do not collapse all three into a replacement decision.",
+        test: "Run one working session in that order. End with a written strategy choice, one redesigned workflow and a fair capability test with named evidence.",
+        learning: "Separate strategy, operating model and people shape when one emotionally loaded decision is hiding three different calls.",
+        future: "CTRL will expose decision-order problems before helping you act on the final layer."
+      }
+    };
+
+    const state = {
+      screen: "start",
+      route: "capability",
+      reaction: "changed",
+      correction: "",
+      call: "",
+      learning: "",
+      learned: false,
+      skipped: false,
+      brainCount: 14
+    };
+
+    const screens = [...document.querySelectorAll(".screen")];
+    const steps = [...document.querySelectorAll(".step")];
+    const order = ["start", "question", "contrast", "call", "learn", "finish"];
+    const toast = document.querySelector(".toast");
+    let toastTimer;
+
+    function announce(message) {
+      toast.textContent = message;
+      toast.classList.add("visible");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("visible"), 2600);
+    }
+
+    function routeData() { return routes[state.route]; }
+
+    function setScreen(name) {
+      state.screen = name;
+      screens.forEach(screen => screen.classList.toggle("active", screen.dataset.screen === name));
+      const currentIndex = Math.min(order.indexOf(name), 4);
+      steps.forEach((step, index) => {
+        step.classList.toggle("active", index === currentIndex);
+        step.classList.toggle("done", index < currentIndex || name === "finish");
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      const heading = document.querySelector(`[data-screen="${name}"] h1, [data-screen="${name}"] h2`);
+      if (heading) heading.setAttribute("tabindex", "-1");
+    }
+
+    function paintContrast() {
+      const data = routeData();
+      document.querySelector("[data-challenge]").textContent = data.challenge;
+      document.querySelector("[data-known]").textContent = data.known;
+      document.querySelector("[data-unknown]").textContent = data.unknown;
+    }
+
+    function makeCall() {
+      const data = routeData();
+      let call = data.call;
+      let why = "";
+      if (state.reaction === "resist") {
+        call = `Keep the original direction provisional. Test its weakest assumption before changing the division: ${data.unknown}`;
+        why = "You were not convinced, so CTRL has kept your direction and turned its challenge into a test instead.";
+      }
+      if (state.reaction === "correct") {
+        call = `Keep your direction, with this correction governing the next move: ${state.correction}`;
+        why = "Your correction replaced CTRL's reading. It will travel with the decision and any later learning.";
+      }
+      if (state.reaction === "irrelevant") {
+        call = "Leave the original decision unchanged. Treat this contrast as rejected and do not learn from it.";
+        why = "You marked the challenge irrelevant. CTRL has not smuggled it into the call.";
+      }
+      state.call = call;
+      document.querySelector("[data-call]").textContent = call;
+      document.querySelector("[data-test]").textContent = state.reaction === "irrelevant"
+        ? "Return with different evidence or a different question. This reading has no authority."
+        : data.test;
+      const whyElement = document.querySelector("[data-why-changed]");
+      whyElement.textContent = why;
+      whyElement.classList.toggle("visible", Boolean(why));
+      document.querySelector("#call-textarea").value = call;
+    }
+
+    function paintLearning() {
+      const data = routeData();
+      state.learning = data.learning;
+      document.querySelector("[data-learning]").textContent = state.learning;
+      document.querySelector("[data-future]").textContent = data.future;
+      document.querySelector("#learning-textarea").value = state.learning;
+    }
+
+    function finish(mode) {
+      state.learned = mode === "keep";
+      state.skipped = mode === "skip" || mode === "irrelevant";
+      state.brainCount = state.learned ? 15 : 14;
+      document.querySelectorAll("[data-brain-count]").forEach(el => el.textContent = state.brainCount);
+      document.querySelectorAll("[data-mobile-count]").forEach(el => el.textContent = state.brainCount);
+      document.querySelector("[data-brain-note]").textContent = state.learned
+        ? "One approved principle added."
+        : "No new principle added.";
+      document.querySelector("[data-final-call]").textContent = state.call;
+      const finalBrain = document.querySelector("[data-final-brain]");
+      const finalLede = document.querySelector("[data-finish-lede]");
+      const finishTitle = document.querySelector("[data-finish-title]");
+      if (state.learned) {
+        finishTitle.textContent = "Clearer now. Smarter next time.";
+        finalLede.textContent = "You own the call. One approved judgement principle will shape the next relevant decision.";
+        finalBrain.textContent = `Added with your approval: ${state.learning}`;
+      } else {
+        finishTitle.textContent = "Clearer now. Nothing taken.";
+        finalLede.textContent = "You own the call. The Brain stayed unchanged because you did not approve a learning.";
+        finalBrain.textContent = "No learning added. The rejected or skipped reading will not steer the next decision.";
+      }
+      const status = state.learned ? "approved" : "unchanged";
+      document.querySelector("[data-receipt]").textContent =
+        `brain/decisions/marketing-ai.md\nstatus: owned\nbrain_change: ${status}\nsource_boundary: preserved\nportable_version: ready`;
+      setScreen("finish");
+    }
+
+    document.querySelectorAll("[data-go]").forEach(button => {
+      button.addEventListener("click", () => setScreen(button.dataset.go));
+    });
+
+    document.querySelectorAll("[data-route]").forEach(button => {
+      button.addEventListener("click", () => {
+        state.route = button.dataset.route;
+        document.querySelectorAll("[data-route]").forEach(item => item.classList.toggle("selected", item === button));
+        const thinking = document.querySelector(".thinking");
+        thinking.classList.add("visible");
+        paintContrast();
+        setTimeout(() => {
+          thinking.classList.remove("visible");
+          setScreen("contrast");
+        }, 420);
+      });
+    });
+
+    document.querySelectorAll("[data-reaction]").forEach(button => {
+      button.addEventListener("click", () => {
+        const reaction = button.dataset.reaction;
+        state.reaction = reaction;
+        if (reaction === "correct") {
+          document.querySelector("[data-correction]").classList.add("visible");
+          document.querySelector("#correction-text").focus();
+          return;
+        }
+        document.querySelector("[data-correction]").classList.remove("visible");
+        makeCall();
+        setScreen("call");
+      });
+    });
+
+    document.querySelector("[data-use-correction]").addEventListener("click", () => {
+      const value = document.querySelector("#correction-text").value.trim();
+      if (value.length < 8) {
+        announce("Give CTRL a little more to work with.");
+        return;
+      }
+      state.correction = value;
+      makeCall();
+      setScreen("call");
+    });
+
+    document.querySelector("[data-edit-call]").addEventListener("click", () => {
+      document.querySelector("[data-call-edit]").classList.toggle("visible");
+      document.querySelector("#call-textarea").focus();
+    });
+
+    document.querySelector("[data-save-call]").addEventListener("click", () => {
+      const value = document.querySelector("#call-textarea").value.trim();
+      if (value.length < 12) {
+        announce("The call needs a little more detail.");
+        return;
+      }
+      state.call = value;
+      document.querySelector("[data-call]").textContent = value;
+      document.querySelector("[data-call-edit]").classList.remove("visible");
+      const why = document.querySelector("[data-why-changed]");
+      why.textContent = "Your wording now governs the decision.";
+      why.classList.add("visible");
+      announce("Your wording is now the call.");
+    });
+
+    document.querySelector("[data-keep-call]").addEventListener("click", () => {
+      if (state.reaction === "irrelevant") {
+        finish("irrelevant");
+        return;
+      }
+      paintLearning();
+      setScreen("learn");
+    });
+
+    document.querySelectorAll("[data-learn]").forEach(button => {
+      button.addEventListener("click", () => {
+        const action = button.dataset.learn;
+        const editor = document.querySelector("[data-learning-edit]");
+        if (action === "edit" && !editor.classList.contains("visible")) {
+          editor.classList.add("visible");
+          document.querySelector("#learning-textarea").focus();
+          button.textContent = "Use edit";
+          return;
+        }
+        if (action === "edit") {
+          const value = document.querySelector("#learning-textarea").value.trim();
+          if (value.length < 12) {
+            announce("Keep the principle specific enough to be useful.");
+            return;
+          }
+          state.learning = value;
+          finish("keep");
+          return;
+        }
+        finish(action);
+      });
+    });
+
+    document.querySelectorAll("[data-toast]").forEach(button => {
+      button.addEventListener("click", () => announce(button.dataset.toast));
+    });
+
+    document.querySelectorAll("[data-voice]").forEach(button => {
+      button.addEventListener("click", () => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          announce("Voice is unavailable here. Every step still works by tap and type.");
+          return;
+        }
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-GB";
+        recognition.interimResults = false;
+        button.setAttribute("aria-pressed", "true");
+        announce("Listening...");
+        recognition.onresult = event => {
+          const spoken = event.results[0][0].transcript;
+          button.setAttribute("aria-pressed", "false");
+          announce(`Heard: ${spoken}`);
+        };
+        recognition.onerror = () => {
+          button.setAttribute("aria-pressed", "false");
+          announce("Voice could not start. Tap or type instead.");
+        };
+        recognition.onend = () => button.setAttribute("aria-pressed", "false");
+        recognition.start();
+      });
+    });
+
+    document.querySelectorAll("[data-brain-button]").forEach(button => {
+      button.addEventListener("click", () => announce(
+        state.learned ? "Your Brain has one newly approved principle." : "Your Brain has not changed yet."
+      ));
+    });
+
+    document.querySelector("[data-restart]").addEventListener("click", () => {
+      state.screen = "start";
+      state.route = "capability";
+      state.reaction = "changed";
+      state.correction = "";
+      state.call = "";
+      state.learning = "";
+      state.learned = false;
+      state.skipped = false;
+      state.brainCount = 14;
+      document.querySelectorAll("[data-route]").forEach(item => item.classList.remove("selected"));
+      document.querySelector("[data-correction]").classList.remove("visible");
+      document.querySelector("[data-call-edit]").classList.remove("visible");
+      document.querySelector("[data-learning-edit]").classList.remove("visible");
+      document.querySelector("#correction-text").value = "The bigger issue is ";
+      document.querySelectorAll("[data-brain-count]").forEach(el => el.textContent = "14");
+      document.querySelectorAll("[data-mobile-count]").forEach(el => el.textContent = "14");
+      document.querySelector("[data-brain-note]").textContent = "Nothing changes without your say-so.";
+      document.querySelector("[data-learn=edit]").textContent = "Edit";
+      setScreen("start");
+    });
+
+    paintContrast();
+  </script>
+</body>
+</html>

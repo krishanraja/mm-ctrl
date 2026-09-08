@@ -1,0 +1,364 @@
+{
+  "fixture_version": "1.0.0",
+  "fixture_status": "synthetic_demo",
+  "as_of": "2026-09-07T21:30:00+01:00",
+  "operator": {
+    "display_name": "Krish",
+    "role": "Mindmake proof lead",
+    "audience": "operator_private"
+  },
+  "customer": {
+    "id": "SYN-CUST-014",
+    "display_name": "Maya Chen",
+    "role": "Founder and CEO",
+    "organisation": "Aperture House",
+    "brain_name": "Maya's Brain",
+    "proof_day": 11,
+    "proof_length_days": 30,
+    "next_session_at": "2026-09-08T10:30:00+01:00",
+    "primary_aim": "Make the company's creative standard transferable without turning it into a formula.",
+    "fixture_disclosure": "Maya Chen and Aperture House are synthetic. This proof demonstrates product behaviour, not a real person or inference."
+  },
+  "latest_evidence_event": {
+    "id": "EVT-014",
+    "source_ref": "SRC-105",
+    "received_at": "2026-09-07T20:42:00+01:00",
+    "label": "Voice reflection received",
+    "summary": "Maya distinguished imitation from perceptual judgement and described the real handoff she wants from her team.",
+    "changes": [
+      {
+        "item_ref": "BI-105",
+        "change": "strengthened",
+        "from": "working_hypothesis",
+        "to": "supported_synthesis"
+      },
+      {
+        "item_ref": "BI-109",
+        "change": "weakened",
+        "from": "working_hypothesis",
+        "to": "discarded_interpretation"
+      },
+      {
+        "item_ref": "BI-103",
+        "change": "qualified",
+        "from": "direct_standard",
+        "to": "direct_standard_with_boundary"
+      }
+    ]
+  },
+  "intervention": {
+    "id": "INT-014",
+    "status": "ready",
+    "standing": "operator_proposal",
+    "audience": "operator_private",
+    "title": "Let her show you what she notices",
+    "directive": "Do not ask Maya another abstract question about where AI belongs. Put two deliberately flawed launch directions in front of her and make her diagnose the difference.",
+    "why_now": "The latest reflection weakens the idea that Maya is reluctant to delegate. The sharper issue is that her evaluation standard is still easier for her to recognise than to transfer.",
+    "expected_value": "Turn an instinctive final edit into concrete positive and negative criteria the team can learn, test and challenge.",
+    "exact_opening": "Which direction is closer to something you would put your name to, and what would still stop you shipping it?",
+    "follow_up": "Could someone on your team have predicted those objections before the work reached you?",
+    "listen_for": [
+      "The first detail she notices without prompting",
+      "Whether she describes the audience, the brand or her own discomfort",
+      "A rule that survives both examples",
+      "A point where she refuses to turn judgement into a formula"
+    ],
+    "material_to_bring": {
+      "kind": "paired_contrast",
+      "label": "Two launch directions that fail differently",
+      "status": "draftable_from_current_brain"
+    },
+    "evidence_refs": ["SRC-101", "SRC-102", "SRC-105"],
+    "item_refs": ["BI-101", "BI-102", "BI-103", "BI-105", "BI-109"],
+    "learning_if_used": [
+      "Specific negative and positive taste criteria",
+      "Whether Maya's bottleneck is judgement transfer or role design",
+      "Whether the team can learn the criteria without copying her voice"
+    ],
+    "alternatives": [
+      {
+        "id": "ALT-01",
+        "label": "Map the approval chain",
+        "difference": "Tests operating structure rather than perceptual judgement.",
+        "reason_not_primary": "The latest evidence makes the unspoken quality standard causally prior."
+      },
+      {
+        "id": "ALT-02",
+        "label": "Ask for one admired example",
+        "difference": "Collects a positive reference without testing rejection or transfer.",
+        "reason_not_primary": "Lower cognitive load, but less likely to expose the criteria behind the final edit."
+      }
+    ]
+  },
+  "ready_now": {
+    "title": "Control is not the pattern. Untranslated perception is.",
+    "body": "Maya is willing to delegate generation. She takes work back when the people around her cannot yet see the quality loss she sees. The route is not to persuade her to release control. It is to make that perception inspectable, teachable and open to challenge.",
+    "standing": "supported_synthesis",
+    "confidence": "supported",
+    "audience": "customer_private",
+    "source_refs": ["SRC-101", "SRC-102", "SRC-105"],
+    "item_refs": ["BI-102", "BI-105", "BI-109"]
+  },
+  "deepen_route": {
+    "id": "GAP-014",
+    "title": "Find the first signal, not another opinion",
+    "gap": "The Brain knows several outcomes Maya rejects but not the first observable detail that tells her a piece of work is off.",
+    "route": "Use the paired contrast for six minutes in the next session.",
+    "effort": "6 minutes",
+    "why_it_matters": "The answer could convert a private instinct into a reusable evaluation signal without claiming to capture all of her taste.",
+    "fallback": "If the session moves elsewhere, send the two directions afterwards and invite a one-tap choice plus voice note."
+  },
+  "sources": [
+    {
+      "id": "SRC-101",
+      "kind": "consented_transcript",
+      "label": "Opening conversation",
+      "observed_at": "2026-08-29",
+      "audience": "customer_private",
+      "assertion": "I want them to bring me work that is nearly there, not more options I have to rescue."
+    },
+    {
+      "id": "SRC-102",
+      "kind": "consented_transcript",
+      "label": "Strategy session 1",
+      "observed_at": "2026-09-03",
+      "audience": "customer_private",
+      "assertion": "The launch was polished, but it could have belonged to anyone. Nobody could tell me what only we would say."
+    },
+    {
+      "id": "SRC-103",
+      "kind": "customer_reply",
+      "label": "Email reply",
+      "observed_at": "2026-09-05",
+      "audience": "customer_private",
+      "assertion": "I do not want a brand rulebook so tight that the next good idea gets rejected for being new."
+    },
+    {
+      "id": "SRC-104",
+      "kind": "operator_note",
+      "label": "Krish's private note",
+      "observed_at": "2026-09-03",
+      "audience": "operator_private",
+      "assertion": "Maya became precise only when comparing two concrete directions. Abstract questions produced principles she later contradicted."
+    },
+    {
+      "id": "SRC-105",
+      "kind": "voice_reflection",
+      "label": "Maya voice reflection",
+      "observed_at": "2026-09-07",
+      "audience": "customer_private",
+      "assertion": "I don't need the team to imitate me. I need them to notice what I notice before I have to fix it."
+    }
+  ],
+  "brain_items": [
+    {
+      "id": "BI-101",
+      "type": "goal",
+      "cluster": "future",
+      "title": "Transfer the standard",
+      "statement": "Make the creative standard usable by the team without centralising every final call in Maya.",
+      "standing": "accepted_goal",
+      "confidence": "direct",
+      "audience": "customer_private",
+      "version": 2,
+      "source_refs": ["SRC-101", "SRC-105"]
+    },
+    {
+      "id": "BI-102",
+      "type": "anti_standard",
+      "cluster": "taste",
+      "title": "Polished but interchangeable",
+      "statement": "Reject work that is smooth and complete but could plausibly belong to any competitor.",
+      "standing": "accepted_anti_standard",
+      "confidence": "direct",
+      "audience": "customer_private",
+      "version": 1,
+      "source_refs": ["SRC-102"]
+    },
+    {
+      "id": "BI-103",
+      "type": "standard",
+      "cluster": "taste",
+      "title": "Distinctive without becoming formulaic",
+      "statement": "Work must feel recognisably ours while leaving room for an idea Maya has not seen before.",
+      "standing": "direct_standard_with_boundary",
+      "confidence": "direct",
+      "audience": "customer_private",
+      "version": 2,
+      "source_refs": ["SRC-102", "SRC-103", "SRC-105"]
+    },
+    {
+      "id": "BI-104",
+      "type": "behaviour",
+      "cluster": "leadership",
+      "title": "Final-mile rescue",
+      "statement": "Maya frequently performs the final edit herself when work reaches her without an explicit quality rationale.",
+      "standing": "observed_pattern",
+      "confidence": "supported",
+      "audience": "operator_private",
+      "version": 1,
+      "source_refs": ["SRC-101", "SRC-104"]
+    },
+    {
+      "id": "BI-105",
+      "type": "synthesis",
+      "cluster": "growth",
+      "title": "Untranslated perception",
+      "statement": "The current bottleneck is not willingness to delegate generation. It is the gap between Maya recognising quality and other people being able to anticipate the same signals.",
+      "standing": "supported_synthesis",
+      "confidence": "supported",
+      "audience": "customer_private",
+      "version": 2,
+      "source_refs": ["SRC-101", "SRC-102", "SRC-105"]
+    },
+    {
+      "id": "BI-106",
+      "type": "edge",
+      "cluster": "self",
+      "title": "Fast diagnosis of wrongness",
+      "statement": "Maya can locate why a direction feels wrong faster than she can state the positive rule in advance.",
+      "standing": "working_hypothesis",
+      "confidence": "provisional",
+      "audience": "operator_private",
+      "version": 1,
+      "source_refs": ["SRC-102", "SRC-104"]
+    },
+    {
+      "id": "BI-107",
+      "type": "tension",
+      "cluster": "leadership",
+      "title": "Scale versus surprise",
+      "statement": "Making judgement repeatable could increase team agency or harden today's preferences into a formula that rejects tomorrow's best idea.",
+      "standing": "current_tension",
+      "confidence": "direct",
+      "audience": "customer_private",
+      "version": 1,
+      "source_refs": ["SRC-103", "SRC-105"]
+    },
+    {
+      "id": "BI-108",
+      "type": "constraint",
+      "cluster": "organisation",
+      "title": "Throughput is rewarded",
+      "statement": "The current team process rewards content volume and deadline completion more visibly than distinctive judgement.",
+      "standing": "working_hypothesis",
+      "confidence": "provisional",
+      "audience": "operator_private",
+      "version": 1,
+      "source_refs": ["SRC-101"]
+    },
+    {
+      "id": "BI-109",
+      "type": "discarded",
+      "cluster": "growth",
+      "title": "Reluctance to delegate",
+      "statement": "Maya keeps final work because she fundamentally distrusts delegation.",
+      "standing": "discarded_interpretation",
+      "confidence": "not_current",
+      "audience": "operator_private",
+      "version": 2,
+      "source_refs": ["SRC-101", "SRC-105"]
+    },
+    {
+      "id": "BI-110",
+      "type": "boundary",
+      "cluster": "judgement",
+      "title": "Do not clone the founder",
+      "statement": "The system may make quality criteria inspectable but must not turn the team into an imitation of Maya's voice.",
+      "standing": "accepted_boundary",
+      "confidence": "direct",
+      "audience": "customer_private",
+      "version": 1,
+      "source_refs": ["SRC-103", "SRC-105"]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "REL-101",
+      "from": "BI-102",
+      "to": "BI-105",
+      "type": "supports",
+      "meaning": "The repeated rejection of interchangeable work supports the interpretation that evaluation, not generation, is the current bottleneck.",
+      "evidence_refs": ["SRC-102", "SRC-105"]
+    },
+    {
+      "id": "REL-102",
+      "from": "BI-103",
+      "to": "BI-107",
+      "type": "in_tension_with",
+      "meaning": "A recognisable standard must coexist with permission for ideas that have not appeared before.",
+      "evidence_refs": ["SRC-103"]
+    },
+    {
+      "id": "REL-103",
+      "from": "BI-104",
+      "to": "BI-105",
+      "type": "exemplifies",
+      "meaning": "Final-mile rescue is one behavioural expression of the evaluation gap.",
+      "evidence_refs": ["SRC-101", "SRC-104"]
+    },
+    {
+      "id": "REL-104",
+      "from": "BI-105",
+      "to": "BI-101",
+      "type": "informs",
+      "meaning": "Untranslated perception creates the need to make the standard transferable.",
+      "evidence_refs": ["SRC-105"]
+    },
+    {
+      "id": "REL-105",
+      "from": "BI-110",
+      "to": "BI-101",
+      "type": "qualifies",
+      "meaning": "Transfer must improve independent judgement rather than produce founder imitation.",
+      "evidence_refs": ["SRC-103", "SRC-105"]
+    }
+  ],
+  "private_ask": {
+    "suggestions": [
+      "The conversation has moved to incentives. What should I protect?",
+      "What evidence would change your current interpretation?",
+      "Give me a sharper follow-up without derailing the session."
+    ],
+    "demo_query": "The conversation has moved to incentives. What should I protect?",
+    "demo_response": {
+      "answer": "Protect the distinction between making Maya's judgement visible and making everyone copy Maya. If incentives become the focus, ask what the team is rewarded for noticing before you discuss output volume.",
+      "next_question": "What would the team have to notice earlier for Maya not to perform the final rescue?",
+      "standing": "session_guidance",
+      "audience": "operator_private",
+      "evidence_refs": ["SRC-101", "SRC-103", "SRC-105"],
+      "durable_effect": "none_until_session_evidence_returns"
+    }
+  },
+  "customer_preview": {
+    "headline": "You are moving from being the final standard to making the standard visible.",
+    "body": "The opportunity is not to remove your judgement from the work. It is to help other people notice the quality loss before the work reaches you, while protecting their ability to surprise you.",
+    "standing": "supported_synthesis",
+    "audience": "customer_private",
+    "source_refs": ["SRC-101", "SRC-102", "SRC-103", "SRC-105"]
+  },
+  "fallback_states": {
+    "sparse": {
+      "title": "One useful signal. One important gap.",
+      "observation": "Maya becomes more precise when reacting to real work than when describing principles in the abstract.",
+      "next_move": "Bring one concrete contrast to the next conversation.",
+      "caveat": "This is an early pattern from two moments, not a settled trait."
+    },
+    "quiet": {
+      "title": "Nothing new has earned an interruption.",
+      "body": "The current session route still holds. The Brain is ready if the conversation moves."
+    },
+    "loading": {
+      "title": "Reading the latest evidence",
+      "body": "Current Brain meaning remains visible until the new evidence is checked."
+    },
+    "stale": {
+      "title": "The latest source could not be refreshed.",
+      "body": "This view uses evidence verified on 5 September. Recheck before treating the intervention as current."
+    },
+    "error": {
+      "title": "The new evidence could not be processed.",
+      "body": "Nothing in Maya's Brain has changed. Retry the source or add a short operator note."
+    }
+  }
+}

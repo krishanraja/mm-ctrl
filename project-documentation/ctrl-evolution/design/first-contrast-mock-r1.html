@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CTRL first contrast, render R1</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #0a100d;
+      --ink-2: #111a16;
+      --ink-3: #18241f;
+      --line: #22322b;
+      --seam: #30463d;
+      --text: #e6ede8;
+      --text-2: #b0c0b7;
+      --muted: #788c82;
+      --paper: #f2f1ea;
+      --amber: #e0a44a;
+      --amber-wash: #2b2113;
+      --mint: #7fe3b4;
+      --sans: Archivo, "Arial Narrow", "Segoe UI", sans-serif;
+      --claim: Newsreader, Georgia, serif;
+      --body: "Source Serif 4", Georgia, serif;
+      --mono: "IBM Plex Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--ink);
+      color: var(--text);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea { font: inherit; }
+
+    button, input[type="range"] { touch-action: manipulation; }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid var(--mint);
+      outline-offset: 3px;
+    }
+
+    .phone {
+      width: min(100%, 390px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      background: var(--ink);
+      overflow-x: clip;
+    }
+
+    .shell {
+      min-height: 100dvh;
+      padding: max(18px, env(safe-area-inset-top)) 20px max(22px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 38px;
+    }
+
+    .wordmark {
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .save-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .save-state::before {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-2);
+      content: "";
+    }
+
+    .decision {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-top: 12px;
+      padding: 15px 0 16px;
+    }
+
+    .object-label {
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .13em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .decision p:last-child {
+      margin: 0;
+      color: var(--text-2);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.42;
+    }
+
+    .instrument {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 25px;
+    }
+
+    .reading {
+      position: relative;
+      min-height: 216px;
+      padding-left: 18px;
+      display: grid;
+    }
+
+    .reading::before {
+      position: absolute;
+      top: 5px;
+      bottom: 8px;
+      left: 0;
+      width: 2px;
+      background: var(--seam);
+      content: "";
+    }
+
+    .reading::after {
+      position: absolute;
+      top: 5px;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--text-2);
+      border-radius: 50%;
+      background: var(--ink);
+      content: "";
+      transition: border-color 180ms ease, background-color 180ms ease;
+    }
+
+    body[data-view="contrast"] .reading::after {
+      border-color: var(--amber);
+      background: var(--amber);
+    }
+
+    .statement {
+      position: relative;
+      grid-area: 1 / 1;
+      margin: 0;
+      font-family: var(--claim);
+      font-size: clamp(27px, 7.25vw, 30px);
+      font-weight: 500;
+      letter-spacing: -.025em;
+      line-height: 1.08;
+      text-wrap: balance;
+      transition: none;
+    }
+
+    .statement strong {
+      color: var(--amber);
+      font-weight: 500;
+    }
+
+    .statement-current { opacity: 1; transform: translateY(0); }
+    .statement-contrast { opacity: 0; transform: translateY(4px); pointer-events: none; }
+
+    body[data-view="contrast"] .statement-current { opacity: 0; transform: translateY(-4px); pointer-events: none; }
+    body[data-view="contrast"] .statement-contrast { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    .lens {
+      margin-top: 6px;
+      padding: 12px 0 2px;
+    }
+
+    .lens-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 7px;
+    }
+
+    .lens-label {
+      min-height: 32px;
+      border: 0;
+      padding: 5px 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      line-height: 1.35;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .lens-label:last-child { text-align: right; }
+    body[data-view="current"] .lens-label:first-child,
+    body[data-view="contrast"] .lens-label:last-child { color: var(--text); }
+
+    .range-wrap {
+      position: relative;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    .range-wrap::before {
+      position: absolute;
+      right: 0;
+      left: 0;
+      height: 2px;
+      background: var(--line);
+      content: "";
+    }
+
+    .range-wrap::after {
+      position: absolute;
+      left: 50%;
+      width: 1px;
+      height: 10px;
+      background: var(--seam);
+      content: "";
+    }
+
+    .evidence-lens {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 44px;
+      margin: 0;
+      appearance: none;
+      background: transparent;
+      cursor: ew-resize;
+    }
+
+    .evidence-lens::-webkit-slider-runnable-track { height: 44px; background: transparent; }
+    .evidence-lens::-moz-range-track { height: 44px; background: transparent; }
+
+    .evidence-lens::-webkit-slider-thumb {
+      width: 42px;
+      height: 42px;
+      appearance: none;
+      border: 2px solid var(--text-2);
+      border-radius: 50%;
+      background: var(--ink-2);
+      box-shadow: 0 0 0 5px var(--ink), 0 0 0 6px var(--line);
+      transition: border-color 160ms ease, background-color 160ms ease;
+    }
+
+    .evidence-lens::-moz-range-thumb {
+      width: 38px;
+      height: 38px;
+      border: 2px solid var(--text-2);
+      border-radius: 50%;
+      background: var(--ink-2);
+      box-shadow: 0 0 0 5px var(--ink), 0 0 0 6px var(--line);
+      transition: border-color 160ms ease, background-color 160ms ease;
+    }
+
+    body[data-view="contrast"] .evidence-lens::-webkit-slider-thumb {
+      border-color: var(--amber);
+      background: var(--amber-wash);
+    }
+
+    body[data-view="contrast"] .evidence-lens::-moz-range-thumb {
+      border-color: var(--amber);
+      background: var(--amber-wash);
+    }
+
+    .unknown {
+      display: none;
+      margin-top: 18px;
+      border-top: 1px dashed var(--amber);
+      padding-top: 12px;
+    }
+
+    body[data-view="contrast"] .unknown { display: block; }
+
+    .unknown p:last-child {
+      margin: 0;
+      color: var(--text-2);
+      font-family: var(--body);
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .source-button {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-height: 44px;
+      margin-top: 5px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 0;
+      background: transparent;
+      color: var(--text-2);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 650;
+      text-align: left;
+    }
+
+    body[data-view="contrast"] .source-button { display: flex; }
+    .source-button span:last-child { color: var(--amber); font-size: 18px; }
+
+    .actions {
+      display: none;
+      margin-top: auto;
+      padding-top: 22px;
+    }
+
+    body[data-view="contrast"] .actions { display: block; }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 52px;
+      gap: 10px;
+    }
+
+    .primary,
+    .voice {
+      min-height: 52px;
+      border: 1px solid var(--paper);
+      cursor: pointer;
+    }
+
+    .primary {
+      border-radius: 2px;
+      padding: 0 18px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 750;
+      text-align: left;
+    }
+
+    .voice {
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .voice svg { width: 20px; height: 20px; }
+    .voice[data-listening="true"] { border-color: var(--amber); color: var(--amber); }
+
+    .escape {
+      min-height: 44px;
+      margin-top: 6px;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .panel {
+      display: none;
+      margin-top: 14px;
+      border-top: 1px solid var(--seam);
+      padding-top: 14px;
+    }
+
+    .panel[data-open="true"] { display: block; }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .choice {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 8px 10px;
+      background: var(--ink-2);
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 650;
+      text-align: left;
+    }
+
+    .response-box {
+      width: 100%;
+      min-height: 88px;
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: 12px;
+      resize: vertical;
+      background: var(--ink-2);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .provenance {
+      display: grid;
+      gap: 12px;
+    }
+
+    .provenance-row {
+      border-left: 2px solid var(--line);
+      padding-left: 11px;
+    }
+
+    .provenance-row[data-tone="amber"] { border-color: var(--amber); }
+
+    .provenance-row p:last-child {
+      margin: 3px 0 0;
+      color: var(--text-2);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .toast {
+      display: none;
+      margin-top: 12px;
+      border-left: 2px solid var(--amber);
+      padding: 8px 0 8px 12px;
+      color: var(--text-2);
+      font-size: 14px;
+    }
+
+    .toast[data-show="true"] { display: block; }
+
+    @keyframes settle {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 365px) {
+      .shell { padding-right: 16px; padding-left: 16px; }
+      .statement { font-size: 26px; }
+      .reading { min-height: 188px; }
+    }
+
+    @media (max-width: 240px) {
+      .shell { padding-right: 12px; padding-left: 12px; }
+      .chrome { min-height: 32px; }
+      .wordmark { font-size: 14px; }
+      .save-state { font-size: 7px; }
+      .decision { margin-top: 8px; padding: 12px 0; }
+      .decision p:last-child { font-size: 12px; }
+      .instrument { padding-top: 20px; }
+      .reading { min-height: 0; padding-left: 14px; }
+      .statement { font-size: 23px; }
+      .lens-label { max-width: 84px; font-size: 8px; }
+      .unknown p:last-child { font-size: 14px; }
+      .action-row { grid-template-columns: minmax(0, 1fr) 48px; }
+      .primary, .voice { min-height: 48px; }
+      .choices { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body data-view="current">
+  <main class="phone" aria-label="CTRL first contrast prototype">
+    <div class="shell">
+      <header class="chrome">
+        <div class="wordmark">CTRL</div>
+        <div class="save-state">Saved here</div>
+      </header>
+
+      <section class="decision" aria-labelledby="decision-label">
+        <p class="object-label" id="decision-label">Your decision</p>
+        <p>Should the marketing function be reoriented around AI, including redesigning work and the capabilities the division needs?</p>
+      </section>
+
+      <section class="instrument" aria-live="polite">
+        <div class="reading">
+          <p class="statement statement-current" id="current-statement">Probably yes. The current team is hesitant to change, while too much time is spent on low-value manual production.</p>
+          <p class="statement statement-contrast" id="contrast-statement">The current evidence does not yet separate <strong>team reluctance</strong> from the conditions they are working in.</p>
+        </div>
+
+        <div class="lens">
+          <div class="lens-labels">
+            <button class="lens-label" type="button" data-set-view="current">Your view</button>
+            <button class="lens-label" type="button" data-set-view="contrast">A different reading</button>
+          </div>
+          <div class="range-wrap">
+            <input class="evidence-lens" id="evidence-lens" type="range" min="0" max="1" step="1" value="0" aria-label="Compare your view with a different evidence-bounded reading" aria-valuetext="Your view">
+          </div>
+        </div>
+
+        <div class="unknown" id="unknown-region">
+          <p class="object-label">Still unknown</p>
+          <p>How quickly this team changes once there is a committed strategy, different incentives and clear measures of success.</p>
+        </div>
+
+        <button class="source-button" id="source-button" type="button" aria-expanded="false" aria-controls="source-panel">
+          <span>What this reading uses</span><span aria-hidden="true">+</span>
+        </button>
+
+        <div class="panel" id="source-panel" data-open="false">
+          <div class="provenance">
+            <div class="provenance-row">
+              <p class="object-label">You said</p>
+              <p>The team appears hesitant, and too much time goes into low-value manual production.</p>
+            </div>
+            <div class="provenance-row">
+              <p class="object-label">Observed</p>
+              <p>One social-post brainstorming meeting lasted about an hour.</p>
+            </div>
+            <div class="provenance-row" data-tone="amber">
+              <p class="object-label">CTRL's read</p>
+              <p>The organisation has not yet tested the team under the conditions you said would change your route.</p>
+            </div>
+            <div class="provenance-row" data-tone="amber">
+              <p class="object-label">Not established</p>
+              <p>Whether the present team can adopt the new standard quickly.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <div class="action-row">
+            <button class="primary" id="respond-button" type="button" aria-expanded="false" aria-controls="response-panel">What is your read?</button>
+            <button class="voice" id="voice-button" type="button" aria-label="Respond by voice" data-listening="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+                <path d="M5.5 10.5a6.5 6.5 0 0 0 13 0M12 17v5M8.5 22h7"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="panel" id="response-panel" data-open="false">
+            <div class="choices" role="group" aria-label="Respond to the contrast">
+              <button class="choice" type="button">This holds</button>
+              <button class="choice" type="button">I am not convinced</button>
+              <button class="choice" type="button">Something is wrong</button>
+              <button class="choice" type="button">This is not relevant</button>
+            </div>
+            <textarea class="response-box" aria-label="Add your view" placeholder="Say what CTRL has missed"></textarea>
+          </div>
+          <button class="escape" id="leave-button" type="button">Leave for now</button>
+          <div class="toast" id="toast" role="status" data-show="false">Saved here. Your decision is still yours.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const body = document.body;
+    const lens = document.getElementById('evidence-lens');
+    const sourceButton = document.getElementById('source-button');
+    const sourcePanel = document.getElementById('source-panel');
+    const respondButton = document.getElementById('respond-button');
+    const responsePanel = document.getElementById('response-panel');
+    const voiceButton = document.getElementById('voice-button');
+    const leaveButton = document.getElementById('leave-button');
+    const toast = document.getElementById('toast');
+
+    function setView(view) {
+      const contrast = view === 'contrast';
+      body.dataset.view = contrast ? 'contrast' : 'current';
+      lens.value = contrast ? '1' : '0';
+      lens.setAttribute('aria-valuetext', contrast ? 'A different evidence-bounded reading' : 'Your view');
+      if (!contrast) {
+        sourcePanel.dataset.open = 'false';
+        sourceButton.setAttribute('aria-expanded', 'false');
+        responsePanel.dataset.open = 'false';
+        respondButton.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    lens.addEventListener('input', () => setView(lens.value === '1' ? 'contrast' : 'current'));
+    document.querySelectorAll('[data-set-view]').forEach((button) => {
+      button.addEventListener('click', () => setView(button.dataset.setView));
+    });
+
+    sourceButton.addEventListener('click', () => {
+      const open = sourcePanel.dataset.open !== 'true';
+      sourcePanel.dataset.open = String(open);
+      sourceButton.setAttribute('aria-expanded', String(open));
+      sourceButton.querySelector('span:last-child').textContent = open ? '−' : '+';
+    });
+
+    respondButton.addEventListener('click', () => {
+      const open = responsePanel.dataset.open !== 'true';
+      responsePanel.dataset.open = String(open);
+      respondButton.setAttribute('aria-expanded', String(open));
+      if (open) responsePanel.querySelector('.choice').focus();
+    });
+
+    voiceButton.addEventListener('click', () => {
+      const listening = voiceButton.dataset.listening !== 'true';
+      voiceButton.dataset.listening = String(listening);
+      voiceButton.setAttribute('aria-label', listening ? 'Stop voice response' : 'Respond by voice');
+      respondButton.textContent = listening ? 'Listening… tap when finished' : 'What is your read?';
+    });
+
+    document.querySelectorAll('.choice').forEach((button) => {
+      button.addEventListener('click', () => {
+        toast.textContent = `Saved: ${button.textContent}. Your decision is still yours.`;
+        toast.dataset.show = 'true';
+      });
+    });
+
+    leaveButton.addEventListener('click', () => {
+      toast.textContent = 'Saved here. Your decision is still yours.';
+      toast.dataset.show = 'true';
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        sourcePanel.dataset.open = 'false';
+        sourceButton.setAttribute('aria-expanded', 'false');
+        responsePanel.dataset.open = 'false';
+        respondButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+  </script>
+</body>
+</html>

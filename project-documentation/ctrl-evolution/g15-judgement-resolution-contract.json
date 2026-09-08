@@ -1,0 +1,67 @@
+{
+  "contract_version": "0.1.0-provisional",
+  "construct": {
+    "internal_name": "Judgement Resolution",
+    "human_expression": "Brain Resolution",
+    "definition": "The weakest-link quality of evidence-grounded Brain performance within a named, important judgement territory.",
+    "status": "research_construct_not_validated_in_product",
+    "prohibited_interpretations": [
+      "personal completeness",
+      "intelligence",
+      "self awareness",
+      "employee quality",
+      "business performance",
+      "permission for autonomous decision making"
+    ]
+  },
+  "territory_eligibility": {
+    "requires_subject_approved_scope": true,
+    "minimum_independent_source_moments": 2,
+    "minimum_chosen_examples": 1,
+    "minimum_rejected_examples": 1,
+    "minimum_frozen_holdouts": 3,
+    "blocking_failures": [
+      "audience_leakage",
+      "unresolved_provenance",
+      "incomplete_correction_repair",
+      "holdout_contamination"
+    ]
+  },
+  "dimensions": [
+    {"id": "grounding", "question": "Is the interpretation traceable to contrastive evidence and correction lineage?"},
+    {"id": "discrimination", "question": "Does it anticipate the person's choice and material reason on unseen work?"},
+    {"id": "calibration", "question": "Does confidence match correctness and does it defer in the right places?"},
+    {"id": "transfer", "question": "Does Brain context improve unfamiliar work over no-Brain and handcrafted-context baselines?"},
+    {"id": "adaptation", "question": "Does new evidence repair the model without erasing valid learning?"}
+  ],
+  "aggregation": {
+    "territory_operator": "minimum_dimension",
+    "overall_operator": "importance_weighted_lower_quartile_of_eligible_territories",
+    "missing_territory_treatment": "report_as_untested_or_intentionally_out_of_scope",
+    "visible_percentage_default": false,
+    "reason": "Volume or one strong dimension must not compensate for a blocking weakness."
+  },
+  "surface_states": ["forming", "tested", "transferable", "revising"],
+  "surface_required_fields": ["territory", "state", "change_direction", "evidence_sentence", "honest_limit"],
+  "surface_prohibited_fields": ["completion_percentage", "leaderboard", "streak", "files_added", "memories_added", "cross_person_rank"],
+  "anti_gaming": {
+    "activity_never_awards_progress": true,
+    "generated_output_cannot_authenticate_itself": true,
+    "brain_version_frozen_before_holdout": true,
+    "same_model_no_brain_baseline_required": true,
+    "handcrafted_context_baseline_required_before_moat_claim": true,
+    "appropriate_abstention_is_positive_evidence": true,
+    "silent_or_universal_abstention_is_not_progress": true
+  },
+  "release_gate": {
+    "required_before_public_efficacy_claim": [
+      "representative_user_comprehension",
+      "stable_results_across_reasonable_holdout_sets",
+      "prospective_held_out_lift",
+      "calibration_and_coverage_report",
+      "correction_repair_replay",
+      "no_increase_in_imitation_or_conformity_failure",
+      "consequence_review"
+    ]
+  }
+}

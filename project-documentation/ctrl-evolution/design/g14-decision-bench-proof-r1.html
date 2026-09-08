@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Decision Bench R1 | Local proof</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #07100b;
+      --ink-2: #0b1510;
+      --raised: #101b15;
+      --raised-2: #15231b;
+      --line: #294238;
+      --line-soft: #1b2d24;
+      --paper: #f2efe3;
+      --paper-2: #d5d4c9;
+      --muted: #8d9c94;
+      --mint: #8be5b8;
+      --amber: #dfa94f;
+      --coral: #dd8977;
+      --blue: #91b6dd;
+      --serif: "Newsreader", "Source Serif 4", Georgia, serif;
+      --sans: "Archivo", Inter, Arial, sans-serif;
+      --mono: "IBM Plex Mono", Consolas, monospace;
+      --top: 60px;
+      --rail: 72px;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--ink); }
+    body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--ink); color: var(--paper); font-family: var(--sans); }
+    button, input, textarea { font: inherit; }
+    button { color: inherit; }
+    [hidden] { display: none !important; }
+    :focus-visible { outline: 2px solid var(--paper); outline-offset: 3px; }
+
+    .topbar {
+      position: fixed; z-index: 20; inset: 0 0 auto 0; height: var(--top); display: grid;
+      grid-template-columns: var(--rail) 1fr auto; align-items: center; border-bottom: 1px solid var(--line-soft); background: rgba(7,16,11,.97);
+    }
+    .brand { height: 100%; display: grid; place-items: center; border-right: 1px solid var(--line-soft); color: var(--amber); }
+    .brand svg { width: 22px; height: 22px; }
+    .identity { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 0 20px; }
+    .avatar { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 50%; color: var(--mint); font: 600 8px/1 var(--mono); }
+    .identity strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .identity span { display: block; margin-top: 3px; color: var(--muted); font: 500 8px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .top-actions { display: flex; align-items: center; gap: 8px; padding-right: 18px; }
+
+    .icon-button, .rail-button, .quiet-button, .cell-button, .source-row, .brain-node, .text-button, .primary {
+      border: 0; background: transparent; cursor: pointer;
+    }
+    .icon-button { width: 42px; height: 42px; display: grid; place-items: center; color: var(--paper-2); }
+    .icon-button svg { width: 18px; height: 18px; }
+    .customer-top-button { display: none; }
+    .quiet-button { min-height: 38px; padding: 0 14px; border: 1px solid var(--line); border-radius: 2px; color: var(--paper); font: 600 8px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .quiet-button:hover { border-color: var(--muted); background: var(--raised); }
+
+    .rail {
+      position: fixed; z-index: 15; left: 0; top: var(--top); bottom: 0; width: var(--rail); display: flex; flex-direction: column; align-items: center;
+      gap: 8px; padding: 18px 10px; border-right: 1px solid var(--line-soft); background: var(--ink);
+    }
+    .rail-button { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 3px; color: var(--muted); }
+    .rail-button svg { width: 18px; height: 18px; }
+    .rail-button:hover, .rail-button.active { color: var(--paper); background: var(--raised); }
+    .rail-button.active::after { content: ""; position: absolute; right: -10px; width: 2px; height: 22px; background: var(--mint); }
+    .rail-spacer { flex: 1; }
+    .day-mark { display: grid; place-items: center; width: 48px; height: 52px; border-top: 1px solid var(--line); color: var(--paper); }
+    .day-mark strong { font: 400 19px/1 var(--serif); }
+    .day-mark span { color: var(--muted); font: 500 6px/1.2 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+
+    .stage {
+      position: fixed; inset: var(--top) 0 0 var(--rail); margin: 0; height: auto; padding: 18px 24px 12px;
+      display: grid; grid-template-rows: 96px minmax(0,1fr) 30px; gap: 14px; overflow: hidden;
+    }
+    .decision-head { min-width: 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 28px; align-items: center; border-bottom: 1px solid var(--line); }
+    .decision-copy { min-width: 0; }
+    .label { color: var(--muted); font: 600 8px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .decision-line { margin: 8px 0 7px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 600 clamp(20px,1.75vw,25px)/1.08 var(--sans); letter-spacing: -.025em; }
+    .read-line { display: flex; gap: 16px; align-items: center; min-width: 0; font: 400 15px/1.25 var(--serif); color: var(--paper-2); }
+    .read-line strong { color: var(--mint); font-weight: 500; }
+    .read-line .gap { color: var(--amber); }
+    .head-meta { display: grid; grid-template-columns: auto auto; gap: 10px; align-items: center; }
+    .meta-block { min-width: 116px; padding: 10px 12px; border-left: 1px solid var(--line); }
+    .meta-block small { display: block; color: var(--muted); font: 500 7px/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+    .meta-block strong { display: block; margin-top: 6px; font-size: 10px; }
+
+    .bench-grid { min-height: 0; display: grid; grid-template-columns: 462px 570px 240px; gap: 24px; }
+    .panel { min-width: 0; min-height: 0; border: 1px solid var(--line); background: var(--ink-2); overflow: hidden; }
+    .panel-head { height: 54px; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--line); }
+    .panel-head strong { font-size: 12px; }
+    .panel-head span { color: var(--muted); font: 500 7px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+
+    .compare-panel { display: grid; grid-template-rows: 54px minmax(0,1fr) 112px; }
+    .comparison { display: grid; grid-template-columns: 72px 1fr 1fr; grid-template-rows: 32px 1.25fr .75fr .82fr .8fr; min-height: 0; }
+    .table-corner, .column-head, .row-head, .cell-button { border-right: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); }
+    .table-corner { display: grid; place-items: center; color: var(--muted); font: 500 7px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .column-head { display: flex; align-items: center; gap: 7px; padding: 0 10px; color: var(--paper-2); font: 600 8px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .column-head.history { color: #68756e; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); }
+    .history .status-dot { background: var(--amber); }
+    .row-head { display: flex; align-items: center; padding: 8px; color: var(--muted); font: 500 7px/1.2 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .cell-button { display: block; width: 100%; padding: 10px; text-align: left; color: var(--paper-2); font: 400 12px/1.28 var(--sans); }
+    .cell-button strong { display: block; color: var(--paper); font-size: 12px; line-height: 1.25; }
+    .cell-button small { display: block; margin-top: 6px; color: var(--muted); font: 500 7px/1.25 var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+    .cell-button.current strong { color: var(--mint); }
+    .cell-button.history { color: #718078; background: rgba(255,255,255,.008); }
+    .cell-button.history strong { color: #7f8a84; text-decoration: line-through; text-decoration-color: #68746e; text-decoration-thickness: 1px; }
+    .cell-button:hover, .cell-button.selected { background: var(--raised-2); box-shadow: inset 2px 0 0 var(--mint); }
+    .cell-button.history.selected { box-shadow: inset 2px 0 0 var(--amber); }
+    .selection-note { padding: 12px 14px; background: #0c1711; }
+    .selection-note .label { color: var(--mint); }
+    .selection-note.history .label { color: var(--amber); }
+    .selection-note p { margin: 7px 0 0; color: var(--paper-2); font: 400 13px/1.35 var(--serif); }
+
+    .evidence-panel { display: grid; grid-template-rows: 54px 50px 180px minmax(0,1fr); }
+    .change-trace { display: grid; grid-template-columns: 1fr 16px 1fr 16px 1fr; align-items: center; padding: 7px 14px; border-bottom: 1px solid var(--line); }
+    .change-step { min-width: 0; }
+    .change-step small { display: block; color: var(--muted); font: 500 6px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .change-step strong { display: block; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--paper-2); font-size: 9px; }
+    .change-step.current strong { color: var(--mint); }
+    .change-step.source strong { color: var(--amber); }
+    .trace-arrow { color: var(--line); font: 600 11px/1 var(--mono); text-align: center; }
+    .source-list { display: grid; grid-template-rows: repeat(3,1fr); border-bottom: 1px solid var(--line); }
+    .source-row { min-width: 0; display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center; padding: 7px 14px; text-align: left; border-bottom: 1px solid var(--line-soft); }
+    .source-row:last-child { border-bottom: 0; }
+    .source-row:hover { background: var(--raised); }
+    .source-id { color: var(--amber); font: 600 7px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .source-copy { min-width: 0; }
+    .source-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
+    .source-copy span { display: block; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font: 400 9px/1.1 var(--serif); }
+    .source-date { color: var(--muted); font: 500 7px/1 var(--mono); text-transform: uppercase; }
+
+    .brain-lens { position: relative; min-height: 0; display: grid; grid-template-columns: 1fr 174px; background-color: #08120c; background-image: linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px); background-size: 58px 58px; }
+    .brain-field { position: relative; overflow: hidden; }
+    .brain-field svg.route-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .route-line { stroke: #315246; stroke-width: 1.2; }
+    .route-line.active { stroke: var(--amber); stroke-width: 1.8; }
+    .brain-node { position: absolute; transform: translate(-50%,-50%); min-width: 0; text-align: left; color: var(--muted); }
+    .brain-node i { display: inline-grid; place-items: center; width: 18px; height: 18px; border: 2px solid var(--line); border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px var(--ink); }
+    .brain-node span { display: inline-block; max-width: 108px; margin-left: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; font: 500 6px/1 var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+    .brain-node.focus i { width: 28px; height: 28px; border-color: var(--paper); background: var(--mint); box-shadow: 0 0 0 5px rgba(139,229,184,.12),0 0 0 9px rgba(139,229,184,.04); }
+    .brain-node.history i { border-color: var(--amber); }
+    .brain-node.blue i { border-color: var(--blue); }
+    .brain-node.boundary i { border-color: #bca0df; }
+    .node-a { left: 54%; top: 48%; }
+    .node-b { left: 19%; top: 23%; }
+    .node-c { left: 19%; top: 73%; }
+    .node-d { left: 76%; top: 21%; }
+    .node-e { left: 77%; top: 73%; }
+    .lens-readout { padding: 13px 12px; border-left: 1px solid var(--line); background: rgba(8,18,12,.94); }
+    .lens-readout h3 { margin: 9px 0 8px; font: 400 18px/1.05 var(--serif); }
+    .lens-readout p { margin: 0; color: var(--muted); font: 400 11px/1.35 var(--serif); }
+    .relationship { margin-top: 12px; padding-top: 9px; border-top: 1px solid var(--line); }
+    .relationship small { color: var(--amber); font: 500 6px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .relationship strong { display: block; margin-top: 5px; font-size: 9px; line-height: 1.25; }
+
+    .action-panel { display: grid; grid-template-rows: 54px minmax(0,1fr) auto; }
+    .action-body { min-height: 0; padding: 15px 14px; }
+    .action-body section { padding: 0 0 13px; margin: 0 0 13px; border-bottom: 1px solid var(--line); }
+    .action-body section:last-child { margin-bottom: 0; border-bottom: 0; }
+    .action-body h3 { margin: 7px 0 0; color: var(--paper); font: 500 16px/1.12 var(--serif); }
+    .action-body p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .action-body .next h3 { color: var(--mint); }
+    .action-body .open h3 { color: var(--amber); }
+    .action-foot { padding: 12px 14px; border-top: 1px solid var(--line); }
+    .primary { width: 100%; min-height: 44px; padding: 0 14px; border-radius: 2px; background: var(--paper); color: var(--ink); font: 700 9px/1 var(--sans); }
+    .primary:hover { background: #fffdf4; }
+    .text-button { min-height: 40px; padding: 0; color: var(--paper-2); font: 600 8px/1 var(--sans); text-align: left; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 7px; }
+    .action-foot .text-button { width: 100%; margin-top: 7px; text-align: center; }
+    .working-boundary { margin-top: 9px; color: var(--muted); font: 500 6px/1.4 var(--mono); letter-spacing: .04em; text-align: center; text-transform: uppercase; }
+
+    .status-strip { min-width: 0; display: flex; align-items: center; gap: 16px; color: var(--muted); font: 500 7px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .status-strip .live { color: var(--mint); }
+    .status-strip .change { color: var(--amber); }
+    .status-strip .proof { margin-left: auto; color: var(--amber); }
+
+    dialog { width: min(620px,calc(100vw - 32px)); max-height: min(760px,calc(100dvh - 36px)); padding: 0; border: 1px solid var(--line); border-radius: 3px; background: var(--ink-2); color: var(--paper); box-shadow: 0 24px 90px rgba(0,0,0,.55); }
+    dialog::backdrop { background: rgba(1,7,4,.82); backdrop-filter: blur(5px); }
+    .dialog-head { height: 54px; display: flex; justify-content: space-between; align-items: center; padding-left: 18px; border-bottom: 1px solid var(--line); }
+    .dialog-head strong { font-size: 11px; }
+    .dialog-body { padding: 22px; overflow: auto; }
+    .dialog-body h2 { margin: 0; font: 400 28px/1.05 var(--serif); }
+    .dialog-body p { color: var(--paper-2); font: 400 14px/1.5 var(--serif); }
+    .quote { margin: 18px 0 0; padding: 17px; border-left: 2px solid var(--amber); background: var(--raised); font: 400 19px/1.35 var(--serif); }
+    .dialog-meta { margin-top: 14px; color: var(--muted); font: 500 7px/1.5 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+    .prep-box { padding: 14px; border: 1px solid var(--line); background: var(--raised); }
+    .prep-box strong { display: block; font-size: 10px; }
+    .prep-box p, .prep-box li { color: var(--paper-2); font: 400 12px/1.4 var(--serif); }
+    .prep-box ul { margin: 9px 0 0; padding-left: 17px; }
+    .ask-row { display: grid; grid-template-columns: 1fr 48px; gap: 8px; margin-top: 17px; }
+    .ask-row input { width: 100%; min-height: 48px; padding: 0 13px; border: 1px solid var(--line); border-radius: 2px; background: var(--ink); color: var(--paper); }
+    .ask-row .primary { min-height: 48px; }
+    .ask-answer { margin-top: 14px; padding: 16px; border: 1px solid var(--line); background: var(--raised); }
+    .ask-answer strong { color: var(--mint); }
+    .projection { margin-top: 18px; padding: 24px; background: var(--paper); color: var(--ink); }
+    .projection h3 { margin: 0; font: 400 28px/1.05 var(--serif); }
+    .projection p { color: #455047; }
+    .privacy-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 16px; background: #c9c5b8; }
+    .privacy-row div { padding: 12px; background: var(--paper); }
+    .privacy-row small { display: block; color: #6d746d; font: 500 6px/1 var(--mono); text-transform: uppercase; }
+    .privacy-row strong { display: block; margin-top: 5px; font-size: 10px; }
+
+    .state-cover { position: absolute; z-index: 10; inset: 114px 24px 56px; display: grid; place-items: center; border: 1px solid var(--line); background: rgba(7,16,11,.96); }
+    .state-card { width: min(520px,calc(100% - 32px)); text-align: center; }
+    .state-card h2 { margin: 12px 0 0; font: 400 32px/1.05 var(--serif); }
+    .state-card p { color: var(--paper-2); font: 400 14px/1.5 var(--serif); }
+
+    .mobile-nav { display: none; }
+
+    @media (max-width: 1180px) and (min-width: 981px) {
+      .bench-grid { grid-template-columns: minmax(380px,.88fr) minmax(440px,1.08fr) 220px; gap: 16px; }
+      .brain-lens { grid-template-columns: 1fr 154px; }
+      .comparison { grid-template-columns: 64px 1fr 1fr; }
+    }
+
+    @media (max-width: 980px) {
+      body { overflow: auto; padding-bottom: 68px; }
+      .topbar { grid-template-columns: 54px 1fr auto; }
+      .brand { border-right: 0; }
+      .identity { padding: 0 6px; gap: 9px; }
+      .identity span { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .top-actions .quiet-button { display: none; }
+      .customer-top-button { display: grid; }
+      .rail { display: none; }
+      .stage { position: relative; inset: auto; margin: var(--top) 0 0; height: auto; min-height: calc(100dvh - var(--top)); padding: 16px 14px 84px; display: block; overflow: visible; }
+      .decision-head { display: block; min-height: 118px; padding: 0 0 14px; }
+      .decision-line { margin: 8px 0; overflow: visible; white-space: normal; font-size: 21px; }
+      .read-line { display: block; font-size: 14px; }
+      .read-line .gap { display: block; margin-top: 5px; }
+      .head-meta { display: none; }
+      .bench-grid { display: block; margin-top: 14px; }
+      .panel { min-height: 560px; }
+      .panel[data-mobile-panel] { display: none; }
+      .panel[data-mobile-panel].mobile-active { display: grid; }
+      .compare-panel { grid-template-rows: 54px minmax(430px,auto) 112px; }
+      .comparison { grid-template-columns: 62px 1fr 1fr; min-height: 430px; }
+      .cell-button { padding: 8px; font-size: 11px; }
+      .evidence-panel { grid-template-rows: 54px auto auto 360px; }
+      .change-trace { min-height: 62px; }
+      .source-list { min-height: 188px; }
+      .brain-lens { grid-template-columns: 1fr; min-height: 360px; }
+      .brain-field { min-height: 230px; }
+      .lens-readout { border: 0; border-top: 1px solid var(--line); }
+      .action-panel { grid-template-rows: 54px auto auto; }
+      .action-body { padding: 18px; }
+      .action-body h3 { font-size: 20px; }
+      .action-body p { font-size: 13px; }
+      .mobile-nav { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; height: 64px; display: grid; grid-template-columns: repeat(3,1fr); padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: rgba(7,16,11,.98); }
+      .mobile-nav button { min-height: 54px; border: 0; background: transparent; color: var(--muted); font: 600 7px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+      .mobile-nav button.active { color: var(--mint); background: var(--raised); }
+      .status-strip { display: none; }
+      .state-cover { position: fixed; inset: var(--top) 0 64px; }
+      .prep-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .top-actions { padding-right: 5px; }
+      .avatar { width: 30px; height: 30px; }
+      .decision-head { min-height: 128px; }
+      .comparison { grid-template-columns: 56px 1fr 1fr; }
+      .row-head { padding: 6px; font-size: 7px; }
+      .column-head { padding: 0 7px; font-size: 7px; }
+      .cell-button strong { font-size: 11px; }
+      .cell-button small { font-size: 6px; }
+      .source-row { grid-template-columns: 45px 1fr; }
+      .source-date { display: none; }
+      .projection { padding: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-brain" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="7" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="19" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="19" cy="18" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 8l3 2M14 10l3-3M7 17l3-3M14 14l3 3" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="i-compare" viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M4 8h6M14 16h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-source" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-action" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.4-5 9.5-5 9.5 5 9.5 5-3.4 5-9.5 5-9.5-5-9.5-5Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand" aria-label="CTRL"><svg><use href="#i-brain"/></svg></div>
+    <div class="identity"><div class="avatar">MC</div><div><strong id="customerName">Maya Chen</strong><span id="customerRole">Founder and CEO · Aperture House</span></div></div>
+    <div class="top-actions"><button class="quiet-button" id="addEvidence">Add evidence</button><button class="icon-button customer-top-button" id="previewCustomerTop" aria-label="Preview customer view"><svg><use href="#i-eye"/></svg></button><button class="icon-button" id="openAsk" aria-label="Ask privately"><svg><use href="#i-mic"/></svg></button></div>
+  </header>
+
+  <aside class="rail" aria-label="Decision Bench">
+    <button class="rail-button active" data-mobile-target="compare" aria-label="Compare interpretations"><svg><use href="#i-compare"/></svg></button>
+    <button class="rail-button" data-mobile-target="evidence" aria-label="Inspect evidence"><svg><use href="#i-source"/></svg></button>
+    <button class="rail-button" data-mobile-target="action" aria-label="Prepare next move"><svg><use href="#i-action"/></svg></button>
+    <button class="rail-button" id="previewCustomer" aria-label="Preview customer view"><svg><use href="#i-eye"/></svg></button>
+    <div class="rail-spacer"></div>
+    <div class="day-mark"><strong id="dayMark">11/30</strong><span>proof day</span></div>
+  </aside>
+
+  <main class="stage" id="stage">
+    <header class="decision-head">
+      <div class="decision-copy">
+        <div class="label">Decision focus</div>
+        <h1 class="decision-line">How can Maya make her quality standard usable by the team?</h1>
+        <div class="read-line"><span>Current read: <strong>the team misses early quality signals.</strong></span><span class="gap">Open question: what is the first warning sign?</span></div>
+      </div>
+      <div class="head-meta"><div class="meta-block"><small>Next session</small><strong>Tomorrow · 10:30</strong></div><div class="meta-block"><small>Current basis</small><strong>3 linked sources</strong></div></div>
+    </header>
+
+    <div class="bench-grid">
+      <section class="panel compare-panel mobile-active" data-mobile-panel="compare" aria-label="Compare interpretations">
+        <div class="panel-head"><strong>Compare the explanation</strong><span>Current and history</span></div>
+        <div class="comparison">
+          <div class="table-corner">Test</div><div class="column-head"><i class="status-dot"></i>Guiding now</div><div class="column-head history"><i class="status-dot"></i>History</div>
+          <div class="row-head">Meaning</div>
+          <button class="cell-button current selected" data-meaning="current" data-row="meaning"><strong>Other people cannot yet see the quality loss Maya sees.</strong><small>BI-105 · supported synthesis</small></button>
+          <button class="cell-button history" data-meaning="history" data-row="meaning"><strong>Maya fundamentally distrusts delegation.</strong><small>BI-109 · discarded interpretation</small></button>
+          <div class="row-head">Evidence</div>
+          <button class="cell-button current" data-meaning="current" data-row="evidence"><strong>3 linked sources</strong><small>SRC-101 · 102 · 105</small></button>
+          <button class="cell-button history" data-meaning="history" data-row="evidence"><strong>Weakened by her correction</strong><small>SRC-105</small></button>
+          <div class="row-head">What changed</div>
+          <button class="cell-button current" data-meaning="current" data-row="change"><strong>She wants the team to notice before she fixes.</strong><small>Voice reflection · 7 September</small></button>
+          <button class="cell-button history" data-meaning="history" data-row="change"><strong>Control was mistaken for the cause.</strong><small>Kept only as history</small></button>
+          <div class="row-head">Session</div>
+          <button class="cell-button current" data-meaning="current" data-row="session"><strong>Test two directions that fail differently.</strong><small>Current next move</small></button>
+          <button class="cell-button history" data-meaning="history" data-row="session"><strong>Do not coach her to delegate more.</strong><small>Cannot guide the session</small></button>
+        </div>
+        <div class="selection-note" id="selectionNote"><div class="label" id="selectionLabel">Why this guides the session</div><p id="selectionText">Maya will hand work over. She steps back in when the team misses the quality problems she sees early.</p></div>
+      </section>
+
+      <section class="panel evidence-panel" data-mobile-panel="evidence" aria-label="Evidence and Living Brain">
+        <div class="panel-head"><strong>Evidence behind the current read</strong><span>Exact sources · typed links</span></div>
+        <div class="change-trace" aria-label="Evidence changed the interpretation">
+          <div class="change-step source"><small>New evidence</small><strong>SRC-105</strong></div><div class="trace-arrow">›</div>
+          <div class="change-step"><small>Moved to history</small><strong>BI-109</strong></div><div class="trace-arrow">›</div>
+          <div class="change-step current"><small>Guiding now</small><strong>BI-105 v2</strong></div>
+        </div>
+        <div class="source-list">
+          <button class="source-row" data-source="SRC-105"><span class="source-id">SRC-105</span><span class="source-copy"><strong>Voice reflection</strong><span>“I need them to notice what I notice...”</span></span><span class="source-date">7 Sep</span></button>
+          <button class="source-row" data-source="SRC-102"><span class="source-id">SRC-102</span><span class="source-copy"><strong>Strategy session 1</strong><span>“Polished, but it could have belonged to anyone.”</span></span><span class="source-date">3 Sep</span></button>
+          <button class="source-row" data-source="SRC-101"><span class="source-id">SRC-101</span><span class="source-copy"><strong>Opening conversation</strong><span>“Nearly there, not more options I have to rescue.”</span></span><span class="source-date">29 Aug</span></button>
+        </div>
+        <div class="brain-lens">
+          <div class="brain-field" aria-label="Local Living Brain route">
+            <svg class="route-lines" viewBox="0 0 396 260" preserveAspectRatio="none" aria-hidden="true"><line class="route-line active" x1="214" y1="125" x2="75" y2="60"/><line class="route-line" x1="214" y1="125" x2="76" y2="190"/><line class="route-line" x1="214" y1="125" x2="300" y2="55"/><line class="route-line active" x1="214" y1="125" x2="302" y2="190"/></svg>
+            <button class="brain-node focus node-a" data-node="BI-105" aria-label="Untranslated perception"><i></i><span>Untranslated perception</span></button>
+            <button class="brain-node node-b" data-node="BI-102" aria-label="Polished but interchangeable"><i></i><span>Polished but interchangeable</span></button>
+            <button class="brain-node history node-c" data-node="BI-109" aria-label="Reluctance to delegate, history"><i></i><span>Reluctance to delegate</span></button>
+            <button class="brain-node blue node-d" data-node="BI-101" aria-label="Transfer the standard"><i></i><span>Transfer the standard</span></button>
+            <button class="brain-node boundary node-e" data-node="BI-110" aria-label="Do not clone the founder"><i></i><span>Do not clone the founder</span></button>
+          </div>
+          <div class="lens-readout" aria-live="polite"><div class="label">Selected Brain item</div><h3 id="nodeTitle">Untranslated perception</h3><p id="nodeStatement">Other people cannot yet anticipate the quality signals Maya sees.</p><div class="relationship"><small id="relType">Supports · REL-101</small><strong id="relMeaning">Interchangeable work supports the current read.</strong></div></div>
+        </div>
+      </section>
+
+      <section class="panel action-panel" data-mobile-panel="action" aria-label="Prepare next move">
+        <div class="panel-head"><strong>Next session</strong><span>Operator private</span></div>
+        <div class="action-body">
+          <section class="next"><div class="label">Prepare</div><h3>Two launch directions that fail differently.</h3><p>Ask which is closer, then what would still stop Maya shipping it.</p></section>
+          <section><div class="label">Why</div><h3>Comparison makes her standard visible.</h3><p>Abstract questions produced principles she later contradicted.</p></section>
+          <section class="open"><div class="label">Still unknown</div><h3>The first warning sign.</h3><p>The Brain knows what Maya rejects, but not the earliest detail she notices.</p></section>
+          <section><div class="label">Decision boundary</div><h3>Three sources support this route.</h3><p>The Brain has no rule that authorises the final decision.</p></section>
+        </div>
+        <div class="action-foot"><button class="primary" id="prepareMove">Prepare next move</button><button class="text-button" id="askFromDock">Ask privately</button><div class="working-boundary">Private working view · does not change the Brain</div></div>
+      </section>
+    </div>
+
+    <footer class="status-strip"><span class="live">Current meaning · BI-105 v2</span><span class="change">Changed by SRC-105</span><span>Customer projection excludes operator notes</span><span class="proof">Synthetic customer · local proof</span></footer>
+
+    <section class="state-cover" id="stateCover" hidden><div class="state-card"><div class="label" id="stateLabel">Proof state</div><h2 id="stateTitle"></h2><p id="stateBody"></p><button class="primary" id="clearState">Return to current view</button></div></section>
+  </main>
+
+  <nav class="mobile-nav" aria-label="Decision Bench sections"><button class="active" data-mobile-target="compare">Compare</button><button data-mobile-target="evidence">Evidence</button><button data-mobile-target="action">Next move</button></nav>
+
+  <dialog id="sourceDialog"><div class="dialog-head"><strong id="sourceDialogTitle">Source</strong><button class="icon-button" data-close="sourceDialog" aria-label="Close source"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="label" id="sourceDialogMeta"></div><blockquote class="quote" id="sourceDialogQuote"></blockquote><div class="dialog-meta">Customer private · exact fixture assertion</div></div></dialog>
+
+  <dialog id="prepareDialog"><div class="dialog-head"><strong>Prepare next move</strong><button class="icon-button" data-close="prepareDialog" aria-label="Close preparation"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="label">Tomorrow · 10:30 · operator private</div><h2>Bring two directions. Ask one question.</h2><blockquote class="quote" id="openingQuote">Which direction is closer to something you would put your name to, and what would still stop you shipping it?</blockquote><div class="prep-grid"><div class="prep-box"><strong>Listen for</strong><ul id="listenList"></ul></div><div class="prep-box"><strong>If the session moves elsewhere</strong><p id="fallbackText"></p><strong>Material</strong><p>Two launch directions that fail differently.</p></div></div></div></dialog>
+
+  <dialog id="askDialog"><div class="dialog-head"><strong>Ask privately</strong><button class="icon-button" data-close="askDialog" aria-label="Close private question"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="label">Private working view · does not change the Brain</div><h2>What changed in the room?</h2><p>Ask about the current evidence. The response stays private and has no durable effect.</p><div class="ask-row"><input id="askInput" aria-label="Private question" value="The conversation has moved to incentives. What should I protect?"><button class="primary" id="submitAsk" aria-label="Ask"><svg width="18" height="18"><use href="#i-action"/></svg></button></div><div class="ask-answer" id="askAnswer" hidden><strong>Keep the two issues separate.</strong><p id="askAnswerBody"></p><div class="dialog-meta">Session guidance · operator private · 3 sources · no durable effect</div></div></div></dialog>
+
+  <dialog id="customerDialog"><div class="dialog-head"><strong>Customer projection</strong><button class="icon-button" data-close="customerDialog" aria-label="Close customer projection"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><div class="label">Preview only · customer private</div><div class="projection"><h3 id="previewTitle"></h3><p id="previewBody"></p><div class="privacy-row"><div><small>Included</small><strong>Customer-visible sources</strong></div><div><small>Excluded</small><strong>Krish's private note</strong></div></div></div></div></dialog>
+
+  <dialog id="localDialog"><div class="dialog-head"><strong>Local proof</strong><button class="icon-button" data-close="localDialog" aria-label="Close"><svg><use href="#i-close"/></svg></button></div><div class="dialog-body"><h2>No customer data will be changed.</h2><p>This rendered proof can inspect the synthetic fixture. Evidence capture and persistence are outside its authority.</p></div></dialog>
+
+  <script>
+    const nodeCopy = {
+      'BI-105': ['Untranslated perception','Other people cannot yet anticipate the quality signals Maya sees.','supports · REL-101','Interchangeable work supports the current read.'],
+      'BI-102': ['Polished but interchangeable','Reject work that could plausibly belong to any competitor.','supports · REL-101','This anti-standard supports the current synthesis.'],
+      'BI-109': ['Reluctance to delegate','This explanation is kept as discarded history.','history · BI-109','It cannot guide the current session.'],
+      'BI-101': ['Transfer the standard','Make Maya’s standard usable without centralising every final call.','informs · REL-104','The current synthesis informs this accepted goal.'],
+      'BI-110': ['Do not clone the founder','Transfer should improve independent judgement, not imitation.','qualifies · REL-105','This boundary qualifies the accepted goal.']
+    };
+
+    const meaningCopy = {
+      current: {
+        label:'Why this guides the session',
+        text:'Maya will hand work over. She steps back in when the team misses the quality problems she sees early.'
+      },
+      history: {
+        label:'Why this cannot guide the session',
+        text:'Maya corrected the idea that reluctance to delegate is the cause. The explanation remains visible as history.'
+      }
+    };
+
+    const fallbackStates = {
+      sparse:['Sparse record','One useful signal. One open question.','Maya becomes more precise when reacting to real work. Bring one concrete contrast to the next conversation.'],
+      quiet:['No new interruption','The current route still holds.','No recorded change needs Krish’s attention. The current session plan remains visible.'],
+      loading:['Reading the latest evidence','Current meaning remains visible.','The new source is still being checked. No current Brain meaning has changed.'],
+      stale:['Evidence needs rechecking','The latest source could not be refreshed.','This view uses evidence verified on 5 September. Recheck it before treating the route as current.'],
+      error:['Evidence unavailable','The new evidence could not be processed.','Nothing in Maya’s Brain has changed. Retry the source or add a short operator note.'],
+      rejected:['Current read rejected','The evidence remains as history.','This interpretation no longer guides the session. A different reading needs support before it replaces it.']
+    };
+
+    let brain = null;
+
+    function openDialog(id) { document.getElementById(id).showModal(); }
+    document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => document.getElementById(button.dataset.close).close()));
+
+    document.querySelectorAll('.cell-button').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('.cell-button').forEach(cell => cell.classList.remove('selected'));
+      button.classList.add('selected');
+      const mode = button.dataset.meaning;
+      const note = document.getElementById('selectionNote');
+      note.classList.toggle('history', mode === 'history');
+      document.getElementById('selectionLabel').textContent = meaningCopy[mode].label;
+      document.getElementById('selectionText').textContent = meaningCopy[mode].text;
+    }));
+
+    document.querySelectorAll('.brain-node').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('.brain-node').forEach(node => node.classList.remove('focus'));
+      button.classList.add('focus');
+      const copy = nodeCopy[button.dataset.node];
+      document.getElementById('nodeTitle').textContent = copy[0];
+      document.getElementById('nodeStatement').textContent = copy[1];
+      document.getElementById('relType').textContent = copy[2];
+      document.getElementById('relMeaning').textContent = copy[3];
+    }));
+
+    document.querySelectorAll('[data-mobile-target]').forEach(button => button.addEventListener('click', () => {
+      const target = button.dataset.mobileTarget;
+      document.querySelectorAll('[data-mobile-panel]').forEach(panel => panel.classList.toggle('mobile-active', panel.dataset.mobilePanel === target));
+      document.querySelectorAll('[data-mobile-target]').forEach(control => control.classList.toggle('active', control.dataset.mobileTarget === target));
+      if (matchMedia('(max-width: 980px)').matches) window.scrollTo({top:0,behavior:'smooth'});
+    }));
+
+    document.getElementById('prepareMove').addEventListener('click', () => openDialog('prepareDialog'));
+    document.getElementById('openAsk').addEventListener('click', () => openDialog('askDialog'));
+    document.getElementById('askFromDock').addEventListener('click', () => openDialog('askDialog'));
+    document.getElementById('previewCustomer').addEventListener('click', () => openDialog('customerDialog'));
+    document.getElementById('previewCustomerTop').addEventListener('click', () => openDialog('customerDialog'));
+    document.getElementById('addEvidence').addEventListener('click', () => openDialog('localDialog'));
+
+    document.getElementById('submitAsk').addEventListener('click', () => {
+      if (!brain) return;
+      document.getElementById('askAnswerBody').textContent = brain.private_ask.demo_response.answer + ' ' + brain.private_ask.demo_response.next_question;
+      document.getElementById('askAnswer').hidden = false;
+    });
+
+    document.getElementById('clearState').addEventListener('click', () => {
+      const url = new URL(location.href); url.searchParams.delete('state'); location.href = url.toString();
+    });
+
+    function showState(name) {
+      const state = fallbackStates[name];
+      if (!state) return;
+      document.getElementById('stateLabel').textContent = state[0];
+      document.getElementById('stateTitle').textContent = state[1];
+      document.getElementById('stateBody').textContent = state[2];
+      document.getElementById('stateCover').hidden = false;
+    }
+
+    fetch('g14-private-brain-builder-fixture.json')
+      .then(response => { if (!response.ok) throw new Error('fixture unavailable'); return response.json(); })
+      .then(data => {
+        brain = data;
+        document.getElementById('customerName').textContent = data.customer.display_name;
+        document.getElementById('customerRole').textContent = `${data.customer.role} · ${data.customer.organisation}`;
+        document.getElementById('dayMark').textContent = `${data.customer.proof_day}/${data.customer.proof_length_days}`;
+        document.getElementById('openingQuote').textContent = data.intervention.exact_opening;
+        document.getElementById('listenList').innerHTML = data.intervention.listen_for.map(item => `<li>${item}</li>`).join('');
+        document.getElementById('fallbackText').textContent = data.deepen_route.fallback;
+        document.getElementById('previewTitle').textContent = data.customer_preview.headline;
+        document.getElementById('previewBody').textContent = data.customer_preview.body;
+        document.querySelectorAll('[data-source]').forEach(button => button.addEventListener('click', () => {
+          const source = data.sources.find(item => item.id === button.dataset.source);
+          document.getElementById('sourceDialogTitle').textContent = source.label;
+          document.getElementById('sourceDialogMeta').textContent = `${source.id} · ${source.kind.replaceAll('_',' ')} · ${source.observed_at}`;
+          document.getElementById('sourceDialogQuote').textContent = `“${source.assertion}”`;
+          openDialog('sourceDialog');
+        }));
+        showState(new URLSearchParams(location.search).get('state'));
+      })
+      .catch(() => showState('error'));
+  </script>
+</body>
+</html>

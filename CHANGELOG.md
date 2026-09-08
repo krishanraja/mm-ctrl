@@ -2,9 +2,19 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-07
+Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
+
+## 2026-09-08 - Fail-closed Living Brain substrate
+
+Applied and read back three additive migrations on the shared production Supabase project. No customer path is connected and all 11 new Brain tables remain empty.
+
+- Added workspace membership and exact-audience grants, encrypted source and assertion records, versioned Brain items, typed exact-endpoint relationships and evidence links.
+- Forced RLS on all 11 tables, closed anonymous and anonymous-auth access, limited authenticated users to audience-scoped reads, and retained writes only for a future server-side adapter.
+- Added evidence, version-chain and relationship-endpoint guards, including four deferred evidence constraints.
+- Corrected the live advisors' anonymous-auth, foreign-key index and per-row JWT findings. Final Brain security readback is clear; only expected unused-index information remains on the empty schema.
+- Committed a rollback-only multi-identity behavioural suite. The management SQL connection rejected its first INSERT as read-only, so that behavioural proof remains pending a writable non-customer test connection.
 
 ## 2026-09-07 - Radar evidence survives the rolling news window
 
@@ -12,6 +22,15 @@ Merged to `main` at `edd9045` (PR #375). No deployment readback is recorded in t
 
 - `video-radar-export` now reads the last four cached headline days rather than one, and repeated sightings of the same story are merged before ranking: candidates that share a title fingerprint or any source URL collapse into one, carrying every distinct public URL, the highest corroboration count and the highest provider score. The reason is stated in the code itself: "The rolling window is evidence coverage, not permission to show the same event several times." Before this a story that ran on several days reached the studio several times, each copy citing one link.
 - `news-cluster` keeps every distinct article URL retained in a cluster (`sourceUrls`), so the export can cite more than the lead link. The field is stripped from the card payload the app serves, so the Today and Briefing surfaces are unchanged.
+
+## 2026-09-05 - Emergency trust containment
+
+Production status: the Supabase function and database controls are live and independently read back. The frontend recovery copy is committed on `codex/trust-containment-2026-09-05`; it is not merged or deployed.
+
+- Deployed and source-verified a 44-route containment manifest. Thirty-five routes now return side-effect-free retired, unavailable, forbidden, neutral, no-op, or empty responses. Nine routes were repaired in place: seven exact-service credential paths, `synthesize-briefing` with exact-service or authenticated-owner access, and `infer-briefing-interests` bound to the signed-in user.
+- Management readback found 44/44 ACTIVE with the expected `verify_jwt` setting and matching runtime source. No-authorisation probes passed 44/44. Invalid service-claim probes were rejected 8/8. `decision-eval` is v36, `infer-briefing-interests` v41, and `synthesize-briefing` v57. Positive scheduled-service execution remains pending the next real run.
+- Applied `supabase/migrations/20260905063000_emergency_trust_containment.sql`, recorded in production as `emergency_trust_containment_20260905` at version `20260905060515`. Fresh post-readback returned PASS with zero violations, all 23 policy fingerprints unchanged, service-role preservation fingerprint `57dd0937d6b2439f800c5deccb8868fa`, and no `kit-nudges-email` cron job.
+- Containment intentionally pauses public onboarding enrichment, AI result generation, result email, and new no-login briefing subscription. The browser still produces its deterministic local result and can continue to ordinary signup; `track-fork` returns no handoff token. The branch now explains the morning-brief failure inline, but production will not show that repair until the owner merges and Vercel deploys it.
 
 ## 2026-09-02 - Audience axis and stance on the daily headline pool
 

@@ -1,0 +1,1330 @@
+{
+  "schema_version": "ctrl.phase2.decision-traceability.v2",
+  "status": "approved_product_rule",
+  "authority": "founder_approved_via_D-052_through_D-055",
+  "source_of_truth": "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
+  "decision_range": "D-001..D-055",
+  "next_design_gate": "D-055 closes G12 and authorises the G13 physical Brain contract and proof fixtures; production implementation remains gated.",
+  "entries": [
+    {
+      "decision_id": "D-001",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "engagement_model",
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#users-and-roles"
+      ],
+      "fixture_ids": [
+        "F01"
+      ],
+      "proof_types": [
+        "architecture",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "The primary tested subject owns a consequential decision and can complete the loop without an intermediary translating the product.",
+      "failure_if_lost": "CTRL drifts into a generic employee assistant or content product."
+    },
+    {
+      "decision_id": "D-002",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "engagement_model",
+        "advisor_workspace"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#primary-early-operator-krish-inside-a-mindmake-engagement",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#gate-3-mindmake-assisted-engagements"
+      ],
+      "fixture_ids": [
+        "F01"
+      ],
+      "proof_types": [
+        "architecture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "The founder can use the slice inside the thirty-day engagement before standalone product acquisition is required.",
+      "failure_if_lost": "CTRL becomes a competing third offer before the relationship-led proof loop works."
+    },
+    {
+      "decision_id": "D-003",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#interaction-modes",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#3-ask-the-one-question-with-highest-decision-value"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F04"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Question depth increases only when expected decision value exceeds burden, and users can switch or stop immediately.",
+      "failure_if_lost": "Rich elicitation becomes a compulsory interview battery."
+    },
+    {
+      "decision_id": "D-004",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "delivery_state",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#source-of-truth-contract",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#resumable-handoff"
+      ],
+      "fixture_ids": [
+        "F10",
+        "F12"
+      ],
+      "proof_types": [
+        "deterministic",
+        "release"
+      ],
+      "exit_evidence": "Material answers, decisions, assumptions, contradictions and milestone state survive a fresh session with authoritative readback.",
+      "failure_if_lost": "Product intent silently degrades across long sessions or handoffs."
+    },
+    {
+      "decision_id": "D-005",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "delivery_state"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#source-of-truth-contract"
+      ],
+      "fixture_ids": [
+        "F12"
+      ],
+      "proof_types": [
+        "deterministic",
+        "release"
+      ],
+      "exit_evidence": "Discovery state reads back from Supabase and the redacted Git snapshot is reproducible but never treated as writable authority.",
+      "failure_if_lost": "Two discovery sources compete or a redacted projection overwrites canonical history."
+    },
+    {
+      "decision_id": "D-006",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#the-five-useful-minute-experience",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#human-evidence-after-the-fixture-gate"
+      ],
+      "fixture_ids": [
+        "F01"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Within seven days a real user can identify a materially sharper decision frame, evidence need or owned call attributable to CTRL.",
+      "failure_if_lost": "Early proof collapses into feature usage, content engagement or memory count."
+    },
+    {
+      "decision_id": "D-007",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "evaluation",
+        "positioning"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#the-outcome-this-pack-protects",
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#claims-that-are-prohibited-until-earned"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "architecture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "All pre-validation surfaces use working-model or judgement-map language; diagnostic language remains prohibited until prospective validation exists.",
+      "failure_if_lost": "CTRL overclaims psychological or predictive validity and damages trust."
+    },
+    {
+      "decision_id": "D-008",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#the-five-useful-minute-experience",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#perceived-performance-contract"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F04"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Representative users receive a useful contrast or precise evidence gap inside five useful minutes before optional depth.",
+      "failure_if_lost": "The product asks for patience or data before returning value."
+    },
+    {
+      "decision_id": "D-009",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#5-reconcile-do-not-persuade",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#6-make-the-owned-call"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F07",
+        "F09"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "The user can accept, resist, correct or defer, and the final call has an explicit human authority event.",
+      "failure_if_lost": "CTRL becomes a recommendation vendor that weakens human reasoning."
+    },
+    {
+      "decision_id": "D-010",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#non-negotiable-invariants",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#2-earn-the-human-prior"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F07",
+        "F09"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Every run proves the human prior and change condition were committed before AI-view exposure.",
+      "failure_if_lost": "The model anchors the user before independent human judgement is observable."
+    },
+    {
+      "decision_id": "D-011",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "decision_entry"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#the-five-useful-minute-experience",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#interaction-modes"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "architecture",
+        "human"
+      ],
+      "exit_evidence": "The first surface supports guided help, a specific decision and a quick route without creating three product silos.",
+      "failure_if_lost": "Entry becomes a generic blank chat or a compulsory assessment."
+    },
+    {
+      "decision_id": "D-012",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_entry",
+        "design_system"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#primary-subject-the-decision-owning-leader",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#first-material-mock-contract"
+      ],
+      "fixture_ids": [
+        "F12"
+      ],
+      "proof_types": [
+        "deterministic",
+        "human"
+      ],
+      "exit_evidence": "The intended mobile viewport is tap-first, voice-ready and usable without typing.",
+      "failure_if_lost": "The companion works only as a desktop text application."
+    },
+    {
+      "decision_id": "D-013",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F03"
+      ],
+      "proof_types": [
+        "fixture",
+        "longitudinal"
+      ],
+      "exit_evidence": "The initial proof portfolio prioritises strategic forks, then product and quality calls; people use remains separately gated.",
+      "failure_if_lost": "CTRL begins with high-risk people judgement before proving safer decision families."
+    },
+    {
+      "decision_id": "D-014",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_entry",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#0-arrive-recognised-not-surveilled",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#cognitive-load-and-delight-contract"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F11"
+      ],
+      "proof_types": [
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Personal context is requested only with a plain-language relevance explanation and a useful work-only path remains available.",
+      "failure_if_lost": "The Brain feels invasive or becomes a whole-person dossier by default."
+    },
+    {
+      "decision_id": "D-015",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#3-ask-the-one-question-with-highest-decision-value",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#4-reveal-one-useful-contrast"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F04",
+        "F08"
+      ],
+      "proof_types": [
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "The first recognition varies with supported evidence and the system abstains rather than manufacturing an impressive aha.",
+      "failure_if_lost": "Every case receives the same theatrical insight."
+    },
+    {
+      "decision_id": "D-016",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "delivery_state",
+        "evidence_orchestration",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/current-to-target-transition-architecture.md#phase-0-protect-and-observe",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#non-negotiable-invariants"
+      ],
+      "fixture_ids": [
+        "F11",
+        "F12"
+      ],
+      "proof_types": [
+        "deterministic",
+        "release"
+      ],
+      "exit_evidence": "Existing production trust containment remains characterised and no new slice bypasses its non-deletion or rollback boundaries.",
+      "failure_if_lost": "The rebuild regresses already verified production trust properties."
+    },
+    {
+      "decision_id": "D-017",
+      "decision_version": 2,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_entry",
+        "decision_loop",
+        "delivery_state"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#cognitive-load-and-delight-contract",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#perceived-performance-contract"
+      ],
+      "fixture_ids": [
+        "F12"
+      ],
+      "proof_types": [
+        "deterministic",
+        "human"
+      ],
+      "exit_evidence": "A usable question appears immediately even if persistence, research or native interactive controls are delayed or unavailable.",
+      "failure_if_lost": "Persistence and tooling mechanics stall the human conversation."
+    },
+    {
+      "decision_id": "D-018",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#4-reveal-one-useful-contrast",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#human-evidence-after-the-fixture-gate"
+      ],
+      "fixture_ids": [
+        "F01"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Users can name the surfaced criterion or tension and express return pull tied to useful continuity, while the evidence report keeps adoption separate from outcome proof.",
+      "failure_if_lost": "Return frequency is misreported as improved judgement."
+    },
+    {
+      "decision_id": "D-019",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evidence_orchestration"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#exceptional-states",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#blocking-invariants"
+      ],
+      "fixture_ids": [
+        "F04",
+        "F06"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Sparse evidence produces a precise unknown and the smallest discriminating move, never filler or unsupported certainty.",
+      "failure_if_lost": "The companion sounds intelligent by making claims the evidence cannot support."
+    },
+    {
+      "decision_id": "D-020",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "engagement_model",
+        "advisor_workspace"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#primary-early-operator-krish-inside-a-mindmake-engagement",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#gate-4-bounded-customer-self-service"
+      ],
+      "fixture_ids": [
+        "F01"
+      ],
+      "proof_types": [
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "The adviser-assisted loop improves real sessions first; self-service actions are admitted only when customers can use them without translation.",
+      "failure_if_lost": "The product optimises for unsupported solo habit before proving engagement value."
+    },
+    {
+      "decision_id": "D-021",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "recall",
+        "advisor_workspace"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#8-return-a-human-receipt",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#user-visible-state-machine"
+      ],
+      "fixture_ids": [
+        "F05",
+        "F12"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "A later return accurately continues the prior decision and improves the next session or smallest useful action.",
+      "failure_if_lost": "Notifications and novelty replace earned continuity."
+    },
+    {
+      "decision_id": "D-022",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_entry",
+        "decision_loop",
+        "positioning"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#preflight-record",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#explicit-reuse-and-discard-register"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F03",
+        "F04"
+      ],
+      "proof_types": [
+        "architecture",
+        "fixture"
+      ],
+      "exit_evidence": "Every accepted first-slice case is an AI-transition decision; unrelated general business prompts are refused or reframed honestly.",
+      "failure_if_lost": "CTRL becomes a generic business chatbot."
+    },
+    {
+      "decision_id": "D-023",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "engagement_model",
+        "decision_loop",
+        "company_map"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#strategy-brief"
+      ],
+      "fixture_ids": [
+        "F01"
+      ],
+      "proof_types": [
+        "architecture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Personal capability evidence links to an accountable company transition decision or outcome without transferring ownership of the private Brain.",
+      "failure_if_lost": "The product serves either personal reflection or company value but cannot connect them."
+    },
+    {
+      "decision_id": "D-024",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#preflight-record",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#blocking-invariants"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F11"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Allowed decision families are explicit and every named-person evaluation or employment recommendation fails the candidate.",
+      "failure_if_lost": "A work-design companion becomes an unvalidated employee-assessment system."
+    },
+    {
+      "decision_id": "D-025",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "decision_loop",
+        "company_map",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#human-evidence-after-the-fixture-gate"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F04"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "The first cohort covers leader adaptation and organisation pacing, and reports held-back quality separately from capacity, agency and transition-map evidence.",
+      "failure_if_lost": "The proof programme spreads across arbitrary decision categories and vanity outcomes."
+    },
+    {
+      "decision_id": "D-026",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "company_map",
+        "export"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#users-and-roles",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#logical-domain-contracts"
+      ],
+      "fixture_ids": [
+        "F11",
+        "F12"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "release"
+      ],
+      "exit_evidence": "Private Leader Brain and company transition-map reads, writes and exports are independently permissioned and fail cross-audience tests.",
+      "failure_if_lost": "Company payment quietly becomes ownership of the leader's private judgement."
+    },
+    {
+      "decision_id": "D-027",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "evidence_orchestration",
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/context-circulation-architecture.md#the-orchestration-policy",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#3-ask-the-one-question-with-highest-decision-value"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F04",
+        "F06"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "The system selects available consented evidence first and asks only the lowest-burden question that changes the route.",
+      "failure_if_lost": "The user performs research administration for the AI."
+    },
+    {
+      "decision_id": "D-028",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "evidence_orchestration",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/context-circulation-architecture.md#context-quality-is-sacrosanct",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#source_envelope"
+      ],
+      "fixture_ids": [
+        "F06",
+        "F11"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Transcript-derived claims retain speaker, time, decision context, source offsets, audience and freshness, with third-party material minimised.",
+      "failure_if_lost": "Convenient transcripts become decontextualised truth about the wrong person or moment."
+    },
+    {
+      "decision_id": "D-029",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "company_map",
+        "advisor_workspace"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#exceptional-states",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#observability-without-surveillance"
+      ],
+      "fixture_ids": [
+        "F11"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Ambiguous content remains private, only deliberate company output crosses visibly, and off-record material is absent from every durable surface.",
+      "failure_if_lost": "Useful adviser continuity becomes covert disclosure or surveillance."
+    },
+    {
+      "decision_id": "D-030",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "evaluation",
+        "positioning"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#brain-attributable-lift",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#exit-gate"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F07",
+        "F08",
+        "F09"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "New-with-Brain performance is paired against the strongest substitute on held-back decisions; fixture success remains an engineering gate only.",
+      "failure_if_lost": "Engagement, agreement or synthetic examples become false decision-quality proof."
+    },
+    {
+      "decision_id": "D-031",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "brain",
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/context-circulation-architecture.md#what-ctrl-can-propose-to-retain",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#brain_proposal-and-brain_item_version"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F09",
+        "F10"
+      ],
+      "proof_types": [
+        "architecture",
+        "fixture",
+        "longitudinal"
+      ],
+      "exit_evidence": "The domain can represent every judgement dimension, while the first session proposes at most one item earned through real work.",
+      "failure_if_lost": "The Brain becomes either a shallow preference list or an invasive upfront assessment."
+    },
+    {
+      "decision_id": "D-032",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "evidence_orchestration"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/context-circulation-architecture.md#memory-states-the-user-can-understand",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#brain_proposal-and-brain_item_version"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F05",
+        "F06",
+        "F10"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Source evidence, provisional inference and accepted durable truth are separate states with consequence-sensitive promotion rules.",
+      "failure_if_lost": "Model inference silently hardens into identity or organisational truth."
+    },
+    {
+      "decision_id": "D-033",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "recall",
+        "export"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#correction_event-and-repair_receipt",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#self-healing-proof"
+      ],
+      "fixture_ids": [
+        "F06",
+        "F10"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "release"
+      ],
+      "exit_evidence": "A seeded correction appends history, repairs every eligible current use and export, preserves contradictions where unresolved, and returns one human receipt.",
+      "failure_if_lost": "Self-healing becomes a cosmetic edit while stale beliefs continue influencing work."
+    },
+    {
+      "decision_id": "D-034",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "recall",
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/context-circulation-architecture.md#how-intelligence-returns-to-the-work",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#observability-without-surveillance"
+      ],
+      "fixture_ids": [
+        "F05"
+      ],
+      "proof_types": [
+        "deterministic",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Interventions are shown only when decision relevance and expected value exceed attention burden; mute and not-useful signals work.",
+      "failure_if_lost": "A supposedly thoughtful companion becomes an attention-harvesting notification system."
+    },
+    {
+      "decision_id": "D-035",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "recall",
+        "advisor_workspace"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#the-five-useful-minute-experience",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#user-visible-state-machine"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F05",
+        "F12"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "The system can anticipate, remember, prepare, act, learn corrections, connect levels and sharpen a decision without forcing every capability into one session.",
+      "failure_if_lost": "Signature magic becomes a rigid seven-step feature parade."
+    },
+    {
+      "decision_id": "D-036",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evaluation",
+        "positioning"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F09"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "The loop builds role-appropriate perception, judgement and boundary-setting through real work rather than testing tool knowledge.",
+      "failure_if_lost": "CTRL becomes a generic AI literacy course or assumes tool use equals fluency."
+    },
+    {
+      "decision_id": "D-037",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "brain",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#event-sequence"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F09",
+        "F10"
+      ],
+      "proof_types": [
+        "architecture",
+        "fixture",
+        "longitudinal"
+      ],
+      "exit_evidence": "Evidence can show noticing, preparation, delegation or retention, handoffs, inspection, reflection, verification, correction and encoded learning across real work.",
+      "failure_if_lost": "AI fluency is reduced to prompt technique or automation count."
+    },
+    {
+      "decision_id": "D-038",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "design_system",
+        "positioning",
+        "content_outputs"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#cognitive-load-and-delight-contract",
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#product-marketing-message-architecture"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F09"
+      ],
+      "proof_types": [
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Users experience the calibrated judgement loop and can explain its value without seeing a technical checklist; later marketing remains evidence-bounded.",
+      "failure_if_lost": "A core USP exists only in internal architecture language."
+    },
+    {
+      "decision_id": "D-039",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "decision_loop",
+        "company_map",
+        "positioning"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F02",
+        "F09"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Recommendations trace reclaimed capacity into judgement, customers, strategy, distinctiveness or shipping, while correct non-delegation remains a positive outcome.",
+      "failure_if_lost": "Time saved and automation volume replace the human value created."
+    },
+    {
+      "decision_id": "D-040",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "evidence_orchestration"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#independence-rules",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#leakage-resistant-run-protocol"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F07",
+        "F09"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Independent AI review is separately framed and inspectable, while model agreement never creates release authority and the human assesses both work and audit.",
+      "failure_if_lost": "A second model creates confidence theatre or silently becomes the approver."
+    },
+    {
+      "decision_id": "D-041",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "content_outputs",
+        "advisor_workspace",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#anti-convergence-proof",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
+      ],
+      "fixture_ids": [
+        "F02",
+        "F08"
+      ],
+      "proof_types": [
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Prepared options begin collaboration at comparative judgement and outperform an unprepared meeting on meaningful causal diversity and accepted quality.",
+      "failure_if_lost": "The system generates more ideas faster but leaves people judging the same generic centre."
+    },
+    {
+      "decision_id": "D-042",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "engagement_model",
+        "positioning",
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#users-and-roles",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#preflight-record"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F03"
+      ],
+      "proof_types": [
+        "architecture",
+        "human"
+      ],
+      "exit_evidence": "First users already intend to shape AI-era change and use CTRL to design and govern it; persuasion and admin efficiency are not the hero promise.",
+      "failure_if_lost": "CTRL is positioned as remedial adoption software for reluctant users."
+    },
+    {
+      "decision_id": "D-043",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "decision_loop",
+        "category_intelligence",
+        "positioning"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/README.md#current-strategic-synthesis-through-g12",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#fixture-map"
+      ],
+      "fixture_ids": [
+        "F03",
+        "F08"
+      ],
+      "proof_types": [
+        "fixture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "At least one bounded case helps a leader imagine and test a future category state, with workflow automation shown only as enabling machinery.",
+      "failure_if_lost": "The product ceiling becomes admin automation rather than future design."
+    },
+    {
+      "decision_id": "D-044",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "decision_loop",
+        "content_outputs",
+        "evaluation"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#anti-convergence-proof",
+        "project-documentation/ctrl-evolution/phase-2-evaluation-fixture-contract.md#quality-rubric"
+      ],
+      "fixture_ids": [
+        "F02",
+        "F08"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Blind grading shows causal diversity, numerical integrity, productive challenge and voice fit without rewarding novelty theatre.",
+      "failure_if_lost": "CTRL reproduces the same smooth, affirmative model house style as its substitutes."
+    },
+    {
+      "decision_id": "D-045",
+      "decision_version": 1,
+      "disposition": "deferred_with_guardrail",
+      "product_surfaces": [
+        "collective_intelligence",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#7-an-approved-pattern-commons-later",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#non-negotiable-invariants"
+      ],
+      "fixture_ids": [
+        "F11"
+      ],
+      "proof_types": [
+        "deterministic",
+        "fixture",
+        "longitudinal"
+      ],
+      "exit_evidence": "No collective contribution path exists in the first slice; any later path requires item-level approval, enforceable withdrawal and separate proof.",
+      "failure_if_lost": "Personal judgement quietly becomes pooled training or shared memory."
+    },
+    {
+      "decision_id": "D-046",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "evidence_orchestration",
+        "brain",
+        "recall"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/context-circulation-architecture.md#one-circulation-system-four-ways-context-arrives",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#event-sequence"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F11",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Every supported doorway enters the same provenance-rich lifecycle and every return respects subject, audience, source, authority and freshness.",
+      "failure_if_lost": "Each integration creates its own memory semantics and the first adapter becomes the product model."
+    },
+    {
+      "decision_id": "D-047",
+      "decision_version": 1,
+      "disposition": "deferred_with_guardrail",
+      "product_surfaces": [
+        "positioning",
+        "evaluation",
+        "delivery_state"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#competitive-substitute-map",
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#proof-programme-inherited-by-product-and-marketing"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "architecture",
+        "human",
+        "longitudinal"
+      ],
+      "exit_evidence": "Future messaging can trace every differentiation claim to a current mechanism, comparator, test and evidence class, including honest objections.",
+      "failure_if_lost": "Commodity memory and connector features are marketed as an unsupported moat."
+    },
+    {
+      "decision_id": "D-048",
+      "decision_version": 1,
+      "disposition": "constrains_now",
+      "product_surfaces": [
+        "brain",
+        "decision_loop",
+        "content_outputs",
+        "recall"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/current-to-target-transition-architecture.md#target-experience-architecture",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#the-five-useful-minute-experience"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F05",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "fixture",
+        "human"
+      ],
+      "exit_evidence": "Consequential work grows the Brain and later outputs draw from it; feed and audio remain downstream rather than the first product contract.",
+      "failure_if_lost": "The content feed stays the hero while the Brain remains an administrative setting."
+    },
+    {
+      "decision_id": "D-049",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "delivery_state",
+        "decision_loop",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/current-to-target-transition-architecture.md#retain-repair-retire-or-rebuild",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#legacy-capability-adapter-map"
+      ],
+      "fixture_ids": [
+        "F10",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "fixture"
+      ],
+      "exit_evidence": "Every retained primitive has a target property and characterisation test; any primitive that forces legacy meaning is replaced or narrowed.",
+      "failure_if_lost": "Six months of assumptions survive merely because six months of code exists."
+    },
+    {
+      "decision_id": "D-050",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "delivery_state",
+        "decision_loop",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/current-to-target-transition-architecture.md#executive-verdict",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#explicit-reuse-and-discard-register"
+      ],
+      "fixture_ids": [
+        "F10",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "release"
+      ],
+      "exit_evidence": "The new domain and experience can be shadowed beside production, with proven organs behind adapters and one authority after each cutover.",
+      "failure_if_lost": "Either a clean demo discards production resilience or legacy architecture controls the rebuild."
+    },
+    {
+      "decision_id": "D-051",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "design_system",
+        "decision_loop"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#first-material-mock-contract",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#gate-0-contract-and-mock"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "architecture",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "Every material surface is rendered at the intended viewport, shown cold, explicitly locked and later verified against the implementation; current polish is only the floor.",
+      "failure_if_lost": "The rebuild is either technically correct but joyless, or visually impressive but dishonest and burdensome."
+    },
+    {
+      "decision_id": "D-052",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "export",
+        "decision_loop",
+        "design_system"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/current-to-target-transition-architecture.md#runtime-and-portability-are-separate-roles",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#executive-contract",
+        "project-documentation/ctrl-evolution/phase-2-decision-brain-vertical-slice-contract.md#founder-approval-gate"
+      ],
+      "fixture_ids": [
+        "F01",
+        "F10",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "fixture",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "One designated user completes the human-first five-minute loop, receives no more than one inspectable learning proposal, and produces a deterministic Brain release that can be re-imported and used in two materially different agent environments without exposing runtime machinery.",
+      "failure_if_lost": "GitHub becomes the live database, portability becomes a marketing claim without external use, or the first experience becomes capture-first and technically visible."
+    },
+    {
+      "decision_id": "D-053",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "design_system",
+        "decision_loop",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-proof-r3-verification.md#visual-system",
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-proof-r3-verification.md#runtime-evidence"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "deterministic",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "The rendered playable surface uses one purposeful thin-line icon family and quiet state-responsive movement, contains no sparkle symbols or decorative AI motifs, preserves all meaning under reduced motion, and receives explicit founder approval.",
+      "failure_if_lost": "CTRL either feels inert and generic or uses decorative AI spectacle that weakens clarity, restraint and trust."
+    },
+    {
+      "decision_id": "D-054",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "design_system",
+        "decision_loop",
+        "brain"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md#binding-real-version-corrections",
+        "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md#authority-boundary"
+      ],
+      "fixture_ids": [],
+      "proof_types": [
+        "deterministic",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "The eventual implementation preserves the approved R3 causal loop, passes a systematic optical-alignment review, removes the named reassurance sentence, and contains no helper copy without a clear action, evidence, state or meaning job.",
+      "failure_if_lost": "Prototype defects become product conventions, leaving visible misalignment and empty reassurance copy inside the supposedly magical experience."
+    },
+    {
+      "decision_id": "D-055",
+      "decision_version": 1,
+      "disposition": "required_now",
+      "product_surfaces": [
+        "brain",
+        "design_system",
+        "decision_loop",
+        "export"
+      ],
+      "contract_refs": [
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#the-product-answer",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#my-brain",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#approved-governing-direction",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#next-proof-gate"
+      ],
+      "fixture_ids": [
+        "F10",
+        "F11",
+        "F12"
+      ],
+      "proof_types": [
+        "architecture",
+        "deterministic",
+        "fixture",
+        "human",
+        "release"
+      ],
+      "exit_evidence": "The portrait and Living Map project the same accepted Brain state, visible relationships never exceed typed evidence, corrections propagate consistently across both lenses, and representative-volume testing preserves comprehension, semantic zoom and inspectability.",
+      "failure_if_lost": "CTRL either discards its strongest immersive signature or preserves a decorative graph that contradicts the Brain, overclaims relationships, hides authority and makes correction unreliable."
+    }
+  ]
+}

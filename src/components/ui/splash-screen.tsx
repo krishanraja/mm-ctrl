@@ -74,6 +74,7 @@ export function BrandSplashVisual() {
       role="status"
       aria-live="polite"
       aria-label="Loading"
+      data-boot-visual="mindmaker-ring"
     >
       <SplashCore />
     </div>

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- router config file legitimately exports the router object and small loading helpers, not fast-refresh components */
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, useParams } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { RequireAuth } from '@/components/auth/RequireAuth'
 import { AuthedLayoutRoute } from '@/components/layout/AuthedLayoutRoute'
@@ -148,6 +148,9 @@ const ReviewPage = lazyWithRetry(() => import('@/pages/ReviewPage'))
 // a few weeks, so it stays out of primary nav and out of the authed prefetch
 // list until that decision is made.
 const ProposalsPage = lazyWithRetry(() => import('@/pages/ProposalsPage'))
+// Local, synthetic implementation harness for the approved operator Decision
+// Bench. It remains unlinked and is not included in authenticated prefetching.
+const DecisionBenchPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionBenchPage'))
 const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 /**
@@ -166,6 +169,8 @@ function preloadInitialRouteChunk() {
     warm(() => import('@/pages/Landing'))
   } else if (p.startsWith('/auth')) {
     warm(() => import('@/pages/Auth'))
+  } else if (p.startsWith('/operator/customers/')) {
+    warm(() => import('@/features/operator-brain/DecisionBenchPage'))
   } else {
     // The authed area: the home/dashboard is the overwhelmingly common entry point.
     warm(() => import('@/pages/Dashboard'))
@@ -226,6 +231,13 @@ function CaptureLandingGate() {
   return FF.publicCapture() ? <CaptureLanding /> : <NotFound />
 }
 
+function DecisionBenchGate() {
+  const { workspaceId, decisionId } = useParams()
+  const isLockedFixture = workspaceId === 'SYN-CUST-014' && decisionId === 'INT-014'
+  const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
+  return previewEnabled && isLockedFixture ? <DecisionBenchPage /> : <NotFound />
+}
+
 export const router = createBrowserRouter([
   // Public routes
   {
@@ -248,6 +260,11 @@ export const router = createBrowserRouter([
     // Dev/QC fixture-render harness (public so it can be screenshot without auth). Unlinked.
     path: '/preview',
     element: <LazyWrapper><Preview /></LazyWrapper>,
+  },
+  {
+    // Direct local route only. Synthetic fixture, no navigation entry and no persistence.
+    path: '/operator/customers/:workspaceId/decisions/:decisionId',
+    element: <LazyWrapper><DecisionBenchGate /></LazyWrapper>,
   },
   {
     // Agent-native marketing page (public): the read-only Memory Web MCP offering.
