@@ -64,18 +64,24 @@ The committed behavioural suite is `supabase/tests/database/brain_workspace_audi
 
 The Supabase management SQL connection rejected the suite at its first INSERT with SQLSTATE `25006` because that connection is read-only. No synthetic row was written. This is recorded as a proof limitation, not represented as a passing behavioural run.
 
-Repository release gates on the complete working branch passed after the live readback:
+Repository release gates on the complete merged tree passed after the live readback:
 
 - documentation, standards and G16 static canary contracts;
 - 44 trust-containment contracts and 4 service-auth tests;
 - G14 Decision Bench contract, React and rendered interaction checks;
 - G15 Judgement Resolution and retained R2 interaction checks;
-- 921 tests across 59 files after integrating current `main`;
+- 945 tests across 60 files after integrating current `main`;
 - type checking with zero new errors against the recorded 94-error legacy baseline;
 - changed-file lint and Git whitespace validation;
-- a production Vite build across 2,796 modules and 3 of 3 prerender routes.
+- a production Vite build across 2,806 modules and 5 of 5 prerender routes.
 
 The build retains the repository's known large-chunk and mixed static/dynamic Supabase import warnings. This canary introduces neither warning and adds no client bundle dependency.
+
+## Merge and production receipt
+
+PR [#374](https://github.com/krishanraja/mm-ctrl/pull/374) merged to `main` on 8 September 2026 at `860dea0046a1b7a84c26ba1db1085f4a853daef1`. GitHub CI passed documentation, standards, tests, typecheck, build and PR-diff lint on the exact reviewed head. Vercel production deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` is READY and PROMOTED from that exact `main` SHA.
+
+Rendered production smoke checks returned HTTP 200 for the canonical home, Answers index and one prerendered answer page. The synthetic Decision Bench path rendered the standard 404 in a clean browser because its production feature flag remains closed. The merge therefore ships the approved code and recovery copy without exposing the synthetic operator proof or connecting any customer path to the new Brain tables.
 
 The destructive rollback source is `supabase/rollback/20260908111121_brain_workspace_audience_canary_rollback.sql`, SHA-256 `85f06aa16d40222c1ff819d8bdc9bf5d9d1904c19c379c830851743441a6bf51`. It has not been executed. Once real Brain data exists, rollback requires a separate exact approval and an export or confirmed zero-row readback.
 
