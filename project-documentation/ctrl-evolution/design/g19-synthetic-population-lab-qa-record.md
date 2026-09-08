@@ -1,6 +1,6 @@
 # G19 synthetic population lab QA record
 
-Status: founder-approved as Krish's customer-range dashboard; locked scrollbar correction verified locally
+Status: founder-approved as Krish's customer-range dashboard; locked scrollbar correction verified locally and remotely
 
 Date: 8 September 2026
 
@@ -77,6 +77,8 @@ Candidate evidence:
 - 61 deterministic and React checks: passed
 - documentation, whitespace, standards, production build and prerender: passed
 - Chromium 1440 by 900 rendered frame: inspected at `test-results/g19-locked-scrollbar.png`; layout and content match the approved baseline
+- protected Vercel deployment: `dpl_CBNiAFYD8tMEBjrxyfaPVq2RQ78V`, source commit `a00d0e7`
+- protected-preview acceptance: all eight existing Chromium journeys passed after the locked revision
 
 ## What held up
 
@@ -84,7 +86,7 @@ The dense desktop view keeps source path, diagnostic restraint and failure press
 
 ## Unverified and blocked
 
-- The locked scrollbar correction requires a fresh protected-preview deployment and smoke check before merge.
+- No remaining G19 implementation gate. Merge remains subject only to repository CI being green.
 - Browser zoom at exactly 200 percent was approximated through a 720 by 450 compact viewport; native browser zoom remains unverified.
 - No screen reader pass has been performed.
 - This lab does not prove the approved Decision Bench or customer Living Brain against every fixture. It exposes the data and oracle range that those product surfaces must subsequently consume.
