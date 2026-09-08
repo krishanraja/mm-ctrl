@@ -109,4 +109,4 @@ Kill the concept if observed mobile testing shows any of the following:
 
 That is a hard-constraint risk, not a polish issue. If spatial meaning needs explanation, the interaction metaphor has failed.
 
-Applied: [krish-principles](C:/Users/krish/.codex/skills/krish-principles/SKILL.md), [strategy-brief](C:/Users/krish/.codex/skills/strategy-brief/SKILL.md), and [krish-design](C:/Users/krish/.codex/skills/krish-design/SKILL.md).
+Applied skills: `krish-principles`, `strategy-brief`, and `krish-design`.
