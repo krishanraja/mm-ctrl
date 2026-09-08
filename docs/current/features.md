@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-05 against live Supabase containment readback, the earlier Vercel frontend baseline, `src/router.tsx`, and plan constants
+Last verified: 2026-09-08 against live Supabase containment readback, the Vercel frontend baseline, `src/router.tsx`, and plan constants
 
 This inventory distinguishes the user-facing product from supporting and nested harnesses. It does not treat every route or Edge Function as a feature.
 
@@ -71,6 +71,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 | Answers | `/answers`, `/answers/:slug` | Public answer pages written to be fetched and quoted by AI assistants |
 | Preview | `/preview` | Unlinked deterministic QA fixtures |
 | Decision Bench | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic operator-surface implementation harness for local or flagged preview builds |
+| Synthetic Brain lab | `/operator/lab/synthetic-population/:accountId` | Unlinked range harness for deterministic Brain inputs, processing boundaries and diagnostic oracles |
 | Skill and MCP generation | Backend functions and exports | Portability substrate only |
 
 ## Route inventory
@@ -87,7 +88,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 
 ### Synthetic preview only
 
-`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. It is unlinked, marked `noindex`, unauthenticated for QA, and has no persistence authority.
+`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. `/operator/lab/synthetic-population/:accountId` uses the same preview boundary and accepts only the 48 deterministic G18 synthetic identities. Both routes are unlinked, marked `noindex`, unauthenticated for QA, and have no persistence authority.
 
 ### Legacy redirects
 
