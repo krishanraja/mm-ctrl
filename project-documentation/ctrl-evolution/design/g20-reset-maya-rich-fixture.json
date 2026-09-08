@@ -1,0 +1,324 @@
+{
+  "fixture_version": "2.0.0",
+  "fixture_status": "synthetic_demo",
+  "as_of": "2026-09-08T21:20:00+01:00",
+  "disclosure": "Maya Chen, Aperture House, every source, number, decision and output in this fixture are synthetic. They demonstrate a proposed product experience, not a real person, company or diagnostic result.",
+  "subject": {
+    "id": "SYN-CUST-014",
+    "display_name": "Maya Chen",
+    "role": "Founder and CEO",
+    "organisation": "Aperture House",
+    "proof_day": 11,
+    "proof_length_days": 30,
+    "brain_name": "Maya's Brain",
+    "primary_aim": "Make the company's creative judgement transferable without making the work formulaic."
+  },
+  "decision": {
+    "id": "DEC-MAYA-021",
+    "title": "How far should Maya rebuild marketing around AI now?",
+    "stakes": "A proposed twelve-month marketing redesign with a synthetic GBP 1.2 million operating budget and eight affected roles.",
+    "status": "forming",
+    "decision_by": "2026-09-18",
+    "provisional_view": "Move faster than an incremental tools rollout, but do not replace the whole function before the new quality system has survived real customer work.",
+    "owned_call": false,
+    "routes": [
+      {
+        "id": "ROUTE-A",
+        "name": "Rebuild now",
+        "plain_summary": "Redesign the function around a small AI-native team this quarter.",
+        "upside": "Fast structural learning and a clear break from content-volume incentives.",
+        "risk": "The company could automate production before it has made Maya's quality standard transferable.",
+        "evidence_for": ["SRC-203", "SRC-205", "SRC-208"],
+        "evidence_against": ["SRC-202", "SRC-206", "SRC-209"]
+      },
+      {
+        "id": "ROUTE-B",
+        "name": "Prove the new system first",
+        "plain_summary": "Run one category campaign through a new AI-native operating model, then use the evidence to redesign roles.",
+        "upside": "Tests the quality system, customer response and role requirements together.",
+        "risk": "A contained pilot may be absorbed by the existing process and fail to create structural change.",
+        "evidence_for": ["SRC-201", "SRC-202", "SRC-204", "SRC-210"],
+        "evidence_against": ["SRC-203", "SRC-207"]
+      },
+      {
+        "id": "ROUTE-C",
+        "name": "Add tools gradually",
+        "plain_summary": "Keep the structure and encourage each role to adopt AI in its current work.",
+        "upside": "Lowest immediate disruption and easiest internal story.",
+        "risk": "Preserves the incentives and weekly work pattern that Maya already believes are wrong.",
+        "evidence_for": ["SRC-209"],
+        "evidence_against": ["SRC-203", "SRC-205", "SRC-207", "SRC-208"]
+      }
+    ]
+  },
+  "current_read": {
+    "title": "The risky move is not going too fast. It is rebuilding around output before Maya has transferred what good looks like.",
+    "plain_summary": "Maya is ready to change the structure. The missing piece is proof that another person can use her standards on unfamiliar work without copying her.",
+    "standing": "supported_synthesis",
+    "confidence": "supported_not_settled",
+    "source_refs": ["SRC-201", "SRC-202", "SRC-204", "SRC-206", "SRC-210"],
+    "counter_case": "The current incentives may be the stronger cause. If volume and deadlines remain the visible measures, even a well-transferred quality standard could lose.",
+    "counter_source_refs": ["SRC-203", "SRC-207"],
+    "important_unknown": "Can the new operating model produce one unfamiliar campaign Maya would ship after no more than a final polish pass?"
+  },
+  "personal_portrait": {
+    "headline": "Maya is moving from being the final quality filter to designing how other people see quality earlier.",
+    "patterns": [
+      {
+        "id": "PAT-201",
+        "name": "Fast diagnosis",
+        "statement": "Maya spots why work is wrong faster than she can state the positive rule in advance.",
+        "standing": "supported_pattern",
+        "source_refs": ["SRC-202", "SRC-204"]
+      },
+      {
+        "id": "PAT-202",
+        "name": "Concrete comparison",
+        "statement": "Her judgement becomes precise when she compares real options. Abstract questions produce rules she later qualifies.",
+        "standing": "supported_pattern",
+        "source_refs": ["SRC-204", "SRC-210"]
+      },
+      {
+        "id": "PAT-203",
+        "name": "Surprise protected",
+        "statement": "She wants a recognisable standard but will reject any rule that blocks a genuinely new idea.",
+        "standing": "direct_standard",
+        "source_refs": ["SRC-206"]
+      },
+      {
+        "id": "PAT-204",
+        "name": "Delegation interpretation corrected",
+        "statement": "Maya does not resist delegation itself. She takes work back when the quality reasoning reaches her too late.",
+        "standing": "corrected_synthesis",
+        "source_refs": ["SRC-201", "SRC-210", "COR-201"]
+      }
+    ],
+    "growth_frontier": "Make the earliest quality signals explicit enough for other people to challenge and use, while Maya stays accountable for the final call.",
+    "growth_source_refs": ["SRC-201", "SRC-206", "SRC-210"]
+  },
+  "standards": [
+    {
+      "id": "STD-201",
+      "kind": "standard",
+      "name": "Only Aperture House would say it",
+      "test": "The central claim should arise from the company's actual customer view, not category language any competitor could borrow.",
+      "source_refs": ["SRC-202", "SRC-205"]
+    },
+    {
+      "id": "STD-202",
+      "kind": "anti_standard",
+      "name": "Polished but interchangeable",
+      "test": "Reject complete-looking work whose idea, evidence and tone could belong to another company.",
+      "source_refs": ["SRC-202"]
+    },
+    {
+      "id": "STD-203",
+      "kind": "standard",
+      "name": "Specific before confident",
+      "test": "A strong direction names the customer behaviour, number or observed mechanism that earns its confidence.",
+      "source_refs": ["SRC-205", "SRC-208"]
+    },
+    {
+      "id": "STD-204",
+      "kind": "boundary",
+      "name": "Do not turn taste into a formula",
+      "test": "Criteria should help the team notice and argue, not force every new idea to resemble the last approved one.",
+      "source_refs": ["SRC-206", "SRC-210"]
+    },
+    {
+      "id": "STD-205",
+      "kind": "release_standard",
+      "name": "Human final accountability",
+      "test": "AI may prepare, compare and audit. Maya or a named human owner still polishes and releases consequential work.",
+      "source_refs": ["SRC-201", "SRC-209"]
+    }
+  ],
+  "unknowns": [
+    {
+      "id": "UNK-201",
+      "question": "Would customers find the bolder category position more useful or merely more interesting?",
+      "why_it_matters": "It separates creative novelty from commercial value.",
+      "smallest_test": "Show both directions to six current buyers without telling them which one Maya prefers."
+    },
+    {
+      "id": "UNK-202",
+      "question": "Can another leader apply Maya's standard to unfamiliar work without her rescuing the final idea?",
+      "why_it_matters": "The role redesign depends on judgement transfer, not prompt fluency.",
+      "smallest_test": "Run one blinded campaign brief through the proposed new operating model."
+    },
+    {
+      "id": "UNK-203",
+      "question": "Which current tasks disappear, and which new human responsibilities appear?",
+      "why_it_matters": "Role titles should follow the work design, not precede it.",
+      "smallest_test": "Map one campaign from raw evidence to release and mark every handoff, judgement and accountability point."
+    },
+    {
+      "id": "UNK-204",
+      "question": "Will existing volume incentives overpower the new quality standard?",
+      "why_it_matters": "A new team structure can still reproduce the old behaviour.",
+      "smallest_test": "Draft the three measures the pilot will reward before selecting people or tools."
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-201",
+      "kind": "consented_transcript",
+      "label": "Opening conversation",
+      "observed_at": "2026-08-29",
+      "audience": "customer_private",
+      "assertion": "I want them to bring me work that is nearly there, not more options I have to rescue."
+    },
+    {
+      "id": "SRC-202",
+      "kind": "consented_transcript",
+      "label": "Strategy session 1",
+      "observed_at": "2026-09-03",
+      "audience": "customer_private",
+      "assertion": "The launch was polished, but it could have belonged to anyone. Nobody could tell me what only we would say."
+    },
+    {
+      "id": "SRC-203",
+      "kind": "work_audit",
+      "label": "Synthetic two-week marketing work audit",
+      "observed_at": "2026-09-04",
+      "audience": "customer_private",
+      "assertion": "The eight-person marketing function spent a synthetic 41 percent of recorded time producing, adapting or approving routine channel content."
+    },
+    {
+      "id": "SRC-204",
+      "kind": "operator_note",
+      "label": "Krish private session note",
+      "observed_at": "2026-09-03",
+      "audience": "operator_private",
+      "assertion": "Maya became precise only when comparing two concrete directions. Abstract questions produced principles she later contradicted."
+    },
+    {
+      "id": "SRC-205",
+      "kind": "customer_research",
+      "label": "Synthetic customer interview synthesis",
+      "observed_at": "2026-09-05",
+      "audience": "customer_private",
+      "assertion": "Seven of ten synthetic customers remembered Aperture House for diagnosing a category problem plainly; two could recall its recent campaign theme."
+    },
+    {
+      "id": "SRC-206",
+      "kind": "customer_reply",
+      "label": "Maya email reply",
+      "observed_at": "2026-09-05",
+      "audience": "customer_private",
+      "assertion": "I do not want a brand rulebook so tight that the next good idea gets rejected for being new."
+    },
+    {
+      "id": "SRC-207",
+      "kind": "operating_data",
+      "label": "Synthetic marketing scorecard",
+      "observed_at": "2026-09-06",
+      "audience": "customer_private",
+      "assertion": "The current scorecard tracks output volume, publishing cadence and deadline completion. It has no measure for distinctiveness, customer usefulness or quality reasoning."
+    },
+    {
+      "id": "SRC-208",
+      "kind": "work_sample",
+      "label": "Synthetic campaign review",
+      "observed_at": "2026-09-06",
+      "audience": "customer_private",
+      "assertion": "The AI-assisted campaign produced twelve usable variants quickly, but nine repeated the same historical category frame and none cited fresh customer evidence."
+    },
+    {
+      "id": "SRC-209",
+      "kind": "board_note",
+      "label": "Synthetic board planning note",
+      "observed_at": "2026-09-07",
+      "audience": "customer_private",
+      "assertion": "The board supports a material operating-model change but expects named accountability, customer evidence and staged financial commitments."
+    },
+    {
+      "id": "SRC-210",
+      "kind": "voice_reflection",
+      "label": "Maya voice reflection",
+      "observed_at": "2026-09-07",
+      "audience": "customer_private",
+      "assertion": "I do not need the team to imitate me. I need them to notice what I notice before I have to fix it."
+    },
+    {
+      "id": "SRC-211",
+      "kind": "team_workshop",
+      "label": "Synthetic team workshop",
+      "observed_at": "2026-09-08",
+      "audience": "customer_private",
+      "assertion": "The team generated forty-three possible AI uses but could not agree which three would change customer value or role design."
+    },
+    {
+      "id": "SRC-212",
+      "kind": "strategy_draft",
+      "label": "Synthetic strategy draft",
+      "observed_at": "2026-09-08",
+      "audience": "customer_private",
+      "assertion": "The current proposal names tools and target savings but does not define the future customer proposition, quality system or human accountability model."
+    }
+  ],
+  "corrections": [
+    {
+      "id": "COR-201",
+      "from": "Maya keeps final work because she fundamentally distrusts delegation.",
+      "to": "Maya delegates generation but takes work back when quality reasoning arrives too late.",
+      "status": "accepted_and_repaired",
+      "source_refs": ["SRC-201", "SRC-210"]
+    }
+  ],
+  "recommended_move": {
+    "title": "Prove the quality system before fixing the org chart.",
+    "reason": "A contained campaign can test customer value, judgement transfer, new role responsibilities and incentives at the same time.",
+    "method": "Run one strategically important campaign through a separate AI-native operating model. Compare it blind against the current process. Maya makes the final call and records the earliest signal that changed it.",
+    "decision_effect": "If the new route wins on customer usefulness and requires no final rescue, Route B earns evidence for a larger rebuild. If it fails, Maya learns whether the missing ingredient is the standard, the people, the incentives or the category proposition.",
+    "source_refs": ["SRC-202", "SRC-203", "SRC-205", "SRC-207", "SRC-208", "SRC-210"]
+  },
+  "claude_handoff": {
+    "desired_output": "Design two materially different twelve-week pilot operating models and recommend one. Each must cover work flow, human judgement points, AI roles, measures, customer proof, cost gates and failure conditions.",
+    "forbidden_assumptions": [
+      "Do not assume faster content production is the goal.",
+      "Do not recommend named-person replacement or performance judgement.",
+      "Do not treat synthetic numbers as real company evidence.",
+      "Do not collapse Maya's standards into a rigid brand formula.",
+      "Do not claim that AI output or model agreement proves quality."
+    ],
+    "output_shape": [
+      "State the decision in one plain sentence.",
+      "Give two genuinely different pilot designs.",
+      "For each, name the causal bet, work design, human judgement, evidence required, cost gate and kill condition.",
+      "Recommend one and state the strongest counter-case.",
+      "Separate supplied evidence, inference and new suggestion.",
+      "List the three questions Maya must answer herself."
+    ]
+  },
+  "returned_claude_example": {
+    "text": "Aperture House should embrace an AI-first marketing transformation. Start by training the team on leading AI tools, automate content creation and use a human-in-the-loop process to maintain quality. This will unlock efficiency while empowering the team to focus on strategy. Track engagement and output to prove success, then scale the programme across the company.",
+    "provenance": "synthetic_claude_suggestion",
+    "brain_audit": {
+      "verdict": "Do not use this yet.",
+      "generic_reasoning": [
+        "It repeats the standard tools, training, automation and scale sequence without choosing a future operating model.",
+        "It treats content efficiency as the goal even though the Brain says customer usefulness and judgement transfer are the decision."
+      ],
+      "missing_evidence": [
+        "No cost gate against the synthetic GBP 1.2 million budget.",
+        "No test of whether another leader can apply Maya's standard.",
+        "No customer proof or kill condition."
+      ],
+      "standard_conflicts": [
+        "Uses category language that any company could adopt.",
+        "Measures engagement and output despite the current incentive problem.",
+        "Says human in the loop without naming who owns the final judgement."
+      ],
+      "additive_material": [
+        "A staged rollout is directionally compatible with the board's demand for staged commitments."
+      ],
+      "sharpening_instruction": "Rebuild the answer around one customer-facing campaign, two competing operating models, named human judgement points, a budget gate and an explicit failure condition."
+    }
+  },
+  "sparse_fallback": {
+    "known": "Maya rejects polished work that could belong to anyone.",
+    "unknown": "The Brain does not yet know which positive signal she trusts first.",
+    "next_move": "Compare two real campaign directions and record the first detail she notices."
+  }
+}
