@@ -53,4 +53,3 @@ Produce one concept spine that is materially distinct in sequencing, user agency
 9. why this is not a disguised version of a conventional editorial page, course, project dashboard or chat UI.
 
 Do not inspect prior G14 renders, screenshots, implementation, rationale, rankings or rejected layout descriptions. Do not imitate their component shapes. Work only from this brief.
-

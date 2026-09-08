@@ -32,4 +32,3 @@
 ## Reset decision
 
 R2 is not approved. This is the second rejected revision inside the Intervention Lens spine. The next step is fresh, blinded divergence using a sanitized brief. No R3 refinement of the same spine is authorised. The new synthesis must be shown cold and receive explicit founder approval before implementation or any later material surface.
-
