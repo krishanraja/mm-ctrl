@@ -1,0 +1,140 @@
+{
+  "schema_version": "ctrl.g14.decision-bench.implementation.v1",
+  "status": "founder_locked_contract",
+  "approved_artifact": {
+    "path": "project-documentation/ctrl-evolution/design/g14-decision-bench-proof-r1.html",
+    "commit": "f4777fa7a6870420d429c5f469931956e84fcd61",
+    "sha256": "cb8739e3094503a23570b9a66c950bd3ce589e5c2b54f3932ee6b41229764933",
+    "fixture_sha256": "d4f0c836f333b94fbde2f1fc8ef4ad697c42258400b46237cefb2bc660287fd8"
+  },
+  "surface": {
+    "working_name": "Decision Bench",
+    "route_pattern": "/operator/customers/:workspaceId/decisions/:decisionId",
+    "primary_actor": "mindmake_operator",
+    "subject": "customer",
+    "default_audience": "operator_private",
+    "desktop_rule": "no_page_scroll_1440x900",
+    "mobile_rule": "one_work_region_at_a_time"
+  },
+  "projection": {
+    "required_identity": [
+      "workspace_id",
+      "subject_id",
+      "decision_id",
+      "projection_version",
+      "as_of"
+    ],
+    "regions": [
+      "decision_header",
+      "meaning_comparison",
+      "evidence_bench",
+      "focused_brain_route",
+      "next_session_move"
+    ],
+    "audiences": [
+      "operator_private",
+      "customer_private"
+    ],
+    "states": [
+      "ready",
+      "sparse",
+      "quiet",
+      "loading",
+      "stale",
+      "error",
+      "rejected"
+    ]
+  },
+  "invariants": [
+    "DECISION_IDENTITY_ALWAYS_VISIBLE",
+    "CURRENT_AND_HISTORY_DISTINCT",
+    "HISTORY_CANNOT_STEER",
+    "EVIDENCE_EXACT_AND_INSPECTABLE",
+    "RELATIONSHIPS_TYPED_AND_EVIDENCED",
+    "PRIVATE_GUIDANCE_NON_DURABLE",
+    "CUSTOMER_PROJECTION_AUDIENCE_SAFE",
+    "UNKNOWN_REMAINS_UNKNOWN",
+    "NO_COMPUTED_PERMISSION_OR_CLEARANCE",
+    "NO_SELF_AWARDING_COPY",
+    "DESKTOP_NO_PAGE_SCROLL",
+    "MOBILE_PROGRESSIVE_DISCLOSURE"
+  ],
+  "reuse": [
+    {
+      "capability": "decision retrieval and evidence qualification",
+      "source": "supabase/functions/decision-engine",
+      "boundary": "adapter input only; retrievers do not determine truth or interface sequence"
+    },
+    {
+      "capability": "decision, claim, evidence and tension read models",
+      "source": "decision_cases, decision_claims, decision_evidence, decision_tensions",
+      "boundary": "read only where identity, subject, source and meaning map unambiguously"
+    },
+    {
+      "capability": "responsive application frames",
+      "source": "DesktopShell and MobileFrame",
+      "boundary": "reuse viewport, focus and recovery properties; approved Decision Bench hierarchy wins"
+    },
+    {
+      "capability": "Brain visual renderer",
+      "source": "BrainGraph and brainGraphModel",
+      "boundary": "reuse rendering mechanics only; use focused canonical relationships, not legacy inferred semantics"
+    },
+    {
+      "capability": "voice draft, review and retry",
+      "source": "current voice capture and transcription flow",
+      "boundary": "no transcript becomes durable Brain truth without source envelope and human authority"
+    }
+  ],
+  "gated_additions": [
+    "workspace_and_subject_identity",
+    "operator_and_customer_role_grants",
+    "versioned_sources_and_assertions",
+    "versioned_brain_items_and_relationships",
+    "audience_aware_projection",
+    "append_only_correction_and_repair",
+    "session_plan_and_private_guidance_events"
+  ],
+  "forbidden_shortcuts": [
+    "cross_user_reads_through_service_role_in_browser",
+    "user_memory_as_target_brain_ontology",
+    "memory_edges_as_canonical_relationships",
+    "historical_meaning_in_current_action_basis",
+    "private_guidance_in_customer_projection",
+    "fixture_fields_presented_as_real_customer_inference",
+    "material_route_in_primary_navigation_before_gate",
+    "production_schema_or_account_creation_without_action_time_approval"
+  ],
+  "first_slice": {
+    "name": "fixture_backed_operator_read_slice",
+    "write_policy": "no_database_writes",
+    "data": "synthetic_fixture_only",
+    "route_visibility": "local_direct_url_only",
+    "includes": [
+      "typed_projection_adapter",
+      "desktop_and_mobile_decision_bench_component",
+      "current_history_comparison",
+      "source_and_relationship_inspection",
+      "transient_private_ask",
+      "customer_safe_preview",
+      "all_required_states",
+      "deterministic_browser_tests"
+    ],
+    "excludes": [
+      "real_accounts",
+      "real_customer_data",
+      "database_migration",
+      "new_auth_roles",
+      "persistent_private_guidance",
+      "github_sync",
+      "deployment"
+    ]
+  },
+  "release_sequence": [
+    "fixture_backed_local_read_slice",
+    "workspace_and_audience_schema_canary",
+    "designated_founder_operator_account",
+    "small_named_mindmake_cohort",
+    "bounded_customer_self_service"
+  ]
+}

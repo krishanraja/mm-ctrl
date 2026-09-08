@@ -1,12 +1,12 @@
 # G14 Decision Bench R1 founder lock
 
-**Date:** 8 September 2026  
-**Artifact:** `g14-decision-bench-proof-r1.html`  
-**Status:** Founder-approved material direction  
-**Conceptual spine:** Decision Bench  
-**Reviewed commit:** `f4777fa7a6870420d429c5f469931956e84fcd61`  
-**Rendered proof SHA-256:** `cb8739e3094503a23570b9a66c950bd3ce589e5c2b54f3932ee6b41229764933`  
-**Synthetic fixture SHA-256:** `d4f0c836f333b94fbde2f1fc8ef4ad697c42258400b46237cefb2bc660287fd8`  
+**Date:** 8 September 2026
+**Artifact:** `g14-decision-bench-proof-r1.html`
+**Status:** Founder-approved material direction
+**Conceptual spine:** Decision Bench
+**Reviewed commit:** `f4777fa7a6870420d429c5f469931956e84fcd61`
+**Rendered proof SHA-256:** `cb8739e3094503a23570b9a66c950bd3ce589e5c2b54f3932ee6b41229764933`
+**Synthetic fixture SHA-256:** `d4f0c836f333b94fbde2f1fc8ef4ad697c42258400b46237cefb2bc660287fd8`
 **Production authority:** None
 
 ## Exact founder reaction
@@ -47,12 +47,12 @@ This approval closes the G14 material visual gate and authorises an implementati
 
 ## Handoff
 
-**OUTCOME:** Translate the approved Decision Bench into an implementation-complete contract without reopening the material design.  
-**PHASE:** G14 visual direction locked; implementation contract pending.  
-**CURRENT TRUTH:** The reviewed proof is a verified, self-contained local artifact using synthetic Maya Chen data.  
-**LOCKED:** G14 Decision Bench R1 at the commit and hashes above.  
-**AUTHORITY:** Documentation, contract work and local proof planning only.  
-**RISKS:** The live app's data model and component architecture may not yet support every approved state truthfully. Synthetic fixture quality does not prove inference quality.  
-**VERIFICATION:** The contract must map each approved object, state and audience boundary to an existing capability, an explicit adapter or a separately gated addition.  
-**NEXT OWNER:** `krish-build` after the implementation contract is complete and implementation authority is explicit.  
-**NEXT ACTION:** Produce the G14 Decision Bench implementation contract and smallest local vertical-slice plan.
+**OUTCOME:** Implement the approved Decision Bench without reopening the material design.
+**PHASE:** G14 visual direction locked; implementation contract complete; exact local implementation gate pending.
+**CURRENT TRUTH:** The reviewed proof is a verified, self-contained local artifact using synthetic Maya Chen data.
+**LOCKED:** G14 Decision Bench R1 at the commit and hashes above.
+**AUTHORITY:** Documentation, contract work and local proof planning only.
+**RISKS:** The live app's data model and component architecture may not yet support every approved state truthfully. Synthetic fixture quality does not prove inference quality.
+**VERIFICATION:** `g14-decision-bench-implementation-contract.json` maps each approved object, state and audience boundary to an existing capability, an explicit adapter or a separately gated addition.
+**NEXT OWNER:** `krish-build` after implementation authority is explicit.
+**NEXT ACTION:** Obtain the exact gate to build the fixture-backed local React slice described in `g14-decision-bench-implementation-plan.md`.
