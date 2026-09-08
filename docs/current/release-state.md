@@ -16,9 +16,9 @@ Last verified: 2026-09-05 against production function, database, and deployment 
 | Edge Function source inventory | 115 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
 | Hook files | 51 |
-| SQL migration files | 167 in the source tree |
+| SQL migration files | 170 in the source tree |
 
-Current source inventory is 115 Edge Function directories excluding `_shared`, 51 hook files, and 167 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
+Current source inventory is 115 Edge Function directories excluding `_shared`, 51 hook files, and 170 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
 
 ## Emergency trust containment, 2026-09-05
 

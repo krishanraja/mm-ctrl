@@ -35,7 +35,7 @@ flowchart LR
 | Scheduled work | Prewarm, delivery, memory, watch, and lifecycle jobs | migrations using Vault, pg_cron, and pg_net |
 | Vercel | Static assets, SPA routing, canonical and redirect hosts | `vercel.json` and project configuration |
 
-The repository contains 115 Edge Function directories excluding `_shared`, 51 hook files, and 167 SQL migrations. These are measured source-tree inventory counts, not design targets.
+The repository contains 115 Edge Function directories excluding `_shared`, 51 hook files, and 170 SQL migrations. These are measured source-tree inventory counts, not design targets.
 
 ## The Supabase project is shared
 
