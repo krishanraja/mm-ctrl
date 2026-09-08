@@ -1,7 +1,7 @@
 # G20 Decision Table R3 QA record
 
 **Date:** 9 September 2026  
-**Status:** local verification complete; protected-preview and founder gates pending
+**Status:** local and protected-preview verification complete; founder gate pending
 
 ## Exact artifacts
 
@@ -10,6 +10,9 @@
 - R3 fixture: `g20-decision-table-r3-fixture.json`, 19,105 bytes, SHA-256 `255bdc3b8dc8fda8655bd13cf4268d56f658371c7f98e3304b8f3f77daffa4f7`.
 - Data: deterministic synthetic Maya Chen and Aperture House material only.
 - Local route: `http://127.0.0.1:4194/g20-decision-table-proof-r3.html`.
+- Protected deployment: `https://mm-ctrl-j9jwonoaz-krish-rajas-projects.vercel.app/g20-decision-table-proof-r3.html`.
+- Deployment source commit: `2fe5d31`.
+- Temporary share access: issued through Vercel and expires 9 September 2026 at 22:57 BST; the access token is not stored in this ledger.
 - Production state: unchanged.
 
 ## Allowed-diff verification
@@ -41,12 +44,16 @@ Seven Chromium journeys pass:
 
 The final local run passed all seven journeys in 8.4 seconds.
 
+The same seven journeys passed against the exact protected deployment in 21.1 seconds. The protected entry established the temporary Vercel session, then every journey exercised the stable deployment origin. No production route or database was used.
+
 ## Rendered evidence
 
 - Opening desktop: `g20-decision-table-r3-1440x900.png`, 153,928 bytes, SHA-256 `3f996cc8e6bbaf42bbc1a14bcf26b70eb9c1916f39813bb1b08f06ebfb769779`.
 - Opening mobile: `g20-decision-table-r3-390x844.png`, 82,500 bytes, SHA-256 `6a9420d681a518333ba3f1459dd0ce1cdaefb188b015fa6720047481a109c963`.
 - Deeper layer desktop: `g20-decision-table-r3-challenge-1440x900.png`, 146,340 bytes, SHA-256 `c79621e175e8c9ca169a766d908e4d8eacf9a1a96c5fcecdd86394f1477a6dad`.
 - Deeper layer mobile: `g20-decision-table-r3-challenge-390x844.png`, 70,146 bytes, SHA-256 `d244eb1f6d7c577574f42c8fb5bf959e8423c31cc4a36c1dfdcde9bdfb829578`.
+- Temporary remote opening desktop capture: 153,928 bytes, SHA-256 `3f996cc8e6bbaf42bbc1a14bcf26b70eb9c1916f39813bb1b08f06ebfb769779`.
+- Temporary remote deeper-layer mobile capture: 70,146 bytes, SHA-256 `d244eb1f6d7c577574f42c8fb5bf959e8423c31cc4a36c1dfdcde9bdfb829578`.
 
 Original-resolution inspection confirms:
 
@@ -56,6 +63,8 @@ Original-resolution inspection confirms:
 - the deeper layer presents one large plain question, one reason, one route effect and two actions;
 - desktop and mobile preserve hierarchy, focus and touch target clarity; and
 - the deeper layer fits within the mobile viewport without nested scrolling.
+
+The temporary remote captures are byte-for-byte identical to their retained local counterparts, so duplicate binaries are not committed. Original-resolution remote inspection confirms that the exact protected deployment preserves both the uncluttered opening and the one-question mobile layer.
 
 ## Repository checks
 
@@ -73,6 +82,6 @@ This synthetic proof demonstrates the proposed interaction and data standing. It
 
 ## Verdict
 
-R3 is locally verified as a targeted synthetic revision. It is not founder-approved, remotely verified, implemented in React, connected to production data, merged, live or released.
+R3 is locally and remotely verified as a targeted synthetic revision. It is not founder-approved, implemented in React, connected to production data, merged, live or released.
 
-Next gate: publish a protected preview, rerun the seven journeys against its exact deployment, inspect remote pixels and present one direct HTTPS route cold.
+Next gate: present one direct protected HTTPS route cold and record Krish's unanchored reaction before explanation or React implementation.
