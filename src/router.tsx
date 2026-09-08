@@ -164,6 +164,8 @@ function preloadInitialRouteChunk() {
     warm(() => import('@/pages/Landing'))
   } else if (p.startsWith('/auth')) {
     warm(() => import('@/pages/Auth'))
+  } else if (p.startsWith('/operator/customers/')) {
+    warm(() => import('@/features/operator-brain/DecisionBenchPage'))
   } else {
     // The authed area: the home/dashboard is the overwhelmingly common entry point.
     warm(() => import('@/pages/Dashboard'))
@@ -227,7 +229,8 @@ function CaptureLandingGate() {
 function DecisionBenchGate() {
   const { workspaceId, decisionId } = useParams()
   const isLockedFixture = workspaceId === 'SYN-CUST-014' && decisionId === 'INT-014'
-  return import.meta.env.DEV && isLockedFixture ? <DecisionBenchPage /> : <NotFound />
+  const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
+  return previewEnabled && isLockedFixture ? <DecisionBenchPage /> : <NotFound />
 }
 
 export const router = createBrowserRouter([

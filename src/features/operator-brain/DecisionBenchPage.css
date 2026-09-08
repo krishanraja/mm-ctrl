@@ -34,13 +34,15 @@
   inset: 0 0 auto;
   height: 60px;
   display: grid;
-  grid-template-columns: 72px 1fr auto;
+  grid-template-columns: 196px 1fr auto;
   align-items: center;
   border-bottom: 1px solid var(--db-line-soft);
   background: rgba(7, 16, 11, 0.97);
 }
-.db-brand { height: 100%; display: grid; place-items: center; border-right: 1px solid var(--db-line-soft); color: var(--db-amber); }
-.db-brand svg { width: 22px; height: 22px; stroke-width: 1.55; }
+.db-brand { height: 100%; display: flex; align-items: center; gap: 14px; padding: 0 18px; border: 0; border-right: 1px solid var(--db-line-soft); background: transparent; color: var(--db-muted); cursor: pointer; }
+.db-brand img { width: 128px; height: auto; display: block; }
+.db-brand svg { width: 17px; height: 17px; margin-left: auto; stroke-width: 1.45; }
+.db-brand:hover { color: var(--db-paper); background: var(--db-raised); }
 .db-identity { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 0 20px; }
 .db-avatar { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 auto; border: 1px solid var(--db-line); border-radius: 50%; color: var(--db-mint); font: 600 8px/1 var(--db-mono); }
 .db-identity strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
@@ -68,10 +70,24 @@
   padding: 18px 10px;
   border-right: 1px solid var(--db-line-soft);
   background: var(--db-ink);
+  overflow: hidden;
+  transition: width 180ms ease, box-shadow 180ms ease;
 }
-.db-rail > button { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border: 0; border-radius: 3px; background: transparent; color: var(--db-muted); cursor: pointer; }
-.db-rail > button span { display: none; }
+.db-rail.is-open { width: 236px; align-items: stretch; box-shadow: 24px 0 52px rgba(0, 0, 0, 0.36); }
+.db-rail-heading { width: 48px; height: 32px; display: flex; align-items: center; gap: 14px; flex: 0 0 auto; color: var(--db-amber); }
+.db-rail-heading svg { width: 18px; height: 18px; margin-left: 15px; flex: 0 0 auto; stroke-width: 1.55; }
+.db-rail-heading span { opacity: 0; white-space: nowrap; color: var(--db-paper-2); font: 600 8px/1 var(--db-mono); letter-spacing: 0.07em; text-transform: uppercase; transition: opacity 100ms ease; }
+.db-rail.is-open .db-rail-heading { width: 100%; }
+.db-rail.is-open .db-rail-heading span { opacity: 1; }
+.db-rail > button { position: relative; width: 48px; height: 52px; display: flex; align-items: center; gap: 14px; padding: 0 15px; flex: 0 0 auto; border: 0; border-radius: 3px; background: transparent; color: var(--db-muted); cursor: pointer; text-align: left; }
+.db-rail.is-open > button { width: 100%; }
 .db-rail > button svg { width: 18px; height: 18px; stroke-width: 1.55; }
+.db-rail > button > svg { flex: 0 0 auto; }
+.db-rail-label { min-width: 0; opacity: 0; pointer-events: none; white-space: nowrap; transition: opacity 100ms ease; }
+.db-rail.is-open .db-rail-label { opacity: 1; }
+.db-rail-label strong, .db-rail-label small { display: block; overflow: hidden; text-overflow: ellipsis; }
+.db-rail-label strong { color: var(--db-paper); font-size: 11px; }
+.db-rail-label small { margin-top: 4px; color: var(--db-muted); font: 500 7px/1 var(--db-mono); letter-spacing: 0.04em; text-transform: uppercase; }
 .db-rail > button:hover, .db-rail > button.is-active { color: var(--db-paper); background: var(--db-raised); }
 .db-rail > button.is-active::after { content: ""; position: absolute; right: -10px; width: 2px; height: 22px; background: var(--db-mint); }
 .db-rail-spacer { flex: 1; }
@@ -103,6 +119,7 @@
 
 .db-grid { min-height: 0; display: grid; grid-template-columns: 462px 570px 240px; gap: 24px; }
 .db-panel { min-width: 0; min-height: 0; border: 1px solid var(--db-line); background: var(--db-ink-2); overflow: hidden; }
+.db-panel.is-active-panel { border-color: #416b59; box-shadow: 0 0 0 1px rgba(139, 229, 184, 0.06); }
 .db-panel-head { height: 54px; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--db-line); }
 .db-panel-head strong { font-size: 12px; }
 .db-panel-head span { color: var(--db-muted); font: 500 7px/1 var(--db-mono); letter-spacing: 0.06em; text-transform: uppercase; }
@@ -200,7 +217,32 @@
 .db-state-cover h2 { margin: 12px 0 0; font: 400 32px/1.05 var(--db-serif); }
 .db-state-cover p { color: var(--db-paper-2); font: 400 14px/1.5 var(--db-serif); }
 
-.db-dialog { width: min(620px, calc(100vw - 32px)); max-width: none; max-height: min(760px, calc(100dvh - 36px)); gap: 0; padding: 0; overflow: hidden; border: 1px solid var(--db-line); border-radius: 3px; background: var(--db-ink-2); color: var(--db-paper); box-shadow: 0 24px 90px rgba(0, 0, 0, 0.55); font-family: var(--db-sans); }
+.db-dialog {
+  --db-ink: #07100b;
+  --db-ink-2: #0b1510;
+  --db-raised: #101b15;
+  --db-line: #294238;
+  --db-paper: #f2efe3;
+  --db-paper-2: #d5d4c9;
+  --db-muted: #8d9c94;
+  --db-mint: #8be5b8;
+  --db-amber: #dfa94f;
+  --db-serif: "Newsreader", "Source Serif 4", Georgia, serif;
+  --db-sans: "Archivo", Inter, Arial, sans-serif;
+  --db-mono: "IBM Plex Mono", Consolas, monospace;
+  width: min(620px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(760px, calc(100dvh - 36px));
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--db-line);
+  border-radius: 3px;
+  background: var(--db-ink-2);
+  color: var(--db-paper);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.72);
+  font-family: var(--db-sans);
+}
 .db-dialog > button { display: none; }
 .db-dialog-head { height: 54px; display: flex; justify-content: space-between; align-items: center; padding-left: 18px; border-bottom: 1px solid var(--db-line); }
 .db-dialog-head strong { font-size: 11px; }
@@ -238,10 +280,11 @@
 
 @media (max-width: 980px) {
   .decision-bench { min-height: 100dvh; padding-bottom: 68px; }
-  .db-topbar { grid-template-columns: 54px 1fr auto; height: 60px; }
-  .db-brand { border-right: 0; }
-  .db-identity { padding: 0 6px; gap: 9px; }
-  .db-identity span { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .db-topbar { grid-template-columns: 148px 1fr auto; height: 60px; }
+  .db-brand { padding: 0 14px; border-right: 0; pointer-events: none; }
+  .db-brand img { width: 120px; }
+  .db-brand svg { display: none; }
+  .db-identity { display: none; }
   .db-top-actions .db-quiet-button { display: none; }
   .db-customer-mobile { display: grid; }
   .db-rail { display: none; }

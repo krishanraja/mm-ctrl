@@ -6,6 +6,7 @@ import {
   FileText,
   GitCompareArrows,
   Mic,
+  PanelLeftOpen,
   Plus,
   X,
 } from 'lucide-react'
@@ -121,7 +122,7 @@ function ComparePanel({ active }: { active: boolean }) {
   const [selected, setSelected] = useState<MeaningMode>('current')
 
   return (
-    <section className={`db-panel db-compare ${active ? 'is-mobile-active' : ''}`} data-mobile-panel="compare" aria-label="Compare interpretations">
+    <section className={`db-panel db-compare ${active ? 'is-mobile-active is-active-panel' : ''}`} data-mobile-panel="compare" aria-label="Compare interpretations">
       <PanelHeader title="Compare the explanation" meta="Current and history" />
       <div className="db-comparison">
         <div className="db-table-corner">Test</div>
@@ -200,7 +201,7 @@ function BrainRoute() {
 
 function EvidencePanel({ active, openSource }: { active: boolean; openSource: (source: BrainSource) => void }) {
   return (
-    <section className={`db-panel db-evidence ${active ? 'is-mobile-active' : ''}`} data-mobile-panel="evidence" aria-label="Evidence and Living Brain">
+    <section className={`db-panel db-evidence ${active ? 'is-mobile-active is-active-panel' : ''}`} data-mobile-panel="evidence" aria-label="Evidence and Living Brain">
       <PanelHeader title="Evidence behind the current read" meta="Exact sources · typed links" />
       <div className="db-change-trace" aria-label="Evidence changed the interpretation">
         <div className="is-source"><small>New evidence</small><strong>SRC-105</strong></div><b>›</b>
@@ -232,7 +233,7 @@ function EvidencePanel({ active, openSource }: { active: boolean; openSource: (s
 
 function ActionPanel({ active, openDialog }: { active: boolean; openDialog: (dialog: DialogKind) => void }) {
   return (
-    <section className={`db-panel db-action ${active ? 'is-mobile-active' : ''}`} data-mobile-panel="action" aria-label="Prepare next move">
+    <section className={`db-panel db-action ${active ? 'is-mobile-active is-active-panel' : ''}`} data-mobile-panel="action" aria-label="Prepare next move">
       <PanelHeader title="Next session" meta="Operator private" />
       <div className="db-action-body">
         <section className="is-next"><span className="db-label">Prepare</span><h3>Two launch directions that fail differently.</h3><p>Ask which is closer, then what would still stop Maya shipping it.</p></section>
@@ -319,27 +320,78 @@ export default function DecisionBenchPage() {
   const [panel, setPanel] = useState<BenchPanel>('compare')
   const [dialog, setDialog] = useState<DialogKind>(null)
   const [source, setSource] = useState<BrainSource | null>(null)
+  const [railHovered, setRailHovered] = useState(false)
+  const [railPinned, setRailPinned] = useState(false)
   const stateCandidate = new URLSearchParams(window.location.search).get('state')
   const state = stateCandidate && stateCandidate in fallbackStates ? stateCandidate as BenchState : null
+
+  useEffect(() => {
+    const previousTitle = document.title
+    const existingRobots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
+    const robots = existingRobots ?? document.createElement('meta')
+    const previousRobots = existingRobots?.content
+    if (!existingRobots) {
+      robots.name = 'robots'
+      document.head.appendChild(robots)
+    }
+    robots.content = 'noindex,nofollow,noarchive'
+    document.title = 'Decision Bench | Mindmake preview'
+
+    return () => {
+      document.title = previousTitle
+      if (existingRobots) robots.content = previousRobots ?? ''
+      else robots.remove()
+    }
+  }, [])
 
   const openSource = (nextSource: BrainSource) => {
     setSource(nextSource)
     setDialog('source')
   }
 
-  const panelButton = (target: BenchPanel, label: string, icon: ReactNode) => (
+  const choosePanel = (target: BenchPanel) => {
+    setPanel(target)
+    setRailHovered(false)
+    if (window.matchMedia('(max-width: 980px)').matches) window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const mobilePanelButton = (target: BenchPanel, label: string, icon: ReactNode) => (
     <button
       type="button"
       className={panel === target ? 'is-active' : ''}
-      onClick={() => { setPanel(target); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+      onClick={() => choosePanel(target)}
       aria-label={label}
     >{icon}<span>{label}</span></button>
   )
 
+  const railButton = (target: BenchPanel, label: string, detail: string, icon: ReactNode) => (
+    <button
+      type="button"
+      className={panel === target ? 'is-active' : ''}
+      onClick={() => choosePanel(target)}
+      aria-label={label}
+      aria-current={panel === target ? 'page' : undefined}
+    >
+      {icon}
+      <span className="db-rail-label"><strong>{label}</strong><small>{detail}</small></span>
+    </button>
+  )
+
+  const railOpen = railHovered || railPinned
+
   return (
     <div className="decision-bench" data-testid="decision-bench">
       <header className="db-topbar">
-        <div className="db-brand" aria-label="CTRL"><BrainCircuit /></div>
+        <button
+          className="db-brand"
+          type="button"
+          aria-label={railPinned ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={railOpen}
+          onClick={() => setRailPinned((pinned) => !pinned)}
+        >
+          <img src="/mindmaker-full-logo.png" alt="Mindmaker" />
+          <PanelLeftOpen aria-hidden="true" />
+        </button>
         <div className="db-identity"><div className="db-avatar">MC</div><div><strong>{fixture.customer.display_name}</strong><span>{fixture.customer.role} · {fixture.customer.organisation}</span></div></div>
         <div className="db-top-actions">
           <button className="db-quiet-button" type="button" onClick={() => setDialog('local')}><Plus />Add evidence</button>
@@ -348,11 +400,17 @@ export default function DecisionBenchPage() {
         </div>
       </header>
 
-      <aside className="db-rail" aria-label="Decision Bench">
-        {panelButton('compare', 'Compare', <GitCompareArrows />)}
-        {panelButton('evidence', 'Evidence', <FileText />)}
-        {panelButton('action', 'Prepare next move', <ArrowRight />)}
-        <button type="button" aria-label="Preview customer view" onClick={() => setDialog('customer')}><Eye /></button>
+      <aside
+        className={`db-rail ${railOpen ? 'is-open' : ''}`}
+        aria-label="Decision Bench"
+        onMouseEnter={() => setRailHovered(true)}
+        onMouseLeave={() => setRailHovered(false)}
+      >
+        <div className="db-rail-heading"><BrainCircuit /><span>Decision Bench</span></div>
+        {railButton('compare', 'Compare', 'Current against history', <GitCompareArrows />)}
+        {railButton('evidence', 'Evidence', 'Sources and Brain route', <FileText />)}
+        {railButton('action', 'Next move', 'Prepare the session', <ArrowRight />)}
+        <button type="button" aria-label="Preview customer view" onClick={() => setDialog('customer')}><Eye /><span className="db-rail-label"><strong>Customer view</strong><small>Check what Maya sees</small></span></button>
         <div className="db-rail-spacer" />
         <div className="db-day"><strong>{fixture.customer.proof_day}/{fixture.customer.proof_length_days}</strong><span>proof day</span></div>
       </aside>
@@ -383,9 +441,9 @@ export default function DecisionBenchPage() {
       </main>
 
       <nav className="db-mobile-nav" aria-label="Decision Bench sections">
-        {panelButton('compare', 'Compare', <GitCompareArrows />)}
-        {panelButton('evidence', 'Evidence', <FileText />)}
-        {panelButton('action', 'Next move', <ArrowRight />)}
+        {mobilePanelButton('compare', 'Compare', <GitCompareArrows />)}
+        {mobilePanelButton('evidence', 'Evidence', <FileText />)}
+        {mobilePanelButton('action', 'Next move', <ArrowRight />)}
       </nav>
 
       <BenchDialog kind={dialog} source={source} onClose={() => setDialog(null)} />

@@ -69,7 +69,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 | Upgrade | `/upgrade`; public `/pricing` rewrite | Plan comparison and checkout entry |
 | Trust and security | Public `/trust` rewrite | Honest security posture: controls in place, in progress, and absent |
 | Preview | `/preview` | Unlinked deterministic QA fixtures |
-| Decision Bench | `/operator/customers/:workspaceId/decisions/:decisionId` | Development-only, synthetic operator-surface implementation harness |
+| Decision Bench | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic operator-surface implementation harness for local or flagged preview builds |
 | Skill and MCP generation | Backend functions and exports | Portability substrate only |
 
 ## Route inventory
@@ -84,9 +84,9 @@ Nested harnesses support a specific job or portability outcome. They must not be
 
 `/dashboard`, `/memory`, `/context`, `/briefing`, `/decision`, `/blind-spot`, `/goals`, `/track-record`, `/decision-map`, `/enrich`, `/sort`, `/review`, `/proposals`, `/settings`, `/compliance`, and `/profile`.
 
-### Local development only
+### Synthetic preview only
 
-`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode. It is unlinked, unauthenticated for local QA, and has no persistence authority.
+`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. It is unlinked, marked `noindex`, unauthenticated for QA, and has no persistence authority.
 
 ### Legacy redirects
 
