@@ -14,6 +14,7 @@
     "brain:g13:render-check": "node scripts/check-ctrl-g13-rendered-proof.mjs",
     "brain:g13:r2-check": "node scripts/check-ctrl-g13-r2-proof.mjs",
     "brain:g14:r1-check": "node scripts/check-ctrl-g14-private-brain-builder-proof.mjs",
+    "brain:g14:r2-check": "node scripts/check-ctrl-g14-private-brain-builder-r2-proof.mjs",
     "brain:g15:check": "node scripts/check-ctrl-g15-judgement-resolution.mjs",
     "brain:g15:r1-check": "node scripts/check-ctrl-g15-brain-resolution-proof.mjs",
     "brain:g15:r2-check": "node scripts/check-ctrl-g15-brain-resolution-r2-proof.mjs",
