@@ -17,6 +17,7 @@
     "brain:g14:r2-check": "node scripts/check-ctrl-g14-private-brain-builder-r2-proof.mjs",
     "brain:g14:bench-check": "node scripts/check-ctrl-g14-decision-bench-proof.mjs",
     "brain:g14:contract-check": "node scripts/check-ctrl-g14-decision-bench-contract.mjs",
+    "brain:g14:react-check": "node scripts/check-ctrl-g14-decision-bench-react.mjs",
     "brain:g15:check": "node scripts/check-ctrl-g15-judgement-resolution.mjs",
     "brain:g15:r1-check": "node scripts/check-ctrl-g15-brain-resolution-proof.mjs",
     "brain:g15:r2-check": "node scripts/check-ctrl-g15-brain-resolution-r2-proof.mjs",
