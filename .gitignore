@@ -54,3 +54,6 @@ _verify/
 # optional worktree-local vite dep-optimize cache (VITE_CACHE_DIR override)
 .vite-worktree-cache/
 .audit-tmp/
+
+.vercel
+.env*

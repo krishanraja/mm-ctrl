@@ -2,7 +2,7 @@
 
 Date: 8 September 2026
 
-Status: implemented and locally verified; remote preview pending
+Status: implemented and verified locally and on the remote preview
 
 ## Founder review
 
@@ -56,4 +56,16 @@ Evidence:
 
 ## Deployment boundary
 
-The authorised target is a non-production Vercel preview of the synthetic fixture. Production, authenticated integration, real customer data, persistence and public release remain untouched and separately gated. The preview URL and immutable deployment readback will be appended after deployment.
+The authorised target is a non-production Vercel preview of the synthetic fixture. Production, authenticated integration, real customer data, persistence and public release remain untouched and separately gated.
+
+Deployment readback:
+
+- Vercel project: `mm-ctrl`
+- environment: `preview`
+- deployment ID: `dpl_9ywamPrcur1VZZoJPm2x9XjNit47`
+- immutable deployment URL: `https://mm-ctrl-hh1i6mkno-krish-rajas-projects.vercel.app`
+- source commit: `5409e4ea769953ff8f6906f615e9d83f33bef473`
+- ready state: `READY`
+- production target: untouched
+
+The project keeps standard deployment protection. A preview-scoped shareable link was created for cross-device founder review and expires on 8 October 2026. Its access parameter is intentionally not persisted in Git. The remote route passed the same desktop, mobile, interaction, privacy-boundary, state-range and wrong-identity acceptance suite as the local build.

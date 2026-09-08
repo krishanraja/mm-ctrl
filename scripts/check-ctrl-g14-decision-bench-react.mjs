@@ -134,16 +134,18 @@ try {
 
   const lowHeight = await browser.newContext({ viewport: { width: 720, height: 450 }, reducedMotion: 'reduce' })
   const lowPage = await lowHeight.newPage()
-  await lowPage.goto(baseUrl, { waitUntil: 'networkidle' })
-  await lowPage.getByTestId('decision-bench').waitFor()
+  await lowPage.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
+  await lowPage.getByTestId('decision-bench').waitFor({ state: 'visible', timeout: 30000 })
   await expect('low-height view reflows to one region without horizontal overflow', await lowPage.locator('.db-panel:visible').count() === 1 && await lowPage.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
   await lowHeight.close()
 
   for (const state of ['sparse', 'quiet', 'loading', 'stale', 'error', 'rejected']) {
     const stateContext = await browser.newContext({ viewport: { width: 1280, height: 720 } })
     const statePage = await stateContext.newPage()
-    await statePage.goto(`${baseUrl}?state=${state}`, { waitUntil: 'networkidle' })
-    await statePage.getByTestId(`state-${state}`).waitFor()
+    const stateUrl = new URL(baseUrl)
+    stateUrl.searchParams.set('state', state)
+    await statePage.goto(stateUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 30000 })
+    await statePage.getByTestId(`state-${state}`).waitFor({ state: 'visible', timeout: 30000 })
     await expect(`${state} state is honest and visible`, await statePage.getByTestId(`state-${state}`).isVisible())
     await stateContext.close()
   }
@@ -151,8 +153,8 @@ try {
   const wrongContext = await browser.newContext({ viewport: { width: 1280, height: 720 } })
   const wrongPage = await wrongContext.newPage()
   const wrongUrl = baseUrl.replace('SYN-CUST-014', 'REAL-CUSTOMER')
-  await wrongPage.goto(wrongUrl, { waitUntil: 'networkidle' })
-  await wrongPage.getByText('Page not found').waitFor()
+  await wrongPage.goto(wrongUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
+  await wrongPage.getByText('Page not found').waitFor({ state: 'visible', timeout: 30000 })
   await expect('wrong customer identity cannot enter the fixture route', await wrongPage.getByTestId('decision-bench').count() === 0 && await wrongPage.getByText('Page not found').isVisible())
   await wrongContext.close()
 } finally {
