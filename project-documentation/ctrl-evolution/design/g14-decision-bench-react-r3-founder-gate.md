@@ -2,7 +2,7 @@
 
 Date: 8 September 2026
 
-Status: direction approved; routine identity correction implemented locally; production navigation deferred
+Status: direction approved; routine identity correction verified locally and remotely; production navigation deferred
 
 ## Reviewed baseline
 
@@ -42,3 +42,12 @@ Against baseline `06da30e3d0708e9df1e205699d951f70a06999a1`:
 This founder gate closes the synthetic React surface review. It authorises the routine icon correction and progression to the real Brain substrate design. It does not approve the existing rail as production navigation and does not authorise schema application, real customer data, authenticated access, production deployment or release.
 
 The next bounded action is the workspace-and-audience canary: turn the approved G13 physical model into a migration candidate and deterministic negative-access test pack, then bring the exact schema mutation to its separate approval gate before applying it anywhere.
+
+## Verified R3 implementation
+
+- source commit: `c5e6150d1388204aae34adfd7e39bc8bcd4b23dd`
+- non-production deployment: `dpl_36WxLrsNwwrw5yqk7bexLdM3bfyW`
+- deployment URL: `https://mm-ctrl-77s1ztkfl-krish-rajas-projects.vercel.app`
+- cross-device access: preview-scoped share link active until 8 October 2026; its token is deliberately excluded from the repository
+- clean-browser gate: passed on desktop, mobile and low-height view, including icon-only identity, opaque customer projection, fixture containment, responsive work-region switching and every honest system state
+- production: untouched
