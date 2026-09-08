@@ -1,6 +1,6 @@
 # G19 synthetic population lab QA record
 
-Status: local and protected remote-preview rendered QA passed; founder review pending
+Status: founder-approved as Krish's customer-range dashboard; locked scrollbar correction verified locally
 
 Date: 8 September 2026
 
@@ -59,13 +59,32 @@ Date: 8 September 2026
 
 The first protected-preview run reached Vercel successfully but all eight tests saw the standard not-found surface. This was not a renderer failure: `VITE_ENABLE_SYNTHETIC_DECISION_BENCH` was absent from the Preview environment, so the internal route correctly failed closed. The flag was added only for Git branch `codex/g19-synthetic-population-lab`, the same source revision was rebuilt, and all eight remote tests then passed. Production and unrelated previews were not enabled. Temporary share access expires automatically and is not stored in source or this ledger.
 
+## Founder gate and locked revision
+
+On 8 September 2026 Krish approved the surface with the exact scope: "Looks good as a dashboard for all my customers, for just me to use," subject to a more brand-consistent vertical scrollbar. This approves G19 as an internal operator range dashboard, not as the entire CTRL product or the customer's Brain experience.
+
+Locked baseline:
+
+- commit: `39754d2`
+- `SyntheticPopulationLabPage.css` SHA-256: `9F2AE5956104AB60F5E8C55BE8F763AF25D0B8B37488D09A2F1B75819C4FD0E3`
+
+Authorised delta: replace browser-default styling on the five existing internal scroll surfaces with a narrow, low-contrast dark track and restrained Mindmake green thumb, including a clearer hover state. Preserve layout, content, typography, spacing, routes, fixtures, logic, breakpoints, scrollbar behaviour and every previously approved interaction. No customer capture, upload, Brain, decision, integration or export surface is implied by this correction.
+
+Candidate evidence:
+
+- candidate `SyntheticPopulationLabPage.css` SHA-256: `E19B9EBE30FF0413DFBF0A402AB76F7F6667A4DCCE63F8AD503C52E34EEAD7AD`
+- source diff: only the existing thin-scrollbar declarations were consolidated and WebKit track, thumb and hover styling was added; no TSX, route, fixture or behaviour file changed
+- 61 deterministic and React checks: passed
+- documentation, whitespace, standards, production build and prerender: passed
+- Chromium 1440 by 900 rendered frame: inspected at `test-results/g19-locked-scrollbar.png`; layout and content match the approved baseline
+
 ## What held up
 
 The dense desktop view keeps source path, diagnostic restraint and failure pressure simultaneously visible without a large editorial hero. Mobile removes the account rail, preserves a direct selector and converts the same information into deliberate vertical disclosure. Script-shaped source content remains literal text and cannot steer or execute inside the interface.
 
 ## Unverified and blocked
 
-- Founder rendered review remains required before this material internal surface may merge.
+- The locked scrollbar correction requires a fresh protected-preview deployment and smoke check before merge.
 - Browser zoom at exactly 200 percent was approximated through a 720 by 450 compact viewport; native browser zoom remains unverified.
 - No screen reader pass has been performed.
 - This lab does not prove the approved Decision Bench or customer Living Brain against every fixture. It exposes the data and oracle range that those product surfaces must subsequently consume.
