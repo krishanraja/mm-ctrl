@@ -68,6 +68,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 | Public demo | `/try` | Pre-login shaped example |
 | Upgrade | `/upgrade`; public `/pricing` rewrite | Plan comparison and checkout entry |
 | Trust and security | Public `/trust` rewrite | Honest security posture: controls in place, in progress, and absent |
+| Answers | `/answers`, `/answers/:slug` | Public answer pages written to be fetched and quoted by AI assistants |
 | Preview | `/preview` | Unlinked deterministic QA fixtures |
 | Decision Bench | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic operator-surface implementation harness for local or flagged preview builds |
 | Skill and MCP generation | Backend functions and exports | Portability substrate only |
@@ -76,9 +77,9 @@ Nested harnesses support a specific job or portability outcome. They must not be
 
 ### Public
 
-`/`, `/auth`, `/auth/callback`, `/preview`, `/agents`, `/try`, `/download`, and `/upgrade`.
+`/`, `/auth`, `/auth/callback`, `/preview`, `/agents`, `/try`, `/answers`, `/answers/:slug`, `/download`, and `/upgrade`.
 
-`/build` redirects to `/`. `/download` is feature-flagged. Vercel rewrites public `/pricing` to the static pricing page and public `/trust` to the static trust page.
+`/build` redirects to `/`. `/download` is feature-flagged. `/answers` and every `/answers/<slug>` are prerendered to static HTML at build time from the markdown in `src/content/answers`, and the same build pass writes their entries into the shipped `sitemap.xml` and `llms.txt`. Vercel rewrites public `/pricing` to the static pricing page and public `/trust` to the static trust page.
 
 ### Authenticated
 
