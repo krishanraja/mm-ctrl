@@ -2,8 +2,8 @@
 repo: krishanraja/mm-ctrl
 product: CTRL by Mindmake
 as_of: 2026-09-08
-head: eebb6fc
-head_scope: last browser-affecting main revision
+head: 860dea0
+head_scope: G16 application release receipt
 lifecycle: live
 production_url: https://makeyourmindup.ai
 state_doc: docs/current/release-state.md
@@ -34,7 +34,7 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 
 ## Where it is right now (as of 2026-09-08)
 
-- **Live** at `makeyourmindup.ai`. Browser-affecting frontend baseline `eebb6fc`, Vercel `dpl_FiUhvoGMwoS1tkZRzr8MFnEzWHen`, READY and PROMOTED from that exact `main` SHA (`docs/current/release-state.md`). Vercel builds every push to `main`; a later documentation-only release-receipt merge does not change the browser artifact.
+- **Live** at `makeyourmindup.ai`. The exact G16 application release is `860dea0`, Vercel `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from that SHA (`docs/current/release-state.md`). Answer-only publishing and documentation receipts may advance `main` and create newer deployment IDs without changing this G16 receipt.
 - **Edge Functions:** 115 directories in the tree. 114 confirmed deployed and ACTIVE by management API readback on 2026-08-21. `live-headlines` version 48 deployed and verified against cache readback on 2026-09-02 (476 items, 473 classified, 12 `damage` dropped). Two changes have no deployment readback recorded here: `video-radar-export` (PR #371, 2026-08-28) and the rolling-window merge (PR #375, `edd9045`).
 - **Tests:** production `main` passes 945 tests in 60 files, with zero new type errors against the 94-error legacy baseline. CI runs docs, standards, tests, typecheck, build and changed-file lint on every push.
 - **Living Brain substrate:** 11 additive production tables are live, empty and disconnected from customer paths. Forced RLS, non-anonymous workspace membership, exact-audience grants and authenticated read-only ACLs protect them. A service-side write adapter and writable multi-identity behavioural test remain future work (`project-documentation/ctrl-evolution/g16-workspace-audience-canary.md`).

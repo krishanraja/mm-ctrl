@@ -2,16 +2,16 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the last browser-affecting `main` revision `eebb6fc`, Vercel deployment `dpl_FiUhvoGMwoS1tkZRzr8MFnEzWHen` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21.
+Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
 
 ## Production baseline
 
 | Item | Verified state |
 |---|---|
 | Canonical host | `https://makeyourmindup.ai` |
-| Frontend application source | `main` through `eebb6fca471fc24d6209fbc55f7e45f85d851b1a` |
-| Frontend application baseline | `eebb6fca471fc24d6209fbc55f7e45f85d851b1a` |
-| Vercel application deployment | `dpl_FiUhvoGMwoS1tkZRzr8MFnEzWHen`, READY and PROMOTED from the exact `eebb6fc` SHA |
+| G16 application source | `main` at `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
+| G16 application baseline | `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
+| G16 Vercel deployment | `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from the exact `860dea0` SHA |
 | Main test suite | 945 tests in 60 files; zero new type errors against the 94-error legacy baseline |
 | Edge Function source inventory | 115 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
@@ -39,7 +39,7 @@ Current source inventory is 115 Edge Function directories excluding `_shared`, 5
 
 Exact route names, versions, hashes, JWT flags, and database evidence live in [`supabase/containment/manifest.json`](../../supabase/containment/manifest.json), [`release-lock.production.json`](../../supabase/containment/release-lock.production.json), and [`db/evidence/`](../../supabase/containment/db/evidence/).
 
-Vercel builds every push to `main`. The 8 September application deployment above includes the public Answers surface and its three published answer pages as well as the reviewed trust-containment recovery copy. It does not enable the synthetic Decision Bench or connect the dormant G16 schema to a customer path. A later documentation-only merge of this receipt may create a newer deployment ID, but it does not alter the browser artifact described here.
+Vercel builds every push to `main`. The exact G16 deployment above includes the first public Answers surface as well as the reviewed trust-containment recovery copy. It does not enable the synthetic Decision Bench or connect the dormant G16 schema to a customer path. Later answer-only and documentation-only merges can create newer deployment IDs; they do not alter this release receipt or the Brain containment state it proves.
 
 ## Edge Function changes after the 2026-08-21 release
 
