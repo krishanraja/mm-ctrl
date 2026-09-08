@@ -9,7 +9,7 @@ CTRL is a calm AI briefing and decision partner for founders and small-team CEOs
 Production: [makeyourmindup.ai](https://makeyourmindup.ai)
 Product: CTRL
 Repository: `krishanraja/mm-ctrl`
-Last verified: 2026-09-05 against live Supabase containment readback. The clearer public briefing recovery copy remains branch-only until it is merged and deployed.
+Last verified: 2026-09-08 against live Supabase Brain-substrate and containment readback, plus the integrated release-candidate source tree. The public frontend remains on its earlier production baseline until PR #374 is merged and its Vercel deployment is verified.
 
 ## Start here
 

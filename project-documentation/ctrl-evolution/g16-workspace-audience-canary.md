@@ -6,7 +6,7 @@ Date: 8 September 2026
 
 ## Outcome
 
-The first real Living Brain substrate is now present in the production Supabase project `Mindmaker AI` (`bkyuxvschuwngtcdhsyg`). It is additive, empty and disconnected from existing customer paths. It does not migrate, reinterpret or delete any legacy memory or decision row.
+The first real Living Brain substrate is now present in the production Supabase project `Mindmaker AI`. It is additive, empty and disconnected from existing customer paths. It does not migrate, reinterpret or delete any legacy memory or decision row.
 
 This canary proves the storage and containment boundary before an ingestion pipeline, synthetic workspace, customer account or UI adapter is allowed to write to it.
 

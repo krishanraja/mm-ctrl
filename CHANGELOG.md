@@ -2,9 +2,26 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-05
+Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
+
+## 2026-09-08 - Fail-closed Living Brain substrate
+
+Applied and read back three additive migrations on the shared production Supabase project. No customer path is connected and all 11 new Brain tables remain empty.
+
+- Added workspace membership and exact-audience grants, encrypted source and assertion records, versioned Brain items, typed exact-endpoint relationships and evidence links.
+- Forced RLS on all 11 tables, closed anonymous and anonymous-auth access, limited authenticated users to audience-scoped reads, and retained writes only for a future server-side adapter.
+- Added evidence, version-chain and relationship-endpoint guards, including four deferred evidence constraints.
+- Corrected the live advisors' anonymous-auth, foreign-key index and per-row JWT findings. Final Brain security readback is clear; only expected unused-index information remains on the empty schema.
+- Committed a rollback-only multi-identity behavioural suite. The management SQL connection rejected its first INSERT as read-only, so that behavioural proof remains pending a writable non-customer test connection.
+
+## 2026-09-07 - Radar evidence survives the rolling news window
+
+Merged to `main` at `edd9045` (PR #375). No deployment readback is recorded in this repository for this change.
+
+- `video-radar-export` now reads the last four cached headline days rather than one, and repeated sightings of the same story are merged before ranking: candidates that share a title fingerprint or any source URL collapse into one, carrying every distinct public URL, the highest corroboration count and the highest provider score. The reason is stated in the code itself: "The rolling window is evidence coverage, not permission to show the same event several times." Before this a story that ran on several days reached the studio several times, each copy citing one link.
+- `news-cluster` keeps every distinct article URL retained in a cluster (`sourceUrls`), so the export can cite more than the lead link. The field is stripped from the card payload the app serves, so the Today and Briefing surfaces are unchanged.
 
 ## 2026-09-05 - Emergency trust containment
 
@@ -36,6 +53,13 @@ Released to production: Vercel `dpl_24XfsypkNsxciZJ2Q1Arx3n8XNci`, 24 Edge Funct
 - Removed 238 unreachable source files and 28 unused dependencies; all 67 documents classed and dated.
 
 **`vite-configuration-fix` was not merged.** It set `allowedHosts: true`, disabling Vite's DNS-rebinding guard on the dev server. `main` already solved that case more narrowly in `081ebe9` with `allowedHosts: [".vercel.run"]`, and the branch was 24 commits behind. It is superseded, and merging it would have widened an allowlist for no gain. Delete the branch rather than revisiting it.
+
+## 2026-08-28 - Cached radar signals exported for the video studio
+
+Merged to `main` at `5e86b92` (PR #371). The Edge Function directory count moved 114 to 115. Deployment of the new function is not recorded in this repository.
+
+- A new read-only Edge Function, `video-radar-export`, serves the shared curation pool to the local Mindmaker video studio. It reads `live_headlines_cache` and the current `news_trends` rows and maps them into the studio's candidate contract (`_shared/video-radar-contract.ts`, schema version 1): title, summary, public source URLs, a corroboration count, a category and a SHA-256 reference hash, every item marked `public_signal` and `public_grounded`. The reason, from the function contract in `supabase/config.toml`: a dedicated export that "validates VIDEO_STUDIO_EXPORT_TOKEN and never returns service credentials", so the studio never needs a user JWT or the service role. The endpoint is GET only, bearer-token gated, rate limited, and answers 401, 429 or 503 rather than partial data.
+- The `source_age` field was aligned to the cache row's creation time so the consumer can tell how old the pool it received is.
 
 ## 2026-08-11 - Shared shell and typography stability
 

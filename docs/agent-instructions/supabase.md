@@ -7,7 +7,7 @@ Read [`../current/architecture.md`](../current/architecture.md) and the [`REPLIC
 
 ## The project is shared
 
-Project `bkyuxvschuwngtcdhsyg` hosts CTRL alongside other Mindmaker surfaces. Production readback on 2026-09-05 found 183 live Edge Functions. The repository source tree contains 115 Edge Function directories excluding `_shared`, 51 hook files, and 167 SQL migrations. These counts describe different inventories and cannot be used to infer function ownership. Before you change anything server-side:
+Project `bkyuxvschuwngtcdhsyg` hosts CTRL alongside other Mindmaker surfaces. Production readback on 2026-09-05 found 183 live Edge Functions. The repository source tree contains 115 Edge Function directories excluding `_shared`, 51 hook files, and 170 SQL migrations. These counts describe different inventories and cannot be used to infer function ownership. Before you change anything server-side:
 
 - Directory presence establishes only that this repository contains a source artifact. Establish ownership and the exact live name before changing, deploying, or rolling back a function; a dashboard function may belong to another product.
 - Treat every repository function as production-significant. Cron, an external webhook, or an email link may invoke a function with no in-repository caller. Neither directory presence nor the absence of an import proves current deployment state.

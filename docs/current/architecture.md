@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-05 against live Supabase containment readback; the Vercel frontend remains on the earlier `main` baseline and does not yet contain the branch-only recovery copy
+Last verified: 2026-09-08 against the integrated release-candidate source tree, live G16 Brain-substrate readback and the 2026-09-05 production containment readback. Frontend deployment remains on the earlier production baseline until PR #374 is merged and verified.
 
 CTRL is a Vite React application on Vercel with Supabase Auth, PostgreSQL, Edge Functions, Storage, Vault, and scheduled jobs. The architecture has one personal context substrate and one curation pool. Product surfaces are views over those shared systems.
 
@@ -42,6 +42,8 @@ The repository contains 115 Edge Function directories excluding `_shared`, 51 ho
 Read this before changing anything server-side.
 
 CTRL does not have a Supabase project to itself. Project `bkyuxvschuwngtcdhsyg`, named "Mindmaker AI", hosts CTRL alongside other Mindmaker surfaces. Production readback on 2026-09-05 found 183 live Edge Functions. This repository contains 115 function directories; ownership must be established by name and source, not inferred from either count.
+
+The last complete ownership mapping, on 2026-08-21, identified 114 of the then 178 deployed functions as CTRL. The shared deployment has since grown to 183, so that earlier mapping cannot establish ownership for the additional functions. `video-radar-export` and its 2026-09-07 rolling-window change still have no deployment readback recorded in this repository.
 
 Three consequences that matter more than anything else on this page:
 
@@ -93,6 +95,10 @@ source gather
 
 Control Center is an optional read-only source adapter inside `live-headlines`. It does not create another feed. Missing bridge configuration fails closed.
 
+Each cached card carries a subject (`category`) and, since 2026-09-02, two optional additive audience fields written by the same synthesis call: `affects` (which business divisions the story lands on) and `stance` (`opportunity`, `shift`, `risk` or `damage`). A `damage` item, one that reports harm with no move in it for the reader, is dropped before caching (`_shared/news-synthesis.ts`, `live-headlines/index.ts`). Older cache rows without the fields keep working.
+
+The pool has one consumer outside the app. `video-radar-export` (since 2026-08-28) maps the most recent cached days and the current `news_trends` rows into the video studio's candidate contract (`_shared/video-radar-contract.ts`), merging repeated sightings of one story and carrying every distinct public source URL. It is GET only, gated by a bearer token checked in the handler rather than a user JWT, rate limited, and returns only public signal fields. It never writes to the pool.
+
 ### Decision engine
 
 ```text
@@ -129,6 +135,12 @@ rejected candidate
   -> reason plus anchor fingerprint only
   -> unchanged evidence suppressed until its inputs change
 ```
+
+### Living Brain canary
+
+The first target-state Brain substrate is live but dormant. Eleven additive tables separate workspaces, roles, audience grants, encrypted sources, assertions, stable item identities, item versions, typed relationship identities, exact-endpoint relationship versions and their evidence links. All are empty and no current customer path reads or writes them.
+
+Row-level security is forced. An identified user needs both active workspace membership and an active, unexpired exact-audience grant to read content. Browser roles cannot write. Anonymous-auth sessions are explicitly rejected. Server-side writes remain future work and must preserve source, subject, audience, version-chain, current-endpoint and evidence constraints. The complete live receipt and proof boundary is in the [G16 workspace-and-audience canary](../../project-documentation/ctrl-evolution/g16-workspace-audience-canary.md).
 
 ## Core data ownership
 

@@ -57,3 +57,6 @@ _verify/
 
 .vercel
 .env*
+
+# Docs steward scratch checkout (see .github/workflows/docs-steward.yml)
+.steward/

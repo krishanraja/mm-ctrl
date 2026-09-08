@@ -8,8 +8,14 @@ export interface CachedHeadline {
   source: string | null;
   sourceCount: number;
   url: string;
+  sourceUrls?: string[];
   category: string;
   score: number;
+}
+
+export interface CachedHeadlineDay {
+  briefing_date: string;
+  payload: CachedHeadline[];
 }
 
 export interface CachedTrend {
@@ -62,7 +68,8 @@ function isoDate(value: string): string {
 
 export async function headlineToRadar(card: CachedHeadline, briefingDate: string): Promise<VideoRadarCandidate | null> {
   if (!validUrl(card.url) || !card.headline.trim()) return null;
-  const reference = await sha256(`headline:${card.id}:${card.url}`);
+  const sourceUrls = [...new Set([card.url, ...(card.sourceUrls || [])].filter(validUrl))].sort();
+  const reference = await sha256(`headline:${card.id}:${sourceUrls.join("|")}`);
   return {
     id: `mm:${reference.slice(0, 24)}`,
     title: card.headline.trim(),
@@ -70,7 +77,7 @@ export async function headlineToRadar(card: CachedHeadline, briefingDate: string
     source_kind: "public_signal",
     sensitivity: "public",
     occurred_at: isoDate(briefingDate),
-    source_urls: [card.url],
+    source_urls: sourceUrls,
     corroboration: Math.max(1, Math.round(card.sourceCount || 1)),
     evidence_status: "public_grounded",
     category: card.category || "ai_native",
@@ -102,12 +109,64 @@ export async function trendToRadar(trend: CachedTrend): Promise<VideoRadarCandid
 }
 
 export async function buildVideoRadarCandidates(headlines: CachedHeadline[], briefingDate: string, trends: CachedTrend[], limit: number): Promise<VideoRadarCandidate[]> {
+  return buildVideoRadarCandidatesFromDays(
+    [{ briefing_date: briefingDate, payload: headlines }],
+    trends,
+    limit,
+  );
+}
+
+function titleFingerprint(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().slice(0, 180);
+}
+
+/** Merge repeated daily-cache sightings before ranking. The rolling window is
+ * evidence coverage, not permission to show the same event several times. */
+async function mergeRepeatedCandidates(candidates: VideoRadarCandidate[]): Promise<VideoRadarCandidate[]> {
+  const groups: VideoRadarCandidate[][] = [];
+  for (const candidate of candidates) {
+    const titleKey = titleFingerprint(candidate.title);
+    const urls = new Set(candidate.source_urls);
+    const existing = groups.find((group) => {
+      const first = group[0];
+      return titleFingerprint(first.title) === titleKey
+        || group.some((item) => item.source_urls.some((url) => urls.has(url)));
+    });
+    if (existing) existing.push(candidate);
+    else groups.push([candidate]);
+  }
+
+  return Promise.all(groups.map(async (group) => {
+    const sorted = [...group].sort((a, b) => Date.parse(b.occurred_at) - Date.parse(a.occurred_at));
+    const primary = sorted[0];
+    const sourceUrls = [...new Set(group.flatMap((item) => item.source_urls))].sort();
+    const reference = await sha256(`public:${titleFingerprint(primary.title)}:${sourceUrls.join("|")}`);
+    return {
+      ...primary,
+      id: `mm:${reference.slice(0, 24)}`,
+      source_urls: sourceUrls,
+      corroboration: Math.max(sourceUrls.length, ...group.map((item) => item.corroboration)),
+      source_ref_hash: reference,
+      provider_score: Math.max(...group.map((item) => item.provider_score || 0)),
+    };
+  }));
+}
+
+export async function buildVideoRadarCandidatesFromDays(
+  days: CachedHeadlineDay[],
+  trends: CachedTrend[],
+  limit: number,
+): Promise<VideoRadarCandidate[]> {
   const mapped = await Promise.all([
-    ...headlines.map((headline) => headlineToRadar(headline, briefingDate)),
+    ...days.flatMap((day) => day.payload.map((headline) => headlineToRadar(headline, day.briefing_date))),
     ...trends.map(trendToRadar),
   ]);
-  return mapped
-    .filter((candidate): candidate is VideoRadarCandidate => candidate !== null)
-    .sort((a, b) => (b.provider_score || 0) - (a.provider_score || 0))
+  const merged = await mergeRepeatedCandidates(
+    mapped.filter((candidate): candidate is VideoRadarCandidate => candidate !== null),
+  );
+  return merged
+    .sort((a, b) => (b.provider_score || 0) - (a.provider_score || 0)
+      || Date.parse(b.occurred_at) - Date.parse(a.occurred_at)
+      || a.id.localeCompare(b.id))
     .slice(0, limit);
 }

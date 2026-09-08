@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-05 for emergency public-entry availability against production containment release `trust-containment-2026-09-05`, its production database readback, and branch commit `7c48e6fc3f33fff0baa3ce0029f95e38381da258` for the pending recovery copy. The remaining documentation set was last verified on 2026-08-20 against production application baseline `b5770194b4646302f47e36655e389f7ec2eb43f8` and live Supabase readback
+Last verified: 2026-09-08 against the integrated release-candidate source tree, the live G16 Brain-substrate readback and the 2026-09-05 trust-containment readback. Every document listed below was checked to exist and carry its class header.
 
 This directory is the shortest reliable path from product intent to safe operation. It describes CTRL as it exists now. Git history and the dated project records explain how it arrived here.
 
@@ -22,8 +22,9 @@ The containment branch includes inline recovery copy that explains the briefing 
 | Resume material interface work | [Design delivery state](./design-state.md) | [Product](./product.md), [Architecture](./architecture.md) |
 | Change data or AI behavior | [Architecture](./architecture.md) | [Supabase instructions](../agent-instructions/supabase.md), [release guide](../../project-documentation/REPLICATION_GUIDE.md) |
 | Operate or release CTRL | [Release state](./release-state.md) | [Release guide](../../project-documentation/REPLICATION_GUIDE.md) |
-| Maintain documentation | [Documentation standards](./documentation-standards.md) | `npm run docs:check` |
+| Maintain documentation | [Documentation standards](./documentation-standards.md) | `npm run docs:check`, [history log](../history/LOG.md) |
 | Work as a coding agent | [`CLAUDE.md`](../../CLAUDE.md) | [Agent instructions](../agent-instructions/README.md) |
+| Read CTRL as an outside agent | [`NOW.md`](../../NOW.md) | [Release state](./release-state.md) |
 
 ## Authority order
 
@@ -64,7 +65,14 @@ Each of these is authoritative inside its own named boundary and nowhere else. E
 - [`project-documentation/REPLICATION_GUIDE.md`](../../project-documentation/REPLICATION_GUIDE.md) is the release and recovery runbook.
 - [`project-documentation/compliance/`](../../project-documentation/compliance/README.md) contains legal and control records. Their status labels are authoritative for compliance claims.
 - [`project-documentation/HISTORY.md`](../../project-documentation/HISTORY.md) and [`APP-DELIVERY-STATE.md`](../../project-documentation/APP-DELIVERY-STATE.md) are historical records, not current instructions.
-- [`docs/history/`](../history/) is the single archive location for superseded documents.
+- [`docs/history/`](../history/) is the single archive location for superseded documents. [`docs/history/LOG.md`](../history/LOG.md) indexes every file in it, newest entry first, and records each move with the file that replaced it. The 64 files uploaded on 2026-09-04 without headers were classed Historical and moved there on 2026-09-07.
+
+## Steward files
+
+Two files sit outside this directory and restate nothing from it. They are maintained by the docs steward described in [`NOW.md`](../../NOW.md) and by hand.
+
+- [`NOW.md`](../../NOW.md) at the repository root is the router an outside agent reads first: what CTRL is, where it stands at a named commit, what changed in the last 30 days, and which document in this set settles each question.
+- [`docs/history/LOG.md`](../history/LOG.md) is the append-only record of moves, reconciliations and decisions about the documentation itself.
 
 ## Freshness rule
 

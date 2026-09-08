@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-05 against production function, database, and deployment readback
+Last verified: 2026-09-08 against the integrated release-candidate source tree and live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21.
 
 ## Production baseline
 
@@ -12,13 +12,22 @@ Last verified: 2026-09-05 against production function, database, and deployment 
 | Frontend source | `main`; containment recovery copy is branch-only |
 | Frontend production baseline | `19d80f36ecda990bce4c3e1e6d18c97387d9ed33` |
 | Vercel production | `dpl_24XfsypkNsxciZJ2Q1Arx3n8XNci`, READY at `19d80f36`; does not contain the recovery-copy repair |
-| Frontend baseline test suite | 891 tests in 55 files |
+| Main test suite | 915 tests in 57 files at `edd9045`; PR #374 release candidate passes 920 tests in 59 files |
 | Edge Function source inventory | 115 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
 | Hook files | 51 |
 | SQL migration files | 170 in the source tree |
 
 Current source inventory is 115 Edge Function directories excluding `_shared`, 51 hook files, and 170 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
+
+## Living Brain substrate canary, 2026-09-08
+
+- Three additive migrations are live and recorded as `brain_workspace_audience_canary_20260908`, `brain_anonymous_session_and_fk_hardening_20260908` and `brain_rls_initplan_hardening_20260908`.
+- Eleven new Brain tables are empty, disconnected from customer paths and protected by forced RLS, authenticated read-only ACLs, explicit anonymous-auth rejection, workspace membership and exact-audience grants.
+- Live readback found 11 policies, 18 advisor-requested covering indexes, 9 custom guard triggers, 4 deferred evidence guards and zero rows.
+- Supabase security advisors report no finding on the new Brain objects. The only remaining performance notices are expected unused-index information on the empty schema.
+- The committed rollback-only multi-identity behavioural suite could not execute through the read-only management SQL connection. It remains pending a writable non-customer test connection and is not represented as passing.
+- No legacy memory or decision row was migrated, reinterpreted or deleted. Full hashes, versions and limitations are in the [G16 canary receipt](../../project-documentation/ctrl-evolution/g16-workspace-audience-canary.md).
 
 ## Emergency trust containment, 2026-09-05
 
@@ -28,6 +37,18 @@ Current source inventory is 115 Edge Function directories excluding `_shared`, 5
 - Containment intentionally pauses public onboarding enrichment, server result generation, result email, and new no-login briefing subscription. The browser still produces its deterministic local result and can continue to ordinary signup; `track-fork` returns no handoff token. Honest morning-brief failure copy is committed on `codex/trust-containment-2026-09-05`, but production will not show that repair until the owner merges it and Vercel deploys it.
 
 Exact route names, versions, hashes, JWT flags, and database evidence live in [`supabase/containment/manifest.json`](../../supabase/containment/manifest.json), [`release-lock.production.json`](../../supabase/containment/release-lock.production.json), and [`db/evidence/`](../../supabase/containment/db/evidence/).
+
+Commits since `19d80f36` changed one test file under `src/` and nothing else the browser build reads, so the served application is the same as the baseline above. Vercel builds every push to `main`, and the deployment identifier of the build at `edd9045` is not recorded here.
+
+## Edge Function changes after the 2026-08-21 release
+
+| Date | Change | Release status |
+|---|---|---|
+| 2026-08-28 | `video-radar-export` added (PR #371), a token-gated read-only export of the curation pool for the video studio | Merged. Deployment not recorded in this repository |
+| 2026-09-02 | `live-headlines` gained the `affects` and `stance` fields and the `?backfill=1` operator action (PRs #372, #373) | Deployed as `live-headlines` version 48 and verified by cache readback on 2026-09-02: 476 items, 473 classified, 12 `damage` items dropped, zero over-assigned or out-of-allowlist |
+| 2026-09-07 | `video-radar-export` reads four cached days and merges repeated sightings; `news-cluster` retains every article URL (PR #375) | Merged at `edd9045`. Deployment not recorded in this repository |
+
+The vocabulary at the end of this file applies: merged is not deployed, and deployed is not verified.
 
 ## Applied migration state, and why the ledger is not the answer
 

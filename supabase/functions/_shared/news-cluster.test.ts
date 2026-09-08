@@ -64,6 +64,11 @@ describe('clustering across sources', () => {
     expect(clusters.length).toBe(2);
     const gpt = clusters.find((c) => c.rep.title.includes('GPT-5'))!;
     expect(gpt.sourceCount).toBe(3);
+    expect(gpt.sourceUrls).toEqual([
+      'https://reuters.com/x',
+      'https://theverge.com/x',
+      'https://venturebeat.com/x',
+    ]);
     // representative is the strongest source (tier 3 Reuters)
     expect(gpt.rep.source).toBe('reuters.com');
   });

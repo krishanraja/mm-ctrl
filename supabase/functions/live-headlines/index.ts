@@ -98,6 +98,8 @@ interface HeadlineCard {
  */
 interface SharedCard extends HeadlineCard {
   snippet: string;
+  /** Public evidence URLs for every distinct article retained in the cluster. */
+  sourceUrls?: string[];
   /** Raw external cluster score (no AA lift baked in - that is aaMatched). */
   externalScore: number;
   /** Recency in [0,1]. */
@@ -234,6 +236,7 @@ async function buildSharedPool(
       externalScore: c.score,
       freshness: freshnessScore(c.bestPublishedIso, Date.now()),
       aaMatched: !!aa,
+      sourceUrls: c.sourceUrls,
     };
   });
   // The editorial rule: a "damage" item (only reports harm, no move in it for
@@ -246,7 +249,7 @@ async function buildSharedPool(
 
 /** Strip the per-user re-score fields back down to the display card. */
 function toDisplayCard(s: SharedCard): HeadlineCard {
-  const { snippet: _s, externalScore: _e, freshness: _f, aaMatched: _a, ...card } = s;
+  const { snippet: _s, externalScore: _e, freshness: _f, aaMatched: _a, sourceUrls: _u, ...card } = s;
   return card;
 }
 

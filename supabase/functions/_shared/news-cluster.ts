@@ -32,6 +32,7 @@ export interface RawArticle {
 export interface Cluster {
   rep: RawArticle; // the representative (best) article in the cluster
   sources: string[]; // distinct corroborating sources (deduped hostnames)
+  sourceUrls: string[]; // every distinct public article URL retained for evidence
   sourceCount: number; // sources.length, the corroboration signal
   maxEngagement: number;
   bestPublishedIso: string | null; // freshest published timestamp in the cluster
@@ -98,6 +99,7 @@ export function clusterArticles(
     for (const c of clusters) {
       if (jaccard(toks, c.repTokens) >= threshold) {
         if (!c.sources.includes(art.source)) c.sources.push(art.source);
+        if (art.url && !c.sourceUrls.includes(art.url)) c.sourceUrls.push(art.url);
         c.sourceCount = c.sources.length;
         c.maxEngagement = Math.max(c.maxEngagement, art.engagement);
         c.bestPublishedIso = freshest(c.bestPublishedIso, art.publishedIso);
@@ -114,6 +116,7 @@ export function clusterArticles(
         rep: art,
         repTokens: toks,
         sources: [art.source],
+        sourceUrls: art.url ? [art.url] : [],
         sourceCount: 1,
         maxEngagement: art.engagement,
         bestPublishedIso: art.publishedIso,
