@@ -2,17 +2,17 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the integrated release-candidate source tree and live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21.
+Last verified: 2026-09-08 against production `main` at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21.
 
 ## Production baseline
 
 | Item | Verified state |
 |---|---|
 | Canonical host | `https://makeyourmindup.ai` |
-| Frontend source | `main`; containment recovery copy is branch-only |
-| Frontend production baseline | `19d80f36ecda990bce4c3e1e6d18c97387d9ed33` |
-| Vercel production | `dpl_24XfsypkNsxciZJ2Q1Arx3n8XNci`, READY at `19d80f36`; does not contain the recovery-copy repair |
-| Main test suite | 915 tests in 57 files at `edd9045`; PR #374 release candidate passes 921 tests in 59 files |
+| Frontend source | `main` at `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
+| Frontend production baseline | `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
+| Vercel production | `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from the exact `860dea0` merge SHA |
+| Main test suite | 945 tests in 60 files; zero new type errors against the 94-error legacy baseline |
 | Edge Function source inventory | 115 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
 | Hook files | 51 |
@@ -28,17 +28,18 @@ Current source inventory is 115 Edge Function directories excluding `_shared`, 5
 - Supabase security advisors report no finding on the new Brain objects. The only remaining performance notices are expected unused-index information on the empty schema.
 - The committed rollback-only multi-identity behavioural suite could not execute through the read-only management SQL connection. It remains pending a writable non-customer test connection and is not represented as passing.
 - No legacy memory or decision row was migrated, reinterpreted or deleted. Full hashes, versions and limitations are in the [G16 canary receipt](../../project-documentation/ctrl-evolution/g16-workspace-audience-canary.md).
+- PR #374 merged to `main` at `860dea0`. GitHub CI and Vercel passed on the exact candidate; production smoke checks passed on the canonical host. The synthetic Decision Bench remains closed in production and renders the standard 404.
 
 ## Emergency trust containment, 2026-09-05
 
 - A 44-route containment manifest is live. Thirty-five routes now return side-effect-free containment responses: 10 retired, 15 unavailable, one retryable unavailable, five forbidden, one neutral handoff, one accepted no-op, and two read-only empty responses. Nine routes were repaired in place: seven exact-service credential paths, `synthesize-briefing` with exact-service or authenticated-owner access, and `infer-briefing-interests` bound to the signed-in user.
 - Management readback found 44/44 ACTIVE with expected `verify_jwt` settings and matching runtime source. No-authorisation probes passed 44/44, and invalid service-claim probes were rejected 8/8. A positive real scheduled-service execution remains pending its next observed run.
 - Migration `supabase/migrations/20260905063000_emergency_trust_containment.sql` is recorded in production as `emergency_trust_containment_20260905` at version `20260905060515`. Fresh independent post-readback returned PASS with zero violations, all 23 policy fingerprints unchanged, service-role preservation fingerprint `57dd0937d6b2439f800c5deccb8868fa`, and no `kit-nudges-email` cron job.
-- Containment intentionally pauses public onboarding enrichment, server result generation, result email, and new no-login briefing subscription. The browser still produces its deterministic local result and can continue to ordinary signup; `track-fork` returns no handoff token. Honest morning-brief failure copy is committed on `codex/trust-containment-2026-09-05`, but production will not show that repair until the owner merges it and Vercel deploys it.
+- Containment intentionally pauses public onboarding enrichment, server result generation, result email, and new no-login briefing subscription. The browser still produces its deterministic local result and can continue to ordinary signup; `track-fork` returns no handoff token. The honest morning-brief failure copy is now deployed from `main` at `860dea0`.
 
 Exact route names, versions, hashes, JWT flags, and database evidence live in [`supabase/containment/manifest.json`](../../supabase/containment/manifest.json), [`release-lock.production.json`](../../supabase/containment/release-lock.production.json), and [`db/evidence/`](../../supabase/containment/db/evidence/).
 
-Commits since `19d80f36` changed one test file under `src/` and nothing else the browser build reads, so the served application is the same as the baseline above. Vercel builds every push to `main`, and the deployment identifier of the build at `edd9045` is not recorded here.
+Vercel builds every push to `main`. The 8 September deployment above includes the public Answers surface merged immediately before PR #374 as well as the reviewed trust-containment recovery copy. It does not enable the synthetic Decision Bench or connect the dormant G16 schema to a customer path.
 
 ## Edge Function changes after the 2026-08-21 release
 

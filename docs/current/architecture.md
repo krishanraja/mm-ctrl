@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the integrated release-candidate source tree, live G16 Brain-substrate readback and the 2026-09-05 production containment readback. Frontend deployment remains on the earlier production baseline until PR #374 is merged and verified.
+Last verified: 2026-09-08 against production `main` at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, live G16 Brain-substrate readback and the 2026-09-05 production containment readback.
 
 CTRL is a Vite React application on Vercel with Supabase Auth, PostgreSQL, Edge Functions, Storage, Vault, and scheduled jobs. The architecture has one personal context substrate and one curation pool. Product surfaces are views over those shared systems.
 

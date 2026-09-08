@@ -15,6 +15,7 @@ Applied and read back three additive migrations on the shared production Supabas
 - Added evidence, version-chain and relationship-endpoint guards, including four deferred evidence constraints.
 - Corrected the live advisors' anonymous-auth, foreign-key index and per-row JWT findings. Final Brain security readback is clear; only expected unused-index information remains on the empty schema.
 - Committed a rollback-only multi-identity behavioural suite. The management SQL connection rejected its first INSERT as read-only, so that behavioural proof remains pending a writable non-customer test connection.
+- Merged PR #374 to `main` at `860dea0` after GitHub CI passed documentation, standards, tests, typecheck, build and PR-diff lint. Vercel production `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` is READY and PROMOTED from that exact SHA. The canonical host passed rendered smoke checks; the synthetic Decision Bench remains closed in production and renders the standard 404.
 
 ## 2026-09-07 - Radar evidence survives the rolling news window
 
