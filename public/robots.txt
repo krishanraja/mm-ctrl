@@ -4,6 +4,10 @@
 # crawlers (answer-engine optimisation). GPTBot, ClaudeBot and PerplexityBot
 # keep their explicit Allow: that is intentional, do not remove it.
 #
+# /answers and /answers/* exist to be fetched and quoted by AI assistants and
+# are covered by the Allow: / in every group below. They need no rule of their
+# own, and nothing in any Disallow list touches them. Keep it that way.
+#
 # What is closed: the authenticated app routes (src/router.tsx, everything
 # under AuthedLayoutRoute + RequireAuth) plus /think (redirects into the authed
 # dashboard) and /preview (an unlinked dev/QC fixture harness). They render no

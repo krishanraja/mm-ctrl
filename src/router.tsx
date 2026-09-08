@@ -126,6 +126,11 @@ const Preview = lazyWithRetry(() => import('@/pages/Preview'))
 const Agents = lazyWithRetry(() => import('@/pages/Agents'))
 const Try = lazyWithRetry(() => import('@/pages/Try'))
 const CaptureLanding = lazyWithRetry(() => import('@/pages/CaptureLanding'))
+// The /answers surface. Public and prerendered: these two routes exist to be
+// fetched and quoted by AI assistants, so the HTML a fetcher receives has to
+// carry the prose (see scripts/prerender.mjs and src/entry-prerender.tsx).
+const Answers = lazyWithRetry(() => import('@/pages/Answers'))
+const Answer = lazyWithRetry(() => import('@/pages/Answer'))
 const Pricing = lazyWithRetry(() => import('@/pages/Pricing'))
 const EnrichPage = lazyWithRetry(() => import('@/pages/EnrichPage'))
 // The check (harness chain stage 2). URL-reachable only for now: which door it
@@ -253,6 +258,16 @@ export const router = createBrowserRouter([
     // Pre-login magic moment (public): a canned but real-shaped pressure-test demo.
     path: '/try',
     element: <LazyWrapper><Try /></LazyWrapper>,
+  },
+  {
+    // Public answer index (prerendered).
+    path: '/answers',
+    element: <LazyWrapper><Answers /></LazyWrapper>,
+  },
+  {
+    // One public answer page (prerendered per slug).
+    path: '/answers/:slug',
+    element: <LazyWrapper><Answer /></LazyWrapper>,
   },
   {
     // Public email-capture landing page (behind FF.publicCapture).
