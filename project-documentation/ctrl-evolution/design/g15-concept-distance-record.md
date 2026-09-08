@@ -1,7 +1,7 @@
 # G15 concept distance record
 
-**Gate:** G15 Judgement Resolution  
-**Recorded:** 2026-09-08  
+**Gate:** G15 Judgement Resolution
+**Recorded:** 2026-09-08
 **Status:** Frozen before judging and synthesis
 
 ## Shared problem
@@ -36,4 +36,3 @@ No candidate may be merged before independent judging. A synthesis may adopt one
 - `g15-brain-resolution-sanitized-brief.md`
 - `g15-judgement-resolution-fixture.json`
 - `../g15-judgement-resolution-contract.json`
-

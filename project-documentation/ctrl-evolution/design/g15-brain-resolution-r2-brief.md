@@ -1,7 +1,7 @@
 # G15 Brain Resolution R2 visual comprehension brief
 
-**Date:** 8 September 2026  
-**State:** Authorised same-spine revision  
+**Date:** 8 September 2026
+**State:** Authorised same-spine revision
 **Source of truth:** `g15-judgement-resolution-fixture.json`
 
 ## Outcome
@@ -96,4 +96,3 @@ The choice remains local and provisional. It cannot change the Brain or territor
 - sparse, quiet, loading, stale, error and private states;
 - rendered high-resolution visual inspection; and
 - cold founder reaction before rationale.
-

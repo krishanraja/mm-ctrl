@@ -35,4 +35,3 @@ Round 2 must not use a folded page, unfolding map, atlas, paper or open-and-trac
 ## Next action
 
 Run three fresh generators against the unchanged product and data constraints, one per missing territory. Then perform pairwise distance testing and two independent blinded judgments before synthesis.
-

@@ -1,8 +1,8 @@
 # G15 Brain Resolution R2 founder gate
 
-**Date:** 8 September 2026  
-**Artifact:** `g15-brain-resolution-proof-r2.html`  
-**Status:** Conceptually useful, rejected as a standalone material surface  
+**Date:** 8 September 2026
+**Artifact:** `g15-brain-resolution-proof-r2.html`
+**Status:** Conceptually useful, rejected as a standalone material surface
 **Production authority:** None
 
 ## Exact founder reaction

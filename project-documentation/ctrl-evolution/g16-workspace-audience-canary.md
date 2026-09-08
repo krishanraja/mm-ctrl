@@ -70,7 +70,7 @@ Repository release gates on the complete working branch passed after the live re
 - 44 trust-containment contracts and 4 service-auth tests;
 - G14 Decision Bench contract, React and rendered interaction checks;
 - G15 Judgement Resolution and retained R2 interaction checks;
-- 920 tests across 59 files;
+- 921 tests across 59 files after integrating current `main`;
 - type checking with zero new errors against the recorded 94-error legacy baseline;
 - changed-file lint and Git whitespace validation;
 - a production Vite build across 2,796 modules and 3 of 3 prerender routes.

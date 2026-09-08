@@ -1,9 +1,9 @@
 # G15 Brain Resolution R1 founder gate
 
-**Date:** 8 September 2026  
-**Reviewed artifact:** `g15-brain-resolution-proof-r1.html` at commit `4f2accb`  
-**Founder gate:** Failed  
-**Conceptual spine:** Becoming Receipt  
+**Date:** 8 September 2026
+**Reviewed artifact:** `g15-brain-resolution-proof-r1.html` at commit `4f2accb`
+**Founder gate:** Failed
+**Conceptual spine:** Becoming Receipt
 **Same-spine revision count:** 1
 
 ## Exact first reaction
@@ -46,4 +46,3 @@ The illustration must explain the shift before the supporting prose does. Eviden
 ## Authority
 
 One local R2 material mock, synthetic fixture use, browser verification, rendered inspection, Git durability and cold founder presentation are authorised. Production implementation, deployment, account mutation, customer scoring and efficacy claims remain gated.
-

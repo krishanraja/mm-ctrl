@@ -2,7 +2,7 @@
 
 ## Territory A concept spine: The Evidence Lens
 
-**Revision:** `A-001`  
+**Revision:** `A-001`
 **Status:** Text-only divergence concept. Unrendered, unvalidated, and not implementation authority.
 
 1. **Governing interaction metaphor**

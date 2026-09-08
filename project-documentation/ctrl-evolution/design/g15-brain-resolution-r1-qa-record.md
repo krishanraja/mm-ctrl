@@ -1,10 +1,10 @@
 # G15 Brain Resolution R1 QA record
 
-**Date:** 8 September 2026  
-**Verdict:** Verified as a local synthetic product proof  
-**Repository revision tested:** `25ba1f8`  
-**Branch:** `codex/trust-containment-2026-09-05`  
-**Local target:** `http://127.0.0.1:4189/g15-brain-resolution-proof-r1.html`  
+**Date:** 8 September 2026
+**Verdict:** Verified as a local synthetic product proof
+**Repository revision tested:** `25ba1f8`
+**Branch:** `codex/trust-containment-2026-09-05`
+**Local target:** `http://127.0.0.1:4189/g15-brain-resolution-proof-r1.html`
 **Production authority:** None
 
 ## Intended outcome
@@ -112,4 +112,3 @@ One visual correction was made after the first screenshot. An orbital territory 
 ## Next gate
 
 Show the proof cold to Krish. Ask for the unanchored first reaction before explaining the metric theory. Specifically learn whether the receipt feels personally meaningful, whether `Brain Resolution` is a useful product idea, whether the experience creates honest return desire, and whether the screen feels like progress or merely a polished history item.
-

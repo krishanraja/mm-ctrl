@@ -12,7 +12,7 @@ Last verified: 2026-09-08 against the integrated release-candidate source tree a
 | Frontend source | `main`; containment recovery copy is branch-only |
 | Frontend production baseline | `19d80f36ecda990bce4c3e1e6d18c97387d9ed33` |
 | Vercel production | `dpl_24XfsypkNsxciZJ2Q1Arx3n8XNci`, READY at `19d80f36`; does not contain the recovery-copy repair |
-| Main test suite | 915 tests in 57 files at `edd9045`; PR #374 release candidate passes 920 tests in 59 files |
+| Main test suite | 915 tests in 57 files at `edd9045`; PR #374 release candidate passes 921 tests in 59 files |
 | Edge Function source inventory | 115 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
 | Hook files | 51 |

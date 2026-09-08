@@ -1,10 +1,10 @@
 # G15 Brain Resolution R2 QA record
 
-**Date:** 8 September 2026  
-**Verdict:** Verified as a local synthetic visual-comprehension proof  
-**Base repository revision:** `6432580`  
-**Branch:** `codex/trust-containment-2026-09-05`  
-**Local target:** `http://127.0.0.1:4189/g15-brain-resolution-proof-r2.html`  
+**Date:** 8 September 2026
+**Verdict:** Verified as a local synthetic visual-comprehension proof
+**Base repository revision:** `6432580`
+**Branch:** `codex/trust-containment-2026-09-05`
+**Local target:** `http://127.0.0.1:4189/g15-brain-resolution-proof-r2.html`
 **Production authority:** None
 
 ## Founder correction

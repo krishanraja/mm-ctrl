@@ -1,9 +1,9 @@
 # CTRL current-to-target transition architecture
 
-Status: Proposed for founder review  
-Owner: Mindmaker / CTRL  
-Prepared: 2026-09-07  
-Current source baseline: `8174677125bc2799929e3196282e75cba215b443`  
+Status: Proposed for founder review
+Owner: Mindmaker / CTRL
+Prepared: 2026-09-07
+Current source baseline: `8174677125bc2799929e3196282e75cba215b443`
 Production deployment checked: `makeyourmindup.ai`, exact source match to the baseline above
 
 ## Executive verdict

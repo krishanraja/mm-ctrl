@@ -1,8 +1,8 @@
 # G15 Judgement Resolution synthesis record
 
-**Date:** 8 September 2026  
-**Status:** Frozen candidate for rejudging and one local playable proof  
-**Selected spine:** The Becoming Receipt  
+**Date:** 8 September 2026
+**Status:** Frozen candidate for rejudging and one local playable proof
+**Selected spine:** The Becoming Receipt
 **Canonical fixture:** `g15-judgement-resolution-fixture.json`
 
 ## Decision

@@ -120,4 +120,3 @@ Hard failures:
 - dependence on mouse, drag or voice alone;
 - conceptual sameness with another candidate on sequencing, agency, interaction, information structure and state model; or
 - any violation of the authority boundary.
-
