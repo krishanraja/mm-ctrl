@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 const root = '/operator/lab/synthetic-population'
+const protectedPreviewEntry = process.env.E2E_PROTECTED_PREVIEW_ENTRY
 
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
@@ -19,6 +20,9 @@ test.describe('synthetic population lab', () => {
       if (message.type() === 'error') errors.push(message.text())
     })
     page.on('pageerror', (error) => errors.push(error.message))
+    if (protectedPreviewEntry) {
+      await page.goto(protectedPreviewEntry)
+    }
     await page.goto(`${root}/SYN-CUST-101`)
     await expect(page.getByTestId('synthetic-population-lab')).toBeVisible()
     expect(errors).toEqual([])

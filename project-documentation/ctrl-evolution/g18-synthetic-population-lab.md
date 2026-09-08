@@ -1,6 +1,6 @@
 # G18 synthetic population and edge-case lab
 
-Status: local deterministic corpus, test oracle and unlinked UI range harness complete; database seeding and diagnostic model evaluation pending
+Status: deterministic corpus, test oracle and protected-preview UI range harness complete; database seeding and diagnostic model evaluation pending
 
 Date: 8 September 2026
 
@@ -114,5 +114,5 @@ The accounts cover:
 - No fixture has been inserted into any database.
 - No diagnostic model has been run or judged against the oracles.
 - No current customer-facing product route reads this population. The unlinked preview-only lab reads it for quality assurance.
-- The React lab passes all-account render checks, but no cross-viewport UI result is claimed until the preview is rendered and independently checked.
+- The React lab passes all-account render checks plus eight local and eight protected-preview browser acceptance checks across desktop, mobile, compact, multilingual, long-token and adversarial-content cases. Founder review remains required before merge.
 - The 48 accounts are curated coverage, not a claim that every future edge case is known. Every production failure class must add a fixture before repair is accepted.
