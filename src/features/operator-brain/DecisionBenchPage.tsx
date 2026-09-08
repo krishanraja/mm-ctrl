@@ -6,7 +6,6 @@ import {
   FileText,
   GitCompareArrows,
   Mic,
-  PanelLeftOpen,
   Plus,
   X,
 } from 'lucide-react'
@@ -389,8 +388,7 @@ export default function DecisionBenchPage() {
           aria-expanded={railOpen}
           onClick={() => setRailPinned((pinned) => !pinned)}
         >
-          <img src="/mindmaker-full-logo.png" alt="Mindmaker" />
-          <PanelLeftOpen aria-hidden="true" />
+          <img src="/mindmaker-favicon.png" alt="Mindmaker" />
         </button>
         <div className="db-identity"><div className="db-avatar">MC</div><div><strong>{fixture.customer.display_name}</strong><span>{fixture.customer.role} · {fixture.customer.organisation}</span></div></div>
         <div className="db-top-actions">
