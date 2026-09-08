@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 const proof = '/g20-context-exchange-proof-r1.html'
+const protectedPreviewEntry = process.env.E2E_PROTECTED_PREVIEW_ENTRY
 
 async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
@@ -24,6 +25,10 @@ async function openProof(page: Page) {
 }
 
 test.describe('G20 context exchange proof', () => {
+  test.beforeEach(async ({ page }) => {
+    if (protectedPreviewEntry) await page.goto(protectedPreviewEntry)
+  })
+
   test('completes the synthetic capture, Claude handoff and attributed return loop', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])
     await page.setViewportSize({ width: 1440, height: 900 })
