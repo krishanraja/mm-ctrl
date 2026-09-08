@@ -1,7 +1,7 @@
 # G14 Decision Bench R1 QA record
 
 **Date:** 8 September 2026
-**Status:** Verified local reset proof, founder reaction pending
+**Status:** Verified local reset proof, founder-approved direction
 **Base revision:** `297eb87`
 **Local target:** `http://127.0.0.1:4189/g14-decision-bench-proof-r1.html`
 **Production authority:** None
@@ -69,8 +69,8 @@ Rendered evidence:
 - Selection, source inspection, private guidance and preparation are local presentation state.
 - No Brain, customer, account, repository, schema or production system was created or changed.
 - Physical iOS Safari and Android Chrome testing remains a release-stage requirement.
-- Founder taste approval is still pending.
+- Founder approval applies to the reviewed product, interaction and visual direction only. Production implementation remains separately gated.
 
 ## Verdict
 
-The reset proof is mechanically and visually ready for a cold founder reaction. It is not approved, implemented, deployed or released.
+The reset proof is mechanically and visually verified and its direction is founder-approved. It is not implemented, deployed or released.
