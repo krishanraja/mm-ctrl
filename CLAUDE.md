@@ -4,6 +4,8 @@ Status: Current
 
 CTRL is a Vite React application with a Supabase backend. Make Your Mind Up is its public intake; the product and canonical host are CTRL at `https://makeyourmindup.ai`.
 
+Read [`AGENTS.md`](./AGENTS.md) first: it points at `NOW.md` for current state and carries the cross-repository Krish canon on approval, verification, secrets and destructive actions. The rules in this file outrank the canon on anything specific to CTRL.
+
 ## Commands
 
 - Install: `npm ci`
