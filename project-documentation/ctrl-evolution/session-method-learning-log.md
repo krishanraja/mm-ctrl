@@ -11,6 +11,7 @@ This file preserves the working methods Krish explicitly valued during the CTRL 
 3. Use stack-ranked interactive intake when it can expose meaningful trade-offs quickly. A bare question often loses the nuance that makes the eventual architecture good.
 4. Give each ranked question an optional notes route. Krish often has a ranking and deeper reasoning; the interface should accept both without making the richer answer compulsory.
 5. Let accumulated evidence reduce questioning. The system should synthesise what is already known and ask only where a response would change the route.
+6. Make diagnostic questions difficult because of the truth they expose, never because of abstract wording. The system should perform the interpretation, then ask a concrete tap-first question with an optional note.
 
 ## Candidate practices to assess at the retrospective
 
