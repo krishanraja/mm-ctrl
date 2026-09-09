@@ -24,6 +24,7 @@
     "brain:canary:check": "node scripts/check-ctrl-brain-canary.mjs",
     "brain:g17:check": "vitest run supabase/functions/_shared/brain-crypto.test.ts supabase/functions/_shared/brain-ingest-core.test.ts",
     "brain:g18:check": "vitest run src/features/operator-brain/syntheticPopulation.test.ts src/features/operator-brain/SyntheticPopulationLabPage.test.tsx",
+    "brain:g21:check": "vitest run src/features/operator-brain/rangeCouncilContract.test.ts",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node standards/check-standards.mjs",
