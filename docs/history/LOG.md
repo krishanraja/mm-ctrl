@@ -4,6 +4,13 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-09
+
+- reconciled at `618bf91`: `CHANGELOG.md` gained five entries covering G17 to G20 (PRs #385, #388, #389, #391, #392) and the three public Answer pages (PRs #380, #381, #384), none of which had a documentation record; the why for each came from the commit body and the linked ctrl-evolution contract, because the commit subjects alone carried only titles.
+- reconciled at `618bf91`: `docs/current/architecture.md` gained one paragraph on the G17 Brain-adapter primitives (`brain-crypto.ts`, `brain-ingest-core.ts`): frozen and tested, not yet called by any runtime function.
+- reconciled at `618bf91`: `docs/current/release-state.md` gained one line noting that G17 to G20 are committed on `main` after the G16 receipt and do not change it.
+- reconciled at `618bf91`: `NOW.md` head moved from `860dea0` to `618bf91` and `as_of` to 2026-09-09; five "What changed recently" bullets added for G17 to G20 and the Answer pages, and the next engineering gate rewritten to name the specific pending decision, approving one isolated Supabase development branch at $0.01344 an hour.
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.

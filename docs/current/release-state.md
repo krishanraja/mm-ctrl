@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
+Last verified: 2026-09-09 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing, documentation receipts, and the committed-but-undeployed G17 to G20 work may create newer `main` and deployment identifiers without changing the G16 receipt below.
 
 ## Production baseline
 
@@ -29,6 +29,7 @@ Current source inventory is 115 Edge Function directories excluding `_shared`, 5
 - The committed rollback-only multi-identity behavioural suite could not execute through the read-only management SQL connection. It remains pending a writable non-customer test connection and is not represented as passing.
 - No legacy memory or decision row was migrated, reinterpreted or deleted. Full hashes, versions and limitations are in the [G16 canary receipt](../../project-documentation/ctrl-evolution/g16-workspace-audience-canary.md).
 - PR #374 merged to `main` at `860dea0`. GitHub CI and Vercel passed on the exact candidate; production smoke checks passed on the canonical host. The synthetic Decision Bench remains closed in production and renders the standard 404.
+- G17 (Brain-adapter encryption and ingest primitives), G18 (a 48-account synthetic Brain test population) and G19 (an internal synthetic-range lab at `/operator/lab/synthetic-population/:accountId`) are committed on `main` after this receipt. G20 is a contract only. None deploys a new Edge Function, connects a customer path, or changes the counts and SHAs above; see `CHANGELOG.md`, 2026-09-08.
 
 ## Emergency trust containment, 2026-09-05
 

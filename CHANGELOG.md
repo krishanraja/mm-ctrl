@@ -2,9 +2,42 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-08
+Last reconciled: 2026-09-09
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
+
+## 2026-09-08 - Universal capture and Claude bridge contract locked
+
+Krish confirmed that frictionless capture and working inside Claude are first-class product requirements. The [G20 contract](project-documentation/ctrl-evolution/g20-universal-capture-claude-bridge-contract.md) locks two gestures on the existing context-circulation substrate (PR #392).
+
+- `Add to Brain` puts pasted, spoken, dropped, uploaded, shared or forwarded material into private staging with a compact receipt, never trusted memory by default.
+- `Use in Claude` creates an explicit, expiring, revocable context capsule read through a private read-only remote MCP connector, with a copied task starter as the honest fallback: there is no reliable way to pre-fill the Claude web UI directly.
+- Whole-Brain dumps, duplicate Claude Project truth, unsupported prompt injection into Claude, and direct trusted-memory write-back from Claude are rejected.
+- No connector, write path or UI is implemented by this record. The first proof remains synthetic, unlinked, and subject to a rendered founder gate.
+
+## 2026-09-08 - Synthetic Brain range lab implemented, then its scrollbar corrected
+
+An unlinked, preview-gated internal dashboard renders all 48 G18 synthetic accounts so Krish can inspect Brain inputs, processing boundaries and diagnostic oracles across hostile data and viewports at `/operator/lab/synthetic-population/:accountId` (PR #389).
+
+- 61 deterministic and React checks pass locally, plus eight Chromium acceptance tests against both a local server and a protected Vercel preview, covering no-scroll desktop, mobile disclosure, keyboard navigation, empty evidence, long-identity and long-token pressure, Arabic and mixed-direction text, inert script-shaped input, and fail-closed unknown IDs.
+- Krish approved it on 8 September 2026 as his internal cross-customer dashboard, not the customer-facing product, subject to one correction.
+- QA found a hidden desktop document-overflow defect (P2); the locked, brand-consistent scrollbar correction shipped next, verified against the same local and remote evidence (PR #391).
+- The route is gated to Vite development mode or an explicit synthetic-preview flag, is `noindex`, and makes no database write.
+
+## 2026-09-08 - Synthetic Brain population built as a test oracle
+
+The [48-account synthetic population lab](project-documentation/ctrl-evolution/g18-synthetic-population-lab.md) defines 48 fictional leaders and exactly 1,672 deterministic input events, each recording what a diagnostic must notice, must not infer, and its smallest defensible next move (PR #388).
+
+- Covers every G16 source type and audience, every designed UI state, and every first-pass processing outcome, including replay, conflicting retry, correction propagation, quarantine, and audience-widening rejection.
+- Every account is marked `synthetic_demo` on the reserved `.invalid` email domain. No auth account, database row or model run is created; the population is ready for branch-only seeding once the G16 transactional and RLS gates pass.
+
+## 2026-09-08 - Strict Brain adapter primitives frozen, not yet wired
+
+The [provisional service-adapter contract](project-documentation/ctrl-evolution/g17-service-adapter-contract.md) rejects the legacy `memory-crypto.ts` fallback cipher for new Brain data (PR #385). Why: that cipher pads or truncates text into a key and keeps a published development-key fallback, which is not acceptable for new Brain records.
+
+- `brain-crypto.ts` requires an exact 32-byte random key, AES-256-GCM with a fresh IV and authentication tag, associated data binding workspace, subject, record kind and field, and a versioned envelope so keys can rotate; it fails hard on a missing key, changed context, or tampered ciphertext.
+- `brain-ingest-core.ts` fingerprints the canonical payload with SHA-256 so a retry carrying the same `ingest_key` and fingerprint returns the original receipt, while a same-key conflicting fingerprint is rejected rather than reinterpreted.
+- 13 focused tests pass. No runtime function calls either module yet; the atomic database write function and its isolated test branch remain blocked on a founder-approved, quoted $0.01344-an-hour Supabase branch that has not been created.
 
 ## 2026-09-08 - Fail-closed Living Brain substrate
 
@@ -16,6 +49,10 @@ Applied and read back three additive migrations on the shared production Supabas
 - Corrected the live advisors' anonymous-auth, foreign-key index and per-row JWT findings. Final Brain security readback is clear; only expected unused-index information remains on the empty schema.
 - Committed a rollback-only multi-identity behavioural suite. The management SQL connection rejected its first INSERT as read-only, so that behavioural proof remains pending a writable non-customer test connection.
 - Merged PR #374 to `main` at `860dea0` after GitHub CI passed documentation, standards, tests, typecheck, build and PR-diff lint. Vercel production `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` is READY and PROMOTED from that exact SHA. The canonical host passed rendered smoke checks; the synthetic Decision Bench remains closed in production and renders the standard 404.
+
+## 2026-09-08 - Three public Answer pages published
+
+Three new pages joined the AI-quoted `/answers` surface, prerendered to static HTML at build time (PRs #380, #381, #384): "[What makes an AI decision tool trustworthy enough for a leadership team](src/content/answers/evaluate-ai-decision-tool-trustworthy-leadership-team.md)", "[Cutting through AI news noise is a judgement problem, not a filtering one](src/content/answers/cut-ai-news-noise-without-missing-what-matters.md)", and a revised "[Tasks done is not the same measure as decisions improved](src/content/answers/ai-chief-of-staff-decision-quality-vs-task-automation.md)".
 
 ## 2026-09-07 - Radar evidence survives the rolling news window
 

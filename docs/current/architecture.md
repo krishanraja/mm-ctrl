@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, live G16 Brain-substrate readback and the 2026-09-05 production containment readback. Later answer-only publishing does not change the Brain architecture described here.
+Last verified: 2026-09-09 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, live G16 Brain-substrate readback, the 2026-09-05 production containment readback, and the committed-but-unwired G17 adapter primitives. Later answer-only publishing does not change the Brain architecture described here.
 
 CTRL is a Vite React application on Vercel with Supabase Auth, PostgreSQL, Edge Functions, Storage, Vault, and scheduled jobs. The architecture has one personal context substrate and one curation pool. Product surfaces are views over those shared systems.
 
@@ -141,6 +141,8 @@ rejected candidate
 The first target-state Brain substrate is live but dormant. Eleven additive tables separate workspaces, roles, audience grants, encrypted sources, assertions, stable item identities, item versions, typed relationship identities, exact-endpoint relationship versions and their evidence links. All are empty and no current customer path reads or writes them.
 
 Row-level security is forced. An identified user needs both active workspace membership and an active, unexpired exact-audience grant to read content. Browser roles cannot write. Anonymous-auth sessions are explicitly rejected. Server-side writes remain future work and must preserve source, subject, audience, version-chain, current-endpoint and evidence constraints. The complete live receipt and proof boundary is in the [G16 workspace-and-audience canary](../../project-documentation/ctrl-evolution/g16-workspace-audience-canary.md).
+
+The service-side write adapter's primitives are frozen but unwired. `brain-crypto.ts` rejects the legacy `memory-crypto.ts` fallback cipher and instead requires an exact 32-byte key, AES-256-GCM with a fresh IV and authentication tag, and a versioned envelope with no default or passphrase padding. `brain-ingest-core.ts` fingerprints each canonical payload so a retry carrying the same key replays the original receipt instead of duplicating, and a same-key conflicting fingerprint is rejected. No runtime function calls either module, and no atomic database write function exists yet; both remain blocked on a founder-approved, not-yet-created isolated Supabase branch (`supabase/functions/_shared/brain-crypto.ts`, `supabase/functions/_shared/brain-ingest-core.ts`, [G17 service adapter contract](../../project-documentation/ctrl-evolution/g17-service-adapter-contract.md)).
 
 ## Core data ownership
 

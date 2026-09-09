@@ -1,9 +1,9 @@
 ---
 repo: krishanraja/mm-ctrl
 product: CTRL by Mindmake
-as_of: 2026-09-08
-head: 860dea0
-head_scope: G16 application release receipt
+as_of: 2026-09-09
+head: 618bf91
+head_scope: reconciled through G20; the G16 application release at `860dea0` remains the production receipt
 lifecycle: live
 production_url: https://makeyourmindup.ai
 state_doc: docs/current/release-state.md
@@ -32,9 +32,10 @@ Angles a writer can use without asking Krish, each with its pointer:
 
 Objection it answers: "He talks about AI. Has he shipped anything a customer pays for and kept it honest?" Here is the product, with its failures in the changelog.
 
-## Where it is right now (as of 2026-09-08)
+## Where it is right now (as of 2026-09-09)
 
-- **Live** at `makeyourmindup.ai`. The exact G16 application release is `860dea0`, Vercel `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from that SHA (`docs/current/release-state.md`). Answer-only publishing and documentation receipts may advance `main` and create newer deployment IDs without changing this G16 receipt.
+- **Live** at `makeyourmindup.ai`. The exact G16 application release is `860dea0`, Vercel `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from that SHA (`docs/current/release-state.md`). Answer-only publishing, documentation receipts, and the committed-but-undeployed G17 to G20 work below may advance `main` and create newer deployment IDs without changing this G16 receipt.
+- **G17 to G20, built but not live.** Strict Brain-adapter encryption and ingest primitives (G17), a 48-account synthetic Brain test population (G18), an internal synthetic-range lab at `/operator/lab/synthetic-population/:accountId` (G19), and a locked universal-capture-and-Claude-bridge contract (G20) are committed on `main`. None connects to a customer path, calls a runtime function, or changes the G16 receipt above (`CHANGELOG.md`, 2026-09-08).
 - **Edge Functions:** 115 directories in the tree. 114 confirmed deployed and ACTIVE by management API readback on 2026-08-21. `live-headlines` version 48 deployed and verified against cache readback on 2026-09-02 (476 items, 473 classified, 12 `damage` dropped). Two changes have no deployment readback recorded here: `video-radar-export` (PR #371, 2026-08-28) and the rolling-window merge (PR #375, `edd9045`).
 - **Tests:** production `main` passes 945 tests in 60 files, with zero new type errors against the 94-error legacy baseline. CI runs docs, standards, tests, typecheck, build and changed-file lint on every push.
 - **Living Brain substrate:** 11 additive production tables are live, empty and disconnected from customer paths. Forced RLS, non-anonymous workspace membership, exact-audience grants and authenticated read-only ACLs protect them. A service-side write adapter and writable multi-identity behavioural test remain future work (`project-documentation/ctrl-evolution/g16-workspace-audience-canary.md`).
@@ -46,6 +47,11 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 
 ## What changed recently
 
+- 2026-09-08 **Universal capture and Claude bridge contract locked.** Why: Krish said the Claude UI is often where he already thinks, so CTRL should not try to replace it. The [G20 contract](project-documentation/ctrl-evolution/g20-universal-capture-claude-bridge-contract.md) locks `Add to Brain` (any paste, speech, drop or upload lands in private staging with a receipt) and `Use in Claude` (a private read-only MCP connector serving an expiring, revocable context capsule, with a copied task starter as the fallback because there is no reliable way to pre-fill the Claude web UI). No connector or write path exists yet (PR #392).
+- 2026-09-08 **Synthetic Brain range lab built, then its scrollbar fixed.** An unlinked, preview-gated dashboard renders all 48 G18 synthetic accounts so Krish can inspect Brain inputs and diagnostic boundaries. 61 deterministic and React checks plus eight Chromium acceptance tests pass locally and on a protected Vercel preview. Krish approved it on 8 September 2026 as his internal cross-customer dashboard, not the customer product, subject to fixing a hidden desktop document-overflow defect QA found; the locked scrollbar correction shipped next (PRs #389, #391).
+- 2026-09-08 **Synthetic Brain population built as a test oracle, not a demo.** 48 fictional leaders and 1,672 deterministic input events cover every G16 source type, audience and processing outcome, each recording what a diagnostic must notice, must not infer, and its smallest defensible next move. Every account is marked `synthetic_demo` on the `.invalid` domain; nothing is seeded to a real database yet (PR #388).
+- 2026-09-08 **Strict Brain adapter primitives frozen, nothing calls them yet.** Why: the existing `memory-crypto.ts` pads text into a key and keeps a published development-key fallback, which is not acceptable for new Brain data. `brain-crypto.ts` requires an exact 32-byte key, AES-256-GCM and a versioned envelope; `brain-ingest-core.ts` fingerprints payloads so a retry replays instead of duplicating and a conflicting retry is rejected. 13 tests pass. The next step, an isolated Supabase branch at $0.01344 an hour, is approved but not created (PR #385).
+- 2026-09-08 **Three public Answer pages published.** New AI-quoted pages on trustworthy decision tools, cutting through AI news noise, and why tasks done is not the same measure as decisions improved, plus a revision to the existing chief-of-staff answer (PRs #380, #381, #384).
 - 2026-09-08 **Fail-closed Living Brain substrate.** Three additive migrations created the dormant workspace, audience, encrypted source, versioned item, typed relationship and evidence kernel. Live readback found zero rows and no Brain security-advisor findings. The management SQL connection is read-only, so the committed rollback-only multi-identity behavioural suite remains pending a writable non-customer test connection.
 - 2026-09-08 **G16 merged and production-verified.** PR #374 merged at `860dea0`; Vercel production `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` is READY and PROMOTED from the exact SHA. The canonical host and prerendered public routes passed smoke checks, while the synthetic Decision Bench remained closed and rendered the standard 404.
 - 2026-09-07 **Radar evidence survives the rolling window** (PR #375, `edd9045`). Why: the studio export read one cached day, so a story that ran on several days arrived several times, each copy citing one link. It now reads four days and merges repeated sightings into one candidate carrying every distinct public URL. The code's own words: "The rolling window is evidence coverage, not permission to show the same event several times." No deployment readback yet.
@@ -63,7 +69,8 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 
 ## What is next and what is waiting on Krish
 
-- Next engineering gate: one designated synthetic Brain workspace, a server-side encrypted write adapter, the committed multi-identity database suite on a writable non-customer connection, and a read-only projection before any approved Brain UI consumes real substrate data.
+- Waiting on Krish: approve or reject creating one isolated Supabase development branch at a quoted $0.01344 an hour. Nothing in G17 proceeds without it: the atomic Brain-write database function, the committed multi-identity behavioural suite, and the G18 synthetic seeding all require that writable non-customer connection.
+- Next engineering gate after that approval: apply the G16 migrations on the branch, run the behavioural suite, author the atomic write function against observed branch behaviour, and only then a read-only projection before any approved Brain UI consumes real substrate data.
 - Waiting on Krish: a deployment readback for `video-radar-export` and the PR #375 change, then a line in `docs/current/release-state.md`.
 - Waiting on Krish: the product name. The fleet calls this "CTRL by Mindmake"; the repo's README title, `product.json` (`legal_entity`, `parent` link) and compliance pack say "Mindmaker". The steward does not change names or commercial claims.
 - Waiting on Krish: whether the corpus and course material archived today (the `doc-*`, syllabus and `DECISIONING CORPUS` files) belongs in another repository, and whether `docs/CTRL-BRAIN-ARCHITECTURE.md` (now in history) should be re-headed as a Reference for the brain migrations that cite it.
