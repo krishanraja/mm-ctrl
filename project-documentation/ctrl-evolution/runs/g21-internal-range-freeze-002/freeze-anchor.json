@@ -1,0 +1,7 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "artifactCommit": "89657b4",
+  "manifestPath": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/input-manifest.json",
+  "verification": "All nine input-manifest file hashes and the manifest-order composite were recomputed from the working tree before the sealed council. The same artifact bytes are anchored at artifactCommit.",
+  "reason": "Run 002 is blocked history. Resolve its nine artifact paths at artifactCommit so later repairs cannot silently alter the evidence judged by its seven sealed rulings."
+}

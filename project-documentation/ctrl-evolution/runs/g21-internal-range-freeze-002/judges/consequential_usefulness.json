@@ -1,0 +1,33 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "judge": "consequential_usefulness",
+  "criterionVersion": "consequential-usefulness:g21-internal-range-freeze-v2",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "verdict": "fail",
+  "claims": [
+    "The four families centre distinct high-value AI-transition choices with concrete exposure: a GBP 1.8 million care rollout, about GBP 900,000 of revenue at risk in a research-product shift, a GBP 4.2 million planning programme with 38 roles, and a GBP 18 million campaign allocation.",
+    "Within every family, the work and longitudinal evidence materially change the decision focus and move the immediate question from an intake-level premise or gate toward a route-specific test, boundary, or scale threshold.",
+    "The twelve frozen questions are consequential on their face: their declared answers can stop a pilot, set a safety or commercial gate, distinguish product from senior service, choose conditions before role redesign, define human-only work, select an audience or exposure test, or unlock an investment decision.",
+    "The implemented validator does not enforce that usefulness. For an otherwise valid profile, replacing routeChangingQuestion with the syntactically valid but generic question 'What should we discuss next?' produces no usefulness error because validation checks only nonempty companion fields, one terminal question mark, a 24-word ceiling, and a fixed jargon list. The tests exercise those surface checks but contain no generic or route-irrelevant question mutation, so a USEFULNESS-RANGE-01 false pass remains possible."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:6-113",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:593-823",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:983-1214",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1391-1622",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1829-2060",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2424-2444",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2693-2694",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:108-121",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:481-522",
+    "scripts/check-g21-internal-range.mjs:360-380"
+  ],
+  "veto": {
+    "ruleId": "USEFULNESS-RANGE-01",
+    "failure": "A generic or route-irrelevant immediate question can pass the implemented profile validator, so the gate does not ensure that an accepted question can select, kill, or reshape the profile's consequential route.",
+    "resolvingTest": "Freeze and validate the full route-question contract for each profile, including routeChangingQuestion, expectedAnswerShape, and answerWouldChange, then add twelve syntactically valid generic or route-irrelevant mutations and prove that validateG21InternalRangeCanary rejects every mutation while all twelve current question contracts still pass."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Freeze and validate the full route-question contract for each profile, including routeChangingQuestion, expectedAnswerShape, and answerWouldChange, then add twelve syntactically valid generic or route-irrelevant mutations and prove that validateG21InternalRangeCanary rejects every mutation while all twelve current question contracts still pass.",
+  "recordedAt": "2026-09-10T19:14:11.752Z"
+}

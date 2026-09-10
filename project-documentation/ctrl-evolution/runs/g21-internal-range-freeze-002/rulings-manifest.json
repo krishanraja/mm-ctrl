@@ -1,0 +1,38 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "rulingsCompositeSha256": "8b964a0e1bc22044683e8a879f4340804713d0f142d19ffd7360a5aff9cd4071",
+  "compositeRecipe": "SHA-256 of UTF-8 path:sha256 lines joined with LF in the listed order, with no trailing LF.",
+  "rulings": [
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/behavioural_and_implementation_reality.json",
+      "sha256": "7d81f721aed3feede22ec6491131b46df6328d9279ebba5a6cb1bf22aca136f3"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/consequential_usefulness.json",
+      "sha256": "794d713cb64f37dbd773a0de7236c33aff1306d50bddbe4199c7b2c075d8dbd3"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/epistemic_integrity.json",
+      "sha256": "9ad8f0b9819213b20ec95b919e5198d69eca2b5a4915fafb7b8650dc990b4ed4"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/human_agency.json",
+      "sha256": "808bcf8353ef4c45fa4901aac11ac59727b5cf14eea3093bc18321ab73e6b2d3"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/human_comprehension_and_access.json",
+      "sha256": "0ae50acd7bc50121591be68cde1de3da821571e18fb653227eb456a4e810d953"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/living_brain_integrity.json",
+      "sha256": "bf54595133560d5a272cb36f41274d1fe7be12f807fce9079b4f8f333c9b2e6f"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/judges/subject_audience_lifecycle_safety.json",
+      "sha256": "894e9fc025202843af4145de3372ad9aa287ad85f465897ec84068faa36c2081"
+    }
+  ],
+  "frozenAt": "2026-09-10T19:25:48.471Z"
+}
+

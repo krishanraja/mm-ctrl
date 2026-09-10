@@ -1,0 +1,37 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "judge": "behavioural_and_implementation_reality",
+  "criterionVersion": "behavioural-and-implementation-reality:g21-internal-range-freeze-v2",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "verdict": "fail",
+  "claims": [
+    "All nine frozen file hashes and the manifest-order composite independently matched the manifest.",
+    "The frozen profiles themselves keep identity and external evidence byte-identical within each family, use cumulative baseline evidence, and expose plausible work records and answerable or testable questions.",
+    "The lifecycle validator does not bind evidence content or claim text to conflict versus correction semantics. Swapping those fields in RANGE-INTERNAL-CARE-I1 while preserving IDs, types, timestamps, links and the frozen lifecycle oracle returned no errors, and the emitted contradicted input contained the original correction statement.",
+    "The blind-input leak check scans only strongestSupportedView, expectedDiagnosticBehaviours and forbiddenClaims. Adding routeChangingQuestion to an emitted input still satisfies the implemented oracle-leak predicate.",
+    "Exact lifecycle behaviour can therefore be faked, and an answer-bearing oracle field can enter a supposedly blind input without the deterministic gate noticing."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/input-manifest.json:artifactCompositeSha256, compositeRecipe and files[0..8]",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2069-2073",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2125-2206",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2323-2348",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2507-2531",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2653-2694",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:141-180",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:272-283",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:382-415",
+    "scripts/check-g21-internal-range.mjs:64-99",
+    "scripts/check-g21-internal-range.mjs:266-275",
+    "independent mutation: RANGE-INTERNAL-CARE-I1 lifecycleEvidence[0] and lifecycleEvidence[1] content and claims[0].text swapped; validateG21InternalRangeProfile returned [] and the contradicted input emitted the original correction content",
+    "independent mutation: routeChangingQuestion added to one emitted blind input; the implemented three-key oracle-leak predicate still returned true"
+  ],
+  "veto": {
+    "ruleId": "REALITY-RANGE-01",
+    "failure": "The validator accepts a lifecycle payload whose conflict record carries the frozen correction text and whose correction record carries the frozen conflict text. The resulting contradicted blind input presents correction semantics while all implemented checks report success. Its oracle-leak predicate also misses routeChangingQuestion. Exact state behaviour and blind-input integrity can be faked by preserving identifiers and polished oracle prose.",
+    "resolvingTest": "Add a deterministic adversarial test for all 12 profiles that swaps conflict and correction content plus claim text while preserving identifiers, types, timestamps and links; require profile validation to reject every swap and require each emitted state to match independently frozen lifecycle evidence bytes. Add an exact blind-input field allowlist and mutate each oracle field, including routeChangingQuestion, into an input; require every mutation to fail before refreezing."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add a deterministic adversarial test for all 12 profiles that swaps conflict and correction content plus claim text while preserving identifiers, types, timestamps and links; require profile validation to reject every swap and require each emitted state to match independently frozen lifecycle evidence bytes. Add an exact blind-input field allowlist and mutate each oracle field, including routeChangingQuestion, into an input; require every mutation to fail before refreezing.",
+  "recordedAt": "2026-09-10T19:24:05.184Z"
+}
