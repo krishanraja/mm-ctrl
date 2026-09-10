@@ -80,6 +80,14 @@ try {
     runId: requestedRunId,
     artifactCompositeSha256: 'self-test-artifact-composite',
     criterionVersions,
+    ...(selfRunVersion >= 4
+      ? {
+          reviewBoundary: {
+            protocolVersion: 'history-free-semantic-allowlist:v1',
+            semanticReviewCompositeSha256: 'a'.repeat(64),
+          },
+        }
+      : {}),
   }
   const passRulings = council.COUNCIL_JUDGES.map((judge) => ({
     runId: requestedRunId,
@@ -93,6 +101,15 @@ try {
     missingEvidence: [],
     resolvingTest: null,
     recordedAt: '2026-09-10T19:00:00.000Z',
+    ...(selfRunVersion >= 4
+      ? {
+          reviewBoundaryAttestation: {
+            semanticReviewCompositeSha256:
+              selfContract.reviewBoundary.semanticReviewCompositeSha256,
+            excludedHistoryEncountered: false,
+          },
+        }
+      : {}),
   }))
 
   assert(
@@ -209,8 +226,49 @@ try {
     'incomplete criterion map was not rejected',
   )
 
+  if (selfRunVersion >= 4) {
+    const contaminatedReview = structuredClone(passRulings)
+    contaminatedReview[0].reviewBoundaryAttestation.excludedHistoryEncountered = true
+    assert(
+      council
+        .validateFrozenRangeCouncil(contaminatedReview, selfContract)
+        .includes('human_agency:frozen_review_boundary_attestation_invalid'),
+      'v4 ruling that encountered excluded history was not rejected',
+    )
+    const semanticPaths = [
+      'src/features/operator-brain/g21InternalRangeCanary.ts',
+      'src/features/operator-brain/g21InternalRangeCanary.test.ts',
+      'scripts/check-g21-internal-range.mjs',
+      `project-documentation/ctrl-evolution/runs/${requestedRunId.toLowerCase()}/council-brief.md`,
+      `project-documentation/ctrl-evolution/runs/${requestedRunId.toLowerCase()}/question-pack.json`,
+    ]
+    const provenancePaths = [
+      'project-documentation/ctrl-evolution/g21-internal-range-canary.md',
+      'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/adjudication.json',
+    ]
+    assert(
+      council.validateG21SemanticReviewAllowlist(semanticPaths, provenancePaths).length === 0,
+      'valid v4 semantic review boundary was rejected',
+    )
+    assert(
+      council
+        .validateG21SemanticReviewAllowlist(
+          [...semanticPaths, 'project-documentation/ctrl-evolution/judge-history/human-agency.md'],
+          provenancePaths,
+        )
+        .some((error) => error.startsWith('history_bearing_semantic_path_forbidden_')),
+      'history-bearing judge material entered the semantic allowlist',
+    )
+  }
+
   if (selfOnly) {
-    console.log(JSON.stringify({ status: 'passed', contractSelfTests: 9 }, null, 2))
+    console.log(
+      JSON.stringify(
+        { status: 'passed', contractSelfTests: selfRunVersion >= 4 ? 11 : 9 },
+        null,
+        2,
+      ),
+    )
   } else {
     const runDirectory = join(
       root,
@@ -241,6 +299,63 @@ try {
       ),
       `input manifest criterion versions do not match the v${runVersion} council contract`,
     )
+
+    if (runVersion >= 4) {
+      assert(
+        Array.isArray(inputManifest.semanticReviewFiles) &&
+          inputManifest.semanticReviewFiles.length > 0,
+        'v4 manifest requires semantic review files',
+      )
+      assert(
+        Array.isArray(inputManifest.provenanceOnlyFiles),
+        'v4 manifest requires provenance-only files',
+      )
+      const semanticPaths = inputManifest.semanticReviewFiles.map((entry) => entry.path)
+      const provenancePaths = inputManifest.provenanceOnlyFiles.map((entry) => entry.path)
+      const boundaryErrors = council.validateG21SemanticReviewAllowlist(
+        semanticPaths,
+        provenancePaths,
+      )
+      assert(
+        boundaryErrors.length === 0,
+        `v4 semantic review boundary invalid: ${boundaryErrors.join(', ')}`,
+      )
+      assert(
+        JSON.stringify(inputManifest.files) ===
+          JSON.stringify([
+            ...inputManifest.semanticReviewFiles,
+            ...inputManifest.provenanceOnlyFiles,
+          ]),
+        'v4 artifact files must be the ordered semantic and provenance files',
+      )
+      assert(
+        inputManifest.reviewBoundary?.protocolVersion ===
+          'history-free-semantic-allowlist:v1',
+        'v4 review boundary protocol is invalid',
+      )
+      assert(
+        composite(inputManifest.semanticReviewFiles) ===
+          inputManifest.reviewBoundary?.semanticReviewCompositeSha256,
+        'v4 semantic review composite hash mismatch',
+      )
+      const contaminatedSemanticContent = inputManifest.semanticReviewFiles.flatMap((entry) => {
+        const content = readFrozenFile(artifactCommit, entry.path).toString('utf8')
+        return [
+          'G21-INTERNAL-RANGE-FREEZE-001',
+          'G21-INTERNAL-RANGE-FREEZE-002',
+          'G21-INTERNAL-RANGE-FREEZE-003',
+          'g21-internal-range-freeze-001',
+          'g21-internal-range-freeze-002',
+          'g21-internal-range-freeze-003',
+        ]
+          .filter((marker) => content.includes(marker))
+          .map((marker) => `${entry.path}:${marker}`)
+      })
+      assert(
+        contaminatedSemanticContent.length === 0,
+        `v4 semantic review content names prior frozen runs: ${contaminatedSemanticContent.join(', ')}`,
+      )
+    }
 
     for (const entry of inputManifest.files) {
       assert(
@@ -333,6 +448,11 @@ try {
       runId: requestedRunId,
       artifactCompositeSha256: inputManifest.artifactCompositeSha256,
       criterionVersions: inputManifest.criterionVersions,
+      ...(runVersion >= 4
+        ? {
+            reviewBoundary: inputManifest.reviewBoundary,
+          }
+        : {}),
     }
     const schemaErrors = council.validateFrozenRangeCouncil(rulings, contract)
     assert(schemaErrors.length === 0, `frozen ruling validation failed: ${schemaErrors.join(', ')}`)
@@ -370,7 +490,7 @@ try {
         {
           status: 'passed',
           runId: requestedRunId,
-          contractSelfTests: 9,
+          contractSelfTests: runVersion >= 4 ? 11 : 9,
           artifacts: inputManifest.files.length,
           rulings: rulings.length,
           result: expectedResult.status,

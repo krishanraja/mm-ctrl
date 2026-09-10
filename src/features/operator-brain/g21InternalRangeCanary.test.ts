@@ -11,6 +11,7 @@ import {
   G21_NONZERO_INTERNAL_DEPTHS,
   buildG21CurrentClaimView,
   buildG21InternalBlindInputs,
+  validateG21CanonicalInternalBlindInput,
   validateG21CompleteCoordinateCoverage,
   validateG21InternalRangeCanary,
   validateG21InternalBlindInput,
@@ -125,8 +126,16 @@ describe('G21 internal evidence range canary', () => {
       expect(profile.oracle.answerContract.unknownAllowed).toBe(true)
       expect(profile.oracle.answerContract.optionalNoteAllowed).toBe(true)
       expect(profile.oracle.answerContract.evidenceRequestIfUnknown.length).toBeGreaterThan(20)
+      expect(profile.oracle.answerContract.routeEffects.length).toBeGreaterThan(0)
+      expect(profile.oracle.answerContract.unknownRouteEffect.effect).not.toBe('select')
+      expect(profile.oracle.answerContract.unknownRouteEffect.routeChange.length).toBeGreaterThan(20)
       if (['choice', 'yes_no'].includes(profile.oracle.expectedAnswerShape)) {
         expect(profile.oracle.answerContract.options.length).toBeGreaterThanOrEqual(2)
+        expect(
+          profile.oracle.answerContract.routeEffects.map((effect) => effect.answer),
+        ).toEqual(profile.oracle.answerContract.options)
+      } else {
+        expect(profile.oracle.answerContract.routeEffects).toHaveLength(1)
       }
       if (profile.oracle.expectedAnswerShape === 'threshold') {
         expect(profile.oracle.answerContract.unit).toBeTruthy()
@@ -179,9 +188,11 @@ describe('G21 internal evidence range canary', () => {
       expect(corrected.authority.mayRecommendConsequentialAction).toBe(false)
       expect(corrected.authority.mayPromoteDurableTruth).toBe(false)
       expect(corrected.evidenceAsOf).toBe(G21_INTERNAL_RANGE_EVIDENCE_AS_OF)
+      expect(corrected.schemaVersion).toBe('g21-internal-range-input:v4')
 
       for (const input of [initial, contradicted, corrected]) {
-        expect(validateG21InternalBlindInput(input, profile)).toEqual([])
+        expect(validateG21InternalBlindInput(input)).toEqual([])
+        expect(validateG21CanonicalInternalBlindInput(input, profile)).toEqual([])
         expect(input.task).toBe(G21_INTERNAL_R1_TASK)
         expect(input.authority).toEqual(G21_INTERNAL_R1_AUTHORITY)
         expect(input.audienceAuthorities).toHaveLength(input.internalEvidence.length)
@@ -664,14 +675,14 @@ describe('G21 internal evidence range canary', () => {
     const input = buildG21InternalBlindInputs()[0]
     for (const [field, value] of Object.entries(G21_INTERNAL_RANGE_CANARY[0].oracle)) {
       const leaked = { ...structuredClone(input), [field]: value }
-      expect(validateG21InternalBlindInput(leaked, G21_INTERNAL_RANGE_CANARY[0])).toContain(
+      expect(validateG21InternalBlindInput(leaked)).toContain(
         'blind_input_fields_invalid',
       )
     }
 
     const badTask = structuredClone(input)
     badTask.task = 'Recommend the rollout and identify which named employees should leave.'
-    expect(validateG21InternalBlindInput(badTask, G21_INTERNAL_RANGE_CANARY[0])).toContain(
+    expect(validateG21InternalBlindInput(badTask)).toContain(
       'blind_input_task_invalid',
     )
 
@@ -682,7 +693,7 @@ describe('G21 internal evidence range canary', () => {
         mayRecommendConsequentialAction: true,
       },
     }
-    expect(validateG21InternalBlindInput(badAuthority, G21_INTERNAL_RANGE_CANARY[0])).toContain(
+    expect(validateG21InternalBlindInput(badAuthority)).toContain(
       'blind_input_authority_invalid',
     )
 
@@ -691,10 +702,10 @@ describe('G21 internal evidence range canary', () => {
       audienceAuthorities: 'private by default',
     }
     expect(() =>
-      validateG21InternalBlindInput(malformedAuthorities, G21_INTERNAL_RANGE_CANARY[0]),
+      validateG21InternalBlindInput(malformedAuthorities),
     ).not.toThrow()
     expect(
-      validateG21InternalBlindInput(malformedAuthorities, G21_INTERNAL_RANGE_CANARY[0]),
+      validateG21InternalBlindInput(malformedAuthorities),
     ).toContain('blind_input_audience_authority_fields_invalid')
 
     const invalidPopulation = structuredClone(G21_INTERNAL_RANGE_CANARY) as Array<
@@ -706,6 +717,231 @@ describe('G21 internal evidence range canary', () => {
     expect(() =>
       buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-003-INVALID', invalidPopulation),
     ).toThrow('refused invalid profiles')
+  })
+
+  it('separates total runtime safety from exact canonical fixture verification', () => {
+    const profile = G21_INTERNAL_RANGE_CANARY[0]
+    const input = buildG21InternalBlindInputs().find(
+      (candidate) =>
+        candidate.profileId === profile.manifest.profileId &&
+        candidate.runtimeState === 'initial',
+    )!
+
+    expect(validateG21InternalBlindInput(input)).toEqual([])
+    expect(validateG21CanonicalInternalBlindInput(input, profile)).toEqual([])
+    expect(validateG21CanonicalInternalBlindInput(input, undefined)).toContain(
+      'canonical_profile_required',
+    )
+
+    const safeNovelText = structuredClone(input)
+    safeNovelText.internalEvidence[0].content = 'A newly supplied fictional intake sentence.'
+    safeNovelText.internalEvidence[0].claims[0].text = 'A newly supplied fictional intake sentence.'
+    safeNovelText.currentClaims = buildG21CurrentClaimView(safeNovelText.internalEvidence)
+    expect(validateG21InternalBlindInput(safeNovelText)).toEqual([])
+    expect(validateG21CanonicalInternalBlindInput(safeNovelText, profile)).toContain(
+      'canonical_internal_evidence_bytes_mismatch',
+    )
+  })
+
+  it('fails closed over malformed, relabelled and counterfeited runtime envelopes', () => {
+    const inputs = buildG21InternalBlindInputs()
+    const baseline = inputs[0]
+    const malformed = [
+      { ...structuredClone(baseline), runId: null },
+      { ...structuredClone(baseline), claims: 'not a field' },
+      { ...structuredClone(baseline), subject: null },
+      { ...structuredClone(baseline), externalCoverage: [] },
+      { ...structuredClone(baseline), externalEvidence: 'not an array' },
+      { ...structuredClone(baseline), internalEvidence: 'not an array' },
+      { ...structuredClone(baseline), audienceAuthorities: 'not an array' },
+      { ...structuredClone(baseline), currentClaims: 'not an array' },
+      { ...structuredClone(baseline), authority: null },
+    ]
+    for (const candidate of malformed) {
+      expect(() => validateG21InternalBlindInput(candidate)).not.toThrow()
+      expect(validateG21InternalBlindInput(candidate).length).toBeGreaterThan(0)
+    }
+
+    const relabelledState = structuredClone(
+      inputs.find((input) => input.runtimeState === 'initial')!,
+    )
+    relabelledState.runtimeState = 'corrected'
+    relabelledState.caseId = `${relabelledState.profileId}-CORRECTED`
+    expect(validateG21InternalBlindInput(relabelledState)).toContain(
+      'blind_input_internal_evidence_binding_mismatch',
+    )
+
+    const careI1 = inputs.find(
+      (input) =>
+        input.profileId === 'RANGE-INTERNAL-CARE-I1' && input.runtimeState === 'initial',
+    )!
+    const relabelledDepth = structuredClone(careI1)
+    relabelledDepth.profileId = 'RANGE-INTERNAL-CARE-I3'
+    relabelledDepth.internalDepth = 'longitudinal_corrections'
+    relabelledDepth.caseId = 'RANGE-INTERNAL-CARE-I3-INITIAL'
+    expect(validateG21InternalBlindInput(relabelledDepth)).toContain(
+      'blind_input_internal_evidence_binding_mismatch',
+    )
+
+    const counterfeitAuthority = structuredClone(baseline)
+    counterfeitAuthority.audienceAuthorities[0].authorityId = 'AUTH-COUNTERFEIT'
+    counterfeitAuthority.audienceAuthorities[0].authorisedAt = '2026-01-01T00:00:00.000Z'
+    expect(validateG21InternalBlindInput(counterfeitAuthority)).toContain(
+      `${counterfeitAuthority.internalEvidence[0].evidenceId}:blind_input_audience_not_authorised`,
+    )
+
+    const realPersonCostume = structuredClone(baseline)
+    realPersonCostume.subject.fictionalIdentityKey = 'real-satya-nadella'
+    realPersonCostume.subject.displayName = 'Satya Nadella'
+    realPersonCostume.subject.organisation = 'Microsoft'
+    expect(validateG21InternalBlindInput(realPersonCostume)).toEqual(
+      expect.arrayContaining([
+        'blind_input_fictional_identity_key_required',
+        'blind_input_subject_mismatch',
+      ]),
+    )
+  })
+
+  it('rejects future evidence, unsafe claim semantics, broken lineage and oracle-bearing drift', () => {
+    const inputs = buildG21InternalBlindInputs()
+    const futureExternal = structuredClone(
+      inputs.find((input) => input.externalEvidence.length > 0)!,
+    )
+    futureExternal.externalEvidence[0].publishedOn = '2026-09-11T09:00:00.000Z'
+    futureExternal.externalEvidence[0].retrievedOn = '2026-09-11T09:01:00.000Z'
+    expect(validateG21InternalBlindInput(futureExternal)).toEqual(
+      expect.arrayContaining([
+        `${futureExternal.externalEvidence[0].sourceId}:blind_input_published_after_as_of`,
+        `${futureExternal.externalEvidence[0].sourceId}:blind_input_retrieved_after_as_of`,
+      ]),
+    )
+
+    const causalObservation = structuredClone(
+      inputs.find(
+        (input) =>
+          input.profileId === 'RANGE-INTERNAL-STORY-I3' && input.runtimeState === 'initial',
+      )!,
+    )
+    const outcome = causalObservation.internalEvidence.find(
+      (record) => record.evidenceId === 'INT-STORY-007',
+    )!
+    outcome.content = 'Theory-heavy exposure causes opening-weekend purchase across all fan groups.'
+    outcome.claims[0].text = outcome.content
+    causalObservation.currentClaims = buildG21CurrentClaimView(causalObservation.internalEvidence)
+    expect(validateG21InternalBlindInput(causalObservation)).toContain(
+      'INT-STORY-007:observational_claim_cannot_assert_causation_INT-STORY-007-CLAIM-01',
+    )
+
+    const incapableSource = structuredClone(
+      inputs.find(
+        (input) =>
+          input.profileId === 'RANGE-INTERNAL-RESEARCH-I3' && input.runtimeState === 'initial',
+      )!,
+    )
+    const leaderChoice = incapableSource.internalEvidence.find(
+      (record) => record.evidenceId === 'INT-RESEARCH-009',
+    )!
+    leaderChoice.sourceType = 'staff_evidence'
+    leaderChoice.subjectScope = 'staff_group'
+    leaderChoice.claims.forEach((claim) => {
+      claim.subjectScope = 'staff_group'
+    })
+    incapableSource.currentClaims = buildG21CurrentClaimView(incapableSource.internalEvidence)
+    expect(validateG21InternalBlindInput(incapableSource)).toContain(
+      'blind_input_internal_evidence_binding_mismatch',
+    )
+
+    const misdirected = structuredClone(
+      inputs.find(
+        (input) =>
+          input.profileId === 'RANGE-INTERNAL-CARE-I3' && input.runtimeState === 'initial',
+      )!,
+    )
+    const correction = misdirected.internalEvidence.find(
+      (record) => record.evidenceId === 'INT-CARE-008',
+    )!
+    correction.claims[0].supersedesClaimIds = ['INT-CARE-002-CLAIM-03']
+    misdirected.currentClaims = buildG21CurrentClaimView(misdirected.internalEvidence)
+    expect(validateG21InternalBlindInput(misdirected)).toContain(
+      'blind_input_internal_evidence_binding_mismatch',
+    )
+
+    const oracleProfile = G21_INTERNAL_RANGE_CANARY.find(
+      (profile) => profile.manifest.profileId === 'RANGE-INTERNAL-CARE-I1',
+    )!
+    const oracleDrift = structuredClone(
+      inputs.find(
+        (input) =>
+          input.profileId === 'RANGE-INTERNAL-CARE-I1' && input.runtimeState === 'initial',
+      )!,
+    )
+    oracleDrift.internalEvidence[0].content = oracleProfile.oracle.strongestSupportedView
+    oracleDrift.internalEvidence[0].claims[0].text = oracleProfile.oracle.strongestSupportedView
+    oracleDrift.currentClaims = buildG21CurrentClaimView(oracleDrift.internalEvidence)
+    expect(validateG21InternalBlindInput(oracleDrift)).toContain(
+      'blind_input_oracle_value_detected',
+    )
+
+    const populationDrift = structuredClone(G21_INTERNAL_RANGE_CANARY)
+    for (const profile of populationDrift.filter(
+      (candidate) => candidate.familyId === 'fictional-care-scheduling',
+    )) {
+      profile.internalEvidence[0].content = oracleProfile.oracle.strongestSupportedView
+      profile.internalEvidence[0].claims[0].text = oracleProfile.oracle.strongestSupportedView
+    }
+    expect(validateG21InternalRangeCanary(populationDrift)).toEqual(
+      expect.arrayContaining([
+        'RANGE-INTERNAL-CARE-I1:profile_substrate_does_not_match_frozen_contract',
+      ]),
+    )
+    expect(() =>
+      buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-004-ORACLE-DRIFT', populationDrift),
+    ).toThrow('refused invalid profiles')
+  })
+
+  it('makes every repaired question alter its exact material route while keeping the final call human', () => {
+    const expectedQuestions = {
+      'RANGE-INTERNAL-CARE-I3':
+        'Out of every 100 vulnerable clients, how many must keep the same carer without you stepping in before expansion?',
+      'RANGE-INTERNAL-RESEARCH-I2':
+        'Have any clients used the monthly product without a senior researcher and said its challenge changed their decision?',
+      'RANGE-INTERNAL-FORGE-I3':
+        'Which named person makes the final call when an AI plan could make a customer late?',
+      'RANGE-INTERNAL-STORY-I2':
+        'Which route gets the GBP 18 million: character-first, theory-first, or neither until new buyers increase without losing core fans?',
+      'RANGE-INTERNAL-STORY-I3':
+        'How many extra new viewers out of 100 must buy a ticket, without core-fan sales falling, before you move GBP 18 million?',
+    } as const
+    for (const [profileId, question] of Object.entries(expectedQuestions)) {
+      const profile = G21_INTERNAL_RANGE_CANARY.find(
+        (candidate) => candidate.manifest.profileId === profileId,
+      )!
+      expect(profile.oracle.routeChangingQuestion).toBe(question)
+      expect(profile.oracle.answerContract.routeEffects.every(
+        (effect) => effect.routeChange.length > 20,
+      )).toBe(true)
+    }
+
+    const forge = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find(
+        (profile) => profile.manifest.profileId === 'RANGE-INTERNAL-FORGE-I3',
+      )!,
+    )
+    forge.oracle.answerContract.options[0] = 'The system'
+    forge.oracle.answerContract.routeEffects[0].answer = 'The system'
+    expect(validateG21InternalRangeProfile(forge)).toContain(
+      'material_final_call_requires_human_options',
+    )
+
+    const story = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find(
+        (profile) => profile.manifest.profileId === 'RANGE-INTERNAL-STORY-I2',
+      )!,
+    )
+    story.oracle.answerContract.routeEffects.pop()
+    expect(validateG21InternalRangeProfile(story)).toContain(
+      'each_answer_option_requires_route_effect',
+    )
   })
 
   it('keeps the rejected abstraction-heavy questions as negative regressions', () => {

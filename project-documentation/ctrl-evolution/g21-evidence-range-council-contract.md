@@ -1,6 +1,6 @@
 # G21 evidence range, responsibility and council contract
 
-Status: public row passed after one preserved veto and repair; internal range runs 001, 002 and 003 preserved as blocked; v4 contract repair in progress
+Status: public row passed after one preserved veto and repair; internal range runs 001, 002 and 003 preserved as blocked; v4 contract repair implemented and awaiting freeze
 
 Date: 10 September 2026
 
@@ -214,4 +214,4 @@ The implemented router covers:
 
 ## Next action
 
-Implement the four dependency-ordered Run 003 repairs: separate canonical fixture verification, total runtime validation and semantic review; enforce one trusted evidence and authority envelope; bind every answer and unknown path to its exact consequential route; then create a clean Run 004 whose semantic allowlist contains no prior verdict history. Stop on any valid veto before a diagnostic model run or product surface.
+Freeze the implemented v4 repair as Run 004 with a semantic allowlist that is disjoint from hash-only provenance. Collect fresh adult answerability screens and seven isolated attested rulings against the frozen bytes. Stop on any valid veto before a diagnostic model run or product surface.

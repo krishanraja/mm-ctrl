@@ -1,6 +1,6 @@
 # G21 matched internal-evidence range canary
 
-Status: council runs 001, 002 and 003 preserved as blocked; v4 contract repair in progress
+Status: council runs 001, 002 and 003 preserved as blocked; v4 contract repair implemented and awaiting freeze
 
 Date: 10 September 2026
 
@@ -167,12 +167,13 @@ The current Living Brain model and G21 council contract remain authoritative. Hi
 
 ## Implemented artifacts
 
-- `src/features/operator-brain/g21InternalRangeCanary.ts`: types, four matched families, twelve profiles, exact runtime schemas, source capability rules, claim-addressable correction, typed audience authority, fixed `asOf`, bounded answer contracts, exact lifecycle binding, 36 range cases and 36 oracle-free inputs.
-- `src/features/operator-brain/g21InternalRangeCanary.test.ts`: matrix, matching, nesting, namespace, depth, chronology, source capability, narrow correction, answerability, oracle separation and adversarial mutation checks.
-- `src/features/operator-brain/rangeCouncilContract.ts`: an exact frozen-ruling envelope, nested veto validation and deterministic adjudicator in addition to the existing council contract.
-- `src/features/operator-brain/rangeCouncilContract.test.ts`: exact-envelope, malformed nested data, hidden-veto, unresolved-pass, criterion-map, rewritten-test and raw-veto preservation checks.
-- `scripts/check-g21-internal-range.mjs`: Vite-independent compilation, baseline validation and 65 adversarial mutations.
-- `scripts/check-g21-internal-council.mjs`: nine Vite-independent council contract self-tests plus commit-anchored frozen artifact, ruling hash and adjudication verification.
+- `src/features/operator-brain/g21InternalRangeCanary.ts`: types, four matched families, twelve profiles, a total structural runtime validator, an explicit canonical fixture verifier, trusted evidence and authority bindings, claim-addressable correction, fixed `asOf`, route-effect answer contracts, exact lifecycle binding, 36 range cases and 36 oracle-free inputs.
+- `src/features/operator-brain/g21InternalRangeCanary.test.ts`: matrix, matching, nesting, namespace, depth, chronology, source capability, narrow correction, contract separation, answer-to-route alignment, recursive oracle separation and adversarial mutation checks.
+- `src/features/operator-brain/rangeCouncilContract.ts`: version-aware frozen-ruling envelopes, v4 semantic-review attestations, history-bearing path exclusion, nested veto validation and deterministic adjudication.
+- `src/features/operator-brain/rangeCouncilContract.test.ts`: legacy compatibility, v4 review-boundary, malformed nested data, hidden-veto, unresolved-pass, criterion-map, rewritten-test and raw-veto preservation checks.
+- `scripts/check-g21-internal-range.mjs`: Vite-independent compilation, baseline validation and 108 adversarial mutations.
+- `scripts/check-g21-internal-council.mjs`: eleven v4 council contract and review-boundary self-tests plus commit-anchored frozen artifact, ruling hash and adjudication verification.
+- `project-documentation/ctrl-evolution/g21-v4-contract-separation.md`: the governing distinction between runtime safety, canonical fixture truth and history-free semantic judgement.
 - `npm run brain:g21:check`: includes the new internal-range suite.
 - `npm run brain:g21:internal:check`: runs the direct deterministic gate when the Vite config loader is unavailable.
 
@@ -189,9 +190,9 @@ Direct TypeScript compilation and runtime validation report:
 - 36 oracle-free model inputs;
 - 12 inputs at each lifecycle state;
 - zero oracle leakage; and
-- 65 deliberately invalid mutations rejected.
+- 108 deliberately invalid mutations rejected.
 
-The council contract direct gate passes nine adversarial contract tests. It rejects malformed nested ruling data, incomplete criterion maps, unresolved evidence hidden inside a pass, a veto inside an inconclusive ruling, a veto hidden inside a pass and a rewritten resolving test. It also proves that adjudication preserves a valid raw veto byte-for-byte at the object level.
+The v4 council contract direct gate passes eleven adversarial contract and review-boundary tests. It rejects malformed nested ruling data, incomplete criterion maps, unresolved evidence hidden inside a pass, a veto inside an inconclusive ruling, a veto hidden inside a pass, a rewritten resolving test, any judge attestation that admits excluded history and history-bearing paths in the semantic allowlist. It also proves that adjudication preserves a valid raw veto byte-for-byte at the object level.
 
 Run 002 is independently reproducible from its recorded artifact commit after the v3 repair. Its nine artifact hashes, seven ruling hashes and deterministic blocked adjudication all verify without reading repaired working-tree bytes.
 
@@ -214,4 +215,4 @@ No database row, auth account, deployment, customer route or production state ch
 
 ## Next action
 
-Separate the canonical frozen-fixture verifier, total structural runtime validator and history-free semantic judge allowlist. Repair the trusted evidence envelope and four route-misaligned answer contracts, run the consolidated mutation matrix, and freeze a new Run 004 without altering any blocked predecessor. A diagnostic model run remains a later gate after the evidence-range substrate itself passes.
+Freeze the verified v4 candidate as Run 004 without altering any blocked predecessor. Recompute the semantic-review composite from the frozen artifact commit, collect fresh adult answerability screens and then collect seven isolated rulings whose attestations bind to that exact clean pack. Stop on any valid veto before a diagnostic model run or product surface.

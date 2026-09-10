@@ -19,6 +19,7 @@ import {
   validateProfileManifest,
   validateRangePopulation,
   validateFrozenRangeCouncil,
+  validateG21SemanticReviewAllowlist,
   validateSealedCouncil,
   type CouncilJudge,
   type FrozenRangeCouncilContract,
@@ -233,6 +234,46 @@ describe('durable council contract', () => {
     }))
   }
 
+  function frozenRangeV4Contract(): FrozenRangeCouncilContract {
+    const criterionVersions = Object.fromEntries(
+      COUNCIL_JUDGES.map((judge) => [
+        judge,
+        `${judge.replace(/_/g, '-')}:g21-internal-range-freeze-v4`,
+      ]),
+    ) as Record<CouncilJudge, string>
+    return {
+      runId: 'G21-INTERNAL-RANGE-FREEZE-004',
+      artifactCompositeSha256: 'artifact-composite-v4',
+      criterionVersions,
+      reviewBoundary: {
+        protocolVersion: 'history-free-semantic-allowlist:v1',
+        semanticReviewCompositeSha256: 'a'.repeat(64),
+      },
+    }
+  }
+
+  function frozenRangeV4Rulings(): FrozenRangeJudgeRuling[] {
+    const contract = frozenRangeV4Contract()
+    return COUNCIL_JUDGES.map((judge) => ({
+      runId: contract.runId,
+      judge,
+      criterionVersion: contract.criterionVersions[judge],
+      artifactCompositeSha256: contract.artifactCompositeSha256,
+      verdict: 'pass',
+      claims: ['The owned range criterion passed.'],
+      evidenceLocators: ['fixture://range/case-1'],
+      veto: null,
+      missingEvidence: [],
+      resolvingTest: null,
+      recordedAt: '2026-09-10T22:00:00.000Z',
+      reviewBoundaryAttestation: {
+        semanticReviewCompositeSha256:
+          contract.reviewBoundary!.semanticReviewCompositeSha256,
+        excludedHistoryEncountered: false,
+      },
+    }))
+  }
+
   it('validates the exact frozen range envelope and adjudicates its raw veto unchanged', () => {
     const contract = frozenRangeContract()
     const rulings = frozenRangeRulings()
@@ -355,6 +396,57 @@ describe('durable council contract', () => {
     extraJudge.criterionVersions.standards_prosecutor = 'must-not-vote:v1'
     expect(validateFrozenRangeCouncil(frozenRangeRulings(), extraJudge)).toContain(
       'frozen_range_criterion_versions_invalid',
+    )
+  })
+
+  it('requires every v4 judge to attest to the same history-free semantic boundary', () => {
+    const contract = frozenRangeV4Contract()
+    const rulings = frozenRangeV4Rulings()
+    expect(validateFrozenRangeCouncil(rulings, contract)).toEqual([])
+
+    delete rulings[0].reviewBoundaryAttestation
+    expect(validateFrozenRangeCouncil(rulings, contract)).toEqual(
+      expect.arrayContaining([
+        'human_agency:frozen_ruling_fields_invalid',
+        'human_agency:frozen_review_boundary_attestation_invalid',
+      ]),
+    )
+
+    const encounteredHistory = frozenRangeV4Rulings()
+    encounteredHistory[1].reviewBoundaryAttestation!.excludedHistoryEncountered = true as false
+    expect(validateFrozenRangeCouncil(encounteredHistory, contract)).toContain(
+      'epistemic_integrity:frozen_review_boundary_attestation_invalid',
+    )
+  })
+
+  it('keeps semantic review files separate from hash-only provenance history', () => {
+    const semantic = [
+      'src/features/operator-brain/g21InternalRangeCanary.ts',
+      'src/features/operator-brain/g21InternalRangeCanary.test.ts',
+      'scripts/check-g21-internal-range.mjs',
+      'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/council-brief.md',
+      'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/question-pack.json',
+    ]
+    const provenance = [
+      'project-documentation/ctrl-evolution/g21-internal-range-canary.md',
+      'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/adjudication.json',
+    ]
+    expect(validateG21SemanticReviewAllowlist(semantic, provenance)).toEqual([])
+    expect(
+      validateG21SemanticReviewAllowlist(
+        [...semantic, 'project-documentation/ctrl-evolution/g21-internal-range-canary.md'],
+        provenance,
+      ),
+    ).toContain(
+      'history_bearing_semantic_path_forbidden_project-documentation/ctrl-evolution/g21-internal-range-canary.md',
+    )
+    expect(
+      validateG21SemanticReviewAllowlist(
+        [...semantic, 'project-documentation/ctrl-evolution/judge-history/human-agency.md'],
+        provenance,
+      ),
+    ).toContain(
+      'history_bearing_semantic_path_forbidden_project-documentation/ctrl-evolution/judge-history/human-agency.md',
     )
   })
 })

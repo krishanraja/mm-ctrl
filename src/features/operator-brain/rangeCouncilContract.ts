@@ -207,12 +207,39 @@ export const FROZEN_RANGE_RULING_FIELDS = [
   'recordedAt',
 ] as const
 
+export const FROZEN_RANGE_RULING_FIELDS_V4 = [
+  ...FROZEN_RANGE_RULING_FIELDS,
+  'reviewBoundaryAttestation',
+] as const
+
 const FROZEN_RANGE_CONTRACT_FIELDS = [
   'runId',
   'artifactCompositeSha256',
   'criterionVersions',
 ] as const
+const FROZEN_RANGE_CONTRACT_FIELDS_V4 = [
+  ...FROZEN_RANGE_CONTRACT_FIELDS,
+  'reviewBoundary',
+] as const
 const FROZEN_RANGE_VETO_FIELDS = ['ruleId', 'failure', 'resolvingTest'] as const
+const FROZEN_RANGE_REVIEW_BOUNDARY_FIELDS = [
+  'protocolVersion',
+  'semanticReviewCompositeSha256',
+] as const
+const FROZEN_RANGE_REVIEW_ATTESTATION_FIELDS = [
+  'semanticReviewCompositeSha256',
+  'excludedHistoryEncountered',
+] as const
+
+export interface FrozenRangeReviewBoundary {
+  protocolVersion: 'history-free-semantic-allowlist:v1'
+  semanticReviewCompositeSha256: string
+}
+
+export interface FrozenRangeReviewBoundaryAttestation {
+  semanticReviewCompositeSha256: string
+  excludedHistoryEncountered: false
+}
 
 export interface FrozenRangeJudgeRuling {
   runId: string
@@ -230,12 +257,76 @@ export interface FrozenRangeJudgeRuling {
   missingEvidence: string[]
   resolvingTest: string | null
   recordedAt: string
+  reviewBoundaryAttestation?: FrozenRangeReviewBoundaryAttestation
 }
 
 export interface FrozenRangeCouncilContract {
   runId: string
   artifactCompositeSha256: string
   criterionVersions: Record<CouncilJudge, string>
+  reviewBoundary?: FrozenRangeReviewBoundary
+}
+
+const G21_HISTORY_BEARING_SEMANTIC_PATHS = new Set([
+  'project-documentation/ctrl-evolution/README.md',
+  'project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md',
+  'project-documentation/ctrl-evolution/g21-internal-range-canary.md',
+  'project-documentation/ctrl-evolution/session-method-learning-log.md',
+  'scripts/check-g21-internal-council.mjs',
+])
+
+const G21_HISTORY_BEARING_PATH_PATTERN =
+  /(?:^|\/)judge-history\/|(?:^|\/)runs\/g21-internal-range-freeze-00[1-3]\/(?:judges|readers)\/|(?:^|\/)(?:adjudication|rulings-manifest|standards-prosecutor|founder-calibration|review-protocol-failure)\.(?:json|md)$/
+
+function validRepositoryPath(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    !value.includes('\\') &&
+    !value.startsWith('/') &&
+    !value.split('/').includes('..')
+  )
+}
+
+export function validateG21SemanticReviewAllowlist(
+  semanticReviewPaths: readonly unknown[],
+  provenanceOnlyPaths: readonly unknown[],
+): string[] {
+  const errors: string[] = []
+  if (!Array.isArray(semanticReviewPaths) || semanticReviewPaths.length === 0) {
+    errors.push('semantic_review_allowlist_required')
+    return errors
+  }
+  if (!Array.isArray(provenanceOnlyPaths)) {
+    errors.push('provenance_only_paths_array_required')
+    return errors
+  }
+  if (!semanticReviewPaths.every(validRepositoryPath)) {
+    errors.push('semantic_review_paths_invalid')
+  }
+  if (!provenanceOnlyPaths.every(validRepositoryPath)) {
+    errors.push('provenance_only_paths_invalid')
+  }
+  const semantic = semanticReviewPaths.filter(validRepositoryPath)
+  const provenance = provenanceOnlyPaths.filter(validRepositoryPath)
+  if (new Set(semantic).size !== semantic.length) {
+    errors.push('semantic_review_paths_must_be_unique')
+  }
+  if (new Set(provenance).size !== provenance.length) {
+    errors.push('provenance_only_paths_must_be_unique')
+  }
+  if (semantic.some((path) => provenance.includes(path))) {
+    errors.push('semantic_and_provenance_paths_must_be_disjoint')
+  }
+  for (const path of semantic) {
+    if (
+      G21_HISTORY_BEARING_SEMANTIC_PATHS.has(path) ||
+      G21_HISTORY_BEARING_PATH_PATTERN.test(path)
+    ) {
+      errors.push(`history_bearing_semantic_path_forbidden_${path}`)
+    }
+  }
+  return errors
 }
 
 function sameFieldSet(actual: string[], expected: readonly string[]): boolean {
@@ -261,6 +352,12 @@ function stringArray(value: unknown): value is string[] {
   )
 }
 
+function requiresHistoryFreeReviewBoundary(runId: unknown): boolean {
+  if (typeof runId !== 'string') return false
+  const match = /G21-INTERNAL-RANGE-FREEZE-(\d{3})$/.exec(runId)
+  return Boolean(match && Number(match[1]) >= 4)
+}
+
 export function validateFrozenRangeCouncil(
   rulings: readonly unknown[],
   contract: FrozenRangeCouncilContract,
@@ -268,8 +365,28 @@ export function validateFrozenRangeCouncil(
   const errors: string[] = []
   if (!Array.isArray(rulings)) return ['frozen_range_rulings_array_required']
   if (!isPlainRecord(contract)) return ['frozen_range_contract_object_required']
-  if (!sameFieldSet(Object.keys(contract), FROZEN_RANGE_CONTRACT_FIELDS)) {
+  const reviewBoundaryRequired = requiresHistoryFreeReviewBoundary(contract.runId)
+  const contractFields = reviewBoundaryRequired
+    ? FROZEN_RANGE_CONTRACT_FIELDS_V4
+    : FROZEN_RANGE_CONTRACT_FIELDS
+  if (!sameFieldSet(Object.keys(contract), contractFields)) {
     errors.push('frozen_range_contract_fields_invalid')
+  }
+  if (reviewBoundaryRequired) {
+    if (
+      !isPlainRecord(contract.reviewBoundary) ||
+      !sameFieldSet(
+        Object.keys(contract.reviewBoundary),
+        FROZEN_RANGE_REVIEW_BOUNDARY_FIELDS,
+      ) ||
+      contract.reviewBoundary.protocolVersion !== 'history-free-semantic-allowlist:v1' ||
+      typeof contract.reviewBoundary.semanticReviewCompositeSha256 !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(contract.reviewBoundary.semanticReviewCompositeSha256)
+    ) {
+      errors.push('frozen_range_review_boundary_invalid')
+    }
+  } else if (contract.reviewBoundary !== undefined) {
+    errors.push('legacy_frozen_range_cannot_claim_v4_review_boundary')
   }
   if (
     !isPlainRecord(contract.criterionVersions) ||
@@ -292,7 +409,10 @@ export function validateFrozenRangeCouncil(
     }
     const ruling = rawRuling as unknown as FrozenRangeJudgeRuling
     const judgeLabel = typeof ruling.judge === 'string' ? ruling.judge : 'unknown_judge'
-    if (!sameFieldSet(Object.keys(ruling), FROZEN_RANGE_RULING_FIELDS)) {
+    const rulingFields = reviewBoundaryRequired
+      ? FROZEN_RANGE_RULING_FIELDS_V4
+      : FROZEN_RANGE_RULING_FIELDS
+    if (!sameFieldSet(Object.keys(ruling), rulingFields)) {
       errors.push(`${judgeLabel}:frozen_ruling_fields_invalid`)
     }
     if (ruling.runId !== contract.runId) errors.push(`${judgeLabel}:frozen_run_id_mismatch`)
@@ -317,6 +437,23 @@ export function validateFrozenRangeCouncil(
     }
     if (!stringArray(ruling.missingEvidence)) {
       errors.push(`${judgeLabel}:frozen_missing_evidence_invalid`)
+    }
+    if (reviewBoundaryRequired) {
+      const attestation = ruling.reviewBoundaryAttestation
+      if (
+        !isPlainRecord(attestation) ||
+        !sameFieldSet(
+          Object.keys(attestation),
+          FROZEN_RANGE_REVIEW_ATTESTATION_FIELDS,
+        ) ||
+        attestation.semanticReviewCompositeSha256 !==
+          contract.reviewBoundary?.semanticReviewCompositeSha256 ||
+        attestation.excludedHistoryEncountered !== false
+      ) {
+        errors.push(`${judgeLabel}:frozen_review_boundary_attestation_invalid`)
+      }
+    } else if (ruling.reviewBoundaryAttestation !== undefined) {
+      errors.push(`${judgeLabel}:legacy_ruling_cannot_claim_v4_review_attestation`)
     }
     if (ruling.verdict === 'pass') {
       if (ruling.veto !== null) errors.push(`${judgeLabel}:frozen_pass_cannot_veto`)
