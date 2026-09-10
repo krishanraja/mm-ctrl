@@ -1,0 +1,25 @@
+# Living Brain Integrity judge history
+
+Owned truth: memory remains versioned, inspectable, portable, correctable and resistant to silent rewrite or poisoning.
+
+## G21-PUBLIC-ROW-RUN-001
+
+- Verdict: pass.
+- Durable stance: typed claims, source identifiers, explicit unknowns and addressable run identity made later correction possible without claiming that learning had occurred.
+- Protected boundary: stored context must never be misrepresented as learned judgement.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-public-row-run-001/judges/living_brain_integrity.json).
+
+## G21-PUBLIC-ROW-RUN-002
+
+- Verdict: pass.
+- Durable stance: the accessibility repair preserved provenance, uncertainty and correction-ready boundaries.
+- Protected boundary: a cleaner surface may not collapse source, inference and unresolved state.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-public-row-run-002/judges/living_brain_integrity.json).
+
+## G21-INTERNAL-RANGE-FREEZE-001
+
+- Verdict: fail. Veto: `BRAIN-RANGE-01`.
+- Failure found: a correction superseded an entire evidence record even when only one of several claims was wrong, risking erasure of still-current claims.
+- Required resolution: corrections target exact claim identifiers, the source record remains immutable, unaffected claims retain provenance and the current view is derived rather than hand-waved in oracle prose.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-001/judges/living_brain_integrity.json).
+

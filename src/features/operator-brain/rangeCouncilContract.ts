@@ -193,6 +193,152 @@ export interface JudgeRuling {
   }
 }
 
+export const FROZEN_RANGE_RULING_FIELDS = [
+  'runId',
+  'judge',
+  'criterionVersion',
+  'artifactCompositeSha256',
+  'verdict',
+  'claims',
+  'evidenceLocators',
+  'veto',
+  'missingEvidence',
+  'resolvingTest',
+  'recordedAt',
+] as const
+
+export interface FrozenRangeJudgeRuling {
+  runId: string
+  judge: CouncilJudge
+  criterionVersion: string
+  artifactCompositeSha256: string
+  verdict: CouncilVerdict
+  claims: string[]
+  evidenceLocators: string[]
+  veto: {
+    ruleId: string
+    failure: string
+    resolvingTest: string
+  } | null
+  missingEvidence: string[]
+  resolvingTest: string | null
+  recordedAt: string
+}
+
+export interface FrozenRangeCouncilContract {
+  runId: string
+  artifactCompositeSha256: string
+  criterionVersions: Record<CouncilJudge, string>
+}
+
+function sameFieldSet(actual: string[], expected: readonly string[]): boolean {
+  return (
+    actual.length === expected.length &&
+    actual.every((field) => expected.includes(field as (typeof expected)[number]))
+  )
+}
+
+export function validateFrozenRangeCouncil(
+  rulings: FrozenRangeJudgeRuling[],
+  contract: FrozenRangeCouncilContract,
+): string[] {
+  const errors: string[] = []
+  if (rulings.length !== COUNCIL_JUDGES.length) errors.push('frozen_range_requires_seven_rulings')
+
+  for (const judge of COUNCIL_JUDGES) {
+    const matches = rulings.filter((ruling) => ruling.judge === judge)
+    if (matches.length === 0) errors.push(`frozen_range_missing_${judge}`)
+    if (matches.length > 1) errors.push(`frozen_range_duplicate_${judge}`)
+  }
+
+  for (const ruling of rulings) {
+    if (!sameFieldSet(Object.keys(ruling), FROZEN_RANGE_RULING_FIELDS)) {
+      errors.push(`${ruling.judge}:frozen_ruling_fields_invalid`)
+    }
+    if (ruling.runId !== contract.runId) errors.push(`${ruling.judge}:frozen_run_id_mismatch`)
+    if (ruling.artifactCompositeSha256 !== contract.artifactCompositeSha256) {
+      errors.push(`${ruling.judge}:frozen_artifact_hash_mismatch`)
+    }
+    if (!COUNCIL_JUDGES.includes(ruling.judge)) errors.push(`${ruling.judge}:frozen_judge_invalid`)
+    if (ruling.criterionVersion !== contract.criterionVersions[ruling.judge]) {
+      errors.push(`${ruling.judge}:frozen_criterion_version_mismatch`)
+    }
+    if (!['pass', 'fail', 'inconclusive'].includes(ruling.verdict)) {
+      errors.push(`${ruling.judge}:frozen_verdict_invalid`)
+    }
+    if (!ruling.claims.length || ruling.claims.some((claim) => !claim.trim())) {
+      errors.push(`${ruling.judge}:frozen_claims_invalid`)
+    }
+    if (!ruling.evidenceLocators.length || ruling.evidenceLocators.some((locator) => !locator.trim())) {
+      errors.push(`${ruling.judge}:frozen_evidence_invalid`)
+    }
+    if (Number.isNaN(Date.parse(ruling.recordedAt))) {
+      errors.push(`${ruling.judge}:frozen_recorded_at_invalid`)
+    }
+    if (ruling.missingEvidence.some((item) => !item.trim())) {
+      errors.push(`${ruling.judge}:frozen_missing_evidence_invalid`)
+    }
+    if (ruling.verdict === 'pass') {
+      if (ruling.veto !== null) errors.push(`${ruling.judge}:frozen_pass_cannot_veto`)
+      if (ruling.resolvingTest !== null) {
+        errors.push(`${ruling.judge}:frozen_pass_cannot_require_resolving_test`)
+      }
+    }
+    if (ruling.verdict === 'fail') {
+      if (!ruling.veto) errors.push(`${ruling.judge}:frozen_fail_requires_veto`)
+      if (!ruling.resolvingTest?.trim()) {
+        errors.push(`${ruling.judge}:frozen_fail_requires_resolving_test`)
+      }
+    }
+    if (ruling.verdict === 'inconclusive') {
+      if (!ruling.missingEvidence.length) {
+        errors.push(`${ruling.judge}:frozen_inconclusive_requires_evidence_gap`)
+      }
+      if (!ruling.resolvingTest?.trim()) {
+        errors.push(`${ruling.judge}:frozen_inconclusive_requires_resolving_test`)
+      }
+    }
+    if (ruling.veto) {
+      if (!ruling.veto.ruleId.trim() || !ruling.veto.failure.trim() || !ruling.veto.resolvingTest.trim()) {
+        errors.push(`${ruling.judge}:frozen_veto_invalid`)
+      }
+      if (ruling.resolvingTest !== ruling.veto.resolvingTest) {
+        errors.push(`${ruling.judge}:frozen_resolving_test_must_match_veto`)
+      }
+    }
+  }
+
+  return errors
+}
+
+export type FrozenRangeCouncilAdjudication =
+  | { status: 'invalid'; errors: string[] }
+  | { status: 'blocked'; vetoes: NonNullable<FrozenRangeJudgeRuling['veto']>[] }
+  | { status: 'needs_evidence'; judges: CouncilJudge[] }
+  | { status: 'failed'; judges: CouncilJudge[] }
+  | { status: 'passed' }
+
+export function adjudicateFrozenRangeCouncil(
+  rulings: FrozenRangeJudgeRuling[],
+  contract: FrozenRangeCouncilContract,
+): FrozenRangeCouncilAdjudication {
+  const errors = validateFrozenRangeCouncil(rulings, contract)
+  if (errors.length) return { status: 'invalid', errors }
+
+  const vetoes = rulings.flatMap((ruling) => (ruling.veto ? [structuredClone(ruling.veto)] : []))
+  if (vetoes.length) return { status: 'blocked', vetoes }
+
+  const inconclusive = rulings
+    .filter((ruling) => ruling.verdict === 'inconclusive')
+    .map((ruling) => ruling.judge)
+  if (inconclusive.length) return { status: 'needs_evidence', judges: inconclusive }
+
+  const failed = rulings.filter((ruling) => ruling.verdict === 'fail').map((ruling) => ruling.judge)
+  if (failed.length) return { status: 'failed', judges: failed }
+
+  return { status: 'passed' }
+}
+
 export function validateSealedCouncil(rulings: JudgeRuling[]): string[] {
   const errors: string[] = []
   const sealed = rulings.filter((ruling) => ruling.phase === 'sealed_review')

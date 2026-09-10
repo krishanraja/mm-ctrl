@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { EXTERNAL_EVIDENCE_DEPTHS, RANGE_RUNTIME_STATES } from './rangeCouncilContract'
 import {
+  G21_ANSWER_SHAPES,
+  G21_INTERNAL_AUDIENCES,
   G21_INTERNAL_RANGE_CANARY,
   G21_INTERNAL_RANGE_CASES,
+  G21_INTERNAL_RANGE_EVIDENCE_AS_OF,
   G21_NONZERO_INTERNAL_DEPTHS,
+  buildG21CurrentClaimView,
   buildG21InternalBlindInputs,
   validateG21CompleteCoordinateCoverage,
   validateG21InternalRangeCanary,
@@ -97,7 +101,7 @@ describe('G21 internal evidence range canary', () => {
         (record) => record.sourceType === 'direct_correction',
       )
       expect(corrections.length).toBeGreaterThan(0)
-      expect(corrections.every((record) => record.supersedesEvidenceId)).toBe(true)
+      expect(corrections.every((record) => record.supersedesClaimIds?.length)).toBe(true)
     }
   })
 
@@ -110,6 +114,7 @@ describe('G21 internal evidence range canary', () => {
       expect(profile.oracle.routeChangingQuestion.match(/\?/g)).toHaveLength(1)
       expect(profile.oracle.routeChangingQuestion.trim().endsWith('?')).toBe(true)
       expect(profile.oracle.routeChangingQuestion.trim().split(/\s+/).length).toBeLessThanOrEqual(24)
+      expect(G21_ANSWER_SHAPES).toContain(profile.oracle.expectedAnswerShape)
       expect(profile.oracle.answerWouldChange.length).toBeGreaterThan(20)
       expect(profile.oracle.expectedDiagnosticBehaviours.length).toBeGreaterThanOrEqual(2)
       expect(profile.oracle.forbiddenClaims.length).toBeGreaterThanOrEqual(2)
@@ -156,6 +161,17 @@ describe('G21 internal evidence range canary', () => {
       expect(corrected.internalEvidence.at(-1)?.sourceType).toBe('direct_correction')
       expect(corrected.authority.mayRecommendConsequentialAction).toBe(false)
       expect(corrected.authority.mayPromoteDurableTruth).toBe(false)
+      expect(corrected.evidenceAsOf).toBe(G21_INTERNAL_RANGE_EVIDENCE_AS_OF)
+
+      for (const input of [initial, contradicted, corrected]) {
+        expect(input.audienceAuthorities).toHaveLength(input.internalEvidence.length)
+        for (const record of input.internalEvidence) {
+          const authority = input.audienceAuthorities.find(
+            (candidate) => candidate.evidenceId === record.evidenceId,
+          )
+          expect(authority?.authorisedAudience).toBe(record.audience)
+        }
+      }
 
       const serialised = JSON.stringify(initial)
       expect(serialised).not.toContain('strongestSupportedView')
@@ -207,7 +223,7 @@ describe('G21 internal evidence range canary', () => {
     const directCorrection = brokenLongitudinal.internalEvidence.find(
       (record) => record.sourceType === 'direct_correction',
     )!
-    delete directCorrection.supersedesEvidenceId
+    delete directCorrection.supersedesClaimIds
     expect(validateG21InternalRangeProfile(brokenLongitudinal)).toContain(
       'longitudinal_correction_requires_supersession',
     )
@@ -255,7 +271,9 @@ describe('G21 internal evidence range canary', () => {
 
   it('rejects a lifecycle correction that does not follow and supersede the conflict', () => {
     const candidate = structuredClone(G21_INTERNAL_RANGE_CANARY[0]) as G21InternalRangeProfile
-    candidate.lifecycleEvidence[1].supersedesEvidenceId = candidate.internalEvidence[0].evidenceId
+    candidate.lifecycleEvidence[1].supersedesClaimIds = [
+      candidate.internalEvidence[0].claims[0].claimId,
+    ]
     candidate.lifecycleEvidence[1].recordedAt = candidate.lifecycleEvidence[0].recordedAt
     expect(validateG21InternalRangeProfile(candidate)).toEqual(
       expect.arrayContaining([
@@ -263,5 +281,244 @@ describe('G21 internal evidence range canary', () => {
         'lifecycle_correction_must_follow_conflict',
       ]),
     )
+  })
+
+  it('bounds every evidence clock by the frozen as-of time', () => {
+    const futureInternal = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    futureInternal.internalEvidence[0].validAt = '2026-09-11T09:00:00.000Z'
+    futureInternal.internalEvidence[0].recordedAt = '2026-09-11T09:01:00.000Z'
+    expect(validateG21InternalRangeProfile(futureInternal)).toEqual(
+      expect.arrayContaining([
+        `${futureInternal.internalEvidence[0].evidenceId}:valid_at_after_as_of`,
+        `${futureInternal.internalEvidence[0].evidenceId}:recorded_at_after_as_of`,
+      ]),
+    )
+
+    const futureLifecycle = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    futureLifecycle.lifecycleEvidence[0].validAt = '2026-09-11T09:00:00.000Z'
+    futureLifecycle.lifecycleEvidence[0].recordedAt = '2026-09-11T09:01:00.000Z'
+    expect(validateG21InternalRangeProfile(futureLifecycle)).toEqual(
+      expect.arrayContaining([
+        `${futureLifecycle.lifecycleEvidence[0].evidenceId}:valid_at_after_as_of`,
+        `${futureLifecycle.lifecycleEvidence[0].evidenceId}:recorded_at_after_as_of`,
+      ]),
+    )
+
+    const futureExternal = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find((profile) => profile.externalEvidence.length > 0)!,
+    )
+    futureExternal.externalEvidence[0].publishedOn = '2026-09-11T09:00:00.000Z'
+    futureExternal.externalEvidence[0].retrievedOn = '2026-09-11T09:01:00.000Z'
+    expect(validateG21InternalRangeProfile(futureExternal)).toEqual(
+      expect.arrayContaining([
+        `${futureExternal.externalEvidence[0].sourceId}:published_after_as_of`,
+        `${futureExternal.externalEvidence[0].sourceId}:retrieved_after_as_of`,
+      ]),
+    )
+  })
+
+  it('rejects audience widening, public private-evidence scope and unknown subjects', () => {
+    const widened = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    const leaderRecord = widened.internalEvidence.find(
+      (record) => record.audience === 'leader_private',
+    )!
+    leaderRecord.audience = 'company_private'
+    expect(validateG21InternalRangeProfile(widened)).toContain(
+      `AUTH-${leaderRecord.evidenceId}:audience_widening_without_authority`,
+    )
+
+    const publicAudience = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    publicAudience.internalEvidence[0].audience = 'public' as never
+    expect(validateG21InternalRangeProfile(publicAudience)).toContain(
+      `${publicAudience.internalEvidence[0].evidenceId}:audience_invalid`,
+    )
+
+    const badSubject = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    badSubject.internalEvidence[0].subjectScope = 'workforce_guess' as never
+    expect(validateG21InternalRangeProfile(badSubject)).toContain(
+      `${badSubject.internalEvidence[0].evidenceId}:subject_scope_invalid`,
+    )
+    expect(G21_INTERNAL_AUDIENCES).toEqual(['leader_private', 'company_private'])
+  })
+
+  it('retires only the corrected claim and keeps the source record in history', () => {
+    const longitudinal = G21_INTERNAL_RANGE_CANARY.filter(
+      (profile) => profile.manifest.internalDepth === 'longitudinal_corrections',
+    )
+    expect(longitudinal).toHaveLength(4)
+
+    for (const profile of longitudinal) {
+      const correction = profile.internalEvidence.find(
+        (record) => record.sourceType === 'direct_correction',
+      )!
+      const targetClaimId = correction.supersedesClaimIds![0]
+      const targetRecord = profile.internalEvidence.find((record) =>
+        record.claims.some((claim) => claim.claimId === targetClaimId),
+      )!
+      const view = buildG21CurrentClaimView(profile.internalEvidence)
+      expect(view.find((claim) => claim.claimId === targetClaimId)).toMatchObject({
+        status: 'superseded',
+        supersededByEvidenceIds: [correction.evidenceId],
+      })
+      for (const unaffected of targetRecord.claims.filter(
+        (claim) => claim.claimId !== targetClaimId,
+      )) {
+        expect(view.find((claim) => claim.claimId === unaffected.claimId)?.status).toBe('current')
+      }
+      expect(profile.internalEvidence).toContain(targetRecord)
+    }
+
+    const legacy = structuredClone(longitudinal[0])
+    const legacyCorrection = legacy.internalEvidence.find(
+      (record) => record.sourceType === 'direct_correction',
+    )! as typeof legacy.internalEvidence[number] & { supersedesEvidenceId?: string }
+    legacyCorrection.supersedesEvidenceId = legacy.internalEvidence[0].evidenceId
+    delete legacyCorrection.supersedesClaimIds
+    expect(validateG21InternalRangeProfile(legacy)).toContain(
+      `${legacyCorrection.evidenceId}:record_level_supersession_forbidden`,
+    )
+  })
+
+  it('binds every lifecycle state to conflict then correction in exact order', () => {
+    const swapped = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    swapped.lifecycleOracle.contradicted.evidenceIdsAdded = [
+      swapped.lifecycleEvidence[1].evidenceId,
+    ]
+    expect(validateG21InternalRangeProfile(swapped)).toEqual(
+      expect.arrayContaining([
+        'contradicted:lifecycle_evidence_sequence_invalid',
+        'lifecycle_oracle_does_not_match_frozen_contract',
+      ]),
+    )
+
+    for (const profile of G21_INTERNAL_RANGE_CANARY) {
+      const inputs = buildG21InternalBlindInputs().filter(
+        (input) => input.profileId === profile.manifest.profileId,
+      )
+      const added = Object.fromEntries(
+        inputs.map((input) => [
+          input.runtimeState,
+          input.internalEvidence
+            .slice(profile.internalEvidence.length)
+            .map((record) => record.evidenceId),
+        ]),
+      )
+      expect(added).toEqual({
+        initial: [],
+        contradicted: [profile.lifecycleEvidence[0].evidenceId],
+        corrected: profile.lifecycleEvidence.map((record) => record.evidenceId),
+      })
+      for (const input of inputs) {
+        expect(input.currentClaims).toEqual(buildG21CurrentClaimView(input.internalEvidence))
+      }
+    }
+  })
+
+  it('rejects adjacent source, standing, locator and lifecycle shortcuts', () => {
+    const unknownExternal = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find((profile) => profile.externalEvidence.length > 0)!,
+    )
+    unknownExternal.externalEvidence[0].sourceType = 'anonymous_rumour' as never
+    expect(validateG21InternalRangeProfile(unknownExternal)).toContain(
+      `${unknownExternal.externalEvidence[0].sourceId}:source_type_invalid`,
+    )
+
+    const wrongDirectStanding = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find(
+        (profile) => profile.manifest.internalDepth === 'work_evidence',
+      )!,
+    )
+    const directNotice = wrongDirectStanding.oracle.allowedNotices.find(
+      (notice) => notice.standing === 'measured_result',
+    )!
+    directNotice.standing = 'direct_statement'
+    expect(validateG21InternalRangeProfile(wrongDirectStanding)).toContain(
+      `${directNotice.noticeId}:direct_statement_requires_direct_source`,
+    )
+
+    const duplicateLocator = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find((profile) => profile.externalEvidence.length >= 2)!,
+    )
+    duplicateLocator.manifest.publicSourceLocators[1] =
+      duplicateLocator.manifest.publicSourceLocators[0]
+    expect(validateG21InternalRangeProfile(duplicateLocator)).toContain(
+      'manifest_source_locators_must_match_fixture_envelope',
+    )
+
+    const genericLifecycle = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    genericLifecycle.lifecycleOracle.contradicted.expectedNotices = [
+      'Review the new information and decide what matters.',
+    ]
+    expect(validateG21InternalRangeProfile(genericLifecycle)).toContain(
+      'lifecycle_oracle_does_not_match_frozen_contract',
+    )
+  })
+
+  it('rejects ID collisions plus self and forward contradiction links', () => {
+    const collision = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    collision.lifecycleEvidence[0].evidenceId = collision.internalEvidence[0].evidenceId
+    expect(validateG21InternalRangeProfile(collision)).toContain(
+      'private_evidence_ids_must_be_unique_across_lifecycle',
+    )
+
+    const selfContradiction = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    selfContradiction.lifecycleEvidence[0].contradictsEvidenceIds = [
+      selfContradiction.lifecycleEvidence[0].evidenceId,
+    ]
+    expect(validateG21InternalRangeProfile(selfContradiction)).toContain(
+      `${selfContradiction.lifecycleEvidence[0].evidenceId}:cannot_contradict_self_${selfContradiction.lifecycleEvidence[0].evidenceId}`,
+    )
+
+    const forwardContradiction = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    forwardContradiction.lifecycleEvidence[0].contradictsEvidenceIds = [
+      forwardContradiction.lifecycleEvidence[1].evidenceId,
+    ]
+    expect(validateG21InternalRangeProfile(forwardContradiction)).toContain(
+      `${forwardContradiction.lifecycleEvidence[0].evidenceId}:contradiction_must_follow_target_${forwardContradiction.lifecycleEvidence[1].evidenceId}`,
+    )
+  })
+
+  it('keeps the rejected abstraction-heavy questions as negative regressions', () => {
+    const regressions = [
+      {
+        familyId: 'fictional-care-scheduling',
+        internalDepth: 'work_evidence',
+        question: 'Did the unsafe schedules come from bad referral data or the scheduling logic?',
+      },
+      {
+        familyId: 'fictional-care-scheduling',
+        internalDepth: 'longitudinal_corrections',
+        question: 'Do the same vulnerable clients keep the same carer when you stop reviewing exceptions?',
+      },
+      {
+        familyId: 'fictional-manufacturing-redesign',
+        internalDepth: 'longitudinal_corrections',
+        question: 'Which exceptions still change customer risk enough that a planner must own the final call?',
+      },
+      {
+        familyId: 'fictional-franchise-fan-intelligence',
+        internalDepth: 'work_evidence',
+        question: 'What should new viewers see first to raise ticket intent without exhausting core fans?',
+      },
+      {
+        familyId: 'fictional-franchise-fan-intelligence',
+        internalDepth: 'longitudinal_corrections',
+        question: 'How much must ticket intent rise in a fair comparison before you move GBP 18 million?',
+      },
+    ] as const
+
+    for (const regression of regressions) {
+      const candidate = structuredClone(
+        G21_INTERNAL_RANGE_CANARY.find(
+          (profile) =>
+            profile.familyId === regression.familyId &&
+            profile.manifest.internalDepth === regression.internalDepth,
+        )!,
+      )
+      candidate.oracle.routeChangingQuestion = regression.question
+      expect(validateG21InternalRangeProfile(candidate)).toContain(
+        'route_question_contains_specialist_jargon',
+      )
+    }
   })
 })

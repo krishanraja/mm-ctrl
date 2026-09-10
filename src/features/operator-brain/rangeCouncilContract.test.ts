@@ -11,13 +11,18 @@ import {
   SHARED_THEORY_CARDS,
   THEORY_TRIGGERS,
   THEORY_PACK_SEQUENCE,
+  adjudicateFrozenRangeCouncil,
   adjudicateSealedCouncil,
   buildRangeCases,
   buildTheoryPack,
   resolveResponsibilityGate,
   validateProfileManifest,
   validateRangePopulation,
+  validateFrozenRangeCouncil,
   validateSealedCouncil,
+  type CouncilJudge,
+  type FrozenRangeCouncilContract,
+  type FrozenRangeJudgeRuling,
   type JudgeRuling,
   type RangeProfileManifest,
 } from './rangeCouncilContract'
@@ -197,6 +202,76 @@ describe('durable council contract', () => {
     rulings[5].claims = [{ claim: 'Nested prose is not the frozen schema.' } as unknown as string]
     expect(validateSealedCouncil(rulings)).toContain(
       'human_comprehension_and_access:claims_must_be_nonempty_strings',
+    )
+  })
+
+  function frozenRangeContract(): FrozenRangeCouncilContract {
+    const criterionVersions = Object.fromEntries(
+      COUNCIL_JUDGES.map((judge) => [judge, `${judge}:range-v2`]),
+    ) as Record<CouncilJudge, string>
+    return {
+      runId: 'G21-INTERNAL-RANGE-FREEZE-002',
+      artifactCompositeSha256: 'artifact-composite-v2',
+      criterionVersions,
+    }
+  }
+
+  function frozenRangeRulings(): FrozenRangeJudgeRuling[] {
+    const contract = frozenRangeContract()
+    return COUNCIL_JUDGES.map((judge) => ({
+      runId: contract.runId,
+      judge,
+      criterionVersion: contract.criterionVersions[judge],
+      artifactCompositeSha256: contract.artifactCompositeSha256,
+      verdict: 'pass',
+      claims: ['The owned range criterion passed.'],
+      evidenceLocators: ['fixture://range/case-1'],
+      veto: null,
+      missingEvidence: [],
+      resolvingTest: null,
+      recordedAt: '2026-09-10T09:00:00.000Z',
+    }))
+  }
+
+  it('validates the exact frozen range envelope and adjudicates its raw veto unchanged', () => {
+    const contract = frozenRangeContract()
+    const rulings = frozenRangeRulings()
+    expect(validateFrozenRangeCouncil(rulings, contract)).toEqual([])
+    expect(adjudicateFrozenRangeCouncil(rulings, contract)).toEqual({ status: 'passed' })
+
+    const resolvingTest = 'Reject a future-dated source and rerun the same frozen artifact.'
+    rulings[1].verdict = 'fail'
+    rulings[1].veto = {
+      ruleId: 'EPISTEMIC-RANGE-01',
+      failure: 'A future-dated source passed validation.',
+      resolvingTest,
+    }
+    rulings[1].resolvingTest = resolvingTest
+    expect(adjudicateFrozenRangeCouncil(rulings, contract)).toEqual({
+      status: 'blocked',
+      vetoes: [rulings[1].veto],
+    })
+  })
+
+  it('rejects range rulings whose envelope drifts or whose veto test is rewritten', () => {
+    const contract = frozenRangeContract()
+    const rulings = frozenRangeRulings()
+    const drifted = rulings[0] as FrozenRangeJudgeRuling & { theoryPackHash?: string }
+    drifted.theoryPackHash = 'unimplemented-field'
+    expect(validateFrozenRangeCouncil(rulings, contract)).toContain(
+      'human_agency:frozen_ruling_fields_invalid',
+    )
+
+    delete drifted.theoryPackHash
+    rulings[0].verdict = 'fail'
+    rulings[0].veto = {
+      ruleId: 'AGENCY-RANGE-01',
+      failure: 'The human became a rubber stamp.',
+      resolvingTest: 'Restore a named human decision boundary.',
+    }
+    rulings[0].resolvingTest = 'A rewritten test that no longer matches.'
+    expect(validateFrozenRangeCouncil(rulings, contract)).toContain(
+      'human_agency:frozen_resolving_test_must_match_veto',
     )
   })
 })

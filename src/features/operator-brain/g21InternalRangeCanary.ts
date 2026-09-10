@@ -32,6 +32,15 @@ export const G21_INTERNAL_SOURCE_TYPES = [
   'direct_correction',
 ] as const
 
+export const G21_SYNTHETIC_EXTERNAL_SOURCE_TYPES = [
+  'company_identity',
+  'company_strategy',
+  'company_result',
+  'market_signal',
+  'countercase',
+  'historical_record',
+] as const
+
 export const G21_INTERNAL_CLAIM_STANDINGS = [
   'synthetic_public_context',
   'direct_statement',
@@ -42,9 +51,26 @@ export const G21_INTERNAL_CLAIM_STANDINGS = [
   'evidence_gap',
 ] as const
 
+export const G21_INTERNAL_AUDIENCES = ['leader_private', 'company_private'] as const
+
+export const G21_INTERNAL_SUBJECT_SCOPES = ['leader', 'company', 'customer', 'work'] as const
+
+export const G21_ANSWER_SHAPES = [
+  'choice',
+  'number',
+  'threshold',
+  'yes_no',
+  'short_description',
+] as const
+
+export const G21_INTERNAL_RANGE_EVIDENCE_AS_OF = '2026-09-10T17:54:06.000Z'
+
 export type G21NonzeroInternalDepth = (typeof G21_NONZERO_INTERNAL_DEPTHS)[number]
 export type G21InternalSourceType = (typeof G21_INTERNAL_SOURCE_TYPES)[number]
 export type G21InternalClaimStanding = (typeof G21_INTERNAL_CLAIM_STANDINGS)[number]
+export type G21InternalAudience = (typeof G21_INTERNAL_AUDIENCES)[number]
+export type G21InternalSubjectScope = (typeof G21_INTERNAL_SUBJECT_SCOPES)[number]
+export type G21AnswerShape = (typeof G21_ANSWER_SHAPES)[number]
 
 export interface G21FictionalIdentity {
   fictionalIdentityKey: string
@@ -73,18 +99,40 @@ export interface G21SyntheticExternalEvidence {
   syntheticDisclosure: string
 }
 
+export interface G21InternalEvidenceClaim {
+  claimId: string
+  text: string
+}
+
 export interface G21InternalEvidenceRecord {
   evidenceId: string
   sourceType: G21InternalSourceType
-  subjectScope: 'leader' | 'company' | 'customer' | 'work'
-  audience: 'leader_private' | 'company_private'
+  subjectScope: G21InternalSubjectScope
+  audience: G21InternalAudience
   validAt: string
   recordedAt: string
   content: string
   sourceLocator: string
   fixtureAuthority: 'synthetic_fixture_authoring'
-  supersedesEvidenceId?: string
+  claims: G21InternalEvidenceClaim[]
+  supersedesClaimIds?: string[]
   contradictsEvidenceIds?: string[]
+}
+
+export interface G21InternalAudienceAuthority {
+  authorityId: string
+  evidenceId: string
+  authorisedAudience: G21InternalAudience
+  authorityType: 'synthetic_fixture_authoring'
+  authorisedAt: string
+}
+
+export interface G21ResolvedInternalClaim extends G21InternalEvidenceClaim {
+  evidenceId: string
+  sourceLocator: string
+  audience: G21InternalAudience
+  status: 'current' | 'superseded'
+  supersededByEvidenceIds: string[]
 }
 
 export interface G21InternalAllowedNotice {
@@ -102,6 +150,7 @@ export interface G21InternalOracle {
   allowedNotices: G21InternalAllowedNotice[]
   unresolved: string[]
   routeChangingQuestion: string
+  expectedAnswerShape: G21AnswerShape
   answerWouldChange: string
   humanDecisionBoundary: string
   expectedDiagnosticBehaviours: string[]
@@ -121,14 +170,16 @@ export interface G21InternalRangeProfile {
   identity: G21FictionalIdentity
   externalCoverage: PublicEvidenceCoverage
   externalEvidence: G21SyntheticExternalEvidence[]
+  evidenceAsOf: string
   internalEvidence: G21InternalEvidenceRecord[]
   lifecycleEvidence: G21InternalEvidenceRecord[]
+  audienceAuthorities: G21InternalAudienceAuthority[]
   lifecycleOracle: Record<RangeRuntimeState, G21InternalLifecycleOracle>
   oracle: G21InternalOracle
 }
 
 export interface G21InternalBlindInput {
-  schemaVersion: 'g21-internal-range-input:v1'
+  schemaVersion: 'g21-internal-range-input:v2'
   runId: string
   caseId: string
   profileId: string
@@ -136,9 +187,12 @@ export interface G21InternalBlindInput {
   subject: G21FictionalIdentity
   externalDepth: ExternalEvidenceDepth
   internalDepth: G21NonzeroInternalDepth
+  evidenceAsOf: string
   externalCoverage: PublicEvidenceCoverage
   externalEvidence: G21SyntheticExternalEvidence[]
   internalEvidence: G21InternalEvidenceRecord[]
+  audienceAuthorities: G21InternalAudienceAuthority[]
+  currentClaims: G21ResolvedInternalClaim[]
   task: string
   authority: {
     responsibilityGate: 1
@@ -156,10 +210,10 @@ interface OracleDraft extends Omit<G21InternalOracle, 'allowedNotices'> {
 }
 
 interface LifecycleDraft {
-  conflict: Omit<G21InternalEvidenceRecord, 'evidenceId' | 'fixtureAuthority'>
+  conflict: Omit<G21InternalEvidenceRecord, 'evidenceId' | 'fixtureAuthority' | 'claims'>
   correction: Omit<
     G21InternalEvidenceRecord,
-    'evidenceId' | 'fixtureAuthority' | 'supersedesEvidenceId'
+    'evidenceId' | 'fixtureAuthority' | 'claims' | 'supersedesClaimIds'
   >
   contradictedExpected: string[]
   correctedExpected: string[]
@@ -244,6 +298,13 @@ const ROUTE_QUESTION_JARGON = [
   /\bcausal(?:ity)?\b/i,
   /\battribut(?:e|able|ion)\b/i,
   /\bleverage\b/i,
+  /\bbad referral data\b/i,
+  /\bscheduling logic\b/i,
+  /\bcustomer risk\b/i,
+  /\bexceptions?\b/i,
+  /\bticket intent\b/i,
+  /\bfair comparison\b/i,
+  /\bexhausting core fans\b/i,
 ] as const
 
 function externalSource(
@@ -253,13 +314,43 @@ function externalSource(
 }
 
 function internalEvidence(
-  draft: Omit<G21InternalEvidenceRecord, 'fixtureAuthority'>,
+  draft: Omit<G21InternalEvidenceRecord, 'fixtureAuthority' | 'claims'> & {
+    claims?: G21InternalEvidenceClaim[]
+  },
 ): G21InternalEvidenceRecord {
-  return { ...draft, fixtureAuthority: 'synthetic_fixture_authoring' }
+  return {
+    ...draft,
+    claims: draft.claims ?? [
+      {
+        claimId: `${draft.evidenceId}-CLAIM-01`,
+        text: draft.content,
+      },
+    ],
+    fixtureAuthority: 'synthetic_fixture_authoring',
+  }
+}
+
+function audienceAuthority(record: G21InternalEvidenceRecord): G21InternalAudienceAuthority {
+  return {
+    authorityId: `AUTH-${record.evidenceId}`,
+    evidenceId: record.evidenceId,
+    authorisedAudience: record.audience,
+    authorityType: 'synthetic_fixture_authoring',
+    authorisedAt: record.recordedAt,
+  }
 }
 
 function sameStringSet(left: string[], right: string[]): boolean {
-  return left.length === right.length && left.every((value) => right.includes(value))
+  return (
+    left.length === right.length &&
+    new Set(left).size === left.length &&
+    new Set(right).size === right.length &&
+    left.every((value) => right.includes(value))
+  )
+}
+
+function sameStringsInOrder(left: string[], right: string[]): boolean {
+  return left.length === right.length && left.every((value, index) => value === right[index])
 }
 
 function validIsoTimestamp(value: string): boolean {
@@ -309,9 +400,11 @@ function makeProfile(
   const correction = internalEvidence({
     evidenceId: correctionId,
     ...stage.lifecycle.correction,
-    supersedesEvidenceId: conflictId,
+    supersedesClaimIds: [`${conflictId}-CLAIM-01`],
   })
   const forbiddenClaims = [...stage.oracle.forbiddenClaims]
+  const depthEvidence = structuredClone(evidenceForDepth(family, internalDepth))
+  const lifecycleEvidence = [conflict, correction]
 
   return {
     manifest: {
@@ -328,8 +421,10 @@ function makeProfile(
     identity: structuredClone(family.identity),
     externalCoverage: { ...EXPECTED_EXTERNAL_COVERAGE[family.externalDepth] },
     externalEvidence: structuredClone(family.externalEvidence),
-    internalEvidence: structuredClone(evidenceForDepth(family, internalDepth)),
-    lifecycleEvidence: [conflict, correction],
+    evidenceAsOf: G21_INTERNAL_RANGE_EVIDENCE_AS_OF,
+    internalEvidence: depthEvidence,
+    lifecycleEvidence,
+    audienceAuthorities: [...depthEvidence, ...lifecycleEvidence].map(audienceAuthority),
     lifecycleOracle: {
       initial: {
         runtimeState: 'initial',
@@ -395,7 +490,21 @@ const familyDrafts: FamilyDraft[] = [
         validAt: '2026-06-02T09:08:00.000Z',
         recordedAt: '2026-06-02T09:09:00.000Z',
         content:
-          'A coordinator must own every exception and I must own the scale decision. Saving staff time on its own will not earn a rollout.',
+          'My current main gate is that a coordinator must own every exception. I must own the scale decision. Saving staff time on its own will not earn a rollout.',
+        claims: [
+          {
+            claimId: 'INT-CARE-002-CLAIM-01',
+            text: 'Coordinator ownership of every exception is the main rollout gate.',
+          },
+          {
+            claimId: 'INT-CARE-002-CLAIM-02',
+            text: 'Elena owns the scale decision.',
+          },
+          {
+            claimId: 'INT-CARE-002-CLAIM-03',
+            text: 'Saving staff time alone will not earn a rollout.',
+          },
+        ],
         sourceLocator: 'fixture://care/leader-reflection/002',
       }),
     ],
@@ -467,7 +576,7 @@ const familyDrafts: FamilyDraft[] = [
         content:
           'I was wrong to make exception ownership the main gate. Continuity for complex care is the gate. Coordinator review is one way to protect it, not the result itself.',
         sourceLocator: 'fixture://care/correction/008',
-        supersedesEvidenceId: 'INT-CARE-002',
+        supersedesClaimIds: ['INT-CARE-002-CLAIM-01'],
       }),
       internalEvidence({
         evidenceId: 'INT-CARE-009',
@@ -511,6 +620,7 @@ const familyDrafts: FamilyDraft[] = [
           unresolved: ['The stopping conditions and baseline service measures are not defined.'],
           routeChangingQuestion:
             'Which failure would make you stop the pilot even if it saves staff time?',
+          expectedAnswerShape: 'short_description',
           answerWouldChange:
             'It decides whether a bounded pilot is responsible enough to start and what must be monitored from day one.',
           humanDecisionBoundary:
@@ -585,9 +695,10 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Whether source data or scheduling logic caused the unsafe travel sequences.'],
           routeChangingQuestion:
-            'Did the unsafe schedules come from bad referral data or the scheduling logic?',
+            'How many unsafe journeys would make you stop the rollout?',
+          expectedAnswerShape: 'number',
           answerWouldChange:
-            'It selects data repair, model repair or a stop before the rollout decision.',
+            'It sets the safety limit. The evidence beneath it can then locate whether data, scheduling or both need repair.',
           humanDecisionBoundary:
             'Care coordinators can reject unsafe schedules, while Elena owns the service standard and scale decision.',
           expectedDiagnosticBehaviours: [
@@ -661,7 +772,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Whether continuity can recover without Elena reviewing the exceptions herself.'],
           routeChangingQuestion:
-            'Do the same vulnerable clients keep the same carer when you stop reviewing exceptions?',
+            'Out of every 100 vulnerable clients, how many must keep the same carer before you expand?',
+          expectedAnswerShape: 'number',
           answerWouldChange:
             'It distinguishes a transferable operating model from a pilot that works only through founder rescue.',
           humanDecisionBoundary:
@@ -769,6 +881,20 @@ const familyDrafts: FamilyDraft[] = [
         recordedAt: '2026-05-04T09:06:00.000Z',
         content:
           'I do not want to sell faster reports. My working theory is that clients will pay for always-on access if we preserve the judgement they get from our senior team.',
+        claims: [
+          {
+            claimId: 'INT-RESEARCH-002-CLAIM-01',
+            text: 'The new offer must not be faster reports.',
+          },
+          {
+            claimId: 'INT-RESEARCH-002-CLAIM-02',
+            text: 'Clients will pay for always-on access.',
+          },
+          {
+            claimId: 'INT-RESEARCH-002-CLAIM-03',
+            text: 'The new offer must preserve the senior team judgement clients value.',
+          },
+        ],
         sourceLocator: 'fixture://research/leader-reflection/002',
       }),
     ],
@@ -840,7 +966,7 @@ const familyDrafts: FamilyDraft[] = [
         content:
           'I was wrong about always-on access. Clients do not want another dashboard. They pay when we bring evidence and disagreement into a live decision they already have to make.',
         sourceLocator: 'fixture://research/correction/008',
-        supersedesEvidenceId: 'INT-RESEARCH-002',
+        supersedesClaimIds: ['INT-RESEARCH-002-CLAIM-02'],
       }),
       internalEvidence({
         evidenceId: 'INT-RESEARCH-009',
@@ -884,6 +1010,7 @@ const familyDrafts: FamilyDraft[] = [
           unresolved: ['The reason clients buy again is not established.'],
           routeChangingQuestion:
             'Across your last ten projects, what did clients pay to get that they could not get elsewhere?',
+          expectedAnswerShape: 'short_description',
           answerWouldChange:
             'It reveals whether the new product should sell speed, continuous access or senior challenge.',
           humanDecisionBoundary:
@@ -959,6 +1086,7 @@ const familyDrafts: FamilyDraft[] = [
           unresolved: ['Whether senior judgement can transfer into a repeatable product experience.'],
           routeChangingQuestion:
             'Would the renewing clients buy the product without a senior researcher challenging them live?',
+          expectedAnswerShape: 'yes_no',
           answerWouldChange:
             'It distinguishes a scalable product from a more efficiently packaged senior service.',
           humanDecisionBoundary:
@@ -1034,7 +1162,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['The number and economics of renewals needed before moving half the team.'],
           routeChangingQuestion:
-            'How many clients must renew the live decision service before you move half the team?',
+            'How many clients must pay for the new service again before you move half the team?',
+          expectedAnswerShape: 'number',
           answerWouldChange:
             'It turns a promising format into a human-owned scale gate rather than a story built from five pilots.',
           humanDecisionBoundary:
@@ -1153,6 +1282,16 @@ const familyDrafts: FamilyDraft[] = [
         recordedAt: '2026-05-21T09:02:00.000Z',
         content:
           'We must decide next quarter whether to spend GBP 4.2 million on AI planning and redesign 38 planner roles, or repair data and measures first. I think hesitation in the planning layer is slowing us down.',
+        claims: [
+          {
+            claimId: 'INT-FORGE-001-CLAIM-01',
+            text: 'The live choice is a GBP 4.2 million AI programme and role redesign or repairing data and measures first.',
+          },
+          {
+            claimId: 'INT-FORGE-001-CLAIM-02',
+            text: 'Planner hesitation is the main cause of slow planning.',
+          },
+        ],
         sourceLocator: 'fixture://forge/opening-intake/001',
       }),
       internalEvidence({
@@ -1235,7 +1374,7 @@ const familyDrafts: FamilyDraft[] = [
         content:
           'I said planner hesitation was the main cause. That was wrong. The system asked people to compensate for bad data and rewarded the wrong local result.',
         sourceLocator: 'fixture://forge/correction/008',
-        supersedesEvidenceId: 'INT-FORGE-001',
+        supersedesClaimIds: ['INT-FORGE-001-CLAIM-02'],
       }),
       internalEvidence({
         evidenceId: 'INT-FORGE-009',
@@ -1278,7 +1417,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Whether planner behaviour is a cause or a response to the current system.'],
           routeChangingQuestion:
-            'If the same planners succeed after data and measures change, would you still redesign the roles?',
+            'If the same planners hit the target with accurate information and fair targets, would you still change their roles?',
+          expectedAnswerShape: 'yes_no',
           answerWouldChange:
             'It separates a people-replacement thesis from a work-and-system redesign thesis.',
           humanDecisionBoundary:
@@ -1353,7 +1493,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Performance with repaired data, aligned measures and the same planners.'],
           routeChangingQuestion:
-            'Can one plant hit the delivery target with clean data and the same planners before you fund all six?',
+            'Can one plant hit the delivery target with accurate information and the same planners before you fund all six?',
+          expectedAnswerShape: 'yes_no',
           answerWouldChange:
             'It tests whether the first investment belongs in conditions, role design or new capability.',
           humanDecisionBoundary:
@@ -1429,7 +1570,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Which exceptions still need human judgement after information work is removed.'],
           routeChangingQuestion:
-            'Which exceptions still change customer risk enough that a planner must own the final call?',
+            'Which planning decisions should a person always make, even when all the data is clean?',
+          expectedAnswerShape: 'short_description',
           answerWouldChange:
             'It defines the future role before the group chooses tools, training or staffing levels.',
           humanDecisionBoundary:
@@ -1581,6 +1723,24 @@ const familyDrafts: FamilyDraft[] = [
         recordedAt: '2026-05-05T09:07:00.000Z',
         content:
           'I want to design the next way fans enter a storyworld, not automate campaign admin. My starting hunch is that more fan theories create more excitement. AI may map attention and test routes. Humans own story, surprise and what the film stands for.',
+        claims: [
+          {
+            claimId: 'INT-STORY-002-CLAIM-01',
+            text: 'The aim is to redesign how fans enter the storyworld, not automate campaign admin.',
+          },
+          {
+            claimId: 'INT-STORY-002-CLAIM-02',
+            text: 'More fan theories create more excitement.',
+          },
+          {
+            claimId: 'INT-STORY-002-CLAIM-03',
+            text: 'AI may map attention and test routes.',
+          },
+          {
+            claimId: 'INT-STORY-002-CLAIM-04',
+            text: 'Humans own story, surprise and what the film stands for.',
+          },
+        ],
         sourceLocator: 'fixture://story/leader-reflection/002',
       }),
     ],
@@ -1652,7 +1812,7 @@ const familyDrafts: FamilyDraft[] = [
         content:
           'I was wrong that more fan theories always create more excitement. The effect depends on who sees them and in what order. Curiosity matters; confusion is not engagement.',
         sourceLocator: 'fixture://story/correction/008',
-        supersedesEvidenceId: 'INT-STORY-002',
+        supersedesClaimIds: ['INT-STORY-002-CLAIM-02'],
       }),
       internalEvidence({
         evidenceId: 'INT-STORY-009',
@@ -1695,7 +1855,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['The target audience, desired behaviour and proof threshold for the investment.'],
           routeChangingQuestion:
-            'Which fan group must change behaviour for the GBP 18 million shift to be worth it?',
+            'Which group of fans must buy more tickets for you to move the GBP 18 million?',
+          expectedAnswerShape: 'choice',
           answerWouldChange:
             'It determines what the system should observe, which creative route to test and what success means.',
           humanDecisionBoundary:
@@ -1770,7 +1931,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['The sequence that grows new-viewer intent without saturating core fans.'],
           routeChangingQuestion:
-            'What should new viewers see first to raise ticket intent without exhausting core fans?',
+            'What should a new viewer see first if the goal is to make them want a ticket?',
+          expectedAnswerShape: 'choice',
           answerWouldChange:
             'It selects the next held-out campaign test rather than merely choosing the loudest content.',
           humanDecisionBoundary:
@@ -1846,7 +2008,8 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['The held-out lift and purchase evidence needed for the next allocation.'],
           routeChangingQuestion:
-            'How much must ticket intent rise in a fair comparison before you move GBP 18 million?',
+            'How many more new viewers must want a ticket before you move the GBP 18 million?',
+          expectedAnswerShape: 'threshold',
           answerWouldChange:
             'It creates a human-owned investment gate while the test protects creative judgement and causal clarity.',
           humanDecisionBoundary:
@@ -1903,11 +2066,50 @@ export const G21_INTERNAL_RANGE_CANARY: G21InternalRangeProfile[] = familyDrafts
     G21_NONZERO_INTERNAL_DEPTHS.map((internalDepth) => makeProfile(family, internalDepth)),
 )
 
+const G21_FROZEN_LIFECYCLE_ORACLE_BY_PROFILE_ID = new Map(
+  G21_INTERNAL_RANGE_CANARY.map((profile) => [
+    profile.manifest.profileId,
+    JSON.stringify(profile.lifecycleOracle),
+  ]),
+)
+
 function allEvidenceIds(profile: G21InternalRangeProfile): string[] {
   return [
     ...profile.externalEvidence.map((source) => source.sourceId),
     ...profile.internalEvidence.map((source) => source.evidenceId),
   ]
+}
+
+function allPrivateEvidence(profile: G21InternalRangeProfile): G21InternalEvidenceRecord[] {
+  return [...profile.internalEvidence, ...profile.lifecycleEvidence]
+}
+
+export function buildG21CurrentClaimView(
+  records: G21InternalEvidenceRecord[],
+): G21ResolvedInternalClaim[] {
+  const supersedingEvidenceByClaim = new Map<string, string[]>()
+
+  for (const record of records) {
+    for (const claimId of record.supersedesClaimIds ?? []) {
+      const superseding = supersedingEvidenceByClaim.get(claimId) ?? []
+      superseding.push(record.evidenceId)
+      supersedingEvidenceByClaim.set(claimId, superseding)
+    }
+  }
+
+  return records.flatMap((record) =>
+    record.claims.map((claim) => {
+      const supersededByEvidenceIds = supersedingEvidenceByClaim.get(claim.claimId) ?? []
+      return {
+        ...structuredClone(claim),
+        evidenceId: record.evidenceId,
+        sourceLocator: record.sourceLocator,
+        audience: record.audience,
+        status: supersededByEvidenceIds.length > 0 ? 'superseded' : 'current',
+        supersededByEvidenceIds,
+      }
+    }),
+  )
 }
 
 function resolveEvidenceType(
@@ -1923,49 +2125,109 @@ function resolveEvidenceType(
 function validateInternalRecord(
   record: G21InternalEvidenceRecord,
   availableEvidence: G21InternalEvidenceRecord[],
+  evidenceAsOf: string,
 ): string[] {
   const errors: string[] = []
   if (!/^(?:INT|LIFE)-[A-Z0-9-]+$/.test(record.evidenceId)) errors.push('evidence_id_invalid')
   if (!G21_INTERNAL_SOURCE_TYPES.includes(record.sourceType)) errors.push('source_type_invalid')
+  if (!G21_INTERNAL_SUBJECT_SCOPES.includes(record.subjectScope)) errors.push('subject_scope_invalid')
+  if (!G21_INTERNAL_AUDIENCES.includes(record.audience)) errors.push('audience_invalid')
   if (!validIsoTimestamp(record.validAt)) errors.push('valid_at_invalid')
   if (!validIsoTimestamp(record.recordedAt)) errors.push('recorded_at_invalid')
   if (validIsoTimestamp(record.validAt) && validIsoTimestamp(record.recordedAt)) {
     if (Date.parse(record.recordedAt) < Date.parse(record.validAt)) errors.push('recorded_before_valid')
+  }
+  if (validIsoTimestamp(record.validAt) && Date.parse(record.validAt) > Date.parse(evidenceAsOf)) {
+    errors.push('valid_at_after_as_of')
+  }
+  if (validIsoTimestamp(record.recordedAt) && Date.parse(record.recordedAt) > Date.parse(evidenceAsOf)) {
+    errors.push('recorded_at_after_as_of')
   }
   if (!record.content.trim()) errors.push('content_required')
   if (!record.sourceLocator.startsWith('fixture://')) errors.push('fixture_locator_required')
   if (record.fixtureAuthority !== 'synthetic_fixture_authoring') {
     errors.push('fixture_authority_required')
   }
-  const availableIds = availableEvidence.map((candidate) => candidate.evidenceId)
-  if (record.supersedesEvidenceId && !availableIds.includes(record.supersedesEvidenceId)) {
-    errors.push('supersedes_target_missing')
-  }
-  if (record.supersedesEvidenceId) {
-    const target = availableEvidence.find(
-      (candidate) => candidate.evidenceId === record.supersedesEvidenceId,
+  if (
+    Object.prototype.hasOwnProperty.call(
+      record as unknown as Record<string, unknown>,
+      'supersedesEvidenceId',
     )
-    if (target && Date.parse(target.recordedAt) >= Date.parse(record.recordedAt)) {
-      errors.push('supersession_must_follow_target')
+  ) {
+    errors.push('record_level_supersession_forbidden')
+  }
+  if (!record.claims.length) errors.push('claim_required')
+  const ownClaimIds = record.claims.map((claim) => claim.claimId)
+  if (new Set(ownClaimIds).size !== ownClaimIds.length) errors.push('claim_ids_must_be_unique')
+  for (const claim of record.claims) {
+    if (!claim.claimId.startsWith(`${record.evidenceId}-CLAIM-`)) {
+      errors.push(`claim_id_wrong_owner_${claim.claimId}`)
+    }
+    if (!/^.+-CLAIM-\d{2}$/.test(claim.claimId)) errors.push(`claim_id_invalid_${claim.claimId}`)
+    if (!claim.text.trim()) errors.push(`claim_text_required_${claim.claimId}`)
+  }
+  const availableIds = availableEvidence.map((candidate) => candidate.evidenceId)
+  const availableClaims = availableEvidence.flatMap((candidate) =>
+    candidate.claims.map((claim) => ({ claim, record: candidate })),
+  )
+  if (record.sourceType === 'direct_correction' && !(record.supersedesClaimIds?.length ?? 0)) {
+    errors.push('direct_correction_requires_claim_target')
+  }
+  if (record.sourceType !== 'direct_correction' && (record.supersedesClaimIds?.length ?? 0) > 0) {
+    errors.push('supersession_requires_direct_correction')
+  }
+  if (new Set(record.supersedesClaimIds ?? []).size !== (record.supersedesClaimIds?.length ?? 0)) {
+    errors.push('supersedes_claim_ids_must_be_unique')
+  }
+  for (const claimId of record.supersedesClaimIds ?? []) {
+    const target = availableClaims.find((candidate) => candidate.claim.claimId === claimId)
+    if (!target) {
+      errors.push(`supersedes_claim_target_missing_${claimId}`)
+      continue
+    }
+    if (target.record.evidenceId === record.evidenceId) {
+      errors.push(`cannot_supersede_own_claim_${claimId}`)
+    }
+    if (Date.parse(target.record.recordedAt) >= Date.parse(record.recordedAt)) {
+      errors.push(`supersession_must_follow_claim_${claimId}`)
     }
   }
   for (const evidenceId of record.contradictsEvidenceIds ?? []) {
-    if (!availableIds.includes(evidenceId)) errors.push(`contradiction_target_missing_${evidenceId}`)
+    const target = availableEvidence.find((candidate) => candidate.evidenceId === evidenceId)
+    if (!availableIds.includes(evidenceId)) {
+      errors.push(`contradiction_target_missing_${evidenceId}`)
+      continue
+    }
+    if (evidenceId === record.evidenceId) errors.push(`cannot_contradict_self_${evidenceId}`)
+    if (target && Date.parse(target.recordedAt) >= Date.parse(record.recordedAt)) {
+      errors.push(`contradiction_must_follow_target_${evidenceId}`)
+    }
   }
   return errors
 }
 
 export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile): string[] {
   const errors = validateProfileManifest(profile.manifest)
-  const { manifest, identity, externalEvidence, internalEvidence: records, oracle } = profile
+  const {
+    manifest,
+    identity,
+    externalEvidence,
+    evidenceAsOf,
+    internalEvidence: records,
+    audienceAuthorities,
+    oracle,
+  } = profile
   const internalDepth = manifest.internalDepth as G21NonzeroInternalDepth
   const externalIds = externalEvidence.map((source) => source.sourceId)
   const internalIds = records.map((record) => record.evidenceId)
   const evidenceIds = allEvidenceIds(profile)
+  const privateEvidence = allPrivateEvidence(profile)
+  const privateEvidenceIds = privateEvidence.map((record) => record.evidenceId)
 
   if (!G21_NONZERO_INTERNAL_DEPTHS.includes(internalDepth)) {
     errors.push('nonzero_internal_depth_required')
   }
+  if (!validIsoTimestamp(evidenceAsOf)) errors.push('evidence_as_of_invalid')
   if (manifest.namespace !== 'synthetic_fixture') errors.push('internal_range_requires_fixture_namespace')
   if (manifest.realNamedPerson) errors.push('internal_range_cannot_name_real_person')
   if (manifest.consentRecordId) errors.push('fictional_fixture_cannot_claim_consent')
@@ -2020,9 +2282,15 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
   }
   if (new Set(externalIds).size !== externalIds.length) errors.push('external_source_ids_must_be_unique')
   if (new Set(internalIds).size !== internalIds.length) errors.push('internal_evidence_ids_must_be_unique')
+  if (new Set(privateEvidenceIds).size !== privateEvidenceIds.length) {
+    errors.push('private_evidence_ids_must_be_unique_across_lifecycle')
+  }
 
   for (const source of externalEvidence) {
     if (!/^EXT-[A-Z0-9-]+$/.test(source.sourceId)) errors.push(`${source.sourceId}:source_id_invalid`)
+    if (!G21_SYNTHETIC_EXTERNAL_SOURCE_TYPES.includes(source.sourceType)) {
+      errors.push(`${source.sourceId}:source_type_invalid`)
+    }
     if (!source.locator.startsWith('https://') || !source.locator.includes('.invalid/')) {
       errors.push(`${source.sourceId}:fictional_invalid_domain_required`)
     }
@@ -2030,6 +2298,12 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
     if (!validIsoTimestamp(source.retrievedOn)) errors.push(`${source.sourceId}:retrieved_on_invalid`)
     if (Date.parse(source.publishedOn) > Date.parse(source.retrievedOn)) {
       errors.push(`${source.sourceId}:published_after_retrieval`)
+    }
+    if (validIsoTimestamp(source.publishedOn) && Date.parse(source.publishedOn) > Date.parse(evidenceAsOf)) {
+      errors.push(`${source.sourceId}:published_after_as_of`)
+    }
+    if (validIsoTimestamp(source.retrievedOn) && Date.parse(source.retrievedOn) > Date.parse(evidenceAsOf)) {
+      errors.push(`${source.sourceId}:retrieved_after_as_of`)
     }
     if (!source.syntheticDisclosure.toLowerCase().includes('fictional')) {
       errors.push(`${source.sourceId}:synthetic_disclosure_required`)
@@ -2040,7 +2314,9 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
 
   for (const record of records) {
     errors.push(
-      ...validateInternalRecord(record, records).map((error) => `${record.evidenceId}:${error}`),
+      ...validateInternalRecord(record, records, evidenceAsOf).map(
+        (error) => `${record.evidenceId}:${error}`,
+      ),
     )
   }
 
@@ -2053,7 +2329,10 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
     errors.push('conflict_requires_target')
   }
   if (correction?.sourceType !== 'direct_correction') errors.push('lifecycle_correction_required')
-  if (conflict && correction?.supersedesEvidenceId !== conflict.evidenceId) {
+  if (
+    conflict &&
+    !sameStringsInOrder(correction?.supersedesClaimIds ?? [], [`${conflict.evidenceId}-CLAIM-01`])
+  ) {
     errors.push('lifecycle_correction_must_supersede_conflict')
   }
   if (conflict && correction && Date.parse(correction.recordedAt) <= Date.parse(conflict.recordedAt)) {
@@ -2062,10 +2341,53 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
   const lifecycleAvailable = [...records, ...profile.lifecycleEvidence]
   for (const record of profile.lifecycleEvidence) {
     errors.push(
-      ...validateInternalRecord(record, lifecycleAvailable).map(
+      ...validateInternalRecord(record, lifecycleAvailable, evidenceAsOf).map(
         (error) => `${record.evidenceId}:${error}`,
       ),
     )
+  }
+
+  const claimIds = privateEvidence.flatMap((record) => record.claims.map((claim) => claim.claimId))
+  if (new Set(claimIds).size !== claimIds.length) errors.push('claim_ids_must_be_globally_unique')
+  const supersededClaimIds = privateEvidence.flatMap((record) => record.supersedesClaimIds ?? [])
+  if (new Set(supersededClaimIds).size !== supersededClaimIds.length) {
+    errors.push('claim_cannot_be_superseded_more_than_once')
+  }
+
+  const authorityIds = audienceAuthorities.map((authority) => authority.authorityId)
+  const authorisedEvidenceIds = audienceAuthorities.map((authority) => authority.evidenceId)
+  if (new Set(authorityIds).size !== authorityIds.length) {
+    errors.push('audience_authority_ids_must_be_unique')
+  }
+  if (new Set(authorisedEvidenceIds).size !== authorisedEvidenceIds.length) {
+    errors.push('one_audience_authority_per_evidence')
+  }
+  if (!sameStringSet(authorisedEvidenceIds, privateEvidenceIds)) {
+    errors.push('audience_authority_must_cover_exact_private_evidence')
+  }
+  for (const authority of audienceAuthorities) {
+    const record = privateEvidence.find((candidate) => candidate.evidenceId === authority.evidenceId)
+    if (!/^AUTH-(?:INT|LIFE)-[A-Z0-9-]+$/.test(authority.authorityId)) {
+      errors.push(`${authority.authorityId}:authority_id_invalid`)
+    }
+    if (authority.authorityType !== 'synthetic_fixture_authoring') {
+      errors.push(`${authority.authorityId}:authority_type_invalid`)
+    }
+    if (!G21_INTERNAL_AUDIENCES.includes(authority.authorisedAudience)) {
+      errors.push(`${authority.authorityId}:authorised_audience_invalid`)
+    }
+    if (!validIsoTimestamp(authority.authorisedAt)) {
+      errors.push(`${authority.authorityId}:authorised_at_invalid`)
+    }
+    if (validIsoTimestamp(authority.authorisedAt) && Date.parse(authority.authorisedAt) > Date.parse(evidenceAsOf)) {
+      errors.push(`${authority.authorityId}:authorised_after_as_of`)
+    }
+    if (record && authority.authorisedAudience !== record.audience) {
+      errors.push(`${authority.authorityId}:audience_widening_without_authority`)
+    }
+    if (record && Date.parse(authority.authorisedAt) > Date.parse(record.recordedAt)) {
+      errors.push(`${authority.authorityId}:authority_must_exist_by_recording`)
+    }
   }
 
   if (internalDepth === 'basic_intake') {
@@ -2090,7 +2412,7 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
   if (internalDepth === 'longitudinal_corrections') {
     const correctionRecords = records.filter((record) => record.sourceType === 'direct_correction')
     if (!correctionRecords.length) errors.push('longitudinal_depth_requires_correction')
-    if (correctionRecords.some((record) => !record.supersedesEvidenceId)) {
+    if (correctionRecords.some((record) => !(record.supersedesClaimIds?.length ?? 0))) {
       errors.push('longitudinal_correction_requires_supersession')
     }
     const times = records.map((record) => Date.parse(record.validAt))
@@ -2104,6 +2426,9 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
   if (!oracle.strongestSupportedView.trim()) errors.push('supported_view_required')
   if (!oracle.countercase.trim()) errors.push('countercase_required')
   if (!oracle.unresolved.length) errors.push('unresolved_required')
+  if (!G21_ANSWER_SHAPES.includes(oracle.expectedAnswerShape)) {
+    errors.push('expected_answer_shape_invalid')
+  }
   if (!oracle.answerWouldChange.trim()) errors.push('answer_effect_required')
   if (!oracle.humanDecisionBoundary.trim()) errors.push('human_boundary_required')
   if (!oracle.expectedDiagnosticBehaviours.length) errors.push('expected_behaviour_required')
@@ -2139,6 +2464,15 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
       if (!evidenceIds.includes(evidenceId)) errors.push(`${notice.noticeId}:unknown_${evidenceId}`)
     }
     const types = notice.evidenceIds.map((evidenceId) => resolveEvidenceType(profile, evidenceId))
+    if (
+      notice.standing === 'direct_statement' &&
+      types.some((sourceType) =>
+        sourceType === undefined ||
+        !BASIC_SOURCE_TYPES.includes(sourceType as G21InternalSourceType),
+      )
+    ) {
+      errors.push(`${notice.noticeId}:direct_statement_requires_direct_source`)
+    }
     if (
       notice.standing === 'synthetic_public_context' &&
       types.some((sourceType) => sourceType !== 'synthetic_external')
@@ -2178,6 +2512,23 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
     for (const evidenceId of lifecycle.evidenceIdsAdded) {
       if (!lifecycleIds.includes(evidenceId)) errors.push(`${runtimeState}:unknown_${evidenceId}`)
     }
+  }
+  if (conflict && correction) {
+    const expectedByState: Record<RangeRuntimeState, string[]> = {
+      initial: [],
+      contradicted: [conflict.evidenceId],
+      corrected: [conflict.evidenceId, correction.evidenceId],
+    }
+    for (const runtimeState of RANGE_RUNTIME_STATES) {
+      if (!sameStringsInOrder(profile.lifecycleOracle[runtimeState].evidenceIdsAdded, expectedByState[runtimeState])) {
+        errors.push(`${runtimeState}:lifecycle_evidence_sequence_invalid`)
+      }
+    }
+  }
+
+  const frozenLifecycle = G21_FROZEN_LIFECYCLE_ORACLE_BY_PROFILE_ID.get(manifest.profileId)
+  if (!frozenLifecycle || JSON.stringify(profile.lifecycleOracle) !== frozenLifecycle) {
+    errors.push('lifecycle_oracle_does_not_match_frozen_contract')
   }
 
   return errors
@@ -2313,32 +2664,43 @@ function evidenceForRuntimeState(
 }
 
 export function buildG21InternalBlindInputs(
-  runId = 'G21-INTERNAL-RANGE-RUN-001',
+  runId = 'G21-INTERNAL-RANGE-RUN-002',
   profiles: G21InternalRangeProfile[] = G21_INTERNAL_RANGE_CANARY,
 ): G21InternalBlindInput[] {
   return profiles.flatMap((profile) =>
-    RANGE_RUNTIME_STATES.map((runtimeState) => ({
-      schemaVersion: 'g21-internal-range-input:v1',
-      runId,
-      caseId: `${profile.manifest.profileId}-${runtimeState.toUpperCase()}`,
-      profileId: profile.manifest.profileId,
-      runtimeState,
-      subject: structuredClone(profile.identity),
-      externalDepth: profile.manifest.externalDepth,
-      internalDepth: profile.manifest.internalDepth as G21NonzeroInternalDepth,
-      externalCoverage: structuredClone(profile.externalCoverage),
-      externalEvidence: structuredClone(profile.externalEvidence),
-      internalEvidence: evidenceForRuntimeState(profile, runtimeState),
-      task:
-        'Produce the most specific decision diagnostic this fictional evidence earns. Keep statements, work evidence, measured results, corrections and gaps separate. Ask one plain question only when its answer could change the route. Preserve contradictions. Do not recommend a consequential action or judge named employees.',
-      authority: {
-        responsibilityGate: 1,
-        mayFrameDecision: true,
-        mayRecommendConsequentialAction: false,
-        mayPromoteDurableTruth: false,
-        mayEvaluateNamedEmployees: false,
-      },
-    })),
+    RANGE_RUNTIME_STATES.map((runtimeState) => {
+      const internalEvidence = evidenceForRuntimeState(profile, runtimeState)
+      const includedEvidenceIds = internalEvidence.map((record) => record.evidenceId)
+      return {
+        schemaVersion: 'g21-internal-range-input:v2',
+        runId,
+        caseId: `${profile.manifest.profileId}-${runtimeState.toUpperCase()}`,
+        profileId: profile.manifest.profileId,
+        runtimeState,
+        subject: structuredClone(profile.identity),
+        externalDepth: profile.manifest.externalDepth,
+        internalDepth: profile.manifest.internalDepth as G21NonzeroInternalDepth,
+        evidenceAsOf: profile.evidenceAsOf,
+        externalCoverage: structuredClone(profile.externalCoverage),
+        externalEvidence: structuredClone(profile.externalEvidence),
+        internalEvidence,
+        audienceAuthorities: structuredClone(
+          profile.audienceAuthorities.filter((authority) =>
+            includedEvidenceIds.includes(authority.evidenceId),
+          ),
+        ),
+        currentClaims: buildG21CurrentClaimView(internalEvidence),
+        task:
+          'Produce the most specific decision diagnostic this fictional evidence earns. Keep statements, work evidence, measured results, corrections and gaps separate. Ask one plain question only when its answer could change the route. Preserve contradictions. Do not recommend a consequential action or judge named employees.',
+        authority: {
+          responsibilityGate: 1,
+          mayFrameDecision: true,
+          mayRecommendConsequentialAction: false,
+          mayPromoteDurableTruth: false,
+          mayEvaluateNamedEmployees: false,
+        },
+      }
+    }),
   )
 }
 
