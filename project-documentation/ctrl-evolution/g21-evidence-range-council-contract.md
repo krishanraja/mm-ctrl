@@ -1,6 +1,6 @@
 # G21 evidence range, responsibility and council contract
 
-Status: local contract implemented; four-profile public row passed after one preserved veto and targeted repair; database event storage, internal-depth population and product UI pending
+Status: local contract implemented; public row passed after one preserved veto and targeted repair; twelve matched internal profiles and 36 lifecycle inputs frozen; internal diagnostic, database event storage and product UI pending
 
 Date: 9 September 2026
 
@@ -185,6 +185,9 @@ The implemented router covers:
 - `src/features/operator-brain/rangeCouncilContract.test.ts` proves the 16 coordinates, 48 lifecycle cases, namespace exclusions, seven independent rulings, veto consistency, highest-risk gate and routed theory quarantine.
 - `src/features/operator-brain/g21PublicRowCanary.ts` freezes the first four source envelopes, coverage capabilities, allowed notices, unresolved facts, route-changing questions, expected behaviour and forbidden claims.
 - `src/features/operator-brain/g21PublicRowCanary.test.ts` proves public-only personhood, external-depth coverage, source-envelope integrity, evidence-backed notices and honest cold-start and sparse behaviour.
+- `src/features/operator-brain/g21InternalRangeCanary.ts` freezes four fictional matched families across the twelve non-zero internal coordinates, cumulative evidence depth, typed oracles, correction-ready lifecycle evidence and 36 oracle-free inputs.
+- `src/features/operator-brain/g21InternalRangeCanary.test.ts` proves fixed identities and external envelopes, nested internal evidence, earned depth, fictional-source disclosure, chronology, supersession, profile-specific lifecycle cases and oracle separation.
+- `project-documentation/ctrl-evolution/g21-internal-range-canary.md` records the fixture rationale, decision families, evidence contract, theory routes, verification and limits.
 - `project-documentation/ctrl-evolution/g21-public-row-canary.md` records the source and claim-evidence matrix, limitations, countercase and verification state.
 - `src/features/operator-brain/g21DiagnosticCanary.ts` owns the versioned oracle-free input, bounded output and plain-language surface contracts.
 - `src/features/operator-brain/g21CouncilCriteria.ts` assigns one versioned owned truth, pass boundary and hard-veto set to every judge.
@@ -195,7 +198,8 @@ The implemented router covers:
 ## What this does not prove
 
 - The public-row diagnostic canary passed its current contract only after one blocked run and a targeted repair. This does not prove diagnostic efficacy outside the four frozen envelopes.
-- No private or anonymised evidence has been collected.
+- No real private or anonymised evidence has been collected. The internal range is wholly fictional and cannot establish consented-customer behaviour.
+- No diagnostic has run against the twelve internal profiles or their 36 lifecycle inputs.
 - No diagnostic model has run against the 48 cases.
 - No council event has been written to Supabase.
 - No customer-facing or operator-facing G21 UI has been designed.
@@ -203,4 +207,4 @@ The implemented router covers:
 
 ## Next action
 
-Freeze the first matched internal-depth profiles for the remaining matrix. Use only consented or wholly fictional private evidence, control for company scale where possible and freeze expected and forbidden claims before diagnosis.
+Run the first oracle-free internal diagnostic canary on the twelve initial profiles, then collect seven sealed council rulings before any contradiction or correction expansion.

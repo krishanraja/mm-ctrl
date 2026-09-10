@@ -1,0 +1,30 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "human_agency",
+  "criterionVersion": "human-agency:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "pass",
+  "claims": [
+    "All five frozen file hashes match the manifest, and the manifest-order path:sha256 composite joined with LF and no trailing LF matches the recorded composite.",
+    "Across care, research, manufacturing and entertainment, the fixture assigns purpose, standards, exceptions where applicable and the final consequential decision to accountable humans.",
+    "All twelve route-changing questions ask the leader for a stopping rule, evidence distinction, threshold, accountability boundary or test condition that can change the route without selecting the consequential route for them.",
+    "The blind-input authority is fixed at R1 Explore and explicitly denies authority to recommend consequential action, promote durable truth or evaluate named employees.",
+    "No profile turns a leader into a rubber stamp, commits an action or converts role design into named-person employment judgement, so AGENCY-RANGE-01 is not triggered."
+  ],
+  "evidenceLocators": [
+    "input-manifest.json files[0..4].sha256 and artifactCompositeSha256",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:130-149",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:495-675",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:868-1048",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1260-1443",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1680-1860",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2315-2340",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:104-116",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:136-164",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:105-114"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-10T17:59:39.771Z"
+}

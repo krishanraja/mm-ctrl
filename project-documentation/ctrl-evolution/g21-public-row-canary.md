@@ -120,4 +120,4 @@ The blind run and targeted repair are recorded in `g21-diagnostic-council-run.md
 
 ## Next action
 
-Freeze matched internal-depth profiles for the remaining evidence matrix. Private depth must be consented or wholly fictional, and every expected and forbidden oracle must freeze before diagnosis.
+The matched fictional internal-depth range is now frozen in `g21-internal-range-canary.md`. Run the first oracle-free internal diagnostic on its twelve initial profiles and collect seven sealed council rulings before expanding to lifecycle cases.

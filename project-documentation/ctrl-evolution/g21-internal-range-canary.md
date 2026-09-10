@@ -1,0 +1,170 @@
+# G21 matched internal-evidence range canary
+
+Status: twelve-profile local fixture and 36 lifecycle inputs frozen; diagnostic and council run pending
+
+Date: 10 September 2026
+
+## Outcome
+
+The remaining twelve cells of the G21 evidence matrix now have deterministic test subjects. They answer a precise question: when the company and external context stay fixed, does deeper private evidence make CTRL materially more specific, more useful and more correct?
+
+The canary uses four wholly fictional leader and company families. Each family appears at three cumulative internal depths:
+
+1. `basic_intake`: what the leader explicitly says about the live decision, stakes, starting view and human boundary;
+2. `work_evidence`: the same intake plus actual-work artifacts, comparisons, operating measures, customer evidence and observed choices;
+3. `longitudinal_corrections`: the same evidence plus later outcomes, an explicit correction, supersession and an observed response.
+
+The identity, company and external source envelope remain byte-for-byte identical inside each family. A stronger diagnostic therefore has to earn its improvement from deeper internal evidence. It cannot benefit from a more famous leader, a larger company or a richer invented biography.
+
+## Safety and honesty boundary
+
+Every identity, company, private statement, metric and public-style source in this canary is fictional. Every profile says so, every external locator uses the reserved `.invalid` domain and every internal source uses a `fixture://` locator.
+
+The fixture does not use symbolic consent language. Consent is a real authority record, not theatre. Authored private depth is instead typed as `synthetic_fixture_authoring` and can never be mistaken for evidence supplied by a real person.
+
+The public row and internal range prove different things:
+
+- the public row uses current attributable sources and tests whether external research can sharpen a decision without inventing private personhood;
+- this internal range uses fictional public-style and private evidence to isolate the effect of input depth, contradiction and correction;
+- fictional public-style sources do not prove real research quality;
+- attributable public research does not prove that CTRL knows the leader privately.
+
+## Matched families
+
+| External depth | Fixed fictional family | Consequential decision | What deeper evidence must reveal |
+|---|---|---|---|
+| None or unusable | Elena Ward, Marrow & Tide Care | Whether to scale a GBP 1.8 million AI scheduling programme across six care districts | The route moves from an untested safety boundary, through unsafe schedules and family continuity evidence, to a corrected scale gate based on continuity for vulnerable clients |
+| Sparse | Noor Patel, Lumen Fieldwork | Whether to put about GBP 900,000 of annual revenue at risk by moving half the firm into a continuous research product | The route moves from an always-on access theory, through margin, repeat purchase and buyer evidence, to a corrected product thesis based on live decision challenge rather than another dashboard |
+| Useful | Jonah Okeke, Forgepoint Components | Whether to spend GBP 4.2 million and redesign 38 planning roles | The route moves from a people-hesitation theory, through data, incentives and observed recommendation use, to evidence that the same team can improve when operating conditions change |
+| Rich and longitudinal | Mei Alvarez, Aurora Storyworlds | Whether to move GBP 18 million of a flagship campaign into AI-led fan intelligence and precision exposure | The route moves from a category ambition, through audience-specific exposure tests, to a corrected judgement that sequence and audience matter more than content volume |
+
+These are not four demos with increasingly impressive copy. They are matched causal probes. Each family freezes three different questions and answer effects because a useful Brain should ask something more precise as the evidence improves.
+
+## Evidence contracts
+
+### Basic intake
+
+Basic intake may contain only an opening intake and direct leader reflection. It may frame the decision and the leader's provisional view. It cannot claim that a preference is a stable pattern, that a theory works in practice or that an operating result exists.
+
+### Work evidence
+
+Work depth must retain the intake foundation and add both:
+
+- at least one source from real work, such as a meeting, comparison, artifact, observed choice or customer record; and
+- at least one measured source, such as an operating metric.
+
+It cannot borrow a later correction to make the present view look settled.
+
+### Longitudinal corrections
+
+Longitudinal depth must retain the full work envelope, cover at least sixty days, include a decision outcome and carry a direct correction with an exact superseded source. The old record remains inspectable. The correction changes the current projection and exposes which downstream conclusions need repair.
+
+Recency alone never wins. A later record can contradict the current view without becoming authoritative. An explicit correction must follow and name what it supersedes.
+
+## Frozen oracle
+
+Before any diagnostic sees a profile, the fixture freezes:
+
+- the decision magnitude and exact decision focus;
+- the strongest supported current view;
+- the strongest countercase;
+- typed notices and their exact evidence identifiers;
+- what remains unknown;
+- one route-changing question in plain language;
+- what the answer would change;
+- the human decision boundary;
+- expected diagnostic behaviour; and
+- forbidden claims.
+
+Allowed notice standings are structural rather than stylistic: fictional public context, direct statement, work observation, measured result, supported pattern, authorised correction and evidence gap. A supported pattern needs at least two distinct kinds of evidence. A measured result needs a measured source. A correction needs a direct correction record.
+
+The input builder emits 36 oracle-free cases. It never includes the supported view, expected behaviour or forbidden claims. The diagnostic therefore cannot grade itself against the answer key.
+
+## Lifecycle proof
+
+Every profile has three ordered states:
+
+1. `initial`: only the evidence earned at that depth;
+2. `contradicted`: one new record directly conflicts with named existing evidence;
+3. `corrected`: an explicit later correction supersedes that conflict.
+
+This creates 36 internal cases. Every state has profile-specific expected notices and forbidden claims. Placeholder lifecycle prose is rejected.
+
+The cases include:
+
+- pressure-testing mistaken for a policy change;
+- a filtered safety dashboard contradicting the underlying schedule review;
+- web clicks relabelled as buyer demand;
+- low self-reported confidence misread as low agency;
+- a changed measurement basis masquerading as plant improvement;
+- mixed audience groups producing a false campaign lift; and
+- prior fandom leaking into a model that claims to predict purchase.
+
+These are designed to test whether CTRL preserves disagreement, questions the measurement, applies a correction narrowly and repairs the current view without deleting history.
+
+## Human agency
+
+Every blind input is limited to R1 Explore. The diagnostic may frame the decision and ask one useful question. It may not recommend a consequential action, promote durable truth or evaluate named employees.
+
+The fixtures keep purpose and the final call human-owned in different domains:
+
+- care leaders own safety, service and scale;
+- research leaders own the quality and commercial gate;
+- manufacturing leaders own role and customer-accountability design;
+- entertainment leaders own story, surprise and campaign release.
+
+AI may analyse, compare, prepare and test inside those boundaries. It does not inherit the final call because it found a pattern.
+
+## Just-in-time historical theory
+
+The following history is useful to the judges only when its trigger is present. It remains advisory and cannot override the current contract:
+
+- `docs/history/2026-09-07-_INTAKE-HARNESS-SPEC.md`: recognition before composition, optional depth and visible payoff for extra context;
+- `docs/history/2026-09-07-intel-methodology-memory-identity.md`: concrete examples over adjectives, class-level corrections, cold-versus-loaded testing and the warning that stored context is not the same as learning;
+- `docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md`: contradiction isolation, temporal validity, provenance, preserved history and correction-aware retrieval;
+- `docs/history/2026-09-07-app-data-learning.md`: the prior failure where capture and attractive learning UI existed but outcomes and corrections did not flow back into current memory;
+- `docs/history/2026-09-07-_INTERROGATION_PROMPT.md`: one question per interaction, optional notes, autosaved rationale and adaptive density.
+
+The current Living Brain model and G21 council contract remain authoritative. Historical claims, vendor comparisons and status labels require current verification before they can influence implementation.
+
+## Implemented artifacts
+
+- `src/features/operator-brain/g21InternalRangeCanary.ts`: types, four matched families, twelve profiles, evidence-depth validators, typed oracles, contradiction and correction events, 36 range cases and 36 oracle-free inputs.
+- `src/features/operator-brain/g21InternalRangeCanary.test.ts`: matrix, matching, nesting, namespace, depth, chronology, question, oracle-separation and adversarial mutation checks.
+- `src/features/operator-brain/rangeCouncilContract.ts`: synthetic fixtures are now explicitly prohibited from claiming consent.
+- `scripts/check-g21-internal-range.mjs`: Vite-independent compilation, baseline validation and five adversarial mutations.
+- `npm run brain:g21:check`: includes the new internal-range suite.
+- `npm run brain:g21:internal:check`: runs the direct deterministic gate when the Vite config loader is unavailable.
+
+## Verification
+
+Direct TypeScript compilation and runtime validation report:
+
+- 12 profiles;
+- four matched families;
+- four profiles at each non-zero internal depth;
+- zero profile-contract errors;
+- zero 16-coordinate coverage errors;
+- 36 evidence-specific lifecycle cases;
+- 36 oracle-free model inputs;
+- 12 inputs at each lifecycle state;
+- zero oracle leakage; and
+- five deliberately invalid mutations rejected.
+
+Changed-file ESLint and the repository typecheck pass with no new errors. The normal Vitest command still fails before test collection because the active sandbox prevents esbuild from traversing the canonical repository parent and loading `vitest.config.ts`. That is an execution-environment limitation, not a passing test result. The deterministic validators are therefore run directly, and the Vitest suite remains to be executed in CI or an unrestricted local runner.
+
+No database row, auth account, deployment, customer route or production state changed.
+
+## What this does not prove
+
+- No diagnostic has yet run against the twelve profiles or 36 lifecycle cases.
+- The seven judges have not ruled on an internal-evidence output.
+- The matched fixtures do not prove that CTRL improves human judgement or company outcomes.
+- The synthetic numbers are test conditions, not benchmarks or market claims.
+- The 48-case full model run still needs structured public-row contradiction and correction inputs, not merely the existing range-shape placeholders.
+- No G21 event family exists in Supabase.
+- No customer or operator interface is approved for this range.
+
+## Next action
+
+Run the first oracle-free internal diagnostic canary on the twelve `initial` profiles. Freeze the outputs, collect seven sealed council rulings, add founder calibration only after those rulings freeze and stop on any valid veto before expanding to the 24 contradiction and correction cases.

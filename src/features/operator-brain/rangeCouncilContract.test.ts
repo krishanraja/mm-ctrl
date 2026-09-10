@@ -100,6 +100,24 @@ describe('evidence range contract', () => {
     )
     expect(EVIDENCE_NAMESPACES).toHaveLength(4)
   })
+
+  it('does not let a fictional fixture borrow the language of consent', () => {
+    const fixture: RangeProfileManifest = {
+      profileId: 'RANGE-SYNTH-CONSENT',
+      displayLabel: 'Fictional leader',
+      namespace: 'synthetic_fixture',
+      externalDepth: 'sparse',
+      internalDepth: 'basic_intake',
+      realNamedPerson: false,
+      publicSourceLocators: [],
+      consentRecordId: 'CONSENT-NOT-REAL',
+      syntheticDisclosure: 'Wholly fictional test identity.',
+    }
+
+    expect(validateProfileManifest(fixture)).toContain(
+      'synthetic_fixture_cannot_claim_consent',
+    )
+  })
 })
 
 describe('durable council contract', () => {

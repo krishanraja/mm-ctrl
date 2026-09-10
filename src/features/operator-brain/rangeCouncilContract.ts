@@ -89,6 +89,7 @@ export function validateProfileManifest(profile: RangeProfileManifest): string[]
 
   if (profile.namespace === 'synthetic_fixture') {
     if (profile.realNamedPerson) errors.push('synthetic_fixture_cannot_name_real_person')
+    if (profile.consentRecordId) errors.push('synthetic_fixture_cannot_claim_consent')
     if (!profile.syntheticDisclosure?.toLowerCase().includes('fictional')) {
       errors.push('synthetic_fixture_requires_fictional_disclosure')
     }

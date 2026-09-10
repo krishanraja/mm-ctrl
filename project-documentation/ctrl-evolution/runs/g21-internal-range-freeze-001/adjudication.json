@@ -1,0 +1,88 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "phase": "adjudication",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "rulingsCompositeSha256": "dcf23495a6503147f6102853a6f7cea1589d9c485d7a215de15f9246f46e28b1",
+  "rulings": [
+    {
+      "file": "behavioural_and_implementation_reality.json",
+      "sha256": "74333b8590d1c9e0167238fd38a75bd933774a780227cbc1754295380d8ddce1",
+      "judge": "behavioural_and_implementation_reality",
+      "verdict": "fail",
+      "vetoRuleId": "REALITY-RANGE-01"
+    },
+    {
+      "file": "consequential_usefulness.json",
+      "sha256": "0ecf978b12ad7be5777d7c425126efcb97fc5c968f7aba5d64155000cde1a8c9",
+      "judge": "consequential_usefulness",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "epistemic_integrity.json",
+      "sha256": "b9b2f0f993a7e0b7443d5947f92cf13dd4e44e6f2bb471ca394db0f4406d4c3a",
+      "judge": "epistemic_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "EPISTEMIC-RANGE-01"
+    },
+    {
+      "file": "human_agency.json",
+      "sha256": "f73dc7ceb55644150417d00b21335443453314ab08c481f163446f354a69c503",
+      "judge": "human_agency",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "human_comprehension_and_access.json",
+      "sha256": "12a2f5161d0c2348eca9c348ba0ece86ab1b0f8dbcba518f7b98de6eb6a43ef4",
+      "judge": "human_comprehension_and_access",
+      "verdict": "fail",
+      "vetoRuleId": "COMPREHENSION-RANGE-01"
+    },
+    {
+      "file": "living_brain_integrity.json",
+      "sha256": "b910290395652f2fea5e3bbec8302e1d5fc76b9f1877a17c02b4bddf77358575",
+      "judge": "living_brain_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "BRAIN-RANGE-01"
+    },
+    {
+      "file": "subject_audience_lifecycle_safety.json",
+      "sha256": "b6766bf48e31cc969b72e801e906b8c3c73ba6a86d14f0036d6083eb68f6eec5",
+      "judge": "subject_audience_lifecycle_safety",
+      "verdict": "fail",
+      "vetoRuleId": "SAFETY-RANGE-01"
+    }
+  ],
+  "result": {
+    "status": "blocked",
+    "vetoes": [
+      {
+        "ruleId": "EPISTEMIC-RANGE-01",
+        "failure": "Future-dated internal and external evidence is accepted when its timestamp strings are valid and locally ordered, because no timestamp is bounded by the run as-of time.",
+        "resolvingTest": "Clone a valid profile, set one internal record validAt and recordedAt after input-manifest.json recordedAt, and separately set one external source publishedOn and retrievedOn after that time. Validation must reject both mutations with explicit future-evidence errors while the unchanged frozen profiles still validate with zero errors."
+      },
+      {
+        "ruleId": "SAFETY-RANGE-01",
+        "failure": "A leader_private evidence record can be changed to company_private without any audience authority, and validateG21InternalRangeProfile does not reject the widened audience.",
+        "resolvingTest": "Clone a valid profile, change one leader_private record to company_private without an audience-authority record, and require validation to reject it. Also mutate an audience to public and require rejection, then build initial, contradicted and corrected inputs and assert every evidence ID retains its original authorised audience."
+      },
+      {
+        "ruleId": "COMPREHENSION-RANGE-01",
+        "failure": "Four main questions are not one immediately accessible leader ask: CARE work evidence asks the leader to diagnose an unestablished technical cause, FORGE longitudinal evidence asks the leader to classify undefined exception and risk abstractions, and both STORY work and longitudinal questions rely on unexplained ticket-intent language while packing test design or audience trade-offs into the ask.",
+        "resolvingTest": "Rewrite CARE work evidence, FORGE longitudinal evidence, STORY work evidence and STORY longitudinal evidence so each main question uses ordinary words to request one human-owned choice or threshold. Put cause analysis, metric definition, comparison design and audience trade-offs in the supporting analysis. Freeze new hashes, then run a fresh blind check over all twelve questions with at least two independent readers aged 11 to 13: without facilitator definitions, each reader must accurately paraphrase the single ask and give an answer in the expected form for every question. Require 12 of 12 questions to pass for both readers, and add regression cases showing that the four original wordings are rejected rather than accepted by punctuation and length alone."
+      },
+      {
+        "ruleId": "BRAIN-RANGE-01",
+        "failure": "Broken lineage can pass because corrections supersede whole evidence records while the corrected meaning is only one claim inside each record. The frozen model cannot retire the changed claim without risking erasure of still-current claims from the same source.",
+        "resolvingTest": "Add claim-addressable supersession or an explicit retained-claims projection, migrate all four longitudinal corrections, and add one adversarial regression per family that constructs the corrected current view and proves that only the changed claim is retired, every unaffected claim from the same source remains current with its provenance, the original record remains in history, and no oracle field enters blind input. The validator must reject the current record-level-only representation."
+      },
+      {
+        "ruleId": "REALITY-RANGE-01",
+        "failure": "The validator accepts the correction identifier in the contradicted state, allowing a lifecycle story to skip the contradiction while still passing the gate.",
+        "resolvingTest": "Require initial identifiers to be exactly empty, contradicted identifiers to be exactly the conflict identifier and corrected identifiers to be exactly conflict then correction. Reject an adversarial contradicted-state swap in both the direct gate and Vitest."
+      }
+    ]
+  },
+  "recordedAt": "2026-09-10T18:12:39.617Z"
+}

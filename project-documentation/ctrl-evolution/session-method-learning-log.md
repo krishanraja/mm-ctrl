@@ -33,6 +33,8 @@ This chronology preserves why a reaction occurred, not only what copy or pixel c
 | A sparse profile looked visually impressive but personally empty | Decorative imagery and theatre masked an evidence deficit | Sparse evidence must produce a precise gap, an honest question or abstention, not simulated insight |
 | Real-company research risked becoming another polished persona | Public company context can feel specific while still supporting no private claim about the leader | Store company facts, public statements, bounded inferences and private personhood as different types; richer research sharpens the decision but never invents the person |
 | The first G21 diagnostic passed six specialist criteria but failed comprehension | Analytical correctness hid that the richest questions still made the leader decode finance and consulting language | Make the immediate frame and one question a versioned plain-language contract; preserve evidence, uncertainty and analytical depth one layer below |
+| One synthetic company could not expose the evidence-range edge cases Krish wanted to compare | A single invented biography blurred external research quality, private input depth and model confidence into one polished story | Test public-only research separately, then use matched fictional families where identity and company stay fixed while internal evidence grows |
+| The human-agency concern kept returning while customers said AI was not good enough yet | Tool capability was being treated as the adoption question, when the durable capability is how a leader frames, delegates, inspects, corrects and owns consequential work | Keep purpose, standards, exceptions and the final call human-owned; use the first-and-last-ten-percent phrase only as shorthand, never a literal score |
 
 The recurring pattern is not “Krish wants less detail.” He rejects detail that arrives before its use, copy that announces rather than proves and intelligence that is abstract rather than specific. The product should preserve deep layers while making the immediate state devastatingly simple.
 
@@ -54,6 +56,8 @@ These are observed candidates, not yet confirmed reusable standards:
 - Route historical theory just in time by criterion and trigger; never load the archive wholesale or let historical status labels regain authority.
 - Classify evidence depth by decision-bearing coverage rather than URL count or page length. A verbose company website can still be sparse evidence.
 - Preserve failed council runs and each judge's sealed ruling as history. Repair into a new immutable run, then rerun every criterion so one local fix cannot hide a regression.
+- Hold identity, company and external evidence fixed when testing internal evidence depth. Otherwise a more impressive diagnostic cannot be attributed to better learning.
+- Freeze profile-specific expected and forbidden behaviour before building oracle-free model inputs. A model must never receive the answer key it will later be judged against.
 
 ## End-of-session gate
 
