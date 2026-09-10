@@ -1,6 +1,6 @@
 # G21 evidence range, responsibility and council contract
 
-Status: public row passed after one preserved veto and repair; internal range runs 001 and 002 preserved as blocked; v3 internal repair awaiting fresh freeze
+Status: public row passed after one preserved veto and repair; internal range runs 001, 002 and 003 preserved as blocked; v4 contract repair in progress
 
 Date: 10 September 2026
 
@@ -192,6 +192,7 @@ The implemented router covers:
 - `project-documentation/ctrl-evolution/g21-internal-range-canary.md` records the fixture rationale, decision families, evidence contract, theory routes, verification and limits.
 - `runs/g21-internal-range-freeze-001/` and local commit `a78334c` preserve the first internal fixture review, two passes, five valid vetoes, blocked adjudication, standards prosecution and founder calibration.
 - `runs/g21-internal-range-freeze-002/` and local commit `89657b4` preserve the second internal fixture review, two adult proxy paraphrase passes, seven valid specialist vetoes, blocked adjudication, standards prosecution and founder calibration. Its verifier resolves artifact bytes from the recorded commit rather than the repaired working tree.
+- `runs/g21-internal-range-freeze-003/` preserves the third internal fixture review, two adult answerability screens, six substantive vetoes, one procedurally correct inconclusive ruling, blocked adjudication, an explicit review-protocol failure, standards prosecution and founder calibration. The semantic review pack exposed prior verdict history, so its rulings remain useful adversarial evidence but cannot be represented as seven clean blind-independent judgements.
 - `project-documentation/ctrl-evolution/g21-public-row-canary.md` records the source and claim-evidence matrix, limitations, countercase and verification state.
 - `src/features/operator-brain/g21DiagnosticCanary.ts` owns the versioned oracle-free input, bounded output and plain-language surface contracts.
 - `src/features/operator-brain/g21CouncilCriteria.ts` assigns one versioned owned truth, pass boundary and hard-veto set to every judge.
@@ -203,7 +204,8 @@ The implemented router covers:
 
 - The public-row diagnostic canary passed its current contract only after one blocked run and a targeted repair. This does not prove diagnostic efficacy outside the four frozen envelopes.
 - No real private or anonymised evidence has been collected. The internal range is wholly fictional and cannot establish consented-customer behaviour.
-- The repaired v3 internal range has not yet completed a third sealed council.
+- Run 003 did not clear the internal range. Five vetoes were materially upheld after bounded reproduction, the agency veto was narrowed but remained blocking and Human Comprehension and Access remained inconclusive after detecting review-pack contamination.
+- The two Run 003 adult proxy screens established visible answerability for all twelve questions. They did not establish consequential route alignment, child comprehension or council clearance.
 - No diagnostic model has run against the twelve internal profiles or their 36 lifecycle inputs.
 - No diagnostic model has run against the 48 cases.
 - No council event has been written to Supabase.
@@ -212,4 +214,4 @@ The implemented router covers:
 
 ## Next action
 
-Commit the verified v3 candidate and freeze internal range run 003. Collect fresh question-only adult proxy reviews as an ambiguity screen, then seven fresh sealed rulings. Freeze those records before Standards Prosecution and Founder Calibration. Stop on any valid veto before a diagnostic model run or product surface.
+Implement the four dependency-ordered Run 003 repairs: separate canonical fixture verification, total runtime validation and semantic review; enforce one trusted evidence and authority envelope; bind every answer and unknown path to its exact consequential route; then create a clean Run 004 whose semantic allowlist contains no prior verdict history. Stop on any valid veto before a diagnostic model run or product surface.

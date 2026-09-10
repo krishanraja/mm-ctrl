@@ -32,3 +32,12 @@ Owned truth: a busy non-technical person can understand the immediate state and 
 - Protected strength: accessible language must preserve the consequential decision and full analytical depth one layer below the immediate ask.
 - Evidence limit: both adult proxy readers paraphrased all twelve. That did not resolve answerability and is not child usability evidence.
 - Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-002/judges/human_comprehension_and_access.json).
+
+## G21-INTERNAL-RANGE-FREEZE-003
+
+- Verdict: inconclusive. No veto was cast.
+- Protocol standing: the judge detected prior verdict history in the semantic review pack and correctly declined to assess the questions as an independent reviewer.
+- Durable stance: procedural honesty outranks a convenient pass. Once a reviewer sees prior rulings, a fresh history-free review is required.
+- Separate evidence: two adult proxy readers found all twelve exact questions visibly answerable. That is an ambiguity screen only and does not prove child comprehension, consequential usefulness or clean council clearance.
+- Required resolution: present the repaired twelve-question pack to a fresh isolated reviewer whose semantic allowlist contains no prior verdicts, judge identities, founder reactions or repair narrative.
+- Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-003/judges/human_comprehension_and_access.json).

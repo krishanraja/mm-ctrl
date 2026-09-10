@@ -31,3 +31,13 @@ Owned truth: identity, consent, audience, provenance, correction and retention b
 - Required resolution: require exact synthetic manifest, identity, evidence and authority fields, exact positive disclosures and a builder that refuses invalid material.
 - Protected strength: keep fictional fixtures unmistakable without inventing symbolic consent theatre.
 - Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-002/judges/subject_audience_lifecycle_safety.json).
+
+## G21-INTERNAL-RANGE-FREEZE-003
+
+- Verdict: fail. Veto: `SAFETY-RANGE-01`.
+- Protocol standing: the ruling is preserved as adversarial evidence, not counted as a clean blind-independent judgement, because the semantic review pack exposed prior verdict history.
+- Failure found: malformed nested values could throw; counterfeit authority metadata could pass; and the no-profile path accepted a real-person costume and reversed lifecycle evidence.
+- Post-freeze disposition: materially upheld by Standards Prosecution through bounded reproduction.
+- Durable stance: fictional identity, audience authority and lifecycle order are positive fail-closed invariants, not optional fixture comparisons.
+- Required resolution: make arbitrary-input validation total, bind exact authority identity, type and time, and enforce identity plus lifecycle invariants without an optional trust fallback.
+- Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-003/judges/subject_audience_lifecycle_safety.json).

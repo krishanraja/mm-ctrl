@@ -31,3 +31,13 @@ Owned truth: every claim earns its standing from attributable evidence, visible 
 - Required resolution: bind one trusted cutoff, require genuinely independent capable sources, enforce provenance-to-subject compatibility and validate claim-level target chronology before emission.
 - Protected strength: keep observed facts, direct statements, interpretations, corrections and unknowns visibly distinct even when the surface becomes simpler.
 - Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-002/judges/epistemic_integrity.json).
+
+## G21-INTERNAL-RANGE-FREEZE-003
+
+- Verdict: fail. Veto: `EPISTEMIC-RANGE-01`.
+- Protocol standing: the ruling is preserved as adversarial evidence, not counted as a clean blind-independent judgement, because the semantic review pack exposed prior verdict history.
+- Failure found: standalone runtime validation permitted future external evidence, incapable source relabelling, cross-subject correction and categorical causal prose under an observational claim kind.
+- Post-freeze disposition: materially upheld by Standards Prosecution through bounded reproduction.
+- Durable stance: source capability, subject, claim kind, chronology and evidence cutoff must be enforced independently before a claim can enter the diagnostic envelope.
+- Required resolution: validate the complete trusted evidence envelope before emission and bind correction targets by subject, kind and chronology.
+- Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-003/judges/epistemic_integrity.json).

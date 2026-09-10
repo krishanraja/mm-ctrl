@@ -1,6 +1,6 @@
 # G21 matched internal-evidence range canary
 
-Status: council runs 001 and 002 preserved as blocked; v3 repair implemented and awaiting a fresh freeze
+Status: council runs 001, 002 and 003 preserved as blocked; v4 contract repair in progress
 
 Date: 10 September 2026
 
@@ -195,13 +195,15 @@ The council contract direct gate passes nine adversarial contract tests. It reje
 
 Run 002 is independently reproducible from its recorded artifact commit after the v3 repair. Its nine artifact hashes, seven ruling hashes and deterministic blocked adjudication all verify without reading repaired working-tree bytes.
 
+Run 003 froze the verified v3 candidate at commit `ad561fc`. Both adult proxy readers found all twelve literal questions answerable, but the specialist council exposed four deeper failures: the optional expected-profile path confused fixture truth with runtime safety; the evidence and authority envelope was not total or independently bound; four answer contracts did not change the consequential route they named; and the semantic review allowlist included documents containing prior verdict history. Six substantive rulings remain preserved as adversarial evidence, but the run is invalid as proof of seven blind-independent judgements. The Human Comprehension and Access judge correctly returned inconclusive after detecting the contamination.
+
 Changed-file ESLint and the repository typecheck pass with no new errors. The normal Vitest command still fails before test collection because the active sandbox prevents esbuild from traversing the canonical repository parent and loading `vitest.config.ts`. That is an execution-environment limitation, not a passing test result. The deterministic validators are therefore run directly, and the Vitest suite remains to be executed in CI or an unrestricted local runner.
 
 No database row, auth account, deployment, customer route or production state changed.
 
 ## What this does not prove
 
-- The seven judges have not yet ruled on the repaired v3 artifact.
+- Run 003 did not pass. Five vetoes were materially upheld, the agency veto was narrowed but remained blocking and the comprehension ruling was inconclusive.
 - No diagnostic model has run against the twelve profiles or 36 lifecycle cases.
 - The matched fixtures do not prove that CTRL improves human judgement or company outcomes.
 - The synthetic numbers are test conditions, not benchmarks or market claims.
@@ -212,4 +214,4 @@ No database row, auth account, deployment, customer route or production state ch
 
 ## Next action
 
-Commit the verified v3 candidate, then freeze it as run 003 without altering either blocked predecessor. Collect fresh question-only adult proxy reviews as an ambiguity screen, not child evidence. Collect seven fresh sealed council rulings and freeze them before Standards Prosecution and Founder Calibration. Stop on any valid veto. A diagnostic model run remains a later gate after the evidence-range substrate itself passes.
+Separate the canonical frozen-fixture verifier, total structural runtime validator and history-free semantic judge allowlist. Repair the trusted evidence envelope and four route-misaligned answer contracts, run the consolidated mutation matrix, and freeze a new Run 004 without altering any blocked predecessor. A diagnostic model run remains a later gate after the evidence-range substrate itself passes.

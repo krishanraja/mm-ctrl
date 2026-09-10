@@ -31,3 +31,13 @@ Owned truth: the proposed behaviour and system must survive real work, sparse st
 - Required resolution: freeze exact lifecycle evidence for this canary, validate one explicit blind-input allowlist and prove every invalid profile is refused before input construction.
 - Protected strength: keep the exact initial, conflict, then correction sequence and never substitute polished fixture prose for observed execution.
 - Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-002/judges/behavioural_and_implementation_reality.json).
+
+## G21-INTERNAL-RANGE-FREEZE-003
+
+- Verdict: fail. Veto: `REALITY-RANGE-01`.
+- Protocol standing: the ruling is preserved as adversarial evidence, not counted as a clean blind-independent judgement, because the semantic review pack exposed prior verdict history.
+- Failure found: omitting the optional expected profile let lifecycle and depth relabelling pass, while malformed exact-key values could throw instead of failing closed.
+- Post-freeze disposition: materially upheld by Standards Prosecution through bounded reproduction.
+- Durable stance: canonical fixture verification and total runtime validation are different contracts. Neither may silently inherit the other's trust anchor or failure mode.
+- Required resolution: require an explicit canonical verifier, make the arbitrary-input validator total and structural, and reject relabelling and wrong types without throwing.
+- Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-003/judges/behavioural_and_implementation_reality.json).

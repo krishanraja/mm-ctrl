@@ -31,3 +31,13 @@ Owned truth: memory remains versioned, inspectable, portable, correctable and re
 - Required resolution: decompose compound conflicts and supersede only the false inference while retaining surviving claims with their original source, audience and history.
 - Protected strength: preserve contradiction and correction as visible history while deriving the current view from explicit relations.
 - Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-002/judges/living_brain_integrity.json).
+
+## G21-INTERNAL-RANGE-FREEZE-003
+
+- Verdict: fail. Veto: `BRAIN-RANGE-01`.
+- Protocol standing: the ruling is preserved as adversarial evidence, not counted as a clean blind-independent judgement, because the semantic review pack exposed prior verdict history.
+- Failure found: recomputed current views could hide a correction aimed at the wrong claim, and synchronised source-plus-claim edits could copy oracle conclusions into emitted evidence.
+- Post-freeze disposition: materially upheld by Standards Prosecution through bounded reproduction.
+- Durable stance: claim-level addressability is incomplete unless the relation itself is valid and the immutable canary substrate cannot drift toward its answer key.
+- Required resolution: enforce same-subject correction lineage, freeze the canonical base substrate and prove recursively that oracle material is unreachable from every blind input.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-003/judges/living_brain_integrity.json).

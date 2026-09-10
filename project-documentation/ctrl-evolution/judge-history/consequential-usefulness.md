@@ -31,3 +31,13 @@ Owned truth: the Brain sharpens a live high-value decision rather than producing
 - Required resolution: freeze question, answer shape and answer effect together inside the evaluation fixture, then keep production usefulness as a semantic criterion rather than a forbidden-phrase list.
 - Protected strength: retain the four materially different decisions and the way deeper evidence changes the immediate route.
 - Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-002/judges/consequential_usefulness.json).
+
+## G21-INTERNAL-RANGE-FREEZE-003
+
+- Verdict: fail. Veto: `USEFULNESS-RANGE-01`.
+- Protocol standing: the ruling is preserved as adversarial evidence, not counted as a clean blind-independent judgement, because the semantic review pack exposed prior verdict history.
+- Failure found: four answerable-looking questions still failed to resolve their named consequential uncertainty. Continuity could depend on executive rescue, purchase agreement stood in for delivered value, a content test failed to govern the GBP 18 million route and stated intent stood in for purchase.
+- Post-freeze disposition: materially upheld by Standards Prosecution.
+- Durable stance: answerability is not consequence. Every allowed answer and unknown path must select, stop, bound or reshape the exact named route.
+- Required resolution: freeze decision focus, unresolved uncertainty, answer contract, unknown evidence request, answer effect and human decision boundary together, then test their route effects deterministically.
+- Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-003/judges/consequential_usefulness.json).
