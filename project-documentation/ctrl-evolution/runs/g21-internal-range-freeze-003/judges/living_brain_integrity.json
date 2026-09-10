@@ -1,0 +1,44 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "judge": "living_brain_integrity",
+  "criterionVersion": "living-brain-integrity:g21-internal-range-freeze-v3",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "verdict": "fail",
+  "claims": [
+    "All ten Git blob SHA-256 values at artifact commit ad561fce1d82bcdcdfea800ad4e4aed64e2a5173 match input-manifest.json, and the ordered LF-joined path:sha256 composite recomputes to b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612.",
+    "The frozen baseline uses claim-addressable challenge and supersession, rejects record-level supersession, retains superseded claims in the resolved view, and carries each claim's evidenceId, sourceLocator and audience into that view.",
+    "The split-claim Forge I2 and Story I3 lifecycle cases narrowly supersede the interpretation while retaining the observation as current with its original source locator and audience.",
+    "The frozen maps cover lifecycle oracle bytes, oracle bytes, lifecycle evidence bytes and relation arrays, but omit the ordinary internalEvidence source bytes and claim text. Base source content is checked for presence, not equality to a canonical frozen source, while family nesting compares the supplied profiles only to each other.",
+    "A reproduction against the exact frozen TypeScript bytes replaced INT-CARE-001.content and INT-CARE-001-CLAIM-01.text in all three care profiles with the CARE-I1 strongestSupportedView. validateG21InternalRangeCanary returned no errors, buildG21InternalBlindInputs emitted 36 inputs, the oracle value appeared in the CARE-I1 initial input as a current direct statement, and validateG21InternalBlindInput returned no errors.",
+    "A second reproduction retargeted INT-CARE-008-CLAIM-01 from INT-CARE-002-CLAIM-01 to the still-valid INT-CARE-002-CLAIM-03 and recomputed currentClaims. validateG21InternalBlindInput(candidate) returned no errors when its optional expectedProfile argument was omitted, and the wrong claim became superseded while the intended invalid claim became current.",
+    "The existing oracle regressions reject extra top-level oracle field names and scan for three oracle field-name literals, but they do not recursively exclude oracle values embedded in allowed evidence or claim fields.",
+    "The frozen fixture does not itself claim real diagnostic learning, and its documentation explicitly limits what the synthetic evidence proves. That restraint does not cure the validator paths that admit misdirected lineage, a broken current view and oracle-bearing source drift."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json:artifactCompositeSha256, compositeRecipe and files[0..9]",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md:82-86",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:117-152",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:381-403",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2348-2382",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2563-2609",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2622-2727",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3127-3152",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3158-3233",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3287-3417",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3420-3465",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:404-440",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:546-586",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:628-670",
+    "scripts/check-g21-internal-range.mjs:74-83",
+    "scripts/check-g21-internal-range.mjs:478-491",
+    "scripts/check-g21-internal-range.mjs:583-591"
+  ],
+  "veto": {
+    "ruleId": "BRAIN-RANGE-01",
+    "failure": "The structural boundary accepts both misdirected lineage and oracle-bearing source drift. validateG21InternalBlindInput(candidate) accepts a corrected CARE-I3 input after INT-CARE-008-CLAIM-01 is retargeted from INT-CARE-002-CLAIM-01 to the still-valid INT-CARE-002-CLAIM-03 and currentClaims is recomputed. Separately, synchronized edits to INT-CARE-001.content and its claim text across the three care depths pass population validation and blind-input construction even when the inserted value is the CARE-I1 strongestSupportedView. The emitted value is marked as a current direct statement. This allows challenge or supersession lineage to be misdirected, broken current views to pass and oracle data to leak into input.",
+    "resolvingTest": "Add and pass a deterministic integrity regression against the frozen bytes that performs both mutations: first retarget INT-CARE-008-CLAIM-01.supersedesClaimIds to INT-CARE-002-CLAIM-03, recompute currentClaims, and require validateG21InternalBlindInput(candidate) to reject without an expectedProfile argument; second copy the CARE-I1 strongestSupportedView into INT-CARE-001.content and INT-CARE-001-CLAIM-01.text in all three care profiles, and require validateG21InternalRangeCanary to reject and buildG21InternalBlindInputs to throw before emitting any input. The direct gate must also recursively prove that none of the oracle values occurs anywhere in any of the 36 blind inputs."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add and pass a deterministic integrity regression against the frozen bytes that performs both mutations: first retarget INT-CARE-008-CLAIM-01.supersedesClaimIds to INT-CARE-002-CLAIM-03, recompute currentClaims, and require validateG21InternalBlindInput(candidate) to reject without an expectedProfile argument; second copy the CARE-I1 strongestSupportedView into INT-CARE-001.content and INT-CARE-001-CLAIM-01.text in all three care profiles, and require validateG21InternalRangeCanary to reject and buildG21InternalBlindInputs to throw before emitting any input. The direct gate must also recursively prove that none of the oracle values occurs anywhere in any of the 36 blind inputs.",
+  "recordedAt": "2026-09-10T21:10:38.486Z"
+}
