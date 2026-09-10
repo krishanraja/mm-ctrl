@@ -303,6 +303,7 @@ try {
       decisionFocus: profile.oracle.decisionFocus,
       question: profile.oracle.routeChangingQuestion,
       expectedAnswerShape: profile.oracle.expectedAnswerShape,
+      ...(runVersion >= 3 ? { answerContract: profile.oracle.answerContract } : {}),
     }))
     assert(
       JSON.stringify(questionPack.questions) === JSON.stringify(expectedQuestions),
