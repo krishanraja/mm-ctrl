@@ -1,0 +1,283 @@
+{
+  "role": "standards_prosecutor",
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "rulingsCompositeSha256": "8b964a0e1bc22044683e8a879f4340804713d0f142d19ffd7360a5aff9cd4071",
+  "finding": {
+    "status": "blocked",
+    "disposition": "uphold_all_seven_vetoes",
+    "summary": "All seven adjudicated vetoes are supported by the frozen bytes. Run 002 fixes the run 001 council-envelope defect and deterministically preserves the seven raw vetoes, but its green range gate still admits false evidence, authority, usefulness, lifecycle and blind-input states, and six frozen questions still fail the declared comprehension rule. The smallest repair is not seven product systems. It is one fail-closed fixture and input envelope, one claim-safe evidence model, and one bounded question contract, applied in dependency order and kept separate from production language policing.",
+    "falsePassesConfirmed": [
+      "A profile-controlled evidenceAsOf can move beyond the frozen run clock and admit future evidence.",
+      "A supported pattern can cite different source types that resolve to one source locator.",
+      "Allowed source-type enums do not establish source capability or semantic fit.",
+      "Allowed-notice text can claim causation that its cited evidence and unresolved list do not establish.",
+      "A direct correction can supersede an unrelated claim because target meaning and valid-time order are not structurally bound.",
+      "A generic or route-irrelevant question can satisfy the implemented question checks.",
+      "Agency-invalid boundary, question and task variants are not rejected by an input-level authority contract.",
+      "Unknown real-person or consent assertions and a negated fictional disclosure can pass the inspected runtime checks.",
+      "Conflict and correction prose plus claim text can be swapped while identifiers and lifecycle-oracle order remain valid.",
+      "The implemented oracle-leak predicate omits routeChangingQuestion and is not an exact input allowlist.",
+      "Lifecycle whole-claim supersession retires still-valid Forge and Story evidence while passing validation."
+    ],
+    "invalidVetoes": [],
+    "mechanicalVerification": {
+      "inputManifestSha256": "f9dd52b6a46916f2935ac0efe799926994d020d9b46375f43480104e755a62ce",
+      "rulingsManifestSha256": "d7007496b4671814c80e2c92ca1d95da4bfe7011858ee07b468d77263718c5e8",
+      "adjudicationSha256": "13f830ee8ff7e82f5146da63740eee335e026a5a33944999ffc3c0cc2d0fad9a",
+      "founderCalibrationSha256": "25c7b9eb877b406a57bade5321f4e64cfbe807caaa4a0f4427fd8b711fb42e65",
+      "artifactFilesVerified": 9,
+      "judgeFilesVerified": 7,
+      "artifactCompositeVerified": true,
+      "rulingsCompositeVerified": true,
+      "runIdsVerified": true,
+      "criterionVersionsVerified": true,
+      "rulingFieldSetsVerified": true,
+      "topLevelResolvingTestsMatchVetoes": true,
+      "adjudicationRulingLinksVerified": true,
+      "adjudicationRawResultVerified": true,
+      "directRangeGate": {
+        "command": "node scripts/check-g21-internal-range.mjs",
+        "status": "passed",
+        "profiles": 12,
+        "families": 4,
+        "cases": 36,
+        "inputs": 36,
+        "adversarialMutationsRejected": 25
+      },
+      "directCouncilGate": {
+        "command": "node scripts/check-g21-internal-council.mjs G21-INTERNAL-RANGE-FREEZE-002",
+        "status": "passed",
+        "contractSelfTests": 4,
+        "artifacts": 9,
+        "rulings": 7,
+        "result": "blocked"
+      },
+      "limitation": "These checks prove the repository bytes, manifest recipes, frozen ruling schema and deterministic adjudication observed here. They do not independently prove immutability outside this repository state, diagnostic quality, customer comprehension or production safety."
+    }
+  },
+  "verifiedVetoes": [
+    {
+      "ruleId": "REALITY-RANGE-01",
+      "judge": "behavioural_and_implementation_reality",
+      "disposition": "verified",
+      "failure": "makeProfile derives one conflict claim from the whole conflict content and binds lifecycle state only by evidence identifiers. validateG21InternalRangeProfile checks identifier order and an exact lifecycle-oracle snapshot, but not conflict-versus-correction content. evidenceForRuntimeState then emits whichever record carries the selected identifier. The direct gate checks only three named oracle keys, so routeChangingQuestion is outside its leak predicate.",
+      "repairTestAssessment": "The content-swap and routeChangingQuestion mutations are valid canary regressions. Independently frozen lifecycle bytes and an exact blind-input allowlist belong at the sealed fixture boundary. They must not become a general production requirement to exact-match prose."
+    },
+    {
+      "ruleId": "USEFULNESS-RANGE-01",
+      "judge": "consequential_usefulness",
+      "disposition": "verified",
+      "failure": "The four families and twelve current questions are consequential on their face, but the validator checks only presence of companion fields, one terminal question mark, a 24-word ceiling and a jargon list. A generic question therefore passes without proving that its answer can select, kill or reshape the route.",
+      "repairTestAssessment": "Freeze the three-field route contract for this evaluation fixture and reject any mismatch. Twelve generic mutations are useful coverage but redundant as a correctness mechanism once exact fixture binding is enforced. Production usefulness remains semantic and must not be implemented as a growing forbidden-phrase list."
+    },
+    {
+      "ruleId": "EPISTEMIC-RANGE-01",
+      "judge": "epistemic_integrity",
+      "disposition": "verified",
+      "failure": "The validator compares evidence clocks with the profile's own evidenceAsOf rather than the frozen constant, treats source-type variety as source independence, checks enums rather than source capability, does not bind notice meaning to cited claims, and checks correction recordedAt but not correction validAt or target meaning. The frozen Forge I2 lifecycle conflict also labels an internal planner pulse survey as customer_evidence.",
+      "repairTestAssessment": "All five demonstrated mutations must be rejected. Clock, source identity, source capability and valid-time ordering should be structural. Semantic notice and correction fit should be exact-bound only inside this frozen canary unless a typed claim relationship can express them. A production string classifier for causation or correction meaning would be overfit."
+    },
+    {
+      "ruleId": "AGENCY-RANGE-01",
+      "judge": "human_agency",
+      "disposition": "verified",
+      "failure": "The current literal builder emits a human-owned R1 Explore task and safe authority flags, but the profile validator accepts any nonempty humanDecisionBoundary and most short questions, while G21InternalBlindInput types task as an unconstrained string and has no runtime input validator. The gate does not fail closed if those authority-bearing fields change.",
+      "repairTestAssessment": "Use a code-owned task identifier or exact task constant plus an exact authority object and validate the emitted input shape. Exact question and boundary binding is appropriate for the frozen canary. Rubber-stamp phrase tests across every family and state are defense in depth, not the primary production control."
+    },
+    {
+      "ruleId": "COMPREHENSION-RANGE-01",
+      "judge": "human_comprehension_and_access",
+      "disposition": "verified",
+      "failure": "Research I1 delegates synthesis and competitive interpretation; Research I2 and Forge I2 ask for unobserved predictions; Forge I3 requests an open taxonomy under undefined clean data; Story I2 declares a choice without its alternatives; Story I3 omits the threshold unit, denominator and comparator. Each breaks the one plain, answerable, declared-form ask even though each is short.",
+      "repairTestAssessment": "Rewrite the six questions and re-run a fresh semantic review over all twelve. An adult proxy may expose ambiguity but cannot prove a bright twelve-year-old criterion, and the two existing adult proxy passes show that paraphrase alone is insufficient. The resolving review must test bounded answerability, not merely paraphrase."
+    },
+    {
+      "ruleId": "BRAIN-RANGE-01",
+      "judge": "living_brain_integrity",
+      "disposition": "verified",
+      "failure": "LifecycleDraft cannot supply claims, internalEvidence creates one claim equal to the whole conflict content, and makeProfile forces the correction to supersede that claim. Forge I2 therefore retires the 64 percent confidence result that its correction says to keep, and Story I3 retires the association that its correction says to keep.",
+      "repairTestAssessment": "Allow lifecycle conflicts to contain claim-addressable assertions and target only the invalid inference. Prove the retained result and association remain current with original evidenceId, sourceLocator and audience. This structural repair should precede Reality and Epistemic regression work because both depend on truthful lifecycle semantics."
+    },
+    {
+      "ruleId": "SAFETY-RANGE-01",
+      "judge": "subject_audience_lifecycle_safety",
+      "disposition": "verified",
+      "failure": "Runtime checks inspect realNamedPerson and consentRecordId only on the manifest, accept any disclosure containing fictional, and do not reject unknown identity or private-record fields. structuredClone then copies those fields into emitted inputs. A real-person assertion, simulated consent assertion or explicit not-fictional disclosure can therefore travel as authored evidence.",
+      "repairTestAssessment": "Exact runtime schemas, exact positive disclosures and rejection of unknown authority-bearing fields are the correct fail-closed repair. Bind emitted subject and evidence to validated values before input construction."
+    }
+  ],
+  "crossVetoInteractions": [
+    {
+      "interaction": "Safety, Agency, Reality oracle leakage and the fixture portion of Usefulness share one missing boundary.",
+      "implication": "A single exact runtime schema and frozen per-profile contract can seal subject, evidence, question contract, task, authority and the blind-input allowlist. Implementing four separate validators would duplicate policy and create drift."
+    },
+    {
+      "interaction": "Living Brain, Epistemic correction fit and Reality lifecycle swapping share one evidence-model defect.",
+      "implication": "Claim-addressable lifecycle assertions, typed correction targets and trusted ordering must land before content-swap and current-view tests. Otherwise tests will exact-bind a known-wrong whole-claim model."
+    },
+    {
+      "interaction": "Comprehension and Usefulness govern the same route-question surface from different sides.",
+      "implication": "Rewrite the six actual failures first, then freeze question, expectedAnswerShape and answerWouldChange together. A question that is route-relevant but unknowable still fails; a plain question whose answer changes nothing also fails."
+    },
+    {
+      "interaction": "Epistemic source capability and Safety subject scope both depend on trusted provenance.",
+      "implication": "Evidence type, subject, source identity, audience authority and run clock should be validated as one input envelope before any notice standing or diagnostic task is derived."
+    },
+    {
+      "interaction": "Exact fixture binding can close several canary mutations but cannot prove production semantics.",
+      "implication": "Keep sealed fixture hashes and negative regressions in evaluation code. Keep production controls structural: schemas, capability enums, authority objects, claim links, clocks and code-owned tasks."
+    }
+  ],
+  "invalidOrOverfitDemands": [
+    {
+      "demand": "Treat exact-binding every boundary, question, lifecycle sentence and generic-question mutation as production product logic.",
+      "disposition": "overfit_if_exported_beyond_canary",
+      "reason": "Exact bytes are an appropriate sealed-evaluation control, but production questions and evidence cannot be required to equal twelve fictional strings."
+    },
+    {
+      "demand": "Infer unsupported causation, correction meaning, agency or usefulness from a growing list of forbidden words and phrases.",
+      "disposition": "invalid_as_primary_control",
+      "reason": "The frozen code's current jargon list already demonstrates the limit. These properties need typed structure or criterion-level semantic review, with phrase tests only as narrow regressions."
+    },
+    {
+      "demand": "Run agency phrase mutations across all four families and all three states after task, authority and route contracts are exact-bound.",
+      "disposition": "redundant_not_invalid",
+      "reason": "A representative mutation per structural path is sufficient to prove the invariant. A full wording matrix adds test volume without a new failure mechanism."
+    },
+    {
+      "demand": "Use adult paraphrase success as proof of the bright-twelve-year-old comprehension criterion.",
+      "disposition": "insufficient_evidence",
+      "reason": "Adult proxy review is allowed as an ambiguity screen, but the existing proxy passes did not catch answerability and cannot be represented as child usability evidence."
+    }
+  ],
+  "protectedStrengths": [
+    {
+      "strength": "Matched evidence-depth isolation",
+      "protection": "Retain four fixed fictional families, identity and external-evidence equality within each family, cumulative internal evidence, twelve profiles and thirty-six lifecycle inputs."
+    },
+    {
+      "strength": "Consequential human-owned decisions",
+      "protection": "Retain the four material decision families, R1 Explore authority, explicit human standards and final calls, and prohibitions on consequential recommendation, durable-truth promotion and named-employee evaluation."
+    },
+    {
+      "strength": "Fictional and private-evidence boundary",
+      "protection": "Retain synthetic_fixture, fictional identity keys, .invalid external locators, fixture:// internal locators, evidence-specific audience authority, no real-person flag and no simulated consent. Tighten runtime schemas without adding consent theatre."
+    },
+    {
+      "strength": "Evidence and oracle separation",
+      "protection": "Retain full source records and derived current claims in blind inputs while excluding supported view, expected behaviours, forbidden claims and route-answer oracle fields through one explicit allowlist."
+    },
+    {
+      "strength": "Correction history and surviving truth",
+      "protection": "Retain source records, contradiction, correction, provenance and downstream repair while splitting only compound lifecycle assertions and superseding only false claims."
+    },
+    {
+      "strength": "Depth below one short ask",
+      "protection": "Retain decisionFocus, countercase, unresolved, answerWouldChange and humanDecisionBoundary beneath each question. Question repair must reduce leader interpretation work without flattening analysis."
+    },
+    {
+      "strength": "Executable governance",
+      "protection": "Retain the v2 eleven-field ruling envelope, per-file hashes, composite recipes, raw-veto preservation and immutable blocked run history."
+    }
+  ],
+  "repairRequirements": [
+    {
+      "order": 1,
+      "id": "FREEZE-BOUNDARY-01",
+      "requirement": "Define one authoritative v3 fixture envelope before changing individual validators: exact runtime schemas for manifest, identity, external evidence, private evidence, audience authority, route-question contract and emitted blind input; one trusted frozen asOf; exact positive fictional disclosures; a code-owned R1 task and exact authority object; and an explicit blind-input field allowlist. Reject unknown authority-bearing real-person and consent fields before emission.",
+      "closes": [
+        "SAFETY-RANGE-01",
+        "AGENCY-RANGE-01 input path",
+        "REALITY-RANGE-01 oracle-leak path"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "CLAIM-SAFE-LIFECYCLE-01",
+      "requirement": "Extend lifecycle drafts to carry claim-addressable assertions. Split Forge I2 confidence from unwillingness and Story I3 association from causation, and supersede only the invalid inference. Bind correction targets to earlier valid claims, require correction validAt and recordedAt to follow the target, preserve unaffected claims with original evidenceId, sourceLocator and audience, and keep all source records inspectable.",
+      "closes": [
+        "BRAIN-RANGE-01",
+        "EPISTEMIC-RANGE-01 correction path"
+      ]
+    },
+    {
+      "order": 3,
+      "id": "EVIDENCE-CAPABILITY-01",
+      "requirement": "Bind profile evidenceAsOf to the trusted run clock; require supported patterns to use distinct source identities, not merely distinct type labels; define source capability by provenance and subject; retype the Forge planner pulse survey; and bind notice standing to typed cited claims. Use exact fixture binding for semantic notice prose rather than production phrase inference.",
+      "closes": [
+        "EPISTEMIC-RANGE-01 time, pattern, source and causation paths"
+      ]
+    },
+    {
+      "order": 4,
+      "id": "QUESTION-CONTRACT-01",
+      "requirement": "Rewrite the six vetoed questions so each requests one available fact, bounded choice, test decision or explicit numeric threshold. State options, units, denominator and comparator where required. Freeze routeChangingQuestion, expectedAnswerShape and answerWouldChange together for all twelve profiles, while leaving deeper analysis below the ask.",
+      "closes": [
+        "COMPREHENSION-RANGE-01",
+        "USEFULNESS-RANGE-01",
+        "AGENCY-RANGE-01 question path"
+      ]
+    },
+    {
+      "order": 5,
+      "id": "SEALED-CANARY-REGRESSIONS-01",
+      "requirement": "Against the repaired model, add representative deterministic mutations for future clock, shared locator, incapable source, unsupported causal notice, misdirected correction, lifecycle content swap, unknown identity and consent fields, negated disclosure, generic route question, agency-invalid task or boundary, and every excluded oracle field including routeChangingQuestion. Require rejection before any blind input is emitted, and assert exact conflict then correction bytes and derived current claims for all thirty-six inputs.",
+      "closes": [
+        "REALITY-RANGE-01 content path",
+        "all demonstrated false-pass regressions"
+      ]
+    },
+    {
+      "order": 6,
+      "id": "OBSERVED-RECHECK-01",
+      "requirement": "Run the direct range and council gates with observed outputs, collect the Vitest suites in an environment that reaches test collection, and run a fresh all-twelve semantic question review that tests answerability as well as paraphrase. Preserve proxy limits explicitly.",
+      "closes": [
+        "execution evidence",
+        "semantic question recheck"
+      ]
+    },
+    {
+      "order": 7,
+      "id": "REFREEZE-AND-COUNCIL-01",
+      "requirement": "Freeze new file hashes and composites, collect seven fresh isolated rulings through the v2-compatible envelope, adjudicate their exact bytes, then run a fresh standards prosecution. Preserve run 002 unchanged as blocked history and do not treat this repair brief as a pass.",
+      "closes": [
+        "governance completion"
+      ]
+    }
+  ],
+  "residuals": [
+    "A repaired synthetic fixture proves validator, builder and council behavior only. It does not prove diagnostic efficacy, customer value, commercial outcomes, learning, consent or production permission.",
+    "Exact fixture contracts prevent a sealed canary from being gamed but do not solve semantic usefulness, comprehension, causation or correction fit for arbitrary production text.",
+    "An adult proxy review is evidence about the exact wording and rubric used. It is not a child usability test and does not by itself establish answerability.",
+    "The direct deterministic gates passed, but the frozen documentation says the Vitest suite was not collected in the restricted environment. Uncollected assertions are not execution evidence.",
+    "The manifests and adjudication are internally consistent but have no external signed or separately hashed root in the allowed evidence. Repository provenance remains the boundary of this review."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/input-manifest.json#artifactCompositeSha256,compositeRecipe,files,frozenCounts,authority",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/rulings-manifest.json#artifactCompositeSha256,rulingsCompositeSha256,rulings",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/adjudication.json#rulings,result.vetoes",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/founder-calibration.json#calibrationFindings,protectedStrengths,nonAuthorityStatement",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/council-brief.md#sealed-review-protocol,owned-criteria-and-hard-vetoes",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json#questions",
+    "src/features/operator-brain/rangeCouncilContract.ts:151-279",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:23-204",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:295-308",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:316-455",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1468-1542",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1920-2057",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2069-2206",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2209-2534",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2636-2704",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:108-121",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:141-180",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:272-318",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:344-415",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:481-522",
+    "scripts/check-g21-internal-range.mjs:46-99",
+    "scripts/check-g21-internal-range.mjs:101-380",
+    "scripts/check-g21-internal-council.mjs:45-260",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md#evidence-contracts,frozen-oracle,lifecycle-proof,human-agency,verification"
+  ],
+  "recordedAt": "2026-09-10T19:43:49.182Z"
+}
