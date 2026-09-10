@@ -23,3 +23,11 @@ Owned truth: the proposed behaviour and system must survive real work, sparse st
 - Required resolution: bind exact state contents and order, then reject correction-for-conflict substitution in both direct and unit gates.
 - Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-001/judges/behavioural_and_implementation_reality.json).
 
+## G21-INTERNAL-RANGE-FREEZE-002
+
+- Verdict: fail. Veto: `REALITY-RANGE-01`.
+- Failure found: swapping conflict and correction prose while retaining identifiers produced a green profile and a false contradicted input. The oracle-leak check also ignored the route-changing question.
+- Durable stance: ordered labels are not state proof. Emitted lifecycle bytes and every permitted input field must be independently testable.
+- Required resolution: freeze exact lifecycle evidence for this canary, validate one explicit blind-input allowlist and prove every invalid profile is refused before input construction.
+- Protected strength: keep the exact initial, conflict, then correction sequence and never substitute polished fixture prose for observed execution.
+- Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-002/judges/behavioural_and_implementation_reality.json).

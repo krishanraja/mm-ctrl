@@ -23,3 +23,11 @@ Owned truth: memory remains versioned, inspectable, portable, correctable and re
 - Required resolution: corrections target exact claim identifiers, the source record remains immutable, unaffected claims retain provenance and the current view is derived rather than hand-waved in oracle prose.
 - Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-001/judges/living_brain_integrity.json).
 
+## G21-INTERNAL-RANGE-FREEZE-002
+
+- Verdict: fail. Veto: `BRAIN-RANGE-01`.
+- Failure found: lifecycle correction was nominally claim-addressed but each conflict was still one compound claim. The resolver retired a valid 64 percent confidence result and a valid campaign association together with the bad interpretations.
+- Durable stance: a source is an immutable receipt; its individual assertions are the units that can be challenged, corrected or remain current.
+- Required resolution: decompose compound conflicts and supersede only the false inference while retaining surviving claims with their original source, audience and history.
+- Protected strength: preserve contradiction and correction as visible history while deriving the current view from explicit relations.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-002/judges/living_brain_integrity.json).

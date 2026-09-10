@@ -23,3 +23,11 @@ Owned truth: identity, consent, audience, provenance, correction and retention b
 - Required resolution: validate runtime subject and audience enums, bind each evidence record to its exact audience authority and reject widening, public scope or authority loss in every lifecycle state.
 - Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-001/judges/subject_audience_lifecycle_safety.json).
 
+## G21-INTERNAL-RANGE-FREEZE-002
+
+- Verdict: fail. Veto: `SAFETY-RANGE-01`.
+- Failure found: extra real-person or consent fields and even a negated fictional disclosure could pass uninspected and be copied into a blind input.
+- Durable stance: privacy and personhood boundaries fail closed through exact runtime shapes and positive authority, never substring checks or prompt promises.
+- Required resolution: require exact synthetic manifest, identity, evidence and authority fields, exact positive disclosures and a builder that refuses invalid material.
+- Protected strength: keep fictional fixtures unmistakable without inventing symbolic consent theatre.
+- Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-002/judges/subject_audience_lifecycle_safety.json).

@@ -23,3 +23,11 @@ Owned truth: the Brain sharpens a live high-value decision rather than producing
 - Protected boundary: repairs to safety, memory and comprehension must not flatten the four families into generic business advice.
 - Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-001/judges/consequential_usefulness.json).
 
+## G21-INTERNAL-RANGE-FREEZE-002
+
+- Verdict: fail. Veto: `USEFULNESS-RANGE-01`.
+- Failure found: the twelve literal questions were consequential, but a generic replacement such as “What should we discuss next?” could satisfy every implemented check.
+- Durable stance: brevity and tidy punctuation do not prove usefulness. The answer must be capable of selecting, stopping or reshaping this exact decision route.
+- Required resolution: freeze question, answer shape and answer effect together inside the evaluation fixture, then keep production usefulness as a semantic criterion rather than a forbidden-phrase list.
+- Protected strength: retain the four materially different decisions and the way deeper evidence changes the immediate route.
+- Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-002/judges/consequential_usefulness.json).
