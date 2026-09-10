@@ -31,6 +31,7 @@ This chronology preserves why a reaction occurred, not only what copy or pixel c
 | The improved question still felt like verbal diarrhoea | Sophistication was expressed as simultaneous labels, explanations, notes and controls | Sequence depth progressively. One question owns the frame; rationale and provenance sit one layer deeper |
 | Synthetic examples felt like business horoscopes | Generic private backstory was not anchored to a real category, company or evidence condition | Test across explicit external and internal evidence depths; require expected and forbidden diagnostic claims |
 | A sparse profile looked visually impressive but personally empty | Decorative imagery and theatre masked an evidence deficit | Sparse evidence must produce a precise gap, an honest question or abstention, not simulated insight |
+| Real-company research risked becoming another polished persona | Public company context can feel specific while still supporting no private claim about the leader | Store company facts, public statements, bounded inferences and private personhood as different types; richer research sharpens the decision but never invents the person |
 
 The recurring pattern is not “Krish wants less detail.” He rejects detail that arrives before its use, copy that announces rather than proves and intelligence that is abstract rather than specific. The product should preserve deep layers while making the immediate state devastatingly simple.
 
@@ -50,6 +51,7 @@ These are observed candidates, not yet confirmed reusable standards:
 - Test intelligence across a four by four external/internal evidence range and three lifecycle states rather than one hero profile.
 - Use a durable specialist council with sealed independent rulings, owned vetoes and deterministic adjudication before founder review.
 - Route historical theory just in time by criterion and trigger; never load the archive wholesale or let historical status labels regain authority.
+- Classify evidence depth by decision-bearing coverage rather than URL count or page length. A verbose company website can still be sparse evidence.
 
 ## End-of-session gate
 

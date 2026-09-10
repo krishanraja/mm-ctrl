@@ -1,6 +1,6 @@
 # G21 evidence range, responsibility and council contract
 
-Status: local contract and deterministic validation implemented; research population, diagnostic runs, database event storage and product UI pending
+Status: local contract and four-profile public-row canary implemented; diagnostic runs, council rulings, database event storage, internal-depth population and product UI pending
 
 Date: 9 September 2026
 
@@ -183,11 +183,14 @@ The implemented router covers:
 
 - `src/features/operator-brain/rangeCouncilContract.ts` owns the matrix, namespace safety, council, responsibility and theory-routing contracts.
 - `src/features/operator-brain/rangeCouncilContract.test.ts` proves the 16 coordinates, 48 lifecycle cases, namespace exclusions, seven independent rulings, veto consistency, highest-risk gate and routed theory quarantine.
+- `src/features/operator-brain/g21PublicRowCanary.ts` freezes the first four source envelopes, coverage capabilities, allowed notices, unresolved facts, route-changing questions, expected behaviour and forbidden claims.
+- `src/features/operator-brain/g21PublicRowCanary.test.ts` proves public-only personhood, external-depth coverage, source-envelope integrity, evidence-backed notices and honest cold-start and sparse behaviour.
+- `project-documentation/ctrl-evolution/g21-public-row-canary.md` records the source and claim-evidence matrix, limitations, countercase and verification state.
 - `npm run brain:g21:check` is the focused deterministic gate.
 
 ## What this does not prove
 
-- No real public profile has been selected or researched.
+- No diagnostic model has run against the selected public profiles.
 - No private or anonymised evidence has been collected.
 - No diagnostic model has run against the 48 cases.
 - No council event has been written to Supabase.
@@ -196,4 +199,4 @@ The implemented router covers:
 
 ## Next action
 
-Build the source-selection and evidence-manifest protocol for the 16 base coordinates, then populate a small four-coordinate canary before researching or generating the full range. Run the permanent council over that canary and inspect whether its disagreements produce useful resolving tests before scaling.
+Freeze the exact diagnostic input and output schema for the four-profile public-row canary, run one blind diagnostic pass and collect seven sealed judge rulings against the expected and forbidden claims. Any valid veto blocks. An inconclusive ruling must name the missing evidence or resolving test rather than becoming a soft pass.
