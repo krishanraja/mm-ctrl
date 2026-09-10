@@ -1,0 +1,370 @@
+{
+  "schemaVersion": "g21-standards-prosecutor:v1",
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "role": "standards_prosecutor_non_voting",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "rulingsCompositeSha256": "33a68b031d22cd9eefd9e21494e8c89f134b589aa79bd59baaf4ffd503be8933",
+  "artifactHashes": {
+    "artifactCommit": "ad561fce1d82bcdcdfea800ad4e4aed64e2a5173",
+    "inputManifestSha256": "2323bda285fea2a81f81b2db32ce9174b8d6244389b7ee9e00372d685fc5f58f",
+    "files": [
+      {
+        "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+        "sha256": "737f301df5d76d2f96716577b7f47319eb3ed82dffc95eb411077af427a393b8"
+      },
+      {
+        "path": "src/features/operator-brain/g21InternalRangeCanary.test.ts",
+        "sha256": "2551cd44dfbb7be62042fbca11d4fb7b2b0d9269e8bfabe295575962419633a2"
+      },
+      {
+        "path": "src/features/operator-brain/rangeCouncilContract.ts",
+        "sha256": "07174fa9e70baed67740690c9c20da922e5f46d97b2b1dfec0de04edb0d4995c"
+      },
+      {
+        "path": "src/features/operator-brain/rangeCouncilContract.test.ts",
+        "sha256": "534acd5fb20f59133b17426e7f02513193cfb12411dc6d716432be7acb2ea5f1"
+      },
+      {
+        "path": "scripts/check-g21-internal-range.mjs",
+        "sha256": "cace10df7d14b45ae7d96e06431ec017ed70ba35fb84ae3b77789aa8995ef150"
+      },
+      {
+        "path": "scripts/check-g21-internal-council.mjs",
+        "sha256": "09f4751410c26e8b44d11234cc738497a41b12803257742e0adafb11478f3f1c"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+        "sha256": "e3d960f510060357cdcf6e72d84fd04c21f21f9ae9a2d3b55918ef8dc7610d51"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+        "sha256": "914796288ce8b3d1a43e4acbc07f7fe817e6c8020e3c6902a71bebad74272065"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md",
+        "sha256": "14dcdabfcde63e1b2b46c925754bcb6869a72ffeae00ddac5419711e90bf592d"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json",
+        "sha256": "f6119ce871fb8af963d840618b26cb9674c0a76ad155a325bb429f8ee3bd5f68"
+      }
+    ],
+    "verifiedFiles": 10,
+    "allFileHashesVerified": true,
+    "manifestOrderCompositeVerified": true,
+    "commitObjectVerified": true,
+    "allCurrentBlobsMatchArtifactCommit": true
+  },
+  "rulingHashes": {
+    "rulingsManifestSha256": "95ebd0692e6bd7a51cab0a753fed93768f97a724b6295c126121cd90c560fee8",
+    "files": [
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/behavioural_and_implementation_reality.json",
+        "sha256": "a8b91188e024a6b014dc2d1d05c2969dab264cbcafccb4cf9dc8c613da815bff"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/consequential_usefulness.json",
+        "sha256": "b486a5477074dee29eb38b3572ba0c66d9db245d4a68b4ea44b8985f484cbbc2"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/epistemic_integrity.json",
+        "sha256": "d896011c7a383fd15e3c6be0400d671a41eef5aacd86de841b27ba3792bd7e93"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/human_agency.json",
+        "sha256": "d6fc721666b335ff228d3214c75a61eafc5154b1c1d1470c9a695dce02e86c83"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/human_comprehension_and_access.json",
+        "sha256": "0c675678f68a2e625dfcc7dd9eb9a0e7eabf3799f6e03b4c056232768a03fdd1"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/living_brain_integrity.json",
+        "sha256": "129755caacf57d7bd2f63fbe6cfbdfc6873dd55052103b501b5b760661c55fcb"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/subject_audience_lifecycle_safety.json",
+        "sha256": "acfaa36a56ab9d5c5245827e3bc5ec77f604fff5913c752bdf16847ecf459b91"
+      }
+    ],
+    "verifiedFiles": 7,
+    "allFileHashesVerified": true,
+    "manifestOrderCompositeVerified": true,
+    "adjudicationLinksVerified": true
+  },
+  "supportingRecordHashes": {
+    "freezeAnchorSha256": "3955c5ccbf354ccadaefddf65152dd30cf9750bef5464d97f35f79f9988180ae",
+    "councilBriefSha256": "14dcdabfcde63e1b2b46c925754bcb6869a72ffeae00ddac5419711e90bf592d",
+    "questionPackSha256": "f6119ce871fb8af963d840618b26cb9674c0a76ad155a325bb429f8ee3bd5f68",
+    "readerBriefSha256": "acbec089f885195d619559108c4487ca35705d846af64952b6e9e72ed6b228d3",
+    "readersManifestSha256": "f538f7e9c791540fbb08041beb41c448598e1770394cfefac55de193ffba85af",
+    "readerReviewsCompositeSha256": "826470ab2a6f17ba26d56ad3e70790934e36df05c2931c85c0d7e47f84ab5eac",
+    "proxyASha256": "ae1d79f9255d256492b63344b8c610451c2ace44945246eb422f59fffb6c6305",
+    "proxyBSha256": "0b2e644c878225f0a1dad377fba42dc2c14b5a5d61651ae17d4fae3f4cbe110a",
+    "adjudicationSha256": "e7af9aff30bacf23efcd929b24603c499441c485263f52c4f80d57c0b196d06c",
+    "reviewProtocolFailureSha256": "76151cdd2360cdab3dd8d2f97f1b30acba6f6096a08992c83f1b5acaf0c6dcc7"
+  },
+  "protocolStanding": {
+    "status": "invalid_for_blind_independence",
+    "scope": "all_seven_semantic_judge_rulings",
+    "cause": "The input manifest required semantic inspection of two documentation files that disclose Run 001 and Run 002 outcomes, veto themes and prosecutor conclusions, while the council brief prohibited exposure to prior outcomes and judge history.",
+    "treatment": "Preserve all seven rulings as frozen adversarial evidence, but do not describe them as seven clean independent sealed judgments. The independently reproducible defects below can sustain a veto without relying on apparent council consensus.",
+    "comprehension": {
+      "status": "inconclusive",
+      "reason": "The Human Comprehension and Access reviewer stopped after identifying the contaminated review pack and made no question-level semantic finding.",
+      "requiredEvidence": "A fresh isolated review of all twelve exact questions and visible answer contracts from a history-free criterion pack."
+    },
+    "adultProxyReviews": {
+      "status": "valid_within_declared_scope",
+      "result": "Two frozen adult reviewers passed all twelve questions for visible paraphrase, ordinary wording and answer-form completeness.",
+      "claimBoundary": "These records are adult answerability screens only. They do not establish child comprehension, customer value, factual truth or product efficacy."
+    }
+  },
+  "findings": [
+    {
+      "id": "SP-003-01",
+      "type": "mechanical_integrity",
+      "finding": "The artifact and ruling evidence is byte-stable inside the repository boundary.",
+      "evidence": [
+        "All ten input-manifest SHA-256 values matched the current files and the blobs at artifact commit ad561fce1d82bcdcdfea800ad4e4aed64e2a5173.",
+        "The artifact composite, two reader hashes, reader composite, seven ruling hashes and ruling composite all recomputed exactly.",
+        "question-pack.json contains the declared twelve question records.",
+        "Both frozen direct gates returned status passed, with 12 profiles, 36 inputs, 65 rejected named mutations and a blocked seven-ruling adjudication."
+      ],
+      "limit": "A green frozen gate proves only its named checks. It does not establish generic runtime safety or independent semantic review."
+    },
+    {
+      "id": "SP-003-02",
+      "type": "protocol_contradiction",
+      "finding": "The review contract was impossible to satisfy as written because required artifact inspection disclosed prohibited prior outcomes.",
+      "evidenceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md:7-13",
+        "project-documentation/ctrl-evolution/g21-internal-range-canary.md:111-135",
+        "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md:184-199",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/review-protocol-failure.json#/failure"
+      ],
+      "effect": "The blinding failure reduces the evidential weight of council independence but does not erase defects reproduced directly from the frozen bytes."
+    },
+    {
+      "id": "SP-003-03",
+      "type": "shared_structural_root",
+      "finding": "REALITY-RANGE-01, SAFETY-RANGE-01 and substantial parts of EPISTEMIC-RANGE-01 and BRAIN-RANGE-01 arise from one unresolved boundary: exact frozen-profile equality and generic runtime validation are mixed behind an optional expectedProfile argument.",
+      "runtimeReproduction": [
+        "Without expectedProfile, a valid initial input relabelled corrected returned an empty error array.",
+        "Without expectedProfile, a basic_intake input relabelled longitudinal_corrections with matching identifiers returned an empty error array.",
+        "A null runId threw TypeError and a string claims value threw TypeError instead of returning typed errors.",
+        "Future external publication and retrieval dates returned an empty error array without expectedProfile.",
+        "A source relabelled to staff_evidence and staff_group while retaining leader-action prose returned an empty error array.",
+        "A counterfeit authority identifier, authority type and timestamp returned an empty error array even with expectedProfile.",
+        "A real-person costume and correction-before-conflict evidence order returned empty error arrays without expectedProfile.",
+        "A misdirected correction relation with a recomputed current view returned an empty error array without expectedProfile."
+      ],
+      "falseRepairPath": "Adding more expectedProfile-only equality assertions or one regression per judge leaves the exported unanchored path and its non-total parser intact."
+    },
+    {
+      "id": "SP-003-04",
+      "type": "claim_and_oracle_integrity",
+      "finding": "Lifecycle bytes, oracle bytes and relation arrays are frozen, but ordinary internal source content and claim text are not bound to an immutable content identity, and relation validity does not establish semantic or subject fit.",
+      "runtimeReproduction": [
+        "A full-canary mutation changing INT-STORY-007 into categorical purchase causation while retaining observation kind returned no errors.",
+        "A full-canary mutation changing INT-FORGE-008 to customer subject while it continued to correct a leader claim returned no errors.",
+        "Synchronized replacement of INT-CARE-001 content and claim text with a strongestSupportedView passed canary validation and blind-input construction, and the exact oracle value appeared in nine emitted care cases."
+      ],
+      "falseRepairPath": "A larger causation word list, field-name leak scan or frozen relation list cannot prove claim standing. The sealed fixture needs content commitments and the generic system needs typed provenance and relation invariants."
+    },
+    {
+      "id": "SP-003-05",
+      "type": "answerability_is_not_consequence",
+      "finding": "The adult screens support visible answerability, but four answer contracts still fail to resolve the decision uncertainty named by their own profiles.",
+      "cases": [
+        {
+          "profileId": "RANGE-INTERNAL-CARE-I3",
+          "mismatch": "A continuity percentage does not distinguish recovery without Elena as permanent exception handler, and the unknown path does not request independence evidence."
+        },
+        {
+          "profileId": "RANGE-INTERNAL-RESEARCH-I2",
+          "mismatch": "Agreement to buy without a senior researcher does not establish that delivered senior challenge transfers into a repeatable experience."
+        },
+        {
+          "profileId": "RANGE-INTERNAL-STORY-I2",
+          "mismatch": "Choosing content for the next test is micro-learning unless the answer also governs the GBP 18 million route, new-viewer purchase movement and the core-fan constraint."
+        },
+        {
+          "profileId": "RANGE-INTERNAL-STORY-I3",
+          "mismatch": "The allocation gate uses stated ticket desire even though the profile says stated intent may not predict purchase and leaves purchase evidence unresolved."
+        }
+      ],
+      "falseRepairPath": "More word-count, punctuation, jargon or adult paraphrase checks would preserve the same route mismatch."
+    },
+    {
+      "id": "SP-003-06",
+      "type": "agency_scope",
+      "finding": "FORGE-I3 contains a real internal contradiction, but the ruling overstates what has been implemented. The frozen task and authority prohibit the diagnostic Brain from recommending or committing a consequential action, while the hidden route contract treats The system as an ordinary final-call answer for a customer-lateness case.",
+      "effect": "The agency veto remains blocking in narrowed form: the evaluation contract must not normalize non-human final accountability for a material customer-impact exception. This is not evidence that the diagnostic Brain already executed or recommended that delegation.",
+      "falseRepairPath": "Requiring manual human approval for every routine automated plan would overcorrect. The repair should preserve bounded automation inside preapproved rules and require accountable human ownership at the consequential exception boundary."
+    },
+    {
+      "id": "SP-003-07",
+      "type": "repeat_failure_pattern",
+      "finding": "Runs 001 through 003 show the same repair failure at increasing depth: named examples were frozen more tightly while the boundary between immutable canary truth, structural runtime safety and semantic judgment remained blurred.",
+      "evidenceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/standards-prosecutor.json#/repairRequirements",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/standards-prosecutor.json#/repairRequirements",
+        "project-documentation/ctrl-evolution/judge-history",
+        "project-documentation/ctrl-evolution/session-method-learning-log.md"
+      ],
+      "implication": "The next repair should replace the mixed trust model before touching individual examples, then refreeze once."
+    }
+  ],
+  "vetoDisposition": [
+    {
+      "ruleId": "REALITY-RANGE-01",
+      "judge": "behavioural_and_implementation_reality",
+      "disposition": "materially_upheld",
+      "blocking": true,
+      "basis": "State and depth relabelling returned no errors without expectedProfile, and exact-key malformed inputs threw instead of failing closed. These are direct instances of fakeable state ordering, fixture equality masquerading as safety and non-executable failure behavior.",
+      "overlap": [
+        "SAFETY-RANGE-01",
+        "EPISTEMIC-RANGE-01",
+        "BRAIN-RANGE-01"
+      ],
+      "repairBoundary": "Resolve through one total, trust-anchored runtime envelope. Do not create separate lifecycle, depth and null-handling patch systems."
+    },
+    {
+      "ruleId": "USEFULNESS-RANGE-01",
+      "judge": "consequential_usefulness",
+      "disposition": "materially_upheld",
+      "blocking": true,
+      "basis": "CARE-I3, RESEARCH-I2, STORY-I2 and STORY-I3 each allow a bounded answer that can leave the profile's named route uncertainty unresolved. Adult answerability does not establish decision consequence.",
+      "overlap": [
+        "AGENCY-RANGE-01",
+        "human_comprehension_and_access_inconclusive"
+      ],
+      "repairBoundary": "Repair the cross-field decision contract and rejudge all twelve questions semantically. Exact current strings and forbidden phrases are regression fixtures, not a generic usefulness validator."
+    },
+    {
+      "ruleId": "EPISTEMIC-RANGE-01",
+      "judge": "epistemic_integrity",
+      "disposition": "materially_upheld",
+      "blocking": true,
+      "basis": "Future external evidence, caller-controlled source relabelling, categorical causation presented as observation and a cross-subject correction all passed relevant exposed validation paths. Any one of the future-clock or cross-subject paths independently sustains the veto.",
+      "overlap": [
+        "REALITY-RANGE-01",
+        "BRAIN-RANGE-01",
+        "SAFETY-RANGE-01"
+      ],
+      "repairBoundary": "Structural checks must own clocks, immutable source identity, subject capability and relation chronology. Sealed fixture semantics must use content commitments or typed claims, not a production prose classifier."
+    },
+    {
+      "ruleId": "AGENCY-RANGE-01",
+      "judge": "human_agency",
+      "disposition": "narrowed",
+      "blocking": true,
+      "basis": "The system is an allowed final-call answer for a plan that could make a customer late, and the answer is said to define the future role. That conflicts with the run's human-owned final-call rule. However, the frozen runtime task and authority do prohibit the diagnostic Brain from recommending or committing the route, so the evidence does not establish executed or recommended autonomy.",
+      "narrowedTo": "An unsafe route-answer baseline that normalizes non-human final accountability at a material customer-impact exception, not proof that the diagnostic Brain itself has acted beyond R1 Explore.",
+      "repairBoundary": "Require an accountable human final owner for material lateness exceptions and encode escalation conditions, while preserving routine automated execution inside explicit human-set standards."
+    },
+    {
+      "ruleId": "BRAIN-RANGE-01",
+      "judge": "living_brain_integrity",
+      "disposition": "materially_upheld",
+      "blocking": true,
+      "basis": "A misdirected correction target passed once currentClaims was recomputed, and oracle-bearing base source drift passed population validation and emitted into nine blind inputs. The current graph proves mechanical derivation from whatever relations it receives, not that those relations or source bytes are trustworthy.",
+      "overlap": [
+        "EPISTEMIC-RANGE-01",
+        "REALITY-RANGE-01"
+      ],
+      "repairBoundary": "Content-address immutable sources and claims, bind correction subject and meaning at the sealed fixture boundary, and make oracle material unreachable by the runtime builder rather than relying on three field-name scans."
+    },
+    {
+      "ruleId": "SAFETY-RANGE-01",
+      "judge": "subject_audience_lifecycle_safety",
+      "disposition": "materially_upheld",
+      "blocking": true,
+      "basis": "The blind-input validator threw on malformed nested values, accepted counterfeit authority metadata even with expectedProfile, and accepted a real-person costume plus reversed lifecycle order without it. These directly violate fail-closed identity, audience authority and lifecycle requirements.",
+      "overlap": [
+        "REALITY-RANGE-01",
+        "EPISTEMIC-RANGE-01"
+      ],
+      "repairBoundary": "Use one total parser and one authenticated evidence-authority envelope. Matching only field names, evidence identifiers and audience labels is not authority proof."
+    }
+  ],
+  "dependencyOrderedRepair": [
+    {
+      "order": 1,
+      "id": "CONTRACT-SEPARATION-01",
+      "dependsOn": [],
+      "requirement": "Define three explicit contracts before editing examples: a canonical frozen-fixture verifier bound to a profile and artifact identity, a total structural runtime validator for arbitrary unknown input, and a semantic judge allowlist. Remove the optional trust fallback. Hash-only provenance may reference history, but the semantic judge pack must not contain prior verdicts, judge identities, founder reactions or repair narratives.",
+      "closesRootCauses": [
+        "fixture_integrity_conflated_with_runtime_safety",
+        "semantic_review_pack_conflated_with_provenance_history"
+      ],
+      "acceptance": "Each entry point has one declared authority and failure mode, and no caller can obtain a successful generic validation by omitting the canonical profile or equivalent trust anchor."
+    },
+    {
+      "order": 2,
+      "id": "TRUSTED-EVIDENCE-ENVELOPE-01",
+      "dependsOn": [
+        "CONTRACT-SEPARATION-01"
+      ],
+      "requirement": "Implement one total schema-first evidence envelope that validates every nested scalar and array before use; binds run, profile, case, state, depth, fictional identity, external clock, source identity, source capability, audience authority and lifecycle order; derives current claims from content-addressed immutable source and claim records; constrains correction targets by subject, kind and chronology; and constructs blind inputs from an explicit allowlist with oracle material outside the reachable object graph.",
+      "closesVetoes": [
+        "REALITY-RANGE-01",
+        "SAFETY-RANGE-01",
+        "EPISTEMIC-RANGE-01_structural_paths",
+        "BRAIN-RANGE-01"
+      ],
+      "acceptance": "The unmodified baseline passes, arbitrary wrong types return typed errors without throwing, and one mechanism-level mutation matrix rejects state or depth relabelling, future clocks, source relabelling, cross-subject or misdirected correction, counterfeit authority, real-person costume, lifecycle reversal, categorical causation with an incompatible claim kind and oracle-bearing source drift before emission."
+    },
+    {
+      "order": 3,
+      "id": "DECISION-ANSWER-ALIGNMENT-01",
+      "dependsOn": [
+        "TRUSTED-EVIDENCE-ENVELOPE-01"
+      ],
+      "requirement": "Refreeze each question together with decisionFocus, unresolved, answer contract, unknown evidence request, answerWouldChange and humanDecisionBoundary. CARE-I3 must test continuity without executive rescue. RESEARCH-I2 must test delivered challenge transfer, not purchase agreement alone. STORY-I2 must govern a material allocation route while preserving new-viewer purchase movement and the core-fan constraint. STORY-I3 must use observed purchase or an explicitly evidenced predictive proxy. FORGE-I3 must name accountable human ownership for material customer-impact exceptions while allowing bounded automation inside human-set rules.",
+      "closesVetoes": [
+        "USEFULNESS-RANGE-01",
+        "AGENCY-RANGE-01_narrowed"
+      ],
+      "acceptance": "A route-effect table shows how every allowed answer and unknown path selects, stops, bounds or reshapes the named consequential route. A fresh isolated Human Comprehension and Access reviewer then examines all twelve exact questions from the clean pack. Adult proxy success remains a separate screen and is not child-comprehension proof."
+    },
+    {
+      "order": 4,
+      "id": "INTEGRATED-REFREEZE-01",
+      "dependsOn": [
+        "CONTRACT-SEPARATION-01",
+        "TRUSTED-EVIDENCE-ENVELOPE-01",
+        "DECISION-ANSWER-ALIGNMENT-01"
+      ],
+      "requirement": "Run the consolidated mutation matrix through the direct gate, collected unit tests and builder, record observed outputs, freeze a new artifact commit and composites, then collect seven fresh isolated rulings from history-free criterion packs. Require each judge to attest that excluded history was not encountered, adjudicate the exact ruling bytes and run a new non-voting prosecution.",
+      "closesRootCauses": [
+        "unobserved_or_local_patch_verification",
+        "invalid_blind_independence"
+      ],
+      "acceptance": "All structural and semantic gates pass against the new hashes, the comprehension criterion is no longer inconclusive, and no claim of clearance relies on Run 003 consensus or adult proxies as child evidence."
+    }
+  ],
+  "nonGoals": [
+    "Do not alter or reinterpret the bytes of any Run 003 ruling, manifest, adjudication or protocol-failure record.",
+    "Do not cast a vote, clear the gate, recommend deployment, write production data or claim product safety.",
+    "Do not treat exact frozen equality as a generic validator for novel runtime evidence.",
+    "Do not build a growing banned-word list or prose classifier as the primary control for agency, causation, comprehension or usefulness.",
+    "Do not require manual human approval for every routine automated act when explicit human-set rules and a consequential exception boundary suffice.",
+    "Do not represent either adult proxy review as proof of child comprehension.",
+    "Do not erase source history, valid observations or prior blocked runs to make the repaired candidate appear cleaner.",
+    "Do not claim that a repaired fictional canary proves diagnostic efficacy, customer value, learning, consent, commercial outcomes or production permission.",
+    "Do not implement twelve local patches when the four dependency-ordered repairs address the shared mechanisms."
+  ],
+  "conclusion": {
+    "status": "blocked",
+    "voteCast": false,
+    "dispositionSummary": {
+      "materiallyUpheld": 5,
+      "narrowedButBlocking": 1,
+      "unsupported": 0
+    },
+    "statement": "Run 003 remains blocked. Five vetoes are materially upheld and AGENCY-RANGE-01 is narrowed but still blocking. The ruling set is invalid as evidence of seven blind independent judgments, yet the frozen bytes and bounded reproductions independently establish the material structural and route-contract failures. Human Comprehension and Access remains inconclusive. Clearance requires the four dependency-ordered repairs and a new history-free frozen review; adult proxy success cannot fill the comprehension gap."
+  },
+  "recordedAt": "2026-09-10T21:31:46.438Z"
+}
