@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "g21-public-row-diagnostic:v2",
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "results": [
+    {
+      "profileId": "RANGE-PUBLIC-00",
+      "diagnosticMode": "intake_required",
+      "recommendationState": "abstain",
+      "decisionFrame": "Abstain. No public evidence was supplied, so no identity, business context, decision tension, outcome, countercase or continuity can be established. The only defensible frame is to identify the live decision before any diagnosis is attempted.",
+      "notices": [
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-00-GAP",
+          "standing": "evidence_gap",
+          "claimScope": "evidence_gap",
+          "text": "There is no evidence from which to establish the subject's current identity, business context or decision tension.",
+          "evidenceIds": []
+        }
+      ],
+      "unresolved": [
+        "The live decision, available options and accountable decision-maker are unknown.",
+        "No current outcome evidence or countercase is available.",
+        "No longitudinal evidence is available."
+      ],
+      "routeChangingQuestion": "What specific decision must be made, by whom, and by what date?",
+      "answerWouldChange": "A concrete decision, owner and deadline would determine whether a bounded evidence request can be formed; without them the route remains intake only.",
+      "humanDecisionBoundary": "A human must define the decision and authorize any later evidence collection. This output does not diagnose the subject or support any consequential action."
+    },
+    {
+      "profileId": "RANGE-PUBLIC-01",
+      "diagnosticMode": "gap_first",
+      "recommendationState": "abstain",
+      "decisionFrame": "Abstain. The evidence establishes a current company and a publicly marketed service range, but not a live decision or the commercial performance of any offer. The defensible route remains gap-first rather than choosing among the offers.",
+      "notices": [
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-01-FACT",
+          "standing": "public_fact",
+          "claimScope": "company",
+          "text": "The public register lists Cloud7 Marketing Ltd as active and incorporated on 15 September 2023 across consultancy, advertising, technology-service and education classifications.",
+          "evidenceIds": [
+            "SRC-CLOUD7-COMPANIES-HOUSE"
+          ]
+        },
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-01-STATEMENT",
+          "standing": "public_statement",
+          "claimScope": "public_person_identity",
+          "text": "Cloud7 presents Silke Anderson as founder and CEO and markets fractional marketing leadership, AI training and delivery support to UK small and mid-sized businesses.",
+          "evidenceIds": [
+            "SRC-CLOUD7-TEAM",
+            "SRC-CLOUD7-HOME"
+          ]
+        },
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-01-GAP",
+          "standing": "evidence_gap",
+          "claimScope": "evidence_gap",
+          "text": "The sources do not establish offer-level demand, revenue, profit, repeat work, delivery capacity, outcomes or a current decision tension.",
+          "evidenceIds": []
+        }
+      ],
+      "unresolved": [
+        "Which offer, if any, produces paid and repeat demand is unknown.",
+        "Offer-level economics and delivery constraints are unknown.",
+        "No current choice or countercase is evidenced."
+      ],
+      "routeChangingQuestion": "Which offer has generated paid repeat work in the last 12 months, with what revenue and delivery cost?",
+      "answerWouldChange": "Comparable offer-level evidence could move the route from gap-first abstention to a provisional frame about focus, capacity or validation; absent that evidence, no such frame is earned.",
+      "humanDecisionBoundary": "A human must supply or verify non-public commercial evidence and define the live choice. This output does not select an offer or recommend a consequential action."
+    },
+    {
+      "profileId": "RANGE-PUBLIC-02",
+      "diagnosticMode": "decision_pressure",
+      "recommendationState": "provisional_frame",
+      "decisionFrame": "Provisional frame: WPP is joining its agencies and software so they work as one. The key test is whether this wins and keeps more customers and adds profit, or mainly cuts costs. Revenue is down while savings are under way, so the public evidence does not yet show which story is true.",
+      "notices": [
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-02-FACT",
+          "standing": "public_fact",
+          "claimScope": "public_person_identity",
+          "text": "WPP appointed Cindy Rose chief executive officer effective 1 September 2025; WPP later reported H1 2026 revenue less pass-through costs down 4.7 percent like for like and GBP 100 million of planned in-year savings.",
+          "evidenceIds": [
+            "SRC-WPP-APPOINTMENT",
+            "SRC-WPP-H1-2026"
+          ]
+        },
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-02-STATEMENT",
+          "standing": "public_statement",
+          "claimScope": "company",
+          "text": "WPP publicly frames Elevate28 as a move to four integrated operating units linked by WPP Open, targets GBP 500 million of gross annualised savings by 2028, and presents growth and trust as central to the client proposition.",
+          "evidenceIds": [
+            "SRC-WPP-ELEVATE28",
+            "SRC-WPP-TRUST"
+          ]
+        },
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-02-INFERENCE",
+          "standing": "bounded_inference",
+          "claimScope": "company",
+          "text": "The near-term diagnostic pressure is attribution: whether integration is improving commercial performance rather than only reducing cost. This is an inference from the strategy, the reported decline, wins and retentions, and the stated growth thesis.",
+          "evidenceIds": [
+            "SRC-WPP-ELEVATE28",
+            "SRC-WPP-H1-2026",
+            "SRC-WPP-TRUST"
+          ]
+        }
+      ],
+      "unresolved": [
+        "The incremental revenue, margin and retention attributable to integration or WPP Open are not disclosed.",
+        "The evidence does not establish whether the expected second-half improvement occurred.",
+        "No longitudinal evidence tests durability across reporting periods."
+      ],
+      "routeChangingQuestion": "How much recent business was won or kept because WPP worked as one, and how much extra profit did that business produce?",
+      "answerWouldChange": "A clear answer would show whether working as one is creating profitable growth or mostly saving money. Without it, the public evidence cannot show whether the plan is improving WPP's business results.",
+      "humanDecisionBoundary": "A human must judge the attribution standard, risk tolerance and strategic trade-offs. This frame does not validate the strategy or recommend a consequential action."
+    },
+    {
+      "profileId": "RANGE-PUBLIC-03",
+      "diagnosticMode": "longitudinal_pressure",
+      "recommendationState": "provisional_frame",
+      "decisionFrame": "Provisional frame: Microsoft has more demand for AI than its limited computing capacity can serve at once. The key choice is which customers and products get capacity first. Revenue is growing, but public totals do not show which uses create lasting customer value and profit after capacity and safety costs.",
+      "notices": [
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-03-FACT",
+          "standing": "public_fact",
+          "claimScope": "public_person_identity",
+          "text": "Microsoft's 2026 filing identifies Satya Nadella as chairman and chief executive officer and reports fiscal 2026 revenue up 18 percent alongside a lower Microsoft Cloud gross-margin percentage as AI infrastructure investment and usage increased.",
+          "evidenceIds": [
+            "SRC-MSFT-2026-10K"
+          ]
+        },
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-03-STATEMENT",
+          "standing": "public_statement",
+          "claimScope": "company",
+          "text": "Microsoft's public framing moved from a mobile-first, cloud-first platform strategy in 2015 to AI as a platform shift across the technology stack in 2025, with current delivery and next-generation building presented as a joint operating challenge.",
+          "evidenceIds": [
+            "SRC-MSFT-2015",
+            "SRC-MSFT-2025"
+          ]
+        },
+        {
+          "noticeId": "DIAG-RANGE-PUBLIC-03-INFERENCE",
+          "standing": "bounded_inference",
+          "claimScope": "company",
+          "text": "The decision pressure is allocating and operating expanded AI capacity so that workload efficiency and customer return keep pace with investment, without treating stated security progress as complete assurance. This is bounded by aggregate disclosures.",
+          "evidenceIds": [
+            "SRC-MSFT-2026-10K",
+            "SRC-MSFT-FY26-Q4",
+            "SRC-MSFT-SFI-2026"
+          ]
+        }
+      ],
+      "unresolved": [
+        "Realised return by AI workload, customer and product is not disclosed.",
+        "Aggregate commercial obligations do not establish the durability or profitability of each workload.",
+        "The company security report is not independent assurance that all objectives or product risks are resolved."
+      ],
+      "routeChangingQuestion": "Which customers or products get limited AI computing capacity first, and what proof of customer value, profit and safety earns that priority?",
+      "answerWouldChange": "The answer would show whether Microsoft gives limited capacity to the customers and products with the strongest proof of value, profit and safety, instead of following demand alone.",
+      "humanDecisionBoundary": "A human must set the acceptable return horizon, security threshold and allocation trade-offs. This frame does not rank workloads or recommend a consequential action."
+    }
+  ]
+}

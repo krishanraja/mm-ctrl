@@ -183,6 +183,8 @@ export interface JudgeRuling {
   evidenceLocators: string[]
   recordedAt: string
   supersedesRulingId?: string
+  missingEvidence?: string[]
+  resolvingTest?: string
   veto?: {
     ruleId: string
     failure: string
@@ -194,22 +196,58 @@ export function validateSealedCouncil(rulings: JudgeRuling[]): string[] {
   const errors: string[] = []
   const sealed = rulings.filter((ruling) => ruling.phase === 'sealed_review')
   const represented = new Set(sealed.map((ruling) => ruling.judge))
+  const runIds = new Set(sealed.map((ruling) => ruling.runId))
+  const artifactHashes = new Set(sealed.map((ruling) => ruling.artifactHash))
+  const rulingIds = rulings.map((ruling) => ruling.rulingId)
 
   if (sealed.length !== COUNCIL_JUDGES.length) errors.push('sealed_review_requires_seven_rulings')
+  if (runIds.size !== 1) errors.push('sealed_review_requires_one_run_id')
+  if (artifactHashes.size !== 1) errors.push('sealed_review_requires_one_artifact_hash')
+  if (new Set(rulingIds).size !== rulingIds.length) errors.push('ruling_ids_must_be_unique')
   for (const judge of COUNCIL_JUDGES) {
+    const count = sealed.filter((ruling) => ruling.judge === judge).length
     if (!represented.has(judge)) errors.push(`sealed_review_missing_${judge}`)
+    if (count > 1) errors.push(`sealed_review_duplicate_${judge}`)
   }
 
   for (const ruling of rulings) {
     if (!ruling.rulingId.trim()) errors.push(`${ruling.judge}:ruling_id_required`)
+    if (!ruling.runId.trim()) errors.push(`${ruling.judge}:run_id_required`)
+    if (!COUNCIL_JUDGES.includes(ruling.judge)) errors.push(`${ruling.judge}:judge_invalid`)
+    if (!['sealed_review', 'cross_examination', 'adjudication'].includes(ruling.phase)) {
+      errors.push(`${ruling.judge}:phase_invalid`)
+    }
+    if (!['pass', 'fail', 'inconclusive'].includes(ruling.verdict)) {
+      errors.push(`${ruling.judge}:verdict_invalid`)
+    }
     if (!ruling.criterionVersion.trim()) errors.push(`${ruling.judge}:criterion_version_required`)
     if (!ruling.artifactHash.trim()) errors.push(`${ruling.judge}:artifact_hash_required`)
     if (!ruling.theoryPackHash.trim()) errors.push(`${ruling.judge}:theory_pack_hash_required`)
     if (ruling.claims.length === 0) errors.push(`${ruling.judge}:claim_required`)
     if (ruling.evidenceLocators.length === 0) errors.push(`${ruling.judge}:evidence_required`)
+    if (ruling.claims.some((claim) => typeof claim !== 'string' || !claim.trim())) {
+      errors.push(`${ruling.judge}:claims_must_be_nonempty_strings`)
+    }
+    if (
+      ruling.evidenceLocators.some(
+        (locator) => typeof locator !== 'string' || !locator.trim(),
+      )
+    ) {
+      errors.push(`${ruling.judge}:evidence_locators_must_be_nonempty_strings`)
+    }
     if (Number.isNaN(Date.parse(ruling.recordedAt))) errors.push(`${ruling.judge}:recorded_at_invalid`)
     if (ruling.supersedesRulingId === ruling.rulingId) errors.push(`${ruling.judge}:cannot_supersede_self`)
     if (ruling.veto && ruling.verdict !== 'fail') errors.push(`${ruling.judge}:veto_requires_fail_verdict`)
+    if (ruling.verdict === 'inconclusive') {
+      if (!ruling.missingEvidence?.length) errors.push(`${ruling.judge}:inconclusive_requires_missing_evidence`)
+      if (!ruling.resolvingTest?.trim()) errors.push(`${ruling.judge}:inconclusive_requires_resolving_test`)
+    }
+    if (ruling.missingEvidence?.some((item) => typeof item !== 'string' || !item.trim())) {
+      errors.push(`${ruling.judge}:missing_evidence_cannot_be_empty`)
+    }
+    if (ruling.veto && !ruling.veto.resolvingTest.trim()) {
+      errors.push(`${ruling.judge}:veto_requires_resolving_test`)
+    }
   }
 
   return errors

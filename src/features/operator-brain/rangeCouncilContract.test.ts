@@ -149,6 +149,38 @@ describe('durable council contract', () => {
     }
     expect(adjudicateSealedCouncil(rulings)).toEqual({ status: 'blocked', vetoes: [rulings[0].veto] })
   })
+
+  it('turns an inconclusive ruling into a named evidence request and resolving test', () => {
+    const rulings = sealedRulings()
+    rulings[1].verdict = 'inconclusive'
+    expect(validateSealedCouncil(rulings)).toEqual(
+      expect.arrayContaining([
+        'epistemic_integrity:inconclusive_requires_missing_evidence',
+        'epistemic_integrity:inconclusive_requires_resolving_test',
+      ]),
+    )
+
+    rulings[1].missingEvidence = ['A source capable of resolving the causal claim.']
+    rulings[1].resolvingTest = 'Acquire the source and rerun the same frozen criterion.'
+    expect(adjudicateSealedCouncil(rulings)).toEqual({
+      status: 'needs_evidence',
+      judges: ['epistemic_integrity'],
+    })
+  })
+
+  it('rejects mixed artifacts in one sealed council', () => {
+    const rulings = sealedRulings()
+    rulings[2].artifactHash = 'sha256:different-artifact'
+    expect(validateSealedCouncil(rulings)).toContain('sealed_review_requires_one_artifact_hash')
+  })
+
+  it('rejects prose objects disguised as string claims', () => {
+    const rulings = sealedRulings()
+    rulings[5].claims = [{ claim: 'Nested prose is not the frozen schema.' } as unknown as string]
+    expect(validateSealedCouncil(rulings)).toContain(
+      'human_comprehension_and_access:claims_must_be_nonempty_strings',
+    )
+  })
 })
 
 describe('responsibility and theory routing', () => {

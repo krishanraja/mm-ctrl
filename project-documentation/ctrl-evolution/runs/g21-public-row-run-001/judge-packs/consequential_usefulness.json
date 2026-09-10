@@ -1,0 +1,84 @@
+{
+  "criterion": {
+    "judge": "consequential_usefulness",
+    "criterionVersion": "consequential-usefulness:g21-v1",
+    "ownedTruth": "The diagnostic sharpens a real high-value decision instead of producing business-horoscope prose.",
+    "passConditions": [
+      "Each non-cold result identifies a concrete decision tension grounded in that exact business.",
+      "The useful and rich cases reach strategy, economics, allocation or another genuinely consequential mechanism.",
+      "The one question names information whose answer could select, kill or materially reshape a route.",
+      "Specificity and decision value rise materially with evidence depth."
+    ],
+    "failConditions": [
+      "The advice could be pasted into an unrelated company with little change.",
+      "The question merely invites reflection, learning or activity without changing a decision.",
+      "The output optimises admin, generic adoption or micro-learning rather than the consequential call."
+    ],
+    "hardVetoRules": [
+      {
+        "ruleId": "USEFULNESS-G21-01",
+        "condition": "The richer profiles still reduce to generic business advice with no evidence-linked decision mechanism."
+      }
+    ],
+    "theoryTriggers": [
+      "consequential_choice",
+      "question_generation"
+    ]
+  },
+  "theoryPack": {
+    "shared": [
+      {
+        "cardId": "agency",
+        "label": "Human agency",
+        "sourceLocator": "project-documentation/ctrl-evolution/README.md#product-truth-locked-through-g12",
+        "rule": "Humans own purpose, boundaries, standards, exceptions and the final consequential call.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "evidence",
+        "label": "Evidence standing",
+        "sourceLocator": "docs/current/architecture.md#architecture-invariants",
+        "rule": "Keep explicit facts, inferred candidates and behavioural feedback as different data types.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "boundary",
+        "label": "Subject and audience boundary",
+        "sourceLocator": "docs/current/architecture.md#trust-boundaries",
+        "rule": "Prove subject, ownership, audience and authority before an item can travel or act.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "reality",
+        "label": "Behavioural reality",
+        "sourceLocator": "project-documentation/ctrl-evolution/session-method-learning-log.md#confirmed-by-krish",
+        "rule": "Judge the real task and consequence, not an elegant description of the intended system.",
+        "advisoryOnly": true
+      }
+    ],
+    "optional": [
+      {
+        "cardId": "reversibility-premortem",
+        "label": "Reversibility and premortem",
+        "sourceLocator": "docs/history/2026-09-07-CTRL-DECISIONING-FRAMEWORK.md",
+        "rule": "Test reversibility, premortem failure and opportunity cost separately from predicted upside.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "decision-not-outcome",
+        "label": "Decision quality",
+        "sourceLocator": "docs/history/2026-09-07-DECISIONING CORPUS.md",
+        "rule": "Assess the quality of the decision process separately from the eventual outcome.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "recognition-first-intake",
+        "label": "Recognition-first intake",
+        "sourceLocator": "docs/history/2026-09-07-_INTERROGATION_PROMPT.md",
+        "rule": "Interpret the evidence first, then ask one concrete question only when its answer can change the route.",
+        "advisoryOnly": true
+      }
+    ],
+    "splitRequired": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "rulingId": "RULING-G21-CONSEQUENTIAL-USEFULNESS-002",
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "judge": "consequential_usefulness",
+  "phase": "sealed_review",
+  "artifactHash": "sha256:86E254AE88F56E7DA05A43FB6CC251FA38B2B36CD9423269B849F65F48924D52",
+  "theoryPackHash": "sha256:FC21255209B109FAE1DA9583E9B00CA64211BAF5032E729364C363C2A70EDEC3",
+  "criterionVersion": "consequential-usefulness:g21-v1",
+  "verdict": "pass",
+  "claims": [
+    "The sparse Cloud7 result abstains from choosing an offer and asks for paid repeat work, revenue and delivery cost, evidence that could move the route toward focus, capacity or validation rather than generic activity.",
+    "The WPP result preserves a consequential choice between using integration as a profitable growth engine and treating it mainly as cost reduction. Its question asks for business won or retained because of the joined-up model and the extra profit produced, so the answer can materially reshape that route.",
+    "The Microsoft result identifies scarce AI computing capacity as the allocation constraint and asks which customers or products receive it first, with customer value, profit and safety as the evidence required for priority. This is a consequential portfolio-allocation question, not generic AI-adoption advice.",
+    "Specificity and decision value rise with evidence depth: cold-start intake identifies the missing live decision, sparse evidence tests offer economics, useful evidence tests WPP integration attribution, and rich longitudinal evidence tests Microsoft capacity allocation.",
+    "The plainer WPP and Microsoft questions remain specific to the supplied business tensions and cannot be pasted into an unrelated company without material change. No fail condition or hard veto rule is met."
+  ],
+  "evidenceLocators": [
+    "output.json#/results/1/routeChangingQuestion",
+    "output.json#/results/1/answerWouldChange",
+    "output.json#/results/2/decisionFrame",
+    "output.json#/results/2/routeChangingQuestion",
+    "output.json#/results/2/answerWouldChange",
+    "output.json#/results/3/decisionFrame",
+    "output.json#/results/3/routeChangingQuestion",
+    "output.json#/results/3/answerWouldChange",
+    "output.json#/results/0/routeChangingQuestion",
+    "judge-packs/consequential_usefulness.json#/criterion/passConditions",
+    "judge-packs/consequential_usefulness.json#/criterion/failConditions",
+    "judge-packs/consequential_usefulness.json#/criterion/hardVetoRules/0"
+  ],
+  "recordedAt": "2026-09-10T15:18:55.9513354+00:00"
+}

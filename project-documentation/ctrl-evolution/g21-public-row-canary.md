@@ -1,6 +1,6 @@
 # G21 public-row canary
 
-Status: four source manifests and diagnostic oracles frozen locally; model and council runs pending
+Status: four source manifests and oracles frozen locally; blind run 001 blocked; targeted run 002 passed seven sealed judges and standards prosecution
 
 Date: 10 September 2026
 
@@ -108,13 +108,16 @@ Blocked by the current local execution boundary:
 
 Not yet proved:
 
-- no diagnostic model has seen the sources;
+- the passed public row does not prove the 12 internal-depth coordinates, contradiction repair, durable learning or customer efficacy;
 - no judge has produced an independent ruling;
 - no council event has been stored;
 - no public subject has supplied or consented to private evidence;
 - no product UI or efficacy claim is earned.
 
+## Run 001
+
+The blind run and targeted repair are recorded in `g21-diagnostic-council-run.md`, `runs/g21-public-row-run-001/` and `runs/g21-public-row-run-002/`. Run 001 remains preserved with its valid comprehension veto. Run 002 adds a versioned plain-language surface contract and passes all seven sealed criteria plus non-voting standards prosecution. Input, output, theory packs, rulings and adjudication are hashed so later work cannot silently review a different artifact.
+
 ## Next action
 
-Freeze the exact diagnostic input and output schema for these four profiles, run one diagnostic pass without builder rationale, and collect seven sealed judge rulings against the expected and forbidden claims. Any valid veto blocks the canary. An inconclusive ruling must name the missing evidence or resolving test rather than becoming a soft pass.
-
+Freeze matched internal-depth profiles for the remaining evidence matrix. Private depth must be consented or wholly fictional, and every expected and forbidden oracle must freeze before diagnosis.

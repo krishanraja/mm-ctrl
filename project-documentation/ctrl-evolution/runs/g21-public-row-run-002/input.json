@@ -1,0 +1,297 @@
+[
+  {
+    "schemaVersion": "g21-public-row-diagnostic:v2",
+    "runId": "G21-PUBLIC-ROW-RUN-002",
+    "profileId": "RANGE-PUBLIC-00",
+    "subjectLabel": "Cold-start leader, wholly fictional",
+    "externalDepth": "none_or_unusable",
+    "coverage": {
+      "currentIdentity": false,
+      "currentBusinessContext": false,
+      "currentDecisionTension": false,
+      "currentOutcomeEvidence": false,
+      "currentCountercase": false,
+      "longitudinalContinuity": false
+    },
+    "evidence": [],
+    "task": "Produce the most specific defensible decision diagnostic this evidence earns. Separate fact, public statement, bounded inference and evidence gap. Ask one question only when its answer could change the route. Do not fill missing evidence with generic advice.",
+    "authority": {
+      "responsibilityGate": 1,
+      "mayFrameDecision": true,
+      "mayRecommendConsequentialAction": false,
+      "mayInferPrivatePersonhood": false,
+      "mayEvaluateNamedEmployees": false
+    },
+    "theoryTriggers": [
+      "claim_or_inference",
+      "consequential_choice",
+      "question_generation"
+    ]
+  },
+  {
+    "schemaVersion": "g21-public-row-diagnostic:v2",
+    "runId": "G21-PUBLIC-ROW-RUN-002",
+    "profileId": "RANGE-PUBLIC-01",
+    "subjectLabel": "Silke Anderson at Cloud7 Marketing",
+    "externalDepth": "sparse",
+    "coverage": {
+      "currentIdentity": true,
+      "currentBusinessContext": true,
+      "currentDecisionTension": false,
+      "currentOutcomeEvidence": false,
+      "currentCountercase": false,
+      "longitudinalContinuity": false
+    },
+    "evidence": [
+      {
+        "sourceId": "SRC-CLOUD7-TEAM",
+        "title": "Meet the Team",
+        "url": "https://www.cloud7marketing.co.uk/team",
+        "publisher": "Cloud7 Marketing and AI",
+        "sourceType": "official_company_page",
+        "layer": "narrative",
+        "subjectScope": "person_and_company",
+        "retrievedOn": "2026-09-10",
+        "summary": "The company presents Silke Anderson as founder and CEO and describes a UK consultancy offering fractional marketing leadership, practical AI training and delivery support.",
+        "limitations": [
+          "First-party positioning does not establish demand, economics, delivery capacity or outcomes."
+        ]
+      },
+      {
+        "sourceId": "SRC-CLOUD7-HOME",
+        "title": "Cloud7 Marketing and AI",
+        "url": "https://www.cloud7marketing.co.uk/",
+        "publisher": "Cloud7 Marketing and AI",
+        "sourceType": "official_company_page",
+        "layer": "narrative",
+        "subjectScope": "company",
+        "retrievedOn": "2026-09-10",
+        "summary": "The company markets AI literacy training, fractional CMO support and marketing services to UK small and mid-sized businesses.",
+        "limitations": [
+          "Service descriptions and testimonials are self-published and do not reveal offer-level revenue, profit or repeat work."
+        ]
+      },
+      {
+        "sourceId": "SRC-CLOUD7-COMPANIES-HOUSE",
+        "title": "CLOUD7 MARKETING LTD overview",
+        "url": "https://find-and-update.company-information.service.gov.uk/company/15140339",
+        "publisher": "Companies House",
+        "sourceType": "regulatory_filing",
+        "layer": "revealed",
+        "subjectScope": "company",
+        "retrievedOn": "2026-09-10",
+        "summary": "The public register lists Cloud7 Marketing Ltd as an active private company incorporated on 15 September 2023 across consultancy, advertising, technology-service and education classifications.",
+        "limitations": [
+          "Companies House warns that it does not verify filed information, and the overview does not establish commercial performance."
+        ]
+      }
+    ],
+    "task": "Produce the most specific defensible decision diagnostic this evidence earns. Separate fact, public statement, bounded inference and evidence gap. Ask one question only when its answer could change the route. Do not fill missing evidence with generic advice.",
+    "authority": {
+      "responsibilityGate": 1,
+      "mayFrameDecision": true,
+      "mayRecommendConsequentialAction": false,
+      "mayInferPrivatePersonhood": false,
+      "mayEvaluateNamedEmployees": false
+    },
+    "theoryTriggers": [
+      "claim_or_inference",
+      "consequential_choice",
+      "question_generation"
+    ]
+  },
+  {
+    "schemaVersion": "g21-public-row-diagnostic:v2",
+    "runId": "G21-PUBLIC-ROW-RUN-002",
+    "profileId": "RANGE-PUBLIC-02",
+    "subjectLabel": "Cindy Rose at WPP",
+    "externalDepth": "useful",
+    "coverage": {
+      "currentIdentity": true,
+      "currentBusinessContext": true,
+      "currentDecisionTension": true,
+      "currentOutcomeEvidence": true,
+      "currentCountercase": true,
+      "longitudinalContinuity": false
+    },
+    "evidence": [
+      {
+        "sourceId": "SRC-WPP-APPOINTMENT",
+        "title": "Chief Executive Officer Appointment",
+        "url": "https://www.wpp.com/en/news/2025/07/chief-executive-officer-appointment",
+        "publisher": "WPP",
+        "sourceType": "official_investor_release",
+        "layer": "revealed",
+        "subjectScope": "person_and_company",
+        "publishedOn": "2025-07-10",
+        "retrievedOn": "2026-09-10",
+        "summary": "WPP appointed Cindy Rose as chief executive officer effective 1 September 2025.",
+        "limitations": [
+          "An appointment announcement establishes role and stated rationale, not later performance."
+        ]
+      },
+      {
+        "sourceId": "SRC-WPP-ELEVATE28",
+        "title": "Strategy Update and 2025 Preliminary Results",
+        "url": "https://www.wpp.com/en/news/2026/02/strategy-update-and-2025-preliminary-results",
+        "publisher": "WPP",
+        "sourceType": "official_investor_release",
+        "layer": "narrative",
+        "subjectScope": "company",
+        "publishedOn": "2026-02-26",
+        "retrievedOn": "2026-09-10",
+        "summary": "WPP announced Elevate28, a shift from a holding company to four integrated operating units connected by WPP Open, with a target of GBP 500 million in gross annualised cost savings by 2028.",
+        "limitations": [
+          "The strategy and targets are forward-looking and do not prove causation or delivery."
+        ]
+      },
+      {
+        "sourceId": "SRC-WPP-H1-2026",
+        "title": "2026 Interim Results",
+        "url": "https://www.wpp.com/en/news/2026-interim-results",
+        "publisher": "WPP",
+        "sourceType": "official_investor_release",
+        "layer": "revealed",
+        "subjectScope": "company",
+        "publishedOn": "2026-08-06",
+        "retrievedOn": "2026-09-10",
+        "summary": "WPP reported H1 revenue less pass-through costs down 4.7 percent like for like, an improving second-half trajectory expectation, major wins and retentions, GBP 100 million of planned in-year savings and continued work toward the GBP 500 million 2028 target.",
+        "limitations": [
+          "The release does not isolate how much incremental revenue, margin or retention was caused by integration or WPP Open."
+        ]
+      },
+      {
+        "sourceId": "SRC-WPP-TRUST",
+        "title": "Our WPP trust principles",
+        "url": "https://www.wpp.com/en/insights/our-trust-principles",
+        "publisher": "WPP",
+        "sourceType": "official_company_page",
+        "layer": "narrative",
+        "subjectScope": "person_and_company",
+        "publishedOn": "2026-06-22",
+        "retrievedOn": "2026-09-10",
+        "summary": "Cindy Rose publicly framed growth and trust as central to WPP and described client demand for marketing transformation and measurable enterprise growth.",
+        "limitations": [
+          "A leadership statement establishes the public thesis, not whether clients experience it."
+        ]
+      }
+    ],
+    "task": "Produce the most specific defensible decision diagnostic this evidence earns. Separate fact, public statement, bounded inference and evidence gap. Ask one question only when its answer could change the route. Do not fill missing evidence with generic advice.",
+    "authority": {
+      "responsibilityGate": 1,
+      "mayFrameDecision": true,
+      "mayRecommendConsequentialAction": false,
+      "mayInferPrivatePersonhood": false,
+      "mayEvaluateNamedEmployees": false
+    },
+    "theoryTriggers": [
+      "claim_or_inference",
+      "consequential_choice",
+      "question_generation"
+    ]
+  },
+  {
+    "schemaVersion": "g21-public-row-diagnostic:v2",
+    "runId": "G21-PUBLIC-ROW-RUN-002",
+    "profileId": "RANGE-PUBLIC-03",
+    "subjectLabel": "Satya Nadella at Microsoft",
+    "externalDepth": "rich_longitudinal",
+    "coverage": {
+      "currentIdentity": true,
+      "currentBusinessContext": true,
+      "currentDecisionTension": true,
+      "currentOutcomeEvidence": true,
+      "currentCountercase": true,
+      "longitudinalContinuity": true
+    },
+    "evidence": [
+      {
+        "sourceId": "SRC-MSFT-2015",
+        "title": "Microsoft 2015 Annual Report",
+        "url": "https://www.microsoft.com/investor/reports/ar15/index.html",
+        "publisher": "Microsoft",
+        "sourceType": "official_company_report",
+        "layer": "narrative",
+        "subjectScope": "person_and_company",
+        "publishedOn": "2015-10-19",
+        "retrievedOn": "2026-09-10",
+        "summary": "The shareholder letter described a mobile-first, cloud-first platform strategy, organisational change and a growth-mindset culture under Satya Nadella.",
+        "limitations": [
+          "This is historical leadership framing and cannot establish current priorities by itself."
+        ]
+      },
+      {
+        "sourceId": "SRC-MSFT-2025",
+        "title": "Microsoft 2025 Annual Report",
+        "url": "https://www.microsoft.com/investor/reports/ar25/index.html",
+        "publisher": "Microsoft",
+        "sourceType": "official_company_report",
+        "layer": "narrative",
+        "subjectScope": "person_and_company",
+        "retrievedOn": "2026-09-10",
+        "summary": "The shareholder letter described AI as a platform shift affecting every layer of the technology stack and framed the operating challenge as delivering current platforms while building the next generation.",
+        "limitations": [
+          "The letter is management framing and predates the latest fiscal-year results."
+        ]
+      },
+      {
+        "sourceId": "SRC-MSFT-2026-10K",
+        "title": "Microsoft 2026 Form 10-K",
+        "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+        "publisher": "United States Securities and Exchange Commission",
+        "sourceType": "regulatory_filing",
+        "layer": "revealed",
+        "subjectScope": "person_and_company",
+        "publishedOn": "2026-07-29",
+        "retrievedOn": "2026-09-10",
+        "summary": "The filing identifies Satya Nadella as chairman and chief executive officer. It reports fiscal 2026 revenue up 18 percent and a lower Microsoft Cloud gross-margin percentage as AI infrastructure investment and usage increased.",
+        "limitations": [
+          "Company-level results do not disclose the full return by workload, customer, product or unit of constrained AI capacity."
+        ]
+      },
+      {
+        "sourceId": "SRC-MSFT-FY26-Q4",
+        "title": "Microsoft Fiscal Year 2026 Fourth Quarter Earnings Conference Call",
+        "url": "https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4",
+        "publisher": "Microsoft Investor Relations",
+        "sourceType": "official_investor_release",
+        "layer": "revealed",
+        "subjectScope": "company",
+        "publishedOn": "2026-07-29",
+        "retrievedOn": "2026-09-10",
+        "summary": "Microsoft reported USD 41 billion of quarterly capital expenditure, USD 678 billion of commercial remaining performance obligations and continued capacity expansion while describing workload efficiency and customer return as operating priorities.",
+        "limitations": [
+          "Management commentary and aggregate commitments do not prove the realised return or durability of every AI workload."
+        ]
+      },
+      {
+        "sourceId": "SRC-MSFT-SFI-2026",
+        "title": "July 2026 Secure Future Initiative progress report",
+        "url": "https://www.microsoft.com/en-us/trust-center/security/secure-future-initiative/sfi-progress-report-july-2026",
+        "publisher": "Microsoft Trust Center",
+        "sourceType": "official_company_report",
+        "layer": "revealed",
+        "subjectScope": "company",
+        "publishedOn": "2026-07-10",
+        "retrievedOn": "2026-09-10",
+        "summary": "Microsoft reported progress against security objectives and described security as a continuous discipline embedded across governance, engineering and AI-accelerated defence.",
+        "limitations": [
+          "A company progress report is not independent assurance that every security objective or product risk is resolved."
+        ]
+      }
+    ],
+    "task": "Produce the most specific defensible decision diagnostic this evidence earns. Separate fact, public statement, bounded inference and evidence gap. Ask one question only when its answer could change the route. Do not fill missing evidence with generic advice.",
+    "authority": {
+      "responsibilityGate": 1,
+      "mayFrameDecision": true,
+      "mayRecommendConsequentialAction": false,
+      "mayInferPrivatePersonhood": false,
+      "mayEvaluateNamedEmployees": false
+    },
+    "theoryTriggers": [
+      "claim_or_inference",
+      "consequential_choice",
+      "question_generation"
+    ]
+  }
+]

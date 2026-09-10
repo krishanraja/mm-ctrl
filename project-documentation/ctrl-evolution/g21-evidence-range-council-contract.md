@@ -1,6 +1,6 @@
 # G21 evidence range, responsibility and council contract
 
-Status: local contract and four-profile public-row canary implemented; diagnostic runs, council rulings, database event storage, internal-depth population and product UI pending
+Status: local contract implemented; four-profile public row passed after one preserved veto and targeted repair; database event storage, internal-depth population and product UI pending
 
 Date: 9 September 2026
 
@@ -186,11 +186,15 @@ The implemented router covers:
 - `src/features/operator-brain/g21PublicRowCanary.ts` freezes the first four source envelopes, coverage capabilities, allowed notices, unresolved facts, route-changing questions, expected behaviour and forbidden claims.
 - `src/features/operator-brain/g21PublicRowCanary.test.ts` proves public-only personhood, external-depth coverage, source-envelope integrity, evidence-backed notices and honest cold-start and sparse behaviour.
 - `project-documentation/ctrl-evolution/g21-public-row-canary.md` records the source and claim-evidence matrix, limitations, countercase and verification state.
+- `src/features/operator-brain/g21DiagnosticCanary.ts` owns the versioned oracle-free input, bounded output and plain-language surface contracts.
+- `src/features/operator-brain/g21CouncilCriteria.ts` assigns one versioned owned truth, pass boundary and hard-veto set to every judge.
+- `runs/g21-public-row-run-001/` preserves the first diagnostic, six passes, the comprehension veto, blocked adjudication, standards prosecution and founder calibration.
+- `runs/g21-public-row-run-002/` preserves the targeted repair, seven fresh passes, passed adjudication and confirming standards prosecution.
 - `npm run brain:g21:check` is the focused deterministic gate.
 
 ## What this does not prove
 
-- No diagnostic model has run against the selected public profiles.
+- The public-row diagnostic canary passed its current contract only after one blocked run and a targeted repair. This does not prove diagnostic efficacy outside the four frozen envelopes.
 - No private or anonymised evidence has been collected.
 - No diagnostic model has run against the 48 cases.
 - No council event has been written to Supabase.
@@ -199,4 +203,4 @@ The implemented router covers:
 
 ## Next action
 
-Freeze the exact diagnostic input and output schema for the four-profile public-row canary, run one blind diagnostic pass and collect seven sealed judge rulings against the expected and forbidden claims. Any valid veto blocks. An inconclusive ruling must name the missing evidence or resolving test rather than becoming a soft pass.
+Freeze the first matched internal-depth profiles for the remaining matrix. Use only consented or wholly fictional private evidence, control for company scale where possible and freeze expected and forbidden claims before diagnosis.

@@ -1,0 +1,69 @@
+{
+  "criterion": {
+    "judge": "human_comprehension_and_access",
+    "criterionVersion": "human-comprehension-and-access:g21-v1",
+    "ownedTruth": "A busy non-technical leader can understand what is known, what matters and what to answer next.",
+    "passConditions": [
+      "Each result can be understood by a bright 12-year-old without product or consulting jargon.",
+      "The language is concise enough to sequence into a simple interface with deeper detail available on demand.",
+      "There is one clear question, not several disguised asks.",
+      "Labels and boundaries clarify meaning rather than adding verbal clutter."
+    ],
+    "failConditions": [
+      "The output is pompous, cryptic, abstract, e-learning-like or full of accessory text.",
+      "A leader must decode phrases before they can answer the question.",
+      "Several ideas or asks compete for attention."
+    ],
+    "hardVetoRules": [
+      {
+        "ruleId": "COMPREHENSION-G21-01",
+        "condition": "The main decision or question is unintelligible without specialist interpretation."
+      }
+    ],
+    "theoryTriggers": [
+      "question_generation"
+    ]
+  },
+  "theoryPack": {
+    "shared": [
+      {
+        "cardId": "agency",
+        "label": "Human agency",
+        "sourceLocator": "project-documentation/ctrl-evolution/README.md#product-truth-locked-through-g12",
+        "rule": "Humans own purpose, boundaries, standards, exceptions and the final consequential call.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "evidence",
+        "label": "Evidence standing",
+        "sourceLocator": "docs/current/architecture.md#architecture-invariants",
+        "rule": "Keep explicit facts, inferred candidates and behavioural feedback as different data types.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "boundary",
+        "label": "Subject and audience boundary",
+        "sourceLocator": "docs/current/architecture.md#trust-boundaries",
+        "rule": "Prove subject, ownership, audience and authority before an item can travel or act.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "reality",
+        "label": "Behavioural reality",
+        "sourceLocator": "project-documentation/ctrl-evolution/session-method-learning-log.md#confirmed-by-krish",
+        "rule": "Judge the real task and consequence, not an elegant description of the intended system.",
+        "advisoryOnly": true
+      }
+    ],
+    "optional": [
+      {
+        "cardId": "recognition-first-intake",
+        "label": "Recognition-first intake",
+        "sourceLocator": "docs/history/2026-09-07-_INTERROGATION_PROMPT.md",
+        "rule": "Interpret the evidence first, then ask one concrete question only when its answer can change the route.",
+        "advisoryOnly": true
+      }
+    ],
+    "splitRequired": false
+  }
+}

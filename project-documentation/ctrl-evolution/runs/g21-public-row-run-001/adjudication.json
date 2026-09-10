@@ -1,0 +1,66 @@
+{
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "phase": "adjudication",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "rulings": [
+    {
+      "file": "behavioural_and_implementation_reality.json",
+      "sha256": "1913e7846b9ca29bbdfaf0545b1e074ee1dc88d9e11c73c12efa9763576aa169",
+      "judge": "behavioural_and_implementation_reality",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "consequential_usefulness.json",
+      "sha256": "36685efca167bdff23daac486c8affbe7c381b1a2bcde51481963f2b1dea18aa",
+      "judge": "consequential_usefulness",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "epistemic_integrity.json",
+      "sha256": "80a3bd78fafa207ecc1926a596190f1713541d732f9c1cdf42b0f8286d6c312d",
+      "judge": "epistemic_integrity",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "human_agency.json",
+      "sha256": "9f6e8bc36fbcee6c84e80645a282fb4ff42cd98744a537dd0c2d2da9d1a3834d",
+      "judge": "human_agency",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "human_comprehension_and_access.json",
+      "sha256": "36c79eef1766f1a916cbe3ba227da0db370d8f7f59958914e1c5779b07f51c77",
+      "judge": "human_comprehension_and_access",
+      "verdict": "fail",
+      "vetoRuleId": "COMPREHENSION-G21-01"
+    },
+    {
+      "file": "living_brain_integrity.json",
+      "sha256": "9c8c289b708ee3718723292fdc44aab11c942eda1b13016b00f7043475668ba5",
+      "judge": "living_brain_integrity",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "subject_audience_lifecycle_safety.json",
+      "sha256": "05d2026f48017fc12b1d758c1a5d5dac1e05b08218e8e9f11207e4d74f464c0b",
+      "judge": "subject_audience_lifecycle_safety",
+      "verdict": "pass",
+      "vetoRuleId": null
+    }
+  ],
+  "result": {
+    "status": "blocked",
+    "vetoes": [
+      {
+        "ruleId": "COMPREHENSION-G21-01",
+        "failure": "The main decision questions for RANGE-PUBLIC-02 and RANGE-PUBLIC-03 are not intelligible to the stated non-technical audience without specialist interpretation.",
+        "resolvingTest": "Rewrite each main frame and question in plain language, then verify that a bright 12-year-old can state what is known, what matters and what single answer is requested without help defining business or finance terms."
+      }
+    ]
+  }
+}
