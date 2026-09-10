@@ -1,0 +1,28 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "questionPackSha256": "a63ed182732568f1ccf6221acbd0bd58d6826dff043f4e4f2a046fb0d7c52aac",
+  "reviewerRole": "independent_adult_answerability_proxy",
+  "reviews": [
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers/adult-answerability-a.json",
+      "sha256": "ddebd53494c5c1e7c83e57bd660678bab1839af9cb1c61574912af523b53cc60",
+      "overallVerdict": "fail",
+      "passedQuestions": 5,
+      "failedQuestions": 7
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers/adult-answerability-b.json",
+      "sha256": "cb165e7ca10d17d2aa6f6b7beb1c2796241f6ca39d3b84f528512c046bb2354f",
+      "overallVerdict": "fail",
+      "passedQuestions": 7,
+      "failedQuestions": 5
+    }
+  ],
+  "sharedFailures": [
+    "RANGE-INTERNAL-FORGE-I2",
+    "RANGE-INTERNAL-FORGE-I3",
+    "RANGE-INTERNAL-STORY-I2",
+    "RANGE-INTERNAL-STORY-I3"
+  ],
+  "boundary": "These adult proxy screens test literal clarity and answerability only. They are not child testing and cannot clear any specialist council criterion."
+}
