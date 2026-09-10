@@ -40,6 +40,10 @@ This chronology preserves why a reaction occurred, not only what copy or pixel c
 | A private-audience type appeared safe but could be changed without authority | A valid enum described possible labels, not who authorised a particular record to use one | Bind each private evidence record to an evidence-specific audience authority and reject any mismatch or widening |
 | Three lifecycle labels looked ordered while the validator accepted the wrong record in the middle state | Named stages were mistaken for proven state behaviour | Bind initial to no lifecycle record, contradicted to the conflict only and corrected to conflict then correction, with exact-order regressions |
 | The first internal-range council exposed defects in its own ruling data | Human review instructions existed in prose but the stored envelope and adjudicator did not enforce them exactly | Treat governance as product code: exact fields, criterion versions, artifact hashes, veto rules and raw adjudication must all be executable |
+| Two adult proxy readers paraphrased every Run 002 question while the comprehension judge still found six unanswerable | Readback tested whether the words could be restated, not whether the leader had a bounded response they could actually give | Test answerability separately: include choices, unit, denominator or comparator where needed, permit `unknown`, name the evidence route and keep notes optional |
+| Exact lifecycle freezing caught fixture drift but did not prove the runtime would reject unseen malformed inputs | A canary answer key and a product safety invariant were being asked to do the same job | Keep two explicit layers: exact frozen bytes for test integrity and structural validation for novel runtime inputs |
+| A later correction risked deleting a still-true observation together with a wrong inference | Source records, observations and interpretations were not independently addressable | Split claims by epistemic kind. Preserve the source and valid observations; challenge or supersede only the exact interpretation that changed |
+| Repairing the source made the old Run 002 verifier report artifact drift | Historical verification read today's working tree instead of the bytes the judges actually saw | Every sealed run must resolve artifact bytes from its recorded commit and verify later rulings against that immutable anchor |
 
 The recurring pattern is not “Krish wants less detail.” He rejects detail that arrives before its use, copy that announces rather than proves and intelligence that is abstract rather than specific. The product should preserve deep layers while making the immediate state devastatingly simple.
 
@@ -63,6 +67,9 @@ These are observed candidates, not yet confirmed reusable standards:
 - Preserve failed council runs and each judge's sealed ruling as history. Repair into a new immutable run, then rerun every criterion so one local fix cannot hide a regression.
 - Hold identity, company and external evidence fixed when testing internal evidence depth. Otherwise a more impressive diagnostic cannot be attributed to better learning.
 - Freeze profile-specific expected and forbidden behaviour before building oracle-free model inputs. A model must never receive the answer key it will later be judged against.
+- Treat paraphrase, answerability and decision usefulness as different question gates. Passing one does not imply either of the others.
+- Separate immutable fixture integrity from structural runtime safety, then attack both independently.
+- Preserve judge disagreement when it reveals that two apparently similar tests measure different things.
 
 ## End-of-session gate
 

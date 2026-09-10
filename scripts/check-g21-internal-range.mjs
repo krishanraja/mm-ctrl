@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const outputDirectory = mkdtempSync(join(tmpdir(), 'mm-ctrl-g21-internal-'))
 const require = createRequire(import.meta.url)
+let run3MutationsRejected = 0
 
 function assert(condition, message) {
   if (!condition) throw new Error(message)
@@ -19,6 +20,15 @@ function includesEvery(values, expected) {
 
 function sameArray(left, right) {
   return JSON.stringify(left) === JSON.stringify(right)
+}
+
+function builderRefuses(contract, profiles) {
+  try {
+    contract.buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-003-MUTATION', profiles)
+    return false
+  } catch {
+    return true
+  }
 }
 
 try {
@@ -95,6 +105,10 @@ try {
         sameArray(input.currentClaims, contract.buildG21CurrentClaimView(input.internalEvidence)),
         `${profile.manifest.profileId} emitted a stale current-claim view`,
       )
+      assert(
+        contract.validateG21InternalBlindInput(input, profile).length === 0,
+        `${profile.manifest.profileId} emitted an invalid ${input.runtimeState} input`,
+      )
     }
   }
 
@@ -138,7 +152,10 @@ try {
   )
 
   const brokenLifecycle = structuredClone(profiles[0])
-  brokenLifecycle.lifecycleEvidence[1].supersedesClaimIds = [
+  const brokenLifecycleCorrectionClaim = brokenLifecycle.lifecycleEvidence[1].claims.find(
+    (claim) => claim.supersedesClaimIds.length > 0,
+  )
+  brokenLifecycleCorrectionClaim.supersedesClaimIds = [
     brokenLifecycle.internalEvidence[0].claims[0].claimId,
   ]
   brokenLifecycle.lifecycleEvidence[1].recordedAt =
@@ -147,6 +164,7 @@ try {
     includesEvery(contract.validateG21InternalRangeProfile(brokenLifecycle), [
       'lifecycle_correction_must_supersede_conflict',
       'lifecycle_correction_must_follow_conflict',
+      'claim_relations_do_not_match_frozen_contract',
     ]),
     'broken lifecycle correction was not rejected',
   )
@@ -231,7 +249,8 @@ try {
     const correction = profile.internalEvidence.find(
       (record) => record.sourceType === 'direct_correction',
     )
-    const targetClaimId = correction.supersedesClaimIds[0]
+    const correctionClaim = correction.claims.find((claim) => claim.supersedesClaimIds.length > 0)
+    const targetClaimId = correctionClaim.supersedesClaimIds[0]
     const targetRecord = profile.internalEvidence.find((record) =>
       record.claims.some((claim) => claim.claimId === targetClaimId),
     )
@@ -248,6 +267,42 @@ try {
     )
   }
 
+  const forgeCorrected = inputs.find(
+    (input) => input.profileId === 'RANGE-INTERNAL-FORGE-I2' && input.runtimeState === 'corrected',
+  )
+  const forgeObservation = forgeCorrected.currentClaims.find(
+    (claim) => claim.claimId === 'LIFE-FORGE-I2-CONFLICT-CLAIM-01',
+  )
+  const forgeInference = forgeCorrected.currentClaims.find(
+    (claim) => claim.claimId === 'LIFE-FORGE-I2-CONFLICT-CLAIM-02',
+  )
+  assert(
+    forgeObservation?.status === 'current' &&
+      forgeObservation.evidenceId === 'LIFE-FORGE-I2-CONFLICT' &&
+      forgeObservation.sourceLocator === 'fixture://forge/lifecycle/work/conflict' &&
+      forgeObservation.audience === 'company_private',
+    'Forge confidence observation did not survive correction with provenance',
+  )
+  assert(forgeInference?.status === 'superseded', 'Forge unwillingness inference survived correction')
+
+  const storyCorrected = inputs.find(
+    (input) => input.profileId === 'RANGE-INTERNAL-STORY-I3' && input.runtimeState === 'corrected',
+  )
+  const storyAssociation = storyCorrected.currentClaims.find(
+    (claim) => claim.claimId === 'LIFE-STORY-I3-CONFLICT-CLAIM-01',
+  )
+  const storyCausation = storyCorrected.currentClaims.find(
+    (claim) => claim.claimId === 'LIFE-STORY-I3-CONFLICT-CLAIM-02',
+  )
+  assert(
+    storyAssociation?.status === 'current' &&
+      storyAssociation.evidenceId === 'LIFE-STORY-I3-CONFLICT' &&
+      storyAssociation.sourceLocator === 'fixture://story/lifecycle/longitudinal/conflict' &&
+      storyAssociation.audience === 'company_private',
+    'Story association did not survive correction with provenance',
+  )
+  assert(storyCausation?.status === 'superseded', 'Story causal inference survived correction')
+
   const legacy = structuredClone(
     profiles.find((profile) => profile.manifest.internalDepth === 'longitudinal_corrections'),
   )
@@ -255,7 +310,6 @@ try {
     (record) => record.sourceType === 'direct_correction',
   )
   legacyCorrection.supersedesEvidenceId = legacy.internalEvidence[0].evidenceId
-  delete legacyCorrection.supersedesClaimIds
   assert(
     contract
       .validateG21InternalRangeProfile(legacy)
@@ -332,30 +386,240 @@ try {
   )
 
   const selfContradiction = structuredClone(profiles[0])
-  selfContradiction.lifecycleEvidence[0].contradictsEvidenceIds = [
-    selfContradiction.lifecycleEvidence[0].evidenceId,
+  const selfChallengeClaim = selfContradiction.lifecycleEvidence[0].claims[0]
+  selfChallengeClaim.challengesClaimIds = [
+    selfChallengeClaim.claimId,
   ]
   assert(
     contract
       .validateG21InternalRangeProfile(selfContradiction)
       .includes(
-        `${selfContradiction.lifecycleEvidence[0].evidenceId}:cannot_contradict_self_${selfContradiction.lifecycleEvidence[0].evidenceId}`,
+        `${selfContradiction.lifecycleEvidence[0].evidenceId}:cannot_challenge_self_${selfChallengeClaim.claimId}`,
       ),
     'self contradiction was not rejected',
   )
 
   const forwardContradiction = structuredClone(profiles[0])
-  forwardContradiction.lifecycleEvidence[0].contradictsEvidenceIds = [
-    forwardContradiction.lifecycleEvidence[1].evidenceId,
+  const forwardChallengeClaim = forwardContradiction.lifecycleEvidence[0].claims[0]
+  const futureClaimId = forwardContradiction.lifecycleEvidence[1].claims[0].claimId
+  forwardChallengeClaim.challengesClaimIds = [
+    futureClaimId,
   ]
   assert(
     contract
       .validateG21InternalRangeProfile(forwardContradiction)
       .includes(
-        `${forwardContradiction.lifecycleEvidence[0].evidenceId}:contradiction_must_follow_target_${forwardContradiction.lifecycleEvidence[1].evidenceId}`,
+        `${forwardContradiction.lifecycleEvidence[0].evidenceId}:challenge_must_follow_target_${futureClaimId}`,
       ),
     'forward contradiction was not rejected',
   )
+
+  const futureAsOf = structuredClone(profiles[0])
+  futureAsOf.evidenceAsOf = '2030-01-01T00:00:00.000Z'
+  futureAsOf.internalEvidence[0].validAt = '2029-01-01T09:00:00.000Z'
+  futureAsOf.internalEvidence[0].recordedAt = '2029-01-01T09:01:00.000Z'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(futureAsOf)
+      .includes('evidence_as_of_must_match_frozen_clock'),
+    'profile-controlled future clock was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const sharedPatternSource = structuredClone(
+    profiles.find((profile) =>
+      profile.oracle.allowedNotices.some((notice) => notice.standing === 'supported_pattern'),
+    ),
+  )
+  const sharedPattern = sharedPatternSource.oracle.allowedNotices.find(
+    (notice) => notice.standing === 'supported_pattern',
+  )
+  const [firstPatternId, secondPatternId] = sharedPattern.evidenceIds
+  const firstPatternRecord = sharedPatternSource.internalEvidence.find(
+    (record) => record.evidenceId === firstPatternId,
+  )
+  const secondPatternRecord = sharedPatternSource.internalEvidence.find(
+    (record) => record.evidenceId === secondPatternId,
+  )
+  secondPatternRecord.sourceLocator = firstPatternRecord.sourceLocator
+  assert(
+    contract
+      .validateG21InternalRangeProfile(sharedPatternSource)
+      .includes(`${sharedPattern.noticeId}:pattern_requires_distinct_evidence`),
+    'one source identity masquerading as a pattern was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const incapableSource = structuredClone(
+    profiles.find((profile) => profile.manifest.profileId === 'RANGE-INTERNAL-FORGE-I2'),
+  )
+  incapableSource.lifecycleEvidence[0].sourceType = 'customer_evidence'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(incapableSource)
+      .includes(`${incapableSource.lifecycleEvidence[0].evidenceId}:source_subject_incompatible`),
+    'source type incompatible with staff evidence was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const unsupportedCausation = structuredClone(
+    profiles.find((profile) => profile.manifest.profileId === 'RANGE-INTERNAL-CARE-I2'),
+  )
+  unsupportedCausation.oracle.allowedNotices[0].text =
+    'The scheduling logic caused two unsafe journeys.'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(unsupportedCausation)
+      .includes('oracle_does_not_match_frozen_contract'),
+    'unsupported causal notice was not rejected by the sealed fixture',
+  )
+  run3MutationsRejected += 1
+
+  const misdirectedCorrection = structuredClone(
+    profiles.find((profile) => profile.manifest.profileId === 'RANGE-INTERNAL-CARE-I3'),
+  )
+  const misdirectedClaim = misdirectedCorrection.internalEvidence
+    .find((record) => record.evidenceId === 'INT-CARE-008')
+    .claims.find((claim) => claim.supersedesClaimIds.length > 0)
+  misdirectedClaim.supersedesClaimIds = ['INT-CARE-002-CLAIM-03']
+  assert(
+    contract
+      .validateG21InternalRangeProfile(misdirectedCorrection)
+      .includes('claim_relations_do_not_match_frozen_contract'),
+    'misdirected correction was not rejected by the claim contract',
+  )
+  run3MutationsRejected += 1
+
+  const identityRealPerson = structuredClone(profiles[0])
+  identityRealPerson.identity.realNamedPerson = true
+  assert(
+    contract
+      .validateG21InternalRangeProfile(identityRealPerson)
+      .includes('identity_fields_invalid'),
+    'unknown real-person identity field was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const identityConsent = structuredClone(profiles[0])
+  identityConsent.identity.consentRecordId = 'CONSENT-FICTIONAL-01'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(identityConsent)
+      .includes('identity_fields_invalid'),
+    'unknown identity consent field was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const evidenceConsent = structuredClone(profiles[0])
+  evidenceConsent.internalEvidence[0].consentRecordId = 'CONSENT-FICTIONAL-01'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(evidenceConsent)
+      .includes(`${evidenceConsent.internalEvidence[0].evidenceId}:evidence_fields_invalid`),
+    'unknown private-evidence consent field was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const negatedDisclosure = structuredClone(profiles[0])
+  negatedDisclosure.manifest.syntheticDisclosure = 'This person is not fictional.'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(negatedDisclosure)
+      .includes('fictional_disclosure_required'),
+    'negated fictional disclosure was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const swappedLifecycleContent = structuredClone(profiles[0])
+  const swappedConflict = swappedLifecycleContent.lifecycleEvidence[0]
+  const swappedCorrection = swappedLifecycleContent.lifecycleEvidence[1]
+  ;[swappedConflict.content, swappedCorrection.content] = [
+    swappedCorrection.content,
+    swappedConflict.content,
+  ]
+  ;[swappedConflict.claims[0].text, swappedCorrection.claims[0].text] = [
+    swappedCorrection.claims[0].text,
+    swappedConflict.claims[0].text,
+  ]
+  assert(
+    contract
+      .validateG21InternalRangeProfile(swappedLifecycleContent)
+      .includes('lifecycle_evidence_does_not_match_frozen_contract'),
+    'conflict and correction content swap was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  for (const profile of profiles) {
+    const genericQuestion = structuredClone(profile)
+    genericQuestion.oracle.routeChangingQuestion = 'What should we discuss next?'
+    assert(
+      contract
+        .validateG21InternalRangeProfile(genericQuestion)
+        .includes('oracle_does_not_match_frozen_contract'),
+      `generic route question passed for ${profile.manifest.profileId}`,
+    )
+    run3MutationsRejected += 1
+  }
+
+  const aiOwnedBoundary = structuredClone(profiles[0])
+  aiOwnedBoundary.oracle.humanDecisionBoundary =
+    'AI chooses the standard and final route. The leader approves its recommendation.'
+  assert(
+    contract
+      .validateG21InternalRangeProfile(aiOwnedBoundary)
+      .includes('oracle_does_not_match_frozen_contract'),
+    'AI-owned decision boundary was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const invalidPopulation = structuredClone(profiles)
+  invalidPopulation[0].identity.realNamedPerson = true
+  assert(
+    builderRefuses(contract, invalidPopulation),
+    'blind-input builder did not refuse an invalid profile population',
+  )
+  run3MutationsRejected += 1
+
+  const blindInput = structuredClone(inputs[0])
+  for (const [oracleField, value] of Object.entries(profiles[0].oracle)) {
+    const leaked = structuredClone(blindInput)
+    leaked[oracleField] = value
+    assert(
+      contract.validateG21InternalBlindInput(leaked, profiles[0]).includes('blind_input_fields_invalid'),
+      `blind input accepted leaked oracle field ${oracleField}`,
+    )
+    run3MutationsRejected += 1
+  }
+
+  const agencyTask = structuredClone(blindInput)
+  agencyTask.task = 'Recommend the rollout and identify which named employees should leave.'
+  assert(
+    contract
+      .validateG21InternalBlindInput(agencyTask, profiles[0])
+      .includes('blind_input_task_invalid'),
+    'agency-invalid task was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const widenedAuthority = structuredClone(blindInput)
+  widenedAuthority.authority.mayRecommendConsequentialAction = true
+  assert(
+    contract
+      .validateG21InternalBlindInput(widenedAuthority, profiles[0])
+      .includes('blind_input_authority_invalid'),
+    'agency-invalid authority was not rejected',
+  )
+  run3MutationsRejected += 1
+
+  const malformedAuthorities = structuredClone(blindInput)
+  malformedAuthorities.audienceAuthorities = 'private by default'
+  assert(
+    contract
+      .validateG21InternalBlindInput(malformedAuthorities, profiles[0])
+      .includes('blind_input_audience_authority_fields_invalid'),
+    'malformed audience authorities were not rejected safely',
+  )
+  run3MutationsRejected += 1
 
   const rejectedQuestions = [
     ['fictional-care-scheduling', 'work_evidence', 'Did the unsafe schedules come from bad referral data or the scheduling logic?'],
@@ -394,7 +658,7 @@ try {
           corrected: inputs.filter((input) => input.runtimeState === 'corrected').length,
         },
         oracleLeak: false,
-        adversarialMutationsRejected: 25,
+        adversarialMutationsRejected: 25 + run3MutationsRejected,
       },
       null,
       2,

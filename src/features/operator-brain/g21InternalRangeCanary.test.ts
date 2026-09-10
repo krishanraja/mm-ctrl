@@ -3,6 +3,8 @@ import { EXTERNAL_EVIDENCE_DEPTHS, RANGE_RUNTIME_STATES } from './rangeCouncilCo
 import {
   G21_ANSWER_SHAPES,
   G21_INTERNAL_AUDIENCES,
+  G21_INTERNAL_R1_AUTHORITY,
+  G21_INTERNAL_R1_TASK,
   G21_INTERNAL_RANGE_CANARY,
   G21_INTERNAL_RANGE_CASES,
   G21_INTERNAL_RANGE_EVIDENCE_AS_OF,
@@ -11,6 +13,7 @@ import {
   buildG21InternalBlindInputs,
   validateG21CompleteCoordinateCoverage,
   validateG21InternalRangeCanary,
+  validateG21InternalBlindInput,
   validateG21InternalRangeProfile,
   type G21InternalRangeProfile,
 } from './g21InternalRangeCanary'
@@ -101,7 +104,11 @@ describe('G21 internal evidence range canary', () => {
         (record) => record.sourceType === 'direct_correction',
       )
       expect(corrections.length).toBeGreaterThan(0)
-      expect(corrections.every((record) => record.supersedesClaimIds?.length)).toBe(true)
+      expect(
+        corrections.every((record) =>
+          record.claims.some((claim) => claim.supersedesClaimIds.length > 0),
+        ),
+      ).toBe(true)
     }
   })
 
@@ -115,6 +122,16 @@ describe('G21 internal evidence range canary', () => {
       expect(profile.oracle.routeChangingQuestion.trim().endsWith('?')).toBe(true)
       expect(profile.oracle.routeChangingQuestion.trim().split(/\s+/).length).toBeLessThanOrEqual(24)
       expect(G21_ANSWER_SHAPES).toContain(profile.oracle.expectedAnswerShape)
+      expect(profile.oracle.answerContract.unknownAllowed).toBe(true)
+      expect(profile.oracle.answerContract.optionalNoteAllowed).toBe(true)
+      expect(profile.oracle.answerContract.evidenceRequestIfUnknown.length).toBeGreaterThan(20)
+      if (['choice', 'yes_no'].includes(profile.oracle.expectedAnswerShape)) {
+        expect(profile.oracle.answerContract.options.length).toBeGreaterThanOrEqual(2)
+      }
+      if (profile.oracle.expectedAnswerShape === 'threshold') {
+        expect(profile.oracle.answerContract.unit).toBeTruthy()
+        expect(profile.oracle.answerContract.comparator).toBeTruthy()
+      }
       expect(profile.oracle.answerWouldChange.length).toBeGreaterThan(20)
       expect(profile.oracle.expectedDiagnosticBehaviours.length).toBeGreaterThanOrEqual(2)
       expect(profile.oracle.forbiddenClaims.length).toBeGreaterThanOrEqual(2)
@@ -164,6 +181,9 @@ describe('G21 internal evidence range canary', () => {
       expect(corrected.evidenceAsOf).toBe(G21_INTERNAL_RANGE_EVIDENCE_AS_OF)
 
       for (const input of [initial, contradicted, corrected]) {
+        expect(validateG21InternalBlindInput(input, profile)).toEqual([])
+        expect(input.task).toBe(G21_INTERNAL_R1_TASK)
+        expect(input.authority).toEqual(G21_INTERNAL_R1_AUTHORITY)
         expect(input.audienceAuthorities).toHaveLength(input.internalEvidence.length)
         for (const record of input.internalEvidence) {
           const authority = input.audienceAuthorities.find(
@@ -202,6 +222,39 @@ describe('G21 internal evidence range canary', () => {
     expect(validateG21InternalRangeProfile(webCostume)).toContain(
       `${webCostume.externalEvidence[0].sourceId}:fictional_invalid_domain_required`,
     )
+
+    const identityCostume = structuredClone(G21_INTERNAL_RANGE_CANARY[0]) as
+      G21InternalRangeProfile & {
+        identity: G21InternalRangeProfile['identity'] & {
+          realNamedPerson?: boolean
+          consentRecordId?: string
+        }
+      }
+    identityCostume.identity.realNamedPerson = true
+    expect(validateG21InternalRangeProfile(identityCostume)).toContain(
+      'identity_fields_invalid',
+    )
+    delete identityCostume.identity.realNamedPerson
+    identityCostume.identity.consentRecordId = 'CONSENT-FICTIONAL-01'
+    expect(validateG21InternalRangeProfile(identityCostume)).toContain(
+      'identity_fields_invalid',
+    )
+
+    const evidenceCostume = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    ;(
+      evidenceCostume.internalEvidence[0] as typeof evidenceCostume.internalEvidence[number] & {
+        consentRecordId?: string
+      }
+    ).consentRecordId = 'CONSENT-FICTIONAL-01'
+    expect(validateG21InternalRangeProfile(evidenceCostume)).toContain(
+      `${evidenceCostume.internalEvidence[0].evidenceId}:evidence_fields_invalid`,
+    )
+
+    const negatedDisclosure = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    negatedDisclosure.manifest.syntheticDisclosure = 'This person is not fictional.'
+    expect(validateG21InternalRangeProfile(negatedDisclosure)).toContain(
+      'fictional_disclosure_required',
+    )
   })
 
   it('rejects depth inflation, broken supersession and weak pattern evidence', () => {
@@ -223,7 +276,9 @@ describe('G21 internal evidence range canary', () => {
     const directCorrection = brokenLongitudinal.internalEvidence.find(
       (record) => record.sourceType === 'direct_correction',
     )!
-    delete directCorrection.supersedesClaimIds
+    directCorrection.claims.forEach((claim) => {
+      claim.supersedesClaimIds = []
+    })
     expect(validateG21InternalRangeProfile(brokenLongitudinal)).toContain(
       'longitudinal_correction_requires_supersession',
     )
@@ -271,14 +326,19 @@ describe('G21 internal evidence range canary', () => {
 
   it('rejects a lifecycle correction that does not follow and supersede the conflict', () => {
     const candidate = structuredClone(G21_INTERNAL_RANGE_CANARY[0]) as G21InternalRangeProfile
-    candidate.lifecycleEvidence[1].supersedesClaimIds = [
+    const correctionClaim = candidate.lifecycleEvidence[1].claims.find(
+      (claim) => claim.supersedesClaimIds.length > 0,
+    )!
+    correctionClaim.supersedesClaimIds = [
       candidate.internalEvidence[0].claims[0].claimId,
     ]
     candidate.lifecycleEvidence[1].recordedAt = candidate.lifecycleEvidence[0].recordedAt
+    candidate.lifecycleEvidence[1].validAt = candidate.lifecycleEvidence[0].validAt
     expect(validateG21InternalRangeProfile(candidate)).toEqual(
       expect.arrayContaining([
         'lifecycle_correction_must_supersede_conflict',
         'lifecycle_correction_must_follow_conflict',
+        'lifecycle_correction_valid_at_must_follow_conflict',
       ]),
     )
   })
@@ -351,14 +411,17 @@ describe('G21 internal evidence range canary', () => {
       const correction = profile.internalEvidence.find(
         (record) => record.sourceType === 'direct_correction',
       )!
-      const targetClaimId = correction.supersedesClaimIds![0]
+      const correctionClaim = correction.claims.find(
+        (claim) => claim.supersedesClaimIds.length > 0,
+      )!
+      const targetClaimId = correctionClaim.supersedesClaimIds[0]
       const targetRecord = profile.internalEvidence.find((record) =>
         record.claims.some((claim) => claim.claimId === targetClaimId),
       )!
       const view = buildG21CurrentClaimView(profile.internalEvidence)
       expect(view.find((claim) => claim.claimId === targetClaimId)).toMatchObject({
         status: 'superseded',
-        supersededByEvidenceIds: [correction.evidenceId],
+        supersededByClaimIds: [correctionClaim.claimId],
       })
       for (const unaffected of targetRecord.claims.filter(
         (claim) => claim.claimId !== targetClaimId,
@@ -373,7 +436,6 @@ describe('G21 internal evidence range canary', () => {
       (record) => record.sourceType === 'direct_correction',
     )! as typeof legacy.internalEvidence[number] & { supersedesEvidenceId?: string }
     legacyCorrection.supersedesEvidenceId = legacy.internalEvidence[0].evidenceId
-    delete legacyCorrection.supersedesClaimIds
     expect(validateG21InternalRangeProfile(legacy)).toContain(
       `${legacyCorrection.evidenceId}:record_level_supersession_forbidden`,
     )
@@ -462,20 +524,188 @@ describe('G21 internal evidence range canary', () => {
     )
 
     const selfContradiction = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
-    selfContradiction.lifecycleEvidence[0].contradictsEvidenceIds = [
-      selfContradiction.lifecycleEvidence[0].evidenceId,
+    const selfChallenge = selfContradiction.lifecycleEvidence[0].claims[0]
+    selfChallenge.challengesClaimIds = [
+      selfChallenge.claimId,
     ]
     expect(validateG21InternalRangeProfile(selfContradiction)).toContain(
-      `${selfContradiction.lifecycleEvidence[0].evidenceId}:cannot_contradict_self_${selfContradiction.lifecycleEvidence[0].evidenceId}`,
+      `${selfContradiction.lifecycleEvidence[0].evidenceId}:cannot_challenge_self_${selfChallenge.claimId}`,
     )
 
     const forwardContradiction = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
-    forwardContradiction.lifecycleEvidence[0].contradictsEvidenceIds = [
-      forwardContradiction.lifecycleEvidence[1].evidenceId,
+    const forwardChallenge = forwardContradiction.lifecycleEvidence[0].claims[0]
+    const futureClaimId = forwardContradiction.lifecycleEvidence[1].claims[0].claimId
+    forwardChallenge.challengesClaimIds = [
+      futureClaimId,
     ]
     expect(validateG21InternalRangeProfile(forwardContradiction)).toContain(
-      `${forwardContradiction.lifecycleEvidence[0].evidenceId}:contradiction_must_follow_target_${forwardContradiction.lifecycleEvidence[1].evidenceId}`,
+      `${forwardContradiction.lifecycleEvidence[0].evidenceId}:challenge_must_follow_target_${futureClaimId}`,
     )
+  })
+
+  it('keeps valid lifecycle observations when a correction retires only the inference', () => {
+    const inputs = buildG21InternalBlindInputs()
+    const forge = inputs.find(
+      (input) =>
+        input.profileId === 'RANGE-INTERNAL-FORGE-I2' && input.runtimeState === 'corrected',
+    )!
+    expect(
+      forge.currentClaims.find(
+        (claim) => claim.claimId === 'LIFE-FORGE-I2-CONFLICT-CLAIM-01',
+      ),
+    ).toMatchObject({
+      status: 'current',
+      evidenceId: 'LIFE-FORGE-I2-CONFLICT',
+      sourceLocator: 'fixture://forge/lifecycle/work/conflict',
+      audience: 'company_private',
+    })
+    expect(
+      forge.currentClaims.find(
+        (claim) => claim.claimId === 'LIFE-FORGE-I2-CONFLICT-CLAIM-02',
+      )?.status,
+    ).toBe('superseded')
+
+    const story = inputs.find(
+      (input) =>
+        input.profileId === 'RANGE-INTERNAL-STORY-I3' && input.runtimeState === 'corrected',
+    )!
+    expect(
+      story.currentClaims.find(
+        (claim) => claim.claimId === 'LIFE-STORY-I3-CONFLICT-CLAIM-01',
+      ),
+    ).toMatchObject({
+      status: 'current',
+      evidenceId: 'LIFE-STORY-I3-CONFLICT',
+      sourceLocator: 'fixture://story/lifecycle/longitudinal/conflict',
+      audience: 'company_private',
+    })
+    expect(
+      story.currentClaims.find(
+        (claim) => claim.claimId === 'LIFE-STORY-I3-CONFLICT-CLAIM-02',
+      )?.status,
+    ).toBe('superseded')
+  })
+
+  it('rejects future clocks, shared sources, incapable provenance and misdirected correction', () => {
+    const futureAsOf = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    futureAsOf.evidenceAsOf = '2030-01-01T00:00:00.000Z'
+    futureAsOf.internalEvidence[0].validAt = '2029-01-01T09:00:00.000Z'
+    futureAsOf.internalEvidence[0].recordedAt = '2029-01-01T09:01:00.000Z'
+    expect(validateG21InternalRangeProfile(futureAsOf)).toContain(
+      'evidence_as_of_must_match_frozen_clock',
+    )
+
+    const sharedSource = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find((profile) =>
+        profile.oracle.allowedNotices.some((notice) => notice.standing === 'supported_pattern'),
+      )!,
+    )
+    const pattern = sharedSource.oracle.allowedNotices.find(
+      (notice) => notice.standing === 'supported_pattern',
+    )!
+    const [firstEvidenceId, secondEvidenceId] = pattern.evidenceIds
+    const firstRecord = sharedSource.internalEvidence.find(
+      (record) => record.evidenceId === firstEvidenceId,
+    )!
+    const secondRecord = sharedSource.internalEvidence.find(
+      (record) => record.evidenceId === secondEvidenceId,
+    )!
+    secondRecord.sourceLocator = firstRecord.sourceLocator
+    expect(validateG21InternalRangeProfile(sharedSource)).toContain(
+      `${pattern.noticeId}:pattern_requires_distinct_evidence`,
+    )
+
+    const incapableSource = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find(
+        (profile) => profile.manifest.profileId === 'RANGE-INTERNAL-FORGE-I2',
+      )!,
+    )
+    incapableSource.lifecycleEvidence[0].sourceType = 'customer_evidence'
+    expect(validateG21InternalRangeProfile(incapableSource)).toContain(
+      `${incapableSource.lifecycleEvidence[0].evidenceId}:source_subject_incompatible`,
+    )
+
+    const misdirected = structuredClone(
+      G21_INTERNAL_RANGE_CANARY.find(
+        (profile) => profile.manifest.profileId === 'RANGE-INTERNAL-CARE-I3',
+      )!,
+    )
+    const correctionClaim = misdirected.internalEvidence
+      .find((record) => record.evidenceId === 'INT-CARE-008')!
+      .claims.find((claim) => claim.supersedesClaimIds.length > 0)!
+    correctionClaim.supersedesClaimIds = ['INT-CARE-002-CLAIM-03']
+    expect(validateG21InternalRangeProfile(misdirected)).toContain(
+      'claim_relations_do_not_match_frozen_contract',
+    )
+  })
+
+  it('seals lifecycle prose, route contracts and every blind-input field', () => {
+    const swapped = structuredClone(G21_INTERNAL_RANGE_CANARY[0])
+    ;[swapped.lifecycleEvidence[0].content, swapped.lifecycleEvidence[1].content] = [
+      swapped.lifecycleEvidence[1].content,
+      swapped.lifecycleEvidence[0].content,
+    ]
+    ;[swapped.lifecycleEvidence[0].claims[0].text, swapped.lifecycleEvidence[1].claims[0].text] = [
+      swapped.lifecycleEvidence[1].claims[0].text,
+      swapped.lifecycleEvidence[0].claims[0].text,
+    ]
+    expect(validateG21InternalRangeProfile(swapped)).toContain(
+      'lifecycle_evidence_does_not_match_frozen_contract',
+    )
+
+    for (const profile of G21_INTERNAL_RANGE_CANARY) {
+      const generic = structuredClone(profile)
+      generic.oracle.routeChangingQuestion = 'What should we discuss next?'
+      expect(validateG21InternalRangeProfile(generic)).toContain(
+        'oracle_does_not_match_frozen_contract',
+      )
+    }
+
+    const input = buildG21InternalBlindInputs()[0]
+    for (const [field, value] of Object.entries(G21_INTERNAL_RANGE_CANARY[0].oracle)) {
+      const leaked = { ...structuredClone(input), [field]: value }
+      expect(validateG21InternalBlindInput(leaked, G21_INTERNAL_RANGE_CANARY[0])).toContain(
+        'blind_input_fields_invalid',
+      )
+    }
+
+    const badTask = structuredClone(input)
+    badTask.task = 'Recommend the rollout and identify which named employees should leave.'
+    expect(validateG21InternalBlindInput(badTask, G21_INTERNAL_RANGE_CANARY[0])).toContain(
+      'blind_input_task_invalid',
+    )
+
+    const badAuthority = {
+      ...structuredClone(input),
+      authority: {
+        ...structuredClone(input.authority),
+        mayRecommendConsequentialAction: true,
+      },
+    }
+    expect(validateG21InternalBlindInput(badAuthority, G21_INTERNAL_RANGE_CANARY[0])).toContain(
+      'blind_input_authority_invalid',
+    )
+
+    const malformedAuthorities = {
+      ...structuredClone(input),
+      audienceAuthorities: 'private by default',
+    }
+    expect(() =>
+      validateG21InternalBlindInput(malformedAuthorities, G21_INTERNAL_RANGE_CANARY[0]),
+    ).not.toThrow()
+    expect(
+      validateG21InternalBlindInput(malformedAuthorities, G21_INTERNAL_RANGE_CANARY[0]),
+    ).toContain('blind_input_audience_authority_fields_invalid')
+
+    const invalidPopulation = structuredClone(G21_INTERNAL_RANGE_CANARY) as Array<
+      G21InternalRangeProfile & {
+        identity: G21InternalRangeProfile['identity'] & { realNamedPerson?: boolean }
+      }
+    >
+    invalidPopulation[0].identity.realNamedPerson = true
+    expect(() =>
+      buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-003-INVALID', invalidPopulation),
+    ).toThrow('refused invalid profiles')
   })
 
   it('keeps the rejected abstraction-heavy questions as negative regressions', () => {

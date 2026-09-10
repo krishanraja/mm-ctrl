@@ -274,6 +274,89 @@ describe('durable council contract', () => {
       'human_agency:frozen_resolving_test_must_match_veto',
     )
   })
+
+  it('does not let a pass claim unresolved evidence or an inconclusive ruling carry a veto', () => {
+    const contract = frozenRangeContract()
+    const passWithGap = frozenRangeRulings()
+    passWithGap[0].missingEvidence = ['The source needed to decide the criterion.']
+    expect(validateFrozenRangeCouncil(passWithGap, contract)).toContain(
+      'human_agency:frozen_pass_cannot_claim_missing_evidence',
+    )
+
+    const inconclusiveWithVeto = frozenRangeRulings()
+    inconclusiveWithVeto[1].verdict = 'inconclusive'
+    inconclusiveWithVeto[1].missingEvidence = ['A source capable of resolving the claim.']
+    inconclusiveWithVeto[1].resolvingTest = 'Acquire that source and rerun the frozen criterion.'
+    inconclusiveWithVeto[1].veto = {
+      ruleId: 'EPISTEMIC-RANGE-INVALID',
+      failure: 'A veto cannot be issued before the missing evidence exists.',
+      resolvingTest: inconclusiveWithVeto[1].resolvingTest,
+    }
+    expect(validateFrozenRangeCouncil(inconclusiveWithVeto, contract)).toContain(
+      'epistemic_integrity:frozen_inconclusive_cannot_veto',
+    )
+  })
+
+  it('rejects malformed nested ruling data without throwing', () => {
+    const contract = frozenRangeContract()
+    const malformed = frozenRangeRulings() as unknown[]
+    malformed[0] = {
+      ...malformed[0] as FrozenRangeJudgeRuling,
+      claims: [{ prose: 'Not a string claim.' }],
+      evidenceLocators: [42],
+      missingEvidence: { gap: 'Not an array.' },
+    }
+    expect(() => validateFrozenRangeCouncil(malformed, contract)).not.toThrow()
+    expect(validateFrozenRangeCouncil(malformed, contract)).toEqual(
+      expect.arrayContaining([
+        'human_agency:frozen_claims_invalid',
+        'human_agency:frozen_evidence_invalid',
+        'human_agency:frozen_missing_evidence_invalid',
+      ]),
+    )
+
+    const malformedVeto = frozenRangeRulings() as unknown[]
+    malformedVeto[0] = {
+      ...malformedVeto[0] as FrozenRangeJudgeRuling,
+      verdict: 'fail',
+      veto: {
+        ruleId: 'AGENCY-RANGE-INVALID',
+        failure: 'The veto envelope contains an unrecognised field.',
+        resolvingTest: 'Reject this malformed veto.',
+        severity: 'critical',
+      },
+      resolvingTest: 'Reject this malformed veto.',
+    }
+    expect(validateFrozenRangeCouncil(malformedVeto, contract)).toContain(
+      'human_agency:frozen_veto_invalid',
+    )
+  })
+
+  it('requires exactly one frozen criterion version for every voting judge', () => {
+    const completeContract = frozenRangeContract()
+    const missingJudge = {
+      ...completeContract,
+      criterionVersions: Object.fromEntries(
+        Object.entries(completeContract.criterionVersions).filter(
+          ([judge]) => judge !== 'human_agency',
+        ),
+      ),
+    }
+    expect(
+      validateFrozenRangeCouncil(
+        frozenRangeRulings(),
+        missingJudge as unknown as FrozenRangeCouncilContract,
+      ),
+    ).toContain('frozen_range_criterion_versions_invalid')
+
+    const extraJudge = frozenRangeContract() as FrozenRangeCouncilContract & {
+      criterionVersions: Record<string, string>
+    }
+    extraJudge.criterionVersions.standards_prosecutor = 'must-not-vote:v1'
+    expect(validateFrozenRangeCouncil(frozenRangeRulings(), extraJudge)).toContain(
+      'frozen_range_criterion_versions_invalid',
+    )
+  })
 })
 
 describe('responsibility and theory routing', () => {

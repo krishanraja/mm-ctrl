@@ -1,6 +1,6 @@
 # G21 matched internal-evidence range canary
 
-Status: council run 001 preserved as blocked; v2 repair implemented and awaiting a fresh freeze
+Status: council runs 001 and 002 preserved as blocked; v3 repair implemented and awaiting a fresh freeze
 
 Date: 10 September 2026
 
@@ -63,6 +63,8 @@ Recency alone never wins. A later record can contradict the current view without
 
 Every fixture has one explicit evidence `asOf` time. Internal valid time, internal recorded time, public-style publication time, retrieval time and audience authority must not fall after it. Each private evidence record also has one evidence-specific audience authority. Changing `leader_private` to `company_private`, using a public audience or losing an authority record fails validation.
 
+Source type is a capability boundary, not a decorative label. Customer evidence cannot establish what staff believed. Staff evidence cannot establish a customer outcome. A record may contain several claims, but each claim is separately typed as a direct statement, observation, interpretation or authorised correction. Challenges and supersession point to claim identifiers, never whole records.
+
 ## Frozen oracle
 
 Before any diagnostic sees a profile, the fixture freezes:
@@ -72,7 +74,7 @@ Before any diagnostic sees a profile, the fixture freezes:
 - the strongest countercase;
 - typed notices and their exact evidence identifiers;
 - what remains unknown;
-- one route-changing question in plain language and its expected answer shape;
+- one route-changing question in plain language, its expected answer shape and a bounded answer contract;
 - what the answer would change;
 - the human decision boundary;
 - expected diagnostic behaviour; and
@@ -81,6 +83,8 @@ Before any diagnostic sees a profile, the fixture freezes:
 Allowed notice standings are structural rather than stylistic: fictional public context, direct statement, work observation, measured result, supported pattern, authorised correction and evidence gap. A supported pattern needs at least two distinct kinds of evidence. A measured result needs a measured source. A correction needs a direct correction record.
 
 The input builder emits 36 oracle-free cases. It includes only the evidence earned by that state, the exact evidence `asOf` time, evidence-specific audience authorities and a current claim projection derived from claim-level supersession. It never includes the supported view, expected behaviour or forbidden claims. The diagnostic therefore cannot grade itself against the answer key.
+
+Every answer contract makes the question answerable without consulting hidden context. Choice questions carry the available options. Threshold questions carry a unit, denominator and comparator. Every question permits `unknown`, names the evidence that would help if the leader does not know and allows one optional note. These fields are frozen in the oracle and prohibited from the blind model input.
 
 ## Lifecycle proof
 
@@ -116,7 +120,25 @@ These are designed to test whether CTRL preserves disagreement, questions the me
 
 The Standards Prosecutor upheld all five vetoes and found additional false-pass paths in source typing, audience and subject validation, lineage, manifest matching, lifecycle specificity and the ruling envelope itself. The artifact was not repaired in place. Run 001 remains blocked history.
 
-The v2 repair converts every veto and adjacent prosecutor finding into an executable invariant. The Brain now performs cause analysis and asks the leader for one choice, number, threshold, yes or no, or short fact. Question length is only a coarse guard. Five known abstract wordings are explicit negative regressions.
+The v2 repair converted every veto and adjacent prosecutor finding into an executable invariant. The Brain performs cause analysis and asks the leader for one choice, number, threshold, yes or no, or short fact. Question length is only a coarse guard. Five known abstract wordings are explicit negative regressions.
+
+## Frozen council run 002
+
+`runs/g21-internal-range-freeze-002/` preserves the second sealed review and resolves its nine artifact files from local commit `89657b4`. Both adult plain-language proxy readers could paraphrase all twelve questions, but all seven specialist judges issued valid vetoes. This disagreement is deliberate evidence: paraphrase is not the same as answerability.
+
+The vetoes exposed three substrate failures:
+
+- the validator did not fully seal the runtime envelope, trusted clock, fictional identity boundary or question bytes;
+- lifecycle relations were still too coarse to distinguish an observation from an interpretation inside the same record; and
+- the route-changing questions lacked the options, denominator, comparator or unknown path needed to answer them reliably.
+
+The Standards Prosecutor upheld every veto. Founder Calibration agreed that Run 002 had become a stronger test instrument but was not yet a trustworthy product substrate. The run remains blocked history. No result was averaged and no ruling was rewritten.
+
+## V3 repair candidate
+
+The v3 candidate separates exact canary bytes from general product invariants. Exact hashes and frozen maps prevent this fixture from drifting. Structural validators separately reject unseen malformed input, unsupported source-to-subject claims, widened authority, future evidence, generic question substitution, oracle leakage and unsafe tasks.
+
+The correction model now preserves observations that remain true while retiring only the interpretation shown to be wrong. For example, Forgepoint retains the observed low-confidence response while superseding the inference that it proved unwillingness to change. Aurora retains the observed audience association while superseding the unsupported causal claim. The blind task is code-owned and limited to R1 Explore.
 
 ## Human agency
 
@@ -145,12 +167,12 @@ The current Living Brain model and G21 council contract remain authoritative. Hi
 
 ## Implemented artifacts
 
-- `src/features/operator-brain/g21InternalRangeCanary.ts`: types, four matched families, twelve profiles, evidence-depth validators, claim-addressable correction, typed audience authority, explicit `asOf`, typed oracles, exact lifecycle binding, 36 range cases and 36 oracle-free inputs.
-- `src/features/operator-brain/g21InternalRangeCanary.test.ts`: matrix, matching, nesting, namespace, depth, chronology, question, oracle separation and adversarial mutation checks.
-- `src/features/operator-brain/rangeCouncilContract.ts`: an exact v2 frozen-ruling envelope and deterministic adjudicator in addition to the existing council contract.
-- `src/features/operator-brain/rangeCouncilContract.test.ts`: exact-envelope, hidden-veto, rewritten-test and raw-veto preservation checks.
-- `scripts/check-g21-internal-range.mjs`: Vite-independent compilation, baseline validation and 25 adversarial mutations.
-- `scripts/check-g21-internal-council.mjs`: Vite-independent council contract self-tests plus frozen artifact, ruling hash and adjudication verification.
+- `src/features/operator-brain/g21InternalRangeCanary.ts`: types, four matched families, twelve profiles, exact runtime schemas, source capability rules, claim-addressable correction, typed audience authority, fixed `asOf`, bounded answer contracts, exact lifecycle binding, 36 range cases and 36 oracle-free inputs.
+- `src/features/operator-brain/g21InternalRangeCanary.test.ts`: matrix, matching, nesting, namespace, depth, chronology, source capability, narrow correction, answerability, oracle separation and adversarial mutation checks.
+- `src/features/operator-brain/rangeCouncilContract.ts`: an exact frozen-ruling envelope, nested veto validation and deterministic adjudicator in addition to the existing council contract.
+- `src/features/operator-brain/rangeCouncilContract.test.ts`: exact-envelope, malformed nested data, hidden-veto, unresolved-pass, criterion-map, rewritten-test and raw-veto preservation checks.
+- `scripts/check-g21-internal-range.mjs`: Vite-independent compilation, baseline validation and 65 adversarial mutations.
+- `scripts/check-g21-internal-council.mjs`: nine Vite-independent council contract self-tests plus commit-anchored frozen artifact, ruling hash and adjudication verification.
 - `npm run brain:g21:check`: includes the new internal-range suite.
 - `npm run brain:g21:internal:check`: runs the direct deterministic gate when the Vite config loader is unavailable.
 
@@ -167,9 +189,11 @@ Direct TypeScript compilation and runtime validation report:
 - 36 oracle-free model inputs;
 - 12 inputs at each lifecycle state;
 - zero oracle leakage; and
-- 25 deliberately invalid mutations rejected.
+- 65 deliberately invalid mutations rejected.
 
-The council contract direct gate also rejects a veto hidden inside a pass and a rewritten resolving test, and proves that adjudication preserves a valid raw veto byte-for-byte at the object level.
+The council contract direct gate passes nine adversarial contract tests. It rejects malformed nested ruling data, incomplete criterion maps, unresolved evidence hidden inside a pass, a veto inside an inconclusive ruling, a veto hidden inside a pass and a rewritten resolving test. It also proves that adjudication preserves a valid raw veto byte-for-byte at the object level.
+
+Run 002 is independently reproducible from its recorded artifact commit after the v3 repair. Its nine artifact hashes, seven ruling hashes and deterministic blocked adjudication all verify without reading repaired working-tree bytes.
 
 Changed-file ESLint and the repository typecheck pass with no new errors. The normal Vitest command still fails before test collection because the active sandbox prevents esbuild from traversing the canonical repository parent and loading `vitest.config.ts`. That is an execution-environment limitation, not a passing test result. The deterministic validators are therefore run directly, and the Vitest suite remains to be executed in CI or an unrestricted local runner.
 
@@ -177,7 +201,7 @@ No database row, auth account, deployment, customer route or production state ch
 
 ## What this does not prove
 
-- The seven judges have not yet ruled on the repaired v2 artifact.
+- The seven judges have not yet ruled on the repaired v3 artifact.
 - No diagnostic model has run against the twelve profiles or 36 lifecycle cases.
 - The matched fixtures do not prove that CTRL improves human judgement or company outcomes.
 - The synthetic numbers are test conditions, not benchmarks or market claims.
@@ -188,4 +212,4 @@ No database row, auth account, deployment, customer route or production state ch
 
 ## Next action
 
-Freeze the repaired v2 artifact as run 002. Collect seven fresh sealed council rulings and two separate question-only comprehension proxy reviews. Freeze those rulings before Standards Prosecution and Founder Calibration. Stop on any valid veto. A diagnostic model run remains a later gate after the evidence-range substrate itself passes.
+Commit the verified v3 candidate, then freeze it as run 003 without altering either blocked predecessor. Collect fresh question-only adult proxy reviews as an ambiguity screen, not child evidence. Collect seven fresh sealed council rulings and freeze them before Standards Prosecution and Founder Calibration. Stop on any valid veto. A diagnostic model run remains a later gate after the evidence-range substrate itself passes.

@@ -1,8 +1,8 @@
 # G21 evidence range, responsibility and council contract
 
-Status: public row passed after one preserved veto and repair; internal range run 001 preserved as blocked; v2 internal repair awaiting fresh sealed review
+Status: public row passed after one preserved veto and repair; internal range runs 001 and 002 preserved as blocked; v3 internal repair awaiting fresh freeze
 
-Date: 9 September 2026
+Date: 10 September 2026
 
 ## Outcome
 
@@ -116,7 +116,9 @@ Two roles do not vote:
 6. Let the Standards Prosecutor cross-examine material claims, vetoes, evidence locators and resolving tests.
 7. Validate every ruling against the exact frozen envelope, then adjudicate deterministically against owned criteria and hard vetoes.
 
-There is no average score and no majority override. A valid veto cannot be outvoted. Disagreement ends in a resolving test, a bounded unknown or a founder-owned product or taste question. A pass cannot contain a veto or resolving test. A fail must contain both, and the adjudicator must preserve the judge's exact veto rather than paraphrasing it.
+There is no average score and no majority override. A valid veto cannot be outvoted. Disagreement ends in a resolving test, a bounded unknown or a founder-owned product or taste question. A pass cannot contain a veto, unresolved evidence or a resolving test. An inconclusive ruling cannot contain a veto. A fail must contain both a veto and an identical resolving test, and the adjudicator must preserve the judge's exact veto rather than paraphrasing it.
+
+Frozen artifacts and product validators perform different jobs. The frozen artifact uses exact bytes, hashes and a commit anchor so later work cannot rewrite what a judge saw. The product validator uses structural invariants so an unseen malformed input cannot pass merely because it differs from a known fixture. Passing either layer never substitutes for passing the other.
 
 ## Durable record families
 
@@ -181,14 +183,15 @@ The implemented router covers:
 
 ## Implemented proof
 
-- `src/features/operator-brain/rangeCouncilContract.ts` owns the matrix, namespace safety, council, responsibility and theory-routing contracts, including the exact v2 frozen-range ruling envelope.
-- `src/features/operator-brain/rangeCouncilContract.test.ts` proves the 16 coordinates, 48 lifecycle cases, namespace exclusions, seven independent rulings, veto consistency, exact raw-veto preservation, highest-risk gate and routed theory quarantine.
+- `src/features/operator-brain/rangeCouncilContract.ts` owns the matrix, namespace safety, council, responsibility and theory-routing contracts, including the exact frozen-range ruling and nested-veto envelopes.
+- `src/features/operator-brain/rangeCouncilContract.test.ts` proves the 16 coordinates, 48 lifecycle cases, namespace exclusions, seven independent rulings, malformed-envelope rejection, veto consistency, exact raw-veto preservation, highest-risk gate and routed theory quarantine.
 - `src/features/operator-brain/g21PublicRowCanary.ts` freezes the first four source envelopes, coverage capabilities, allowed notices, unresolved facts, route-changing questions, expected behaviour and forbidden claims.
 - `src/features/operator-brain/g21PublicRowCanary.test.ts` proves public-only personhood, external-depth coverage, source-envelope integrity, evidence-backed notices and honest cold-start and sparse behaviour.
-- `src/features/operator-brain/g21InternalRangeCanary.ts` freezes four fictional matched families across the twelve non-zero internal coordinates, cumulative evidence depth, typed oracles, explicit evidence `asOf`, evidence-specific audience authority, claim-addressable correction, exact lifecycle binding and 36 oracle-free inputs.
-- `src/features/operator-brain/g21InternalRangeCanary.test.ts` proves fixed identities and external envelopes, nested internal evidence, earned depth, fictional-source disclosure, chronology, claim-level supersession, audience safety, profile-specific lifecycle cases and oracle separation.
+- `src/features/operator-brain/g21InternalRangeCanary.ts` freezes four fictional matched families across the twelve non-zero internal coordinates, cumulative evidence depth, exact runtime schemas, source capability, typed oracles and answer contracts, explicit evidence `asOf`, evidence-specific audience authority, claim-addressable correction, exact lifecycle binding and 36 oracle-free inputs.
+- `src/features/operator-brain/g21InternalRangeCanary.test.ts` proves fixed identities and external envelopes, nested internal evidence, earned depth, fictional-source disclosure, chronology, source-to-subject compatibility, claim-level challenge and supersession, audience safety, answerability, profile-specific lifecycle cases and oracle separation.
 - `project-documentation/ctrl-evolution/g21-internal-range-canary.md` records the fixture rationale, decision families, evidence contract, theory routes, verification and limits.
 - `runs/g21-internal-range-freeze-001/` and local commit `a78334c` preserve the first internal fixture review, two passes, five valid vetoes, blocked adjudication, standards prosecution and founder calibration.
+- `runs/g21-internal-range-freeze-002/` and local commit `89657b4` preserve the second internal fixture review, two adult proxy paraphrase passes, seven valid specialist vetoes, blocked adjudication, standards prosecution and founder calibration. Its verifier resolves artifact bytes from the recorded commit rather than the repaired working tree.
 - `project-documentation/ctrl-evolution/g21-public-row-canary.md` records the source and claim-evidence matrix, limitations, countercase and verification state.
 - `src/features/operator-brain/g21DiagnosticCanary.ts` owns the versioned oracle-free input, bounded output and plain-language surface contracts.
 - `src/features/operator-brain/g21CouncilCriteria.ts` assigns one versioned owned truth, pass boundary and hard-veto set to every judge.
@@ -200,7 +203,7 @@ The implemented router covers:
 
 - The public-row diagnostic canary passed its current contract only after one blocked run and a targeted repair. This does not prove diagnostic efficacy outside the four frozen envelopes.
 - No real private or anonymised evidence has been collected. The internal range is wholly fictional and cannot establish consented-customer behaviour.
-- The repaired internal range has not yet completed a second sealed council.
+- The repaired v3 internal range has not yet completed a third sealed council.
 - No diagnostic model has run against the twelve internal profiles or their 36 lifecycle inputs.
 - No diagnostic model has run against the 48 cases.
 - No council event has been written to Supabase.
@@ -209,4 +212,4 @@ The implemented router covers:
 
 ## Next action
 
-Freeze internal range run 002, collect seven fresh sealed rulings plus two question-only comprehension proxy reviews, then cross-examine it through Standards Prosecution and Founder Calibration. Stop on any valid veto before a diagnostic model run or product surface.
+Commit the verified v3 candidate and freeze internal range run 003. Collect fresh question-only adult proxy reviews as an ambiguity screen, then seven fresh sealed rulings. Freeze those records before Standards Prosecution and Founder Calibration. Stop on any valid veto before a diagnostic model run or product surface.

@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
@@ -24,6 +24,18 @@ function sha256(value) {
 
 function sha256File(path) {
   return sha256(readFileSync(path))
+}
+
+function readGitFile(commit, path) {
+  return execFileSync('git', ['show', `${commit}:${path}`], {
+    cwd: root,
+    encoding: null,
+    maxBuffer: 20 * 1024 * 1024,
+  })
+}
+
+function readFrozenFile(commit, path) {
+  return commit ? readGitFile(commit, path) : readFileSync(join(root, path))
 }
 
 function readJson(path) {
@@ -57,11 +69,11 @@ try {
   )
 
   const council = require(join(outputDirectory, 'rangeCouncilContract.js'))
-  const internalRange = require(join(outputDirectory, 'g21InternalRangeCanary.js'))
+  const selfRunVersion = Number(requestedRunId.slice(-3))
   const criterionVersions = Object.fromEntries(
     council.COUNCIL_JUDGES.map((judge) => [
       judge,
-      `${judge.replaceAll('_', '-')}:g21-internal-range-freeze-v2`,
+      `${judge.replaceAll('_', '-')}:g21-internal-range-freeze-v${selfRunVersion}`,
     ]),
   )
   const selfContract = {
@@ -135,8 +147,70 @@ try {
     'adjudicator did not preserve the raw veto exactly',
   )
 
+  const passWithGap = structuredClone(passRulings)
+  passWithGap[0].missingEvidence = ['The evidence needed to decide the criterion.']
+  assert(
+    council
+      .validateFrozenRangeCouncil(passWithGap, selfContract)
+      .includes('human_agency:frozen_pass_cannot_claim_missing_evidence'),
+    'pass with unresolved evidence was not rejected',
+  )
+
+  const inconclusiveVeto = structuredClone(passRulings)
+  inconclusiveVeto[1].verdict = 'inconclusive'
+  inconclusiveVeto[1].missingEvidence = ['A source capable of resolving the claim.']
+  inconclusiveVeto[1].resolvingTest = 'Acquire that source and rerun the frozen criterion.'
+  inconclusiveVeto[1].veto = {
+    ruleId: 'EPISTEMIC-RANGE-INVALID',
+    failure: 'A veto cannot be issued before the missing evidence exists.',
+    resolvingTest: inconclusiveVeto[1].resolvingTest,
+  }
+  assert(
+    council
+      .validateFrozenRangeCouncil(inconclusiveVeto, selfContract)
+      .includes('epistemic_integrity:frozen_inconclusive_cannot_veto'),
+    'inconclusive ruling with veto was not rejected',
+  )
+
+  const malformedArrays = structuredClone(passRulings)
+  malformedArrays[0].claims = [{ prose: 'Not a string claim.' }]
+  malformedArrays[0].evidenceLocators = [42]
+  malformedArrays[0].missingEvidence = { gap: 'Not an array.' }
+  const malformedArrayErrors = council.validateFrozenRangeCouncil(malformedArrays, selfContract)
+  assert(
+    malformedArrayErrors.includes('human_agency:frozen_claims_invalid') &&
+      malformedArrayErrors.includes('human_agency:frozen_evidence_invalid') &&
+      malformedArrayErrors.includes('human_agency:frozen_missing_evidence_invalid'),
+    'malformed nested ruling arrays were not rejected',
+  )
+
+  const malformedVeto = structuredClone(passRulings)
+  malformedVeto[0].verdict = 'fail'
+  malformedVeto[0].veto = {
+    ruleId: 'AGENCY-RANGE-INVALID',
+    failure: 'The veto envelope contains an unrecognised field.',
+    resolvingTest: 'Reject this malformed veto.',
+    severity: 'critical',
+  }
+  malformedVeto[0].resolvingTest = malformedVeto[0].veto.resolvingTest
+  assert(
+    council
+      .validateFrozenRangeCouncil(malformedVeto, selfContract)
+      .includes('human_agency:frozen_veto_invalid'),
+    'malformed veto envelope was not rejected',
+  )
+
+  const incompleteContract = structuredClone(selfContract)
+  delete incompleteContract.criterionVersions.human_agency
+  assert(
+    council
+      .validateFrozenRangeCouncil(passRulings, incompleteContract)
+      .includes('frozen_range_criterion_versions_invalid'),
+    'incomplete criterion map was not rejected',
+  )
+
   if (selfOnly) {
-    console.log(JSON.stringify({ status: 'passed', contractSelfTests: 4 }, null, 2))
+    console.log(JSON.stringify({ status: 'passed', contractSelfTests: 9 }, null, 2))
   } else {
     const runDirectory = join(
       root,
@@ -148,23 +222,29 @@ try {
     assert(existsSync(runDirectory), `frozen run does not exist: ${requestedRunId}`)
 
     const inputManifest = readJson(join(runDirectory, 'input-manifest.json'))
+    const freezeAnchor = readJson(join(runDirectory, 'freeze-anchor.json'))
+    assert(freezeAnchor.runId === requestedRunId, 'freeze anchor run ID mismatch')
+    assert(typeof freezeAnchor.artifactCommit === 'string', 'freeze anchor commit missing')
+    const artifactCommit = freezeAnchor.artifactCommit
     assert(inputManifest.runId === requestedRunId, 'input manifest run ID mismatch')
     assert(
       Object.keys(inputManifest.criterionVersions).length === council.COUNCIL_JUDGES.length,
       'input manifest must freeze exactly seven criterion versions',
     )
+    const runVersion = Number(requestedRunId.slice(-3))
+    assert(Number.isInteger(runVersion) && runVersion > 0, 'run version is invalid')
     assert(
       council.COUNCIL_JUDGES.every(
         (judge) =>
           inputManifest.criterionVersions[judge] ===
-          `${judge.replaceAll('_', '-')}:g21-internal-range-freeze-v2`,
+          `${judge.replaceAll('_', '-')}:g21-internal-range-freeze-v${runVersion}`,
       ),
-      'input manifest criterion versions do not match the v2 council contract',
+      `input manifest criterion versions do not match the v${runVersion} council contract`,
     )
 
     for (const entry of inputManifest.files) {
       assert(
-        sha256File(join(root, entry.path)) === entry.sha256,
+        sha256(readFrozenFile(artifactCommit, entry.path)) === entry.sha256,
         `artifact hash mismatch: ${entry.path}`,
       )
     }
@@ -173,9 +253,49 @@ try {
       'artifact composite hash mismatch',
     )
 
-    const questionPack = readJson(join(runDirectory, 'question-pack.json'))
+    const questionPack = JSON.parse(
+      readFrozenFile(
+        artifactCommit,
+        `project-documentation/ctrl-evolution/runs/${requestedRunId.toLowerCase()}/question-pack.json`,
+      ).toString('utf8'),
+    )
     assert(questionPack.runId === requestedRunId, 'question pack run ID mismatch')
-    const expectedQuestions = internalRange.G21_INTERNAL_RANGE_CANARY.map((profile) => ({
+
+    const frozenSourceDirectory = join(outputDirectory, 'frozen-source')
+    const frozenOutputDirectory = join(outputDirectory, 'frozen-output')
+    mkdirSync(frozenSourceDirectory, { recursive: true })
+    for (const sourceFile of [
+      'rangeCouncilContract.ts',
+      'g21PublicRowCanary.ts',
+      'g21InternalRangeCanary.ts',
+    ]) {
+      writeFileSync(
+        join(frozenSourceDirectory, sourceFile),
+        readFrozenFile(artifactCommit, `src/features/operator-brain/${sourceFile}`),
+      )
+    }
+    execFileSync(
+      process.execPath,
+      [
+        join(root, 'node_modules', 'typescript', 'bin', 'tsc'),
+        join(frozenSourceDirectory, 'rangeCouncilContract.ts'),
+        join(frozenSourceDirectory, 'g21PublicRowCanary.ts'),
+        join(frozenSourceDirectory, 'g21InternalRangeCanary.ts'),
+        '--module',
+        'commonjs',
+        '--target',
+        'ES2022',
+        '--moduleResolution',
+        'node',
+        '--esModuleInterop',
+        '--skipLibCheck',
+        '--outDir',
+        frozenOutputDirectory,
+      ],
+      { cwd: root, stdio: 'inherit' },
+    )
+    const frozenInternalRange = require(join(frozenOutputDirectory, 'g21InternalRangeCanary.js'))
+    const expectedQuestions = frozenInternalRange.G21_INTERNAL_RANGE_CANARY.map((profile) => ({
       profileId: profile.manifest.profileId,
       fictionalSubject: profile.identity.displayName,
       fictionalCompany: profile.identity.organisation,
@@ -249,7 +369,7 @@ try {
         {
           status: 'passed',
           runId: requestedRunId,
-          contractSelfTests: 4,
+          contractSelfTests: 9,
           artifacts: inputManifest.files.length,
           rulings: rulings.length,
           result: expectedResult.status,
