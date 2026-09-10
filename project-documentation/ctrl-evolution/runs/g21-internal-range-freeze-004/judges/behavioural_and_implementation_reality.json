@@ -1,0 +1,38 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "behavioural_and_implementation_reality",
+  "criterionVersion": "behavioural-and-implementation-reality:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "fail",
+  "claims": [
+    "The four matched families preserve identity and external evidence within each family while nesting basic, work and longitudinal internal evidence, so the intended internal-depth comparison is isolated.",
+    "The evidence records and unknown-answer requests describe plausible real-work observations, tests, corrections and next steps across all twelve question contracts.",
+    "The runtime validator fails closed for the tested malformed field shapes and binds profile, depth, state, authority and claim relations across the three lifecycle states.",
+    "The trusted runtime evidence binding omits record content and claim text. A corrected-state input can therefore swap the conflict and correction prose, update the derived current-claim view, retain every trusted metadata and relation field, and pass structural runtime validation with the semantic lifecycle reversed.",
+    "The deterministic lifecycle-prose swap is rejected only through frozen profile equality, while the safe-novel-text regression explicitly proves that structural runtime validation ignores prose bytes. Fixture equality therefore masks a state-ordering hole in the runtime contract."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2591 trustedEvidenceBinding omits record.content and claim.text",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3013 buildG21CurrentClaimView derives status from claim IDs and relations while carrying supplied text",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3807 validateG21InternalBlindInput",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4078 runtime evidence binding comparison",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:652 seals lifecycle prose, route contracts and every blind-input field",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:730 separates total runtime safety from exact canonical fixture verification",
+    "scripts/check-g21-internal-range.mjs:574 swappedLifecycleContent profile-only attack",
+    "scripts/check-g21-internal-range.mjs:729 safeNovelText structural-versus-canonical regression",
+    "scripts/check-g21-internal-range.mjs:813 reversedLifecycle metadata-order attack",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/council-brief.md:Behavioural and Implementation Reality"
+  ],
+  "veto": {
+    "ruleId": "REALITY-RANGE-01",
+    "failure": "State ordering can be faked at runtime by swapping conflict and correction content plus claim text while preserving the trusted metadata binding and recomputing currentClaims. The structural validator accepts the reversed meaning, and only canonical fixture equality rejects it.",
+    "resolvingTest": "For every profile, construct a corrected-state blind input that swaps only conflict and correction content plus claim text, recompute currentClaims, and assert validateG21InternalBlindInput rejects it while a genuinely novel safe record still passes structural validation; bind the authenticated state role to the prose or to a content digest so the test passes for the runtime contract rather than only the canonical fixture contract."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "For every profile, construct a corrected-state blind input that swaps only conflict and correction content plus claim text, recompute currentClaims, and assert validateG21InternalBlindInput rejects it while a genuinely novel safe record still passes structural validation; bind the authenticated state role to the prose or to a content digest so the test passes for the runtime contract rather than only the canonical fixture contract.",
+  "recordedAt": "2026-09-10T23:14:10.694Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}
