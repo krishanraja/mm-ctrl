@@ -4,6 +4,10 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-10
+
+- rolled from NOW.md: 2026-08-10 canonical current documentation (PR #365) separated current truth from history, and Make Your Mind Up unified with CTRL (PR #362) into one product, one data spine, no-login delivery.
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.
