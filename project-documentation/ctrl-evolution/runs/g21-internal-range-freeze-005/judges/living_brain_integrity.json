@@ -1,0 +1,30 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "living_brain_integrity",
+  "criterionVersion": "living-brain-integrity:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "fail",
+  "claims": [
+    "The sealed implementation preserves claim-level provenance and semantic receipt bindings inside a declared snapshot, but it does not bind that snapshot's lifecycle state to an independent authority.",
+    "A corrected RANGE-INTERNAL-CARE-I1 input can be converted to initial by deleting both lifecycle records, filtering their authorities, relabelling runtimeState and caseId, and re-deriving currentClaims. Both validateG21InternalBlindInput and validateG21CanonicalInternalBlindInput then return no errors.",
+    "Because candidate-controlled runtimeState selects the expected evidence binding and also determines the caseId check, an accepted envelope can erase a correction and reinstate the earlier view. This is lifecycle lineage misdirection under BRAIN-RANGE-01."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3977-3987 selects the evidence subset from the declared runtimeState.",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4262-4300 selects the trusted state binding from candidate-controlled runtimeState and derives the accepted caseId from the same value.",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4314-4346 canonical verification chooses expected evidence from input.runtimeState rather than an independently supplied expected case or state.",
+    "Independent adversarial execution against the hash-matched sealed files removed LIFE-CARE-I1-CONFLICT and LIFE-CARE-I1-CORRECTION, reduced currentClaims from 6 to 4, and produced runtimeErrors=[] and canonicalErrors=[]."
+  ],
+  "veto": {
+    "ruleId": "BRAIN-RANGE-01",
+    "failure": "Candidate-controlled state selection permits a corrected envelope to be downgraded to the canonical initial subset. The conflict and correction disappear, the earlier claim view is restored, and both validators accept it, so lifecycle lineage can be reversed without detection.",
+    "resolvingTest": "Bind runId, caseId, profileId and runtimeState to an independently trusted envelope receipt or an external expected-case input, then prove across all 12 profiles that deleting conflict and correction records from a corrected input, relabelling it initial and re-deriving currentClaims is rejected by every gate used to admit diagnostic input."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Bind runId, caseId, profileId and runtimeState to an independently trusted envelope receipt or an external expected-case input, then prove across all 12 profiles that deleting conflict and correction records from a corrected input, relabelling it initial and re-deriving currentClaims is rejected by every gate used to admit diagnostic input.",
+  "recordedAt": "2026-09-11T01:04:55.217Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}
