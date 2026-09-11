@@ -62,4 +62,3 @@ The operator may access the rich machinery. Customer moments remain radically mi
 ## Authority boundary
 
 This close authorises ending isolated R4 page iteration and preparing the synthetic whole-product proof. It does not authorise customer data, live ingestion, email connection, database writes, navigation release, merge or production promotion.
-
