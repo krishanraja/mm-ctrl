@@ -41,3 +41,14 @@ Owned truth: the Brain sharpens a live high-value decision rather than producing
 - Durable stance: answerability is not consequence. Every allowed answer and unknown path must select, stop, bound or reshape the exact named route.
 - Required resolution: freeze decision focus, unresolved uncertainty, answer contract, unknown evidence request, answer effect and human decision boundary together, then test their route effects deterministically.
 - Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-003/judges/consequential_usefulness.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: pass.
+- Protocol standing: clean history-free independent ruling. A later dependency-closure qualification does not alter this verdict.
+- Finding: all twelve known and unknown answer branches could select, stop, bound or reshape materially different care, research, industrial-planning and storyworld decisions.
+- Prosecutor disposition: upheld narrowly. Route mapping and large fictional stakes establish consequential altitude, not model intelligence, accessibility or customer value.
+- Durable stance: every answer must change this exact decision route. Greater evidence depth must create more specificity or better restraint, never just more prose.
+- Protected strength: retain the four distinct decision families and their explicit route effects while simplifying visible questions.
+- Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-004/judges/consequential_usefulness.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).

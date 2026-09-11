@@ -41,3 +41,14 @@ Owned truth: memory remains versioned, inspectable, portable, correctable and re
 - Durable stance: claim-level addressability is incomplete unless the relation itself is valid and the immutable canary substrate cannot drift toward its answer key.
 - Required resolution: enforce same-subject correction lineage, freeze the canonical base substrate and prove recursively that oracle material is unreachable from every blind input.
 - Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-003/judges/living_brain_integrity.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: pass.
+- Protocol standing: clean history-free independent ruling. A later dependency-closure qualification narrows the semantic-composite claim but does not alter this ruling.
+- Finding: immutable evidence receipts, claim-level challenge and supersession, unaffected-claim retention, deterministic current views and exact canonical drift rejection were all present.
+- Prosecutor disposition: upheld narrowly. The canonical substrate is strong, but it does not prove arbitrary runtime prose is authentic or that correction meaning cannot be reversed.
+- Durable stance: source records stay immutable; individual assertions are the correctable unit; current truth is a deterministic projection of valid relations.
+- Protected strength: strengthen live semantic authenticity around the claim-addressable substrate rather than replacing it or silently rewriting history.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-004/judges/living_brain_integrity.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).

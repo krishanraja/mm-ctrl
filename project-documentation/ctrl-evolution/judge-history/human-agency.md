@@ -41,3 +41,14 @@ Owned truth: the person retains purpose, standards, exceptions, informed overrid
 - Durable stance: routine automation can run within human-set rules, but purpose, standards, material exceptions and the final consequential call require a named accountable human role.
 - Required resolution: remove non-human final-call options and enforce the human-owned exception boundary structurally.
 - Raw ruling: [`human_agency.json`](../runs/g21-internal-range-freeze-003/judges/human_agency.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: pass.
+- Protocol standing: clean history-free independent ruling over the declared semantic pack. A later dependency-closure qualification does not alter this verdict.
+- Finding: the R1 diagnostic may frame the decision and ask one route-changing question, but cannot recommend or execute a consequential route, evaluate named employees or promote material into durable truth.
+- Prosecutor disposition: upheld narrowly. This proves an executable authority boundary, not helpful prose, answerability or product value.
+- Durable stance: purpose, standards, material exceptions and the final consequential call remain human-owned. Evidence-backed recommendation may exist later only inside the already accepted staged human contract.
+- Protected strength: do not weaken the exact R1 authority object or safe unknown route while repairing semantics and language.
+- Raw ruling: [`human_agency.json`](../runs/g21-internal-range-freeze-004/judges/human_agency.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).

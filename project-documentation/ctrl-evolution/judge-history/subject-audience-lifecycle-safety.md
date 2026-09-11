@@ -41,3 +41,15 @@ Owned truth: identity, consent, audience, provenance, correction and retention b
 - Durable stance: fictional identity, audience authority and lifecycle order are positive fail-closed invariants, not optional fixture comparisons.
 - Required resolution: make arbitrary-input validation total, bind exact authority identity, type and time, and enforce identity plus lifecycle invariants without an optional trust fallback.
 - Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-003/judges/subject_audience_lifecycle_safety.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: fail. Veto: `SAFETY-RANGE-01`.
+- Protocol standing: clean history-free independent ruling. The later dependency-closure qualification does not alter either reproduced failure class.
+- Failure found: sparse nested arrays could throw instead of failing closed, while real-personhood, simulated-consent and source-incompatible prose could inherit valid fictional and authorised metadata.
+- Prosecutor disposition: upheld. Runtime totality is a bounded engineering fix; semantic personhood, consent and capability require the shared trust root rather than a language blacklist.
+- Durable stance: an exported unknown-input validator is total, dense-array aware and nonthrowing, and meaning cannot borrow another record's subject, audience or authority.
+- Required resolution: validate every nested shape without unsafe dereference and bind content meaning to subject, source capability, audience, authority and lifecycle in one trusted receipt.
+- Protected strength: preserve hard separation among real-public, consented-private, anonymised and wholly fictional namespaces.
+- Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-004/judges/subject_audience_lifecycle_safety.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).

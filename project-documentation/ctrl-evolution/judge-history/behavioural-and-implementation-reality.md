@@ -41,3 +41,15 @@ Owned truth: the proposed behaviour and system must survive real work, sparse st
 - Durable stance: canonical fixture verification and total runtime validation are different contracts. Neither may silently inherit the other's trust anchor or failure mode.
 - Required resolution: require an explicit canonical verifier, make the arbitrary-input validator total and structural, and reject relabelling and wrong types without throwing.
 - Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-003/judges/behavioural_and_implementation_reality.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: fail. Veto: `REALITY-RANGE-01`.
+- Protocol standing: clean history-free independent ruling. The later dependency-closure qualification does not change the reproduced runtime defect.
+- Failure found: conflict and correction content plus claim text could trade places, rebuild the current view and still pass structural validation. Ordered identifiers and metadata did not prove semantic lifecycle order.
+- Prosecutor disposition: upheld through reproduction across multiple profiles. This is another manifestation of the shared semantic trust-root defect, not a case for twelve profile-specific recognisers.
+- Durable stance: lifecycle meaning and lifecycle role must be inseparable at runtime, while canonical byte equality remains a separate fixture-truth contract.
+- Required resolution: bind lifecycle role and evidence meaning in one trusted receipt, retain a trusted safe-novel control and reject semantic reversal before canonical equality is consulted.
+- Protected strength: keep exact initial, conflict and correction history visible and independently testable.
+- Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-004/judges/behavioural_and_implementation_reality.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).

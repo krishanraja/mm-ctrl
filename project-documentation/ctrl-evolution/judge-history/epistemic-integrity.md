@@ -41,3 +41,15 @@ Owned truth: every claim earns its standing from attributable evidence, visible 
 - Durable stance: source capability, subject, claim kind, chronology and evidence cutoff must be enforced independently before a claim can enter the diagnostic envelope.
 - Required resolution: validate the complete trusted evidence envelope before emission and bind correction targets by subject, kind and chronology.
 - Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-003/judges/epistemic_integrity.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: fail. Veto: `EPISTEMIC-RANGE-01`.
+- Protocol standing: clean history-free independent ruling. The later dependency-closure qualification does not change the reproduced defect.
+- Failure found: the runtime trust binding covered identifiers and standing metadata but omitted evidence content and claim text. Unsupported causal meaning could therefore borrow observational standing and pass the structural validator.
+- Prosecutor disposition: upheld through direct reproduction. A narrow forbidden-verb list would overfit the canary and miss paraphrases.
+- Durable stance: content meaning, claim text, subject, source capability, audience, assertion standing and lifecycle role must earn trust together from one trusted semantic receipt.
+- Required resolution: accept safe novel evidence only through trusted issuance, reject altered meaning before canonical equality is consulted and retain the exact causal mutation as a regression.
+- Protected strength: keep facts, statements, interpretations, corrections and unknowns distinct without collapsing structural validation into exact fixture equality.
+- Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-004/judges/epistemic_integrity.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).

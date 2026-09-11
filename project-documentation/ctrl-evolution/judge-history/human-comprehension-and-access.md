@@ -41,3 +41,16 @@ Owned truth: a busy non-technical person can understand the immediate state and 
 - Separate evidence: two adult proxy readers found all twelve exact questions visibly answerable. That is an ambiguity screen only and does not prove child comprehension, consequential usefulness or clean council clearance.
 - Required resolution: present the repaired twelve-question pack to a fresh isolated reviewer whose semantic allowlist contains no prior verdicts, judge identities, founder reactions or repair narrative.
 - Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-003/judges/human_comprehension_and_access.json).
+
+## G21-INTERNAL-RANGE-FREEZE-004
+
+- Verdict: fail. Veto: `COMPREHENSION-RANGE-01`.
+- Protocol standing: clean history-free independent ruling. Two separate adult answerability screens provide supporting proxy evidence only.
+- Failure found: FORGE-I3 asked for a named person but offered roles and categories. An optional note would have become a hidden required field. Both adult screens also failed FORGE-I2, FORGE-I3, STORY-I2 and STORY-I3.
+- Prosecutor disposition: upheld. This repeats the founder's earlier product feedback: the Brain must do the interpretation and ask for one concrete answer the person can actually provide.
+- Durable stance: a question, its controls and its route effect must ask for the same answer type in ordinary business language. Unknown remains safe and deeper detail remains optional.
+- Required resolution: repair the four shared adult failures without adding explanatory furniture, and keep nonshared reader disagreements as wording watchpoints rather than new vetoes.
+- Protected strength: simplicity may hide depth but must not flatten the consequential decision or its evidence.
+- Evidence limit: these are adult proxy screens, not child testing, product usability proof or a founder taste decision.
+- Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-004/judges/human_comprehension_and_access.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
