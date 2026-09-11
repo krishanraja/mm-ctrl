@@ -1,7 +1,7 @@
 # G23 product spine R2 QA record
 
 **Date:** 11 September 2026
-**Status:** local verification and independent veto complete; protected preview pending
+**Status:** local, independent and protected-preview verification complete; founder review pending
 
 **Data boundary:** illustrative synthetic content and static founder-alignment interaction only
 
@@ -53,15 +53,28 @@ The first phone view shows the proposition, decision territory, payer logic, thr
 
 The fresh [R2 independent review](g23-product-spine-r2-independent-verdict.md) passed with no residual vetoes. It confirmed that all four R1 vetoes are closed and that a busy founder can understand the product and approval boundary within one minute.
 
+## Protected preview verification
+
+- Deployment: `dpl_CGRNP46y1oZrTDiixA2p2K8ykFof`
+- Source commit: `a4764ab`
+- Environment: Vercel Preview
+- Branch domain: `https://mm-ctrl-git-codex-g20-context-excha-c29389-krish-rajas-projects.vercel.app`
+- Reviewed route: `/g23-product-spine-r2.html`
+- Vercel state: `READY`
+- Authenticated CLI content check: correct title and founder question present
+- Signed-out in-app browser check: the shareable branch link opened the exact R2 route and exposed the complete product, relationship, mechanism, example, leader change and approval boundary
+
+The temporary share parameter is deliberately excluded from Git. Krish receives the direct cross-device link at the founder gate. Recovery is to stop using the preview and return its access setting to `Only people with access`; no production or data rollback is required.
+
 ## Honest limitations
 
 - Synthetic content demonstrates the product model, not diagnostic accuracy or business impact.
 - This artifact does not call a model, conduct research, persist a choice, send email or alter a Brain.
 - It is a founder alignment object, not the final customer or operator interface.
-- Protected-preview verification is not yet recorded in this revision.
+- The branch share link permits anyone holding it to view this protected preview until access is revoked.
 
 ## Gate
 
-R2 has passed the closed R1 vetoes, product comprehension and visual hierarchy. It may reach Krish after protected-preview verification. The sole founder question remains: `Is this the product we are building?`
+R2 has passed the closed R1 vetoes, product comprehension, visual hierarchy and protected-preview verification. It may now reach Krish. The sole founder question remains: `Is this the product we are building?`
 
 Production implementation, authenticated integration, database writes, navigation release, merge and production promotion remain closed.

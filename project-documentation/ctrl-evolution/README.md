@@ -112,7 +112,7 @@ The first grounded exemplar is an hour-long synchronous meeting to brainstorm on
 
 A higher-order marketing exemplar uses aggregate audience-exposure intelligence to understand which fan theories, characters and narrative threads people have encountered and help a franchise decide what to emphasise or sequence next. The supplied Marvel Short illustrates the strategic pattern but is not independently verified as an official Disney asset or as evidence of campaign effectiveness. The pattern must preserve provenance, uncertainty, creative surprise and human franchise judgement.
 
-**NEXT_ACTION:** Complete the independent G23 R2 veto and protected-preview verification, then ask one approval question only: `Is this the product we are building?` Do not resume UI design or implementation until the product commitments are explicitly approved. Keep customer delivery, production data, live ingestion, email connection, database writes, navigation release, merge and production promotion closed.
+**NEXT_ACTION:** Present the independently passed, protected G23 R2 preview and ask one approval question only: `Is this the product we are building?` Do not resume UI design or implementation until the product commitments are explicitly approved. Keep customer delivery, production data, live ingestion, email connection, database writes, navigation release, merge and production promotion closed.
 
 ## Current strategic synthesis through G12
 
