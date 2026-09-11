@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 const proof = '/g22-whole-product-golden-path-r1.html'
+const protectedPreviewEntry = process.env.E2E_PROTECTED_PREVIEW_ENTRY
 
 async function openProof(page: Page, suffix = '?reset=1') {
   await page.goto(`${proof}${suffix}`)
@@ -14,6 +15,10 @@ async function expectNoHorizontalOverflow(page: Page) {
 }
 
 test.describe('G22 whole-product golden-path R1', () => {
+  test.beforeEach(async ({ page }) => {
+    if (protectedPreviewEntry) await page.goto(protectedPreviewEntry)
+  })
+
   test('opens on one consequential case with one concrete Maya question', async ({ page }) => {
     await openProof(page)
     await expect(page.getByRole('heading', { name: 'How far should Aperture House rebuild marketing around AI?' })).toBeVisible()

@@ -1,7 +1,7 @@
 # G22 whole-product golden-path R1 QA record
 
 **Date:** 11 September 2026  
-**Status:** Local proof complete; protected preview pending  
+**Status:** Local and protected-preview verification complete; founder review pending  
 **Data boundary:** Deterministic synthetic fixtures and browser-local events only
 
 ## What was built
@@ -63,6 +63,19 @@ The production build completed with the pre-existing large-chunk and mixed-impor
 
 The prescribed `agent-browser` executable was unavailable on this host. Playwright was used as the equivalent rendered-browser fallback, including desktop and Pixel 5 screenshots, Vite error-overlay checks, full interaction tests and a second run against the built preview server.
 
+## Protected preview verification
+
+- Deployment: `dpl_8kFVFPVeJsMHMxL1rdv4i6cpAWMm`
+- Source commit: `6657921`
+- Protected commit domain: `https://mm-ctrl-k8ifiy9ed-krish-rajas-projects.vercel.app`
+- Reviewed route: `/g22-whole-product-golden-path-r1.html`
+- Vercel state: `READY`
+- Authenticated route check: HTTP `200`
+- Clean remote Chromium run: `5 passed`
+- In-app browser inspection: the correct G22 title, decision, stakes, evidence, concrete question and controls rendered from the protected deployment.
+
+The temporary share parameter is deliberately not stored in Git. The direct cross-device review link is supplied to Krish at the founder gate.
+
 ## Visual inspection
 
 Inspected at:
@@ -94,4 +107,4 @@ Fixture  F7E0FC0776C99A52C51260E9DAE9F431D2ADCA44FC9F4B26C54C2B8CD37F54C1
 
 ## Gate
 
-The next action is one protected branch preview and a cold founder review. R1 is not a material UI lock until Krish has used the complete path and approved the whole-product direction. Production implementation, data wiring, navigation release, merge and production promotion remain closed.
+The next action is a cold founder review on the verified protected branch preview. R1 is not a material UI lock until Krish has used the complete path and approved the whole-product direction. Production implementation, data wiring, navigation release, merge and production promotion remain closed.
