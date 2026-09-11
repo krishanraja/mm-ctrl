@@ -4,7 +4,7 @@
 **Status:** closed at a valid blocked terminal boundary  
 **Authority:** Krish Raja, explicit approval to close G21 and return to the G20 R4 cold product gate
 
-**Canonical ledger status:** `STORE_UNAVAILABLE` for write. The Mindmaker AI `ctrl_discovery` store was identified and its current `D-062` plus `M-015` v1 rows were read back. The connected management session rejected the append as read-only and created no partial row. `D-063` plus `M-015` v2 remain complete proposed records in committed project state until an approved writable adapter can append and independently read them back.
+**Canonical ledger status:** appended and independently read back from the Mindmaker AI `ctrl_discovery` store on 11 September 2026. `D-063` v1 is final with user authority and record SHA-256 `8a1ec859a82b976eed09e57e0d4555d40180df748dc3d340772fbd6965aa242b`. `M-015` v2 is complete with record SHA-256 `275af9a28e616574a07c08b7c57b2b89a7f76681f69c9482748d31a6f4cdcbc7` and predecessor `af6d9e62-a7e9-4ef7-ab6d-36d018d59278`, the canonical `M-015` v1 row. Each idempotency key exists exactly once.
 
 ## Decision
 

@@ -5,6 +5,8 @@
 **Artifact SHA-256:** `cca7a99a0cc0548f4d9065eb0b2e2f7d20f046cda4a60dacf28ceaf01aa7fcdc`  
 **Founder verdict:** approved with an explicit audience and surface boundary
 
+**Canonical ledger status:** `D-064` v1 was appended and independently read back from the Mindmaker AI `ctrl_discovery` store on 11 September 2026. It is final with user authority, appears once under its idempotency key and has record SHA-256 `13dae49a76c40755e306ca3052c7cfc376bf36292364475341605f66a95c61da`.
+
 ## Cold reaction
 
 Krish's first reaction to the unchanged R4 preview was:
