@@ -1,9 +1,13 @@
 # G20 Decision Table R4 React implementation record
 
-**Date:** 11 September 2026  
-**Status:** locally verified, branch-only, synthetic  
-**Branch:** `codex/g20-context-exchange-proof`  
-**Base revision:** `4c644bd8cef7083171ff817e45a0ba0ecfb10ab9`  
+**Date:** 11 September 2026
+
+**Status:** locally verified, branch-only, synthetic
+
+**Branch:** `codex/g20-context-exchange-proof`
+
+**Base revision:** `4c644bd8cef7083171ff817e45a0ba0ecfb10ab9`
+
 **Route:** `/operator/customers/SYN-CUST-014/decisions/INT-014`
 
 ## Outcome
