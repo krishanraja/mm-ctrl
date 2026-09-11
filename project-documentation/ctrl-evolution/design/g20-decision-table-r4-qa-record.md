@@ -14,6 +14,7 @@
 - Deployment ID: `dpl_HYRQMWsqhVedofUi2JUHgGCNzEXv`.
 - Deployment source commit: `91ee9544af5ba5a317ebcd890ee2728783a4a6b9` on `codex/g20-context-exchange-proof`.
 - Temporary share access: issued through Vercel and expires 9 September 2026 at 23:56 BST; the access token is not stored in this ledger.
+- Refreshed share access: regenerated on 11 September 2026 for the unchanged deployment and expires 12 September 2026; the access token is not stored in this ledger.
 - Production and Supabase state: unchanged.
 
 ## Rollback readiness

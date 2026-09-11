@@ -4,6 +4,8 @@
 **Status:** closed at a valid blocked terminal boundary  
 **Authority:** Krish Raja, explicit approval to close G21 and return to the G20 R4 cold product gate
 
+**Canonical ledger status:** `STORE_UNAVAILABLE` for write. The Mindmaker AI `ctrl_discovery` store was identified and its current `D-062` plus `M-015` v1 rows were read back. The connected management session rejected the append as read-only and created no partial row. `D-063` plus `M-015` v2 remain complete proposed records in committed project state until an approved writable adapter can append and independently read them back.
+
 ## Decision
 
 G21 ends with `G21-INTERNAL-RANGE-FREEZE-005`. No Run 006 and no 36-input diagnostic model run will be created from this branch of work.
