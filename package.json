@@ -28,6 +28,7 @@
     "brain:g21:internal:check": "node scripts/check-g21-internal-range.mjs",
     "brain:g21:internal:council-check": "node scripts/check-g21-internal-council.mjs",
     "brain:g22:check": "node scripts/check-ctrl-g22-whole-product-proof.mjs",
+    "brain:g23:check": "node scripts/check-ctrl-g23-product-spine.mjs && node scripts/check-ctrl-g23-product-spine-r2.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node standards/check-standards.mjs",
