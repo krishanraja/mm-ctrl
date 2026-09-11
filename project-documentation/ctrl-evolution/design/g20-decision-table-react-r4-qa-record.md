@@ -2,7 +2,7 @@
 
 **Date:** 11 September 2026
 
-**Status:** locally verified, branch-only, synthetic
+**Status:** locally and protected-preview verified, branch-only, synthetic
 
 **Branch:** `codex/g20-context-exchange-proof`
 
@@ -60,6 +60,24 @@ The implementation was exercised against a local Vite runtime at the exact prote
 
 Thirteen Chromium acceptance tests passed across the unchanged static R4 proof and the React implementation. The React slice owns six of those tests. The full Vitest suite passed 1,087 tests across 70 files, including the R4 fixture/model contract and the adjacent G21 internal-range regression. Changed-file ESLint, the 94-diagnostic typecheck baseline, documentation checks, standards checks, the production build and all seven prerender routes passed.
 
+## Protected preview readback
+
+The committed branch was pushed and deployed to Vercel as a non-production preview with the synthetic decision-bench flag supplied only at build time.
+
+| Field | Readback |
+|---|---|
+| Deployment | `dpl_3m8JVKu147oHe1EpN8rNQrx1ykth` |
+| Preview origin | `https://mm-ctrl-egrczx2ni-krish-rajas-projects.vercel.app` |
+| Exact route | `https://mm-ctrl-egrczx2ni-krish-rajas-projects.vercel.app/operator/customers/SYN-CUST-014/decisions/INT-014` |
+| Vercel target | `preview` |
+| Vercel state | `READY` |
+| Source branch | `codex/g20-context-exchange-proof` |
+| Source revision | `c7270431e0be4c0a813e7881bdb8547942563bc7` |
+
+Vercel's source readback matched the exact branch and revision. An unauthenticated request returned the expected protection redirect; Vercel's authenticated request returned the route with status 200, `no-store`, `noindex` and the existing security headers. A temporary shareable review link was generated for cross-device founder review. Its access parameter is not persisted in Git.
+
+The six-test React browser suite then passed against the deployed origin. It exercised the main decision, contextual question sequence, complete Claude brief, returned-plan judgement, source inspection, ephemeral evidence capture, sparse/stale/wrong-customer states and the 1440x900, 390x844 and 320x568 layouts. The live browser console produced no warnings or errors.
+
 ## File identities
 
 | File | SHA-256 |
@@ -74,4 +92,4 @@ Thirteen Chromium acceptance tests passed across the unchanged static R4 proof a
 
 This record proves the interaction and implementation against deterministic synthetic data. It does not prove diagnostic efficacy, live ingestion, durable capture, customer suitability or production readiness.
 
-The next gate is exact approval for a protected non-production preview deployment. The deployed revision must then pass the same desktop and mobile tasks before Krish is asked for the implemented-medium verdict. Merge, production release, customer data, email and the customer surface remain closed.
+The next gate is Krish's cold implemented-medium verdict on the exact protected React route. Merge, production release, customer data, email and the customer surface remain closed.

@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 
 const route = '/operator/customers/SYN-CUST-014/decisions/INT-014'
+const protectedPreviewEntry = process.env.E2E_PROTECTED_PREVIEW_ENTRY
+
+test.beforeEach(async ({ page }) => {
+  if (protectedPreviewEntry) await page.goto(protectedPreviewEntry)
+})
 
 async function openDecision(page: Page, suffix = '') {
   await page.goto(`${route}${suffix}`)
