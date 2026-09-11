@@ -24,7 +24,7 @@ function sameArray(left, right) {
 
 function builderRefuses(contract, profiles) {
   try {
-    contract.buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-004-MUTATION', profiles)
+    contract.buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-005-MUTATION', profiles)
     return false
   } catch {
     return true
@@ -45,6 +45,34 @@ function validateWithoutThrow(contract, candidate) {
     return contract.validateG21InternalBlindInput(candidate)
   } catch {
     return null
+  }
+}
+
+function deterministicMalformedJson(seed, depth = 0) {
+  const mixed = (Math.imul(seed + depth + 1, 1664525) + 1013904223) >>> 0
+  if (depth >= 3) {
+    const leaves = [null, Boolean(mixed & 1), mixed, `value-${mixed}`]
+    return leaves[mixed % leaves.length]
+  }
+  switch (mixed % 6) {
+    case 0:
+      return null
+    case 1:
+      return Boolean(mixed & 1)
+    case 2:
+      return mixed
+    case 3:
+      return `value-${mixed}`
+    case 4:
+      return Array.from(
+        { length: (mixed % 4) + 1 },
+        (_, index) => deterministicMalformedJson(mixed + index + 1, depth + 1),
+      )
+    default:
+      return {
+        [`field_${mixed % 11}`]: deterministicMalformedJson(mixed + 1, depth + 1),
+        [`field_${(mixed + 3) % 11}`]: deterministicMalformedJson(mixed + 2, depth + 1),
+      }
   }
 }
 
@@ -83,8 +111,8 @@ try {
   assert(cases.length === 36, 'expected thirty-six internal lifecycle cases')
   assert(inputs.length === 36, 'expected thirty-six oracle-free inputs')
   assert(
-    inputs.every((input) => input.schemaVersion === 'g21-internal-range-input:v4'),
-    'expected only v4 blind-input envelopes',
+    inputs.every((input) => input.schemaVersion === 'g21-internal-range-input:v5'),
+    'expected only v5 blind-input envelopes',
   )
   assert(
     profiles.every((profile) =>
@@ -705,6 +733,32 @@ try {
     run4MutationsRejected += 1
   }
 
+  const sparseMutations = [
+    ['external evidence', totalityExternal, (candidate) => { candidate.externalEvidence = new Array(1) }],
+    ['external limitations', totalityExternal, (candidate) => { candidate.externalEvidence[0].limitations = new Array(1) }],
+    ['internal evidence', totalityBase, (candidate) => { candidate.internalEvidence = new Array(1) }],
+    ['internal claims', totalityBase, (candidate) => { candidate.internalEvidence[0].claims = new Array(1) }],
+    ['claim relations', totalityBase, (candidate) => { candidate.internalEvidence[0].claims[0].challengesClaimIds = new Array(1) }],
+    ['audience authorities', totalityBase, (candidate) => { candidate.audienceAuthorities = new Array(1) }],
+    ['current claims', totalityBase, (candidate) => { candidate.currentClaims = new Array(1) }],
+  ]
+  for (const [label, seed, mutate] of sparseMutations) {
+    const candidate = structuredClone(seed)
+    mutate(candidate)
+    const validation = validateWithoutThrow(contract, candidate)
+    assert(Array.isArray(validation), `sparse ${label} caused the validator to throw`)
+    assert(validation.length > 0, `sparse ${label} was not rejected`)
+    run4MutationsRejected += 1
+  }
+
+  const malformedJsonSamples = 128
+  for (let seed = 0; seed < malformedJsonSamples; seed += 1) {
+    const validation = validateWithoutThrow(contract, deterministicMalformedJson(seed))
+    assert(Array.isArray(validation), `malformed JSON sample ${seed} caused the validator to throw`)
+    assert(validation.length > 0, `malformed JSON sample ${seed} was not rejected`)
+    run4MutationsRejected += 1
+  }
+
   const contractProfile = profiles[0]
   const contractInput = structuredClone(
     inputs.find(
@@ -727,8 +781,11 @@ try {
     'canonical verification succeeded without its explicit trust anchor',
   )
   const safeNovelText = structuredClone(contractInput)
-  safeNovelText.internalEvidence[0].content = 'A newly supplied fictional intake sentence.'
-  safeNovelText.internalEvidence[0].claims[0].text = 'A newly supplied fictional intake sentence.'
+  safeNovelText.internalEvidence[0].content = contract.G21_TRUSTED_SAFE_NOVEL_VARIANT.content
+  safeNovelText.internalEvidence[0].claims[0].text =
+    contract.G21_TRUSTED_SAFE_NOVEL_VARIANT.claimText
+  safeNovelText.internalEvidence[0].semanticReceipt.receiptId =
+    contract.G21_TRUSTED_SAFE_NOVEL_VARIANT.receiptId
   safeNovelText.currentClaims = contract.buildG21CurrentClaimView(safeNovelText.internalEvidence)
   assert(
     contract.validateG21InternalBlindInput(safeNovelText).length === 0,
@@ -741,6 +798,40 @@ try {
     'the canonical verifier accepted novel evidence bytes',
   )
   run4MutationsRejected += 2
+
+  const reorderedRecord = structuredClone(contractInput)
+  reorderedRecord.internalEvidence[0] = Object.fromEntries(
+    Object.entries(reorderedRecord.internalEvidence[0]).reverse(),
+  )
+  reorderedRecord.currentClaims = contract.buildG21CurrentClaimView(
+    reorderedRecord.internalEvidence,
+  )
+  assert(
+    contract.validateG21InternalBlindInput(reorderedRecord).length === 0,
+    'semantic receipt incorrectly depended on object property order',
+  )
+  assert(
+    contract
+      .validateG21CanonicalInternalBlindInput(reorderedRecord, contractProfile)
+      .includes('canonical_internal_evidence_bytes_mismatch'),
+    'canonical fixture verification ignored property-order byte drift',
+  )
+  run4MutationsRejected += 2
+
+  const untrustedNovelText = structuredClone(contractInput)
+  untrustedNovelText.internalEvidence[0].content = 'A fictional but unissued intake sentence.'
+  untrustedNovelText.internalEvidence[0].claims[0].text =
+    'A fictional but unissued intake sentence.'
+  untrustedNovelText.currentClaims = contract.buildG21CurrentClaimView(
+    untrustedNovelText.internalEvidence,
+  )
+  assert(
+    contract
+      .validateG21InternalBlindInput(untrustedNovelText)
+      .includes('INT-CARE-001:blind_input_semantic_receipt_binding_mismatch'),
+    'unissued novel evidence inherited trusted semantic standing',
+  )
+  run4MutationsRejected += 1
 
   const relabelledState = structuredClone(
     inputs.find((input) => input.runtimeState === 'initial'),
@@ -852,6 +943,79 @@ try {
   )
   run4MutationsRejected += 1
 
+  const causalParaphrase = structuredClone(
+    inputs.find(
+      (input) =>
+        input.profileId === 'RANGE-INTERNAL-STORY-I3' && input.runtimeState === 'initial',
+    ),
+  )
+  const causalParaphraseOutcome = causalParaphrase.internalEvidence.find(
+    (record) => record.evidenceId === 'INT-STORY-007',
+  )
+  causalParaphraseOutcome.content =
+    'Theory-heavy exposure drove opening-weekend purchase across all fan groups.'
+  causalParaphraseOutcome.claims[0].text = causalParaphraseOutcome.content
+  causalParaphrase.currentClaims = contract.buildG21CurrentClaimView(
+    causalParaphrase.internalEvidence,
+  )
+  assert(
+    contract
+      .validateG21InternalBlindInput(causalParaphrase)
+      .includes('INT-STORY-007:blind_input_semantic_receipt_binding_mismatch'),
+    'unsupported causal paraphrase inherited observational standing',
+  )
+  run4MutationsRejected += 1
+
+  const semanticPersonhood = structuredClone(contractInput)
+  semanticPersonhood.internalEvidence[0].content =
+    'Satya Nadella personally consented to this private evidence being used by the fictional fixture.'
+  semanticPersonhood.internalEvidence[0].claims[0].text =
+    semanticPersonhood.internalEvidence[0].content
+  semanticPersonhood.currentClaims = contract.buildG21CurrentClaimView(
+    semanticPersonhood.internalEvidence,
+  )
+  assert(
+    contract
+      .validateG21InternalBlindInput(semanticPersonhood)
+      .includes('INT-CARE-001:blind_input_semantic_receipt_binding_mismatch'),
+    'real-person or simulated-consent meaning inherited fictional authority',
+  )
+  run4MutationsRejected += 1
+
+  const semanticLifecycleReversal = structuredClone(
+    inputs.find(
+      (input) =>
+        input.profileId === 'RANGE-INTERNAL-CARE-I1' && input.runtimeState === 'corrected',
+    ),
+  )
+  const semanticLifecycleBaseLength = profiles.find(
+    (profile) => profile.manifest.profileId === semanticLifecycleReversal.profileId,
+  ).internalEvidence.length
+  const semanticConflict = semanticLifecycleReversal.internalEvidence[semanticLifecycleBaseLength]
+  const semanticCorrection = semanticLifecycleReversal.internalEvidence[semanticLifecycleBaseLength + 1]
+  ;[semanticConflict.content, semanticCorrection.content] = [
+    semanticCorrection.content,
+    semanticConflict.content,
+  ]
+  ;[semanticConflict.claims[0].text, semanticCorrection.claims[0].text] = [
+    semanticCorrection.claims[0].text,
+    semanticConflict.claims[0].text,
+  ]
+  ;[semanticConflict.semanticReceipt, semanticCorrection.semanticReceipt] = [
+    semanticCorrection.semanticReceipt,
+    semanticConflict.semanticReceipt,
+  ]
+  semanticLifecycleReversal.currentClaims = contract.buildG21CurrentClaimView(
+    semanticLifecycleReversal.internalEvidence,
+  )
+  assert(
+    contract
+      .validateG21InternalBlindInput(semanticLifecycleReversal)
+      .some((error) => error.endsWith('blind_input_semantic_receipt_binding_mismatch')),
+    'reversed conflict and correction meaning inherited lifecycle standing',
+  )
+  run4MutationsRejected += 1
+
   const runtimeIncapableSource = structuredClone(
     inputs.find(
       (input) =>
@@ -870,7 +1034,7 @@ try {
   assert(
     contract
       .validateG21InternalBlindInput(runtimeIncapableSource)
-      .includes('blind_input_internal_evidence_binding_mismatch'),
+      .includes('INT-RESEARCH-009:blind_input_semantic_receipt_binding_mismatch'),
     'source relabelling retained false authority',
   )
   run4MutationsRejected += 1
@@ -891,7 +1055,7 @@ try {
   assert(
     contract
       .validateG21InternalBlindInput(runtimeMisdirectedCorrection)
-      .includes('blind_input_internal_evidence_binding_mismatch'),
+      .includes('INT-CARE-008:blind_input_semantic_receipt_binding_mismatch'),
     'misdirected correction passed after recomputing the current view',
   )
   run4MutationsRejected += 1
@@ -930,12 +1094,14 @@ try {
       'Out of every 100 vulnerable clients, how many must keep the same carer without you stepping in before expansion?',
     'RANGE-INTERNAL-RESEARCH-I2':
       'Have any clients used the monthly product without a senior researcher and said its challenge changed their decision?',
+    'RANGE-INTERNAL-FORGE-I2':
+      'Before you fund all six plants, must one plant get on-time delivery back to at least 91% with the same planners?',
     'RANGE-INTERNAL-FORGE-I3':
-      'Which named person makes the final call when an AI plan could make a customer late?',
+      'Which role should make the final call when an AI plan could make a customer late?',
     'RANGE-INTERNAL-STORY-I2':
-      'Which route gets the GBP 18 million: character-first, theory-first, or neither until new buyers increase without losing core fans?',
+      'Must ticket sales show which campaign wins new viewers without losing core-fan sales before the GBP 18 million moves?',
     'RANGE-INTERNAL-STORY-I3':
-      'How many extra new viewers out of 100 must buy a ticket, without core-fan sales falling, before you move GBP 18 million?',
+      'How many extra ticket buyers per 100 new viewers, versus today, would justify GBP 18 million if core-fan sales hold?',
   }
   for (const [profileId, question] of Object.entries(repairedQuestions)) {
     const profile = profiles.find((candidate) => candidate.manifest.profileId === profileId)
@@ -1002,6 +1168,7 @@ try {
           corrected: inputs.filter((input) => input.runtimeState === 'corrected').length,
         },
         oracleLeak: false,
+        malformedJsonSamples,
         adversarialMutationsRejected: 25 + run4MutationsRejected,
       },
       null,

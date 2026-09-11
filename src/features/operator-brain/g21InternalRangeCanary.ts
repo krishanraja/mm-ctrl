@@ -69,6 +69,8 @@ export const G21_INTERNAL_ASSERTION_KINDS = [
   'authorised_correction',
 ] as const
 
+export const G21_SEMANTIC_LIFECYCLE_ROLES = ['base', 'conflict', 'correction'] as const
+
 export const G21_ANSWER_SHAPES = [
   'choice',
   'number',
@@ -87,6 +89,7 @@ export type G21InternalClaimStanding = (typeof G21_INTERNAL_CLAIM_STANDINGS)[num
 export type G21InternalAudience = (typeof G21_INTERNAL_AUDIENCES)[number]
 export type G21InternalSubjectScope = (typeof G21_INTERNAL_SUBJECT_SCOPES)[number]
 export type G21InternalAssertionKind = (typeof G21_INTERNAL_ASSERTION_KINDS)[number]
+export type G21SemanticLifecycleRole = (typeof G21_SEMANTIC_LIFECYCLE_ROLES)[number]
 export type G21AnswerShape = (typeof G21_ANSWER_SHAPES)[number]
 export type G21RouteEffectType = (typeof G21_ROUTE_EFFECT_TYPES)[number]
 
@@ -126,6 +129,13 @@ export interface G21InternalEvidenceClaim {
   supersedesClaimIds: string[]
 }
 
+export interface G21TrustedSemanticReceipt {
+  receiptId: string
+  issuer: 'g21_synthetic_fixture_compiler'
+  issuedAt: string
+  lifecycleRole: G21SemanticLifecycleRole
+}
+
 export interface G21InternalEvidenceRecord {
   evidenceId: string
   sourceType: G21InternalSourceType
@@ -136,6 +146,7 @@ export interface G21InternalEvidenceRecord {
   content: string
   sourceLocator: string
   fixtureAuthority: 'synthetic_fixture_authoring'
+  semanticReceipt: G21TrustedSemanticReceipt
   claims: G21InternalEvidenceClaim[]
 }
 
@@ -220,7 +231,7 @@ export interface G21InternalRangeProfile {
 }
 
 export interface G21InternalBlindInput {
-  schemaVersion: 'g21-internal-range-input:v4'
+  schemaVersion: 'g21-internal-range-input:v5'
   runId: string
   caseId: string
   profileId: string
@@ -254,8 +265,9 @@ type G21InternalEvidenceClaimDraft = Pick<G21InternalEvidenceClaim, 'claimId' | 
 
 type G21InternalEvidenceDraft = Omit<
   G21InternalEvidenceRecord,
-  'fixtureAuthority' | 'claims'
+  'fixtureAuthority' | 'semanticReceipt' | 'claims'
 > & {
+  lifecycleRole?: G21SemanticLifecycleRole
   claims?: G21InternalEvidenceClaimDraft[]
   challengesClaimIds?: string[]
   supersedesClaimIds?: string[]
@@ -401,6 +413,7 @@ function defaultAssertionKind(sourceType: G21InternalSourceType): G21InternalAss
 
 function internalEvidence(draft: G21InternalEvidenceDraft): G21InternalEvidenceRecord {
   const {
+    lifecycleRole = 'base',
     claims: claimDrafts,
     challengesClaimIds = [],
     supersedesClaimIds = [],
@@ -422,6 +435,12 @@ function internalEvidence(draft: G21InternalEvidenceDraft): G21InternalEvidenceR
       supersedesClaimIds: claim.supersedesClaimIds ?? (index === 0 ? supersedesClaimIds : []),
     })),
     fixtureAuthority: 'synthetic_fixture_authoring',
+    semanticReceipt: {
+      receiptId: `SEM-${draft.evidenceId}-${lifecycleRole.toUpperCase()}-V1`,
+      issuer: 'g21_synthetic_fixture_compiler',
+      issuedAt: draft.recordedAt,
+      lifecycleRole,
+    },
   }
 }
 
@@ -492,10 +511,15 @@ function makeProfile(
   const profileId = `RANGE-INTERNAL-${family.code}-${depthCode(internalDepth)}`
   const conflictId = `LIFE-${family.code}-${depthCode(internalDepth)}-CONFLICT`
   const correctionId = `LIFE-${family.code}-${depthCode(internalDepth)}-CORRECTION`
-  const conflict = internalEvidence({ evidenceId: conflictId, ...stage.lifecycle.conflict })
+  const conflict = internalEvidence({
+    evidenceId: conflictId,
+    lifecycleRole: 'conflict',
+    ...stage.lifecycle.conflict,
+  })
   const retireConflictClaimIndexes = stage.lifecycle.retireConflictClaimIndexes ?? [0]
   const correction = internalEvidence({
     evidenceId: correctionId,
+    lifecycleRole: 'correction',
     ...stage.lifecycle.correction,
     supersedesClaimIds: retireConflictClaimIndexes.map(
       (index) => conflict.claims[index]?.claimId ?? `${conflictId}-CLAIM-MISSING`,
@@ -1616,10 +1640,10 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Performance with repaired data, aligned measures and the same planners.'],
           routeChangingQuestion:
-            'Will one plant have to hit the delivery target with the same planners before you fund all six?',
+            'Before you fund all six plants, must one plant get on-time delivery back to at least 91% with the same planners?',
           expectedAnswerShape: 'yes_no',
           answerWouldChange:
-            'It tests whether the first investment belongs in conditions, role design or new capability.',
+            'It makes a same-team return to the previous delivery level an explicit gate for group funding.',
           humanDecisionBoundary:
             'Humans set customer-risk exceptions and the role design; the pilot tests work, not individual employability.',
           expectedDiagnosticBehaviours: [
@@ -1706,7 +1730,7 @@ const familyDrafts: FamilyDraft[] = [
           ],
           unresolved: ['Which exceptions still need human judgement after information work is removed.'],
           routeChangingQuestion:
-            'Which named person makes the final call when an AI plan could make a customer late?',
+            'Which role should make the final call when an AI plan could make a customer late?',
           expectedAnswerShape: 'choice',
           answerWouldChange:
             'It defines the future role before the group chooses tools, training or staffing levels.',
@@ -2087,12 +2111,12 @@ const familyDrafts: FamilyDraft[] = [
               evidenceIds: [],
             },
           ],
-          unresolved: ['Which route increases new-viewer ticket purchases without reducing core-fan purchases.'],
+          unresolved: ['Whether actual ticket sales must decide which campaign receives the investment.'],
           routeChangingQuestion:
-            'Which route gets the GBP 18 million: character-first, theory-first, or neither until new buyers increase without losing core fans?',
-          expectedAnswerShape: 'choice',
+            'Must ticket sales show which campaign wins new viewers without losing core-fan sales before the GBP 18 million moves?',
+          expectedAnswerShape: 'yes_no',
           answerWouldChange:
-            'It governs the GBP 18 million route while preserving purchase evidence and the core-fan constraint.',
+            'It decides whether actual purchase evidence is a funding gate or an uncertainty the leader accepts.',
           humanDecisionBoundary:
             'AI may map exposure and compare private routes; accountable humans own characters, story and release.',
           expectedDiagnosticBehaviours: [
@@ -2166,9 +2190,9 @@ const familyDrafts: FamilyDraft[] = [
               evidenceIds: ['INT-STORY-004', 'INT-STORY-006', 'INT-STORY-008', 'INT-STORY-009'],
             },
           ],
-          unresolved: ['The held-out lift and purchase evidence needed for the next allocation.'],
+          unresolved: ['The ticket-sales increase needed for the next allocation in a comparable audience test.'],
           routeChangingQuestion:
-            'How many extra new viewers out of 100 must buy a ticket, without core-fan sales falling, before you move GBP 18 million?',
+            'How many extra ticket buyers per 100 new viewers, versus today, would justify GBP 18 million if core-fan sales hold?',
           expectedAnswerShape: 'threshold',
           answerWouldChange:
             'It creates a human-owned investment gate while the test protects creative judgement and causal clarity.',
@@ -2415,47 +2439,51 @@ const G21_ANSWER_CONTRACTS: Record<string, G21RouteAnswerContract> = {
     comparator: null,
     unknownAllowed: true,
     evidenceRequestIfUnknown:
-      'Name one plant, one delivery target, one time window and the funding decision it controls.',
+      'Choose one plant, confirm its current on-time delivery and decide whether 91 percent is the funding gate.',
     optionalNoteAllowed: true,
     routeEffects: [
       {
         answer: 'Yes',
         effect: 'bound',
-        routeChange: 'Make same-planner target delivery at one plant the gate for funding all six.',
+        routeChange: 'Fund all six only after one plant reaches at least 91 percent on-time delivery with the same planners.',
       },
       {
         answer: 'No',
         effect: 'reshape',
-        routeChange: 'Require Jonah to name a different proof gate before group funding can proceed.',
+        routeChange: 'Require Jonah to name the different result that will earn group funding.',
       },
     ],
     unknownRouteEffect: {
       effect: 'stop',
-      routeChange: 'Do not fund all six plants until an owner, target, time window and proof gate are named.',
+      routeChange: 'Do not fund all six until the first plant and the exact result it must reach are named.',
     },
   },
   'RANGE-INTERNAL-FORGE-I3': {
-    options: ['A named planner', 'A named operations leader', 'A named human chosen by the escalation rule'],
+    options: [
+      'The planner responsible for the order',
+      'The operations leader on duty',
+      'The human named by the escalation rule',
+    ],
     unit: null,
     denominator: null,
     comparator: null,
     unknownAllowed: true,
     evidenceRequestIfUnknown:
-      'Review late-order cases and identify where customer accountability cannot be delegated.',
+      'Review late orders and decide which human role already owns the promise to the customer.',
     optionalNoteAllowed: true,
     routeEffects: [
       {
-        answer: 'A named planner',
+        answer: 'The planner responsible for the order',
         effect: 'select',
-        routeChange: 'Assign the customer-impact exception and final call to a named planner.',
+        routeChange: 'Assign the customer-impact exception and final call to the planner responsible for the order.',
       },
       {
-        answer: 'A named operations leader',
+        answer: 'The operations leader on duty',
         effect: 'select',
-        routeChange: 'Escalate the customer-impact exception and final call to a named operations leader.',
+        routeChange: 'Escalate the customer-impact exception and final call to the operations leader on duty.',
       },
       {
-        answer: 'A named human chosen by the escalation rule',
+        answer: 'The human named by the escalation rule',
         effect: 'bound',
         routeChange: 'Automate routine planning only inside a rule that names the human exception owner.',
       },
@@ -2502,44 +2530,39 @@ const G21_ANSWER_CONTRACTS: Record<string, G21RouteAnswerContract> = {
     },
   },
   'RANGE-INTERNAL-STORY-I2': {
-    options: ['Character-first', 'Theory-first', 'Neither until purchase evidence'],
+    options: ['Yes', 'No'],
     unit: null,
     denominator: null,
     comparator: null,
     unknownAllowed: true,
     evidenceRequestIfUnknown:
-      'Compare both routes on new-viewer purchases and core-fan purchases before allocating the budget.',
+      'Show both campaigns to similar groups, count ticket purchases and check that core-fan ticket sales do not fall.',
     optionalNoteAllowed: true,
     routeEffects: [
       {
-        answer: 'Character-first',
-        effect: 'select',
-        routeChange: 'Choose character-first only with new-viewer purchase growth and no core-fan purchase loss.',
+        answer: 'Yes',
+        effect: 'bound',
+        routeChange: 'Keep the allocation unchanged until comparable ticket sales identify the stronger campaign and core-fan sales hold.',
       },
       {
-        answer: 'Theory-first',
-        effect: 'select',
-        routeChange: 'Choose theory-first only with new-viewer purchase growth and no core-fan purchase loss.',
-      },
-      {
-        answer: 'Neither until purchase evidence',
-        effect: 'stop',
-        routeChange: 'Hold the GBP 18 million allocation until the two purchase conditions are tested.',
+        answer: 'No',
+        effect: 'reshape',
+        routeChange: 'Require Mei to name the non-purchase evidence and maximum core-fan loss she will accept before moving budget.',
       },
     ],
     unknownRouteEffect: {
       effect: 'stop',
-      routeChange: 'Hold the allocation and run a comparable purchase test across both audience groups.',
+      routeChange: 'Keep the allocation unchanged and compare actual ticket purchases for the two campaigns.',
     },
   },
   'RANGE-INTERNAL-STORY-I3': {
     options: [],
-    unit: 'additional new viewers who buy a ticket',
-    denominator: '100 new viewers',
-    comparator: "today's campaign",
+    unit: 'extra ticket buyers',
+    denominator: '100 franchise-new viewers',
+    comparator: "today's campaign shown under similar release conditions",
     unknownAllowed: true,
     evidenceRequestIfUnknown:
-      'Measure actual ticket purchases in a held-out test and core-fan sales before setting the gate.',
+      'Show both campaigns to similar groups, count actual ticket purchases and check that core-fan ticket sales do not fall.',
     optionalNoteAllowed: true,
     routeEffects: [
       {
@@ -2560,6 +2583,20 @@ export const G21_INTERNAL_RANGE_CANARY: G21InternalRangeProfile[] = familyDrafts
     G21_NONZERO_INTERNAL_DEPTHS.map((internalDepth) => makeProfile(family, internalDepth)),
 )
 
+export const G21_TRUSTED_SAFE_NOVEL_VARIANT = {
+  profileIds: [
+    'RANGE-INTERNAL-CARE-I1',
+    'RANGE-INTERNAL-CARE-I2',
+    'RANGE-INTERNAL-CARE-I3',
+  ],
+  evidenceId: 'INT-CARE-001',
+  receiptId: 'SEM-INT-CARE-001-SAFE-NOVEL-V1',
+  content:
+    'The fictional intake records the six-week, GBP 1.8 million scaling decision and adds that the weekend escalation rota is not yet agreed.',
+  claimText:
+    'The six-week, GBP 1.8 million scaling decision also depends on an unresolved weekend escalation rota.',
+} as const
+
 function canonicalSubstrate(profile: G21InternalRangeProfile): string {
   return JSON.stringify({
     manifest: profile.manifest,
@@ -2575,40 +2612,97 @@ function canonicalSubstrate(profile: G21InternalRangeProfile): string {
   })
 }
 
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map((item) => canonicalJson(item)).join(',')}]`
+  if (value && typeof value === 'object') {
+    const record = value as Record<string, unknown>
+    return `{${Object.keys(record)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key])}`)
+      .join(',')}}`
+  }
+  return JSON.stringify(value)
+}
+
 function trustedExternalBinding(sources: G21SyntheticExternalEvidence[]): string {
-  return JSON.stringify(
-    sources.map((source) => ({
-      sourceId: source.sourceId,
-      locator: source.locator,
-      sourceType: source.sourceType,
-      publishedOn: source.publishedOn,
-      retrievedOn: source.retrievedOn,
-      syntheticDisclosure: source.syntheticDisclosure,
+  return canonicalJson(sources)
+}
+
+function trustedEvidenceBinding(records: G21InternalEvidenceRecord[]): string {
+  return canonicalJson(
+    records.map((record) => ({
+      evidenceId: record.evidenceId,
+      lifecycleRole: record.semanticReceipt.lifecycleRole,
     })),
   )
 }
 
-function trustedEvidenceBinding(records: G21InternalEvidenceRecord[]): string {
-  return JSON.stringify(
-    records.map((record) => ({
-      evidenceId: record.evidenceId,
-      sourceType: record.sourceType,
-      subjectScope: record.subjectScope,
-      audience: record.audience,
-      validAt: record.validAt,
-      recordedAt: record.recordedAt,
-      sourceLocator: record.sourceLocator,
-      fixtureAuthority: record.fixtureAuthority,
-      claims: record.claims.map((claim) => ({
-        claimId: claim.claimId,
-        kind: claim.kind,
-        subjectScope: claim.subjectScope,
-        challengesClaimIds: claim.challengesClaimIds,
-        supersedesClaimIds: claim.supersedesClaimIds,
-      })),
-    })),
-  )
+interface G21TrustedSemanticReceiptBinding {
+  profileIds: string[]
+  recordAndAuthority: string
 }
+
+function trustedRecordAndAuthorityBinding(
+  record: G21InternalEvidenceRecord,
+  authority: G21InternalAudienceAuthority,
+): string {
+  return canonicalJson({ record, authority })
+}
+
+function buildTrustedSemanticReceiptRegistry(): Map<string, G21TrustedSemanticReceiptBinding> {
+  const registry = new Map<string, G21TrustedSemanticReceiptBinding>()
+  const register = (
+    profileId: string,
+    record: G21InternalEvidenceRecord,
+    authority: G21InternalAudienceAuthority,
+  ) => {
+    const receiptId = record.semanticReceipt.receiptId
+    const recordAndAuthority = trustedRecordAndAuthorityBinding(record, authority)
+    const existing = registry.get(receiptId)
+    if (existing && existing.recordAndAuthority !== recordAndAuthority) {
+      throw new Error(`Trusted semantic receipt collision: ${receiptId}`)
+    }
+    registry.set(receiptId, {
+      profileIds: [...new Set([...(existing?.profileIds ?? []), profileId])],
+      recordAndAuthority,
+    })
+  }
+
+  for (const profile of G21_INTERNAL_RANGE_CANARY) {
+    for (const record of allPrivateEvidence(profile)) {
+      const authority = profile.audienceAuthorities.find(
+        (candidate) => candidate.evidenceId === record.evidenceId,
+      )
+      if (!authority) throw new Error(`Trusted semantic receipt lacks authority: ${record.evidenceId}`)
+      register(profile.manifest.profileId, record, authority)
+    }
+  }
+
+  const safeVariantSeed = G21_INTERNAL_RANGE_CANARY
+    .find((profile) => profile.manifest.profileId === G21_TRUSTED_SAFE_NOVEL_VARIANT.profileIds[0])
+    ?.internalEvidence.find(
+      (record) => record.evidenceId === G21_TRUSTED_SAFE_NOVEL_VARIANT.evidenceId,
+    )
+  if (!safeVariantSeed) throw new Error('Trusted safe-novel semantic seed is missing')
+  const safeVariant = structuredClone(safeVariantSeed)
+  safeVariant.content = G21_TRUSTED_SAFE_NOVEL_VARIANT.content
+  safeVariant.claims[0].text = G21_TRUSTED_SAFE_NOVEL_VARIANT.claimText
+  safeVariant.semanticReceipt.receiptId = G21_TRUSTED_SAFE_NOVEL_VARIANT.receiptId
+  for (const profileId of G21_TRUSTED_SAFE_NOVEL_VARIANT.profileIds) {
+    const profile = G21_INTERNAL_RANGE_CANARY.find(
+      (candidate) => candidate.manifest.profileId === profileId,
+    )
+    const authority = profile?.audienceAuthorities.find(
+      (candidate) => candidate.evidenceId === safeVariant.evidenceId,
+    )
+    if (!authority) throw new Error(`Trusted safe-novel receipt lacks authority: ${profileId}`)
+    register(profileId, safeVariant, authority)
+  }
+
+  return registry
+}
+
+const G21_TRUSTED_SEMANTIC_RECEIPT_BY_ID = buildTrustedSemanticReceiptRegistry()
 
 function forbiddenOracleValues(profile: G21InternalRangeProfile): string[] {
   return [
@@ -2745,6 +2839,13 @@ const G21_INTERNAL_EVIDENCE_FIELDS = [
   'sourceLocator',
   'claims',
   'fixtureAuthority',
+  'semanticReceipt',
+] as const
+const G21_SEMANTIC_RECEIPT_FIELDS = [
+  'receiptId',
+  'issuer',
+  'issuedAt',
+  'lifecycleRole',
 ] as const
 const G21_INTERNAL_CLAIM_FIELDS = [
   'claimId',
@@ -2869,8 +2970,16 @@ function nonemptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0
 }
 
+function denseArray(value: unknown): value is unknown[] {
+  if (!Array.isArray(value)) return false
+  for (let index = 0; index < value.length; index += 1) {
+    if (!Object.prototype.hasOwnProperty.call(value, index)) return false
+  }
+  return true
+}
+
 function stringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === 'string')
+  return denseArray(value) && value.every((item) => typeof item === 'string')
 }
 
 function collectStringValues(value: unknown, seen = new WeakSet<object>()): string[] {
@@ -2954,11 +3063,27 @@ function validateInternalEvidenceShape(value: unknown): string[] {
   ] as const) {
     if (!nonemptyString(record[field])) errors.push(`${field}_invalid`)
   }
-  if (!Array.isArray(record.claims)) {
+  if (!denseArray(record.claims)) {
     errors.push('claims_invalid')
   } else {
     for (const [index, claim] of record.claims.entries()) {
       errors.push(...validateInternalClaimShape(claim).map((error) => `claim_${index}_${error}`))
+    }
+  }
+  if (!hasExactFields(record.semanticReceipt, G21_SEMANTIC_RECEIPT_FIELDS)) {
+    errors.push('semantic_receipt_invalid')
+  } else {
+    const receipt = record.semanticReceipt as Record<string, unknown>
+    if (!nonemptyString(receipt.receiptId)) errors.push('semantic_receipt_id_invalid')
+    if (receipt.issuer !== 'g21_synthetic_fixture_compiler') {
+      errors.push('semantic_receipt_issuer_invalid')
+    }
+    if (!validIsoTimestamp(receipt.issuedAt)) errors.push('semantic_receipt_issued_at_invalid')
+    if (
+      typeof receipt.lifecycleRole !== 'string' ||
+      !G21_SEMANTIC_LIFECYCLE_ROLES.includes(receipt.lifecycleRole as G21SemanticLifecycleRole)
+    ) {
+      errors.push('semantic_receipt_lifecycle_role_invalid')
     }
   }
   return errors
@@ -2995,6 +3120,25 @@ function validateResolvedClaimShape(value: unknown): string[] {
     'supersededByClaimIds',
   ] as const) {
     if (!stringArray(claim[field])) errors.push(`${field}_invalid`)
+  }
+  return errors
+}
+
+function validateTrustedSemanticReceipt(
+  record: G21InternalEvidenceRecord,
+  authority: G21InternalAudienceAuthority | undefined,
+  profileId: string,
+): string[] {
+  const errors: string[] = []
+  const receiptId = record.semanticReceipt.receiptId
+  const trusted = G21_TRUSTED_SEMANTIC_RECEIPT_BY_ID.get(receiptId)
+  if (!trusted) return ['semantic_receipt_untrusted']
+  if (!trusted.profileIds.includes(profileId)) errors.push('semantic_receipt_profile_mismatch')
+  if (
+    !authority ||
+    trustedRecordAndAuthorityBinding(record, authority) !== trusted.recordAndAuthority
+  ) {
+    errors.push('semantic_receipt_binding_mismatch')
   }
   return errors
 }
@@ -3104,6 +3248,25 @@ function validateInternalRecord(
   if (!record.sourceLocator.startsWith('fixture://')) errors.push('fixture_locator_required')
   if (record.fixtureAuthority !== 'synthetic_fixture_authoring') {
     errors.push('fixture_authority_required')
+  }
+  if (!hasExactFields(record.semanticReceipt, G21_SEMANTIC_RECEIPT_FIELDS)) {
+    errors.push('semantic_receipt_invalid')
+  } else {
+    if (!/^SEM-(?:INT|LIFE)-[A-Z0-9-]+-V\d+$/.test(record.semanticReceipt.receiptId)) {
+      errors.push('semantic_receipt_id_invalid')
+    }
+    if (record.semanticReceipt.issuer !== 'g21_synthetic_fixture_compiler') {
+      errors.push('semantic_receipt_issuer_invalid')
+    }
+    if (!validIsoTimestamp(record.semanticReceipt.issuedAt)) {
+      errors.push('semantic_receipt_issued_at_invalid')
+    }
+    if (record.semanticReceipt.issuedAt !== record.recordedAt) {
+      errors.push('semantic_receipt_time_must_match_recording')
+    }
+    if (!G21_SEMANTIC_LIFECYCLE_ROLES.includes(record.semanticReceipt.lifecycleRole)) {
+      errors.push('semantic_receipt_lifecycle_role_invalid')
+    }
   }
   if (
     Object.prototype.hasOwnProperty.call(record as unknown as Record<string, unknown>, 'supersedesEvidenceId') ||
@@ -3337,6 +3500,12 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
     errors.push('conflict_requires_target')
   }
   if (correction?.sourceType !== 'direct_correction') errors.push('lifecycle_correction_required')
+  if (conflict?.semanticReceipt.lifecycleRole !== 'conflict') {
+    errors.push('lifecycle_conflict_semantic_role_required')
+  }
+  if (correction?.semanticReceipt.lifecycleRole !== 'correction') {
+    errors.push('lifecycle_correction_semantic_role_required')
+  }
   if (
     conflict &&
     (correctionSupersessionIds.length === 0 ||
@@ -3408,6 +3577,20 @@ export function validateG21InternalRangeProfile(profile: G21InternalRangeProfile
     if (record && authority.authorisedAt !== record.recordedAt) {
       errors.push(`${authority.authorityId}:authority_time_must_match_recording`)
     }
+  }
+
+  for (const record of privateEvidence) {
+    const authority = audienceAuthorities.find(
+      (candidate) => candidate.evidenceId === record.evidenceId,
+    )
+    errors.push(
+      ...validateTrustedSemanticReceipt(record, authority, manifest.profileId).map(
+        (error) => `${record.evidenceId}:${error}`,
+      ),
+    )
+  }
+  if (records.some((record) => record.semanticReceipt.lifecycleRole !== 'base')) {
+    errors.push('profile_evidence_requires_base_semantic_role')
   }
 
   if (internalDepth === 'basic_intake') {
@@ -3804,7 +3987,7 @@ function evidenceForRuntimeState(
   ]
 }
 
-export function validateG21InternalBlindInput(
+function validateG21InternalBlindInputUnchecked(
   candidate: unknown,
 ): string[] {
   const errors: string[] = []
@@ -3812,7 +3995,7 @@ export function validateG21InternalBlindInput(
     return ['blind_input_fields_invalid']
   }
   const raw = candidate as Record<string, unknown>
-  if (raw.schemaVersion !== 'g21-internal-range-input:v4') {
+  if (raw.schemaVersion !== 'g21-internal-range-input:v5') {
     errors.push('blind_input_schema_invalid')
   }
   if (!nonemptyString(raw.runId)) errors.push('blind_input_run_id_required')
@@ -3876,6 +4059,9 @@ export function validateG21InternalBlindInput(
   if (!Array.isArray(raw.externalEvidence)) {
     errors.push('blind_input_external_evidence_array_required')
     errors.push('blind_input_external_evidence_fields_invalid')
+  } else if (!denseArray(raw.externalEvidence)) {
+    errors.push('blind_input_external_evidence_dense_array_required')
+    errors.push('blind_input_external_evidence_fields_invalid')
   } else {
     const shapeErrors = raw.externalEvidence.flatMap((source, index) =>
       validateExternalEvidenceShape(source).map(
@@ -3935,6 +4121,9 @@ export function validateG21InternalBlindInput(
   if (!Array.isArray(raw.internalEvidence)) {
     errors.push('blind_input_internal_evidence_array_required')
     errors.push('blind_input_internal_evidence_fields_invalid')
+  } else if (!denseArray(raw.internalEvidence)) {
+    errors.push('blind_input_internal_evidence_dense_array_required')
+    errors.push('blind_input_internal_evidence_fields_invalid')
   } else {
     const shapeErrors = raw.internalEvidence.flatMap((record, index) =>
       validateInternalEvidenceShape(record).map(
@@ -3975,6 +4164,9 @@ export function validateG21InternalBlindInput(
   if (!Array.isArray(raw.audienceAuthorities)) {
     errors.push('blind_input_audience_authority_array_required')
     errors.push('blind_input_audience_authority_fields_invalid')
+  } else if (!denseArray(raw.audienceAuthorities)) {
+    errors.push('blind_input_audience_authority_dense_array_required')
+    errors.push('blind_input_audience_authority_fields_invalid')
   } else {
     const shapeErrors = raw.audienceAuthorities.flatMap((authority, index) =>
       validateAudienceAuthorityShape(authority).map(
@@ -3991,6 +4183,9 @@ export function validateG21InternalBlindInput(
   let currentClaims: G21ResolvedInternalClaim[] | null = null
   if (!Array.isArray(raw.currentClaims)) {
     errors.push('blind_input_current_claim_array_required')
+    errors.push('blind_input_current_claim_fields_invalid')
+  } else if (!denseArray(raw.currentClaims)) {
+    errors.push('blind_input_current_claim_dense_array_required')
     errors.push('blind_input_current_claim_fields_invalid')
   } else {
     const shapeErrors = raw.currentClaims.flatMap((claim, index) =>
@@ -4056,6 +4251,11 @@ export function validateG21InternalBlindInput(
       ) {
         errors.push(`${record.evidenceId}:blind_input_audience_not_authorised`)
       }
+      errors.push(
+        ...validateTrustedSemanticReceipt(record, authority, String(raw.profileId)).map(
+          (error) => `${record.evidenceId}:blind_input_${error}`,
+        ),
+      )
     }
   }
 
@@ -4103,6 +4303,14 @@ export function validateG21InternalBlindInput(
   return errors
 }
 
+export function validateG21InternalBlindInput(candidate: unknown): string[] {
+  try {
+    return validateG21InternalBlindInputUnchecked(candidate)
+  } catch {
+    return ['blind_input_validation_failed_closed']
+  }
+}
+
 export function validateG21CanonicalInternalBlindInput(
   candidate: unknown,
   expectedProfile: G21InternalRangeProfile | null | undefined,
@@ -4140,7 +4348,7 @@ export function validateG21CanonicalInternalBlindInput(
 }
 
 export function buildG21InternalBlindInputs(
-  runId = 'G21-INTERNAL-RANGE-RUN-004',
+  runId = 'G21-INTERNAL-RANGE-RUN-005',
   profiles: G21InternalRangeProfile[] = G21_INTERNAL_RANGE_CANARY,
 ): G21InternalBlindInput[] {
   const profileErrors = validateG21InternalRangeCanary(profiles)
@@ -4152,7 +4360,7 @@ export function buildG21InternalBlindInputs(
       const internalEvidence = evidenceForRuntimeState(profile, runtimeState)
       const includedEvidenceIds = internalEvidence.map((record) => record.evidenceId)
       return {
-        schemaVersion: 'g21-internal-range-input:v4' as const,
+        schemaVersion: 'g21-internal-range-input:v5' as const,
         runId,
         caseId: `${profile.manifest.profileId}-${runtimeState.toUpperCase()}`,
         profileId: profile.manifest.profileId,

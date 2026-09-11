@@ -271,12 +271,13 @@ const G21_HISTORY_BEARING_SEMANTIC_PATHS = new Set([
   'project-documentation/ctrl-evolution/README.md',
   'project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md',
   'project-documentation/ctrl-evolution/g21-internal-range-canary.md',
+  'project-documentation/ctrl-evolution/g21-v4-contract-separation.md',
   'project-documentation/ctrl-evolution/session-method-learning-log.md',
   'scripts/check-g21-internal-council.mjs',
 ])
 
 const G21_HISTORY_BEARING_PATH_PATTERN =
-  /(?:^|\/)judge-history\/|(?:^|\/)runs\/g21-internal-range-freeze-00[1-3]\/(?:judges|readers)\/|(?:^|\/)(?:adjudication|rulings-manifest|standards-prosecutor|founder-calibration|review-protocol-failure)\.(?:json|md)$/
+  /(?:^|\/)judge-history\/|(?:^|\/)runs\/g21-internal-range-freeze-\d{3}\/(?:judges|readers)\/|(?:^|\/)(?:adjudication|rulings-manifest|standards-prosecutor|founder-calibration|review-protocol-failure)\.(?:json|md)$/
 
 function validRepositoryPath(value: unknown): value is string {
   return (
@@ -288,16 +289,24 @@ function validRepositoryPath(value: unknown): value is string {
   )
 }
 
+function denseArray(value: unknown): value is unknown[] {
+  if (!Array.isArray(value)) return false
+  for (let index = 0; index < value.length; index += 1) {
+    if (!Object.prototype.hasOwnProperty.call(value, index)) return false
+  }
+  return true
+}
+
 export function validateG21SemanticReviewAllowlist(
   semanticReviewPaths: readonly unknown[],
   provenanceOnlyPaths: readonly unknown[],
 ): string[] {
   const errors: string[] = []
-  if (!Array.isArray(semanticReviewPaths) || semanticReviewPaths.length === 0) {
+  if (!denseArray(semanticReviewPaths) || semanticReviewPaths.length === 0) {
     errors.push('semantic_review_allowlist_required')
     return errors
   }
-  if (!Array.isArray(provenanceOnlyPaths)) {
+  if (!denseArray(provenanceOnlyPaths)) {
     errors.push('provenance_only_paths_array_required')
     return errors
   }
@@ -341,13 +350,13 @@ function isPlainRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function nonemptyStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.length > 0 && value.every(
+  return denseArray(value) && value.length > 0 && value.every(
     (item) => typeof item === 'string' && item.trim().length > 0,
   )
 }
 
 function stringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every(
+  return denseArray(value) && value.every(
     (item) => typeof item === 'string' && item.trim().length > 0,
   )
 }
@@ -363,7 +372,7 @@ export function validateFrozenRangeCouncil(
   contract: FrozenRangeCouncilContract,
 ): string[] {
   const errors: string[] = []
-  if (!Array.isArray(rulings)) return ['frozen_range_rulings_array_required']
+  if (!denseArray(rulings)) return ['frozen_range_rulings_array_required']
   if (!isPlainRecord(contract)) return ['frozen_range_contract_object_required']
   const reviewBoundaryRequired = requiresHistoryFreeReviewBoundary(contract.runId)
   const contractFields = reviewBoundaryRequired

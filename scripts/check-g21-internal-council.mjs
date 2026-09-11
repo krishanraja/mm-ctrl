@@ -3,12 +3,13 @@ import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { basename, dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, posix, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const outputDirectory = mkdtempSync(join(tmpdir(), 'mm-ctrl-g21-council-'))
 const require = createRequire(import.meta.url)
+const typescript = require(join(root, 'node_modules', 'typescript'))
 const selfOnly = process.argv.includes('--self-only')
 const requestedRunId =
   process.argv.find((argument) => /^G21-INTERNAL-RANGE-FREEZE-\d{3}$/.test(argument)) ??
@@ -44,6 +45,38 @@ function readJson(path) {
 
 function composite(entries) {
   return sha256(entries.map((entry) => `${entry.path}:${entry.sha256}`).join('\n'))
+}
+
+function frozenFileExists(commit, path) {
+  try {
+    readFrozenFile(commit, path)
+    return true
+  } catch {
+    return false
+  }
+}
+
+function repoOwnedTypeScriptClosure(commit, entryPoints) {
+  const seen = new Set()
+  const queue = [...entryPoints]
+  while (queue.length > 0) {
+    const path = queue.shift()
+    if (seen.has(path)) continue
+    seen.add(path)
+    const source = readFrozenFile(commit, path).toString('utf8')
+    const imports = typescript.preProcessFile(source, true, true).importedFiles
+    for (const imported of imports) {
+      if (!imported.fileName.startsWith('.')) continue
+      const unresolved = posix.normalize(posix.join(posix.dirname(path), imported.fileName))
+      const candidates = unresolved.endsWith('.ts')
+        ? [unresolved]
+        : [`${unresolved}.ts`, posix.join(unresolved, 'index.ts')]
+      const resolvedImport = candidates.find((candidate) => frozenFileExists(commit, candidate))
+      assert(resolvedImport, `local TypeScript import cannot be resolved: ${path}:${imported.fileName}`)
+      queue.push(resolvedImport)
+    }
+  }
+  return [...seen].sort()
 }
 
 try {
@@ -201,6 +234,15 @@ try {
     'malformed nested ruling arrays were not rejected',
   )
 
+  const sparseRulingArray = structuredClone(passRulings)
+  sparseRulingArray[0].claims = new Array(1)
+  assert(
+    council
+      .validateFrozenRangeCouncil(sparseRulingArray, selfContract)
+      .includes('human_agency:frozen_claims_invalid'),
+    'sparse ruling claims were not rejected',
+  )
+
   const malformedVeto = structuredClone(passRulings)
   malformedVeto[0].verdict = 'fail'
   malformedVeto[0].veto = {
@@ -259,12 +301,30 @@ try {
         .some((error) => error.startsWith('history_bearing_semantic_path_forbidden_')),
       'history-bearing judge material entered the semantic allowlist',
     )
+    assert(
+      council
+        .validateG21SemanticReviewAllowlist(
+          [
+            ...semanticPaths,
+            `project-documentation/ctrl-evolution/runs/${requestedRunId.toLowerCase()}/judges/human_agency.json`,
+          ],
+          provenancePaths,
+        )
+        .some((error) => error.startsWith('history_bearing_semantic_path_forbidden_')),
+      'current-run ruling material entered the semantic allowlist',
+    )
+    assert(
+      council
+        .validateG21SemanticReviewAllowlist(new Array(1), provenancePaths)
+        .includes('semantic_review_allowlist_required'),
+      'sparse semantic allowlist was not rejected',
+    )
   }
 
   if (selfOnly) {
     console.log(
       JSON.stringify(
-        { status: 'passed', contractSelfTests: selfRunVersion >= 4 ? 11 : 9 },
+        { status: 'passed', contractSelfTests: selfRunVersion >= 4 ? 14 : 10 },
         null,
         2,
       ),
@@ -340,14 +400,12 @@ try {
       )
       const contaminatedSemanticContent = inputManifest.semanticReviewFiles.flatMap((entry) => {
         const content = readFrozenFile(artifactCommit, entry.path).toString('utf8')
-        return [
-          'G21-INTERNAL-RANGE-FREEZE-001',
-          'G21-INTERNAL-RANGE-FREEZE-002',
-          'G21-INTERNAL-RANGE-FREEZE-003',
-          'g21-internal-range-freeze-001',
-          'g21-internal-range-freeze-002',
-          'g21-internal-range-freeze-003',
-        ]
+        return Array.from({ length: runVersion - 1 }, (_, index) =>
+          String(index + 1).padStart(3, '0')
+        ).flatMap((priorVersion) => [
+          `G21-INTERNAL-RANGE-FREEZE-${priorVersion}`,
+          `g21-internal-range-freeze-${priorVersion}`,
+        ])
           .filter((marker) => content.includes(marker))
           .map((marker) => `${entry.path}:${marker}`)
       })
@@ -355,6 +413,50 @@ try {
         contaminatedSemanticContent.length === 0,
         `v4 semantic review content names prior frozen runs: ${contaminatedSemanticContent.join(', ')}`,
       )
+
+      if (runVersion >= 5) {
+        const compileClosure = inputManifest.compileClosure
+        assert(
+          compileClosure?.protocolVersion === 'repo-local-typescript-import-closure:v1',
+          'v5 compile closure protocol is invalid',
+        )
+        assert(
+          Array.isArray(compileClosure.entryPoints) && compileClosure.entryPoints.length > 0,
+          'v5 compile closure entry points are missing',
+        )
+        assert(Array.isArray(compileClosure.files), 'v5 compile closure files are missing')
+        const computedClosure = repoOwnedTypeScriptClosure(
+          artifactCommit,
+          compileClosure.entryPoints,
+        )
+        assert(
+          JSON.stringify(compileClosure.files.map((entry) => entry.path)) ===
+            JSON.stringify(computedClosure),
+          'v5 compile closure does not match repo-owned local imports',
+        )
+        for (const entry of compileClosure.files) {
+          assert(
+            sha256(readFrozenFile(artifactCommit, entry.path)) === entry.sha256,
+            `v5 compile closure hash mismatch: ${entry.path}`,
+          )
+          assert(
+            semanticPaths.includes(entry.path),
+            `v5 compile dependency is absent from semantic review files: ${entry.path}`,
+          )
+        }
+        assert(
+          composite(compileClosure.files) === compileClosure.compositeSha256,
+          'v5 compile closure composite hash mismatch',
+        )
+        assert(
+          compileClosure.nodeVersion === process.version,
+          `v5 Node version mismatch: expected ${compileClosure.nodeVersion}, received ${process.version}`,
+        )
+        assert(
+          compileClosure.typescriptVersion === typescript.version,
+          `v5 TypeScript version mismatch: expected ${compileClosure.typescriptVersion}, received ${typescript.version}`,
+        )
+      }
     }
 
     for (const entry of inputManifest.files) {
@@ -490,7 +592,7 @@ try {
         {
           status: 'passed',
           runId: requestedRunId,
-          contractSelfTests: runVersion >= 4 ? 11 : 9,
+          contractSelfTests: runVersion >= 4 ? 14 : 10,
           artifacts: inputManifest.files.length,
           rulings: rulings.length,
           result: expectedResult.status,

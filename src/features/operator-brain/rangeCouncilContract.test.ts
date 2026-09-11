@@ -448,6 +448,28 @@ describe('durable council contract', () => {
     ).toContain(
       'history_bearing_semantic_path_forbidden_project-documentation/ctrl-evolution/judge-history/human-agency.md',
     )
+    expect(
+      validateG21SemanticReviewAllowlist(
+        [
+          ...semantic,
+          'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json',
+        ],
+        provenance,
+      ),
+    ).toContain(
+      'history_bearing_semantic_path_forbidden_project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json',
+    )
+    expect(
+      validateG21SemanticReviewAllowlist(
+        [...semantic, 'project-documentation/ctrl-evolution/g21-v4-contract-separation.md'],
+        provenance,
+      ),
+    ).toContain(
+      'history_bearing_semantic_path_forbidden_project-documentation/ctrl-evolution/g21-v4-contract-separation.md',
+    )
+    expect(validateG21SemanticReviewAllowlist(new Array(1), provenance)).toEqual([
+      'semantic_review_allowlist_required',
+    ])
   })
 })
 

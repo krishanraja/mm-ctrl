@@ -9,6 +9,7 @@ import {
   G21_INTERNAL_RANGE_CASES,
   G21_INTERNAL_RANGE_EVIDENCE_AS_OF,
   G21_NONZERO_INTERNAL_DEPTHS,
+  G21_TRUSTED_SAFE_NOVEL_VARIANT,
   buildG21CurrentClaimView,
   buildG21InternalBlindInputs,
   validateG21CanonicalInternalBlindInput,
@@ -188,7 +189,7 @@ describe('G21 internal evidence range canary', () => {
       expect(corrected.authority.mayRecommendConsequentialAction).toBe(false)
       expect(corrected.authority.mayPromoteDurableTruth).toBe(false)
       expect(corrected.evidenceAsOf).toBe(G21_INTERNAL_RANGE_EVIDENCE_AS_OF)
-      expect(corrected.schemaVersion).toBe('g21-internal-range-input:v4')
+      expect(corrected.schemaVersion).toBe('g21-internal-range-input:v5')
 
       for (const input of [initial, contradicted, corrected]) {
         expect(validateG21InternalBlindInput(input)).toEqual([])
@@ -734,12 +735,25 @@ describe('G21 internal evidence range canary', () => {
     )
 
     const safeNovelText = structuredClone(input)
-    safeNovelText.internalEvidence[0].content = 'A newly supplied fictional intake sentence.'
-    safeNovelText.internalEvidence[0].claims[0].text = 'A newly supplied fictional intake sentence.'
+    safeNovelText.internalEvidence[0].content = G21_TRUSTED_SAFE_NOVEL_VARIANT.content
+    safeNovelText.internalEvidence[0].claims[0].text = G21_TRUSTED_SAFE_NOVEL_VARIANT.claimText
+    safeNovelText.internalEvidence[0].semanticReceipt.receiptId =
+      G21_TRUSTED_SAFE_NOVEL_VARIANT.receiptId
     safeNovelText.currentClaims = buildG21CurrentClaimView(safeNovelText.internalEvidence)
     expect(validateG21InternalBlindInput(safeNovelText)).toEqual([])
     expect(validateG21CanonicalInternalBlindInput(safeNovelText, profile)).toContain(
       'canonical_internal_evidence_bytes_mismatch',
+    )
+
+    const untrustedNovelText = structuredClone(input)
+    untrustedNovelText.internalEvidence[0].content = 'A fictional but unissued intake sentence.'
+    untrustedNovelText.internalEvidence[0].claims[0].text =
+      'A fictional but unissued intake sentence.'
+    untrustedNovelText.currentClaims = buildG21CurrentClaimView(
+      untrustedNovelText.internalEvidence,
+    )
+    expect(validateG21InternalBlindInput(untrustedNovelText)).toContain(
+      'INT-CARE-001:blind_input_semantic_receipt_binding_mismatch',
     )
   })
 
@@ -758,6 +772,22 @@ describe('G21 internal evidence range canary', () => {
       { ...structuredClone(baseline), authority: null },
     ]
     for (const candidate of malformed) {
+      expect(() => validateG21InternalBlindInput(candidate)).not.toThrow()
+      expect(validateG21InternalBlindInput(candidate).length).toBeGreaterThan(0)
+    }
+
+    const sparse = [
+      { ...structuredClone(baseline), internalEvidence: new Array(1) },
+      { ...structuredClone(baseline), audienceAuthorities: new Array(1) },
+      { ...structuredClone(baseline), currentClaims: new Array(1) },
+    ]
+    const sparseClaims = structuredClone(baseline)
+    sparseClaims.internalEvidence[0].claims = new Array(1)
+    sparse.push(sparseClaims)
+    const sparseRelations = structuredClone(baseline)
+    sparseRelations.internalEvidence[0].claims[0].challengesClaimIds = new Array(1)
+    sparse.push(sparseRelations)
+    for (const candidate of sparse) {
       expect(() => validateG21InternalBlindInput(candidate)).not.toThrow()
       expect(validateG21InternalBlindInput(candidate).length).toBeGreaterThan(0)
     }
@@ -832,6 +862,60 @@ describe('G21 internal evidence range canary', () => {
       'INT-STORY-007:observational_claim_cannot_assert_causation_INT-STORY-007-CLAIM-01',
     )
 
+    const causalParaphrase = structuredClone(causalObservation)
+    const paraphrasedOutcome = causalParaphrase.internalEvidence.find(
+      (record) => record.evidenceId === 'INT-STORY-007',
+    )!
+    paraphrasedOutcome.content =
+      'Theory-heavy exposure drove opening-weekend purchase across all fan groups.'
+    paraphrasedOutcome.claims[0].text = paraphrasedOutcome.content
+    causalParaphrase.currentClaims = buildG21CurrentClaimView(causalParaphrase.internalEvidence)
+    expect(validateG21InternalBlindInput(causalParaphrase)).toContain(
+      'INT-STORY-007:blind_input_semantic_receipt_binding_mismatch',
+    )
+
+    const semanticPersonhood = structuredClone(inputs[0])
+    semanticPersonhood.internalEvidence[0].content =
+      'Satya Nadella personally consented to this private evidence being used by the fictional fixture.'
+    semanticPersonhood.internalEvidence[0].claims[0].text =
+      semanticPersonhood.internalEvidence[0].content
+    semanticPersonhood.currentClaims = buildG21CurrentClaimView(
+      semanticPersonhood.internalEvidence,
+    )
+    expect(validateG21InternalBlindInput(semanticPersonhood)).toContain(
+      `${semanticPersonhood.internalEvidence[0].evidenceId}:blind_input_semantic_receipt_binding_mismatch`,
+    )
+
+    const semanticLifecycleReversal = structuredClone(
+      inputs.find(
+        (input) =>
+          input.profileId === 'RANGE-INTERNAL-CARE-I1' && input.runtimeState === 'corrected',
+      )!,
+    )
+    const careProfile = G21_INTERNAL_RANGE_CANARY.find(
+      (profile) => profile.manifest.profileId === semanticLifecycleReversal.profileId,
+    )!
+    const conflict = semanticLifecycleReversal.internalEvidence[careProfile.internalEvidence.length]
+    const correction =
+      semanticLifecycleReversal.internalEvidence[careProfile.internalEvidence.length + 1]
+    ;[conflict.content, correction.content] = [correction.content, conflict.content]
+    ;[conflict.claims[0].text, correction.claims[0].text] = [
+      correction.claims[0].text,
+      conflict.claims[0].text,
+    ]
+    ;[conflict.semanticReceipt, correction.semanticReceipt] = [
+      correction.semanticReceipt,
+      conflict.semanticReceipt,
+    ]
+    semanticLifecycleReversal.currentClaims = buildG21CurrentClaimView(
+      semanticLifecycleReversal.internalEvidence,
+    )
+    expect(validateG21InternalBlindInput(semanticLifecycleReversal)).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/blind_input_semantic_receipt_binding_mismatch$/),
+      ]),
+    )
+
     const incapableSource = structuredClone(
       inputs.find(
         (input) =>
@@ -848,7 +932,7 @@ describe('G21 internal evidence range canary', () => {
     })
     incapableSource.currentClaims = buildG21CurrentClaimView(incapableSource.internalEvidence)
     expect(validateG21InternalBlindInput(incapableSource)).toContain(
-      'blind_input_internal_evidence_binding_mismatch',
+      'INT-RESEARCH-009:blind_input_semantic_receipt_binding_mismatch',
     )
 
     const misdirected = structuredClone(
@@ -863,7 +947,7 @@ describe('G21 internal evidence range canary', () => {
     correction.claims[0].supersedesClaimIds = ['INT-CARE-002-CLAIM-03']
     misdirected.currentClaims = buildG21CurrentClaimView(misdirected.internalEvidence)
     expect(validateG21InternalBlindInput(misdirected)).toContain(
-      'blind_input_internal_evidence_binding_mismatch',
+      'INT-CARE-008:blind_input_semantic_receipt_binding_mismatch',
     )
 
     const oracleProfile = G21_INTERNAL_RANGE_CANARY.find(
@@ -895,7 +979,7 @@ describe('G21 internal evidence range canary', () => {
       ]),
     )
     expect(() =>
-      buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-004-ORACLE-DRIFT', populationDrift),
+      buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-005-ORACLE-DRIFT', populationDrift),
     ).toThrow('refused invalid profiles')
   })
 
@@ -905,12 +989,14 @@ describe('G21 internal evidence range canary', () => {
         'Out of every 100 vulnerable clients, how many must keep the same carer without you stepping in before expansion?',
       'RANGE-INTERNAL-RESEARCH-I2':
         'Have any clients used the monthly product without a senior researcher and said its challenge changed their decision?',
+      'RANGE-INTERNAL-FORGE-I2':
+        'Before you fund all six plants, must one plant get on-time delivery back to at least 91% with the same planners?',
       'RANGE-INTERNAL-FORGE-I3':
-        'Which named person makes the final call when an AI plan could make a customer late?',
+        'Which role should make the final call when an AI plan could make a customer late?',
       'RANGE-INTERNAL-STORY-I2':
-        'Which route gets the GBP 18 million: character-first, theory-first, or neither until new buyers increase without losing core fans?',
+        'Must ticket sales show which campaign wins new viewers without losing core-fan sales before the GBP 18 million moves?',
       'RANGE-INTERNAL-STORY-I3':
-        'How many extra new viewers out of 100 must buy a ticket, without core-fan sales falling, before you move GBP 18 million?',
+        'How many extra ticket buyers per 100 new viewers, versus today, would justify GBP 18 million if core-fan sales hold?',
     } as const
     for (const [profileId, question] of Object.entries(expectedQuestions)) {
       const profile = G21_INTERNAL_RANGE_CANARY.find(
