@@ -1,10 +1,12 @@
 # CTRL design delivery state
 
-Status: Current
+Status: Current production release record; superseded as the material evolution state route
 Owner: Mindmaker
-Last verified: 2026-08-21 against the released positioning and data-class change
+Last verified: 2026-09-11 for state routing; the Blind Spot release evidence below remains unchanged
 
-This is the single resumable state route for material CTRL interface work. Product and architecture truth remain in the other `docs/current/` documents. Accepted product decisions remain in `project-documentation/DECISIONS_LOG.md`.
+This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine and proposed G24 product-system blueprint. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
+
+**The one current evolution action:** review the G24 product-system blueprint. If approved, implement its headless Crossing locally before any new customer-facing surface or external mutation.
 
 ## Current phase
 
