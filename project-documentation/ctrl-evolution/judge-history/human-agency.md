@@ -52,3 +52,13 @@ Owned truth: the person retains purpose, standards, exceptions, informed overrid
 - Protected strength: do not weaken the exact R1 authority object or safe unknown route while repairing semantics and language.
 - Raw ruling: [`human_agency.json`](../runs/g21-internal-range-freeze-004/judges/human_agency.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: pass.
+- Protocol standing: valid history-free independent ruling over the terminal frozen pack.
+- Finding: the exact R1 boundary still permits framing and one question while prohibiting consequential recommendation, execution, durable-truth promotion and named-employee assessment.
+- Cross-examination: upheld strictly within the owned authority criterion. Corrupt evidence or unusable questions can weaken practical agency but do not change these executable capabilities.
+- Durable stance: human authority is necessary but never sufficient for a safe or valuable diagnostic. Purpose, standards, material exceptions and the final call remain human-owned.
+- Raw ruling: [`human_agency.json`](../runs/g21-internal-range-freeze-005/judges/human_agency.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).

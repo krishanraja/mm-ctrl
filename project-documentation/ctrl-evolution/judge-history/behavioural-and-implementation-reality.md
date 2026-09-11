@@ -53,3 +53,13 @@ Owned truth: the proposed behaviour and system must survive real work, sparse st
 - Protected strength: keep exact initial, conflict and correction history visible and independently testable.
 - Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-004/judges/behavioural_and_implementation_reality.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: pass.
+- Protocol standing: valid history-free independent ruling, preserved only for the subclaims its evidence actually proves.
+- Finding: the exact artifact fixed nine semantic hashes, the three-file local compilation closure, four matched families, 36 valid baselines, 128 rejected malformed JSON samples, 249 rejected declared mutations and nine safe-novel controls.
+- Cross-examination: materially narrowed. The `toJSON` counterexample defeats global arbitrary-input clearance, coordinated state substitution was not tested as currentness, and one-to-one route-effect prose did not prove every answer useful.
+- Durable stance: a green finite gate proves its enumerated baselines, attacks and invariants. It never becomes evidence for arbitrary input, live freshness, diagnostic intelligence or product value.
+- Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).

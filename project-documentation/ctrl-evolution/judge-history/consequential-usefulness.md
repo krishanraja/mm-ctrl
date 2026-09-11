@@ -52,3 +52,14 @@ Owned truth: the Brain sharpens a live high-value decision rather than producing
 - Protected strength: retain the four distinct decision families and their explicit route effects while simplifying visible questions.
 - Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-004/judges/consequential_usefulness.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: fail. Veto: `USEFULNESS-RANGE-01`.
+- Protocol standing: valid history-free independent ruling.
+- Failure found: STORY-I1 accepted `Another named group` as a complete answer while claiming that the response supplied a concrete customer gate for the GBP 18 million route.
+- Cross-examination: veto upheld and narrowed to the visible answer contract. A future response parser is not required to see that the current answer lacks the value its route effect assumes.
+- Durable stance: a permitted answer must contain, or explicitly request, the decision-bearing value its promised route effect uses.
+- Protected strength: the other eleven contracts retain materially different select, stop, bound or reshape effects across four consequential decision families.
+- Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).

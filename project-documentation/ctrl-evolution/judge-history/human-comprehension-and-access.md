@@ -54,3 +54,14 @@ Owned truth: a busy non-technical person can understand the immediate state and 
 - Evidence limit: these are adult proxy screens, not child testing, product usability proof or a founder taste decision.
 - Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-004/judges/human_comprehension_and_access.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: fail. Veto: `COMPREHENSION-RANGE-01`.
+- Protocol standing: valid history-free independent ruling with two adult proxy screens.
+- Failure found: the sealed judge named four confusing contracts.
+- Cross-examination: veto upheld but narrowed to two independently supported defects: RESEARCH-I1 omitted other, mixed and tie results; FORGE-I3 offered a circular non-role that depended on an unseen escalation rule. The other two items remain wording watchpoints, not veto grounds.
+- Durable stance: fixed choices must cover plausible answers or offer a real write-in, and every role option must be a role the person can identify without hidden context.
+- Evidence limit: adult proxy agreement is not child-comprehension or product-usability proof.
+- Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).

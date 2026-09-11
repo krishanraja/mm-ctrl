@@ -205,7 +205,7 @@ The implemented router covers:
 
 - The public-row diagnostic canary passed its current contract only after one blocked run and a targeted repair. This does not prove diagnostic efficacy outside the four frozen envelopes.
 - No real private or anonymised evidence has been collected. The internal range is wholly fictional and cannot establish consented-customer behaviour.
-- Run 004 did not clear the internal range. Four valid vetoes were independently issued and directly reproduced; three passes remain narrow prerequisites rather than evidence of product value.
+- Run 005 did not clear the internal range. Five valid vetoes survived cross-examination; two passes remain narrow prerequisites rather than evidence of product value.
 - The two Run 004 adult proxy screens shared four failures. They do not establish child comprehension, product usability or diagnostic efficacy.
 - No diagnostic model has run against the twelve internal profiles or their 36 lifecycle inputs.
 - No diagnostic model has run against the 48 cases.
@@ -213,6 +213,6 @@ The implemented router covers:
 - No customer-facing or operator-facing G21 UI has been designed.
 - No claim about diagnostic efficacy, judgement improvement or customer value is earned by this contract.
 
-## Next action
+## Terminal status
 
-Run one bounded terminal Run 005 to close the four Run 004 vetoes through total validation, a shared semantic trust receipt, four plain answer-contract repairs and a dependency-complete freeze identity. Preserve all earlier runs. If seven fresh isolated judges clear it, end synthetic contract work and run the fixed diagnostic model blind across the 36 internal lifecycle inputs.
+G21 is closed at Run 005 under Krish's explicit authority. Preserve every run and the seven judge histories. Do not create Run 006 or run the 36-input diagnostic from this branch. The next material product gate is the unchanged G20 Decision Table R4 cold founder review; the [terminal closure](g21-terminal-closure.md) owns the carry-forward requirements.

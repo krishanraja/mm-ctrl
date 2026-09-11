@@ -217,9 +217,17 @@ Changed-file ESLint and the repository typecheck pass with no new errors. The no
 
 No database row, auth account, deployment, customer route or production state changed.
 
+## Frozen council run 005 and terminal closure
+
+`runs/g21-internal-range-freeze-005/` preserves the v5 candidate at artifact commit `a1a5c5e`. Its artifact, semantic-review and ruling composites are recorded in the [terminal closure](g21-terminal-closure.md). The review was valid, history-free and dependency-complete. Two judges passed narrowly and five issued valid vetoes, so deterministic adjudication remains `blocked`.
+
+The final cross-examination preserved the Human Agency boundary and the finite deterministic engineering proof. It also located five requirements that must travel into any future production-shaped admission and diagnostic architecture: honest causal standing, total live-object validation, answer values that actually drive their claimed routes, trusted currentness at the real store or caller boundary, and plain exhaustive question contracts.
+
+Krish closed G21 at this terminal boundary on 11 September 2026. No Run 006 and no 36-input diagnostic model run will be created. The immediate product gate returns to the unchanged G20 Decision Table R4 experience.
+
 ## What this does not prove
 
-- Run 004 did not pass. Four clean independent vetoes were upheld after direct reproduction.
+- Run 005 did not pass. Five clean independent vetoes survived prosecution and defense.
 - No diagnostic model has run against the twelve profiles or 36 lifecycle cases.
 - The matched fixtures do not prove that CTRL improves human judgement or company outcomes.
 - The synthetic numbers are test conditions, not benchmarks or market claims.
@@ -230,4 +238,4 @@ No database row, auth account, deployment, customer route or production state ch
 
 ## Next action
 
-Implement one terminal Run 005 without altering any blocked predecessor. Make arbitrary-input validation total, bind semantic meaning and authority in one trusted receipt, repair the four shared adult answerability failures and hash the bounded repo-owned compilation closure. Freeze once, collect fresh adult screens and seven isolated rulings, then stop on any valid veto. If it passes, run the fixed diagnostic model blind across all 36 cases and do not create a Run 006 merely to elaborate the synthetic contract.
+Present the unchanged G20 Decision Table R4 preview cold and record Krish's unanchored reaction. Carry the terminal G21 requirements into later production architecture only when the product route needs them.

@@ -53,3 +53,13 @@ Owned truth: identity, consent, audience, provenance, correction and retention b
 - Protected strength: preserve hard separation among real-public, consented-private, anonymised and wholly fictional namespaces.
 - Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-004/judges/subject_audience_lifecycle_safety.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: fail. Veto: `SAFETY-RANGE-01`.
+- Protocol standing: valid history-free independent ruling.
+- Failure found: an array-level `toJSON` could present a benign current-claim view while the live object retained fabricated kind, real-person subject and public audience values; both exported validators accepted it.
+- Cross-examination: upheld for the declared in-process `unknown` boundary and narrowed away from a claimed network JSON exploit or observed disclosure.
+- Durable stance: validate the live value the caller will use. Serialization safety cannot substitute for total nested-object safety when the exported boundary accepts broader input.
+- Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).

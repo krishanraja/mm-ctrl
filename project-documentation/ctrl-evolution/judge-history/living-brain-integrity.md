@@ -52,3 +52,13 @@ Owned truth: memory remains versioned, inspectable, portable, correctable and re
 - Protected strength: strengthen live semantic authenticity around the claim-addressable substrate rather than replacing it or silently rewriting history.
 - Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-004/judges/living_brain_integrity.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: fail. Veto: `BRAIN-RANGE-01`.
+- Protocol standing: valid history-free independent ruling; the sealed veto remains immutable.
+- Failure found: all twelve corrected envelopes could be reduced to their exact canonical initial state and accepted because the candidate chose its own state binding.
+- Cross-examination: substantively challenged by independent defense. The transformed input is a valid historical initial snapshot, and the canary did not declare freshness or anti-replay authority. Prosecution retains the failure only at a future current-case admission boundary.
+- Durable stance: immutable evidence, claim-level correction and deterministic projection remain protected. A live system must establish currentness at the trusted store or caller boundary rather than asking a static snapshot to prove an undeclared fact.
+- Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).

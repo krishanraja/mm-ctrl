@@ -53,3 +53,13 @@ Owned truth: every claim earns its standing from attributable evidence, visible 
 - Protected strength: keep facts, statements, interpretations, corrections and unknowns distinct without collapsing structural validation into exact fixture equality.
 - Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-004/judges/epistemic_integrity.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-004/standards-prosecutor.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-004/founder-calibration.json).
+
+## G21-INTERNAL-RANGE-FREEZE-005
+
+- Verdict: fail. Veto: `EPISTEMIC-RANGE-01`.
+- Protocol standing: valid history-free independent ruling.
+- Failure found: the frozen story fixture gave observational standing to lifted and improved causal language while controlled or held-out evidence remained unresolved. Receipt and fixture integrity did not earn that causal meaning.
+- Cross-examination: veto upheld but narrowed. The external artifact hash defeats general source-drift claims, while the frozen causal overclaim and context-insensitive causation check remain blocking.
+- Durable stance: standing follows the evidence design. A trusted receipt cannot upgrade association into causation.
+- Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json).
+- Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
