@@ -1,0 +1,99 @@
+{
+  "criterion": {
+    "judge": "living_brain_integrity",
+    "criterionVersion": "living-brain-integrity:g21-v1",
+    "ownedTruth": "The artifact preserves inspectable evidence, uncertainty and correction-ready boundaries without claiming memory behavior it does not prove.",
+    "passConditions": [
+      "Every supported notice retains source identifiers and a typed standing.",
+      "Unknowns remain explicit rather than being promoted into durable truth.",
+      "Run and schema identity make the artifact addressable for later versioning and supersession.",
+      "The output makes no claim that persistence, learning, correction propagation or export has occurred."
+    ],
+    "failConditions": [
+      "Evidence provenance is lost between input and output.",
+      "Tentative inference is flattened into an untyped memory-like assertion.",
+      "The artifact claims the Brain learned, remembered or corrected something this run did not test."
+    ],
+    "hardVetoRules": [
+      {
+        "ruleId": "BRAIN-G21-01",
+        "condition": "Unsupported or private content is presented as durable Brain truth."
+      }
+    ],
+    "theoryTriggers": [
+      "claim_or_inference",
+      "memory_change",
+      "self_correction"
+    ]
+  },
+  "theoryPack": {
+    "shared": [
+      {
+        "cardId": "agency",
+        "label": "Human agency",
+        "sourceLocator": "project-documentation/ctrl-evolution/README.md#product-truth-locked-through-g12",
+        "rule": "Humans own purpose, boundaries, standards, exceptions and the final consequential call.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "evidence",
+        "label": "Evidence standing",
+        "sourceLocator": "docs/current/architecture.md#architecture-invariants",
+        "rule": "Keep explicit facts, inferred candidates and behavioural feedback as different data types.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "boundary",
+        "label": "Subject and audience boundary",
+        "sourceLocator": "docs/current/architecture.md#trust-boundaries",
+        "rule": "Prove subject, ownership, audience and authority before an item can travel or act.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "reality",
+        "label": "Behavioural reality",
+        "sourceLocator": "project-documentation/ctrl-evolution/session-method-learning-log.md#confirmed-by-krish",
+        "rule": "Judge the real task and consequence, not an elegant description of the intended system.",
+        "advisoryOnly": true
+      }
+    ],
+    "optional": [
+      {
+        "cardId": "claim-decomposition",
+        "label": "Claim decomposition",
+        "sourceLocator": "docs/history/2026-09-07-intel-methodology-critical-thinking.md",
+        "rule": "Type the claim, identify its load-bearing assumption and name evidence that would disconfirm it.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "strongest-countercase",
+        "label": "Strongest countercase",
+        "sourceLocator": "docs/history/2026-09-07-LLM_CRITICAL_THINKING_TRAINING.md",
+        "rule": "Build the strongest plausible countercase before accepting a confident synthesis.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "bitemporal-provenance",
+        "label": "Bi-temporal provenance",
+        "sourceLocator": "docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md",
+        "rule": "Preserve valid time, recorded time, provenance, contradiction and explicit supersession.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "memory-poisoning",
+        "label": "Memory poisoning containment",
+        "sourceLocator": "docs/history/2026-09-07-intel-methodology-memory-identity.md",
+        "rule": "Structurally isolate untrusted content so it cannot become instruction, identity or durable truth.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "external-feedback-loop",
+        "label": "External correction loop",
+        "sourceLocator": "docs/history/2026-09-07-app-data-learning.md",
+        "rule": "A correction must repair downstream projections and become a regression case before the system claims learning.",
+        "advisoryOnly": true
+      }
+    ],
+    "splitRequired": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "human_agency",
+  "criterionVersion": "human-agency:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "pass",
+  "claims": [
+    "The code-owned R1 task and authority envelope let the diagnostic frame and ask, while explicitly denying recommendation of consequential action, promotion of durable truth, and evaluation of named employees.",
+    "Across care, research, manufacturing, and story families, the frozen boundaries keep standards, exceptions, role or creative ownership, and the final consequential call with identified humans.",
+    "Known answers expose one declared select, stop, bound, or reshape effect, while unknown answers cannot select a route and instead preserve a human decision or request evidence. No route effect executes, allocates, publishes, hires, fires, or changes durable truth.",
+    "The customer-impact final-call question offers only human owners, and the validator rejects a non-human final-call option.",
+    "Adversarial mutations that widen recommendation authority, replace the diagnostic task with rollout and employment instructions, or make AI choose the standard and final route are rejected by the frozen contracts."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2808-2817",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4013-4024",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2243-2554",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:731-745,810-824,886-900",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1132-1146,1207-1221,1286-1300",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1543-1556,1618-1631,1708-1721",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2002-2015,2091-2104,2170-2183",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3530-3535",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:167-211,683-698,902-945",
+    "scripts/check-g21-internal-range.mjs:605-653,928-966",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/question-pack.json:/questions/0/answerContract through /questions/11/answerContract"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-10T22:51:22.827Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}

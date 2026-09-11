@@ -1,0 +1,441 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "purpose": "Question-only adult ambiguity and answerability screen. These are fictional test cases, not customer facts.",
+  "reviewBoundary": "Judge whether each immediate question contains one understandable, answerable ask and whether every permitted answer, including unknown, has a visible route effect. Do not judge hidden oracle material or infer product efficacy.",
+  "questions": [
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I1",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to run a limited AI scheduling pilot or commit the whole care network before the safety and service gates are known.",
+      "question": "Which failure would make you stop the pilot even if it saves staff time?",
+      "expectedAnswerShape": "short_description",
+      "answerContract": {
+        "options": [],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Name the incident, complaint or service standard that should define the stopping rule.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Any specific stopping failure",
+            "effect": "bound",
+            "routeChange": "Bind the limited pilot to the human-defined failure that stops it."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Do not widen the pilot until a concrete stopping failure is defined."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I2",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether the service gain survives the two unsafe schedules and the continuity standard families value.",
+      "question": "Out of 1,000 scheduled journeys, how many unsafe ones would stop the rollout?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "unsafe journeys",
+        "denominator": "1,000 scheduled journeys",
+        "comparator": "the maximum tolerated before stopping",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Review the safety baseline and total journey volume before setting the limit.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Any valid threshold",
+            "effect": "bound",
+            "routeChange": "Use the stated unsafe-journey threshold as the human rollout stop rule."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Hold rollout until the baseline and tolerated safety limit are known."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I3",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Whether the pilot can restore complex-care continuity without Elena becoming the permanent exception handler.",
+      "question": "Out of every 100 vulnerable clients, how many must keep the same carer without you stepping in before expansion?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "vulnerable clients keeping the same carer",
+        "denominator": "100 vulnerable clients",
+        "comparator": "the minimum required before expansion",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Measure continuity for vulnerable clients and record whether Elena had to step in.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Any valid threshold",
+            "effect": "bound",
+            "routeChange": "Expand only after continuity reaches the threshold without Elena rescuing exceptions."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Keep expansion paused until continuity and executive intervention are measured together."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I1",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to move half the firm from bespoke projects into a monthly product before knowing what clients actually renew for.",
+      "question": "When clients hired you again, what did they mention most: speed, access between projects, or live challenge?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "Faster answers",
+          "Access between projects",
+          "Live challenge"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Ask repeat clients which part of the work made them hire Lumen again.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Faster answers",
+            "effect": "select",
+            "routeChange": "Test a faster-answer offer before moving delivery capacity."
+          },
+          {
+            "answer": "Access between projects",
+            "effect": "select",
+            "routeChange": "Test an access-between-projects offer before moving delivery capacity."
+          },
+          {
+            "answer": "Live challenge",
+            "effect": "select",
+            "routeChange": "Test a live-challenge offer before moving delivery capacity."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Do not choose the product promise until repeat-client evidence distinguishes it."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I2",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether a repeatable decision-room product can preserve the senior challenge clients renew for without rebuilding a dashboard nobody needs.",
+      "question": "Have any clients used the monthly product without a senior researcher and said its challenge changed their decision?",
+      "expectedAnswerShape": "yes_no",
+      "answerContract": {
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Run one paid client decision through the product without a senior researcher, then ask what changed.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Yes",
+            "effect": "select",
+            "routeChange": "Continue the repeatable-product route to an economics test using delivered challenge evidence."
+          },
+          {
+            "answer": "No",
+            "effect": "reshape",
+            "routeChange": "Treat the current offer as a senior service until challenge transfers without the researcher."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Do not call the product scalable until one paid delivered-use test resolves transfer."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I3",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Whether to scale the paid decision-room format after the dashboard route failed, and what proof should unlock moving half the team.",
+      "question": "How many clients must pay for the new service again before you move half the team?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "clients who pay for the new service again",
+        "denominator": null,
+        "comparator": "the minimum required before moving half the team",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Model the revenue and delivery capacity at different repeat-purchase counts.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Any valid threshold",
+            "effect": "bound",
+            "routeChange": "Move half the team only after repeat purchase reaches the leader-set threshold."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Keep the capacity move paused until its renewal and economics threshold is set."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I1",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to redesign planning roles and buy the system now, or first test whether data and measures are creating the apparent resistance.",
+      "question": "If the same planners hit the target with accurate information and fair targets, would you still change their roles?",
+      "expectedAnswerShape": "yes_no",
+      "answerContract": {
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Use one same-team test before deciding whether the roles must change.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Yes",
+            "effect": "select",
+            "routeChange": "Keep role redesign in scope, but require a reason beyond the current performance failure."
+          },
+          {
+            "answer": "No",
+            "effect": "reshape",
+            "routeChange": "Repair information and measures before deciding whether roles must change."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Delay the role conclusion until the same-team test separates people from system conditions."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I2",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether one plant can prove the new operating conditions with the same planners before Forgepoint commits all six plants.",
+      "question": "Will one plant have to hit the delivery target with the same planners before you fund all six?",
+      "expectedAnswerShape": "yes_no",
+      "answerContract": {
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Name one plant, one delivery target, one time window and the funding decision it controls.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Yes",
+            "effect": "bound",
+            "routeChange": "Make same-planner target delivery at one plant the gate for funding all six."
+          },
+          {
+            "answer": "No",
+            "effect": "reshape",
+            "routeChange": "Require Jonah to name a different proof gate before group funding can proceed."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Do not fund all six plants until an owner, target, time window and proof gate are named."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I3",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Which planning work should move to AI after one plant showed the same people can improve when data and measures change.",
+      "question": "Which named person makes the final call when an AI plan could make a customer late?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "A named planner",
+          "A named operations leader",
+          "A named human chosen by the escalation rule"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Review late-order cases and identify where customer accountability cannot be delegated.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "A named planner",
+            "effect": "select",
+            "routeChange": "Assign the customer-impact exception and final call to a named planner."
+          },
+          {
+            "answer": "A named operations leader",
+            "effect": "select",
+            "routeChange": "Escalate the customer-impact exception and final call to a named operations leader."
+          },
+          {
+            "answer": "A named human chosen by the escalation rule",
+            "effect": "bound",
+            "routeChange": "Automate routine planning only inside a rule that names the human exception owner."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Do not let the plan affect a customer until a human final-call owner is named."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I1",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to fund a precision fan-intelligence system before the campaign has a named audience movement and human creative boundary.",
+      "question": "Which group of fans must buy more tickets for you to move the GBP 18 million?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "Franchise-new viewers",
+          "Casual viewers",
+          "Core fans",
+          "Another named group"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Use ticket-buyer and audience evidence to define the group before choosing a route.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Franchise-new viewers",
+            "effect": "select",
+            "routeChange": "Judge the GBP 18 million route by ticket growth among franchise-new viewers."
+          },
+          {
+            "answer": "Casual viewers",
+            "effect": "select",
+            "routeChange": "Judge the GBP 18 million route by ticket growth among casual viewers."
+          },
+          {
+            "answer": "Core fans",
+            "effect": "select",
+            "routeChange": "Judge the GBP 18 million route by ticket growth among core fans."
+          },
+          {
+            "answer": "Another named group",
+            "effect": "reshape",
+            "routeChange": "Replace the audience gate with the leader-named ticket-buyer group."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Do not choose the campaign route until its intended ticket-buyer group is defined."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I2",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Which exposure route, if either, should receive GBP 18 million after increasing purchases from franchise-new viewers without reducing core-fan purchases.",
+      "question": "Which route gets the GBP 18 million: character-first, theory-first, or neither until new buyers increase without losing core fans?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "Character-first",
+          "Theory-first",
+          "Neither until purchase evidence"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Compare both routes on new-viewer purchases and core-fan purchases before allocating the budget.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Character-first",
+            "effect": "select",
+            "routeChange": "Choose character-first only with new-viewer purchase growth and no core-fan purchase loss."
+          },
+          {
+            "answer": "Theory-first",
+            "effect": "select",
+            "routeChange": "Choose theory-first only with new-viewer purchase growth and no core-fan purchase loss."
+          },
+          {
+            "answer": "Neither until purchase evidence",
+            "effect": "stop",
+            "routeChange": "Hold the GBP 18 million allocation until the two purchase conditions are tested."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Hold the allocation and run a comparable purchase test across both audience groups."
+        }
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I3",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "What held-out proof should unlock the next major shift after three releases showed audience and sequence matter more than content volume.",
+      "question": "How many extra new viewers out of 100 must buy a ticket, without core-fan sales falling, before you move GBP 18 million?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "additional new viewers who buy a ticket",
+        "denominator": "100 new viewers",
+        "comparator": "today's campaign",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Measure actual ticket purchases in a held-out test and core-fan sales before setting the gate.",
+        "optionalNoteAllowed": true,
+        "routeEffects": [
+          {
+            "answer": "Any valid threshold",
+            "effect": "bound",
+            "routeChange": "Move the GBP 18 million only after new-viewer purchases clear the threshold and core-fan sales do not fall."
+          }
+        ],
+        "unknownRouteEffect": {
+          "effect": "stop",
+          "routeChange": "Keep the allocation unchanged until purchase lift and the core-fan constraint are measured."
+        }
+      }
+    }
+  ]
+}

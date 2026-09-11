@@ -1,0 +1,7 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "artifactCommit": "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317",
+  "manifestPath": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json",
+  "verification": "All sixteen input-manifest file hashes, the artifact composite, the nine-file semantic-review composite, the three-file repository-local TypeScript compile closure and the twelve question records were recomputed before review. The same artifact bytes are anchored at artifactCommit.",
+  "reason": "Resolve every Run 005 artifact path at artifactCommit and bind each first-pass ruling to the exact history-free, dependency-closed semantic review bytes."
+}

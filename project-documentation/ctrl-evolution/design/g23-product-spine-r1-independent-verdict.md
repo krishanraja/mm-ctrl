@@ -1,0 +1,58 @@
+# G23 product spine R1 independent verdict
+
+**Verdict:** FAIL
+**Founder-gate readiness:** Not ready to ask, **"Is this the product we are building?"**
+
+## Review contract
+
+- **Review mode:** fresh, independent comprehension and UX veto
+- **Authority:** read-only review plus this verdict file; no product-code change, approval, implementation or release
+- **Repository:** `krishanraja/mm-ctrl` at `c08864b97e9529dcd6a51da4b277cb95cf2c52d1`
+- **Standard:** `g23-product-spine-reset-preflight.md` and the render vetoes and founder-gate scope in `g23-product-spine-synthesis.md`, informed by the recorded G22 failure
+- **Submission:** `public/g23-product-spine-r1.html`, `.css` and `.js`, plus the four supplied desktop and mobile screenshots
+- **Independence:** the reviewer received the required frozen product documents and submission, but no builder recommendation or earlier G23 R1 verdict
+
+The page has a strong core: the opening states a private AI Brain built with one leader, the three action rights are unusually clear, and the active Crossing makes permissioned reuse understandable. It still fails the stated one-minute whole-product test. The month is a collapsed appendix, the case interaction again occupies most of the artifact, the difference from static files is not made visible, and the approval scope does not say plainly which product commitments would become locked or that the synthetic example remains unapproved.
+
+## Evidence by criterion
+
+| Criterion | Finding | Evidence | Judgment |
+|---|---|---|---|
+| What the product is | **HOLDS, with a naming caveat** | The current opening says, "Mindmake builds a private AI Brain with one leader in 30 days" and says it prepares decisions about the leader's market, organisation, people and own role (`g23-product-spine-r1.html:30-31`; current first-screen renders). | A cold viewer can describe the basic proposition. The `CTRL` masthead beside a sentence led by `Mindmake` leaves the product versus operator relationship slightly ambiguous, but that ambiguity alone is not a veto. |
+| Who pays and why | **HOLDS** | "The company pays because the leader becomes better at changing how the business works and grows" (`html:32`), reinforced by "Company gets: A leader more capable of making useful change" (`html:120`). | The economic buyer and intended benefit are visible in the first screen and repeated at the transformation point. The buyer class is broad, but the payer logic is legible. |
+| The 30-day relationship | **BREAKS** | The opening names 30 days (`html:30`), but the actual relationship is hidden in the collapsed "What happens across 30 days" disclosure near the bottom (`html:126-133`). In the supplied full mobile render, that disclosure comes after the long case and leader-change sections. | A first-minute reader learns the duration, not what happens across it. Arrival prepared, early usefulness, learning through real work, correction and portable departure are the defining product spine and should not require reaching and opening an appendix. This breaks preflight criteria 1 and 3. |
+| Distinct roles of Brain, Krish and leader | **HOLDS** | "Brain prepares", "Krish challenges" and "Leader decides" are visually paired with distinct action descriptions in the opening (`html:35-48`). The same division is enacted in the target decision (`html:83-86`). | This is the clearest part of the artifact. Preparation, expert challenge and human authority do not collapse into generic AI assistance. |
+| How judgement transfers across consequential decisions | **HOLDS** | The organisation judgement is marked `Leader-owned`, proposed for reuse in a people decision, then gated by three leader choices (`html:65-94`). The response is rendered immediately under the choice and distinguishes carry, change and stay (`g23-product-spine-r1.js:1-29`). | The Crossing demonstrates scope, permission and leader control rather than implying that repetition or time automatically grants standing. |
+| Leader transformation | **HOLDS** | The leader can apply a human boundary across organisation and people decisions, notice incentives that break it and retain the final standard without becoming the bottleneck (`html:116-121`). | This connects personal development to consequential company work. "More capable" is generic in isolation, but the preceding sentence makes the capability specific enough. |
+| Honest advantage over capable general AI and static files | **BREAKS** | The general-AI baseline and relationship-specific addition are placed together (`html:99-108`). The default surface never makes the static-file distinction. Standing, provenance, corrections, dependent repair and portability exist only in collapsed detail (`html:127-163`). | The page fairly calls the general-AI answer reasonable, so it avoids a straw man. It does not yet show why the result is more than an expert-curated folder with good notes. The governing difference, authorised standing plus correction-aware later use, is not visible in the first read. |
+| No single-case, workflow or dashboard regression | **BREAKS** | The Crossing case includes a source card, animated transfer, target decision, contributions, hard question, three action buttons, a result state and a comparison strip (`html:52-109`; `js:1-29`). In the supplied full renders it is the largest section, consuming roughly half the mobile page before the leader-change section. | There is no dashboard regression, but there is a single-case and workflow regression. The example is no longer the literal whole product, yet it remains the dominant visual and interactive object. A busy founder is still likely to read this as approval of a decision workflow with surrounding explanation. This repeats the central G22 failure at a better level of polish. |
+| Mobile and desktop hierarchy | **BREAKS** | The current first-screen renders at 1440x900 and 390x844 establish proposition, payer and roles without overflow. The current CSS stacks the Crossing cleanly and avoids nested scrolling, but sets the four scope labels to 7px on mobile (`g23-product-spine-r1.css:446-462`). More importantly, `desktop.png` and `mobile.png` predate the current HTML and contain different hero, role and section copy, while the matching `desktop-first.png` and `mobile-first.png` cover only the first viewport. | The opening hierarchy holds at both target sizes. The current full-page hierarchy is not independently evidenced, and 7px labels fail the no-tiny-text condition. The supplied mobile full render also shows a long case before the defining month and approval scope. This criterion cannot pass on the current evidence. |
+| Excessive words or vague AI copy | **BREAKS** | The normal default surface contains about 371 visible words before any disclosure, with another large body behind the three disclosures. Phrases such as "better at changing how the business works and grows", "big decisions", "useful change" and "one hard question" carry little product-specific meaning without the surrounding explanation (`html:31-42`, `html:120`). | The writing is restrained compared with a feature deck and avoids obvious AI-site slogans, but the one-minute object still asks the case to explain the product through accumulated prose. The clearest mechanism should replace several abstract benefit lines, not sit below them. |
+| Exact approval scope | **BREAKS** | The exact question appears once (`html:182`). The scope line says only: "This review covers the product spine only. It does not approve a screen, final words, implementation or release" (`html:183`). The synthesis separately says approval does not approve the example, interface, visual system, data action, deployment or merge (`g23-product-spine-synthesis.md:139`). | The question is exact, but the approval object is not. "Product spine" is internal shorthand, and the on-page boundary omits the synthetic example and several exclusions named by the governing synthesis. The artifact also does not state positively what approval would lock: the 30-day relationship, role rights, human authority and cross-decision compounding. This is a founder-gate veto. |
+
+## Vetoes
+
+1. **The 30-day product is not the first-read spine.** Duration is prominent; the actual month is collapsed near the end. Promote the four month facts into the core visual sequence so the viewer sees prepared arrival, first-decision usefulness, learning and repair, and owned departure without opening anything.
+2. **The synthetic Crossing still becomes the product.** Keep it as one compact proof of the mechanism, but make the 30-day relationship and leader transformation visually primary. Remove the interactive workflow from the founder product gate unless the interaction itself is explicitly part of the product decision.
+3. **The approval boundary is not exact enough.** Replace "product spine only" with a plain positive lock statement, and explicitly state that the synthetic example, interface, visual system, final copy, implementation, data action, deployment, merge and release remain unapproved.
+4. **The current full responsive artifact is not frozen in evidence.** Recapture full desktop and mobile renders from the exact current HTML/CSS/JS hashes and remove the 7px mobile labels before re-review.
+
+## Non-veto improvements
+
+- Keep the opening three-role strip and the `Brain prepares / Krish challenges / Leader decides` verbs. They do real explanatory work quickly.
+- Keep the fair capable-general-AI baseline, then add one short cause line that distinguishes the Brain from a folder: authorised judgement carries with scope, evidence, correction history and traceable later use.
+- Tie `CTRL` and `Mindmake` together in one plain sentence so the viewer does not have to infer whether the Brain, the 30-day engagement, CTRL and Mindmake are the same object or related parts.
+- Replace generic benefit phrases with the already-strong specific transformation: the leader can preserve human purpose and final standards across different AI-driven changes without reviewing every draft.
+- Retain the choice consequence directly beneath the action if the Crossing interaction survives. That placement is clear and accessible.
+
+## Mechanical and evidence notes
+
+- The existing deterministic content check passed: exact founder question count, required copy, no em dash, no nested-scroll CSS, narrow breakpoint, reduced motion and alternate quiet/sparse/contradiction hooks were present.
+- Mechanical presence is not comprehension proof. The checker asserts that required phrases exist, not that a cold founder sees them in the required order or understands the approval object.
+- Reviewed submission hashes: HTML `1f5fb1e07d54c1e45654c55e7485e53ef918ccc09577c98df19fbd342e10f97b`; CSS `f946df67da92e3cd5798d0699fb1fd79f1931ebea37dc0a41ffc56ac1672419a`; JS `f0402e04045a41e038512a632e99aa7dcebab1993ba53d27fb512d86e487d8bc`.
+- Matching first-screen evidence: desktop-first `adcd3544e9a2bd5f6d6a0a205efa0ed5d44a46498d9615f80f1435471c8e340d`; mobile-first `d077615a58136e51f66b61ae789e5e3e809b7609d03b7d71d8e99256d3e9dd69`.
+- Stale full-page evidence: desktop `47d12938151a4b392a5b13b38d6f39191bce10ba4398d6d0e91b3c346683e09f`; mobile `9a162fb5f05962d7f97b4154ea46e6e81ee42028f273e3b4fb216097d619a9a1`.
+
+## Owner decision
+
+**FAIL. Do not present the exact founder question yet.** The next candidate is ready for the question only when a matching full render makes the 30-day relationship the dominant explanatory spine, demotes the case to supporting proof, states why this is more than an LLM or files, and names exactly what approval locks and excludes.

@@ -1,0 +1,99 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "phase": "adjudication",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "rulingsCompositeSha256": "8b964a0e1bc22044683e8a879f4340804713d0f142d19ffd7360a5aff9cd4071",
+  "rulings": [
+    {
+      "file": "behavioural_and_implementation_reality.json",
+      "sha256": "7d81f721aed3feede22ec6491131b46df6328d9279ebba5a6cb1bf22aca136f3",
+      "judge": "behavioural_and_implementation_reality",
+      "verdict": "fail",
+      "vetoRuleId": "REALITY-RANGE-01"
+    },
+    {
+      "file": "consequential_usefulness.json",
+      "sha256": "794d713cb64f37dbd773a0de7236c33aff1306d50bddbe4199c7b2c075d8dbd3",
+      "judge": "consequential_usefulness",
+      "verdict": "fail",
+      "vetoRuleId": "USEFULNESS-RANGE-01"
+    },
+    {
+      "file": "epistemic_integrity.json",
+      "sha256": "9ad8f0b9819213b20ec95b919e5198d69eca2b5a4915fafb7b8650dc990b4ed4",
+      "judge": "epistemic_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "EPISTEMIC-RANGE-01"
+    },
+    {
+      "file": "human_agency.json",
+      "sha256": "808bcf8353ef4c45fa4901aac11ac59727b5cf14eea3093bc18321ab73e6b2d3",
+      "judge": "human_agency",
+      "verdict": "fail",
+      "vetoRuleId": "AGENCY-RANGE-01"
+    },
+    {
+      "file": "human_comprehension_and_access.json",
+      "sha256": "0ae50acd7bc50121591be68cde1de3da821571e18fb653227eb456a4e810d953",
+      "judge": "human_comprehension_and_access",
+      "verdict": "fail",
+      "vetoRuleId": "COMPREHENSION-RANGE-01"
+    },
+    {
+      "file": "living_brain_integrity.json",
+      "sha256": "bf54595133560d5a272cb36f41274d1fe7be12f807fce9079b4f8f333c9b2e6f",
+      "judge": "living_brain_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "BRAIN-RANGE-01"
+    },
+    {
+      "file": "subject_audience_lifecycle_safety.json",
+      "sha256": "894e9fc025202843af4145de3372ad9aa287ad85f465897ec84068faa36c2081",
+      "judge": "subject_audience_lifecycle_safety",
+      "verdict": "fail",
+      "vetoRuleId": "SAFETY-RANGE-01"
+    }
+  ],
+  "result": {
+    "status": "blocked",
+    "vetoes": [
+      {
+        "ruleId": "REALITY-RANGE-01",
+        "failure": "The validator accepts a lifecycle payload whose conflict record carries the frozen correction text and whose correction record carries the frozen conflict text. The resulting contradicted blind input presents correction semantics while all implemented checks report success. Its oracle-leak predicate also misses routeChangingQuestion. Exact state behaviour and blind-input integrity can be faked by preserving identifiers and polished oracle prose.",
+        "resolvingTest": "Add a deterministic adversarial test for all 12 profiles that swaps conflict and correction content plus claim text while preserving identifiers, types, timestamps and links; require profile validation to reject every swap and require each emitted state to match independently frozen lifecycle evidence bytes. Add an exact blind-input field allowlist and mutate each oracle field, including routeChangingQuestion, into an input; require every mutation to fail before refreezing."
+      },
+      {
+        "ruleId": "USEFULNESS-RANGE-01",
+        "failure": "A generic or route-irrelevant immediate question can pass the implemented profile validator, so the gate does not ensure that an accepted question can select, kill, or reshape the profile's consequential route.",
+        "resolvingTest": "Freeze and validate the full route-question contract for each profile, including routeChangingQuestion, expectedAnswerShape, and answerWouldChange, then add twelve syntactically valid generic or route-irrelevant mutations and prove that validateG21InternalRangeCanary rejects every mutation while all twelve current question contracts still pass."
+      },
+      {
+        "ruleId": "EPISTEMIC-RANGE-01",
+        "failure": "Full-canary validation returns no errors for future-asOf, one-source-pattern, incapable-source-type, unsupported-causation and misdirected-correction mutations. These paths can manufacture evidence depth or current claim standing while still passing validation.",
+        "resolvingTest": "Re-run the five demonstrated full-canary mutations and require a specific non-empty validation error for each: a profile evidenceAsOf that differs from G21_INTERNAL_RANGE_EVIDENCE_AS_OF with evidence after the frozen constant; a supported_pattern whose cited records share one sourceLocator; a sourceType incompatible with the record provenance and subject; a causal allowed notice not established by its cited evidence and contradicted by unresolved; and a direct_correction that targets a claim its text does not correct or whose validAt precedes that claim. Require the unmodified frozen baseline to remain error-free and verify that no invalid mutation reaches emitted blind inputs."
+      },
+      {
+        "ruleId": "AGENCY-RANGE-01",
+        "failure": "Agency-invalid prompt and oracle mutations can pass the implemented gate: the validator does not reject a non-empty boundary that assigns purpose, standards, exceptions or the final consequential call to AI, a short question that turns role design into named-person employment judgement, or a blind-input task that instructs consequential recommendation. This permits a green validator while the leader is reduced to a rubber stamp.",
+        "resolvingTest": "Add a deterministic agency-contract validator that exact-binds each profile's humanDecisionBoundary and routeChangingQuestion and validates every emitted input's R1 task and authority flags, then add negative mutations for AI recommendation, AI commitment, rubber-stamp wording and named-person employment judgement across all four families and all three states, and rerun the frozen direct gate with every mutation rejected."
+      },
+      {
+        "ruleId": "COMPREHENSION-RANGE-01",
+        "failure": "Six main questions trigger the hard veto. Research I1 delegates synthesis of ten projects and competitive uniqueness; Research I2 and Forge I2 demand yes or no answers about unobserved results; Forge I3 delegates an open planning-decision taxonomy under undefined clean data; Story I2 declares a choice without presenting the evidence-backed alternatives; Story I3 asks for a threshold without a unit, denominator, or comparator.",
+        "resolvingTest": "Rewrite and refreeze the six failed questions so Research I1 asks for one observable client fact or presents bounded value choices, Research I2 asks for an observed commitment or a yes or no decision to test, Forge I2 asks whether the one-plant result will be required as a funding gate, Forge I3 presents one concrete human-ownership decision, Story I2 names the character-first and theory-first choices, and Story I3 states its numeric unit, denominator, and comparator. Then run an independent adult plain-language proxy review against the same criterion and pass only if all twelve questions are one plain, decision-specific ask answerable in their declared form without interpretation by the leader."
+      },
+      {
+        "ruleId": "BRAIN-RANGE-01",
+        "failure": "The lifecycle builder and validator retire still-valid claims. RANGE-INTERNAL-FORGE-I2 supersedes the only claim carrying the 64 percent confidence result even though its correction says to keep that result, and RANGE-INTERNAL-STORY-I3 similarly supersedes the association its correction says to preserve. Because these corrected projections pass validation, broken claim lineage can pass.",
+        "resolvingTest": "Split the affected lifecycle conflict records into claim-addressable assertions and change lifecycle validation so each direct correction supersedes only the false assertion. Add deterministic corrected-input tests proving that RANGE-INTERNAL-FORGE-I2 keeps the 64 percent confidence claim and RANGE-INTERNAL-STORY-I3 keeps the association claim current with their original evidenceId, sourceLocator and audience, while only the invalid inference or causal interpretation is superseded."
+      },
+      {
+        "ruleId": "SAFETY-RANGE-01",
+        "failure": "Runtime validation does not seal the subject and private-evidence shapes or require an unambiguous positive fictional disclosure. Real-person or consent assertions outside the inspected manifest fields can pass validation and be copied into blind input as authored evidence.",
+        "resolvingTest": "Add exact runtime schemas for the manifest, identity, private evidence and emitted blind input, bind the emitted subject to the validated synthetic-fixture identity, require the exact positive fictional disclosures, and reject unknown real-person or consent fields. Add adversarial mutations for identity.realNamedPerson=true, identity.consentRecordId=CONSENT-FICTIONAL-01, a consent field on a private record, and a disclosure that says the subject is not fictional; require validation to reject each mutation and the blind-input builder to refuse emission, then rerun this frozen criterion."
+      }
+    ]
+  },
+  "recordedAt": "2026-09-10T19:25:48.471Z"
+}
+

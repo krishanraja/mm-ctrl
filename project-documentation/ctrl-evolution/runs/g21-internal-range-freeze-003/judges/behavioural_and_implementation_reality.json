@@ -1,0 +1,36 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "judge": "behavioural_and_implementation_reality",
+  "criterionVersion": "behavioural-and-implementation-reality:g21-internal-range-freeze-v3",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "verdict": "fail",
+  "claims": [
+    "All ten frozen blobs at commit ad561fce1d82bcdcdfea800ad4e4aed64e2a5173 match their manifest SHA-256 values, and the ordered LF-joined path:sha256 recipe recomputes to b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612.",
+    "The fixture construction genuinely holds identity and external evidence fixed within each family and requires basic evidence to nest byte-for-byte into work evidence and work evidence into longitudinal evidence.",
+    "The twelve answer contracts all permit unknown and name a usable next evidence request. Their operating measures, customer evidence, same-team tests, purchase tests, late-order reviews and comparable audience tests are feasible synthetic representations of conditions that can occur in real work.",
+    "The exported unknown-input validator does not structurally bind runtimeState, caseId, profileId or internalDepth to the supplied evidence unless its optional expectedProfile argument is present. Against the committed code, a valid initial input relabelled as corrected with a matching corrected caseId returns no errors when expectedProfile is omitted; the same call with expectedProfile returns blind_input_lifecycle_bytes_mismatch.",
+    "The same standalone validator returns no errors when a basic_intake input is relabelled as longitudinal_corrections and its profileId and caseId are changed consistently. Exact frozen-profile equality, not a general invariant, is therefore doing the depth and lifecycle safety work.",
+    "Malformed exact-key inputs do not fail closed. Setting runId to null throws a TypeError at trim, and replacing an internal record's claims array with a string throws a TypeError at map. The frozen tests and direct checker exercise malformed audienceAuthorities, but do not exercise these scalar and nested type-confusion paths or the standalone lifecycle and depth spoofs."
+  ],
+  "evidenceLocators": [
+    "input-manifest.json#/files and #/compositeRecipe",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:452-460",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3158-3229",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json#/questions/*/answerContract",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3287-3301",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3318-3363",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3386-3415",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3433-3452",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:642-709",
+    "scripts/check-g21-internal-range.mjs:583-622",
+    "Commit-blob reproduction: initial relabelled corrected without expectedProfile returned []; the same candidate with expectedProfile returned [blind_input_lifecycle_bytes_mismatch]; basic_intake relabelled longitudinal_corrections returned []; runId null and claims string each threw TypeError."
+  ],
+  "veto": {
+    "ruleId": "REALITY-RANGE-01",
+    "failure": "The exported standalone blind-input validator accepts relabelled lifecycle and depth states because state-to-evidence binding is enforced only when an optional frozen expectedProfile is supplied, so fixture equality masquerades as runtime safety and exact state ordering can be faked. It also throws on exact-key type-confused runId and claims values instead of failing closed.",
+    "resolvingTest": "Add and pass one table-driven test of validateG21InternalBlindInput called without expectedProfile: (1) relabel a valid initial input as corrected and update caseId, (2) relabel a valid basic_intake input as longitudinal_corrections and update profileId and caseId, (3) set runId to null, and (4) replace one claims array with a string. The first two rows must return explicit lifecycle and depth binding errors, the malformed rows must not throw and must return typed errors, and none of those outcomes may depend on exact expectedProfile byte equality."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add and pass one table-driven test of validateG21InternalBlindInput called without expectedProfile: (1) relabel a valid initial input as corrected and update caseId, (2) relabel a valid basic_intake input as longitudinal_corrections and update profileId and caseId, (3) set runId to null, and (4) replace one claims array with a string. The first two rows must return explicit lifecycle and depth binding errors, the malformed rows must not throw and must return typed errors, and none of those outcomes may depend on exact expectedProfile byte equality.",
+  "recordedAt": "2026-09-10T21:12:29.243Z"
+}

@@ -1,0 +1,32 @@
+{
+  "role": "founder_calibration",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "additive": true,
+  "predictedReaction": "Krish would most likely object that the WPP and Microsoft passages make the leader decode the system's analysis before answering. He may experience the frames and questions as incomprehensible or as verbal diarrhoea, while still valuing the underlying evidence discipline. The likely correction is one direct, concrete question after the system has done the interpretation, with rationale and provenance available one layer deeper.",
+  "confidence": "high",
+  "supportingLedgerLocators": [
+    "session-method-learning-log.md#Confirmed by Krish item 6",
+    "session-method-learning-log.md#Correction chronology and likely cause: The first harder question was incomprehensible",
+    "session-method-learning-log.md#Correction chronology and likely cause: The improved question still felt like verbal diarrhoea",
+    "session-method-learning-log.md#The recurring pattern",
+    "README.md#G20_CAPTURE_AND_CLAUDE_BRIDGE",
+    "README.md#Locked product decisions/D-027",
+    "README.md#Locked product decisions/D-034",
+    "README.md#Locked product decisions/D-060"
+  ],
+  "calibrationFindings": [
+    "The founder history materially sharpens the comprehension veto. The likely failure is not specialist vocabulary alone, but requiring the leader to perform abstraction and diagnostic interpretation that the system should already have performed.",
+    "The most likely objection points are RANGE-PUBLIC-02 and RANGE-PUBLIC-03 at decisionFrame, routeChangingQuestion and answerWouldChange, where several business and finance concepts are stacked before the single requested answer becomes clear.",
+    "A vocabulary-only rewrite may still fail if interpretation, rationale, consequences and the question remain simultaneous. Historical corrections support progressive sequencing, with one question owning the immediate frame and supporting depth placed below it.",
+    "The supported correction pattern is: preserve the evidence-backed diagnosis internally, translate it into one concrete route-changing question a twelve-year-old can answer without definitions, and keep rationale, provenance and technical distinctions available as optional deeper inspection.",
+    "This calibration reinforces rather than supersedes COMPREHENSION-G21-01. It does not average away the veto or convert historical taste evidence into approval."
+  ],
+  "protectedStrengths": [
+    "The artifact separates public facts, public statements, bounded inferences and evidence gaps.",
+    "The sparse profiles abstain instead of manufacturing insight, and all profiles preserve an explicit human decision boundary.",
+    "Each profile already asks one route-changing question, so the correction can simplify expression without weakening epistemic restraint or widening claim scope.",
+    "The WPP and Microsoft frames identify consequential unresolved tensions that should be retained beneath the simpler surface question."
+  ],
+  "nonAuthorityStatement": "This advisory calibration cannot replace Krish's cold reaction or approval."
+}

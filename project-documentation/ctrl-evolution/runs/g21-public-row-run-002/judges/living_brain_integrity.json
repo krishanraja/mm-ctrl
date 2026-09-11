@@ -1,0 +1,32 @@
+{
+  "rulingId": "RULING-G21-LIVING-BRAIN-INTEGRITY-002",
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "judge": "living_brain_integrity",
+  "phase": "sealed_review",
+  "artifactHash": "sha256:86E254AE88F56E7DA05A43FB6CC251FA38B2B36CD9423269B849F65F48924D52",
+  "theoryPackHash": "sha256:27E3C2763B4FC6A2C9D144192BD0B1B164B4F332C0B8D6006003DF88ED13027B",
+  "criterionVersion": "living-brain-integrity:g21-v1",
+  "verdict": "pass",
+  "claims": [
+    "Every notice has an explicit standing, claim scope and evidence identifier list; all identifiers on supported notices resolve to supplied input sources, while evidence-gap notices remain explicitly unsourced.",
+    "The WPP and Microsoft diagnostic claims remain separated into public fact, public statement and bounded inference, with unresolved matters stated separately rather than promoted into durable truth.",
+    "All four profiles retain explicit unresolved items, one route-changing question, an answer-change condition and a human decision boundary, so later evidence can correct or supersede the provisional frame without ambiguity.",
+    "The run and schema identifiers make the artifact addressable, and the output makes no claim that persistence, learning, correction propagation or export occurred.",
+    "The protected provenance, typed uncertainty and correction-ready boundaries required by the targeted repair brief are present in the repaired artifact. The hard-veto condition BRAIN-G21-01 is not triggered."
+  ],
+  "evidenceLocators": [
+    "judge-packs/living_brain_integrity.json:4-20",
+    "repair-brief.md:19-25",
+    "repair-brief.md:27-42",
+    "input.json:3-29",
+    "input.json:45-100",
+    "input.json:117-190",
+    "input.json:207-294",
+    "output.json:2-3",
+    "output.json:6-26",
+    "output.json:29-68",
+    "output.json:71-115",
+    "output.json:118-161"
+  ],
+  "recordedAt": "2026-09-10T16:19:35.605+01:00"
+}

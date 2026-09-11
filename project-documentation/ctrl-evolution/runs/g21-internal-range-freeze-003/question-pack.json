@@ -1,0 +1,248 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "purpose": "Question-only adult ambiguity and answerability screen. These are fictional test cases, not customer facts.",
+  "reviewBoundary": "Judge whether each immediate question contains one understandable, answerable ask and whether its answer contract makes uncertainty safe. Do not judge the hidden oracle or infer product efficacy.",
+  "questions": [
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I1",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to run a limited AI scheduling pilot or commit the whole care network before the safety and service gates are known.",
+      "question": "Which failure would make you stop the pilot even if it saves staff time?",
+      "expectedAnswerShape": "short_description",
+      "answerContract": {
+        "options": [],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Name the incident, complaint or service standard that should define the stopping rule.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I2",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether the service gain survives the two unsafe schedules and the continuity standard families value.",
+      "question": "Out of 1,000 scheduled journeys, how many unsafe ones would stop the rollout?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "unsafe journeys",
+        "denominator": "1,000 scheduled journeys",
+        "comparator": "the maximum tolerated before stopping",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Review the safety baseline and total journey volume before setting the limit.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I3",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Whether the pilot can restore complex-care continuity without Elena becoming the permanent exception handler.",
+      "question": "Out of every 100 vulnerable clients, how many must keep the same carer before you expand?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "vulnerable clients keeping the same carer",
+        "denominator": "100 vulnerable clients",
+        "comparator": "the minimum required before expansion",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Review current continuity and the service promise made to vulnerable clients.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I1",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to move half the firm from bespoke projects into a monthly product before knowing what clients actually renew for.",
+      "question": "When clients hired you again, what did they mention most: speed, access between projects, or live challenge?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "Faster answers",
+          "Access between projects",
+          "Live challenge"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Ask repeat clients which part of the work made them hire Lumen again.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I2",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether a repeatable decision-room product can preserve the senior challenge clients renew for without rebuilding a dashboard nobody needs.",
+      "question": "Have any clients agreed to buy the monthly product without a senior researcher in the room?",
+      "expectedAnswerShape": "yes_no",
+      "answerContract": {
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Find a signed commitment or run a purchase test without a senior researcher present.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I3",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Whether to scale the paid decision-room format after the dashboard route failed, and what proof should unlock moving half the team.",
+      "question": "How many clients must pay for the new service again before you move half the team?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "clients who pay for the new service again",
+        "denominator": null,
+        "comparator": "the minimum required before moving half the team",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Model the revenue and delivery capacity at different repeat-purchase counts.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I1",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to redesign planning roles and buy the system now, or first test whether data and measures are creating the apparent resistance.",
+      "question": "If the same planners hit the target with accurate information and fair targets, would you still change their roles?",
+      "expectedAnswerShape": "yes_no",
+      "answerContract": {
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Use one same-team test before deciding whether the roles must change.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I2",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether one plant can prove the new operating conditions with the same planners before Forgepoint commits all six plants.",
+      "question": "Will one plant have to hit the delivery target with the same planners before you fund all six?",
+      "expectedAnswerShape": "yes_no",
+      "answerContract": {
+        "options": [
+          "Yes",
+          "No"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Name one plant, one delivery target, one time window and the funding decision it controls.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I3",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Which planning work should move to AI after one plant showed the same people can improve when data and measures change.",
+      "question": "Who makes the final call when an AI plan could make a customer late: a planner or the system?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "A planner",
+          "The system",
+          "It depends on a named condition"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Review late-order cases and identify where customer accountability cannot be delegated.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I1",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to fund a precision fan-intelligence system before the campaign has a named audience movement and human creative boundary.",
+      "question": "Which group of fans must buy more tickets for you to move the GBP 18 million?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "Franchise-new viewers",
+          "Casual viewers",
+          "Core fans",
+          "Another named group"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Use ticket-buyer and audience evidence to define the group before choosing a route.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I2",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Which exposure route can invite franchise-new viewers in without exhausting core fans or confusing the story.",
+      "question": "What should new viewers see first: one character's story or several fan theories?",
+      "expectedAnswerShape": "choice",
+      "answerContract": {
+        "options": [
+          "One character's story",
+          "Several fan theories"
+        ],
+        "unit": null,
+        "denominator": null,
+        "comparator": null,
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Run both routes with comparable groups of franchise-new viewers.",
+        "optionalNoteAllowed": true
+      }
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I3",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "What held-out proof should unlock the next major shift after three releases showed audience and sequence matter more than content volume.",
+      "question": "Out of 100 new viewers, how many more must want a ticket than after today's campaign before you move GBP 18 million?",
+      "expectedAnswerShape": "threshold",
+      "answerContract": {
+        "options": [],
+        "unit": "additional new viewers who say they want a ticket",
+        "denominator": "100 new viewers",
+        "comparator": "today's campaign",
+        "unknownAllowed": true,
+        "evidenceRequestIfUnknown": "Set the current campaign baseline and the minimum lift needed to justify the allocation.",
+        "optionalNoteAllowed": true
+      }
+    }
+  ]
+}

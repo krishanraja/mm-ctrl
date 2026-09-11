@@ -1,0 +1,41 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "judge": "epistemic_integrity",
+  "criterionVersion": "epistemic-integrity:g21-internal-range-freeze-v2",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "verdict": "fail",
+  "claims": [
+    "Artifact identity is intact: all nine listed file SHA-256 values and the manifest-order composite independently match the frozen manifest.",
+    "The unmodified frozen canary validates with zero errors, and its source clocks are checked against the supplied profile evidenceAsOf value.",
+    "Hard veto: evidenceAsOf is checked for timestamp syntax but is never bound to G21_INTERNAL_RANGE_EVIDENCE_AS_OF. Advancing two matched profiles to a 2030 evidenceAsOf allowed a 2029 operating record to validate and appear in emitted blind inputs with zero canary errors.",
+    "Hard veto: supported_pattern checks only evidence count and distinct resolved sourceType values. Two cited records sharing one sourceLocator validated as distinct pattern evidence with zero canary errors.",
+    "Hard veto: source enums are not bound to record semantics or subject scope. A planning-review transcript relabelled as customer_evidence validated with zero canary errors, and the frozen fixture itself types an internal planner pulse survey as customer_evidence.",
+    "Hard veto: allowed-notice text is not checked against the cited claims. A measured_result notice asserting that scheduling logic caused two unsafe journeys validated with zero errors while the same oracle still said whether data or scheduling caused them was unresolved.",
+    "Hard veto: correction targets are checked for existence and later recordedAt, but not semantic fit or valid-time order. A backdated correction about exception ownership could target the unrelated time-saving claim; the emitted currentClaims then retired that unrelated claim and left the claim actually corrected current, with zero canary errors.",
+    "The baseline preserves ordinary contradictions and the exact conflict-then-correction sequence, but those controls do not close the demonstrated false-pass paths."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/input-manifest.json:files[0..8],compositeRecipe,artifactCompositeSha256",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:66,424,2140-2145,2230,2666-2694",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:286-318",
+    "scripts/check-g21-internal-range.mjs:163-195",
+    "mechanical://in-memory-full-canary/future-asof-bypass?errors=0&evidenceAsOf=2030-01-01T00:00:00.000Z&recordedAt=2029-01-01T09:01:00.000Z",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2115-2123,2463-2503",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:686-693,2494-2497",
+    "mechanical://in-memory-full-canary/one-source-pattern-bypass?errors=0&locator=fixture://care/family-interviews/005",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1512-1532",
+    "mechanical://in-memory-full-canary/incapable-source-typing-bypass?errors=0&evidenceId=INT-FORGE-006&sourceType=customer_evidence",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:675-701,2489-2492",
+    "mechanical://in-memory-full-canary/unsupported-causation-bypass?errors=0&noticeId=NOTICE-CARE-I2-01",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:577-580,2087-2113,2182-2193",
+    "mechanical://in-memory-full-canary/misdirected-correction-bypass?errors=0&superseded=INT-CARE-002-CLAIM-03&leftCurrent=INT-CARE-002-CLAIM-01"
+  ],
+  "veto": {
+    "ruleId": "EPISTEMIC-RANGE-01",
+    "failure": "Full-canary validation returns no errors for future-asOf, one-source-pattern, incapable-source-type, unsupported-causation and misdirected-correction mutations. These paths can manufacture evidence depth or current claim standing while still passing validation.",
+    "resolvingTest": "Re-run the five demonstrated full-canary mutations and require a specific non-empty validation error for each: a profile evidenceAsOf that differs from G21_INTERNAL_RANGE_EVIDENCE_AS_OF with evidence after the frozen constant; a supported_pattern whose cited records share one sourceLocator; a sourceType incompatible with the record provenance and subject; a causal allowed notice not established by its cited evidence and contradicted by unresolved; and a direct_correction that targets a claim its text does not correct or whose validAt precedes that claim. Require the unmodified frozen baseline to remain error-free and verify that no invalid mutation reaches emitted blind inputs."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Re-run the five demonstrated full-canary mutations and require a specific non-empty validation error for each: a profile evidenceAsOf that differs from G21_INTERNAL_RANGE_EVIDENCE_AS_OF with evidence after the frozen constant; a supported_pattern whose cited records share one sourceLocator; a sourceType incompatible with the record provenance and subject; a causal allowed notice not established by its cited evidence and contradicted by unresolved; and a direct_correction that targets a claim its text does not correct or whose validAt precedes that claim. Require the unmodified frozen baseline to remain error-free and verify that no invalid mutation reaches emitted blind inputs.",
+  "recordedAt": "2026-09-10T19:10:31.842Z"
+}

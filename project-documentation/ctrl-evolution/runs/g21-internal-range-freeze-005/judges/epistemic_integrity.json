@@ -1,0 +1,42 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "epistemic_integrity",
+  "criterionVersion": "epistemic-integrity:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "fail",
+  "claims": [
+    "All nine authorised semantic blobs matched the supplied SHA-256 values, and no excluded history was encountered.",
+    "The runtime gate does separate exact shape checks, full record-and-authority receipt binding, profile-and-state evidence binding and a fail-closed wrapper. The pre-issued safe novel control also demonstrates that runtime acceptance is not canonical equality.",
+    "The canonical gate is not an independent freeze. The trusted receipt registry and every frozen substrate, runtime, lifecycle and oracle baseline are derived from G21_INTERNAL_RANGE_CANARY during the same module evaluation, while canonical validation compares against an expected profile validated by those same derived baselines.",
+    "A synchronised pre-load fixture edit can therefore become its own semantic authority: internalEvidence automatically issues a trusted receipt for each authored draft, and the only direct observation-level causal rule recognises a narrow phrase list.",
+    "The sealed INT-STORY-007 record is issued as an observation even though it says character-first exposure lifted ticket intent, high theory density lifted sharing and theory density reduced comprehension. The Story I3 oracle repeats that exposure improved intent, while the same profile says true held-out proof remains unresolved. No controlled or held-out design for the three-release record is supplied.",
+    "The causal-paraphrase regression proves post-load receipt immutability only. It expects a semantic receipt binding mismatch for the word drove, so it does not prove that a binding-valid, code-issued observation with unsupported causal prose is rejected for causation.",
+    "Unsupported causation, semantic receipt substitution and synchronised fixture drift can therefore pass the contract that claims to prevent them, triggering EPISTEMIC-RANGE-01."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md#epistemic-integrity",
+    "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#trusted-semantic-receipt",
+    "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#fixture-truth-and-oracle-isolation",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:398-444",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1964-1995",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2176-2203",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2586-2705",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2726-2787",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3299-3301",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4314-4347",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:723-758",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:849-875"
+  ],
+  "veto": {
+    "ruleId": "EPISTEMIC-RANGE-01",
+    "failure": "Unsupported causal semantics can be code-issued as trusted observations, and a synchronised pre-load edit of fixture, receipt registry and oracle becomes the derived frozen baseline. The current INT-STORY-007 already uses causal lifted language without supplied controlled or held-out evidence. Receipt equality and same-module fixture equality therefore substitute for causal and independent canonical authority.",
+    "resolvingTest": "Introduce an independently frozen canonical digest and receipt allowlist that are not computed from G21_INTERNAL_RANGE_CANARY at module load. Add a pre-issued, binding-valid observation control using each unsupported causal form already at risk, including lifted, raised, drove, resulted in and attributed to, and require a causation-specific rejection rather than a receipt or substrate mismatch. Rewrite INT-STORY-007 and NOTICE-STORY-I3-01 as bounded associations unless a frozen controlled or held-out design supports causation, then prove the runtime accepts only the existing safe novel control and the canonical verifier rejects the old and synchronously edited fixture bytes."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Introduce an independently frozen canonical digest and receipt allowlist that are not computed from G21_INTERNAL_RANGE_CANARY at module load. Add a pre-issued, binding-valid observation control using each unsupported causal form already at risk, including lifted, raised, drove, resulted in and attributed to, and require a causation-specific rejection rather than a receipt or substrate mismatch. Rewrite INT-STORY-007 and NOTICE-STORY-I3-01 as bounded associations unless a frozen controlled or held-out design supports causation, then prove the runtime accepts only the existing safe novel control and the canonical verifier rejects the old and synchronously edited fixture bytes.",
+  "recordedAt": "2026-09-11T00:50:31.953Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}

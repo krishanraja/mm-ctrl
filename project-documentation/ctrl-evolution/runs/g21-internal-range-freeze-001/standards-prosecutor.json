@@ -1,0 +1,202 @@
+{
+  "role": "standards_prosecutor",
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "rulingsCompositeSha256": "dcf23495a6503147f6102853a6f7cea1589d9c485d7a215de15f9246f46e28b1",
+  "finding": {
+    "status": "blocked",
+    "disposition": "uphold_all_five_vetoes",
+    "summary": "All five adjudicated vetoes are supported by the frozen artifact bytes and none is invalid. The freeze is internally hash-consistent, but the frozen ruling envelope is incompatible with the council validator and the adjudication is not a reproducible direct output of the frozen adjudicator. Additional validator false passes remain beyond the five stated failures. Clearance requires every verified veto repair, the council-envelope repair and the bounded validator regressions below, without sacrificing the protected strengths.",
+    "falsePassesConfirmed": [],
+    "invalidVetoes": [],
+    "mechanicalVerification": {
+      "inputManifestSha256": "40924afba975c0b080ee17c0c68d98ba36a83c3c870b99c223b3bf3ea14182e0",
+      "rulingsManifestSha256": "bcd65699df0e271ebfba3408e9576ca63405511d1e8983f4b37e1e4efd9a3322",
+      "adjudicationSha256": "1e2e0a3456405aadddad5344901eb9b62e4188ec33b6ad8afc6ba53fb1d5c3b0",
+      "artifactFilesVerified": 5,
+      "judgeFilesVerified": 7,
+      "artifactCompositeVerified": true,
+      "rulingsCompositeVerified": true,
+      "runIdsVerified": true,
+      "adjudicationRulingLinksVerified": true,
+      "limitation": "These checks establish internal byte and cross-reference consistency. The allowed evidence contains no separately hashed or signed root for the two manifests or adjudication, so it does not independently prove immutability outside this repository state."
+    }
+  },
+  "verifiedVetoes": [
+    {
+      "ruleId": "EPISTEMIC-RANGE-01",
+      "judge": "epistemic_integrity",
+      "disposition": "verified",
+      "failure": "validIsoTimestamp checks shape and parseability, and the validator checks local ordering, but no internal validAt or recordedAt and no external publishedOn or retrievedOn is bounded by the frozen run as-of time.",
+      "repairTestAssessment": "The stated future-date mutations are necessary. They close the defect only if the validator receives or owns an explicit frozen asOf value and applies it to base internal evidence, both lifecycle records and all external publication and retrieval times. A hard-coded check against only the current fixture rows is insufficient."
+    },
+    {
+      "ruleId": "SAFETY-RANGE-01",
+      "judge": "subject_audience_lifecycle_safety",
+      "disposition": "verified",
+      "failure": "audience is a TypeScript union but has no runtime enumeration or authority check. A cloned leader_private record can be widened to company_private, or assigned public at runtime, without a validation error.",
+      "repairTestAssessment": "The nested veto test is necessary. The ruling's separate top-level resolvingTest is stronger because it also requires runtime enumeration and transition authority. The repair contract must take the union of both formulations and must preserve the current evidence ID to audience mapping through all three lifecycle states."
+    },
+    {
+      "ruleId": "COMPREHENSION-RANGE-01",
+      "judge": "human_comprehension_and_access",
+      "disposition": "verified",
+      "failure": "The cited CARE work, FORGE longitudinal, STORY work and STORY longitudinal questions make the leader perform diagnosis, decode undefined abstractions or unpack specialist measurement and comparison language. Punctuation and a 24-word ceiling do not establish comprehension.",
+      "repairTestAssessment": "The four rewrites plus a fresh 12-of-12 blind paraphrase and answer-form check by both readers directly test the defect. Mechanical rejection of the old strings is only a regression guard, not proof that arbitrary new wording is plain. The reader rubric, expected answer form and raw pass or fail record must be frozen before review."
+    },
+    {
+      "ruleId": "BRAIN-RANGE-01",
+      "judge": "living_brain_integrity",
+      "disposition": "verified",
+      "failure": "Each longitudinal correction supersedes a whole multi-claim record while changing only one claim. A current-view resolver must therefore erase still-current claims or retain a withdrawn claim.",
+      "repairTestAssessment": "Claim-addressable supersession can close the defect. An explicit retained-claims projection closes it only if it is validated against decomposed source claims and is consumed by the actual current-view resolver. A hand-authored oracle note that bypasses blind input does not count as repair."
+    },
+    {
+      "ruleId": "REALITY-RANGE-01",
+      "judge": "behavioural_and_implementation_reality",
+      "disposition": "verified",
+      "failure": "The lifecycle validator checks only that evidenceIdsAdded contains identifiers found somewhere in lifecycleEvidence. It does not bind initial, contradicted and corrected states to the exact empty, conflict, then conflict-plus-correction sequence, so the contradicted state can include only the correction and skip the contradiction.",
+      "repairTestAssessment": "The exact-state assertions and contradicted-state swap mutation close the cited path if both the direct gate and an actually collected Vitest run reject it. Merely adding an unexecuted Vitest assertion is not execution evidence."
+    }
+  ],
+  "challengedRulings": [
+    {
+      "ruling": "council_envelope_and_adjudication",
+      "disposition": "sustained_process_defect_without_nullifying_valid_vetoes",
+      "challenge": "The council brief requires eleven fields and all seven rulings use them. The frozen JudgeRuling interface instead requires rulingId, phase, artifactHash and theoryPackHash, none of which appears in any ruling, while the rulings use artifactCompositeSha256. validateSealedCouncil therefore cannot validate the raw frozen rulings under its own contract. adjudicateSealedCouncil returns source veto objects unchanged, but adjudication.json rewrites the REALITY failure and resolving test. The adjudication is hash-linked and substantively blocked, but it is not demonstrated as a deterministic output of the frozen council code."
+    },
+    {
+      "ruling": "behavioural_and_implementation_reality",
+      "disposition": "verdict_upheld_but_incomplete",
+      "challenge": "The ruling finds the state-identifier swap but misses a second polished-story path. The profile validator requires only nonempty lifecycle expectedNotices and forbiddenClaims, the Vitest suite checks only that one known placeholder is absent from the current constants, and the direct gate does not adversarially replace them. A different generic notice can still pass, so the proposed sequence repair alone cannot establish implementation reality."
+    },
+    {
+      "ruling": "epistemic_integrity",
+      "disposition": "verdict_upheld_but_incomplete",
+      "challenge": "The future-time veto is valid, but other unearned-standing paths remain. External sourceType has no runtime enumeration for sparse or nonessential rich sources, direct_statement has no source-type rule, and sameStringSet accepts a duplicated manifest locator that omits another equal-count locator. The current fixtures are sound on these points, but adversarial inputs can pass."
+    },
+    {
+      "ruling": "subject_audience_lifecycle_safety",
+      "disposition": "verdict_upheld_with_repair_contract_reconciled",
+      "challenge": "The nested veto resolving test and the top-level resolvingTest are not equal. Adjudication preserves the nested version and omits the top-level wording that explicitly requires runtime enumeration and transition authority checks. The ruling also misses that subjectScope is not runtime-enumerated. The repair must satisfy both versions plus the subject-scope regression."
+    },
+    {
+      "ruling": "human_comprehension_and_access",
+      "disposition": "verdict_upheld_with_one_additional_question_left_to_the_declared_reader_gate",
+      "challenge": "The four cited failures are clear, but the list should not be treated as exhaustive before the all-twelve blind check. CARE longitudinal also uses the undefined abstraction exceptions and asks what happens when you stop reviewing them, although the evidence assigns exception ownership to coordinators and does not establish that the leader personally reviews them. It must pass or be rewritten under the same reader rubric."
+    },
+    {
+      "ruling": "living_brain_integrity",
+      "disposition": "verdict_upheld_but_repair_requires_runtime_proof",
+      "challenge": "The proposed retained-claims alternative is too permissive unless it drives the current view. The validator also checks internal and lifecycle identifier uniqueness separately, so a lifecycle record can collide with a base evidence ID, and contradiction targets are checked for membership but not against self-reference or forward lifecycle reference. Those paths preserve a broken-looking lineage while passing validation."
+    }
+  ],
+  "protectedStrengths": [
+    {
+      "strength": "Matched evidence-depth isolation",
+      "protection": "Retain four families, fixed identity and external evidence within each family, byte-identical evidence nesting from basic to work to longitudinal depth, twelve profiles and thirty-six lifecycle inputs."
+    },
+    {
+      "strength": "Unmistakable fictional boundary",
+      "protection": "Retain synthetic_fixture namespace, fictional disclosures, fictional identity keys, .invalid external locators, fixture:// internal locators, no real-person flag and no simulated consent."
+    },
+    {
+      "strength": "Consequential and human-owned decisions",
+      "protection": "Retain the four high-value decision families, explicit human standards and final calls, R1 Explore authority, and the prohibitions on consequential recommendations, durable-truth promotion and named-employee evaluation. The usefulness and agency passes are not overturned."
+    },
+    {
+      "strength": "Evidence and oracle separation",
+      "protection": "Retain measured-source checks, multi-source pattern support, explicit uncertainty and countercases, full source records in blind inputs and exclusion of strongestSupportedView, expectedDiagnosticBehaviours and forbiddenClaims from those inputs."
+    },
+    {
+      "strength": "Visible contradiction and history",
+      "protection": "Retain conflict and correction records, valid and recorded times, source locators, explicit supersession, preserved original records and downstream-repair expectations while moving supersession to claim-addressable semantics."
+    },
+    {
+      "strength": "Analytical depth below a short question",
+      "protection": "Retain decisionFocus, countercase, unresolved, answerWouldChange and humanDecisionBoundary beneath each immediate ask. Plain-language repair must simplify the question surface, not flatten the underlying analysis."
+    }
+  ],
+  "repairRequirements": [
+    {
+      "id": "COUNCIL-ENVELOPE-01",
+      "requirement": "Version and align the council brief, JudgeRuling schema, manifest and adjudicator. Parse the seven exact ruling bytes through the aligned validator, require zero schema errors without an exception, and require adjudication to preserve each source verdict, veto failure and resolving test exactly. Include a frozen theory-pack identity or remove the unimplemented field from the authoritative schema explicitly."
+    },
+    {
+      "id": "EPISTEMIC-RANGE-01",
+      "requirement": "Introduce an explicit frozen asOf boundary and reject future internal validAt and recordedAt values, future lifecycle conflict and correction times, and future external publishedOn and retrievedOn values. Run the judge's two mutations plus lifecycle mutations, and prove every unchanged frozen profile still validates with zero errors."
+    },
+    {
+      "id": "SAFETY-RANGE-01",
+      "requirement": "Add runtime enumeration for audience and subjectScope and a source-specific authority mechanism that can distinguish an authorised original audience from an unauthorised widening. Reject leader_private to company_private without authority, reject private to public, reject an invalid subject scope, and prove evidence ID to authorised audience equality in initial, contradicted and corrected inputs."
+    },
+    {
+      "id": "COMPREHENSION-RANGE-01",
+      "requirement": "Rewrite at least the four vetoed questions so each asks for one ordinary-language human choice or threshold and move diagnosis, metric definition, comparison design and audience trade-offs below the ask. Freeze new hashes. Run the declared fresh all-twelve blind reader test with two independent readers aged 11 to 13, appropriate consent and no facilitator definitions, requiring both readers to paraphrase the single ask and answer in the predeclared form for all twelve. Keep the four old wordings as negative regressions, and treat the human result rather than the string filter as the comprehension proof."
+    },
+    {
+      "id": "BRAIN-RANGE-01",
+      "requirement": "Implement claim-addressable supersession or a validated retained-claims projection that the current-view resolver actually consumes. Migrate all four longitudinal corrections. For each family, prove only the changed claim retires, every unaffected claim remains current with provenance, the source record remains in history, downstream projections repair and no oracle field enters blind input. Reject the current record-level-only representation."
+    },
+    {
+      "id": "REALITY-RANGE-01",
+      "requirement": "Validate initial evidenceIdsAdded as exactly empty, contradicted as exactly the conflict ID, and corrected as exactly conflict then correction. Reject the correction-for-conflict swap in both the direct gate and Vitest, assert the emitted evidence sequence for all thirty-six inputs, and record an actual collected and passing Vitest execution."
+    },
+    {
+      "id": "VALIDATOR-COVERAGE-01",
+      "requirement": "Close the adjacent deterministic false passes: enforce allowed external source types; enforce standing-to-source rules for direct statements; compare manifest locators as an exact multiset or unique ordered set; require evidence IDs to be unique across base and lifecycle records; reject self and forward contradiction targets; and replace the nonempty-only lifecycle notice check with an evidence-linked or exact frozen contract that rejects generic substitutions. Add one adversarial regression for each path."
+    },
+    {
+      "id": "REFREEZE-01",
+      "requirement": "After repairs, freeze new hashes and composites, run both deterministic gates with observed outputs, collect seven fresh isolated rulings against the aligned contract, adjudicate from their exact bytes, and run a fresh standards prosecution. Do not reuse this frozen run as evidence that the repaired candidate passed."
+    }
+  ],
+  "residuals": [
+    "Even a repaired synthetic fixture proves contract and validator behaviour only. It does not prove diagnostic quality, improved human judgement, commercial outcomes, production safety or permission to deploy.",
+    "The current Vitest suite exists but the frozen documentation records that it was not collected in the restricted environment. Only the direct deterministic gate has an execution claim, so future Vitest assertions need observed CI or unrestricted-run evidence.",
+    "A two-reader comprehension result is evidence about the exact frozen wording, not a universal semantic validator. Future questions still require fresh criterion-level review.",
+    "Historical memory and learning sources are advisory and include time-sensitive claims. They support the correction and provenance shape here but cannot establish current vendor or research truth without separate verification.",
+    "The manifests and adjudication are internally consistent but lack an external signed or separately hashed root in the allowed evidence. Repository provenance remains the boundary for this review."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json#recordedAt,artifactCompositeSha256,files,frozenCounts,authority",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/rulings-manifest.json#artifactCompositeSha256,rulingsCompositeSha256,compositeRecipe,rulings",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/adjudication.json#rulings,result.vetoes,recordedAt",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/council-brief.md#review-protocol",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/council-brief.md#owned-criteria",
+    "src/features/operator-brain/rangeCouncilContract.ts:149-194",
+    "src/features/operator-brain/rangeCouncilContract.ts:196-279",
+    "src/features/operator-brain/rangeCouncilContract.ts:336-453",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:76-88",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:241-268",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:288-360",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:391-483",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:512-590",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1147-1251",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1355-1434",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1563-1668",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1767-1851",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1923-2183",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2186-2261",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2285-2342",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:33-67",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:104-165",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:167-227",
+    "scripts/check-g21-internal-range.mjs:42-131",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:19-30",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:43-103",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:139-166",
+    "project-documentation/ctrl-evolution/README.md:48-63",
+    "project-documentation/ctrl-evolution/README.md:113-141",
+    "project-documentation/ctrl-evolution/README.md:274-278",
+    "docs/current/architecture.md:117-143",
+    "docs/current/architecture.md:179-190",
+    "docs/current/architecture.md:200-208",
+    "project-documentation/ctrl-evolution/session-method-learning-log.md:7-39",
+    "docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md:135-160",
+    "docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md:228-248",
+    "docs/history/2026-09-07-app-data-learning.md:160-179",
+    "docs/history/2026-09-07-_INTERROGATION_PROMPT.md:13-29"
+  ],
+  "recordedAt": "2026-09-10T18:22:46.184Z"
+}

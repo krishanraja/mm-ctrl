@@ -1,0 +1,41 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "judge": "consequential_usefulness",
+  "criterionVersion": "consequential-usefulness:g21-internal-range-freeze-v3",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "verdict": "fail",
+  "claims": [
+    "All ten artifact blobs at commit ad561fce1d82bcdcdfea800ad4e4aed64e2a5173 match the manifest SHA-256 values, and the listed path:sha256 lines reproduce composite b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612.",
+    "The four families name distinct material AI-transition decisions and the evidence becomes more specific with depth, but consequential usefulness fails because several bounded answer contracts do not discriminate the real uncertainty named by their own profile.",
+    "RANGE-INTERNAL-CARE-I3 asks only for a continuity percentage even though its decision focus and unresolved field require knowing whether continuity can recover without Elena as permanent exception handler. The same threshold answer can be satisfied with or without executive rescue, and the unknown request asks only for continuity and the service promise.",
+    "RANGE-INTERNAL-RESEARCH-I2 asks whether any client agreed to buy without a senior researcher, but its unresolved issue is whether senior judgement transfers into a repeatable product experience. A purchase agreement does not establish delivered challenge, repeatability or scale, and the unknown request remains a commitment or purchase test.",
+    "RANGE-INTERNAL-STORY-I2 reduces a dual-audience, ticket-linked GBP 18 million route to choosing which content new viewers see in the next test. Its stated answer effect is only selection of that next test, and its unknown request omits both the core-fan constraint and a ticket outcome, so this is micro-learning rather than a route-changing answer.",
+    "RANGE-INTERNAL-STORY-I3 gates GBP 18 million on how many viewers say they want a ticket even though the same oracle states that stated intent may fail to predict purchase and that purchase evidence is unresolved. The unknown request sets another baseline and lift for the same unvalidated proxy.",
+    "The implemented checks enforce nonempty consequence prose, answer-shape fields, word count, a jargon blacklist and exact frozen bytes. They do not demonstrate that each allowed answer or unknown path changes the named consequential route, and the negative regressions show that decision-critical clauses about executive handling, ticket intent and core-fan exhaustion were removed from the accepted questions."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json#/files",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json#/artifactCompositeSha256",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:836-869",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:1157-1190",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:2041-2074",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:2120-2153",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:2220-2339",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:2980-3019",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:115-138",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:642-662",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:711-752",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json#/questions/2",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json#/questions/4",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json#/questions/10",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json#/questions/11"
+  ],
+  "veto": {
+    "ruleId": "USEFULNESS-RANGE-01",
+    "failure": "The frozen fixture fails consequential usefulness because four bounded-looking contracts do not resolve the real uncertainty they name. CARE-I3's continuity threshold can be met while Elena remains the permanent exception handler, and its unknown path never tests independence. RESEARCH-I2 treats any purchase agreement as proof that senior challenge transfers into a scalable experience, while its unknown path still collects purchase evidence rather than delivered-value evidence. STORY-I2 reduces a dual-audience, ticket-linked GBP 18 million route to choosing content for a next test, and its unknown path tests only new viewers. STORY-I3 makes stated ticket desire the investment gate despite its own countercase that stated intent may not predict purchase. Exact-byte freezing and a jargon blacklist preserve these mismatches rather than proving route consequence.",
+    "resolvingTest": "Replace the four contracts and add a deterministic route-effect test that enumerates every allowed answer and unknown path. The test must show that CARE-I3 distinguishes continuity achieved without executive exception handling, RESEARCH-I2 distinguishes delivered senior-challenge transfer rather than purchase agreement alone, STORY-I2 changes the GBP 18 million route while retaining both new-viewer purchase movement and the core-fan constraint, and STORY-I3 uses observed purchase or a purchase proxy whose predictive link is explicitly supplied in the profile. It must reject each current mismatched question and unknown request as a negative regression."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Replace the four contracts and add a deterministic route-effect test that enumerates every allowed answer and unknown path. The test must show that CARE-I3 distinguishes continuity achieved without executive exception handling, RESEARCH-I2 distinguishes delivered senior-challenge transfer rather than purchase agreement alone, STORY-I2 changes the GBP 18 million route while retaining both new-viewer purchase movement and the core-fan constraint, and STORY-I3 uses observed purchase or a purchase proxy whose predictive link is explicitly supplied in the profile. It must reject each current mismatched question and unknown request as a negative regression.",
+  "recordedAt": "2026-09-10T21:06:04.804Z"
+}

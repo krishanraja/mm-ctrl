@@ -1,0 +1,18 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "questionPackSha256": "f6119ce871fb8af963d840618b26cb9674c0a76ad155a325bb429f8ee3bd5f68",
+  "reviewsCompositeSha256": "826470ab2a6f17ba26d56ad3e70790934e36df05c2931c85c0d7e47f84ab5eac",
+  "compositeRecipe": "SHA-256 of UTF-8 path:sha256 lines joined with LF in the listed order, with no trailing LF.",
+  "reviews": [
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/readers/proxy-a.json",
+      "sha256": "ae1d79f9255d256492b63344b8c610451c2ace44945246eb422f59fffb6c6305"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/readers/proxy-b.json",
+      "sha256": "0b2e644c878225f0a1dad377fba42dc2c14b5a5d61651ae17d4fae3f4cbe110a"
+    }
+  ],
+  "frozenAt": "2026-09-10T20:50:17.407Z",
+  "claimBoundary": "Independent adult answerability proxies only. Not evidence of child comprehension, customer value or product efficacy."
+}

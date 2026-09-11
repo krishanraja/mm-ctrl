@@ -1,0 +1,37 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "judge": "epistemic_integrity",
+  "criterionVersion": "epistemic-integrity:g21-internal-range-freeze-v3",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "verdict": "fail",
+  "claims": [
+    "All ten frozen blobs at artifact commit ad561fce1d82bcdcdfea800ad4e4aed64e2a5173 match their manifest SHA-256 values, and the ordered path:sha256 recipe reproduces composite b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612.",
+    "The profile validator does enforce the fixed asOf against internal and external clocks, and supported-pattern notices require at least two distinct evidence identifiers and distinct locators.",
+    "The frozen maps seal lifecycle evidence, lifecycle oracles, oracle prose and claim relations, but they do not seal base internal-evidence content, claim text or claim kind. Claim validation checks only non-empty prose, an allowed kind label and relation mechanics.",
+    "A full-population mutation that rewrites INT-STORY-007 content and claim text to categorical purchase causation while leaving the claim kind as observation returns no canary errors, and buildG21InternalBlindInputs does not refuse it. Unsupported causation can therefore be emitted as a current observation.",
+    "Source capability is also only checked between two caller-controlled labels. Relabelling INT-RESEARCH-009 from an observed leader choice to staff_evidence with staff_group subject leaves its leader-action prose intact, returns no canary errors and is emitted. Changing INT-FORGE-008 to customer subject still lets that correction supersede a leader claim because relation validation has no subject-capability check.",
+    "The generic blind-input validator makes expectedProfile optional and validates external evidence only by field names. A valid emitted input whose external publishedOn and retrievedOn are moved after the fixed asOf returns no errors when validated without expectedProfile."
+  ],
+  "evidenceLocators": [
+    "input-manifest.json:files and compositeRecipe",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:339-353",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:375-399",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1916-1925",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2622-2727",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2836-2845",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3077-3092",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3127-3152",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3287-3417",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3420-3465",
+    "scripts/check-g21-internal-range.mjs:465-475",
+    "scripts/check-g21-internal-range.mjs:583-620"
+  ],
+  "veto": {
+    "ruleId": "EPISTEMIC-RANGE-01",
+    "failure": "Runtime structural validation permits future external evidence, incapable source relabelling, cross-subject correction and unsupported causal claim prose to pass. Exact fixture checks cover oracle and lifecycle bytes, but base internal claims are not frozen or bound to their assertion kind and subject, while external blind-input semantics are skipped whenever expectedProfile is absent.",
+    "resolvingTest": "Add and pass one adversarial mutation matrix that proves all four cases fail before emission: rewrite INT-STORY-007 as categorical purchase causation while its kind remains observation; relabel INT-RESEARCH-009 as staff_evidence with staff_group subject while retaining its leader-action claim; change INT-FORGE-008 to customer subject while it targets the leader claim; and move one emitted external source publishedOn and retrievedOn after evidenceAsOf before calling validateG21InternalBlindInput without expectedProfile. The full canary validator and builder must reject the first three with stable claim-kind, source-capability or correction-subject errors, and the blind-input validator must reject the fourth with explicit publication and retrieval clock errors."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add and pass one adversarial mutation matrix that proves all four cases fail before emission: rewrite INT-STORY-007 as categorical purchase causation while its kind remains observation; relabel INT-RESEARCH-009 as staff_evidence with staff_group subject while retaining its leader-action claim; change INT-FORGE-008 to customer subject while it targets the leader claim; and move one emitted external source publishedOn and retrievedOn after evidenceAsOf before calling validateG21InternalBlindInput without expectedProfile. The full canary validator and builder must reject the first three with stable claim-kind, source-capability or correction-subject errors, and the blind-input validator must reject the fourth with explicit publication and retrieval clock errors.",
+  "recordedAt": "2026-09-10T20:59:42.108Z"
+}

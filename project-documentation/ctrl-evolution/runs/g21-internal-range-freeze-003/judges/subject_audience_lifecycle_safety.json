@@ -1,0 +1,31 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "judge": "subject_audience_lifecycle_safety",
+  "criterionVersion": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v3",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "verdict": "fail",
+  "claims": [
+    "All ten artifact SHA-256 values and the LF composite recipe reproduce the manifest.",
+    "The frozen profiles themselves are structurally fictional, omit consent, restrict private audiences to leader_private or company_private, assign one matching synthetic_fixture_authoring authority per private record, enforce source-to-subject capability, and freeze initial, contradicted, corrected ordering.",
+    "The exported runtime validator is not fail-closed for malformed envelopes: exact-field objects with a null runId, null record content, null claim relation arrays, or null runtimeState throw TypeError rather than returning validation errors.",
+    "The runtime validator accepts counterfeited audience authority metadata even with the expected profile supplied because it validates authority field names and record audience matching but does not validate authorityId, authorityType, authorisedAt, or exact equality with the frozen authorities.",
+    "When expectedProfile is omitted, the same exported validator accepts a real-person costume with realistic external-source labelling and accepts correction-before-conflict array order, so its optional-profile path does not structurally preserve fictional identity or lifecycle ordering."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json#artifactCompositeSha256,compositeRecipe,files[0..9]",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:278-281,339-353,464-504",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:2622-2727,2906-2943,3114-3124",
+    "src/features/operator-brain/g21InternalRangeCanary.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:3287-3417",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:689-698",
+    "scripts/check-g21-internal-range.mjs@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:583-622",
+    "runtime-probe@ad561fce1d82bcdcdfea800ad4e4aed64e2a5173:null-runId,null-record-content,null-claim-relations,null-runtimeState=>TypeError;counterfeit-authority-with-expected-profile=>[];real-person-costume-without-expected-profile=>[];reversed-lifecycle-without-expected-profile=>[]"
+  ],
+  "veto": {
+    "ruleId": "SAFETY-RANGE-01",
+    "failure": "The exported blind-input validator can throw on malformed runtime envelopes and can accept counterfeited audience authority metadata; its no-profile path also accepts a real-person costume and reversed lifecycle evidence.",
+    "resolvingTest": "Make validateG21InternalBlindInput total over arbitrary unknown input, validate every nested scalar and array before dereference, require authorityId, authorityType and authorisedAt to match the exact evidence authority, and make the expected profile mandatory or carry and validate equivalent fictional-identity and lifecycle-ordering invariants. Then run the frozen validator against null and wrong-type mutations at every field, counterfeited authority metadata, real-person costumes, and reversed or substituted lifecycle records, proving every case returns a non-empty error array without throwing."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Make validateG21InternalBlindInput total over arbitrary unknown input, validate every nested scalar and array before dereference, require authorityId, authorityType and authorisedAt to match the exact evidence authority, and make the expected profile mandatory or carry and validate equivalent fictional-identity and lifecycle-ordering invariants. Then run the frozen validator against null and wrong-type mutations at every field, counterfeited authority metadata, real-person costumes, and reversed or substituted lifecycle records, proving every case returns a non-empty error array without throwing.",
+  "recordedAt": "2026-09-10T21:02:06.853Z"
+}

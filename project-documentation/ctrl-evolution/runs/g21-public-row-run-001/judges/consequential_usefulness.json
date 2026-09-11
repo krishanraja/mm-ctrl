@@ -1,0 +1,32 @@
+{
+  "rulingId": "RULING-G21-CONSEQUENTIAL-USEFULNESS-001",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "judge": "consequential_usefulness",
+  "phase": "sealed_review",
+  "verdict": "pass",
+  "criterionVersion": "consequential-usefulness:g21-v1",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "theoryPackHash": "sha256:FC21255209B109FAE1DA9583E9B00CA64211BAF5032E729364C363C2A70EDEC3",
+  "claims": [
+    "Each non-cold result names an evidence-grounded business tension: offer economics, integration attribution, or AI workload return and allocation.",
+    "The useful and rich cases reach consequential strategy and economics rather than generic adoption or administrative activity.",
+    "Each question requests information capable of selecting, rejecting, or materially reshaping the stated route.",
+    "Decision specificity rises materially from intake abstention through offer validation and strategy attribution to longitudinal portfolio allocation."
+  ],
+  "evidenceLocators": [
+    "/results/1/decisionFrame",
+    "/results/1/routeChangingQuestion",
+    "/results/1/answerWouldChange",
+    "/results/2/decisionFrame",
+    "/results/2/notices/2",
+    "/results/2/routeChangingQuestion",
+    "/results/2/answerWouldChange",
+    "/results/3/decisionFrame",
+    "/results/3/notices/2",
+    "/results/3/routeChangingQuestion",
+    "/results/3/answerWouldChange",
+    "/results/0/diagnosticMode",
+    "/results/0/recommendationState"
+  ],
+  "recordedAt": "2026-09-10T15:50:48.5741691+01:00"
+}

@@ -1,0 +1,39 @@
+{
+  "rulingId": "RULING-G21-HUMAN-COMPREHENSION-002",
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "judge": "human_comprehension_and_access",
+  "phase": "sealed_review",
+  "artifactHash": "sha256:86E254AE88F56E7DA05A43FB6CC251FA38B2B36CD9423269B849F65F48924D52",
+  "theoryPackHash": "sha256:5B8946386CDA8347E49C6D05EDC58BDD57E0C461343330E66481951D71687B7C",
+  "criterionVersion": "human-comprehension-and-access:g21-v1",
+  "verdict": "pass",
+  "claims": [
+    "The resolving test passes: a bright 12-year-old could paraphrase what is known, what matters, and the one requested answer for every result without definitions.",
+    "The cold-start and sparse-evidence results plainly explain that the evidence does not support a diagnosis or offer choice, then ask one concrete question that could change the route.",
+    "The WPP result states the central contrast in concrete terms: whether joining agencies and software wins and keeps customers and adds profit, or mainly cuts costs. Its single question asks for the business and profit attributable to working as one.",
+    "The Microsoft result states the scarce-capacity choice in concrete terms and asks one question about which customers or products receive limited AI computing capacity first and what proof of value, profit, and safety earns priority.",
+    "Each result keeps deeper evidence, unknowns, and the human decision boundary available after a concise decision frame, without making the main decision or question depend on specialist interpretation."
+  ],
+  "evidenceLocators": [
+    "output.json#/results/0/decisionFrame",
+    "output.json#/results/0/routeChangingQuestion",
+    "output.json#/results/0/answerWouldChange",
+    "output.json#/results/1/decisionFrame",
+    "output.json#/results/1/routeChangingQuestion",
+    "output.json#/results/1/answerWouldChange",
+    "output.json#/results/2/decisionFrame",
+    "output.json#/results/2/routeChangingQuestion",
+    "output.json#/results/2/answerWouldChange",
+    "output.json#/results/3/decisionFrame",
+    "output.json#/results/3/routeChangingQuestion",
+    "output.json#/results/3/answerWouldChange",
+    "output.json#/results/0/humanDecisionBoundary",
+    "output.json#/results/1/humanDecisionBoundary",
+    "output.json#/results/2/humanDecisionBoundary",
+    "output.json#/results/3/humanDecisionBoundary",
+    "judge-packs/human_comprehension_and_access.json#/criterion/passConditions",
+    "judge-packs/human_comprehension_and_access.json#/criterion/failConditions",
+    "judge-packs/human_comprehension_and_access.json#/criterion/hardVetoRules/0"
+  ],
+  "recordedAt": "2026-09-10T16:14:31.007+01:00"
+}

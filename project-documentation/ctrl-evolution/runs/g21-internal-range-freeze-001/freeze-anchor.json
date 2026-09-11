@@ -1,0 +1,7 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "artifactCommit": "a78334c",
+  "manifestPath": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json",
+  "verification": "Each input-manifest file hash was recomputed from git show a78334c:<path> and matched on 10 September 2026.",
+  "reason": "The source artifact was repaired only after this failed council was frozen. Resolve its five artifact paths at artifactCommit so the blocked run remains independently verifiable rather than silently changing under the same run ID."
+}

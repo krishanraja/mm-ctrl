@@ -1,0 +1,35 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "subject_audience_lifecycle_safety",
+  "criterionVersion": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "fail",
+  "claims": [
+    "All five artifact SHA-256 values match the frozen manifest, and the SHA-256 of the manifest-order path:sha256 lines joined with LF and no trailing LF matches the frozen composite.",
+    "The frozen profiles make fictional identity and fixture authority explicit, prohibit real-person costumes and simulated consent, and retain fictional markers in the blind input.",
+    "The frozen state builder clones complete evidence records, so the authored leader_private and company_private labels remain attached through initial, contradicted and corrected states.",
+    "The runtime validator does not validate the audience field and does not require authority for changing a record from leader_private to company_private. That change is permitted by the static type, is an audience widening, and can pass profile validation without an authority record. This violates the pass condition and triggers SAFETY-RANGE-01."
+  ],
+  "evidenceLocators": [
+    "input-manifest.json:4-32",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:75-85",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:186-189",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:314-326",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1923-1953",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2302-2312",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2320-2340",
+    "src/features/operator-brain/rangeCouncilContract.ts:74-96",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:54-67",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:167-184",
+    "scripts/check-g21-internal-range.mjs:72-86",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:24-36"
+  ],
+  "veto": {
+    "ruleId": "SAFETY-RANGE-01",
+    "failure": "A leader_private evidence record can be changed to company_private without any audience authority, and validateG21InternalRangeProfile does not reject the widened audience.",
+    "resolvingTest": "Clone a valid profile, change one leader_private record to company_private without an audience-authority record, and require validation to reject it. Also mutate an audience to public and require rejection, then build initial, contradicted and corrected inputs and assert every evidence ID retains its original authorised audience."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add runtime audience enumeration and audience-transition authority checks, then prove with adversarial mutations that leader_private cannot become company_private and no private record can become public without explicit authority; finally assert evidence ID to audience equality across all three lifecycle states.",
+  "recordedAt": "2026-09-10T18:00:56.126Z"
+}

@@ -1,0 +1,205 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "recordedAt": "2026-09-11T00:32:06.226Z",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "compositeRecipe": "SHA-256 of UTF-8 path:sha256 lines joined with LF in the listed order, with no trailing LF.",
+  "reviewBoundary": {
+    "protocolVersion": "history-free-semantic-allowlist:v1",
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003"
+  },
+  "compileClosure": {
+    "protocolVersion": "repo-local-typescript-import-closure:v1",
+    "entryPoints": [
+      "src/features/operator-brain/g21InternalRangeCanary.ts"
+    ],
+    "nodeVersion": "v24.13.0",
+    "typescriptVersion": "5.9.3",
+    "compositeSha256": "9e6bb2b8b33e7a987ea2b5b67b1b6cfde001ab80065541c3a25c3f1384084fc6",
+    "files": [
+      {
+        "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+        "sha256": "47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d"
+      },
+      {
+        "path": "src/features/operator-brain/g21PublicRowCanary.ts",
+        "sha256": "3891a861ff81d1f35587a32e3a9f11bb3034366b99207a53040ca73467f5c82c"
+      },
+      {
+        "path": "src/features/operator-brain/rangeCouncilContract.ts",
+        "sha256": "1b03b58b19d9375fdce303e8161cd8c2cd43c65c5c6e9f94be4c69ebdb29ccc0"
+      }
+    ]
+  },
+  "criterionVersions": {
+    "human_agency": "human-agency:g21-internal-range-freeze-v5",
+    "epistemic_integrity": "epistemic-integrity:g21-internal-range-freeze-v5",
+    "subject_audience_lifecycle_safety": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v5",
+    "consequential_usefulness": "consequential-usefulness:g21-internal-range-freeze-v5",
+    "living_brain_integrity": "living-brain-integrity:g21-internal-range-freeze-v5",
+    "human_comprehension_and_access": "human-comprehension-and-access:g21-internal-range-freeze-v5",
+    "behavioural_and_implementation_reality": "behavioural-and-implementation-reality:g21-internal-range-freeze-v5"
+  },
+  "semanticReviewFiles": [
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+      "sha256": "47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d"
+    },
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.test.ts",
+      "sha256": "40bb5722dbcf0755b64034425b1754eda08865e9cf8547f302aeed88d52451ec"
+    },
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.ts",
+      "sha256": "1b03b58b19d9375fdce303e8161cd8c2cd43c65c5c6e9f94be4c69ebdb29ccc0"
+    },
+    {
+      "path": "src/features/operator-brain/g21PublicRowCanary.ts",
+      "sha256": "3891a861ff81d1f35587a32e3a9f11bb3034366b99207a53040ca73467f5c82c"
+    },
+    {
+      "path": "scripts/check-g21-internal-range.mjs",
+      "sha256": "fccfbefe99261dbe33ac8ab92bbdda18af28c76f9353f65999ba421063dce741"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md",
+      "sha256": "1f585985dd4286f6f8b41c91d4e4d048baa658ff0ba6310f256db56929b7f662"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md",
+      "sha256": "1587fe6ba6e06a641042b84a1a4daf6ebd150a49df756e0685f0ac88f34475ce"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json",
+      "sha256": "49a67c424238be1fe48dcaadc3bac785fba7b0a7dc9dd4d84d4d6beccaf46dd6"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/reader-brief.md",
+      "sha256": "1823ec846dcbbcf0bedf803298dbd0e418eadafe54fc2b12ab4064475dd756ea"
+    }
+  ],
+  "provenanceOnlyFiles": [
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.test.ts",
+      "sha256": "207c32c16f9af863681d49436ee772c3f7fe1266594f076c33e8eed08330cafa"
+    },
+    {
+      "path": "scripts/check-g21-internal-council.mjs",
+      "sha256": "119d8d51b646564a97fc0f95d6460e69e6e2cc2c42dac0f861ed385cafa504e6"
+    },
+    {
+      "path": "scripts/prepare-g21-internal-freeze.mjs",
+      "sha256": "7546f5f1ea5b816df79810c4bd1e3742309f273fa44286a573631c284d507e11"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+      "sha256": "b2482292a99b2ab394774f178a57f03623c19d3f94a410b2a47cca1972d96ee2"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+      "sha256": "f15b3393bc131c7c15307f190c3d05bf83466bc03b768b1acc409575f5a1535e"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-v4-contract-separation.md",
+      "sha256": "b939b7f04c4d41b67a4f8bc2b9737dde4d4f7da74a99eeb7be65e401a705494c"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/session-method-learning-log.md",
+      "sha256": "1c6de3d8bf46f0dfde419fa728ef7e5c156774c3b58b164043ef03770d9d2590"
+    }
+  ],
+  "files": [
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+      "sha256": "47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d"
+    },
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.test.ts",
+      "sha256": "40bb5722dbcf0755b64034425b1754eda08865e9cf8547f302aeed88d52451ec"
+    },
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.ts",
+      "sha256": "1b03b58b19d9375fdce303e8161cd8c2cd43c65c5c6e9f94be4c69ebdb29ccc0"
+    },
+    {
+      "path": "src/features/operator-brain/g21PublicRowCanary.ts",
+      "sha256": "3891a861ff81d1f35587a32e3a9f11bb3034366b99207a53040ca73467f5c82c"
+    },
+    {
+      "path": "scripts/check-g21-internal-range.mjs",
+      "sha256": "fccfbefe99261dbe33ac8ab92bbdda18af28c76f9353f65999ba421063dce741"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md",
+      "sha256": "1f585985dd4286f6f8b41c91d4e4d048baa658ff0ba6310f256db56929b7f662"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md",
+      "sha256": "1587fe6ba6e06a641042b84a1a4daf6ebd150a49df756e0685f0ac88f34475ce"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json",
+      "sha256": "49a67c424238be1fe48dcaadc3bac785fba7b0a7dc9dd4d84d4d6beccaf46dd6"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/reader-brief.md",
+      "sha256": "1823ec846dcbbcf0bedf803298dbd0e418eadafe54fc2b12ab4064475dd756ea"
+    },
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.test.ts",
+      "sha256": "207c32c16f9af863681d49436ee772c3f7fe1266594f076c33e8eed08330cafa"
+    },
+    {
+      "path": "scripts/check-g21-internal-council.mjs",
+      "sha256": "119d8d51b646564a97fc0f95d6460e69e6e2cc2c42dac0f861ed385cafa504e6"
+    },
+    {
+      "path": "scripts/prepare-g21-internal-freeze.mjs",
+      "sha256": "7546f5f1ea5b816df79810c4bd1e3742309f273fa44286a573631c284d507e11"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+      "sha256": "b2482292a99b2ab394774f178a57f03623c19d3f94a410b2a47cca1972d96ee2"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+      "sha256": "f15b3393bc131c7c15307f190c3d05bf83466bc03b768b1acc409575f5a1535e"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-v4-contract-separation.md",
+      "sha256": "b939b7f04c4d41b67a4f8bc2b9737dde4d4f7da74a99eeb7be65e401a705494c"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/session-method-learning-log.md",
+      "sha256": "1c6de3d8bf46f0dfde419fa728ef7e5c156774c3b58b164043ef03770d9d2590"
+    }
+  ],
+  "frozenCounts": {
+    "profiles": 12,
+    "matchedFamilies": 1,
+    "lifecycleCases": 36,
+    "oracleFreeInputs": 36,
+    "initialInputs": 12,
+    "contradictedInputs": 12,
+    "correctedInputs": 12,
+    "malformedJsonSamples": 128,
+    "adversarialMutationsRejected": 249,
+    "councilContractSelfTests": 14,
+    "questions": 12
+  },
+  "authority": {
+    "allowed": [
+      "Review the frozen local evidence-range fixture",
+      "Return one sealed ruling against one owned criterion",
+      "Return one sealed adult answerability proxy review"
+    ],
+    "prohibited": [
+      "Change the artifact while reviewing it",
+      "Read provenance-only material during first-pass semantic review",
+      "Infer approval from another judge",
+      "Average away a valid veto",
+      "Treat fictional evidence as real research or consent",
+      "Represent an adult proxy review as a child usability test",
+      "Recommend deployment, database writes or production use"
+    ]
+  }
+}

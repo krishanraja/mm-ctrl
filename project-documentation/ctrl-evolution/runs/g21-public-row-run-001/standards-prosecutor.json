@@ -1,0 +1,51 @@
+{
+  "role": "standards_prosecutor",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "artifactHash": "sha256:70497310ec7a27865115f0ac5eba79a092ff1695c04aa04757dfc807bb4d461f",
+  "adjudicationHash": "sha256:c113be0f72cd36ddf7a61e680da316535460501abeb01a4b728d955db0ee1744",
+  "finding": "confirmed_block",
+  "claims": [
+    "COMPREHENSION-G21-01 is a valid veto, not overreach. RANGE-PUBLIC-02 requires a non-technical reader to decode attribution, margin change, integrated model and commercial causation, while RANGE-PUBLIC-03 requires interpretation of workload-level economics, contribution margin, capacity-constrained growth and portfolio allocation before the single question can be answered.",
+    "The comprehension ruling cites the exact main frames, questions and answer effects that contain the specialist language, so its evidence is sufficient for the hard-veto condition.",
+    "No sealed pass ignored a forbidden oracle claim or another hard-veto violation. The notices remain evidence-linked, provisional and within the public-person and R1 boundaries.",
+    "The human_agency ruling's first four locators, /0/authority through /3/authority, do not resolve against the hashed output artifact and omit an input file qualifier. Its pass remains independently supported by the result-level recommendationState, unresolved, routeChangingQuestion and humanDecisionBoundary locators.",
+    "The Microsoft question tests workload economics but does not explicitly ask which scarce-capacity uses should be prioritised or what hurdle earns priority, leaving a non-veto gap against the pre-frozen oracle. That gap does not displace the valid comprehension veto."
+  ],
+  "evidenceLocators": [
+    "adjudication.json#/result/status",
+    "adjudication.json#/result/vetoes/0",
+    "judge-packs/human_comprehension_and_access.json#/criterion/passConditions/0",
+    "judge-packs/human_comprehension_and_access.json#/criterion/hardVetoRules/0",
+    "judges/human_comprehension_and_access.json#/claims",
+    "judges/human_comprehension_and_access.json#/evidenceLocators",
+    "output.json#/results/2/decisionFrame",
+    "output.json#/results/2/notices/2/text",
+    "output.json#/results/2/routeChangingQuestion",
+    "output.json#/results/2/answerWouldChange",
+    "output.json#/results/3/decisionFrame",
+    "output.json#/results/3/routeChangingQuestion",
+    "output.json#/results/3/answerWouldChange",
+    "judges/human_agency.json#/evidenceLocators/0",
+    "judges/human_agency.json#/evidenceLocators/3",
+    "judges/human_agency.json#/evidenceLocators/6",
+    "judges/human_agency.json#/evidenceLocators/17",
+    "src/features/operator-brain/g21PublicRowCanary.ts#G21_PUBLIC_ROW_CANARY/RANGE-PUBLIC-03/oracle/routeChangingQuestion",
+    "src/features/operator-brain/g21PublicRowCanary.ts#G21_PUBLIC_ROW_CANARY/RANGE-PUBLIC-03/oracle/expectedDiagnosticNotices/2"
+  ],
+  "oracleComparison": {
+    "expectedBehavioursMet": [
+      "Diagnostic mode and specificity rise with evidence depth across all four profiles.",
+      "The cold and sparse profiles abstain, identify evidence gaps and ask one route-changing question without generic advice or invented personhood.",
+      "The WPP result separates public strategy, reported outcomes and bounded causal inference, then asks for attribution evidence before validating the strategy.",
+      "The Microsoft result uses the longitudinal public arc and keeps realised return, margin pressure and security assurance unresolved rather than treating aggregate demand or stated security progress as proof.",
+      "All four results preserve the human consequential decision boundary."
+    ],
+    "gaps": [
+      "RANGE-PUBLIC-02 and RANGE-PUBLIC-03 fail the required bright-12-year-old comprehension test in their main frames, questions and answer effects.",
+      "RANGE-PUBLIC-03 asks which workloads produce return, but does not explicitly ask which uses receive scarce capacity first or what return and security hurdle earns that priority.",
+      "The human_agency ruling omits the input file qualifier from four authority locators, making those pointers non-resolving against the output artifact."
+    ],
+    "forbiddenClaimsTriggered": []
+  },
+  "smallestResolvingRepair": "Change only decisionFrame, routeChangingQuestion and answerWouldChange for RANGE-PUBLIC-02 and RANGE-PUBLIC-03 into plain language, preserving the existing claim types, evidence IDs, one-question limit and human boundary. Make the WPP question ask how many recent wins and renewals came from the integrated model and how much profit they added. Make the Microsoft question ask which customers or products should receive limited AI computing capacity first and what proof of customer value, profit and safety earns that priority. Then rerun COMPREHENSION-G21-01 with the stated bright-12-year-old paraphrase test and add input.json qualifiers to the four human_agency authority locators."
+}

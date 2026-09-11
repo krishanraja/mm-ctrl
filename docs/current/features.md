@@ -70,7 +70,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 | Trust and security | Public `/trust` rewrite | Honest security posture: controls in place, in progress, and absent |
 | Answers | `/answers`, `/answers/:slug` | Public answer pages written to be fetched and quoted by AI assistants |
 | Preview | `/preview` | Unlinked deterministic QA fixtures |
-| Decision Bench | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic operator-surface implementation harness for local or flagged preview builds |
+| Decision Table | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic R4 operator harness for route comparison, decision sharpening, Claude handoff and returned-work audit in local or flagged preview builds |
 | Synthetic Brain lab | `/operator/lab/synthetic-population/:accountId` | Unlinked range harness for deterministic Brain inputs, processing boundaries and diagnostic oracles |
 | Skill and MCP generation | Backend functions and exports | Portability substrate only |
 
@@ -88,7 +88,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 
 ### Synthetic preview only
 
-`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. `/operator/lab/synthetic-population/:accountId` uses the same preview boundary and accepts only the 48 deterministic G18 synthetic identities. Both routes are unlinked, marked `noindex`, unauthenticated for QA, and have no persistence authority.
+`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. Its R4 fixture keeps customer-private and operator-private evidence distinct, asks one contextual tap-first question at a time, builds a complete Claude brief and audits a synthetic return. Evidence capture is page-local and disappears on reload. `/operator/lab/synthetic-population/:accountId` uses the same preview boundary and accepts only the 48 deterministic G18 synthetic identities. Both routes are unlinked, marked `noindex`, unauthenticated for QA, and have no production persistence authority.
 
 ### Legacy redirects
 

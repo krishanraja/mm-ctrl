@@ -1,0 +1,38 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "consequential_usefulness",
+  "criterionVersion": "consequential-usefulness:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "fail",
+  "claims": [
+    "The four family arcs centre distinct material choices: a GBP 1.8 million care rollout, a GBP 900,000 research capacity shift, a GBP 4.2 million planning programme with 38 roles, and a GBP 18 million campaign allocation.",
+    "CARE sharpens from a human stopping failure, to an unsafe-journey rollout threshold, to a continuity and executive-intervention expansion gate. Its known and unknown paths bind or hold the same customer-safety route.",
+    "RESEARCH sharpens from choosing the repeat-client value to test, to testing whether decision challenge transfers without a senior researcher, to a repeat-purchase gate before moving half the team. Its paths change the product, economics or workforce-capacity route rather than celebrating AI adoption.",
+    "FORGE sharpens from separating role redesign from bad operating conditions, to a same-team plant funding gate, to naming the human owner of a customer-impact final call. Its paths alter funding, workforce design or accountability.",
+    "STORY-I2 and STORY-I3 sharpen the campaign decision from comparable ticket-sale evidence to a purchase-lift threshold with a core-fan constraint, and their unknown paths hold the GBP 18 million allocation while requesting the same decision evidence.",
+    "STORY-I1 violates the every-answer requirement. The permitted literal option `Another named group` does not identify any ticket-buyer group, the only note is explicitly optional, and the contract nevertheless claims that this answer replaces the audience gate with a leader-named group. That answer cannot select or reshape the customer target for the GBP 18 million route.",
+    "The implementation enforces that option strings map one for one to nonempty route-effect prose, but it has no required custom-group value and no rejection for the bare `Another named group` answer. The declared route effect therefore asserts a consequential change that the permitted answer does not supply, triggering USEFULNESS-RANGE-01."
+  ],
+  "evidenceLocators": [
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L728-L958",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L1128-L1361",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L1539-L1779",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L1998-L2262",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#L320-L365",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2496-L2530",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3640-L3699",
+    "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.test.ts#L986-L1031"
+  ],
+  "veto": {
+    "ruleId": "USEFULNESS-RANGE-01",
+    "failure": "STORY-I1 permits the complete answer `Another named group` without requiring the group to be named, yet claims that this answer reshapes the GBP 18 million campaign route around a leader-named ticket-buyer group. The permitted answer therefore changes no executable customer target and its route effect evades the consequence it names.",
+    "resolvingTest": "Freeze a STORY-I1 answer contract in which every accepted response identifies a concrete ticket-buyer group, either by removing the placeholder option or by requiring a nonempty custom group value when it is selected, then add a deterministic negative test proving that the bare answer `Another named group` is rejected and a positive test proving that the supplied group becomes the customer gate for the GBP 18 million route."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Freeze a STORY-I1 answer contract in which every accepted response identifies a concrete ticket-buyer group, either by removing the placeholder option or by requiring a nonempty custom group value when it is selected, then add a deterministic negative test proving that the bare answer `Another named group` is rejected and a positive test proving that the supplied group becomes the customer gate for the GBP 18 million route.",
+  "recordedAt": "2026-09-11T00:52:08.184Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}

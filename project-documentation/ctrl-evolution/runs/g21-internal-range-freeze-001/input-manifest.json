@@ -1,0 +1,50 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "recordedAt": "2026-09-10T17:54:06.510Z",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "files": [
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+      "sha256": "56aa9e7c1367bd45f331233748eb42b456737d71af3264fbceb63914c155dd5b"
+    },
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.test.ts",
+      "sha256": "9547c4ac28fa0a424790076504c9cf219fb2569b3377332a6977a1f2eca93ec5"
+    },
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.ts",
+      "sha256": "1c10060263750145de8c1d67a6c832790693905e276e584ca468e7329e49a316"
+    },
+    {
+      "path": "scripts/check-g21-internal-range.mjs",
+      "sha256": "6bdcf9afafcaa7da4204d5b9ad2d350a075754f7855111ff3d70cb72c8eaa55d"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+      "sha256": "7eae2708e32efb0d76341c9f4a9c4515f20e1712c63e92a6ca92d389a6750ee2"
+    }
+  ],
+  "frozenCounts": {
+    "profiles": 12,
+    "matchedFamilies": 4,
+    "lifecycleCases": 36,
+    "oracleFreeInputs": 36,
+    "initialInputs": 12,
+    "contradictedInputs": 12,
+    "correctedInputs": 12,
+    "adversarialMutationsRejected": 5
+  },
+  "authority": {
+    "allowed": [
+      "Review the frozen local evidence-range fixture",
+      "Return a sealed ruling against one owned criterion"
+    ],
+    "prohibited": [
+      "Change the artifact while reviewing it",
+      "Infer approval from another judge",
+      "Average away a valid veto",
+      "Treat fictional evidence as real research or consent",
+      "Recommend deployment, database writes or production use"
+    ]
+  }
+}
