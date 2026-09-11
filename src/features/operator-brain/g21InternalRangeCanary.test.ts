@@ -941,10 +941,10 @@ describe('G21 internal evidence range canary', () => {
           input.profileId === 'RANGE-INTERNAL-CARE-I3' && input.runtimeState === 'initial',
       )!,
     )
-    const correction = misdirected.internalEvidence.find(
+    const misdirectedCorrection = misdirected.internalEvidence.find(
       (record) => record.evidenceId === 'INT-CARE-008',
     )!
-    correction.claims[0].supersedesClaimIds = ['INT-CARE-002-CLAIM-03']
+    misdirectedCorrection.claims[0].supersedesClaimIds = ['INT-CARE-002-CLAIM-03']
     misdirected.currentClaims = buildG21CurrentClaimView(misdirected.internalEvidence)
     expect(validateG21InternalBlindInput(misdirected)).toContain(
       'INT-CARE-008:blind_input_semantic_receipt_binding_mismatch',
