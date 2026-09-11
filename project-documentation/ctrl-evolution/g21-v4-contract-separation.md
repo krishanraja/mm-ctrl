@@ -1,6 +1,6 @@
 # G21 v4 validation and review architecture
 
-Status: implemented candidate, not yet frozen or council-cleared
+Status: frozen as Run 004 and blocked by four valid vetoes
 
 Date: 10 September 2026
 
@@ -25,7 +25,7 @@ The runtime contract validates:
 - a current claim view derived from immutable source and claim records;
 - no known oracle value anywhere in the reachable input graph.
 
-The trusted runtime binding contains security-relevant metadata, not the full evidence prose. Safe novel text can therefore pass structural validation. It cannot pass the canonical fixture verifier.
+Run 004 showed that this boundary was incomplete. The trusted runtime binding contained security-relevant metadata but omitted evidence content and claim text. Arbitrary meaning could therefore borrow trusted standing, subject, audience and lifecycle metadata. Safe novel text remains a requirement, but it must enter through trusted semantic issuance rather than inheriting authority from unchanged metadata.
 
 ## Contract 2: canonical frozen-fixture verification
 
@@ -95,10 +95,23 @@ The direct v4 gate currently proves:
 
 The focused TypeScript compilation and changed-file lint pass. Normal Vitest remains blocked before collection by the current filesystem restriction while esbuild loads the repository config. That is an open execution-environment gap, not a passing result.
 
+## Run 004 result
+
+Run 004 froze the candidate at local artifact commit `63b8550`. Its seven fresh judges received the clean semantic allowlist and attested that excluded history was not encountered. Human Agency, Consequential Usefulness and Living Brain Integrity passed. Four valid vetoes blocked the run:
+
+- arbitrary evidence meaning could inherit trusted epistemic standing;
+- malformed sparse arrays could throw and personhood or consent meaning could inherit safe metadata;
+- FORGE-I3 asked for a named person while offering roles; and
+- conflict and correction meaning could be reversed while the runtime projection remained green.
+
+Both adult answerability screens also failed FORGE-I2, FORGE-I3, STORY-I2 and STORY-I3. These are adult proxy findings only. The Standards Prosecutor reproduced every technical failure and preserved all three narrow passes. Founder Calibration authorised exactly one bounded terminal Run 005 rather than another open-ended synthetic design cycle.
+
+The prosecutor also found that the semantic composite omitted the locally imported `g21PublicRowCanary.ts` dependency used by the declared gates. The artifact commit still fixes those bytes, so this does not alter the sealed Run 004 rulings. Run 005 must nevertheless identify the complete bounded repo-owned compilation closure.
+
 ## Non-claims
 
 This architecture does not prove diagnostic efficacy, improved judgement, customer value, child comprehension, consented-private behaviour, production safety or permission to write data. It does not authorise a diagnostic model run, database change, deployment or release.
 
 ## Next gate
 
-Freeze the verified candidate as Run 004. Build its semantic-review composite only from the clean allowlist, keep history in hash-only provenance, collect fresh adult answerability screens, then collect seven isolated attested rulings. Stop on any valid veto before a diagnostic model run or product surface.
+Implement one terminal Run 005 repair with four boundaries: total nonthrowing validation, one trusted semantic receipt that binds meaning and authority, four plain answer-contract repairs and dependency-complete freeze identity. Freeze it once and repeat the independent council. If it clears, synthetic contract work ends and the fixed diagnostic model runs blind across all 36 inputs before any cold product proof.

@@ -198,13 +198,28 @@ Run 002 is independently reproducible from its recorded artifact commit after th
 
 Run 003 froze the verified v3 candidate at commit `ad561fc`. Both adult proxy readers found all twelve literal questions answerable, but the specialist council exposed four deeper failures: the optional expected-profile path confused fixture truth with runtime safety; the evidence and authority envelope was not total or independently bound; four answer contracts did not change the consequential route they named; and the semantic review allowlist included documents containing prior verdict history. Six substantive rulings remain preserved as adversarial evidence, but the run is invalid as proof of seven blind-independent judgements. The Human Comprehension and Access judge correctly returned inconclusive after detecting the contamination.
 
+## Frozen council run 004
+
+`runs/g21-internal-range-freeze-004/` preserves the v4 candidate at local artifact commit `63b8550`. Its artifact composite is `f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742`; its clean semantic-review composite is `5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48`. All seven fresh judges attested to that pack and reported no excluded history.
+
+Human Agency, Consequential Usefulness and Living Brain Integrity passed narrowly. Epistemic Integrity, Subject/Audience/Lifecycle Safety, Human Comprehension and Behavioural/Implementation Reality issued valid vetoes. Standards Prosecution reproduced every technical failure:
+
+- unsupported causal, real-person and simulated-consent prose could inherit unchanged trusted metadata;
+- a sparse internal-evidence array could throw instead of returning an error;
+- swapped conflict and correction meaning could pass structural validation after recomputing the current view; and
+- FORGE-I3's question requested a named person while its controls supplied roles.
+
+Both adult answerability screens separately failed FORGE-I2, FORGE-I3, STORY-I2 and STORY-I3. The adult screens remain proxy evidence, not child testing or product-usability proof. Founder Calibration upheld the block and authorised one bounded terminal Run 005. It compressed the repair into total validation, one semantic trust root, plain visible answer contracts and a dependency-complete freeze identity.
+
+The Run 004 semantic composite was history-free but not a complete transitive compilation identity because it omitted the locally imported `g21PublicRowCanary.ts`. The artifact commit still fixes the omitted bytes, so the sealed rulings stand. The next freeze must hash the bounded repo-owned local-source closure used by both declared gates.
+
 Changed-file ESLint and the repository typecheck pass with no new errors. The normal Vitest command still fails before test collection because the active sandbox prevents esbuild from traversing the canonical repository parent and loading `vitest.config.ts`. That is an execution-environment limitation, not a passing test result. The deterministic validators are therefore run directly, and the Vitest suite remains to be executed in CI or an unrestricted local runner.
 
 No database row, auth account, deployment, customer route or production state changed.
 
 ## What this does not prove
 
-- Run 003 did not pass. Five vetoes were materially upheld, the agency veto was narrowed but remained blocking and the comprehension ruling was inconclusive.
+- Run 004 did not pass. Four clean independent vetoes were upheld after direct reproduction.
 - No diagnostic model has run against the twelve profiles or 36 lifecycle cases.
 - The matched fixtures do not prove that CTRL improves human judgement or company outcomes.
 - The synthetic numbers are test conditions, not benchmarks or market claims.
@@ -215,4 +230,4 @@ No database row, auth account, deployment, customer route or production state ch
 
 ## Next action
 
-Freeze the verified v4 candidate as Run 004 without altering any blocked predecessor. Recompute the semantic-review composite from the frozen artifact commit, collect fresh adult answerability screens and then collect seven isolated rulings whose attestations bind to that exact clean pack. Stop on any valid veto before a diagnostic model run or product surface.
+Implement one terminal Run 005 without altering any blocked predecessor. Make arbitrary-input validation total, bind semantic meaning and authority in one trusted receipt, repair the four shared adult answerability failures and hash the bounded repo-owned compilation closure. Freeze once, collect fresh adult screens and seven isolated rulings, then stop on any valid veto. If it passes, run the fixed diagnostic model blind across all 36 cases and do not create a Run 006 merely to elaborate the synthetic contract.

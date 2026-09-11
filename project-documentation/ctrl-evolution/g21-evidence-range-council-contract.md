@@ -193,6 +193,7 @@ The implemented router covers:
 - `runs/g21-internal-range-freeze-001/` and local commit `a78334c` preserve the first internal fixture review, two passes, five valid vetoes, blocked adjudication, standards prosecution and founder calibration.
 - `runs/g21-internal-range-freeze-002/` and local commit `89657b4` preserve the second internal fixture review, two adult proxy paraphrase passes, seven valid specialist vetoes, blocked adjudication, standards prosecution and founder calibration. Its verifier resolves artifact bytes from the recorded commit rather than the repaired working tree.
 - `runs/g21-internal-range-freeze-003/` preserves the third internal fixture review, two adult answerability screens, six substantive vetoes, one procedurally correct inconclusive ruling, blocked adjudication, an explicit review-protocol failure, standards prosecution and founder calibration. The semantic review pack exposed prior verdict history, so its rulings remain useful adversarial evidence but cannot be represented as seven clean blind-independent judgements.
+- `runs/g21-internal-range-freeze-004/` preserves the fourth internal fixture review at artifact commit `63b8550`: two adult answerability screens, seven clean history-free rulings, three narrow passes, four valid vetoes, blocked deterministic adjudication, direct standards-prosecution reproductions and founder calibration. The semantic pack was clean but omitted one locally imported source from its compilation identity; the artifact commit still fixes those bytes, so the rulings stand and the next freeze must close the dependency boundary.
 - `project-documentation/ctrl-evolution/g21-public-row-canary.md` records the source and claim-evidence matrix, limitations, countercase and verification state.
 - `src/features/operator-brain/g21DiagnosticCanary.ts` owns the versioned oracle-free input, bounded output and plain-language surface contracts.
 - `src/features/operator-brain/g21CouncilCriteria.ts` assigns one versioned owned truth, pass boundary and hard-veto set to every judge.
@@ -204,8 +205,8 @@ The implemented router covers:
 
 - The public-row diagnostic canary passed its current contract only after one blocked run and a targeted repair. This does not prove diagnostic efficacy outside the four frozen envelopes.
 - No real private or anonymised evidence has been collected. The internal range is wholly fictional and cannot establish consented-customer behaviour.
-- Run 003 did not clear the internal range. Five vetoes were materially upheld after bounded reproduction, the agency veto was narrowed but remained blocking and Human Comprehension and Access remained inconclusive after detecting review-pack contamination.
-- The two Run 003 adult proxy screens established visible answerability for all twelve questions. They did not establish consequential route alignment, child comprehension or council clearance.
+- Run 004 did not clear the internal range. Four valid vetoes were independently issued and directly reproduced; three passes remain narrow prerequisites rather than evidence of product value.
+- The two Run 004 adult proxy screens shared four failures. They do not establish child comprehension, product usability or diagnostic efficacy.
 - No diagnostic model has run against the twelve internal profiles or their 36 lifecycle inputs.
 - No diagnostic model has run against the 48 cases.
 - No council event has been written to Supabase.
@@ -214,4 +215,4 @@ The implemented router covers:
 
 ## Next action
 
-Freeze the implemented v4 repair as Run 004 with a semantic allowlist that is disjoint from hash-only provenance. Collect fresh adult answerability screens and seven isolated attested rulings against the frozen bytes. Stop on any valid veto before a diagnostic model run or product surface.
+Run one bounded terminal Run 005 to close the four Run 004 vetoes through total validation, a shared semantic trust receipt, four plain answer-contract repairs and a dependency-complete freeze identity. Preserve all earlier runs. If seven fresh isolated judges clear it, end synthetic contract work and run the fixed diagnostic model blind across the 36 internal lifecycle inputs.
