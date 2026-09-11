@@ -1,7 +1,8 @@
 # G22 whole-product golden-path R1 QA record
 
 **Date:** 11 September 2026  
-**Status:** Local and protected-preview verification complete; founder review pending  
+**Status:** Local and protected-preview verification complete; founder review pending
+
 **Data boundary:** Deterministic synthetic fixtures and browser-local events only
 
 ## What was built
