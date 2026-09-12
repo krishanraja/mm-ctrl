@@ -23,6 +23,7 @@ import {
   validateG24InterventionAtom,
   type G24ControlRegistry,
   type G24EnrichmentExecutionPlan,
+  type G24ExecutionReceipt,
   type G24InterventionAtom,
   type G24LifecycleSnapshot,
   type G24LifecycleTransition,
@@ -616,6 +617,22 @@ describe('G24 headless Crossing selector', () => {
     const held = selectG24Intervention(input)
     expect(held).toMatchObject({ route: 'abstain_hold', actionable: false })
     expect(renderG24SelectorReceipt(held)).toBe('Standing: held with no action')
+
+    for (const formatControl of [
+      '\u202e',
+      '\u202d',
+      '\u2066',
+      '\u202c',
+      '\u2069',
+      '\u200b',
+      '\ufeff',
+    ]) {
+      const actionable = buildG24CrossingSelectorFixtures().highExternalHighInternal
+      actionable.expectedMaterialEffect = `Decision effect ${formatControl}hidden control`
+      expect(renderG24SelectorReceipt(selectG24Intervention(actionable))).toBe(
+        'Standing: held with no action',
+      )
+    }
   })
 })
 
@@ -4794,6 +4811,59 @@ describe('G24 strict owned-data boundary', () => {
       eligible: false,
       reason: 'invalidation_receipt_identity_invalid',
       receipt: null,
+    })
+  })
+
+  it('rejects a splice of independently issued same-plan execution branches', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:branch-splice:round-21:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 4,
+    })
+    const issue = (priorReceipts: G24ExecutionReceipt[], id: string) =>
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts,
+        attempt: {
+          receiptId: `execution-receipt:${id}`,
+          idempotencyKey: `execution-attempt:${id}`,
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      })
+
+    const a1 = issue([], 'branch-a1')
+    const a2 = issue(a1.receipts, 'branch-a2')
+    const b1 = issue([], 'branch-b1')
+    const b2 = issue(b1.receipts, 'branch-b2')
+    expect(a2.receipt).not.toBeNull()
+    expect(b2.receipt).not.toBeNull()
+
+    const spliced = [a1.receipt!, b2.receipt!]
+    const append = issue(spliced, 'spliced-c3')
+    expect(append).toEqual({
+      receipt: null,
+      receipts: [],
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+    const malformed = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: spliced,
+      attempt: {
+        receiptId: 'execution-receipt:spliced-malformed',
+        idempotencyKey: 'execution-attempt:spliced-malformed',
+        elapsedMs: -0,
+        outcome: 'failed',
+      },
+    })
+    expect(malformed.receipts).toEqual([])
+    expect(malformed.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
     })
   })
 })

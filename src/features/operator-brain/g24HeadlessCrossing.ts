@@ -4108,7 +4108,8 @@ function g24ReceiptTextContainsControl(value: string): boolean {
       codePoint <= 0x1f ||
       (codePoint >= 0x7f && codePoint <= 0x9f) ||
       codePoint === 0x2028 ||
-      codePoint === 0x2029
+      codePoint === 0x2029 ||
+      /\p{Cf}/u.test(character)
     ) {
       return true
     }
@@ -4236,6 +4237,7 @@ export interface G24ExecutionReceipt {
   planVersion: string
   planFingerprint: string
   attemptNumber: number
+  priorLedgerFingerprint: string
   attemptFingerprint: string
   status: G24ExecutionStatus
   sourceRef: string | null
@@ -4266,6 +4268,7 @@ function g24ExecutionReceiptHasExactShape(value: unknown): value is G24Execution
       'planVersion',
       'planFingerprint',
       'attemptNumber',
+      'priorLedgerFingerprint',
       'attemptFingerprint',
       'status',
       'sourceRef',
@@ -4282,6 +4285,7 @@ function g24ExecutionReceiptHasExactShape(value: unknown): value is G24Execution
     g24FingerprintIsValid(value.planFingerprint) &&
     Number.isInteger(value.attemptNumber) &&
     (value.attemptNumber as number) > 0 &&
+    g24FingerprintIsValid(value.priorLedgerFingerprint) &&
     g24FingerprintIsValid(value.attemptFingerprint) &&
     (
       ['proposed_evidence', 'failed_held', 'slow_held', 'stale_rejected', 'attempt_budget_held'] as unknown[]
@@ -4294,6 +4298,12 @@ function g24ExecutionReceiptHasExactShape(value: unknown): value is G24Execution
     value.approvalCreated === false &&
     value.deliveryCreated === false
   )
+}
+
+function fingerprintG24ExecutionReceiptLedger(
+  receipts: readonly G24ExecutionReceipt[],
+): string {
+  return stringifyG24Data(receipts)
 }
 
 function cloneG24ExecutionReceiptsWithProofs(
@@ -4334,6 +4344,8 @@ function preserveIssuedG24ExecutionReceiptLedger(value: unknown): G24ExecutionRe
         !g24FingerprintIsValid(fingerprint) ||
         g24ExecutionReceiptProofs.get(receipt) !== fingerprint ||
         receipt.attemptNumber !== index + 1 ||
+        receipt.priorLedgerFingerprint !==
+          fingerprintG24ExecutionReceiptLedger(receipts.slice(0, index)) ||
         (first !== undefined &&
           (receipt.planVersion !== first.planVersion ||
             receipt.planFingerprint !== first.planFingerprint)) ||
@@ -4399,6 +4411,8 @@ function g24ExecutionReceiptLedgerIsStructurallyValid(
       receipt.planVersion === plan.planVersion &&
       receipt.planFingerprint === plan.planFingerprint &&
       receipt.attemptNumber === index + 1 &&
+      receipt.priorLedgerFingerprint ===
+        fingerprintG24ExecutionReceiptLedger(receipts.slice(0, index)) &&
       (['proposed_evidence', 'failed_held', 'slow_held', 'stale_rejected', 'attempt_budget_held'] as unknown[]).includes(
         receipt.status,
       ) &&
@@ -4583,7 +4597,7 @@ export function recordG24EnrichmentAttempt(input: {
   if (!g24ExecutionReceiptLedgerIsStructurallyValid(input.priorReceipts, input.plan)) {
     return {
       receipt: null,
-      receipts: cloneG24ExecutionReceiptsWithProofs(input.priorReceipts),
+      receipts: preserveIssuedG24ExecutionReceiptLedger(input.priorReceipts),
       replayed: false,
       rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
     }
@@ -4640,6 +4654,9 @@ export function recordG24EnrichmentAttempt(input: {
     planVersion: input.plan.planVersion,
     planFingerprint: input.plan.planFingerprint,
     attemptNumber,
+    priorLedgerFingerprint: fingerprintG24ExecutionReceiptLedger(
+      prior ? input.priorReceipts.slice(0, priorIndex) : input.priorReceipts,
+    ),
     attemptFingerprint,
     status,
     sourceRef:
