@@ -355,7 +355,9 @@ The moving repair adds one strict runtime selector-result schema covering all ou
 
 Release compilation emits sorted selector-root maps. Projection and authority use now require compiler-canonical order for selector, canonical source, canonical Brain, manifest-control, root and watermark arrays, so order mutation cannot preserve usable identity even where the public fingerprint sorts. Session and question payload shape checks validate every nested collection and every value used through string or array operations before semantic validation. Answer commands now admit exactly `receiptId`, `kind` and optional `value`.
 
-One hundred and eighty-three focused checks pass locally. Four new tests collectively attack eleven self-refingerprinted selector semantic mutations, reordered Release bytes, malformed session agenda values and answer-command extra fields. This moving repair remains unverified until its exact committed bytes pass fresh independent review.
+One hundred and eighty-three focused checks pass locally. Four new tests collectively attack eleven self-refingerprinted selector semantic mutations, reordered Release bytes, malformed session agenda values and answer-command extra fields.
+
+The repair is frozen at `dc587da3719bd737c56f2418b8be1c806cecc832`, tree `e26ac437ccb4905379aacb2c23160dee92e49daa`. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
