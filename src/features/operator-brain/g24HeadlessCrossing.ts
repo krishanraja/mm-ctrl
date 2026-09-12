@@ -4343,10 +4343,27 @@ const G24_MAX_ENRICHMENT_ATTEMPTS = 32
 const G24_MAX_EXECUTION_RECEIPTS = G24_MAX_ENRICHMENT_ATTEMPTS + 1
 const G24_EXECUTION_CHAIN_DOMAIN = 'g24:execution-receipt-chain:v1'
 const G24_EXECUTION_CHAIN_GENESIS = g24Sha256(`${G24_EXECUTION_CHAIN_DOMAIN}:genesis`)
-const g24TerminalExecutionReceiptsByPlan = new WeakMap<
-  G24EnrichmentExecutionPlan,
-  Map<string, G24ExecutionReceipt>
+const g24TerminalExecutionReceiptByPlanFingerprint = new Map<
+  string,
+  { prefixFingerprint: string; receipt: G24ExecutionReceipt }
 >()
+const G24_EXECUTION_RECEIPT_KEYS = [
+  'receiptId',
+  'idempotencyKey',
+  'planVersion',
+  'planFingerprint',
+  'attemptNumber',
+  'priorLedgerFingerprint',
+  'attemptFingerprint',
+  'status',
+  'sourceRef',
+  'appendOnly',
+  'standingAwarded',
+  'canonicalEvidenceCreated',
+  'brainChanged',
+  'approvalCreated',
+  'deliveryCreated',
+] as const
 
 function g24ExecutionChainFingerprintIsValid(value: unknown): value is string {
   return typeof value === 'string' && /^sha256:[0-9a-f]{64}$/.test(value)
@@ -4363,23 +4380,7 @@ function fingerprintG24ExecutionReceipt(receipt: G24ExecutionReceipt): string {
 function g24ExecutionReceiptHasExactShape(value: unknown): value is G24ExecutionReceipt {
   return (
     g24IsRecord(value) &&
-    g24HasExactOwnKeys(value, [
-      'receiptId',
-      'idempotencyKey',
-      'planVersion',
-      'planFingerprint',
-      'attemptNumber',
-      'priorLedgerFingerprint',
-      'attemptFingerprint',
-      'status',
-      'sourceRef',
-      'appendOnly',
-      'standingAwarded',
-      'canonicalEvidenceCreated',
-      'brainChanged',
-      'approvalCreated',
-      'deliveryCreated',
-    ]) &&
+    g24HasExactOwnKeys(value, [...G24_EXECUTION_RECEIPT_KEYS]) &&
     g24IdentifierIsCanonical(value.receiptId) &&
     g24IdentifierIsCanonical(value.idempotencyKey) &&
     g24IdentifierIsCanonical(value.planVersion) &&
@@ -4449,38 +4450,92 @@ function cloneG24ExecutionReceiptsWithProofs(
   return clones
 }
 
-function g24BoundedPlainArrayPreflight(value: unknown, maximumLength: number): boolean {
+function captureG24ExactOwnDataRecord(
+  value: unknown,
+  expectedKeys: readonly string[],
+  requireExactKeys = true,
+): { ok: true; value: Record<string, unknown> } | { ok: false } {
   try {
-    if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype) return false
-    const lengthDescriptor = Object.getOwnPropertyDescriptor(value, 'length')
-    return (
-      Boolean(lengthDescriptor) &&
-      Object.prototype.hasOwnProperty.call(lengthDescriptor, 'value') &&
-      typeof lengthDescriptor?.value === 'number' &&
-      Number.isSafeInteger(lengthDescriptor.value) &&
-      lengthDescriptor.value >= 0 &&
-      lengthDescriptor.value <= maximumLength
-    )
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      return { ok: false }
+    }
+    const prototype = Object.getPrototypeOf(value)
+    if (prototype !== Object.prototype && prototype !== null) return { ok: false }
+    if (requireExactKeys) {
+      if (Object.getOwnPropertySymbols(value).length > 0) return { ok: false }
+      const names = Object.getOwnPropertyNames(value).sort(compareText)
+      const expected = [...expectedKeys].sort(compareText)
+      if (
+        names.length !== expected.length ||
+        names.some((name, index) => name !== expected[index])
+      ) {
+        return { ok: false }
+      }
+    }
+    const captured = Object.create(null) as Record<string, unknown>
+    for (const key of expectedKeys) {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key)
+      if (
+        !descriptor ||
+        !descriptor.enumerable ||
+        !Object.prototype.hasOwnProperty.call(descriptor, 'value')
+      ) {
+        return { ok: false }
+      }
+      g24SetOwn(captured, key, descriptor.value)
+    }
+    return { ok: true, value: captured }
   } catch {
-    return false
+    return { ok: false }
   }
 }
 
-function preserveIssuedG24ExecutionReceiptLedger(value: unknown): G24ExecutionReceipt[] {
+function captureIssuedG24ExecutionReceiptLedger(
+  value: unknown,
+): { ok: true; receipts: G24ExecutionReceipt[] } | { ok: false } {
   try {
-    if (!g24BoundedPlainArrayPreflight(value, G24_MAX_EXECUTION_RECEIPTS)) return []
-    const snapshot = snapshotG24PlainData(value)
-    if (!snapshot.ok || !Array.isArray(snapshot.value)) return []
-    const receipts = snapshot.value
-    if (receipts.length > G24_MAX_EXECUTION_RECEIPTS) return []
-    receipts.forEach((receipt) => {
-      if (!g24ExecutionReceiptHasExactShape(receipt)) return
-      const source = g24SourceForOwned(snapshot, receipt)
-      const proof = source ? g24ExecutionReceiptProofs.get(source) : undefined
-      if (proof === fingerprintG24ExecutionReceipt(receipt)) {
-        g24ExecutionReceiptProofs.set(receipt, proof)
+    if (!Array.isArray(value) || Object.getPrototypeOf(value) !== Array.prototype) {
+      return { ok: false }
+    }
+    const lengthDescriptor = Object.getOwnPropertyDescriptor(value, 'length')
+    if (
+      !lengthDescriptor ||
+      !Object.prototype.hasOwnProperty.call(lengthDescriptor, 'value') ||
+      typeof lengthDescriptor.value !== 'number' ||
+      !Number.isSafeInteger(lengthDescriptor.value) ||
+      lengthDescriptor.value < 0 ||
+      lengthDescriptor.value > G24_MAX_EXECUTION_RECEIPTS
+    ) {
+      return { ok: false }
+    }
+    const receipts: G24ExecutionReceipt[] = []
+    for (let index = 0; index < lengthDescriptor.value; index += 1) {
+      const entryDescriptor = Object.getOwnPropertyDescriptor(value, String(index))
+      if (
+        !entryDescriptor ||
+        !entryDescriptor.enumerable ||
+        !Object.prototype.hasOwnProperty.call(entryDescriptor, 'value')
+      ) {
+        return { ok: false }
       }
-    })
+      const source = entryDescriptor.value
+      const captured = captureG24ExactOwnDataRecord(
+        source,
+        G24_EXECUTION_RECEIPT_KEYS,
+        false,
+      )
+      if (!captured.ok || !g24ExecutionReceiptHasExactShape(captured.value)) {
+        return { ok: false }
+      }
+      const receipt = captured.value
+      const proof = g24ExecutionReceiptProofs.get(source as G24ExecutionReceipt)
+      const fingerprint = fingerprintG24ExecutionReceipt(receipt)
+      if (!g24FingerprintIsValid(fingerprint) || proof !== fingerprint) {
+        return { ok: false }
+      }
+      g24ExecutionReceiptProofs.set(receipt, proof)
+      receipts.push(receipt)
+    }
     const receiptIds = new Set<string>()
     const idempotencyKeys = new Set<string>()
     const first = receipts[0]
@@ -4509,9 +4564,9 @@ function preserveIssuedG24ExecutionReceiptLedger(value: unknown): G24ExecutionRe
       )
       return true
     })
-    return valid ? cloneG24ExecutionReceiptsWithProofs(receipts) : []
+    return valid ? { ok: true, receipts } : { ok: false }
   } catch {
-    return []
+    return { ok: false }
   }
 }
 
@@ -4653,26 +4708,13 @@ export function recordG24EnrichmentAttempt(input: {
     sourceRef?: string
   }
 }): G24EnrichmentAttemptResult {
-  const priorReceiptsPreflight = (() => {
-    try {
-      if (typeof input !== 'object' || input === null) return { ok: false } as const
-      const descriptor = Object.getOwnPropertyDescriptor(input, 'priorReceipts')
-      if (
-        !descriptor ||
-        !Object.prototype.hasOwnProperty.call(descriptor, 'value') ||
-        !g24BoundedPlainArrayPreflight(
-          descriptor.value,
-          G24_MAX_EXECUTION_RECEIPTS,
-        )
-      ) {
-        return { ok: false } as const
-      }
-      return { ok: true, value: descriptor.value } as const
-    } catch {
-      return { ok: false } as const
-    }
-  })()
-  if (!priorReceiptsPreflight.ok) {
+  const capturedInput = captureG24ExactOwnDataRecord(input, [
+    'plan',
+    'currentSelector',
+    'priorReceipts',
+    'attempt',
+  ])
+  if (!capturedInput.ok) {
     return {
       receipt: null,
       receipts: [],
@@ -4680,16 +4722,26 @@ export function recordG24EnrichmentAttempt(input: {
       rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
     }
   }
-  const recoverablePriorReceipts = preserveIssuedG24ExecutionReceiptLedger(
-    priorReceiptsPreflight.value,
+  const capturedPriorReceipts = captureIssuedG24ExecutionReceiptLedger(
+    capturedInput.value.priorReceipts,
   )
+  if (!capturedPriorReceipts.ok) {
+    return {
+      receipt: null,
+      receipts: [],
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    }
+  }
+  const recoverablePriorReceipts = capturedPriorReceipts.receipts
+  g24SetOwn(capturedInput.value, 'priorReceipts', recoverablePriorReceipts)
   const malformedResult = (): G24EnrichmentAttemptResult => ({
     receipt: null,
     receipts: cloneG24ExecutionReceiptsWithProofs(recoverablePriorReceipts),
     replayed: false,
     rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
   })
-  const inputSnapshot = snapshotG24PlainData(input)
+  const inputSnapshot = snapshotG24PlainData(capturedInput.value)
   if (!inputSnapshot.ok || !g24IsRecord(inputSnapshot.value)) {
     return malformedResult()
   }
@@ -4785,7 +4837,7 @@ export function recordG24EnrichmentAttempt(input: {
   if (!g24ExecutionReceiptLedgerIsStructurallyValid(input.priorReceipts, input.plan)) {
     return {
       receipt: null,
-      receipts: preserveIssuedG24ExecutionReceiptLedger(input.priorReceipts),
+      receipts: cloneG24ExecutionReceiptsWithProofs(recoverablePriorReceipts),
       replayed: false,
       rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
     }
@@ -4862,14 +4914,13 @@ export function recordG24EnrichmentAttempt(input: {
           }),
         )
       : null
-  const terminalReceipts = planSource
-    ? g24TerminalExecutionReceiptsByPlan.get(planSource)
+  const issuedTerminalState = terminalPrefixFingerprint
+    ? g24TerminalExecutionReceiptByPlanFingerprint.get(input.plan.planFingerprint)
     : undefined
-  const issuedTerminalReceipt = terminalPrefixFingerprint
-    ? terminalReceipts?.get(terminalPrefixFingerprint)
-    : undefined
-  if (issuedTerminalReceipt) {
+  if (issuedTerminalState) {
+    const issuedTerminalReceipt = issuedTerminalState.receipt
     const sameTerminalAttempt =
+      issuedTerminalState.prefixFingerprint === terminalPrefixFingerprint &&
       issuedTerminalReceipt.receiptId === input.attempt.receiptId &&
       issuedTerminalReceipt.idempotencyKey === input.attempt.idempotencyKey &&
       issuedTerminalReceipt.attemptFingerprint === attemptFingerprint
@@ -4948,14 +4999,12 @@ export function recordG24EnrichmentAttempt(input: {
     }
   }
   if (receiptIdAlreadyUsed) throw new Error('execution_receipt_id_collision')
-  if (terminalPrefixFingerprint && planSource) {
-    const planTerminalReceipts =
-      terminalReceipts ?? new Map<string, G24ExecutionReceipt>()
+  if (terminalPrefixFingerprint) {
     const receiptClone = cloneG24ExecutionReceiptsWithProofs([receipt])[0]
-    planTerminalReceipts.set(terminalPrefixFingerprint, receiptClone)
-    if (!terminalReceipts) {
-      g24TerminalExecutionReceiptsByPlan.set(planSource, planTerminalReceipts)
-    }
+    g24TerminalExecutionReceiptByPlanFingerprint.set(input.plan.planFingerprint, {
+      prefixFingerprint: terminalPrefixFingerprint,
+      receipt: receiptClone,
+    })
   }
   return {
     receipt,

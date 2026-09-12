@@ -5076,4 +5076,150 @@ describe('G24 strict owned-data boundary', () => {
     expect(replayFromFullLedger.replayed).toBe(true)
     expect(replayFromFullLedger.receipts).toEqual(replayFromPrefix.receipts)
   })
+
+  it('makes terminal finality canonical across equivalent plans and authentic branches', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const planInput = {
+      planVersion: 'enrichment-plan:canonical-terminal:round-24:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 1,
+    }
+    const planA = createG24EnrichmentExecutionPlan(selector, planInput)
+    const planB = createG24EnrichmentExecutionPlan(selector, planInput)
+    expect(planB).toEqual(planA)
+    const issue = (
+      plan: G24EnrichmentExecutionPlan,
+      priorReceipts: G24ExecutionReceipt[],
+      id: string,
+    ) =>
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts,
+        attempt: {
+          receiptId: `execution-receipt:canonical-terminal:${id}`,
+          idempotencyKey: `execution-attempt:canonical-terminal:${id}`,
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      })
+
+    const branchA = issue(planA, [], 'branch-a')
+    const branchB = issue(planA, [], 'branch-b')
+    const terminal = issue(planA, branchA.receipts, 'terminal')
+    expect(terminal.receipt).toMatchObject({
+      attemptNumber: 2,
+      status: 'attempt_budget_held',
+    })
+
+    const equivalentPlanReplay = issue(planB, branchA.receipts, 'terminal')
+    expect(equivalentPlanReplay).toMatchObject({
+      replayed: true,
+      receipt: { receiptId: 'execution-receipt:canonical-terminal:terminal' },
+    })
+    const equivalentPlanCompetition = issue(planB, branchA.receipts, 'terminal-b')
+    expect(equivalentPlanCompetition).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
+    })
+    const competingBranch = issue(planA, branchB.receipts, 'branch-b-terminal')
+    expect(competingBranch).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
+    })
+  })
+
+  it('captures a stateful command once and never traverses unselected ledger data', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:single-capture:round-24:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    let entryInspections = 0
+    const guardedEntry = new Proxy(
+      {},
+      {
+        getOwnPropertyDescriptor() {
+          entryInspections += 1
+          throw new Error('unselected_receipt_entry_inspected')
+        },
+      },
+    )
+    const oversizedLedger = Array(100_000).fill(
+      guardedEntry,
+    ) as G24ExecutionReceipt[]
+    let priorDescriptorReads = 0
+    const command = new Proxy(
+      {
+        plan,
+        currentSelector: selector,
+        priorReceipts: [],
+        attempt: {
+          receiptId: 'execution-receipt:single-capture:round-24:v1',
+          idempotencyKey: 'execution-attempt:single-capture:round-24:v1',
+          elapsedMs: 1,
+          outcome: 'failed' as const,
+        },
+      },
+      {
+        getOwnPropertyDescriptor(target, property) {
+          if (property === 'priorReceipts') {
+            priorDescriptorReads += 1
+            return {
+              value: priorDescriptorReads === 1 ? [] : oversizedLedger,
+              enumerable: true,
+              configurable: true,
+              writable: true,
+            }
+          }
+          return Reflect.getOwnPropertyDescriptor(target, property)
+        },
+      },
+    )
+
+    const result = recordG24EnrichmentAttempt(command)
+    expect(result.receipt).toMatchObject({
+      receiptId: 'execution-receipt:single-capture:round-24:v1',
+      attemptNumber: 1,
+    })
+    expect(priorDescriptorReads).toBe(1)
+    expect(entryInspections).toBe(0)
+  })
+
+  it('projects only bounded ledger indices without enumerating unrelated array keys', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:allowlisted-ledger:round-24:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    const ledger = [] as unknown as G24ExecutionReceipt[] & Record<string, unknown>
+    let unrelatedReads = 0
+    for (let index = 0; index < 10_000; index += 1) {
+      Object.defineProperty(ledger, `unrelated-${index}`, {
+        get() {
+          unrelatedReads += 1
+          throw new Error('unrelated_array_key_read')
+        },
+        enumerable: true,
+      })
+    }
+
+    const result = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: ledger,
+      attempt: {
+        receiptId: 'execution-receipt:allowlisted-ledger:round-24:v1',
+        idempotencyKey: 'execution-attempt:allowlisted-ledger:round-24:v1',
+        elapsedMs: 1,
+        outcome: 'failed',
+      },
+    })
+    expect(result.receipt).toMatchObject({ attemptNumber: 1 })
+    expect(unrelatedReads).toBe(0)
+  })
 })
