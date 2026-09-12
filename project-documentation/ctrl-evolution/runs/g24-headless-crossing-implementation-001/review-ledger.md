@@ -114,7 +114,7 @@ The supplied answer-receipt ledger also cannot prove its own completeness or cur
 
 The current repair requires every included selector purpose and audience to equal the pending Release purpose and audience; rejects empty, blank, duplicate or unoffered closed-choice options and undeclared effect keys; and requires nonblank approval receipt identity, authority and fingerprint on both answers before correction can compare them. Exact adversarial reproductions are blocking tests.
 
-The repair worktree has 127 focused checks passing. These results do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+The repair was frozen at `9977cd0c18fdb66643ebeb3d1d6cc7562cdc423f` with 127 focused checks passing. These results do not close review. The exact code bytes are under independent attack again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 
