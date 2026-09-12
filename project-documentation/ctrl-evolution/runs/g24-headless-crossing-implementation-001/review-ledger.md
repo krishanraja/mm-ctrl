@@ -252,6 +252,29 @@ One hundred and fifty focused checks pass. The new attacks cover hidden options 
 
 The repair is frozen at `1befb0c2d5c3d9581ebc488e9d0e9e67f822c77c`, tree `c8d3b09ccd813627a675417eff55a78bf12caceb`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 12
+
+**Frozen code:** `1befb0c2d5c3d9581ebc488e9d0e9e67f822c77c`
+
+**Truthful state correction:** `f3cff450c6ab08755b581a56ee903394fd32efe3`
+
+**Adjudication:** `VETO`
+
+All ordinary historical attacks held, including correction identity, canonical graph checks, lifecycle isolation and roots, approval mutation, stale execution replay, ranking bounds, Release purpose and audience binding, related watermark invalidation and unrelated-lineage isolation. Both independent reviewers nevertheless reproduced four defects in the strict snapshot boundary:
+
+1. `undefined` was accepted even though JSON serialization omitted object properties carrying it. Different keysets could therefore share an issuance proof, including approved atoms and lifecycle, answer or correction receipts.
+2. Object copies were built by assigning into `{}`. An own `__proto__` field invoked the inherited setter, disappeared from the owned keyset and changed the copy's prototype. The reviewers used this to inject inherited named-leader authority and make an otherwise unauthorized pending Release eligible. The same root could erase a correction dependency edge.
+3. Exceptions from hostile Proxy reflection traps escaped the snapshot boundary. Public selector, Release, lifecycle, execution and fingerprint calls could throw instead of producing their defined fail-closed outcomes.
+4. A plain but malformed Release authority could reach string methods before its runtime shape was checked and throw rather than return ineligible.
+
+These are one boundary-integrity family: the copy was not fully injective or exception-total, and Release use still trusted TypeScript shape beyond that copy.
+
+## Repair round 12
+
+The current repair rejects `undefined`, copies every object into a null-prototype record using explicit own data properties, catches every reflection failure and preserves `__proto__` as ordinary owned data. Successful selector results no longer materialize an absent optional diagnostic as `undefined`. Pending Release use now requires an exact outer envelope, exact and fully typed projection, current control registry and named-leader authority structures before evaluating any property methods or comparisons, with a final exception boundary that returns the existing non-actionable result.
+
+One hundred and fifty-five focused checks pass. The five new blocking reproductions cover proof-bearing `undefined` mutations, outer `__proto__` Release-authority injection, `__proto__` correction-dependency preservation, revoked Proxy traps across the public boundaries named by review and malformed plain Release authority. The moving bytes remain unverified until frozen exact-byte review.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

@@ -3249,3 +3249,148 @@ describe('G24 bounded enrichment execution', () => {
     ).toMatchObject({ status: 'attempt_budget_held', sourceRef: null })
   })
 })
+
+describe('G24 strict owned-data boundary', () => {
+  it('rejects undefined additions instead of allowing proof-equivalent hidden fields', () => {
+    const atom = approvedQuestionAtom() as G24InterventionAtom & { unsupported?: undefined }
+    atom.unsupported = undefined
+    expect(() =>
+      recordG24Answer(
+        atom,
+        { receiptId: 'answer:undefined-field', kind: 'option', value: 'Fewer rewrites' },
+        [],
+      ),
+    ).toThrow('answer_requires_plain_data')
+
+    const opened = issuedLifecycleSnapshotAt('preparing') as G24LifecycleSnapshot & {
+      receipts: Array<G24LifecycleSnapshot['receipts'][number] & { unsupported?: undefined }>
+    }
+    opened.receipts[0].unsupported = undefined
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
+    expect(
+      applyG24LifecycleTransition(
+        opened,
+        lifecycleRequest(accept, {
+          fromVersion: opened.version,
+          afterVersion: 'intensive_proof:undefined-field:v1',
+        }),
+      ),
+    ).toMatchObject({ accepted: false, reason: 'lifecycle_requires_plain_data' })
+  })
+
+  it('preserves __proto__ as an own key and blocks inherited Release authority injection', () => {
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(selectedFixture(), controls)
+    const attack = Object.assign(Object.create(null), {
+      projection,
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId: 'release-check:prototype-injection',
+    }) as Record<string, unknown>
+    Object.defineProperty(attack, '__proto__', {
+      value: { authority: buildExactG24ReleaseAuthority(projection) },
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    })
+
+    expect(evaluateG24PendingReleaseUse(attack as never)).toEqual({
+      eligible: false,
+      reason: 'controlling_state_invalid',
+      receipt: null,
+    })
+  })
+
+  it('preserves a __proto__ dependency node in correction identity and impact', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(
+      atom,
+      { receiptId: 'answer:prototype-original', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacement = recordG24Answer(
+      atom,
+      {
+        receiptId: 'answer:prototype-replacement',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original],
+    )
+    const derivativeDependencies = Object.create(null) as Record<string, string[]>
+    Object.defineProperty(derivativeDependencies, '__proto__', {
+      value: [original.receiptId],
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    })
+
+    const correction = correctG24Answer(original, replacement, {
+      receiptId: 'correction:prototype-node',
+      idempotencyKey: 'correction:prototype-node:idempotency',
+      priorCorrections: [],
+      dependencyGraph: {
+        graphVersion: 'answer-dependency-graph:prototype-node:v1',
+        derivativeDependencies,
+        decisionDependencies: {},
+      },
+    })
+    expect(correction.retiredDerivativeRefs).toEqual(['__proto__'])
+  })
+
+  it('turns throwing Proxy reflection traps into each public fail-closed outcome', () => {
+    const createRevokedProxy = () => {
+      const revocable = Proxy.revocable({}, {})
+      revocable.revoke()
+      return revocable.proxy
+    }
+
+    expect(selectG24Intervention(createRevokedProxy())).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+      reasonCode: 'invalid_input',
+    })
+    expect(evaluateG24PendingReleaseUse(createRevokedProxy() as never)).toEqual({
+      eligible: false,
+      reason: 'controlling_state_invalid',
+      receipt: null,
+    })
+    expect(
+      applyG24LifecycleTransition(createRevokedProxy() as never, createRevokedProxy() as never),
+    ).toMatchObject({ accepted: false, reason: 'lifecycle_requires_plain_data' })
+    expect(recordG24EnrichmentAttempt(createRevokedProxy() as never)).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+    expect(fingerprintG24EnrichmentExecutionPlan(createRevokedProxy() as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+  })
+
+  it('rejects malformed plain Release authority without throwing', () => {
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(selectedFixture(), controls)
+    const authority = buildExactG24ReleaseAuthority(projection) as unknown as Record<
+      string,
+      unknown
+    >
+    authority.authorityVersion = 7
+
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: authority as never,
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:malformed-authority',
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'release_authority_missing_or_mismatched',
+      receipt: null,
+    })
+  })
+})

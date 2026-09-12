@@ -75,37 +75,52 @@ type G24PlainSnapshot<T> = { ok: true; value: T } | { ok: false }
 function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
   const active = new WeakSet<object>()
   const copy = (current: unknown): G24PlainSnapshot<unknown> => {
-    if (
-      current === null ||
-      typeof current === 'string' ||
-      typeof current === 'boolean' ||
-      typeof current === 'undefined'
-    ) {
-      return { ok: true, value: current }
-    }
-    if (typeof current === 'number') {
-      return Number.isFinite(current) ? { ok: true, value: current } : { ok: false }
-    }
-    if (typeof current !== 'object' || active.has(current)) return { ok: false }
-    active.add(current)
-    if (Object.getOwnPropertySymbols(current).length > 0) return { ok: false }
-
-    if (Array.isArray(current)) {
-      if (Object.getPrototypeOf(current) !== Array.prototype) return { ok: false }
-      const names = Object.getOwnPropertyNames(current)
-      const expectedNames = [
-        ...Array.from({ length: current.length }, (_, index) => String(index)),
-        'length',
-      ]
-      if (
-        names.length !== expectedNames.length ||
-        names.some((name) => !expectedNames.includes(name))
-      ) {
-        return { ok: false }
+    try {
+      if (current === null || typeof current === 'string' || typeof current === 'boolean') {
+        return { ok: true, value: current }
       }
-      const result: unknown[] = []
-      for (let index = 0; index < current.length; index += 1) {
-        const descriptor = Object.getOwnPropertyDescriptor(current, String(index))
+      if (typeof current === 'number') {
+        return Number.isFinite(current) ? { ok: true, value: current } : { ok: false }
+      }
+      if (typeof current !== 'object' || active.has(current)) return { ok: false }
+      active.add(current)
+      if (Object.getOwnPropertySymbols(current).length > 0) return { ok: false }
+
+      if (Array.isArray(current)) {
+        if (Object.getPrototypeOf(current) !== Array.prototype) return { ok: false }
+        const names = Object.getOwnPropertyNames(current)
+        const expectedNames = [
+          ...Array.from({ length: current.length }, (_, index) => String(index)),
+          'length',
+        ]
+        if (
+          names.length !== expectedNames.length ||
+          names.some((name) => !expectedNames.includes(name))
+        ) {
+          return { ok: false }
+        }
+        const result: unknown[] = []
+        for (let index = 0; index < current.length; index += 1) {
+          const descriptor = Object.getOwnPropertyDescriptor(current, String(index))
+          if (
+            !descriptor ||
+            !descriptor.enumerable ||
+            !Object.prototype.hasOwnProperty.call(descriptor, 'value')
+          ) {
+            return { ok: false }
+          }
+          const child = copy(descriptor.value)
+          if (!child.ok) return child
+          result.push(child.value)
+        }
+        return { ok: true, value: result }
+      }
+
+      const prototype = Object.getPrototypeOf(current)
+      if (prototype !== Object.prototype && prototype !== null) return { ok: false }
+      const result = Object.create(null) as Record<string, unknown>
+      for (const name of Object.getOwnPropertyNames(current).sort(compareText)) {
+        const descriptor = Object.getOwnPropertyDescriptor(current, name)
         if (
           !descriptor ||
           !descriptor.enumerable ||
@@ -115,30 +130,19 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
         }
         const child = copy(descriptor.value)
         if (!child.ok) return child
-        result.push(child.value)
+        Object.defineProperty(result, name, {
+          value: child.value,
+          enumerable: true,
+          configurable: true,
+          writable: true,
+        })
       }
-      active.delete(current)
       return { ok: true, value: result }
+    } catch {
+      return { ok: false }
+    } finally {
+      if (typeof current === 'object' && current !== null) active.delete(current)
     }
-
-    const prototype = Object.getPrototypeOf(current)
-    if (prototype !== Object.prototype && prototype !== null) return { ok: false }
-    const result: Record<string, unknown> = {}
-    for (const name of Object.getOwnPropertyNames(current).sort(compareText)) {
-      const descriptor = Object.getOwnPropertyDescriptor(current, name)
-      if (
-        !descriptor ||
-        !descriptor.enumerable ||
-        !Object.prototype.hasOwnProperty.call(descriptor, 'value')
-      ) {
-        return { ok: false }
-      }
-      const child = copy(descriptor.value)
-      if (!child.ok) return child
-      result[name] = child.value
-    }
-    active.delete(current)
-    return { ok: true, value: result }
   }
   return copy(value) as G24PlainSnapshot<T>
 }
@@ -551,7 +555,9 @@ export function fingerprintG24SelectorResult(
     expiry: result.expiry,
     replanningTrigger: result.replanningTrigger,
     actionable: result.actionable,
-    provisionalDiagnostic: result.provisionalDiagnostic,
+    ...(typeof result.provisionalDiagnostic === 'string'
+      ? { provisionalDiagnostic: result.provisionalDiagnostic }
+      : {}),
   })
 }
 
@@ -869,7 +875,6 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
         unresolvedGap: null,
         unresolvedEvidenceRefs: [],
         actionable: true,
-        provisionalDiagnostic: undefined,
       })
     }
     return heldSelectorResult(
@@ -920,7 +925,6 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
     route: chosen.route,
     reasonCode: reasonByRoute[chosen.route],
     actionable: true,
-    provisionalDiagnostic: undefined,
   })
 }
 
@@ -2116,6 +2120,149 @@ export interface G24ReleaseUseResult {
   receipt: G24ReleaseInvalidationReceipt | null
 }
 
+function g24IsStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((entry) => typeof entry === 'string')
+}
+
+function g24IsRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function g24IsStringRecord(value: unknown): value is Record<string, string> {
+  return (
+    g24IsRecord(value) &&
+    Object.entries(value).every(
+      ([key, entry]) => Boolean(key.trim()) && key === key.trim() && typeof entry === 'string',
+    )
+  )
+}
+
+function g24WatermarkIsStructurallyValid(value: unknown): value is G24ControlWatermark {
+  return (
+    g24IsRecord(value) &&
+    g24HasExactOwnKeys(value, ['key', 'lineageId', 'version']) &&
+    typeof value.key === 'string' &&
+    typeof value.lineageId === 'string' &&
+    typeof value.version === 'string'
+  )
+}
+
+function g24ControlManifestIsStructurallyValid(value: unknown): value is G24ControlManifest {
+  return (
+    g24IsRecord(value) &&
+    g24HasExactOwnKeys(value, ['manifestVersion', 'applicableControlKeys', 'graphFingerprint']) &&
+    typeof value.manifestVersion === 'string' &&
+    g24IsStringArray(value.applicableControlKeys) &&
+    typeof value.graphFingerprint === 'string'
+  )
+}
+
+function g24ControlRegistryIsStructurallyValid(value: unknown): value is G24ControlRegistry {
+  if (!g24IsRecord(value)) return false
+  return Object.entries(value).every(([registryKey, entry]) => {
+    if (!g24IsRecord(entry)) return false
+    const keys = ['key', 'lineageId', 'version', 'state', 'dependencies']
+    if (Object.prototype.hasOwnProperty.call(entry, 'validFrom')) keys.push('validFrom')
+    if (Object.prototype.hasOwnProperty.call(entry, 'validUntil')) keys.push('validUntil')
+    return (
+      g24HasExactOwnKeys(entry, keys) &&
+      registryKey === entry.key &&
+      typeof entry.key === 'string' &&
+      typeof entry.lineageId === 'string' &&
+      typeof entry.version === 'string' &&
+      (['current', 'unknown', 'mismatched', 'invalid', 'indeterminate'] as unknown[]).includes(
+        entry.state,
+      ) &&
+      g24IsStringArray(entry.dependencies) &&
+      (!Object.prototype.hasOwnProperty.call(entry, 'validFrom') ||
+        typeof entry.validFrom === 'string') &&
+      (!Object.prototype.hasOwnProperty.call(entry, 'validUntil') ||
+        typeof entry.validUntil === 'string')
+    )
+  })
+}
+
+function g24PendingReleaseProjectionIsStructurallyValid(
+  value: unknown,
+): value is G24PendingReleaseProjection {
+  if (
+    !g24IsRecord(value) ||
+    !g24HasExactOwnKeys(value, [
+      'projectionVersion',
+      'projectionFingerprint',
+      'purpose',
+      'audience',
+      'selectorResultVersions',
+      'selectorResultFingerprints',
+      'selectorControlRoots',
+      'selectorControlManifests',
+      'selectorControllingWatermarks',
+      'controllingWatermarks',
+      'controllingFingerprint',
+      'includedCanonicalSourceVersions',
+      'includedCanonicalBrainVersions',
+    ])
+  ) {
+    return false
+  }
+  return (
+    typeof value.projectionVersion === 'string' &&
+    typeof value.projectionFingerprint === 'string' &&
+    typeof value.purpose === 'string' &&
+    typeof value.audience === 'string' &&
+    g24IsStringArray(value.selectorResultVersions) &&
+    g24IsStringRecord(value.selectorResultFingerprints) &&
+    g24IsRecord(value.selectorControlRoots) &&
+    Object.values(value.selectorControlRoots).every(g24IsStringArray) &&
+    g24IsRecord(value.selectorControlManifests) &&
+    Object.values(value.selectorControlManifests).every(g24ControlManifestIsStructurallyValid) &&
+    g24IsRecord(value.selectorControllingWatermarks) &&
+    Object.values(value.selectorControllingWatermarks).every(
+      (watermarks) =>
+        Array.isArray(watermarks) && watermarks.every(g24WatermarkIsStructurallyValid),
+    ) &&
+    Array.isArray(value.controllingWatermarks) &&
+    value.controllingWatermarks.every(g24WatermarkIsStructurallyValid) &&
+    typeof value.controllingFingerprint === 'string' &&
+    g24IsStringArray(value.includedCanonicalSourceVersions) &&
+    g24IsStringArray(value.includedCanonicalBrainVersions)
+  )
+}
+
+function g24ReleaseAuthorityIsStructurallyValid(
+  value: unknown,
+): value is G24ReleaseAuthority {
+  return (
+    g24IsRecord(value) &&
+    g24HasExactOwnKeys(value, [
+      'authorityVersion',
+      'authorityControlVersion',
+      'actor',
+      'projectionVersion',
+      'projectionFingerprint',
+      'purpose',
+      'audience',
+      'selectorResultVersions',
+      'selectorResultFingerprints',
+      'controllingFingerprint',
+      'includedCanonicalSourceVersions',
+      'includedCanonicalBrainVersions',
+    ]) &&
+    typeof value.authorityVersion === 'string' &&
+    typeof value.authorityControlVersion === 'string' &&
+    value.actor === 'named_leader' &&
+    typeof value.projectionVersion === 'string' &&
+    typeof value.projectionFingerprint === 'string' &&
+    typeof value.purpose === 'string' &&
+    typeof value.audience === 'string' &&
+    g24IsStringArray(value.selectorResultVersions) &&
+    g24IsStringRecord(value.selectorResultFingerprints) &&
+    typeof value.controllingFingerprint === 'string' &&
+    g24IsStringArray(value.includedCanonicalSourceVersions) &&
+    g24IsStringArray(value.includedCanonicalBrainVersions)
+  )
+}
+
 function equalSorted(left: readonly string[], right: readonly string[]): boolean {
   return stringifyG24Data([...left].sort(compareText)) === stringifyG24Data([...right].sort(compareText))
 }
@@ -2133,11 +2280,33 @@ export function evaluateG24PendingReleaseUse(input: {
   trustedAsOf: string
   receiptId: string
 }): G24ReleaseUseResult {
-  const inputSnapshot = snapshotG24PlainData(input)
-  if (!inputSnapshot.ok) {
-    return { eligible: false, reason: 'controlling_state_invalid', receipt: null }
-  }
-  input = inputSnapshot.value
+  try {
+    const inputSnapshot = snapshotG24PlainData(input)
+    if (!inputSnapshot.ok) {
+      return { eligible: false, reason: 'controlling_state_invalid', receipt: null }
+    }
+    input = inputSnapshot.value
+    const inputKeys = ['projection', 'controls', 'trustedAsOf', 'receiptId']
+    if (Object.prototype.hasOwnProperty.call(input, 'authority')) inputKeys.push('authority')
+    if (
+      !g24HasExactOwnKeys(input, inputKeys) ||
+      !g24PendingReleaseProjectionIsStructurallyValid(input.projection) ||
+      !g24ControlRegistryIsStructurallyValid(input.controls) ||
+      typeof input.trustedAsOf !== 'string' ||
+      typeof input.receiptId !== 'string'
+    ) {
+      return { eligible: false, reason: 'controlling_state_invalid', receipt: null }
+    }
+    if (
+      Object.prototype.hasOwnProperty.call(input, 'authority') &&
+      !g24ReleaseAuthorityIsStructurallyValid(input.authority)
+    ) {
+      return {
+        eligible: false,
+        reason: 'release_authority_missing_or_mismatched',
+        receipt: null,
+      }
+    }
   const currentMerged = new Map<string, G24ControlWatermark>()
   const stateErrors: string[] = []
   const selectorWatermarkErrors: string[] = []
@@ -2245,10 +2414,13 @@ export function evaluateG24PendingReleaseUse(input: {
       input.projection.includedCanonicalBrainVersions,
     )
 
-  return {
-    eligible: Boolean(authorityMatches),
-    reason: authorityMatches ? 'eligible' : 'release_authority_missing_or_mismatched',
-    receipt: null,
+    return {
+      eligible: Boolean(authorityMatches),
+      reason: authorityMatches ? 'eligible' : 'release_authority_missing_or_mismatched',
+      receipt: null,
+    }
+  } catch {
+    return { eligible: false, reason: 'controlling_state_invalid', receipt: null }
   }
 }
 
