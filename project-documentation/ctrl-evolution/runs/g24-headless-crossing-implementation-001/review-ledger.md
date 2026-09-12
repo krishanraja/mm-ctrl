@@ -649,6 +649,40 @@ Two hundred and nine focused checks pass locally. Three new checks cover separat
 
 The repair is frozen at `8ac8f6a8e2f48eb56f7b8ac80c17401d34e1b30f`, tree `8552dc3554646a60daa7485b7ad8bf3912120e5a`, source blob `1faeb23d341d1f6f90c8707bafb322d507c90490` and test blob `729161718eda4065d8922a3f80c28f541772d207`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 25
+
+**Frozen code:** `8ac8f6a8e2f48eb56f7b8ac80c17401d34e1b30f`
+
+**Frozen tree:** `8552dc3554646a60daa7485b7ad8bf3912120e5a`
+
+**Frozen source blob:** `1faeb23d341d1f6f90c8707bafb322d507c90490`
+
+**Frozen test blob:** `729161718eda4065d8922a3f80c28f541772d207`
+
+**Truthful state correction:** `8dcf0504c545e003b33f5d0013098e4b568f56f8`
+
+**Adjudication:** `VETO`
+
+Both reviewers verified that equivalent-plan and authentic-branch terminal finality held, the stateful outer command attack no longer traversed its hidden 100,000-entry ledger, and all 209 checks plus adjacent gates passed. Three current defects or claim conflicts remained under the combined stricter verdict:
+
+1. A malformed outer command with an extra string key, symbol or missing non-ledger field returned before independently recovering its valid receipt history. The rejection was correct, but the empty returned list could again masquerade as replacement state and erase authentic history.
+2. Allowlisted projection accepted a proof-bearing receipt after unsupported string and symbol fields had been added, silently removing those mutations. The fields could not influence semantics, but accepting the post-issuance mutation contradicted the exact-envelope and mutated-history rejection claims.
+3. The canonical terminal registry retained the complete large plan fingerprint and complete terminal receipt for every terminalized plan. One hundred plans retained approximately 25.5 MB after garbage collection; an ordinary fixture's stored receipt serialized to approximately 135 KB. Canonical finality was correct, but the registry itself created avoidable permanent amplification.
+
+The adjudicator accepted bounded receipt projection as a safe semantic boundary if documented precisely. The defense reviewer correctly required issuance-time immutability of the keyset so projection could not launder a post-issuance mutation. The combined resolution is to seal the exact issued receipt envelope, then inspect only that bounded envelope, and to retain fixed cryptographic identities rather than full event payloads.
+
+## Repair round 25
+
+Every newly issued execution receipt and every proof-preserving receipt clone is now sealed with its exact canonical keyset. Recovery first requires the original source object to carry an issuance proof and remain sealed, then performs exact-key capture. Unsupported string or symbol additions therefore cannot be made to an authentic receipt. Canonical fields remain writable only so the boundary can detect and reject their mutation through the existing fingerprint mismatch; callers cannot expand or shrink the envelope.
+
+Outer command capture now acquires the prior-ledger descriptor first and retains it independently from the envelope-exactness verdict. Extra keys, symbols, missing non-ledger fields, custom shape or later reflection failure still reject the command, but a valid issuance-proven causal ledger is returned as preserved state. The command is never acted on unless the complete outer envelope is exact.
+
+Terminal state is keyed by a domain-separated SHA-256 digest of the exact canonical plan fingerprint. It stores only the fixed prefix digest, fixed request digest and fixed receipt digest. Exact replay deterministically reconstructs the receipt from the newly validated request, verifies its fixed digest and issues a fresh sealed proof-preserving result. Full plan, request and receipt payloads are no longer retained by the registry. The registry remains same-process state with later durable lifecycle, restart and concurrency requirements, but its value size no longer scales with fixture or identifier size.
+
+Two hundred and eleven focused checks pass locally. New checks cover outer string extras, symbol extras and missing non-ledger fields over a valid two-receipt history; sealed original and cloned receipts; rejection of string and symbol additions at mutation time; and continued detection of canonical-field mutation.
+
+The repair is frozen at `5dc193851a2452d77fc2080c195028adf9ab1115`, tree `61d87d44ab39a027d50b8707ddf64cfdfacf5880`, source blob `872d3da1b57ac7c4c2c3cda43a12cce039bf7654` and test blob `213caa0b0735ac394a3d8263a36ade7723ea250c`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
