@@ -327,7 +327,9 @@ The moving repair makes the invalid fingerprint a reserved value that can never 
 
 Control closure now validates its complete runtime envelope before traversal. Explicit validity bounds must be canonical parseable dates. Release compilation and use reject duplicate selector, canonical source, canonical Brain, root, manifest-control and watermark identities; Release use also recomputes the controlling-watermark fingerprint as a derived invariant. Array ownership validates a bounded dense keyset before allocating or iterating by the declared length. Malformed atom, plan, execution and closure calls return or throw only their defined fail-closed outcomes.
 
-One hundred and seventy-nine focused checks pass locally. Fourteen new checks cover reserved-sentinel selectors and plans; padded selector, authority-control, atom, channel, timing and evidence identities; blank explicit validity; duplicate Release forms after recomputed public fingerprints and matching authority; unknown atom, approval, plan, attempt and correction-graph fields; malformed public entry points; and a maximum-length sparse array without proportional allocation. This moving repair is not verified until its exact committed bytes pass fresh independent review.
+One hundred and seventy-nine focused checks pass locally. Fourteen new checks cover reserved-sentinel selectors and plans; padded selector, authority-control, atom, channel, timing and evidence identities; blank explicit validity; duplicate Release forms after recomputed public fingerprints and matching authority; unknown atom, approval, plan, attempt and correction-graph fields; malformed public entry points; and a maximum-length sparse array without proportional allocation.
+
+The repair is frozen at `5f18f2cfc39996a3136cd96112a58fa8cb5ed918`, tree `66a750c4263a854eb581109cac0661bdf7517731`. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
