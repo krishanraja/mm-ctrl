@@ -418,6 +418,38 @@ One hundred and ninety-three focused checks pass locally. Four new grouped tests
 
 The repair is frozen at `79d39b681781514e38b28c4039948e40d618574c`, tree `a9d60542f1085e933dd3929e4e25d84cf443a04e`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 18
+
+**Frozen code:** `79d39b681781514e38b28c4039948e40d618574c`
+
+**Frozen source blob:** `5019aca11ddfc94e45b60f6cb381fc295c4fad47`
+
+**Frozen test blob:** `94e8b67831666c2c321e708b3e9eacdf1032a54c`
+
+**Truthful state correction:** `9dd5cd9fa5ebbae666e6aba306af0bb7c0c99340`
+
+**Adjudication:** `VETO`
+
+Every direct round-seventeen reproduction held. The defense reviewer then proved that burden-bearing alternatives were still caller-mutable derived facts rather than issued selector evidence. A caller could change the winning burden, delete the genuine winner or invent eligibility for a rejected route, update route and reason consistently, recompute the public fingerprint and cross Release. The adjudicator classified authenticity of otherwise internally coherent rewritten burdens as a later ingress concern; the defense reviewer classified same-process post-return mutation as current. The stricter current-gate interpretation governs this repair: kernel consumers must distinguish a selector actually issued by the kernel from a coherent reconstruction.
+
+Three exact-identity defects also remained:
+
+1. Timezone-less instants were accepted. Identical bytes changed expiry, route and selector fingerprint under different process timezones.
+2. JavaScript negative zero survived as a burden but serialized identically to positive zero, so mutation could preserve the fingerprint.
+3. Invalidation receipts omitted the exact projection fingerprint and exact observed current-control state. Different projections, or different versions of the same changed control, could therefore issue byte-identical receipts under one ID. The compiler also allowed one projection version to denote different exact content.
+
+## Repair round 18
+
+Selector results now receive a private in-process issuance proof at finalization. The proof is transferred only across the strict owned snapshot and is required by atom creation, approval, Release compilation and enrichment planning and execution. Public fingerprints remain inspectable, but coherent reconstruction or post-return mutation cannot impersonate kernel issuance. Official special-key identities such as `__proto__` remain supported by entering through selector input before issuance.
+
+Temporal fields must now use an explicit `Z` or numeric-offset instant before parsing, making validity and route decisions independent of host timezone. Negative-zero burden is rejected at input, normalized out of held diagnostic alternatives and forbidden in selector-result semantics.
+
+Invalidation receipts bind the exact projection fingerprint and a deterministic fingerprint of trusted time plus the observed control registry. The local compiler also prevents one projection version from denoting different exact projection content. Exact same-event replay remains stable; changed-event reuse of an identity fails closed.
+
+One hundred and ninety-six focused checks pass locally. Three new grouped tests reproduce all three coherent selector rewrites, timezone-less authority divergence, negative-zero equivalence, same-version projection collision and same-key different-version invalidation collision.
+
+The repair is frozen at `c006c6518e4488c32778bf1afc72fae218fc3759`, tree `7d67a63dae3bcad121ef28e774d9156a8d0d179a`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
