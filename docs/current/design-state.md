@@ -6,7 +6,7 @@ Last verified: 2026-09-12 for state routing; the Blind Spot release evidence bel
 
 This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine and proposed G24 R5 dependent Release watermark repair. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
 
-**The one current evolution action:** obtain Krish's explicit architecture-only lock over the exact council-cleared R1 through R5 bytes. Do not begin the headless Crossing until that lock is recorded; the lock itself opens no implementation or external action.
+**The one current evolution action:** implement and verify the local headless Crossing against Krish's exact R1 through R5 architecture lock. Customer-facing UI and every external action remain closed.
 
 ## Current phase
 
