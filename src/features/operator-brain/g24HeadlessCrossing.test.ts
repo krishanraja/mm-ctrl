@@ -1027,9 +1027,7 @@ describe('G24 versioned intervention and answer effects', () => {
     addHiddenJsonProjection(issued, structuredClone(issued))
     issued.value = 'Fewer rewrites'
 
-    expect(() => recordG24Answer(atom, answer, [issued])).toThrow(
-      'answer_receipt_ledger_invalid',
-    )
+    expect(() => recordG24Answer(atom, answer, [issued])).toThrow('answer_requires_plain_data')
   })
 
   it('rejects answers to proposed atoms and approval against a changed selector under the same version', () => {
@@ -1121,7 +1119,100 @@ describe('G24 versioned intervention and answer effects', () => {
         },
         [],
       ),
-    ).toThrow('answer_requires_current_exact_atom')
+    ).toThrow('answer_requires_plain_data')
+  })
+
+  it('rejects hidden options, custom collection methods, cycles and sparse issued evidence', () => {
+    const atomWithHiddenOption = approvedQuestionAtom()
+    if (atomWithHiddenOption.payload.kind !== 'question') throw new Error('expected question atom')
+    Object.defineProperty(
+      atomWithHiddenOption.payload.optionsOrComparator,
+      String(atomWithHiddenOption.payload.optionsOrComparator.length),
+      { value: 'FORGED', enumerable: false, configurable: true },
+    )
+    Object.defineProperty(atomWithHiddenOption.payload.answerEffects, 'FORGED', {
+      value: {
+        caseEffect: 'rebuild_required',
+        visibleConsequence: 'Forged consequence.',
+        retireInterventionRefs: [],
+        pendingHumanOwnedProposal: 'Forged proposal.',
+      },
+      enumerable: false,
+      configurable: true,
+    })
+    expect(() =>
+      recordG24Answer(
+        atomWithHiddenOption,
+        { receiptId: 'answer:hidden-option', kind: 'option', value: 'FORGED' },
+        [],
+      ),
+    ).toThrow('answer_requires_plain_data')
+
+    const atomWithPrototype = approvedQuestionAtom()
+    if (atomWithPrototype.payload.kind !== 'question') throw new Error('expected question atom')
+    const forgedArrayPrototype = Object.create(Array.prototype) as unknown[]
+    Object.defineProperty(forgedArrayPrototype, 'includes', { value: () => true })
+    Object.setPrototypeOf(atomWithPrototype.payload.optionsOrComparator, forgedArrayPrototype)
+    expect(() =>
+      recordG24Answer(
+        atomWithPrototype,
+        { receiptId: 'answer:prototype-option', kind: 'option', value: 'default' },
+        [],
+      ),
+    ).toThrow('answer_requires_plain_data')
+
+    const atomWithCycle = approvedQuestionAtom()
+    if (atomWithCycle.payload.kind !== 'question') throw new Error('expected question atom')
+    const cyclicExtension: Record<string, unknown> = {}
+    cyclicExtension.self = cyclicExtension
+    ;(atomWithCycle.payload as unknown as Record<string, unknown>).cyclicExtension = cyclicExtension
+    expect(() =>
+      recordG24Answer(
+        atomWithCycle,
+        { receiptId: 'answer:cyclic-option', kind: 'option', value: 'Fewer rewrites' },
+        [],
+      ),
+    ).toThrow('answer_requires_plain_data')
+
+    const honestExit = { receiptId: 'answer:sparse-issued', kind: 'unknown' as const }
+    const issued = recordG24Answer(approvedQuestionAtom(), honestExit, [])
+    issued.retiredInterventionRefs.length = 4
+    expect(() => recordG24Answer(approvedQuestionAtom(), honestExit, [issued])).toThrow(
+      'answer_requires_plain_data',
+    )
+  })
+
+  it('rejects accessor-backed selector authority before approval reads it', () => {
+    const selector = selectedFixture('highExternalHighInternal')
+    const atom = questionAtom(selector)
+    let reads = 0
+    Object.defineProperty(selector, 'controllingWatermarks', {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        reads += 1
+        return selector.controllingWatermarks
+      },
+    })
+
+    expect(() =>
+      approveG24InterventionAtom(atom, selector, {
+        atomVersion: atom.atomVersion,
+        controlVersion: atom.controlVersion,
+        purpose: atom.purpose,
+        audience: atom.audience,
+        sensitivity: atom.sensitivity,
+        channel: atom.channel,
+        timing: atom.timing,
+        decisionFrameVersion: atom.decisionFrameVersion,
+        evidenceVersions: [...atom.evidenceVersions],
+        payloadFingerprint: atom.payloadFingerprint,
+        approvalReceiptId: 'approval:accessor-selector',
+        approvedByRef: 'krish',
+        approvalAuthorityVersionRef: 'authority:FORGED',
+      }),
+    ).toThrow('intervention_approval_requires_plain_data')
+    expect(reads).toBe(0)
   })
 
   it('will not approve a self-consistent atom whose semantics contradict the current selector', () => {
@@ -1539,6 +1630,16 @@ describe('G24 versioned intervention and answer effects', () => {
       }),
     ).toThrow('correction_receipt_ledger_invalid')
 
+    replay.affectedDecisionRefs.length = 2
+    expect(() =>
+      correctG24Answer(original, replacementB, {
+        receiptId: 'answer-correction:collision',
+        idempotencyKey: 'answer-correction:collision:idempotency',
+        dependencyGraph,
+        priorCorrections: [replay],
+      }),
+    ).toThrow('correction_requires_plain_data')
+
     addHiddenJsonProjection(first, structuredClone(first))
     first.affectedDecisionRefs = ['forged:decision']
     expect(() =>
@@ -1548,7 +1649,7 @@ describe('G24 versioned intervention and answer effects', () => {
         dependencyGraph,
         priorCorrections: [first],
       }),
-    ).toThrow('correction_receipt_ledger_invalid')
+    ).toThrow('correction_requires_plain_data')
   })
 
   it('binds correction replay to full answer and dependency graph content', () => {
@@ -1624,9 +1725,99 @@ describe('G24 versioned intervention and answer effects', () => {
       }),
     ).toThrow('correction_dependency_graph_malformed')
   })
+
+  it('rejects accessors, sparse arrays, extras and custom prototypes in correction graphs', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(
+      atom,
+      { receiptId: 'answer:plain-graph:original', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacement = recordG24Answer(
+      atom,
+      {
+        receiptId: 'answer:plain-graph:replacement',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original],
+    )
+    const baseDetails = {
+      receiptId: 'answer-correction:plain-graph',
+      idempotencyKey: 'answer-correction:plain-graph:idempotency',
+      priorCorrections: [],
+    }
+    let accessorReads = 0
+    const accessorGraph = {
+      graphVersion: 'answer-dependency-graph:accessor:v1',
+      get derivativeDependencies() {
+        accessorReads += 1
+        return { forged: [original.receiptId] }
+      },
+      decisionDependencies: {},
+    }
+    expect(() =>
+      correctG24Answer(original, replacement, {
+        ...baseDetails,
+        dependencyGraph: accessorGraph,
+      }),
+    ).toThrow('correction_requires_plain_data')
+    expect(accessorReads).toBe(0)
+
+    const sparseDependencies = Array(1) as string[]
+    const dependenciesWithExtra = [original.receiptId]
+    ;(dependenciesWithExtra as unknown as Record<string, unknown>).extra = 'ignored-before'
+    const customPrototypeDependencies = [original.receiptId]
+    Object.setPrototypeOf(customPrototypeDependencies, Object.create(Array.prototype))
+    for (const [name, dependencies] of [
+      ['sparse', sparseDependencies],
+      ['extra', dependenciesWithExtra],
+      ['prototype', customPrototypeDependencies],
+    ] as const) {
+      expect(() =>
+        correctG24Answer(original, replacement, {
+          ...baseDetails,
+          receiptId: `${baseDetails.receiptId}:${name}`,
+          idempotencyKey: `${baseDetails.idempotencyKey}:${name}`,
+          dependencyGraph: {
+            graphVersion: `answer-dependency-graph:${name}:v1`,
+            derivativeDependencies: { derived: dependencies },
+            decisionDependencies: {},
+          },
+        }),
+      ).toThrow('correction_requires_plain_data')
+    }
+  })
 })
 
 describe('G24 dependent Release closure', () => {
+  it('rejects an accessor-backed Release projection before checking or using it', () => {
+    const projection = compileProjection()
+    const controls = buildG24FixtureControls()
+    const authority = buildExactG24ReleaseAuthority(projection)
+    const originalPurpose = projection.purpose
+    let reads = 0
+    Object.defineProperty(projection, 'purpose', {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        reads += 1
+        return reads < 3 ? originalPurpose : 'purpose:FORGED'
+      },
+    })
+
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority,
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:accessor',
+      }),
+    ).toEqual({ eligible: false, reason: 'controlling_state_invalid', receipt: null })
+    expect(reads).toBe(0)
+  })
+
   it('compiles the exact selector result with its complete functional closure', () => {
     const projection = compileProjection()
     expect(projection.selectorResultVersions).toEqual([
@@ -2378,8 +2569,30 @@ describe('G24 engagement lifecycle', () => {
       ),
     ).toMatchObject({
       accepted: false,
-      reason: 'lifecycle_receipt_history_invalid',
+      reason: 'lifecycle_requires_plain_data',
     })
+  })
+
+  it('rejects unsupported lifecycle request fields before issuing a receipt', () => {
+    const initial = issuedLifecycleSnapshotAt('none')
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const request = {
+      ...lifecycleRequest(open),
+      unsupported: 'must not enter the request fingerprint',
+    }
+    const result = applyG24LifecycleTransition(
+      initial,
+      request as G24LifecycleTransitionRequest,
+    )
+
+    expect(result).toMatchObject({
+      accepted: false,
+      reason: 'lifecycle_envelope_unknown_fields',
+      snapshot: initial,
+    })
+    expect(result.snapshot.receipts).toHaveLength(0)
   })
 
   it('does not replay an old request across a changed lifecycle identity binding', () => {
@@ -2564,6 +2777,44 @@ describe('G24 engagement lifecycle', () => {
 })
 
 describe('G24 bounded enrichment execution', () => {
+  it('rejects an accessor-backed issued plan before budget checks or use', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:accessor:v1',
+      maximumWallClockMs: 2_000,
+      maximumAttempts: 1,
+    })
+    let reads = 0
+    Object.defineProperty(plan, 'maximumAttempts', {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        reads += 1
+        return reads === 1 ? 1 : 2
+      },
+    })
+    const result = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: [],
+      attempt: {
+        receiptId: 'enrichment-receipt:accessor:2',
+        idempotencyKey: 'enrichment-attempt:accessor:2',
+        elapsedMs: 10,
+        outcome: 'succeeded',
+        sourceRef: 'proposed-source:accessor:v1',
+      },
+    })
+
+    expect(reads).toBe(0)
+    expect(result).toEqual({
+      receipt: null,
+      receipts: [],
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+  })
+
   it('keeps successful output proposed until trusted evaluation awards standing', () => {
     const selector = selectedFixture('highExternalLowInternal')
     const plan = createG24EnrichmentExecutionPlan(selector, {

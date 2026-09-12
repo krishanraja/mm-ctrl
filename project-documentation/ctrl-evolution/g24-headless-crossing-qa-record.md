@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** exact tenth-veto repair at `c5a6432` under independent byte review, not connected to product runtime
+**State:** local deterministic kernel under eleventh-veto repair, not connected to product runtime and awaiting frozen exact-byte review
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -30,7 +30,7 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - an append-only invalidation receipt with no approval, delivery or external side effect; and
 - a fresh structurally bound trusted evaluation plus a new exact named-leader authority after rebuild; and
 - bounded enrichment attempts tied to exact in-process plan and receipt issuance proofs plus a structurally checked supplied receipt ledger that hold malformed, mutated, reconstructed, stale-replay, slow, failed, stale, over-budget and duplicate-collision outcomes without awarding standing or changing the Brain; and
-- plain-data fingerprinting across the kernel's proof and replay boundaries so caller-defined serialization behaviour cannot conceal post-issuance or post-approval mutation.
+- one strict owned plain-data snapshot before stateful authorization, derivation and use, rejecting accessors, hidden properties, sparse or extended arrays, custom prototypes, functions, symbols, nonfinite values and cycles before they can conceal mutation or split checking from use.
 
 ## Deterministic fixtures
 
@@ -52,13 +52,14 @@ The fixture range includes:
 14. malformed, mutated, reconstructed, slow, failed, duplicate, stale and over-budget execution envelopes; and
 15. lifecycle actor aliases, padded versions, non-root empty history, named-leader rebound, prior-snapshot mutation and noncanonical execution identities; and
 16. exact correction replay, receipt collision, idempotency collision, same-ID different answer bytes, same-version different dependency graphs, padded graph references and reconstructed correction history; and
-17. hidden serialization projections over approved atom, answer, correction, lifecycle and execution bytes.
+17. hidden serialization projections over approved atom, answer, correction, lifecycle and execution bytes; and
+18. sparse or hidden collections, custom prototypes, cycles, accessors and unsupported lifecycle fields across approval, answer, correction, lifecycle, execution and Release.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 144 checks passed in one file.
+- `npm run brain:g24:headless-check`: 150 checks passed in one file.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.

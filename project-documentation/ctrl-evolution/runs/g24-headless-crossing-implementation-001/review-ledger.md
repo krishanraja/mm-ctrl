@@ -225,6 +225,31 @@ The current repair fingerprints an explicit descriptor-based plain-data projecti
 
 The repair was frozen at `c5a6432c9545f4bc04622dd6e0265fa8695cc167`, tree `f55b9e9d1b676cf8cf95cefb16928217be5cff21`, with 144 focused checks, including hidden-serialization attacks against approved atom content, answer evidence, correction history, lifecycle snapshots and execution receipts, plus same-ID answer-content collisions, distinct same-version graphs and padded graph references. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 11
+
+**Frozen code:** `c5a6432c9545f4bc04622dd6e0265fa8695cc167`
+
+**Truthful state correction:** `95955bfccdb00a4df2937462aa878da2ee69a950`
+
+**Adjudication:** `VETO`
+
+The correction fingerprints, padded-reference rejection and ordinary hidden-serialization repairs held. The exact review then proved that the descriptor projector was still lossy and that several APIs read mutable caller objects more than once:
+
+1. Sparse arrays, non-enumerable array entries and hidden object properties were omitted from identity. A hidden option and answer effect could therefore create immutable evidence after approval, while sparse issued answer and correction arrays replayed as unchanged.
+2. Custom collection prototypes could replace `includes` or `some`, admitting an unoffered answer or suppressing correction lineage without changing the recorded fingerprint.
+3. Repeated references and real cycles used one marker. Two different object topologies therefore shared an identity and reopened post-approval mutation.
+4. Stateful getters split checking from use across selector authority, execution budget, Release purpose and correction graph derivation. Each API could approve one value, act on another and record an internally contradictory result.
+5. Sparse, extended or custom-prototype dependency collections and nonplain records such as `Map` could erase graph edges.
+6. Unsupported lifecycle request fields could enter the first request fingerprint but disappear during historical reconstruction, causing the kernel to accept a transition whose own immediate retry rejected.
+
+These defects shared one architectural cause: exactness was being inferred from live caller-owned JavaScript objects rather than one strict owned data snapshot.
+
+## Repair round 11
+
+The current repair replaces lossy projection with a strict recursive snapshot boundary. Admissible values are finite JSON-like primitives, ordinary own-data objects and dense vanilla arrays. It rejects accessors, functions, symbols, symbol keys, hidden properties, extra array keys, sparse arrays, custom prototypes, nonfinite values and cycles. Shared acyclic references are copied as repeated values rather than confused with cycles. Stateful APIs snapshot before semantic reads, transfer valid private issuance proofs to their owned copies where necessary, then validate, fingerprint, derive and use only those copies. Lifecycle snapshots and requests additionally require their exact known field sets before receipt issuance.
+
+One hundred and fifty focused checks pass. The new attacks cover hidden options and effects, sparse issued answer and correction evidence, custom array behaviour, cyclic approved content, accessor-backed selector authority, dependency graphs, execution plans and Release projections, malformed graph collections and unsupported lifecycle fields. The moving bytes remain unverified until frozen exact-byte review.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
