@@ -974,6 +974,7 @@ export function createG24InterventionAtom(
       throw new Error('question_honest_exits_invalid')
     }
     if (
+      typeof atom.payload.scopedWriteIn !== 'boolean' ||
       !Array.isArray(atom.payload.optionsOrComparator) ||
       !atom.payload.answerEffects ||
       typeof atom.payload.answerEffects !== 'object' ||
@@ -1007,6 +1008,12 @@ export function createG24InterventionAtom(
         atom.payload.optionsOrComparator.length
     ) {
       throw new Error('question_options_or_comparator_invalid')
+    }
+    if (
+      atom.payload.answerGrammar === 'ranked_choice' &&
+      atom.payload.optionsOrComparator.length > 5
+    ) {
+      throw new Error('question_ranking_exceeds_five')
     }
     const requiredEffectKeys = [...new Set([
       ...atom.payload.honestExits,
@@ -1058,8 +1065,7 @@ export function createG24InterventionAtom(
       }
       if (
         (effect.caseEffect === 'no_case_change' &&
-          (effect.pendingHumanOwnedProposal !== null || effect.retireInterventionRefs.length > 0)) ||
-        (effect.caseEffect === 'rebuild_required' && effect.pendingHumanOwnedProposal === null)
+          (effect.pendingHumanOwnedProposal !== null || effect.retireInterventionRefs.length > 0))
       ) {
         throw new Error(`answer_effect_semantics_invalid:${key}`)
       }
@@ -1075,11 +1081,12 @@ export function createG24InterventionAtom(
       }
     }
   } else if (
+    !Array.isArray(atom.payload.exactAgenda) ||
     atom.payload.exactAgenda.length === 0 ||
     atom.payload.exactAgenda.some((item) => !item.trim()) ||
     !atom.payload.leaderVisiblePurpose.trim() ||
     !atom.payload.expectedEndState.trim() ||
-    !atom.payload.leaderCanDeclineRejectOrReframe ||
+    atom.payload.leaderCanDeclineRejectOrReframe !== true ||
     atom.payload.noContactScheduleCaptureOrLearningAuthority !== true
   ) {
     throw new Error('session_atom_required_boundary_missing')
@@ -2130,6 +2137,93 @@ function lifecycleIdentifierIsCanonical(value: string): boolean {
   return typeof value === 'string' && value.length > 0 && value === value.trim()
 }
 
+function buildCanonicalG24LifecycleReceipt(
+  definition: G24LifecycleTransition,
+  request: G24LifecycleTransitionRequest,
+): G24LifecycleReceipt {
+  return {
+    receiptId: request.receiptId,
+    transitionId: request.transitionId,
+    idempotencyKey: request.idempotencyKey,
+    beforeState: definition.from,
+    beforeVersion: request.fromVersion,
+    afterState: definition.to,
+    afterVersion: request.afterVersion,
+    actorClass: request.actorClass,
+    actorRefs: [...request.actorRefs].sort(compareText),
+    identityControlVersionRef: request.identityControlVersionRef,
+    authority: request.authority,
+    authorityVersionRef: request.authorityVersionRef,
+    precondition: request.precondition,
+    preconditionEvidenceRefs: [...request.preconditionEvidenceRefs].sort(compareText),
+    invalidation: definition.invalidation,
+    receiptType: definition.receipt,
+    requestFingerprint: fingerprintG24LifecycleRequest(request),
+  }
+}
+
+function g24LifecycleHistoryIsStructurallyValid(snapshot: G24LifecycleSnapshot): boolean {
+  if (!Array.isArray(snapshot.receipts)) return false
+  const receiptIds = new Set<string>()
+  const idempotencyKeys = new Set<string>()
+  let previous: G24LifecycleReceipt | undefined
+  for (const receipt of snapshot.receipts) {
+    if (
+      !receipt ||
+      typeof receipt !== 'object' ||
+      Array.isArray(receipt) ||
+      !Array.isArray(receipt.actorRefs) ||
+      !Array.isArray(receipt.preconditionEvidenceRefs)
+    ) {
+      return false
+    }
+    const definition = G24_LIFECYCLE_TRANSITIONS.find(({ id }) => id === receipt.transitionId)
+    if (!definition) return false
+    const request: G24LifecycleTransitionRequest = {
+      transitionId: receipt.transitionId,
+      fromVersion: receipt.beforeVersion,
+      afterVersion: receipt.afterVersion,
+      actorClass: receipt.actorClass,
+      actorRefs: [...receipt.actorRefs],
+      identityControlVersionRef: receipt.identityControlVersionRef,
+      authority: receipt.authority,
+      authorityVersionRef: receipt.authorityVersionRef,
+      precondition: receipt.precondition,
+      preconditionEvidenceRefs: [...receipt.preconditionEvidenceRefs],
+      idempotencyKey: receipt.idempotencyKey,
+      receiptId: receipt.receiptId,
+    }
+    if (
+      !lifecycleRefsAreCanonical(receipt.actorRefs) ||
+      !lifecycleActorRefsAreValid(receipt.actorClass, receipt.actorRefs, snapshot.namedLeaderRef) ||
+      !lifecycleRefsAreCanonical(receipt.preconditionEvidenceRefs) ||
+      !lifecycleIdentifierIsCanonical(receipt.receiptId) ||
+      !lifecycleIdentifierIsCanonical(receipt.idempotencyKey) ||
+      !lifecycleIdentifierIsCanonical(receipt.afterVersion) ||
+      (receipt.beforeVersion !== null &&
+        !lifecycleIdentifierIsCanonical(receipt.beforeVersion)) ||
+      !lifecycleIdentifierIsCanonical(receipt.identityControlVersionRef) ||
+      !lifecycleIdentifierIsCanonical(receipt.authorityVersionRef) ||
+      receiptIds.has(receipt.receiptId) ||
+      idempotencyKeys.has(receipt.idempotencyKey) ||
+      (previous !== undefined &&
+        (receipt.beforeState !== previous.afterState ||
+          receipt.beforeVersion !== previous.afterVersion)) ||
+      JSON.stringify(receipt) !==
+        JSON.stringify(buildCanonicalG24LifecycleReceipt(definition, request))
+    ) {
+      return false
+    }
+    receiptIds.add(receipt.receiptId)
+    idempotencyKeys.add(receipt.idempotencyKey)
+    previous = receipt
+  }
+  return (
+    previous === undefined ||
+    (snapshot.state === previous.afterState && snapshot.version === previous.afterVersion)
+  )
+}
+
 export function applyG24LifecycleTransition(
   snapshot: G24LifecycleSnapshot,
   request: G24LifecycleTransitionRequest,
@@ -2139,6 +2233,13 @@ export function applyG24LifecycleTransition(
     !lifecycleIdentifierIsCanonical(snapshot.identityControlVersion)
   ) {
     return { accepted: false, reason: 'lifecycle_identity_binding_missing', snapshot: structuredClone(snapshot) }
+  }
+  if (!g24LifecycleHistoryIsStructurallyValid(snapshot)) {
+    return {
+      accepted: false,
+      reason: 'lifecycle_receipt_history_invalid',
+      snapshot: structuredClone(snapshot),
+    }
   }
   const definition = G24_LIFECYCLE_TRANSITIONS.find(({ id }) => id === request.transitionId)
   if (!definition) return { accepted: false, reason: 'transition_unknown', snapshot: structuredClone(snapshot) }
@@ -2171,7 +2272,11 @@ export function applyG24LifecycleTransition(
   const requestFingerprint = fingerprintG24LifecycleRequest(request)
   const prior = snapshot.receipts.find((receipt) => receipt.idempotencyKey === request.idempotencyKey)
   if (prior) {
-    if (prior.requestFingerprint !== requestFingerprint) {
+    const canonicalPrior = buildCanonicalG24LifecycleReceipt(definition, request)
+    if (
+      prior.requestFingerprint !== requestFingerprint ||
+      JSON.stringify(prior) !== JSON.stringify(canonicalPrior)
+    ) {
       return {
         accepted: false,
         reason: 'idempotency_key_collision',
@@ -2208,25 +2313,7 @@ export function applyG24LifecycleTransition(
   ) {
     return { accepted: false, reason: 'after_version_already_used', snapshot: structuredClone(snapshot) }
   }
-  const receipt: G24LifecycleReceipt = {
-    receiptId: request.receiptId,
-    transitionId: request.transitionId,
-    idempotencyKey: request.idempotencyKey,
-    beforeState: snapshot.state,
-    beforeVersion: snapshot.version,
-    afterState: definition.to,
-    afterVersion: request.afterVersion,
-    actorClass: request.actorClass,
-    actorRefs: [...new Set(request.actorRefs)].sort(compareText),
-    identityControlVersionRef: request.identityControlVersionRef,
-    authority: request.authority,
-    authorityVersionRef: request.authorityVersionRef,
-    precondition: request.precondition,
-    preconditionEvidenceRefs: [...new Set(request.preconditionEvidenceRefs)].sort(compareText),
-    invalidation: definition.invalidation,
-    receiptType: definition.receipt,
-    requestFingerprint,
-  }
+  const receipt = buildCanonicalG24LifecycleReceipt(definition, request)
   return {
     accepted: true,
     reason: 'transition_accepted',
@@ -2314,10 +2401,57 @@ export type G24EnrichmentAttemptResult =
       receipts: G24ExecutionReceipt[]
       replayed: false
       rejection: {
-        status: 'malformed_rejected'
+        status: 'malformed_rejected' | 'stale_context_rejected'
         durableReceiptCreated: false
       }
     }
+
+function g24ExecutionReceiptLedgerIsStructurallyValid(
+  receipts: readonly G24ExecutionReceipt[],
+  plan: G24EnrichmentExecutionPlan,
+): boolean {
+  const receiptIds = new Set<string>()
+  const idempotencyKeys = new Set<string>()
+  return receipts.every((receipt, index) => {
+    if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt)) return false
+    const sourceRefIsValid =
+      receipt.status === 'proposed_evidence'
+        ? typeof receipt.sourceRef === 'string' &&
+          Boolean(receipt.sourceRef.trim()) &&
+          receipt.sourceRef === receipt.sourceRef.trim()
+        : receipt.sourceRef === null
+    const identityIsCanonical =
+      typeof receipt.receiptId === 'string' &&
+      Boolean(receipt.receiptId.trim()) &&
+      receipt.receiptId === receipt.receiptId.trim() &&
+      typeof receipt.idempotencyKey === 'string' &&
+      Boolean(receipt.idempotencyKey.trim()) &&
+      receipt.idempotencyKey === receipt.idempotencyKey.trim() &&
+      typeof receipt.attemptFingerprint === 'string' &&
+      Boolean(receipt.attemptFingerprint)
+    const unique =
+      !receiptIds.has(receipt.receiptId) && !idempotencyKeys.has(receipt.idempotencyKey)
+    receiptIds.add(receipt.receiptId)
+    idempotencyKeys.add(receipt.idempotencyKey)
+    return (
+      identityIsCanonical &&
+      unique &&
+      receipt.planVersion === plan.planVersion &&
+      receipt.planFingerprint === plan.planFingerprint &&
+      receipt.attemptNumber === index + 1 &&
+      (['proposed_evidence', 'failed_held', 'slow_held', 'stale_rejected', 'attempt_budget_held'] as unknown[]).includes(
+        receipt.status,
+      ) &&
+      sourceRefIsValid &&
+      receipt.appendOnly === true &&
+      receipt.standingAwarded === false &&
+      receipt.canonicalEvidenceCreated === false &&
+      receipt.brainChanged === false &&
+      receipt.approvalCreated === false &&
+      receipt.deliveryCreated === false
+    )
+  })
+}
 
 export function createG24EnrichmentExecutionPlan(
   selector: G24SelectorResult,
@@ -2363,6 +2497,7 @@ export function recordG24EnrichmentAttempt(input: {
     sourceRef?: string
   }
 }): G24EnrichmentAttemptResult {
+  const priorReceiptLedgerIsAnArray = Array.isArray(input.priorReceipts)
   const receiptIdIsValid =
     typeof input.attempt.receiptId === 'string' &&
     Boolean(input.attempt.receiptId.trim()) &&
@@ -2399,11 +2534,20 @@ export function recordG24EnrichmentAttempt(input: {
     !planVersionIsValid ||
     !planFingerprintIsValid ||
     !planIssuanceIsValid ||
+    !priorReceiptLedgerIsAnArray ||
     !Number.isFinite(input.plan.maximumWallClockMs) ||
     input.plan.maximumWallClockMs <= 0 ||
     !Number.isInteger(input.plan.maximumAttempts) ||
     input.plan.maximumAttempts <= 0
   if (malformed) {
+    return {
+      receipt: null,
+      receipts: structuredClone(input.priorReceipts),
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    }
+  }
+  if (!g24ExecutionReceiptLedgerIsStructurallyValid(input.priorReceipts, input.plan)) {
     return {
       receipt: null,
       receipts: structuredClone(input.priorReceipts),
@@ -2421,36 +2565,31 @@ export function recordG24EnrichmentAttempt(input: {
     outcome: input.attempt.outcome,
     sourceRef: input.attempt.sourceRef ?? null,
   })
-  const prior = input.priorReceipts.find(
+  const priorIndex = input.priorReceipts.findIndex(
     ({ idempotencyKey }) => idempotencyKey === input.attempt.idempotencyKey,
   )
-  if (prior) {
-    const sameAttempt =
-      prior.receiptId === input.attempt.receiptId &&
-      prior.planVersion === input.plan.planVersion &&
-      prior.planFingerprint === input.plan.planFingerprint &&
-      prior.attemptFingerprint === attemptFingerprint
-    if (!sameAttempt) throw new Error('execution_idempotency_key_collision')
+  const prior = priorIndex >= 0 ? input.priorReceipts[priorIndex] : undefined
+  const currentSelectorMatchesPlan =
+    input.currentSelector.route === 'enrich' &&
+    input.currentSelector.actionable &&
+    input.currentSelector.selectorResultVersion === input.plan.selectorResultVersion &&
+    input.currentSelector.selectorFingerprint === input.plan.selectorFingerprint &&
+    fingerprintG24SelectorResult(input.currentSelector) === input.currentSelector.selectorFingerprint
+  const receiptIdAlreadyUsed = input.priorReceipts.some(
+    ({ receiptId }) => receiptId === input.attempt.receiptId,
+  )
+  if (!currentSelectorMatchesPlan && (prior || receiptIdAlreadyUsed)) {
     return {
-      receipt: structuredClone(prior),
+      receipt: null,
       receipts: structuredClone(input.priorReceipts),
-      replayed: true,
-      rejection: null,
+      replayed: false,
+      rejection: { status: 'stale_context_rejected', durableReceiptCreated: false },
     }
   }
-  if (input.priorReceipts.some(({ receiptId }) => receiptId === input.attempt.receiptId)) {
-    throw new Error('execution_receipt_id_collision')
-  }
 
-  const attemptNumber = input.priorReceipts.length + 1
+  const attemptNumber = prior ? priorIndex + 1 : input.priorReceipts.length + 1
   let status: G24ExecutionStatus
-  if (
-    input.currentSelector.route !== 'enrich' ||
-    !input.currentSelector.actionable ||
-    input.currentSelector.selectorResultVersion !== input.plan.selectorResultVersion ||
-    input.currentSelector.selectorFingerprint !== input.plan.selectorFingerprint ||
-    fingerprintG24SelectorResult(input.currentSelector) !== input.currentSelector.selectorFingerprint
-  ) {
+  if (!currentSelectorMatchesPlan) {
     status = 'stale_rejected'
   } else if (attemptNumber > input.plan.maximumAttempts) {
     status = 'attempt_budget_held'
@@ -2481,6 +2620,24 @@ export function recordG24EnrichmentAttempt(input: {
     approvalCreated: false,
     deliveryCreated: false,
   }
+  if (prior) {
+    const sameAttemptIdentity =
+      prior.receiptId === input.attempt.receiptId &&
+      prior.planVersion === input.plan.planVersion &&
+      prior.planFingerprint === input.plan.planFingerprint &&
+      prior.attemptFingerprint === attemptFingerprint
+    if (!sameAttemptIdentity) throw new Error('execution_idempotency_key_collision')
+    if (JSON.stringify(prior) !== JSON.stringify(receipt)) {
+      throw new Error('execution_receipt_history_invalid')
+    }
+    return {
+      receipt: structuredClone(receipt),
+      receipts: structuredClone(input.priorReceipts),
+      replayed: true,
+      rejection: null,
+    }
+  }
+  if (receiptIdAlreadyUsed) throw new Error('execution_receipt_id_collision')
   return {
     receipt,
     receipts: [...structuredClone(input.priorReceipts), receipt],

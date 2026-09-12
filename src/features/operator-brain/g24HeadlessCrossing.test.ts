@@ -576,6 +576,31 @@ describe('G24 versioned intervention and answer effects', () => {
     })
   })
 
+  it('requires the session decline boundary to be literal true, not a truthy string', () => {
+    const selector = selectedFixture('lowExternalLowInternal')
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        atomVersion: 'session-invalid-decline:v1',
+        controlVersion: 'session-control:v1',
+        purpose: 'Resolve the incentive and quality-standard conflict.',
+        audience: 'named_leader_private',
+        sensitivity: 'private',
+        channel: 'operator_pull_only',
+        timing: 'next_operator_review',
+        decisionFrameVersion: selector.acceptedDecisionFrameRef,
+        evidenceVersions: [selector.evidenceCoverageRef],
+        payload: {
+          kind: 'session',
+          exactAgenda: ['Name the customer proof the rebuild must earn.'],
+          leaderVisiblePurpose: 'Leave with one testable route.',
+          expectedEndState: 'One leader-owned proof threshold.',
+          leaderCanDeclineRejectOrReframe: 'false',
+          noContactScheduleCaptureOrLearningAuthority: true,
+        },
+      } as never),
+    ).toThrow('session_atom_required_boundary_missing')
+  })
+
   it('requires exact content, control, purpose, audience, channel, timing and evidence approval binding', () => {
     const selector = selectedFixture('highExternalHighInternal')
     const atom = questionAtom(selector)
@@ -721,6 +746,16 @@ describe('G24 versioned intervention and answer effects', () => {
         ...atomInput,
         payload: {
           ...questionPayload,
+          scopedWriteIn: 'false',
+        },
+      } as never),
+    ).toThrow('question_answer_contract_invalid')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
           honestExits: ['unknown', 'defer', 'refuse', 'invented_exit'],
         },
       } as never),
@@ -801,7 +836,7 @@ describe('G24 versioned intervention and answer effects', () => {
             caseEffect: 'rebuild_required',
             visibleConsequence: 'The case will be rebuilt around your complete ranking.',
             retireInterventionRefs: ['question:priority-order:v1'],
-            pendingHumanOwnedProposal: 'Review this priority order as a decision constraint.',
+            pendingHumanOwnedProposal: null,
           },
           unknown: base.payload.answerEffects.unknown,
           defer: base.payload.answerEffects.defer,
@@ -810,6 +845,27 @@ describe('G24 versioned intervention and answer effects', () => {
         },
       },
     })
+    if (ranked.payload.kind !== 'question') throw new Error('expected ranked question payload')
+    const rankedPayload = ranked.payload
+    const {
+      selectorResultVersion: _selectorResultVersion,
+      selectorFingerprint: _selectorFingerprint,
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
+      payload: _payload,
+      ...rankedInput
+    } = ranked
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...rankedInput,
+        atomVersion: 'ranked-question-too-long:v1',
+        payload: {
+          ...rankedPayload,
+          optionsOrComparator: ['One', 'Two', 'Three', 'Four', 'Five', 'Six'],
+        },
+      }),
+    ).toThrow('question_ranking_exceeds_five')
     const approved = approveG24InterventionAtom(ranked, selector, {
       atomVersion: ranked.atomVersion,
       controlVersion: ranked.controlVersion,
@@ -838,7 +894,7 @@ describe('G24 versioned intervention and answer effects', () => {
       answerKind: 'ranking',
       value: ['Customer impact', 'Speed', 'Cost'],
       caseEffect: 'rebuild_required',
-      pendingHumanOwnedProposal: 'Review this priority order as a decision constraint.',
+      pendingHumanOwnedProposal: null,
     })
     for (const value of [
       ['Customer impact', 'Speed'],
@@ -2064,6 +2120,32 @@ describe('G24 engagement lifecycle', () => {
     expect(collision.snapshot).toEqual(first.snapshot)
   })
 
+  it('rejects a forged lifecycle receipt before replay or append can preserve it', () => {
+    const initial: G24LifecycleSnapshot = {
+      state: 'none',
+      version: null,
+      namedLeaderRef: 'leader:maya',
+      identityControlVersion: 'identity-control:maya:v1',
+      receipts: [],
+    }
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const request = lifecycleRequest(open, { afterVersion: 'preparing:v1' })
+    const first = applyG24LifecycleTransition(initial, request)
+    const forged = structuredClone(first.snapshot)
+    forged.receipts[0].afterState = 'completed' as never
+    forged.receipts[0].actorRefs = ['attacker']
+    forged.receipts[0].invalidation = 'release_granted'
+    forged.receipts[0].receiptType = 'fabricated_receipt' as never
+
+    expect(applyG24LifecycleTransition(forged, request)).toMatchObject({
+      accepted: false,
+      reason: 'lifecycle_receipt_history_invalid',
+      snapshot: forged,
+    })
+  })
+
   it('rejects lifecycle actor and version aliases instead of recording different raw bytes', () => {
     const initial: G24LifecycleSnapshot = {
       state: 'none',
@@ -2347,6 +2429,63 @@ describe('G24 bounded enrichment execution', () => {
         },
       }),
     ).toThrow('execution_receipt_id_collision')
+
+    const staleSelector = structuredClone(selector)
+    staleSelector.actionable = false
+    const staleReplay = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: staleSelector,
+      priorReceipts: first.receipts,
+      attempt,
+    })
+    expect(staleReplay.receipt).toBeNull()
+    expect(staleReplay.replayed).toBe(false)
+    expect(staleReplay.rejection).toEqual({
+      status: 'stale_context_rejected',
+      durableReceiptCreated: false,
+    })
+  })
+
+  it('rejects a forged prior execution receipt instead of replaying its claimed side effects', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:v1',
+      maximumWallClockMs: 2_000,
+      maximumAttempts: 2,
+    })
+    const attempt = {
+      receiptId: 'enrichment-receipt:failed',
+      idempotencyKey: 'enrichment-attempt:failed',
+      elapsedMs: 10,
+      outcome: 'failed' as const,
+    }
+    const first = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: [],
+      attempt,
+    })
+    const forged = structuredClone(first.receipts)
+    forged[0].status = 'proposed_evidence'
+    forged[0].sourceRef = 'forged-source:v1'
+    forged[0].standingAwarded = true as never
+    forged[0].canonicalEvidenceCreated = true as never
+    forged[0].brainChanged = true as never
+    forged[0].approvalCreated = true as never
+    forged[0].deliveryCreated = true as never
+
+    const replay = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: forged,
+      attempt,
+    })
+    expect(replay.receipt).toBeNull()
+    expect(replay.replayed).toBe(false)
+    expect(replay.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
+    })
   })
 
   it.each([

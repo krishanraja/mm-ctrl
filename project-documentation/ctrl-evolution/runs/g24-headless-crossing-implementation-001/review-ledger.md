@@ -140,6 +140,30 @@ The current repair requires canonical, unique, non-reserved option bytes; valida
 
 The repair was frozen at `98dfc3c09bbf6851c01b7984a19bb504d5df6f52`, tree `64b08de9d7aa0384332c30ea91660fe2fccb7278`, with 133 focused checks passing, including exact reproductions of every round-six attack. These checks do not close review. The exact bytes are under independent attack again before any verified-state or runtime-readiness claim.
 
+## Review round 7
+
+**Frozen code:** `98dfc3c09bbf6851c01b7984a19bb504d5df6f52`
+
+**Truthful state correction:** `4c02ff9c4c8ec9401e89df9551b1bb7dc26d4e9c`
+
+**Adjudication:** `VETO`
+
+Every round-six reproduction closed, including real complete rankings, canonical lifecycle identities and mutation-proof enrichment plans. Five exact-history and runtime-Boolean defects remained:
+
+1. An exact enrichment retry returned an earlier `proposed_evidence` receipt before revalidating that the current selector was still exact and actionable.
+2. Execution replay compared only selected identity fields, so a caller-mutated prior receipt could claim standing, canonical evidence, Brain change, approval and delivery and be returned unchanged. Unmatched malformed history could also affect budgets and later receipts.
+3. Lifecycle replay trusted a matched request fingerprint without rebuilding the whole receipt. Forged state, actor, invalidation and receipt-type fields could survive replay, and forged unmatched history could be carried into later transitions.
+4. Runtime string `"false"` could enable a scoped write-in because the Boolean field was interpreted by truthiness.
+5. Runtime string `"false"` could also satisfy the mandatory session decline and reframe boundary.
+
+Founder calibration found no question for Krish. It confirmed the product direction but caught two architecture-level implementation drifts: rankings must obey the locked maximum of five, and factual evidence may require case rebuilding without manufacturing a human-owned proposal.
+
+## Repair round 7
+
+The current repair validates the complete supplied execution ledger for identity, plan, ordering, status, source and zero-side-effect invariants before it can affect replay, collisions or budgets. It validates the complete supplied lifecycle chain against the thirteen transition definitions, exact request fingerprints, before-and-after continuity, canonical actor and authority binding, uniqueness and current snapshot tip. Both replay paths reconstruct the exact expected receipt and require full-object equality. Stale selector context now blocks execution replay without altering history. Question write-in permission must be a literal Boolean, session decline and no-contact boundaries must be literal `true`, rankings stop at five, and case rebuilding no longer fabricates a human-owned proposal where none is warranted.
+
+The moving worktree has 136 focused checks passing, including exact reproductions of every round-seven attack. It remains under repair until frozen and independently reviewed.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
