@@ -300,7 +300,9 @@ The current repair makes the snapshot return an internal source mapping for each
 
 Release compiler maps are null-prototype records populated with explicit own properties, and invalid fingerprint sentinels cannot be returned as successful projections. One canonical-identifier predicate now governs compile inputs, selector and manifest bindings, approval receipts, Release projection and authority structures, canonical source and Brain versions and invalidation receipt issuance. Release use checks exact typed bindings before evaluation. The exported selector, atom, Release, watermark and control-graph fingerprint functions and selector receipt renderer now return their documented safe result for malformed plain shapes rather than throwing.
 
-One hundred and sixty-five focused checks pass. The ten new checks cover every round-thirteen reproduction: post-snapshot caller `get` traps across selector, answer, correction, lifecycle and execution; official `__proto__` selector compilation and eligible use without key loss; padded compile, approval, authority and invalidation identities; six blank Release bindings; and total public fingerprint and render helpers. The moving bytes remain unverified until frozen exact-byte review.
+One hundred and sixty-five focused checks pass. The ten new checks cover every round-thirteen reproduction: post-snapshot caller `get` traps across selector, answer, correction, lifecycle and execution; official `__proto__` selector compilation and eligible use without key loss; padded compile, approval, authority and invalidation identities; six blank Release bindings; and total public fingerprint and render helpers.
+
+The repair is frozen at `685a8db4f266965834e9d06c70b3e9337fb5b272`, tree `4e7cf69f940376bea3ab0a1bcd192ecf8a801ad8`. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
