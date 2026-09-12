@@ -73,6 +73,58 @@ function lifecycleRequest(
   }
 }
 
+function issuedLifecycleSnapshotAt(
+  targetState: G24LifecycleSnapshot['state'],
+): G24LifecycleSnapshot {
+  const pathByState: Record<G24LifecycleSnapshot['state'], G24LifecycleTransition['id'][]> = {
+    none: [],
+    preparing: ['open_preparation'],
+    intensive_proof: ['open_preparation', 'accept_intensive_proof'],
+    continuing: ['open_preparation', 'accept_intensive_proof', 'continue_after_intensive_proof'],
+    paused: [
+      'open_preparation',
+      'accept_intensive_proof',
+      'continue_after_intensive_proof',
+      'pause_continuing',
+    ],
+    closing: [
+      'open_preparation',
+      'accept_intensive_proof',
+      'close_intensive_proof',
+    ],
+    closed: [
+      'open_preparation',
+      'accept_intensive_proof',
+      'close_intensive_proof',
+      'complete_close',
+    ],
+  }
+  let snapshot: G24LifecycleSnapshot = {
+    state: 'none',
+    version: null,
+    namedLeaderRef: 'leader:maya',
+    identityControlVersion: 'identity-control:maya:v1',
+    receipts: [],
+  }
+  for (const [index, transitionId] of pathByState[targetState].entries()) {
+    const transition = G24_LIFECYCLE_TRANSITIONS.find(
+      (candidate) => candidate.id === transitionId,
+    ) as G24LifecycleTransition
+    const result = applyG24LifecycleTransition(
+      snapshot,
+      lifecycleRequest(transition, {
+        fromVersion: snapshot.version,
+        afterVersion: `${transition.to}:fixture:${index + 1}`,
+        idempotencyKey: `idempotency:fixture:${targetState}:${transitionId}`,
+        receiptId: `receipt:fixture:${targetState}:${transitionId}`,
+      }),
+    )
+    if (!result.accepted) throw new Error(`fixture_lifecycle_transition_rejected:${transitionId}`)
+    snapshot = result.snapshot
+  }
+  return snapshot
+}
+
 function selectedFixture(name = 'lowExternalHighInternal'): G24SelectorResult {
   return selectG24Intervention(buildG24CrossingSelectorFixtures()[name])
 }
@@ -1250,6 +1302,8 @@ describe('G24 versioned intervention and answer effects', () => {
     }, [original])
     const correction = correctG24Answer(original, replacement, {
       receiptId: 'answer-correction:v1',
+      idempotencyKey: 'answer-correction:idempotency:v1',
+      priorCorrections: [],
       dependencyGraph: {
         graphVersion: 'answer-dependency-graph:v1',
         derivativeDependencies: {
@@ -1299,6 +1353,8 @@ describe('G24 versioned intervention and answer effects', () => {
     expect(() =>
       correctG24Answer(original, replacement, {
         receiptId: 'answer-correction:v1',
+        idempotencyKey: 'answer-correction:idempotency:v1',
+        priorCorrections: [],
         dependencyGraph: {
           graphVersion: 'answer-dependency-graph:v1',
           derivativeDependencies: {},
@@ -1336,6 +1392,8 @@ describe('G24 versioned intervention and answer effects', () => {
     expect(() =>
       correctG24Answer(legacyOriginal as typeof original, legacyReplacement as typeof replacement, {
         receiptId: 'answer-correction:legacy:v1',
+        idempotencyKey: 'answer-correction:legacy:idempotency:v1',
+        priorCorrections: [],
         dependencyGraph: {
           graphVersion: 'answer-dependency-graph:v1',
           derivativeDependencies: {},
@@ -1360,6 +1418,8 @@ describe('G24 versioned intervention and answer effects', () => {
     expect(() =>
       correctG24Answer(original, replacement, {
         receiptId: 'answer:v1',
+        idempotencyKey: 'answer-correction:idempotency:v1',
+        priorCorrections: [],
         dependencyGraph: {
           graphVersion: 'answer-dependency-graph:v1',
           derivativeDependencies: {},
@@ -1367,6 +1427,73 @@ describe('G24 versioned intervention and answer effects', () => {
         },
       }),
     ).toThrow('correction_receipt_identity_invalid')
+  })
+
+  it('makes correction replay exact and rejects receipt or idempotency collisions', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(
+      atom,
+      { receiptId: 'answer:collision:a', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacementB = recordG24Answer(
+      atom,
+      { receiptId: 'answer:collision:b', kind: 'option', value: 'Faster approval' },
+      [original],
+    )
+    const replacementC = recordG24Answer(
+      atom,
+      {
+        receiptId: 'answer:collision:c',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original, replacementB],
+    )
+    const dependencyGraph = {
+      graphVersion: 'answer-dependency-graph:collision:v1',
+      derivativeDependencies: {},
+      decisionDependencies: {},
+    }
+    const first = correctG24Answer(original, replacementB, {
+      receiptId: 'answer-correction:collision',
+      idempotencyKey: 'answer-correction:collision:idempotency',
+      dependencyGraph,
+      priorCorrections: [],
+    })
+    const replay = correctG24Answer(original, replacementB, {
+      receiptId: 'answer-correction:collision',
+      idempotencyKey: 'answer-correction:collision:idempotency',
+      dependencyGraph,
+      priorCorrections: [first],
+    })
+
+    expect(replay).toEqual(first)
+    expect(replay).not.toBe(first)
+    expect(() =>
+      correctG24Answer(original, replacementC, {
+        receiptId: 'answer-correction:collision',
+        idempotencyKey: 'answer-correction:different-idempotency',
+        dependencyGraph,
+        priorCorrections: [first],
+      }),
+    ).toThrow('correction_receipt_id_collision')
+    expect(() =>
+      correctG24Answer(original, replacementC, {
+        receiptId: 'answer-correction:different-receipt',
+        idempotencyKey: 'answer-correction:collision:idempotency',
+        dependencyGraph,
+        priorCorrections: [first],
+      }),
+    ).toThrow('correction_idempotency_key_collision')
+    expect(() =>
+      correctG24Answer(original, replacementB, {
+        receiptId: 'answer-correction:collision',
+        idempotencyKey: 'answer-correction:collision:idempotency',
+        dependencyGraph,
+        priorCorrections: [structuredClone(first)],
+      }),
+    ).toThrow('correction_receipt_ledger_invalid')
   })
 })
 
@@ -1836,18 +1963,20 @@ describe('G24 engagement lifecycle', () => {
   it.each(G24_LIFECYCLE_TRANSITIONS)(
     'accepts the explicit $id edge from $from to $to with exact authority and a receipt',
     (transition) => {
-      const snapshot: G24LifecycleSnapshot = {
-        state: transition.from,
-        version: transition.from === 'none' ? null : `${transition.from}:v1`,
-        namedLeaderRef: 'leader:maya',
-        identityControlVersion: 'identity-control:maya:v1',
-        receipts: [],
-      }
-      const result = applyG24LifecycleTransition(snapshot, lifecycleRequest(transition))
+      const snapshot = issuedLifecycleSnapshotAt(transition.from)
+      const result = applyG24LifecycleTransition(
+        snapshot,
+        lifecycleRequest(transition, {
+          fromVersion: snapshot.version,
+          afterVersion: `${transition.to}:tested:${transition.id}`,
+          idempotencyKey: `idempotency:tested:${transition.id}`,
+          receiptId: `receipt:tested:${transition.id}`,
+        }),
+      )
       expect(result.accepted).toBe(true)
       expect(result.snapshot.state).toBe(transition.to)
-      expect(result.snapshot.receipts).toHaveLength(1)
-      expect(result.snapshot.receipts[0]).toMatchObject({
+      expect(result.snapshot.receipts).toHaveLength(snapshot.receipts.length + 1)
+      expect(result.snapshot.receipts.at(-1)).toMatchObject({
         actorClass: transition.actor,
         authority: transition.authority,
         precondition: transition.precondition,
@@ -1858,13 +1987,7 @@ describe('G24 engagement lifecycle', () => {
   )
 
   it('rejects implied edges and stale versions without changing state', () => {
-    const snapshot: G24LifecycleSnapshot = {
-      state: 'preparing',
-      version: 'preparing:v1',
-      namedLeaderRef: 'leader:maya',
-      identityControlVersion: 'identity-control:maya:v1',
-      receipts: [],
-    }
+    const snapshot = issuedLifecycleSnapshotAt('preparing')
     const pauseContinuing = G24_LIFECYCLE_TRANSITIONS.find(
       ({ id }) => id === 'pause_continuing',
     ) as G24LifecycleTransition
@@ -1899,13 +2022,7 @@ describe('G24 engagement lifecycle', () => {
   it.each(G24_LIFECYCLE_TRANSITIONS)(
     'rejects wrong actor, authority, and precondition evidence for $id',
     (transition) => {
-      const snapshot: G24LifecycleSnapshot = {
-        state: transition.from,
-        version: transition.from === 'none' ? null : `${transition.from}:v1`,
-        namedLeaderRef: 'leader:maya',
-        identityControlVersion: 'identity-control:maya:v1',
-        receipts: [],
-      }
+      const snapshot = issuedLifecycleSnapshotAt(transition.from)
       const wrongActor = transition.actor === 'krish' ? 'named_leader_or_krish' : 'krish'
       const base = lifecycleRequest(transition)
       expect(
@@ -1952,17 +2069,14 @@ describe('G24 engagement lifecycle', () => {
     const accept = G24_LIFECYCLE_TRANSITIONS.find(
       ({ id }) => id === 'accept_intensive_proof',
     ) as G24LifecycleTransition
-    const preparing: G24LifecycleSnapshot = {
-      state: 'preparing',
-      version: 'preparing:v1',
-      namedLeaderRef: 'leader:maya',
-      identityControlVersion: 'identity-control:maya:v1',
-      receipts: [],
-    }
+    const preparing = issuedLifecycleSnapshotAt('preparing')
     expect(
       applyG24LifecycleTransition(
         preparing,
-        lifecycleRequest(accept, { afterVersion: 'preparing:v1' }),
+        lifecycleRequest(accept, {
+          fromVersion: preparing.version,
+          afterVersion: preparing.version as string,
+        }),
       ),
     ).toMatchObject({ accepted: false, reason: 'after_version_must_advance', snapshot: preparing })
 
@@ -2010,6 +2124,107 @@ describe('G24 engagement lifecycle', () => {
     const retry = applyG24LifecycleTransition(first.snapshot, request)
     expect(retry).toMatchObject({ accepted: true, reason: 'idempotent_replay' })
     expect(retry.snapshot.receipts).toHaveLength(1)
+  })
+
+  it('isolates every accepted lifecycle snapshot while preserving issued receipt proofs', () => {
+    const transition = (id: G24LifecycleTransition['id']) =>
+      G24_LIFECYCLE_TRANSITIONS.find((candidate) => candidate.id === id) as G24LifecycleTransition
+    const first = applyG24LifecycleTransition(
+      {
+        state: 'none',
+        version: null,
+        namedLeaderRef: 'leader:maya',
+        identityControlVersion: 'identity-control:maya:v1',
+        receipts: [],
+      },
+      lifecycleRequest(transition('open_preparation'), {
+        fromVersion: null,
+        afterVersion: 'preparing:v1',
+        idempotencyKey: 'open:isolation',
+        receiptId: 'receipt:open:isolation',
+      }),
+    )
+    const second = applyG24LifecycleTransition(
+      first.snapshot,
+      lifecycleRequest(transition('accept_intensive_proof'), {
+        fromVersion: 'preparing:v1',
+        afterVersion: 'intensive_proof:v1',
+        idempotencyKey: 'accept:isolation',
+        receiptId: 'receipt:accept:isolation',
+      }),
+    )
+
+    expect(first.accepted).toBe(true)
+    expect(second.accepted).toBe(true)
+    expect(first.snapshot.receipts[0]).not.toBe(second.snapshot.receipts[0])
+
+    first.snapshot.receipts[0].actorRefs[0] = 'attacker'
+    expect(second.snapshot.receipts[0].actorRefs).toEqual(['krish'])
+
+    const third = applyG24LifecycleTransition(
+      second.snapshot,
+      lifecycleRequest(transition('continue_after_intensive_proof'), {
+        fromVersion: 'intensive_proof:v1',
+        afterVersion: 'continuing:v1',
+        idempotencyKey: 'continue:isolation',
+        receiptId: 'receipt:continue:isolation',
+      }),
+    )
+    expect(third).toMatchObject({
+      accepted: true,
+      reason: 'transition_accepted',
+      snapshot: { state: 'continuing', version: 'continuing:v1' },
+    })
+  })
+
+  it('rejects a non-root lifecycle state with no issued history', () => {
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
+    const bypass: G24LifecycleSnapshot = {
+      state: 'preparing',
+      version: 'preparing:v1',
+      namedLeaderRef: 'leader:maya',
+      identityControlVersion: 'identity-control:maya:v1',
+      receipts: [],
+    }
+
+    expect(
+      applyG24LifecycleTransition(
+        bypass,
+        lifecycleRequest(accept, {
+          fromVersion: 'preparing:v1',
+          afterVersion: 'intensive_proof:v1',
+        }),
+      ),
+    ).toMatchObject({
+      accepted: false,
+      reason: 'lifecycle_receipt_history_invalid',
+      snapshot: bypass,
+    })
+  })
+
+  it('rejects silent rebinding of an issued lifecycle snapshot to another leader', () => {
+    const opened = issuedLifecycleSnapshotAt('preparing')
+    opened.namedLeaderRef = 'leader:eve'
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
+
+    expect(
+      applyG24LifecycleTransition(
+        opened,
+        lifecycleRequest(accept, {
+          fromVersion: opened.version,
+          afterVersion: 'intensive_proof:eve:v1',
+          actorRefs: ['krish', 'leader:eve'],
+        }),
+      ),
+    ).toMatchObject({
+      accepted: false,
+      reason: 'lifecycle_receipt_history_invalid',
+      snapshot: opened,
+    })
   })
 
   it('does not replay an old request across a changed lifecycle identity binding', () => {

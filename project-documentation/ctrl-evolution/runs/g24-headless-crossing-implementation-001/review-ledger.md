@@ -180,7 +180,28 @@ The same reasoning applied to immutable answer evidence and correction, even tho
 
 The current repair gives lifecycle, execution and answer receipts private in-process issuance proofs. Every supplied history requires both canonical full-object structure and exact issuance proof before it can influence state, replay, collision, budget or correction. Proofs are preserved across kernel-produced defensive clones but are not minted for caller reconstructions. Lifecycle history is anchored at `none` and `null`, matches every historical actor, authority and precondition to the fixed thirteen-edge table, binds identity control and nonempty precondition evidence, enforces continuity and historical version non-reuse, and matches the current snapshot tip. Restart rehydration remains explicitly closed until trusted canonical ingress can authenticate durable receipts.
 
-The moving worktree retains 136 focused checks, now including rejection of proofless reconstructed lifecycle, execution and answer receipts. It remains under repair until frozen and independently reviewed.
+The repair was frozen at `79cc54a62432a0d633cc30a69a2a08a48c142e13`, tree `7d415ecd59f0db431a19e501f568ac9d12a1e7b2`, with 136 focused checks, including rejection of proofless reconstructed lifecycle, execution and answer receipts. The exact bytes are under independent review and remain unverified until that review clears.
+
+## Review round 9
+
+**Frozen code:** `79cc54a62432a0d633cc30a69a2a08a48c142e13`
+
+**Adjudication:** `VETO`
+
+Both independent reviewers confirmed that proofless lifecycle, execution and answer receipts now reject and that every earlier attack remained closed. They then reproduced four adjacent failures:
+
+1. A successful lifecycle append reused all prior receipt objects. Mutating an older returned snapshot therefore changed a newer snapshot and destroyed its proof.
+2. An issued preparation snapshot could be rebound from one named leader to another without a new identity-control version because the issued history did not seal the snapshot root.
+3. A caller-created non-root lifecycle state with no receipts could start at `preparing` and reach `intensive_proof` without traversing `open_preparation`.
+4. One correction receipt identity could denote two different replacements because correction had no issued ledger, exact replay or collision boundary.
+
+The panel distinguished these as one class of defect: individual receipts were issued and shaped correctly, but the containers and correction event identities that carried them were not yet sealed as append-only history.
+
+## Repair round 9
+
+The current repair defensively clones the complete successful lifecycle snapshot while preserving proofs, seals every nonempty lifecycle snapshot to its exact issued root and contents, and permits empty history only at the `none` and null-version root. It adds an in-process issued correction-receipt ledger with canonical receipt and idempotency identities, exact full-object replay, separate receipt and idempotency collision failures, proof-preserving defensive clones and rejection of caller reconstructions.
+
+One hundred and forty focused checks now pass, including the exact four review-round-nine reproductions. The moving bytes remain unverified until they are frozen and independently reviewed.
 
 ## Preserved proof limits
 

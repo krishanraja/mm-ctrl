@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel under eighth-veto repair, not connected to product runtime and awaiting a new frozen exact-byte review
+**State:** local deterministic kernel under ninth-veto repair, not connected to product runtime and awaiting frozen exact-byte review
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -21,8 +21,9 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - one versioned question or session atom with exact content, control, purpose, audience, sensitivity, channel, timing, evidence and decision-frame binding to a version-matched Krish approval receipt and an in-process approval-function transition under caller-supplied identity;
 - all four honest question exits without adverse inference, forced re-ask or automatic session escalation, plus canonical single-choice and complete ordered-list ranked answers capped at five options;
 - immutable, approval-bound and in-process issuance-proven answer evidence with exact retry and receipt-collision handling within a caller-supplied receipt ledger, rebuildable case effects, optional human-owned proposals only where warranted and correction impact derived from a versioned supplied dependency graph;
+- issuance-proven answer correction with exact replay, receipt and idempotency collision handling, proof-preserving defensive clones and rejection of caller-reconstructed correction history;
 - one answer retiring a now-obsolete prepared question, an optional voice critical incident creating only a reviewable learning proposal, and a later different decision where prior judgement is either reused or blocked by a countercase;
-- all six engagement states and exactly thirteen allowed receipt-bearing transitions, with the supplied history checked for in-process issuance, a complete root, continuity and historical version non-reuse, and each receipt bound to canonical actor references, exact actor class, authority class, precondition class, version advance, receipt type and invalidation effect, separate from Release;
+- all six engagement states and exactly thirteen allowed receipt-bearing transitions, with every nonempty snapshot sealed to its issued named-leader root and complete contents, empty history permitted only at `none`, defensive isolation between returned snapshots, continuity and historical version non-reuse, and each receipt bound to canonical actor references, exact actor class, authority class, precondition class, version advance, receipt type and invalidation effect, separate from Release;
 - pending Release compilation against each selector result and its controlling watermark closure relative to the supplied manifest and graph;
 - before-use invalidation when any recorded dependency changes, including the independent challenger while canonical source and Brain versions stay fixed;
 - no global invalidation when an unrelated lineage changes;
@@ -48,17 +49,18 @@ The fixture range includes:
 12. low-value work that does not earn an interruption;
 13. structurally declared private cross-case reuse and immutable public reference reuse; and
 14. malformed, mutated, reconstructed, slow, failed, duplicate, stale and over-budget execution envelopes; and
-15. lifecycle actor aliases, padded versions and noncanonical execution identities.
+15. lifecycle actor aliases, padded versions, non-root empty history, named-leader rebound, prior-snapshot mutation and noncanonical execution identities; and
+16. exact correction replay, receipt collision, idempotency collision and reconstructed correction history.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 136 checks passed in one file.
+- `npm run brain:g24:headless-check`: 140 checks passed in one file.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
-- The exact six-state, thirteen-edge lifecycle table passed one positive check per edge; every edge rejected wrong actor class, empty authority version and missing precondition evidence. Implied edges, stale, unadvanced or historically reused versions, changed identity bindings on replay, duplicate receipt identities and idempotency collisions were rejected without state change.
+- The exact six-state, thirteen-edge lifecycle table passed one positive check per edge from genuinely issued history; every edge rejected wrong actor class, empty authority version and missing precondition evidence. Implied edges, empty-history root bypass, silent leader rebound, prior-snapshot mutation, stale, unadvanced or historically reused versions, changed identity bindings on replay, duplicate receipt identities and idempotency collisions were rejected without corrupting later state.
 - `npm run brain:g21:check`: 66 adjacent operator-Brain checks passed across six files.
 - `npm run docs:check`: passed, including the frozen G24 R1 through R5 contracts, R5 council and founder-lock verifier.
 - `npm run typecheck`: no new TypeScript errors against the repository baseline.
@@ -77,7 +79,7 @@ This is a semantic and deterministic data-and-intelligence kernel, not productio
 - model output quality, cost, latency, retries or provider behaviour;
 - atomic database check-and-use under concurrency;
 - durable approval, answer, lifecycle, execution-receipt or enrichment-plan authenticity and rehydration after process restart;
-- completeness, currentness or canonical identity of the caller-supplied answer-receipt ledger;
+- completeness, currentness or canonical identity of the caller-supplied answer and correction-receipt ledgers;
 - stale queue, worker or delivery rejection in a real runtime;
 - customer comprehension, delight, haptics, progressive disclosure or mobile usability;
 - consented capture, multi-speaker handling, withdrawal, erasure, export or deterministic re-import;
