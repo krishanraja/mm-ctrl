@@ -162,7 +162,7 @@ Founder calibration found no question for Krish. It confirmed the product direct
 
 The current repair validates the complete supplied execution ledger for identity, plan, ordering, status, source and zero-side-effect invariants before it can affect replay, collisions or budgets. It validates the complete supplied lifecycle chain against the thirteen transition definitions, exact request fingerprints, before-and-after continuity, canonical actor and authority binding, uniqueness and current snapshot tip. Both replay paths reconstruct the exact expected receipt and require full-object equality. Stale selector context now blocks execution replay without altering history. Question write-in permission must be a literal Boolean, session decline and no-contact boundaries must be literal `true`, rankings stop at five, and case rebuilding no longer fabricates a human-owned proposal where none is warranted.
 
-The moving worktree has 136 focused checks passing, including exact reproductions of every round-seven attack. It remains under repair until frozen and independently reviewed.
+The repair was frozen at `ede48c33f42a7f6859dba3a19b201ca32bf1343a`, tree `28608fa04a1a57ecf81d4567fd84384df01b78bf`, with 136 focused checks passing, including exact reproductions of every round-seven attack. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
