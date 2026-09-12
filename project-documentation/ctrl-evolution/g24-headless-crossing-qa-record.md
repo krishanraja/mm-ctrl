@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel under sixth-veto repair, not connected to product runtime and awaiting a new frozen exact-byte review
+**State:** exact sixth-veto repair at `98dfc3c` under independent byte review, not connected to product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 

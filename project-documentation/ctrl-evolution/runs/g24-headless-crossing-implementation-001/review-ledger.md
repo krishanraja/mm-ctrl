@@ -138,7 +138,7 @@ The reviewers independently confirmed that Release purpose and audience binding,
 
 The current repair requires canonical, unique, non-reserved option bytes; validates the complete question grammar, honest-exit and effect contract before approval; records ranked answers as an exact complete ordered list with no missing, duplicate or unoffered values; and gives each accepted ranking one deterministic declared case effect. It rejects padded lifecycle identities and versions before authorization or storage. Enrichment plans now carry an exact fingerprint and an in-process issuance proof, every attempt receipt binds that fingerprint, and mutation or reconstruction outside the issuance boundary fails without a fabricated durable receipt.
 
-The moving worktree has 133 focused checks passing, including exact reproductions of every round-six attack. These checks do not close review. The repaired bytes must be frozen and independently attacked again before any verified-state or runtime-readiness claim.
+The repair was frozen at `98dfc3c09bbf6851c01b7984a19bb504d5df6f52`, tree `64b08de9d7aa0384332c30ea91660fe2fccb7278`, with 133 focused checks passing, including exact reproductions of every round-six attack. These checks do not close review. The exact bytes are under independent attack again before any verified-state or runtime-readiness claim.
 
 ## Preserved proof limits
 
