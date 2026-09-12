@@ -486,6 +486,41 @@ One hundred and ninety-nine focused checks pass locally. Three new grouped check
 
 The repair is frozen at `e77609806c3526ccd62205ce550723f4871bfa8e`, tree `946e4a44f477d434527fe00d883e16e75146ee4e`, source blob `3e12e6fa25d147680c893f7b9e3d0097eef3d279` and test blob `c25eb50f8cbb830d3516e0429ff9d60eb624ed30`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 20
+
+**Frozen code:** `e77609806c3526ccd62205ce550723f4871bfa8e`
+
+**Frozen tree:** `946e4a44f477d434527fe00d883e16e75146ee4e`
+
+**Frozen source blob:** `3e12e6fa25d147680c893f7b9e3d0097eef3d279`
+
+**Frozen test blob:** `c25eb50f8cbb830d3516e0429ff9d60eb624ed30`
+
+**Truthful state correction:** `753661af2e0f2bf8df1980927227f5a4587602f7`
+
+**Adjudication:** `VETO`
+
+All five direct round-nineteen repairs held. Global negative zero, impossible instants, explicit-zone timezone determinism, issued projection use, unrelated-lineage and dependency-order replay, relevant recorded-control sensitivity, selector receipt proof and every historical selector action boundary survived. The reviewers found four adjacent integrity failures:
+
+1. A coherent but unissued projection could not become eligible, but its projection-integrity error still entered invalidation receipt construction. It could register an attacker-chosen receipt ID and cause the genuine issued projection's later invalidation to collide.
+2. Invalidation observation included the old applicable manifest but not newly reached transitive descendants. Changing the version of a newly added relevant child or grandchild therefore replayed the same receipt even though current closure correctly reported the new relevant lineage.
+3. An exactly issued held selector could place a false eligible-standing line inside `expectedMaterialEffect`. The line-oriented renderer authenticated the selector object but interpolated control characters without protecting the visible protocol.
+4. If one nested command field made the root enrichment snapshot fail, the malformed result returned an empty receipt ledger. The attempt was correctly rejected, but its result could masquerade as replacement state and erase already issued history.
+
+These findings sharpen one invariant across the product: refusal alone is insufficient. Invalid input must neither consume durable identity, visually impersonate standing nor erase prior valid state.
+
+## Repair round 20
+
+Projection fingerprint, issuance and selector-binding integrity now fail before invalidation construction, and invalid trusted evaluation time likewise returns no receipt. Only an exact issued projection may mint or register control-change history.
+
+Invalidation observation now walks the current transitive graph from every recorded root and applicable key. It includes newly reached children, deeper descendants and missing-node sentinels while excluding unreachable registry entries. Current relevant state changes therefore alter receipt identity without restoring unrelated-lineage noise.
+
+The line-oriented selector renderer fails closed when any interpolated value contains line or control characters, so issued free text cannot create an apparent protocol field. Malformed enrichment commands independently recover only a canonical sequence of exact issuance-proven prior receipts and return a proof-preserving clone; untrusted receipt combinations remain discarded.
+
+Two hundred and two focused checks pass locally. Three new grouped checks cover projection receipt-ID poisoning and invalid trusted time; direct, deep and missing-to-present dependency observation; visible-standing line injection; and malformed-command ledger preservation followed by continued valid use. One historical assertion was deliberately tightened: projection-integrity failures now return no invalidation receipt rather than documenting attacker-controlled projection bytes.
+
+The repair is frozen at `a08978a5e8518d6059f9963a6a4238d341ae84bd`, tree `5c49f8159f7f79396570c2a1abb9212a343039ad`, source blob `e755382546f5f48d2c8cc0dd8aae9e298e63fece` and test blob `bbc8c2a679e9df7d1adad0045a8ae4c78a0d4af5`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

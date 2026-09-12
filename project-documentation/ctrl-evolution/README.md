@@ -249,7 +249,7 @@ Four refinements are now explicit. Continuous early-sight processing does not re
 | Apply and verify production trust containment | Complete |
 | Complete founder product interview | In progress |
 | Produce decision-complete product corpus and architecture | Complete for G24.A: exact R1 through R5 chain founder-locked after four immutable councils; later proof gates remain explicit |
-| Implement headless Crossing mechanics | Local deterministic kernel frozen after nineteen exact-byte implementation veto rounds: 199 focused checks pass; exact repair `e77609806c3526ccd62205ce550723f4871bfa8e` is under independent review and not connected to runtime |
+| Implement headless Crossing mechanics | Local deterministic kernel frozen after twenty exact-byte implementation veto rounds: 202 focused checks pass; exact repair `a08978a5e8518d6059f9963a6a4238d341ae84bd` is under independent review and not connected to runtime |
 | Diverge, render and approve first material surface | Complete: R3 direction approved with implementation corrections |
 | Implement and independently verify vertical slice | Backstage headless mechanics are repaired and locally test clean but the repaired bytes await independent re-review. Trusted canonical ingress, novel semantic intelligence, production atomicity and rendered experience remain open before runtime integration |
 
