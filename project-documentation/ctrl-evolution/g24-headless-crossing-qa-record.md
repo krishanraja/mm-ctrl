@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel under twelfth-veto repair, not connected to product runtime and awaiting frozen exact-byte review
+**State:** local deterministic kernel repaired after twelve vetoes, frozen at `7be88d7e746996c2476d05cbe7592c767080011c` and tree `c826bdbd41010b057920c883f4bf03cf43502ae3`, not connected to product runtime and under independent exact-byte review
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 

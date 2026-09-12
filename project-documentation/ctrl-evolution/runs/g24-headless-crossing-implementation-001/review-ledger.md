@@ -273,7 +273,9 @@ These are one boundary-integrity family: the copy was not fully injective or exc
 
 The current repair rejects `undefined`, copies every object into a null-prototype record using explicit own data properties, catches every reflection failure and preserves `__proto__` as ordinary owned data. Successful selector results no longer materialize an absent optional diagnostic as `undefined`. Pending Release use now requires an exact outer envelope, exact and fully typed projection, current control registry and named-leader authority structures before evaluating any property methods or comparisons, with a final exception boundary that returns the existing non-actionable result.
 
-One hundred and fifty-five focused checks pass. The five new blocking reproductions cover proof-bearing `undefined` mutations, outer `__proto__` Release-authority injection, `__proto__` correction-dependency preservation, revoked Proxy traps across the public boundaries named by review and malformed plain Release authority. The moving bytes remain unverified until frozen exact-byte review.
+One hundred and fifty-five focused checks pass. The five new blocking reproductions cover proof-bearing `undefined` mutations, outer `__proto__` Release-authority injection, `__proto__` correction-dependency preservation, revoked Proxy traps across the public boundaries named by review and malformed plain Release authority.
+
+The repair is frozen at `7be88d7e746996c2476d05cbe7592c767080011c`, tree `c826bdbd41010b057920c883f4bf03cf43502ae3`. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
