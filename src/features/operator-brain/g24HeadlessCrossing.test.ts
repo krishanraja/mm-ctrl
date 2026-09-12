@@ -82,7 +82,7 @@ function compileProjection(
 ): G24PendingReleaseProjection {
   const result = compileG24PendingRelease({
     projectionVersion,
-    purpose: 'Help the named leader decide how to rebuild marketing around AI.',
+    purpose: selector.purposeRef,
     audience: 'named_leader_private',
     selectorResults: [selector],
     controls,
@@ -658,6 +658,26 @@ describe('G24 versioned intervention and answer effects', () => {
         audience: 'public',
       }),
     ).toThrow('intervention_atom_selector_binding_mismatch')
+
+    const questionPayload = atomInput.payload
+    if (questionPayload.kind !== 'question') throw new Error('expected question payload')
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          answerEffects: {
+            ...questionPayload.answerEffects,
+            'NOT OFFERED': {
+              caseEffect: 'rebuild_required',
+              visibleConsequence: 'An unseen answer changes the case.',
+              retireInterventionRefs: [],
+              pendingHumanOwnedProposal: 'An invalid unseen proposal.',
+            },
+          },
+        },
+      }),
+    ).toThrow('answer_effect_not_offered')
   })
 
   it('keeps an answer immutable while making human-owned change only a pending proposal', () => {
@@ -845,6 +865,18 @@ describe('G24 versioned intervention and answer effects', () => {
         value: 'yes',
       }, []),
     ).toThrow('answer_kind_incompatible_with_grammar')
+
+    expect(() =>
+      recordG24Answer(
+        approvedQuestionAtom(),
+        {
+          receiptId: 'answer:unoffered-option',
+          kind: 'option',
+          value: 'Not offered',
+        },
+        [],
+      ),
+    ).toThrow('answer_option_not_offered')
 
     expect(
       recordG24Answer(approvedQuestionAtom(), {
@@ -1037,6 +1069,43 @@ describe('G24 versioned intervention and answer effects', () => {
     ).toThrow('replacement_answer_atom_mismatch')
   })
 
+  it('rejects correction when either answer omits its approval lineage', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(
+      atom,
+      { receiptId: 'answer:legacy:v1', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacement = recordG24Answer(
+      atom,
+      {
+        receiptId: 'answer:legacy:v2',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original],
+    )
+    const legacyOriginal = { ...original } as Partial<typeof original>
+    const legacyReplacement = { ...replacement } as Partial<typeof replacement>
+    delete legacyOriginal.approvalReceiptId
+    delete legacyOriginal.approvalFingerprint
+    delete legacyOriginal.approvalAuthorityVersionRef
+    delete legacyReplacement.approvalReceiptId
+    delete legacyReplacement.approvalFingerprint
+    delete legacyReplacement.approvalAuthorityVersionRef
+
+    expect(() =>
+      correctG24Answer(legacyOriginal as typeof original, legacyReplacement as typeof replacement, {
+        receiptId: 'answer-correction:legacy:v1',
+        dependencyGraph: {
+          graphVersion: 'answer-dependency-graph:v1',
+          derivativeDependencies: {},
+          decisionDependencies: {},
+        },
+      }),
+    ).toThrow('replacement_answer_approval_mismatch')
+  })
+
   it('requires correction receipt identity to differ from both answer receipts', () => {
     const atom = approvedQuestionAtom()
     const original = recordG24Answer(atom, {
@@ -1084,7 +1153,7 @@ describe('G24 dependent Release closure', () => {
     )
     const result = compileG24PendingRelease({
       projectionVersion: 'release-projection:bad:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [selector],
       controls: buildG24FixtureControls(),
@@ -1112,7 +1181,7 @@ describe('G24 dependent Release closure', () => {
     changedControls.canonical_source_versions.dependencies = []
     const compileResult = compileG24PendingRelease({
       projectionVersion: 'release-projection:deleted-edge:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [selector],
       controls: changedControls,
@@ -1149,7 +1218,7 @@ describe('G24 dependent Release closure', () => {
     selector.route = 'session'
     const result = compileG24PendingRelease({
       projectionVersion: 'release-projection:mutated-selector:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [selector],
       controls: buildG24FixtureControls(),
@@ -1166,7 +1235,7 @@ describe('G24 dependent Release closure', () => {
   it('refuses Release compilation without canonical source and Brain version identity', () => {
     const result = compileG24PendingRelease({
       projectionVersion: 'release-projection:missing-canonical:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [selectedFixture()],
       controls: buildG24FixtureControls(),
@@ -1183,13 +1252,13 @@ describe('G24 dependent Release closure', () => {
     )
   })
 
-  it('refuses a blank selector identity or a Release audience wider than its selector', () => {
+  it('refuses a blank selector identity or a Release purpose or audience outside its selector', () => {
     const blankVersion = selectedFixture()
     blankVersion.selectorResultVersion = ''
     blankVersion.selectorFingerprint = fingerprintG24SelectorResult(blankVersion)
     const blankResult = compileG24PendingRelease({
       projectionVersion: 'release-projection:blank-selector:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [blankVersion],
       controls: buildG24FixtureControls(),
@@ -1202,7 +1271,7 @@ describe('G24 dependent Release closure', () => {
 
     const widened = compileG24PendingRelease({
       projectionVersion: 'release-projection:widened-audience:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'public',
       selectorResults: [selectedFixture()],
       controls: buildG24FixtureControls(),
@@ -1213,6 +1282,21 @@ describe('G24 dependent Release closure', () => {
     expect(widened.projection).toBeNull()
     expect(widened.errors).toContain(
       'selector:low-external-high-internal:v1:selector_release_audience_mismatch',
+    )
+
+    const repurposed = compileG24PendingRelease({
+      projectionVersion: 'release-projection:repurposed:v1',
+      purpose: 'An unrelated purpose.',
+      audience: 'named_leader_private',
+      selectorResults: [selectedFixture()],
+      controls: buildG24FixtureControls(),
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(repurposed.projection).toBeNull()
+    expect(repurposed.errors).toContain(
+      'selector:low-external-high-internal:v1:selector_release_purpose_mismatch',
     )
   })
 
@@ -1234,7 +1318,7 @@ describe('G24 dependent Release closure', () => {
     expect(selector).toMatchObject({ route: 'abstain_hold', actionable: false })
     const result = compileG24PendingRelease({
       projectionVersion: 'release-projection:held:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [selector],
       controls: input.controls,
@@ -1283,7 +1367,7 @@ describe('G24 dependent Release closure', () => {
 
     const collisionCompile = compileG24PendingRelease({
       projectionVersion: 'release-projection:delimiter-collision:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [selectedFixture()],
       controls,
@@ -1314,7 +1398,7 @@ describe('G24 dependent Release closure', () => {
     const second = selectG24Intervention(secondInput)
     const compiled = compileG24PendingRelease({
       projectionVersion: 'release-projection:two-selectors:v1',
-      purpose: 'A purpose.',
+      purpose: 'Resolve the quality-standard transfer gap.',
       audience: 'named_leader_private',
       selectorResults: [first, second],
       controls,

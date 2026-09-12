@@ -964,6 +964,13 @@ export function createG24InterventionAtom(
     ) {
       throw new Error('question_atom_required_field_missing')
     }
+    if (
+      atom.payload.optionsOrComparator.length === 0 ||
+      atom.payload.optionsOrComparator.some((option) => !option.trim()) ||
+      new Set(atom.payload.optionsOrComparator).size !== atom.payload.optionsOrComparator.length
+    ) {
+      throw new Error('question_options_or_comparator_invalid')
+    }
     const requiredEffectKeys = [
       ...atom.payload.honestExits,
       ...(atom.payload.answerGrammar === 'single_choice' ||
@@ -972,6 +979,10 @@ export function createG24InterventionAtom(
         : ['default']),
       ...(atom.payload.scopedWriteIn ? ['default'] : []),
     ]
+    const allowedEffectKeys = new Set(requiredEffectKeys)
+    if (Object.keys(atom.payload.answerEffects).some((key) => !allowedEffectKeys.has(key))) {
+      throw new Error('answer_effect_not_offered')
+    }
     for (const key of requiredEffectKeys) {
       const effect = atom.payload.answerEffects[key]
       if (!effect?.visibleConsequence.trim()) throw new Error(`answer_effect_required:${key}`)
@@ -1217,6 +1228,12 @@ export function recordG24Answer(
     (answer.kind === 'voice' && atom.payload.answerGrammar === 'voice_critical_incident')
   if (!answerMatchesGrammar) throw new Error('answer_kind_incompatible_with_grammar')
   if (!honestExit && !answer.value?.trim()) throw new Error('answer_value_required')
+  if (
+    answer.kind === 'option' &&
+    !atom.payload.optionsOrComparator.includes(answer.value?.trim() ?? '')
+  ) {
+    throw new Error('answer_option_not_offered')
+  }
   const effectKey = honestExit
     ? answer.kind
     : answer.kind === 'option'
@@ -1332,6 +1349,18 @@ export function correctG24Answer(
     throw new Error('replacement_answer_atom_mismatch')
   }
   if (
+    typeof original.approvalFingerprint !== 'string' ||
+    !original.approvalFingerprint.trim() ||
+    typeof replacement.approvalFingerprint !== 'string' ||
+    !replacement.approvalFingerprint.trim() ||
+    typeof original.approvalReceiptId !== 'string' ||
+    !original.approvalReceiptId.trim() ||
+    typeof replacement.approvalReceiptId !== 'string' ||
+    !replacement.approvalReceiptId.trim() ||
+    typeof original.approvalAuthorityVersionRef !== 'string' ||
+    !original.approvalAuthorityVersionRef.trim() ||
+    typeof replacement.approvalAuthorityVersionRef !== 'string' ||
+    !replacement.approvalAuthorityVersionRef.trim() ||
     original.approvalFingerprint !== replacement.approvalFingerprint ||
     original.approvalReceiptId !== replacement.approvalReceiptId ||
     original.approvalAuthorityVersionRef !== replacement.approvalAuthorityVersionRef
@@ -1487,6 +1516,9 @@ export function compileG24PendingRelease(input: {
     }
     if (selector.audienceRef !== input.audience) {
       errors.push(`${selector.selectorResultVersion}:selector_release_audience_mismatch`)
+    }
+    if (selector.purposeRef !== input.purpose) {
+      errors.push(`${selector.selectorResultVersion}:selector_release_purpose_mismatch`)
     }
     selectorControlRoots[selector.selectorResultVersion] = closure.roots
     selectorControlManifests[selector.selectorResultVersion] = {

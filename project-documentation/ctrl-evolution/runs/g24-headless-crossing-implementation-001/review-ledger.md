@@ -94,9 +94,27 @@ Every earlier veto reproduction remained repaired. Founder calibration found no 
 
 ## Repair round 4
 
-The current repair replaces object-membership proof with an approval-time proof of the exact atom and approval-receipt fingerprints; binds approval authority to the current selector authority watermark; carries approval receipt identity, authority and fingerprint into every answer; validates runtime answer kind and value; enforces compatibility with the rendered single-choice, ranked, bounded-text, scoped-write-in or voice grammar; requires a current answer-receipt ledger; replays an exact duplicate deterministically; and rejects identity collisions. It also makes watermark fingerprinting collision-safe and refuses blank selector identities or a Release audience that differs from an included selector.
+The current repair replaces object-membership proof with an approval-time proof of the exact atom and approval-receipt fingerprints; binds approval authority to the current selector authority watermark; carries approval receipt identity, authority and fingerprint into every answer; validates runtime answer kind and value; enforces compatibility with the rendered single-choice, ranked, bounded-text, scoped-write-in or voice grammar; requires a caller-supplied answer-receipt ledger; replays an exact duplicate deterministically within that supplied ledger; and rejects identity collisions. It also makes watermark fingerprinting collision-safe and refuses blank selector identities or a Release audience that differs from an included selector.
 
 The repair was frozen at `63f0e04222a8af0eb655101e9a2955ff6f5a4158` with 126 focused checks passing. These results do not close review. The exact code bytes are under independent attack again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+
+## Review round 5
+
+**Frozen code:** `63f0e04222a8af0eb655101e9a2955ff6f5a4158`
+
+**Truthful state correction:** `23fe8e15ed49bae07eb6009622f989edc3854029`
+
+**Adjudication:** `VETO`
+
+The approval, authority, answer-grammar and supplied-ledger repairs all held under exact-byte replay. Three narrower defects remained. A selector could be compiled into a Release projection with an unrelated purpose despite exact audience binding. A closed-choice answer could select an answer-effect key that was never present in the rendered options. Two legacy-shaped answer receipts could both omit approval lineage and still pass correction because their absent fields compared equal.
+
+The supplied answer-receipt ledger also cannot prove its own completeness or currentness. That remains a canonical-ingress boundary, so the QA and canonical state now describe only collision handling within a caller-supplied ledger.
+
+## Repair round 5
+
+The current repair requires every included selector purpose and audience to equal the pending Release purpose and audience; rejects empty, blank, duplicate or unoffered closed-choice options and undeclared effect keys; and requires nonblank approval receipt identity, authority and fingerprint on both answers before correction can compare them. Exact adversarial reproductions are blocking tests.
+
+The repair worktree has 127 focused checks passing. These results do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 
