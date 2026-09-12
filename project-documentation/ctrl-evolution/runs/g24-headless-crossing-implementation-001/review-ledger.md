@@ -390,6 +390,34 @@ One hundred and eighty-nine focused checks pass locally. Six new grouped tests r
 
 The repair is frozen at `57e959e44634f24fdb5175d62f2d4aea2a9d0539`, tree `751736d2b669b66d12ea0d9860eb98a8b812d4b1`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 17
+
+**Frozen code:** `57e959e44634f24fdb5175d62f2d4aea2a9d0539`
+
+**Frozen source blob:** `c707847579616cc4eb21afd8e76cb684f6ad238e`
+
+**Frozen test blob:** `e21caa3b05cdbd3dc21aa3939756be313ebc3c61`
+
+**Truthful state correction:** `6365b74ac166ba24bd05341fd34c3017332b1ee9`
+
+**Adjudication:** `VETO`
+
+Every round-sixteen reproduction held. Exact review then found three selector-consistency gaps. A genuine ask could be relabelled as session with the paired reason code even though a lower-burden ask remained eligible. An actionable resolving route could call its gap `sufficient`. An alternative could simultaneously claim eligibility and carry rejection reasons. Each contradiction could be self-refingerprinted, compiled and evaluated as Release-eligible. The selector result omitted route burden, so Release could not replay the frozen least-burden precedence.
+
+Two producer and time defects were also reproduced. Padded challenger-boundary or candidate-rejection input could pass route selection and produce an actionable result bearing the reserved invalid fingerprint instead of holding. `earliestExpiry` sorted valid date strings lexically, so different valid timezone encodings could select an instant one hour later than the true earliest expiry.
+
+Finally, approval and Release invalidation receipt identities were not collision-safe. Two different officially created atoms could be approved under one receipt ID. Two different changed-control events could each issue an append-only invalidation receipt under one ID. This was the same local event-identity class already closed for answer, correction, lifecycle and execution receipts, not a deferred durable-ingress concern.
+
+## Repair round 17
+
+The selector result now carries each alternative's finite nonnegative burden inside its fingerprinted bytes. Validation replays the deterministic least-burden and route-order precedence for resolving routes, requires every alternative's eligibility to equal the absence of rejection reasons, and excludes `sufficient` from actionable unresolved gaps. Non-normal challenger boundaries and candidate rejection reasons are caught before selection and converted to a non-actionable, internally valid hold.
+
+Expiry derivation now orders parsed instants and uses the source text only as a deterministic tie-break. Approval and Release invalidation issuance maintain local exact receipt-ID registries: an exact repeated event is stable, while the same ID for different event bytes fails before another proof-bearing receipt is returned. Durable restart rehydration and transactional uniqueness remain later-gate requirements.
+
+One hundred and ninety-three focused checks pass locally. Four new grouped tests reproduce route-precedence forgery, eligibility and gap contradictions, padded producer inputs, timezone-offset expiry order and approval and invalidation identity collisions.
+
+The repair is frozen at `79d39b681781514e38b28c4039948e40d618574c`, tree `a9d60542f1085e933dd3929e4e25d84cf443a04e`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
