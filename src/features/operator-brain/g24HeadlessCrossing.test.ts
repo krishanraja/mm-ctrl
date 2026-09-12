@@ -7,6 +7,7 @@ import {
   compileG24PendingRelease,
   correctG24Answer,
   createG24EnrichmentExecutionPlan,
+  fingerprintG24EnrichmentExecutionPlan,
   createG24InterventionAtom,
   evaluateG24PendingReleaseUse,
   fingerprintG24ControlGraph,
@@ -20,6 +21,7 @@ import {
   selectG24Intervention,
   validateG24InterventionAtom,
   type G24ControlRegistry,
+  type G24EnrichmentExecutionPlan,
   type G24InterventionAtom,
   type G24LifecycleSnapshot,
   type G24LifecycleTransition,
@@ -678,6 +680,84 @@ describe('G24 versioned intervention and answer effects', () => {
         },
       }),
     ).toThrow('answer_effect_not_offered')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          optionsOrComparator: [' Yes', 'Yes'],
+          answerEffects: {
+            ...questionPayload.answerEffects,
+            ' Yes': questionPayload.answerEffects['Fewer rewrites'],
+            Yes: questionPayload.answerEffects['Higher customer preference'],
+          },
+        },
+      }),
+    ).toThrow('question_options_or_comparator_invalid')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          optionsOrComparator: ['unknown'],
+        },
+      }),
+    ).toThrow('question_options_or_comparator_invalid')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          answerGrammar: 'arbitrary_runtime_grammar',
+        },
+      } as never),
+    ).toThrow('question_answer_grammar_invalid')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          honestExits: ['unknown', 'defer', 'refuse', 'invented_exit'],
+        },
+      } as never),
+    ).toThrow('question_honest_exits_invalid')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          answerEffects: {
+            ...questionPayload.answerEffects,
+            'Fewer rewrites': {
+              ...questionPayload.answerEffects['Fewer rewrites'],
+              caseEffect: 'arbitrary_runtime_effect',
+              retireInterventionRefs: [''],
+            },
+          },
+        },
+      } as never),
+    ).toThrow('answer_effect_case_effect_invalid:Fewer rewrites')
+
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        payload: {
+          ...questionPayload,
+          answerEffects: {
+            ...questionPayload.answerEffects,
+            'Fewer rewrites': {
+              ...questionPayload.answerEffects['Fewer rewrites'],
+              retireInterventionRefs: ['question:follow-up:v1', 'question:follow-up:v1'],
+            },
+          },
+        },
+      }),
+    ).toThrow('answer_effect_retirement_refs_invalid:Fewer rewrites')
   })
 
   it('keeps an answer immutable while making human-owned change only a pending proposal', () => {
@@ -694,6 +774,106 @@ describe('G24 versioned intervention and answer effects', () => {
       automaticReaskPressure: false,
       automaticSessionEscalation: false,
     })
+  })
+
+  it('records a complete exact ranking and rejects partial, duplicate or scalar substitutes', () => {
+    const selector = selectedFixture('highExternalHighInternal')
+    const base = questionAtom(selector)
+    if (base.payload.kind !== 'question') throw new Error('expected question payload')
+    const ranked = createG24InterventionAtom(selector, {
+      atomVersion: 'ranked-question:v1',
+      controlVersion: base.controlVersion,
+      purpose: base.purpose,
+      audience: base.audience,
+      sensitivity: base.sensitivity,
+      channel: base.channel,
+      timing: base.timing,
+      decisionFrameVersion: base.decisionFrameVersion,
+      evidenceVersions: [...base.evidenceVersions],
+      payload: {
+        ...base.payload,
+        renderedControlPayload: 'ranked-choice:v1',
+        answerGrammar: 'ranked_choice',
+        optionsOrComparator: ['Customer impact', 'Speed', 'Cost'],
+        scopedWriteIn: false,
+        answerEffects: {
+          default: {
+            caseEffect: 'rebuild_required',
+            visibleConsequence: 'The case will be rebuilt around your complete ranking.',
+            retireInterventionRefs: ['question:priority-order:v1'],
+            pendingHumanOwnedProposal: 'Review this priority order as a decision constraint.',
+          },
+          unknown: base.payload.answerEffects.unknown,
+          defer: base.payload.answerEffects.defer,
+          refuse: base.payload.answerEffects.refuse,
+          premise_wrong: base.payload.answerEffects.premise_wrong,
+        },
+      },
+    })
+    const approved = approveG24InterventionAtom(ranked, selector, {
+      atomVersion: ranked.atomVersion,
+      controlVersion: ranked.controlVersion,
+      purpose: ranked.purpose,
+      audience: ranked.audience,
+      sensitivity: ranked.sensitivity,
+      channel: ranked.channel,
+      timing: ranked.timing,
+      decisionFrameVersion: ranked.decisionFrameVersion,
+      evidenceVersions: [...ranked.evidenceVersions],
+      payloadFingerprint: ranked.payloadFingerprint,
+      approvalReceiptId: 'approval:ranked-question:v1',
+      approvedByRef: 'krish',
+      approvalAuthorityVersionRef: 'authority_version:v1',
+    })
+    const answer = recordG24Answer(
+      approved,
+      {
+        receiptId: 'answer:ranked:v1',
+        kind: 'ranking',
+        value: ['Customer impact', 'Speed', 'Cost'],
+      },
+      [],
+    )
+    expect(answer).toMatchObject({
+      answerKind: 'ranking',
+      value: ['Customer impact', 'Speed', 'Cost'],
+      caseEffect: 'rebuild_required',
+      pendingHumanOwnedProposal: 'Review this priority order as a decision constraint.',
+    })
+    for (const value of [
+      ['Customer impact', 'Speed'],
+      ['Customer impact', 'Customer impact', 'Cost'],
+      ['Customer impact', 'Speed', 'Not offered'],
+    ]) {
+      expect(() =>
+        recordG24Answer(
+          approved,
+          { receiptId: `answer:invalid:${JSON.stringify(value)}`, kind: 'ranking', value },
+          [],
+        ),
+      ).toThrow('answer_ranking_invalid')
+    }
+    expect(() =>
+      recordG24Answer(
+        approved,
+        { receiptId: 'answer:ranked:scalar', kind: 'ranking', value: 'Customer impact' },
+        [],
+      ),
+    ).toThrow('answer_ranking_invalid')
+    expect(() =>
+      recordG24Answer(
+        approved,
+        { receiptId: 'answer:ranked:single-option', kind: 'option', value: 'Customer impact' },
+        [],
+      ),
+    ).toThrow('answer_kind_incompatible_with_grammar')
+    expect(() =>
+      recordG24Answer(
+        approved,
+        { receiptId: 'answer:ranked:v1', kind: 'ranking', value: ['Cost', 'Speed', 'Customer impact'] },
+        [answer],
+      ),
+    ).toThrow('answer_receipt_id_collision')
   })
 
   it('replays one exact answer receipt and rejects the same identity for different evidence', () => {
@@ -1883,6 +2063,43 @@ describe('G24 engagement lifecycle', () => {
     expect(collision).toMatchObject({ accepted: false, reason: 'idempotency_key_collision' })
     expect(collision.snapshot).toEqual(first.snapshot)
   })
+
+  it('rejects lifecycle actor and version aliases instead of recording different raw bytes', () => {
+    const initial: G24LifecycleSnapshot = {
+      state: 'none',
+      version: null,
+      namedLeaderRef: 'leader:maya',
+      identityControlVersion: 'identity-control:maya:v1',
+      receipts: [],
+    }
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const paddedActors = applyG24LifecycleTransition(
+      initial,
+      lifecycleRequest(open, {
+        actorRefs: ['krish', ' krish '],
+        afterVersion: 'preparing:v1',
+      }),
+    )
+    const paddedVersion = applyG24LifecycleTransition(
+      initial,
+      lifecycleRequest(open, {
+        afterVersion: ' preparing:v1 ',
+      }),
+    )
+
+    expect(paddedActors).toMatchObject({
+      accepted: false,
+      reason: 'actor_or_authority_invalid',
+      snapshot: initial,
+    })
+    expect(paddedVersion).toMatchObject({
+      accepted: false,
+      reason: 'transition_envelope_incomplete',
+      snapshot: initial,
+    })
+  })
 })
 
 describe('G24 bounded enrichment execution', () => {
@@ -1979,17 +2196,16 @@ describe('G24 bounded enrichment execution', () => {
     })
   })
 
-  it('rejects a handcrafted enrichment plan bound to a non-enrichment selector', () => {
+  it('rejects a handcrafted enrichment plan before it can create a durable receipt', () => {
     const selector = selectedFixture('lowExternalHighInternal')
-    expect(
-      recordG24EnrichmentAttempt({
+    const result = recordG24EnrichmentAttempt({
         plan: {
           planVersion: 'forged-enrichment-plan:v1',
           selectorResultVersion: selector.selectorResultVersion,
           selectorFingerprint: selector.selectorFingerprint,
           maximumWallClockMs: 2_000,
           maximumAttempts: 1,
-        },
+        } as G24EnrichmentExecutionPlan,
         currentSelector: selector,
         priorReceipts: [],
         attempt: {
@@ -1999,8 +2215,81 @@ describe('G24 bounded enrichment execution', () => {
           outcome: 'succeeded',
           sourceRef: 'must-not-enter:v1',
         },
-      }).receipt,
-    ).toMatchObject({ status: 'stale_rejected', sourceRef: null })
+      })
+    expect(result.receipt).toBeNull()
+    expect(result.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
+    })
+  })
+
+  it('rejects a plan whose limits were widened after issuance even if its public fingerprint is recomputed', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:v1',
+      maximumWallClockMs: 100,
+      maximumAttempts: 1,
+    })
+    const first = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: [],
+      attempt: {
+        receiptId: 'enrichment-receipt:first',
+        idempotencyKey: 'enrichment-attempt:first',
+        elapsedMs: 10,
+        outcome: 'failed',
+      },
+    })
+    plan.maximumAttempts = 99
+    plan.maximumWallClockMs = 999_999
+    plan.planFingerprint = fingerprintG24EnrichmentExecutionPlan(plan)
+
+    const second = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: first.receipts,
+      attempt: {
+        receiptId: 'enrichment-receipt:second',
+        idempotencyKey: 'enrichment-attempt:second',
+        elapsedMs: 1_000,
+        outcome: 'succeeded',
+        sourceRef: 'must-not-enter:v1',
+      },
+    })
+    expect(second.receipt).toBeNull()
+    expect(second.receipts).toEqual(first.receipts)
+    expect(second.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
+    })
+  })
+
+  it('fails closed when an issued enrichment plan is reconstructed outside canonical ingress', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:v1',
+      maximumWallClockMs: 2_000,
+      maximumAttempts: 1,
+    })
+    const reconstructed = structuredClone(plan)
+    const result = recordG24EnrichmentAttempt({
+      plan: reconstructed,
+      currentSelector: selector,
+      priorReceipts: [],
+      attempt: {
+        receiptId: 'enrichment-receipt:reconstructed',
+        idempotencyKey: 'enrichment-attempt:reconstructed',
+        elapsedMs: 10,
+        outcome: 'succeeded',
+        sourceRef: 'must-not-enter:v1',
+      },
+    })
+    expect(result.receipt).toBeNull()
+    expect(result.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
+    })
   })
 
   it('replays an exact duplicate once and rejects an idempotency collision', () => {
@@ -2070,6 +2359,20 @@ describe('G24 bounded enrichment execution', () => {
     [
       { receiptId: 'receipt', idempotencyKey: 'key', elapsedMs: 10, outcome: 'unknown' },
       'unknown outcome',
+    ],
+    [
+      { receiptId: ' receipt ', idempotencyKey: 'key', elapsedMs: 10, outcome: 'failed' },
+      'padded receipt identity',
+    ],
+    [
+      {
+        receiptId: 'receipt',
+        idempotencyKey: 'key',
+        elapsedMs: 10,
+        outcome: 'succeeded',
+        sourceRef: ' source:v1 ',
+      },
+      'padded source identity',
     ],
   ] as const)('rejects a malformed execution envelope: $1', (attempt, _label) => {
     const selector = selectedFixture('highExternalLowInternal')

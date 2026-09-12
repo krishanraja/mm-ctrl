@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel under fifth-veto repair and exact-byte re-review, not connected to product runtime
+**State:** local deterministic kernel under sixth-veto repair, not connected to product runtime and awaiting a new frozen exact-byte review
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -19,16 +19,16 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - least-burden selection only after route capability, permission, freshness, audience, provenance independence, use-specific sufficiency, counterevidence, deadline, budget and material-effect eligibility;
 - declared private cross-case reuse rejected, with structurally complete immutable public-reference reuse admitted outside the same case;
 - one versioned question or session atom with exact content, control, purpose, audience, sensitivity, channel, timing, evidence and decision-frame binding to a version-matched Krish approval receipt and an in-process approval-function transition under caller-supplied identity;
-- all four honest question exits without adverse inference, forced re-ask or automatic session escalation;
+- all four honest question exits without adverse inference, forced re-ask or automatic session escalation, plus canonical single-choice and complete ordered-list ranked answers;
 - immutable, approval-bound answer evidence with exact retry and receipt-collision handling within a caller-supplied receipt ledger, rebuildable case effects, pending human-owned proposals and correction impact derived from a versioned supplied dependency graph;
 - one answer retiring a now-obsolete prepared question, an optional voice critical incident creating only a reviewable learning proposal, and a later different decision where prior judgement is either reused or blocked by a countercase;
-- all six engagement states and exactly thirteen allowed receipt-bearing transitions, each structurally bound to its exact actor class, authority class, precondition class, version advance, receipt type and invalidation effect, separate from Release;
+- all six engagement states and exactly thirteen allowed receipt-bearing transitions, each structurally bound to canonical actor references, exact actor class, authority class, precondition class, version advance, receipt type and invalidation effect, separate from Release;
 - pending Release compilation against each selector result and its controlling watermark closure relative to the supplied manifest and graph;
 - before-use invalidation when any recorded dependency changes, including the independent challenger while canonical source and Brain versions stay fixed;
 - no global invalidation when an unrelated lineage changes;
 - an append-only invalidation receipt with no approval, delivery or external side effect; and
 - a fresh structurally bound trusted evaluation plus a new exact named-leader authority after rebuild; and
-- bounded enrichment attempts that hold malformed, slow, failed, stale, over-budget and duplicate-collision outcomes without awarding standing or changing the Brain.
+- bounded enrichment attempts tied to an exact in-process plan issuance proof that hold malformed, mutated, reconstructed, slow, failed, stale, over-budget and duplicate-collision outcomes without awarding standing or changing the Brain.
 
 ## Deterministic fixtures
 
@@ -42,18 +42,19 @@ The fixture range includes:
 6. a valid unresolved case with no eligible resolving route;
 7. stale, malformed, under-recorded and adversarial controlling state;
 8. transitive permission and assertion-policy dependencies;
-9. answer, honest-exit, obsolete-question, optional voice and correction events;
+9. single-choice, full-ranking, honest-exit, obsolete-question, optional voice and correction events;
 10. a later materially different decision that permits or blocks judgement transfer; and
 11. related and unrelated lineage mutations;
 12. low-value work that does not earn an interruption;
 13. structurally declared private cross-case reuse and immutable public reference reuse; and
-14. malformed, slow, failed, duplicate, stale and over-budget execution envelopes.
+14. malformed, mutated, reconstructed, slow, failed, duplicate, stale and over-budget execution envelopes; and
+15. lifecycle actor aliases, padded versions and noncanonical execution identities.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 127 checks passed in one file.
+- `npm run brain:g24:headless-check`: 133 checks passed in one file.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
@@ -75,7 +76,7 @@ This is a semantic and deterministic data-and-intelligence kernel, not productio
 - superiority to a competent human or general AI given the same evidence;
 - model output quality, cost, latency, retries or provider behaviour;
 - atomic database check-and-use under concurrency;
-- durable approval-receipt authenticity or rehydration after process restart;
+- durable approval-receipt or enrichment-plan authenticity and rehydration after process restart;
 - completeness, currentness or canonical identity of the caller-supplied answer-receipt ledger;
 - stale queue, worker or delivery rejection in a real runtime;
 - customer comprehension, delight, haptics, progressive disclosure or mobile usability;

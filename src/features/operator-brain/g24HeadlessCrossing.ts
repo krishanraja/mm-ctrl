@@ -839,6 +839,15 @@ export interface G24QuestionPayload {
   >
 }
 
+const G24_ANSWER_GRAMMARS = [
+  'single_choice',
+  'ranked_choice',
+  'bounded_text',
+  'voice_critical_incident',
+] as const
+
+const G24_HONEST_EXITS = ['unknown', 'defer', 'refuse', 'premise_wrong'] as const
+
 export interface G24SessionPayload {
   kind: 'session'
   exactAgenda: string[]
@@ -951,7 +960,29 @@ export function createG24InterventionAtom(
     throw new Error('intervention_atom_selector_binding_mismatch')
   }
   if (atom.payload.kind === 'question') {
+    if (!(G24_ANSWER_GRAMMARS as readonly unknown[]).includes(atom.payload.answerGrammar)) {
+      throw new Error('question_answer_grammar_invalid')
+    }
+    if (
+      !Array.isArray(atom.payload.honestExits) ||
+      atom.payload.honestExits.length !== G24_HONEST_EXITS.length ||
+      new Set(atom.payload.honestExits).size !== G24_HONEST_EXITS.length ||
+      atom.payload.honestExits.some(
+        (exit) => !(G24_HONEST_EXITS as readonly unknown[]).includes(exit),
+      )
+    ) {
+      throw new Error('question_honest_exits_invalid')
+    }
+    if (
+      !Array.isArray(atom.payload.optionsOrComparator) ||
+      !atom.payload.answerEffects ||
+      typeof atom.payload.answerEffects !== 'object' ||
+      Array.isArray(atom.payload.answerEffects)
+    ) {
+      throw new Error('question_answer_contract_invalid')
+    }
     const exits = new Set(atom.payload.honestExits)
+    const reservedAnswerEffectKeys = new Set(['default', ...atom.payload.honestExits])
     for (const exit of ['unknown', 'defer', 'refuse', 'premise_wrong'] as const) {
       if (!exits.has(exit)) throw new Error(`honest_exit_required:${exit}`)
     }
@@ -966,26 +997,72 @@ export function createG24InterventionAtom(
     }
     if (
       atom.payload.optionsOrComparator.length === 0 ||
-      atom.payload.optionsOrComparator.some((option) => !option.trim()) ||
-      new Set(atom.payload.optionsOrComparator).size !== atom.payload.optionsOrComparator.length
+      atom.payload.optionsOrComparator.some(
+        (option) =>
+          !option.trim() ||
+          option !== option.trim() ||
+          reservedAnswerEffectKeys.has(option),
+      ) ||
+      new Set(atom.payload.optionsOrComparator.map((option) => option.trim())).size !==
+        atom.payload.optionsOrComparator.length
     ) {
       throw new Error('question_options_or_comparator_invalid')
     }
-    const requiredEffectKeys = [
+    const requiredEffectKeys = [...new Set([
       ...atom.payload.honestExits,
-      ...(atom.payload.answerGrammar === 'single_choice' ||
-      atom.payload.answerGrammar === 'ranked_choice'
+      ...(atom.payload.answerGrammar === 'single_choice'
         ? atom.payload.optionsOrComparator
         : ['default']),
       ...(atom.payload.scopedWriteIn ? ['default'] : []),
-    ]
+    ])]
     const allowedEffectKeys = new Set(requiredEffectKeys)
     if (Object.keys(atom.payload.answerEffects).some((key) => !allowedEffectKeys.has(key))) {
       throw new Error('answer_effect_not_offered')
     }
     for (const key of requiredEffectKeys) {
-      const effect = atom.payload.answerEffects[key]
-      if (!effect?.visibleConsequence.trim()) throw new Error(`answer_effect_required:${key}`)
+      const effect = Object.prototype.hasOwnProperty.call(atom.payload.answerEffects, key)
+        ? atom.payload.answerEffects[key]
+        : undefined
+      if (!effect || typeof effect !== 'object' || Array.isArray(effect)) {
+        throw new Error(`answer_effect_required:${key}`)
+      }
+      if (
+        effect.caseEffect !== 'rebuild_required' &&
+        effect.caseEffect !== 'no_case_change'
+      ) {
+        throw new Error(`answer_effect_case_effect_invalid:${key}`)
+      }
+      if (
+        typeof effect.visibleConsequence !== 'string' ||
+        !effect.visibleConsequence.trim() ||
+        effect.visibleConsequence !== effect.visibleConsequence.trim()
+      ) {
+        throw new Error(`answer_effect_required:${key}`)
+      }
+      if (
+        !Array.isArray(effect.retireInterventionRefs) ||
+        effect.retireInterventionRefs.length !== new Set(effect.retireInterventionRefs).size ||
+        effect.retireInterventionRefs.some(
+          (ref) => typeof ref !== 'string' || !ref.trim() || ref !== ref.trim(),
+        )
+      ) {
+        throw new Error(`answer_effect_retirement_refs_invalid:${key}`)
+      }
+      const proposalIsValid =
+        effect.pendingHumanOwnedProposal === null ||
+        (typeof effect.pendingHumanOwnedProposal === 'string' &&
+          Boolean(effect.pendingHumanOwnedProposal.trim()) &&
+          effect.pendingHumanOwnedProposal === effect.pendingHumanOwnedProposal.trim())
+      if (!proposalIsValid) {
+        throw new Error(`answer_effect_proposal_invalid:${key}`)
+      }
+      if (
+        (effect.caseEffect === 'no_case_change' &&
+          (effect.pendingHumanOwnedProposal !== null || effect.retireInterventionRefs.length > 0)) ||
+        (effect.caseEffect === 'rebuild_required' && effect.pendingHumanOwnedProposal === null)
+      ) {
+        throw new Error(`answer_effect_semantics_invalid:${key}`)
+      }
     }
     for (const exit of atom.payload.honestExits) {
       const effect = atom.payload.answerEffects[exit]
@@ -1131,10 +1208,19 @@ export function approveG24InterventionAtom(
   return approved
 }
 
-export type G24AnswerKind = 'option' | 'write_in' | 'voice' | 'unknown' | 'defer' | 'refuse' | 'premise_wrong'
+export type G24AnswerKind =
+  | 'option'
+  | 'ranking'
+  | 'write_in'
+  | 'voice'
+  | 'unknown'
+  | 'defer'
+  | 'refuse'
+  | 'premise_wrong'
 
 const G24_ANSWER_KINDS: readonly G24AnswerKind[] = [
   'option',
+  'ranking',
   'write_in',
   'voice',
   'unknown',
@@ -1151,7 +1237,7 @@ export interface G24AnswerReceipt {
   approvalFingerprint: string
   approvalAuthorityVersionRef: string
   answerKind: G24AnswerKind
-  value: string | null
+  value: string | string[] | null
   immutableCaseEvidence: true
   caseEffect: 'rebuild_required' | 'no_case_change'
   pendingHumanOwnedProposal: string | null
@@ -1163,7 +1249,7 @@ export interface G24AnswerReceipt {
 
 export function recordG24Answer(
   atom: G24InterventionAtom,
-  answer: { receiptId: string; kind: G24AnswerKind; value?: string },
+  answer: { receiptId: string; kind: G24AnswerKind; value?: string | string[] },
   priorReceipts: readonly G24AnswerReceipt[],
 ): G24AnswerReceipt {
   if (!Array.isArray(priorReceipts)) throw new Error('answer_receipt_ledger_required')
@@ -1180,7 +1266,11 @@ export function recordG24Answer(
   if (typeof answer.kind !== 'string' || !G24_ANSWER_KINDS.includes(answer.kind)) {
     throw new Error('answer_kind_invalid')
   }
-  if (answer.value !== undefined && typeof answer.value !== 'string') {
+  if (
+    answer.value !== undefined &&
+    typeof answer.value !== 'string' &&
+    !Array.isArray(answer.value)
+  ) {
     throw new Error('answer_value_invalid')
   }
   if (atom.payload.kind !== 'question') throw new Error('answer_requires_question_atom')
@@ -1218,28 +1308,59 @@ export function recordG24Answer(
   if (honestExit && !atom.payload.honestExits.includes(answer.kind as never)) {
     throw new Error(`answer_exit_not_offered:${answer.kind}`)
   }
+  if (honestExit && answer.value !== undefined) throw new Error('answer_exit_value_not_allowed')
   const answerMatchesGrammar =
     honestExit ||
-    (answer.kind === 'option' &&
-      (atom.payload.answerGrammar === 'single_choice' ||
-        atom.payload.answerGrammar === 'ranked_choice')) ||
+    (answer.kind === 'option' && atom.payload.answerGrammar === 'single_choice') ||
+    (answer.kind === 'ranking' && atom.payload.answerGrammar === 'ranked_choice') ||
     (answer.kind === 'write_in' &&
       (atom.payload.answerGrammar === 'bounded_text' || atom.payload.scopedWriteIn)) ||
     (answer.kind === 'voice' && atom.payload.answerGrammar === 'voice_critical_incident')
   if (!answerMatchesGrammar) throw new Error('answer_kind_incompatible_with_grammar')
-  if (!honestExit && !answer.value?.trim()) throw new Error('answer_value_required')
-  if (
-    answer.kind === 'option' &&
-    !atom.payload.optionsOrComparator.includes(answer.value?.trim() ?? '')
-  ) {
-    throw new Error('answer_option_not_offered')
+  if (!honestExit) {
+    if (atom.payload.answerGrammar === 'ranked_choice' && answer.kind === 'ranking') {
+      const ranking = answer.value
+      const offeredOptions = atom.payload.optionsOrComparator
+      if (
+        !Array.isArray(ranking) ||
+        ranking.length !== offeredOptions.length ||
+        new Set(ranking).size !== ranking.length ||
+        ranking.some(
+          (option) =>
+            typeof option !== 'string' ||
+            !option.trim() ||
+            option !== option.trim() ||
+            !offeredOptions.includes(option),
+        ) ||
+        offeredOptions.some((option) => !ranking.includes(option))
+      ) {
+        throw new Error('answer_ranking_invalid')
+      }
+    } else {
+      if (
+        typeof answer.value !== 'string' ||
+        !answer.value.trim() ||
+        answer.value !== answer.value.trim()
+      ) {
+        throw new Error('answer_value_required')
+      }
+      if (
+        answer.kind === 'option' &&
+        !atom.payload.optionsOrComparator.includes(answer.value)
+      ) {
+        throw new Error('answer_option_not_offered')
+      }
+    }
   }
   const effectKey = honestExit
     ? answer.kind
-    : answer.kind === 'option'
-      ? answer.value?.trim()
+    : answer.kind === 'option' && atom.payload.answerGrammar === 'single_choice'
+      ? (answer.value as string)
       : 'default'
-  const effect = effectKey ? atom.payload.answerEffects[effectKey] : undefined
+  const effect =
+    effectKey && Object.prototype.hasOwnProperty.call(atom.payload.answerEffects, effectKey)
+      ? atom.payload.answerEffects[effectKey]
+      : undefined
   if (!effect) throw new Error(`answer_effect_not_declared:${effectKey ?? 'missing'}`)
   const receipt: G24AnswerReceipt = {
     receiptId: answer.receiptId,
@@ -1249,7 +1370,10 @@ export function recordG24Answer(
     approvalFingerprint: approvalReceipt.approvalFingerprint,
     approvalAuthorityVersionRef: approvalReceipt.approvalAuthorityVersionRef,
     answerKind: answer.kind,
-    value: answer.value?.trim() || null,
+    value:
+      Array.isArray(answer.value) ? [...answer.value]
+      : typeof answer.value === 'string' ? answer.value
+      : null,
     immutableCaseEvidence: true,
     caseEffect: effect.caseEffect,
     pendingHumanOwnedProposal: effect.pendingHumanOwnedProposal,
@@ -1982,7 +2106,7 @@ function lifecycleActorRefsAreValid(
   actorRefs: readonly string[],
   namedLeaderRef: string,
 ): boolean {
-  const refs = [...new Set(actorRefs.map((ref) => ref.trim()).filter(Boolean))]
+  const refs = [...actorRefs]
   if (actorClass === 'krish') return refs.length === 1 && refs[0] === 'krish'
   if (actorClass === 'named_leader_and_krish') {
     return refs.length === 2 && refs.includes('krish') && refs.includes(namedLeaderRef)
@@ -1995,32 +2119,53 @@ function lifecycleActorRefsAreValid(
   return refs.length === 1 && (refs[0] === 'krish' || refs[0] === namedLeaderRef)
 }
 
+function lifecycleRefsAreCanonical(refs: readonly string[]): boolean {
+  return (
+    refs.length === new Set(refs).size &&
+    refs.every((ref) => typeof ref === 'string' && ref.length > 0 && ref === ref.trim())
+  )
+}
+
+function lifecycleIdentifierIsCanonical(value: string): boolean {
+  return typeof value === 'string' && value.length > 0 && value === value.trim()
+}
+
 export function applyG24LifecycleTransition(
   snapshot: G24LifecycleSnapshot,
   request: G24LifecycleTransitionRequest,
 ): { accepted: boolean; reason: string; snapshot: G24LifecycleSnapshot } {
-  if (!snapshot.namedLeaderRef.trim() || !snapshot.identityControlVersion.trim()) {
+  if (
+    !lifecycleIdentifierIsCanonical(snapshot.namedLeaderRef) ||
+    !lifecycleIdentifierIsCanonical(snapshot.identityControlVersion)
+  ) {
     return { accepted: false, reason: 'lifecycle_identity_binding_missing', snapshot: structuredClone(snapshot) }
   }
   const definition = G24_LIFECYCLE_TRANSITIONS.find(({ id }) => id === request.transitionId)
   if (!definition) return { accepted: false, reason: 'transition_unknown', snapshot: structuredClone(snapshot) }
   if (
     request.actorClass !== definition.actor ||
+    !lifecycleRefsAreCanonical(request.actorRefs) ||
     !lifecycleActorRefsAreValid(request.actorClass, request.actorRefs, snapshot.namedLeaderRef) ||
     request.identityControlVersionRef !== snapshot.identityControlVersion ||
+    !lifecycleIdentifierIsCanonical(request.identityControlVersionRef) ||
     request.authority !== definition.authority ||
-    !request.authorityVersionRef.trim()
+    !lifecycleIdentifierIsCanonical(request.authorityVersionRef)
   ) {
     return { accepted: false, reason: 'actor_or_authority_invalid', snapshot: structuredClone(snapshot) }
   }
   if (
     request.precondition !== definition.precondition ||
     request.preconditionEvidenceRefs.length === 0 ||
-    request.preconditionEvidenceRefs.some((ref) => !ref.trim())
+    !lifecycleRefsAreCanonical(request.preconditionEvidenceRefs)
   ) {
     return { accepted: false, reason: 'precondition_unsatisfied', snapshot: structuredClone(snapshot) }
   }
-  if (!request.afterVersion.trim() || !request.idempotencyKey.trim() || !request.receiptId.trim()) {
+  if (
+    !lifecycleIdentifierIsCanonical(request.afterVersion) ||
+    (request.fromVersion !== null && !lifecycleIdentifierIsCanonical(request.fromVersion)) ||
+    !lifecycleIdentifierIsCanonical(request.idempotencyKey) ||
+    !lifecycleIdentifierIsCanonical(request.receiptId)
+  ) {
     return { accepted: false, reason: 'transition_envelope_incomplete', snapshot: structuredClone(snapshot) }
   }
   const requestFingerprint = fingerprintG24LifecycleRequest(request)
@@ -2116,6 +2261,21 @@ export interface G24EnrichmentExecutionPlan {
   selectorFingerprint: string
   maximumWallClockMs: number
   maximumAttempts: number
+  planFingerprint: string
+}
+
+const g24EnrichmentExecutionPlanProofs = new WeakMap<G24EnrichmentExecutionPlan, string>()
+
+export function fingerprintG24EnrichmentExecutionPlan(
+  plan: Omit<G24EnrichmentExecutionPlan, 'planFingerprint'>,
+): string {
+  return JSON.stringify({
+    planVersion: plan.planVersion,
+    selectorResultVersion: plan.selectorResultVersion,
+    selectorFingerprint: plan.selectorFingerprint,
+    maximumWallClockMs: plan.maximumWallClockMs,
+    maximumAttempts: plan.maximumAttempts,
+  })
 }
 
 export type G24ExecutionStatus =
@@ -2129,6 +2289,7 @@ export interface G24ExecutionReceipt {
   receiptId: string
   idempotencyKey: string
   planVersion: string
+  planFingerprint: string
   attemptNumber: number
   attemptFingerprint: string
   status: G24ExecutionStatus
@@ -2167,6 +2328,7 @@ export function createG24EnrichmentExecutionPlan(
   }
   if (
     !input.planVersion.trim() ||
+    input.planVersion !== input.planVersion.trim() ||
     !Number.isFinite(input.maximumWallClockMs) ||
     input.maximumWallClockMs <= 0 ||
     !Number.isInteger(input.maximumAttempts) ||
@@ -2174,13 +2336,19 @@ export function createG24EnrichmentExecutionPlan(
   ) {
     throw new Error('enrichment_plan_budget_invalid')
   }
-  return {
+  const planWithoutFingerprint = {
     planVersion: input.planVersion,
     selectorResultVersion: selector.selectorResultVersion,
     selectorFingerprint: selector.selectorFingerprint,
     maximumWallClockMs: input.maximumWallClockMs,
     maximumAttempts: input.maximumAttempts,
   }
+  const plan: G24EnrichmentExecutionPlan = {
+    ...planWithoutFingerprint,
+    planFingerprint: fingerprintG24EnrichmentExecutionPlan(planWithoutFingerprint),
+  }
+  g24EnrichmentExecutionPlanProofs.set(plan, plan.planFingerprint)
+  return plan
 }
 
 export function recordG24EnrichmentAttempt(input: {
@@ -2196,18 +2364,41 @@ export function recordG24EnrichmentAttempt(input: {
   }
 }): G24EnrichmentAttemptResult {
   const receiptIdIsValid =
-    typeof input.attempt.receiptId === 'string' && Boolean(input.attempt.receiptId.trim())
+    typeof input.attempt.receiptId === 'string' &&
+    Boolean(input.attempt.receiptId.trim()) &&
+    input.attempt.receiptId === input.attempt.receiptId.trim()
   const idempotencyKeyIsValid =
-    typeof input.attempt.idempotencyKey === 'string' && Boolean(input.attempt.idempotencyKey.trim())
+    typeof input.attempt.idempotencyKey === 'string' &&
+    Boolean(input.attempt.idempotencyKey.trim()) &&
+    input.attempt.idempotencyKey === input.attempt.idempotencyKey.trim()
   const planVersionIsValid =
-    typeof input.plan.planVersion === 'string' && Boolean(input.plan.planVersion.trim())
+    typeof input.plan.planVersion === 'string' &&
+    Boolean(input.plan.planVersion.trim()) &&
+    input.plan.planVersion === input.plan.planVersion.trim()
+  const sourceRefIsValid =
+    input.attempt.sourceRef === undefined ||
+    (typeof input.attempt.sourceRef === 'string' &&
+      Boolean(input.attempt.sourceRef.trim()) &&
+      input.attempt.sourceRef === input.attempt.sourceRef.trim())
+  const planFingerprintIsValid =
+    typeof input.plan.planFingerprint === 'string' && Boolean(input.plan.planFingerprint.trim())
+  const computedPlanFingerprint = planFingerprintIsValid
+    ? fingerprintG24EnrichmentExecutionPlan(input.plan)
+    : null
+  const issuedPlanFingerprint = g24EnrichmentExecutionPlanProofs.get(input.plan)
+  const planIssuanceIsValid =
+    computedPlanFingerprint === input.plan.planFingerprint &&
+    issuedPlanFingerprint === input.plan.planFingerprint
   const malformed =
     !receiptIdIsValid ||
     !idempotencyKeyIsValid ||
+    !sourceRefIsValid ||
     !Number.isFinite(input.attempt.elapsedMs) ||
     input.attempt.elapsedMs < 0 ||
     !(['succeeded', 'failed'] as unknown[]).includes(input.attempt.outcome) ||
     !planVersionIsValid ||
+    !planFingerprintIsValid ||
+    !planIssuanceIsValid ||
     !Number.isFinite(input.plan.maximumWallClockMs) ||
     input.plan.maximumWallClockMs <= 0 ||
     !Number.isInteger(input.plan.maximumAttempts) ||
@@ -2237,6 +2428,7 @@ export function recordG24EnrichmentAttempt(input: {
     const sameAttempt =
       prior.receiptId === input.attempt.receiptId &&
       prior.planVersion === input.plan.planVersion &&
+      prior.planFingerprint === input.plan.planFingerprint &&
       prior.attemptFingerprint === attemptFingerprint
     if (!sameAttempt) throw new Error('execution_idempotency_key_collision')
     return {
@@ -2274,6 +2466,7 @@ export function recordG24EnrichmentAttempt(input: {
     receiptId: input.attempt.receiptId,
     idempotencyKey: input.attempt.idempotencyKey,
     planVersion: input.plan.planVersion,
+    planFingerprint: input.plan.planFingerprint,
     attemptNumber,
     attemptFingerprint,
     status,

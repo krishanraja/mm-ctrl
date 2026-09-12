@@ -116,6 +116,30 @@ The current repair requires every included selector purpose and audience to equa
 
 The repair was frozen at `9977cd0c18fdb66643ebeb3d1d6cc7562cdc423f` with 127 focused checks passing. These results do not close review. The exact code bytes are under independent attack again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
+## Review round 6
+
+**Frozen code:** `9977cd0c18fdb66643ebeb3d1d6cc7562cdc423f`
+
+**Truthful state correction:** `f69a3418ea8b8b3fb9d6793eb128ed52ce33b5f5`
+
+**Adjudication:** `VETO`
+
+Every round-five defect stayed repaired, but exact hostile probes found five deeper contract failures:
+
+1. Raw options were checked before trimming, so two visibly equivalent options could be approved and one selection could apply the other's consequence. Reserved honest-exit names could also be offered as ordinary options and resolve to the honest-exit effect.
+2. `ranked_choice` was declared but accepted only one scalar option, so the kernel could not preserve the ordered answer the leader actually gave.
+3. The question atom did not validate its grammar enum or the full runtime shape and semantics of honest exits and answer effects. Invalid effect types and blank retirement references could reach immutable receipts.
+4. An issued enrichment plan could be widened in place without changing its plan version, bypassing the approved attempt and time limits.
+5. Lifecycle actor references were normalized for authorization but recorded as raw bytes, while padded lifecycle versions were accepted and stored. Equivalent aliases could therefore acquire different receipt identities.
+
+The reviewers independently confirmed that Release purpose and audience binding, approval authority and exact-byte proof, answer-ledger collision handling, correction lineage, selector identity, challenger binding, lifecycle ABA prevention and earlier control-lineage repairs all held. The state-correction commit changed documentation only and did not affect the reviewed code.
+
+## Repair round 6
+
+The current repair requires canonical, unique, non-reserved option bytes; validates the complete question grammar, honest-exit and effect contract before approval; records ranked answers as an exact complete ordered list with no missing, duplicate or unoffered values; and gives each accepted ranking one deterministic declared case effect. It rejects padded lifecycle identities and versions before authorization or storage. Enrichment plans now carry an exact fingerprint and an in-process issuance proof, every attempt receipt binds that fingerprint, and mutation or reconstruction outside the issuance boundary fails without a fabricated durable receipt.
+
+The moving worktree has 133 focused checks passing, including exact reproductions of every round-six attack. These checks do not close review. The repaired bytes must be frozen and independently attacked again before any verified-state or runtime-readiness claim.
+
 ## Preserved proof limits
 
-This local kernel does not prove authoritative input provenance, durable approval rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
+This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
