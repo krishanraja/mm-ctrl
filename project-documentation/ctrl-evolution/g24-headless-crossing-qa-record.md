@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after fifteen vetoes, frozen at `dc587da3719bd737c56f2418b8be1c806cecc832` and tree `e26ac437ccb4905379aacb2c23160dee92e49daa`; 183 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** local deterministic kernel repaired after sixteen vetoes, frozen at `57e959e44634f24fdb5175d62f2d4aea2a9d0539` and tree `751736d2b669b66d12ea0d9860eb98a8b812d4b1`; 189 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -32,6 +32,7 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - bounded enrichment attempts tied to exact in-process plan and receipt issuance proofs plus a structurally checked supplied receipt ledger that hold malformed, mutated, reconstructed, stale-replay, slow, failed, stale, over-budget and duplicate-collision outcomes without awarding standing or changing the Brain; and
 - one strict owned plain-data snapshot before stateful authorization, derivation and use, rejecting accessors, hidden properties, sparse or extended arrays, custom prototypes, functions, symbols, nonfinite values and cycles before they can conceal mutation or split checking from use.
 - exact proof-envelope schemas and one canonical normal form across selector, intervention, approval, correction, Release and enrichment execution boundaries, with unknown fields, duplicate identities and the reserved invalid-fingerprint sentinel rejected before use.
+- trusted selector evaluation versions bound to their same-key controlling watermarks, route-specific evidence semantics and fresh-closure expiry, with malformed answer, correction and approval ledgers rejected before property operations.
 
 ## Deterministic fixtures
 
@@ -55,13 +56,14 @@ The fixture range includes:
 16. exact correction replay, receipt collision, idempotency collision, same-ID different answer bytes, same-version different dependency graphs, padded graph references and reconstructed correction history; and
 17. hidden serialization projections over approved atom, answer, correction, lifecycle and execution bytes; and
 18. sparse or hidden collections, custom prototypes, cycles, accessors and unsupported lifecycle fields across approval, answer, correction, lifecycle, execution and Release; and
-19. invalid-fingerprint sentinels, unknown proof fields, padded issuance identities, explicit blank validity bounds, duplicate Release canonical forms, malformed public calls and maximum-length sparse arrays.
+19. invalid-fingerprint sentinels, unknown proof fields, padded issuance identities, explicit blank validity bounds, duplicate Release canonical forms, malformed public calls and maximum-length sparse arrays; and
+20. forged trusted-evaluation versions, route-semantic contradictions, stale selector expiry, duplicate unresolved evidence, intervention evidence-order ambiguity and malformed approval, answer and correction ledgers.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 183 checks passed in one file on the frozen round-fifteen repair.
+- `npm run brain:g24:headless-check`: 189 checks passed in one file on the frozen round-sixteen repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.

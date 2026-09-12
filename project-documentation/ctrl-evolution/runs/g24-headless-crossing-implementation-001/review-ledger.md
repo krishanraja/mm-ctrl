@@ -359,6 +359,37 @@ One hundred and eighty-three focused checks pass locally. Four new tests collect
 
 The repair is frozen at `dc587da3719bd737c56f2418b8be1c806cecc832`, tree `e26ac437ccb4905379aacb2c23160dee92e49daa`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 16
+
+**Frozen code:** `dc587da3719bd737c56f2418b8be1c806cecc832`
+
+**Frozen source blob:** `229d8eaca0ae7c7f166c118fa538a03ab3b7b133`
+
+**Frozen test blob:** `06e1ca3da197f934066435d1779a4539b2f5a6aa`
+
+**Truthful state correction:** `37566b541958f737e6a6528b07fd8cfd08f64423`
+
+**Adjudication:** `VETO`
+
+Every round-fifteen reproduction held. Both reviewers then showed that the strict selector schema still did not bind the five trusted semantic evaluation versions to their same-key controlling watermarks. Canonical but invented decision-requirement, evidence-coverage, cutoff, policy and challenger versions could be self-refingerprinted and compiled. The selector also admitted an expiry before its trusted time, an actionable indeterminate challenger, contradictory reuse, actionable diagnostic text, an empty alternative set, an ineligible selected route and an ask route without a named gap or evidence reference. Duplicate unresolved input could make the official selector produce an actionable-looking result whose fingerprint was the reserved invalid sentinel. Release compilation compared watermarks but did not rederive selector expiry from the fresh closure.
+
+Two adjacent proof-boundary families remained:
+
+1. Intervention atom fingerprints sorted `evidenceVersions`, while creation, validation and approval did not require one stored order. Different raw bytes could therefore share the same payload and approval identities.
+2. Approval, answer and correction paths still called array, object or string operations before complete runtime validation. A numeric approval evidence list, malformed selector watermark, malformed atom payload, null answer-ledger item or null correction receipt identity could escape as a raw TypeError rather than a defined fail-closed result.
+
+These were current kernel failures. They were not deferred to canonical ingress because each occurred after the public boundary had accepted caller-owned plain data.
+
+## Repair round 16
+
+The repair binds each trusted decision-requirement, evidence-coverage, cutoff, epistemic-policy and challenger-result version to the same-key controlling watermark. It requires expiry to follow trusted evaluation time, indeterminate challenge to remain non-actionable, reuse to carry no unresolved evidence, every other actionable route to carry a named gap and evidence reference, actionable results to carry no diagnostic failure text, and the chosen alternative to exist and be eligible. Duplicate input control and evidence identities now force the official selector to hold. Release compilation rederives expiry from the fresh control closure.
+
+Intervention creation rejects duplicate evidence identities and stores the accepted set in canonical order. Fingerprinting, validation and approval require those exact normal-form bytes rather than sorting at comparison time. Approval validates the selector watermark and binding collections before lookup or comparison. Answer and correction ledgers require complete exact receipt shapes before proof transfer, destructuring, replay or identity methods, so malformed plain values fail with defined contract errors.
+
+One hundred and eighty-nine focused checks pass locally. Six new grouped tests reproduce all five forged evaluation bindings, seven route-semantic contradictions, duplicated unresolved evidence input, stale selector expiry at Release compilation, evidence-order equivalence and malformed approval, answer and correction boundaries.
+
+The repair is frozen at `57e959e44634f24fdb5175d62f2d4aea2a9d0539`, tree `751736d2b669b66d12ea0d9860eb98a8b812d4b1`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
