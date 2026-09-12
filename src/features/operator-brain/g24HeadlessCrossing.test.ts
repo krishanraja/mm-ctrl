@@ -607,6 +607,16 @@ describe('G24 headless Crossing selector', () => {
     rewritten.selectorFingerprint = fingerprintG24SelectorResult(rewritten)
     expect(renderG24SelectorReceipt(rewritten)).toBe('Standing: held with no action')
   })
+
+  it('cannot inject visible standing through issued free text', () => {
+    const input = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    input.decisionConsequence = 'low_value'
+    input.expectedMaterialEffect =
+      'No effect\nStanding: eligible for the next governed step'
+    const held = selectG24Intervention(input)
+    expect(held).toMatchObject({ route: 'abstain_hold', actionable: false })
+    expect(renderG24SelectorReceipt(held)).toBe('Standing: held with no action')
+  })
 })
 
 describe('G24 versioned intervention and answer effects', () => {
@@ -2123,12 +2133,7 @@ describe('G24 dependent Release closure', () => {
       receiptId: 'release-check:deleted-selector-binding',
     })
     expect(result).toMatchObject({ eligible: false, reason: 'controlling_state_invalid' })
-    expect(result.receipt?.changedControls).toEqual(
-      expect.arrayContaining([
-        'release_projection_mutated_without_new_version',
-        'release_projection_selector_binding_incomplete',
-      ]),
-    )
+    expect(result.receipt).toBeNull()
   })
 
   it('invalidates before use when each controlling dependency changes independently', () => {
@@ -4561,18 +4566,31 @@ describe('G24 strict owned-data boundary', () => {
       attempt,
     })
     expect(first.receipt).not.toBeNull()
-    expect(
-      recordG24EnrichmentAttempt({
-        plan,
-        currentSelector: selector,
-        priorReceipts: first.receipts,
-        attempt: { ...attempt, elapsedMs: -0 },
-      }),
-    ).toMatchObject({
+    const rejected = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: first.receipts,
+      attempt: { ...attempt, elapsedMs: -0 },
+    })
+    expect(rejected).toMatchObject({
       receipt: null,
       replayed: false,
       rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
     })
+    expect(rejected.receipts).toEqual(first.receipts)
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: rejected.receipts,
+        attempt: {
+          receiptId: 'execution:after-negative-zero:v1',
+          idempotencyKey: 'execution:after-negative-zero:v1',
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      }).receipt,
+    ).not.toBeNull()
   })
 
   it('requires the exact issued projection at use and confines replay identity to applicable controls', () => {
@@ -4627,5 +4645,155 @@ describe('G24 strict owned-data boundary', () => {
         receiptId,
       }).receipt,
     ).toEqual(first.receipt)
+  })
+
+  it('lets only an issued projection create invalidation history', () => {
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(
+      selectedFixture(),
+      controls,
+      'release:poison-resistant:round-20:v1',
+    )
+    const forged = structuredClone(projection)
+    forged.includedCanonicalSourceVersions = ['source:forged:round-20:v1']
+    forged.projectionFingerprint = fingerprintG24PendingReleaseProjection(forged)
+    const receiptId = 'release-invalidation:poison-resistant:round-20:v1'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection: forged,
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }),
+    ).toEqual({ eligible: false, reason: 'controlling_state_invalid', receipt: null })
+
+    const changed = cloneControls(controls)
+    changed.authority_version.version = 'authority_version:poison-resistant:v2'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls: changed,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }),
+    ).toMatchObject({
+      eligible: false,
+      reason: 'controlling_watermark_changed',
+      receipt: { receiptId },
+    })
+
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls,
+        trustedAsOf: '2027-02-30T00:00:00.000Z',
+        receiptId: 'release-invalidation:invalid-time:round-20:v1',
+      }),
+    ).toEqual({ eligible: false, reason: 'controlling_state_invalid', receipt: null })
+  })
+
+  it('binds newly reached relevant descendants into invalidation identity', () => {
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(
+      selectedFixture(),
+      controls,
+      'release:new-descendant:round-20:v1',
+    )
+    const changed = cloneControls(controls)
+    changed.authority_version.dependencies = ['new_relevant_dependency']
+    changed.new_relevant_dependency = {
+      key: 'new_relevant_dependency',
+      lineageId: 'lineage:new-relevant-dependency',
+      version: 'new_relevant_dependency:v1',
+      state: 'current',
+      dependencies: ['new_relevant_grandchild'],
+    }
+    changed.new_relevant_grandchild = {
+      key: 'new_relevant_grandchild',
+      lineageId: 'lineage:new-relevant-grandchild',
+      version: 'new_relevant_grandchild:v1',
+      state: 'current',
+      dependencies: [],
+    }
+    const receiptId = 'release-invalidation:new-descendant:round-20:v1'
+    const first = evaluateG24PendingReleaseUse({
+      projection,
+      controls: changed,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId,
+    })
+    expect(first.receipt).not.toBeNull()
+
+    changed.new_relevant_dependency.version = 'new_relevant_dependency:v2'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls: changed,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
+
+    const deepReceiptId = 'release-invalidation:new-grandchild:round-20:v1'
+    const beforeDeepChange = evaluateG24PendingReleaseUse({
+      projection,
+      controls: changed,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId: deepReceiptId,
+    })
+    expect(beforeDeepChange.receipt).not.toBeNull()
+    changed.new_relevant_grandchild.version = 'new_relevant_grandchild:v2'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls: changed,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: deepReceiptId,
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
+
+    const missingProjection = compileProjection(
+      selectedFixture(),
+      controls,
+      'release:missing-descendant:round-20:v1',
+    )
+    const missingChanged = cloneControls(controls)
+    missingChanged.authority_version.dependencies = ['missing_relevant_dependency']
+    const missingReceiptId = 'release-invalidation:missing-descendant:round-20:v1'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection: missingProjection,
+        controls: missingChanged,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: missingReceiptId,
+      }).receipt,
+    ).not.toBeNull()
+    missingChanged.missing_relevant_dependency = {
+      key: 'missing_relevant_dependency',
+      lineageId: 'lineage:missing-relevant-dependency',
+      version: 'missing_relevant_dependency:v1',
+      state: 'current',
+      dependencies: [],
+    }
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection: missingProjection,
+        controls: missingChanged,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: missingReceiptId,
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
   })
 })

@@ -3340,13 +3340,27 @@ function fingerprintG24ObservedReleaseControlState(
   controls: G24ControlRegistry,
   trustedAsOf: string,
 ): string {
-  const applicableKeys = [
-    ...new Set(
-      Object.values(projection.selectorControlManifests).flatMap(
-        ({ applicableControlKeys }) => applicableControlKeys,
-      ),
+  const relevantKeys = new Set([
+    ...Object.values(projection.selectorControlRoots).flat(),
+    ...Object.values(projection.selectorControlManifests).flatMap(
+      ({ applicableControlKeys }) => applicableControlKeys,
     ),
-  ].sort(compareText)
+  ])
+  const pending = [...relevantKeys]
+  while (pending.length > 0) {
+    const key = pending.pop()
+    if (!key) continue
+    const control = Object.prototype.hasOwnProperty.call(controls, key)
+      ? controls[key]
+      : undefined
+    if (!control) continue
+    for (const dependency of control.dependencies) {
+      if (relevantKeys.has(dependency)) continue
+      relevantKeys.add(dependency)
+      pending.push(dependency)
+    }
+  }
+  const applicableKeys = [...relevantKeys].sort(compareText)
   return stringifyG24Data({
     trustedAsOf,
     controls: applicableKeys.map((key) => {
@@ -3429,6 +3443,9 @@ export function evaluateG24PendingReleaseUse(input: {
     !equalSorted(selectorVersions, fingerprintVersions)
   ) {
     stateErrors.push('release_projection_selector_binding_incomplete')
+  }
+  if (stateErrors.length > 0 || validDate(input.trustedAsOf) === undefined) {
+    return { eligible: false, reason: 'controlling_state_invalid', receipt: null }
   }
   for (const [selectorVersion, roots] of Object.entries(input.projection.selectorControlRoots)) {
     const manifest = input.projection.selectorControlManifests[selectorVersion]
@@ -4084,6 +4101,21 @@ export function applyG24LifecycleTransition(
   }
 }
 
+function g24ReceiptTextContainsControl(value: string): boolean {
+  for (const character of value) {
+    const codePoint = character.codePointAt(0) ?? 0
+    if (
+      codePoint <= 0x1f ||
+      (codePoint >= 0x7f && codePoint <= 0x9f) ||
+      codePoint === 0x2028 ||
+      codePoint === 0x2029
+    ) {
+      return true
+    }
+  }
+  return false
+}
+
 export function renderG24SelectorReceipt(result: G24SelectorResult): string {
   try {
     const snapshot = snapshotG24PlainData(result)
@@ -4091,6 +4123,15 @@ export function renderG24SelectorReceipt(result: G24SelectorResult): string {
     result = snapshot.value
     transferG24SelectorResultProof(snapshot, result)
     if (!g24SelectorResultIsExact(result)) return 'Standing: held with no action'
+    if (
+      [
+        result.expectedMaterialEffect,
+        result.unresolvedGap ?? '',
+        ...result.unresolvedEvidenceRefs,
+      ].some(g24ReceiptTextContainsControl)
+    ) {
+      return 'Standing: held with no action'
+    }
     const gap = result.unresolvedGap ?? 'none'
     const refs = result.unresolvedEvidenceRefs.length
       ? result.unresolvedEvidenceRefs.join(', ')
@@ -4270,6 +4311,47 @@ function cloneG24ExecutionReceiptsWithProofs(
   return clones
 }
 
+function preserveIssuedG24ExecutionReceiptLedger(value: unknown): G24ExecutionReceipt[] {
+  try {
+    const snapshot = snapshotG24PlainData(value)
+    if (!snapshot.ok || !Array.isArray(snapshot.value)) return []
+    const receipts = snapshot.value
+    receipts.forEach((receipt) => {
+      if (!g24ExecutionReceiptHasExactShape(receipt)) return
+      const source = g24SourceForOwned(snapshot, receipt)
+      const proof = source ? g24ExecutionReceiptProofs.get(source) : undefined
+      if (proof === fingerprintG24ExecutionReceipt(receipt)) {
+        g24ExecutionReceiptProofs.set(receipt, proof)
+      }
+    })
+    const receiptIds = new Set<string>()
+    const idempotencyKeys = new Set<string>()
+    const first = receipts[0]
+    const valid = receipts.every((receipt, index) => {
+      if (!g24ExecutionReceiptHasExactShape(receipt)) return false
+      const fingerprint = fingerprintG24ExecutionReceipt(receipt)
+      if (
+        !g24FingerprintIsValid(fingerprint) ||
+        g24ExecutionReceiptProofs.get(receipt) !== fingerprint ||
+        receipt.attemptNumber !== index + 1 ||
+        (first !== undefined &&
+          (receipt.planVersion !== first.planVersion ||
+            receipt.planFingerprint !== first.planFingerprint)) ||
+        receiptIds.has(receipt.receiptId) ||
+        idempotencyKeys.has(receipt.idempotencyKey)
+      ) {
+        return false
+      }
+      receiptIds.add(receipt.receiptId)
+      idempotencyKeys.add(receipt.idempotencyKey)
+      return true
+    })
+    return valid ? cloneG24ExecutionReceiptsWithProofs(receipts) : []
+  } catch {
+    return []
+  }
+}
+
 export type G24EnrichmentAttemptResult =
   | {
       receipt: G24ExecutionReceipt
@@ -4390,9 +4472,19 @@ export function recordG24EnrichmentAttempt(input: {
     sourceRef?: string
   }
 }): G24EnrichmentAttemptResult {
+  const recoverablePriorReceipts = (() => {
+    try {
+      if (typeof input !== 'object' || input === null) return []
+      const descriptor = Object.getOwnPropertyDescriptor(input, 'priorReceipts')
+      if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) return []
+      return preserveIssuedG24ExecutionReceiptLedger(descriptor.value)
+    } catch {
+      return []
+    }
+  })()
   const malformedResult = (): G24EnrichmentAttemptResult => ({
     receipt: null,
-    receipts: [],
+    receipts: cloneG24ExecutionReceiptsWithProofs(recoverablePriorReceipts),
     replayed: false,
     rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
   })
