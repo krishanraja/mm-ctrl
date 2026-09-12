@@ -118,6 +118,7 @@ function routeCandidate(
     counterevidenceTreated: eligible,
     reuseOrigin: 'same_case',
     originCaseRef: 'case:maya:decision-014',
+    reuseEvidenceNamespace: 'customer:maya/private/case:decision-014',
     reuseEvidenceRef: 'evidence:maya:decision-014:v1',
     publicSourceRef: null,
     immutableContentVersion: null,

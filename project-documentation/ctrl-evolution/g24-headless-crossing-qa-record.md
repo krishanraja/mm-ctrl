@@ -53,7 +53,7 @@ The identities and internal evidence are wholly synthetic. No simulated consent 
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 110 checks passed in one file.
+- `npm run brain:g24:headless-check`: 113 checks passed in one file.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.

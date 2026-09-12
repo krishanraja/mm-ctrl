@@ -202,6 +202,7 @@ export interface G24RouteCandidate {
   counterevidenceTreated: boolean
   reuseOrigin: 'same_case' | 'same_person_other_case' | 'same_workspace_other_case' | 'public_immutable'
   originCaseRef: string
+  reuseEvidenceNamespace: string
   reuseEvidenceRef: string
   publicSourceRef: string | null
   immutableContentVersion: string | null
@@ -280,6 +281,7 @@ const g24RouteCandidateSchema = z
       'public_immutable',
     ]),
     originCaseRef: z.string(),
+    reuseEvidenceNamespace: z.string(),
     reuseEvidenceRef: z.string(),
     publicSourceRef: z.string().nullable(),
     immutableContentVersion: z.string().nullable(),
@@ -361,6 +363,8 @@ export interface G24SelectorAlternative {
 
 export interface G24SelectorResult {
   selectorResultVersion: string
+  currentCaseRef: string
+  evidenceNamespace: string
   purposeRef: string
   audienceRef: string
   sensitivityRef: string
@@ -377,6 +381,7 @@ export interface G24SelectorResult {
   controlManifestVersion: string
   applicableControlKeys: string[]
   controlGraphFingerprint: string
+  trustedEvaluation: G24TrustedEvaluationBinding
   controllingWatermarks: G24ControlWatermark[]
   controllingFingerprint: string
   selectorFingerprint: string
@@ -391,6 +396,8 @@ export function fingerprintG24SelectorResult(
 ): string {
   return JSON.stringify({
     selectorResultVersion: result.selectorResultVersion,
+    currentCaseRef: result.currentCaseRef,
+    evidenceNamespace: result.evidenceNamespace,
     purposeRef: result.purposeRef,
     audienceRef: result.audienceRef,
     sensitivityRef: result.sensitivityRef,
@@ -413,6 +420,7 @@ export function fingerprintG24SelectorResult(
     controlManifestVersion: result.controlManifestVersion,
     applicableControlKeys: [...result.applicableControlKeys].sort(compareText),
     controlGraphFingerprint: result.controlGraphFingerprint,
+    trustedEvaluation: result.trustedEvaluation,
     controllingWatermarks: [...result.controllingWatermarks].sort((left, right) =>
       compareText(left.key, right.key),
     ),
@@ -441,12 +449,16 @@ const ROUTE_ORDER: Array<Exclude<G24SelectorRoute, 'abstain_hold'>> = [
 function candidateEligibility(
   candidate: G24RouteCandidate,
   currentCaseRef: string,
+  currentEvidenceNamespace: string,
 ): G24SelectorAlternative {
   const sameCaseReuse =
-    candidate.reuseOrigin === 'same_case' && candidate.originCaseRef === currentCaseRef
+    candidate.reuseOrigin === 'same_case' &&
+    candidate.originCaseRef === currentCaseRef &&
+    candidate.reuseEvidenceNamespace === currentEvidenceNamespace
   const publicImmutableReuse =
     candidate.reuseOrigin === 'public_immutable' &&
     candidate.originCaseRef !== currentCaseRef &&
+    candidate.reuseEvidenceNamespace === 'public' &&
     Boolean(candidate.reuseEvidenceRef.trim()) &&
     Boolean(candidate.publicSourceRef?.trim()) &&
     Boolean(candidate.immutableContentVersion?.trim()) &&
@@ -501,6 +513,8 @@ function heldSelectorResult(
 ): G24SelectorResult {
   return finalizeG24SelectorResult({
     selectorResultVersion: input.selectorResultVersion,
+    currentCaseRef: input.currentCaseRef,
+    evidenceNamespace: input.evidenceNamespace,
     purposeRef: input.purposeRef,
     audienceRef: input.audienceRef,
     sensitivityRef: input.sensitivityRef,
@@ -517,6 +531,7 @@ function heldSelectorResult(
     controlManifestVersion: input.controlManifest.manifestVersion,
     applicableControlKeys: [...input.controlManifest.applicableControlKeys].sort(compareText),
     controlGraphFingerprint: input.controlManifest.graphFingerprint,
+    trustedEvaluation: structuredClone(input.trustedEvaluation),
     controllingWatermarks: closure.watermarks,
     controllingFingerprint: fingerprintG24Watermarks(closure.watermarks),
     expiry: earliestExpiry(closure.watermarks, input.controls),
@@ -535,6 +550,8 @@ function malformedG24SelectorResult(inputValue: unknown, errors: string[]): G24S
     typeof candidate[key] === 'string' ? (candidate[key] as string) : fallback
   return finalizeG24SelectorResult({
     selectorResultVersion: textOr('selectorResultVersion', 'invalid-selector-envelope'),
+    currentCaseRef: textOr('currentCaseRef', 'invalid-case'),
+    evidenceNamespace: textOr('evidenceNamespace', 'invalid-evidence-namespace'),
     purposeRef: textOr('purposeRef', 'invalid-purpose'),
     audienceRef: textOr('audienceRef', 'invalid-audience'),
     sensitivityRef: textOr('sensitivityRef', 'invalid-sensitivity'),
@@ -551,6 +568,17 @@ function malformedG24SelectorResult(inputValue: unknown, errors: string[]): G24S
     controlManifestVersion: '',
     applicableControlKeys: [],
     controlGraphFingerprint: '',
+    trustedEvaluation: {
+      evaluationVersion: '',
+      decisionRequirementVersion: '',
+      evidenceCoverageVersion: '',
+      trustedCutoffVersion: '',
+      epistemicPolicyVersion: '',
+      independentChallengerResultVersion: '',
+      controlManifestVersion: '',
+      controlGraphFingerprint: '',
+      trustedAsOf: '',
+    },
     controllingWatermarks: [],
     controllingFingerprint: '',
     expiry: null,
@@ -583,7 +611,9 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
     input.controlManifest.applicableControlKeys,
   )
   const alternatives = input.candidates
-    .map((candidate) => candidateEligibility(candidate, input.currentCaseRef))
+    .map((candidate) =>
+      candidateEligibility(candidate, input.currentCaseRef, input.evidenceNamespace),
+    )
     .sort((left, right) => ROUTE_ORDER.indexOf(left.route) - ROUTE_ORDER.indexOf(right.route))
   const candidateRoutes = input.candidates.map(({ route }) => route)
   const selectorEnvelopeErrors = [
@@ -683,7 +713,10 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
 
   if (input.evidenceState === 'sufficient') {
     const reuse = input.candidates.find((candidate) => candidate.route === 'reuse')
-    if (reuse && candidateEligibility(reuse, input.currentCaseRef).eligible) {
+    if (
+      reuse &&
+      candidateEligibility(reuse, input.currentCaseRef, input.evidenceNamespace).eligible
+    ) {
       return finalizeG24SelectorResult({
         ...heldSelectorResult(input, closure, 'current_sufficient', '', alternatives),
         route: 'reuse',
@@ -717,7 +750,7 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
     .filter(
       (candidate): candidate is G24RouteCandidate & { route: G24ResolvingRoute } =>
         RESOLVING_ROUTE_ORDER.includes(candidate.route as G24ResolvingRoute) &&
-        candidateEligibility(candidate, input.currentCaseRef).eligible,
+        candidateEligibility(candidate, input.currentCaseRef, input.evidenceNamespace).eligible,
     )
     .sort((left, right) => {
       if (left.burden !== right.burden) return left.burden - right.burden
@@ -957,6 +990,7 @@ export type G24AnswerKind = 'option' | 'write_in' | 'voice' | 'unknown' | 'defer
 export interface G24AnswerReceipt {
   receiptId: string
   atomVersion: string
+  interventionFingerprint: string
   answerKind: G24AnswerKind
   value: string | null
   immutableCaseEvidence: true
@@ -972,6 +1006,9 @@ export function recordG24Answer(
   atom: G24InterventionAtom,
   answer: { receiptId: string; kind: G24AnswerKind; value?: string },
 ): G24AnswerReceipt {
+  if (typeof answer.receiptId !== 'string' || !answer.receiptId.trim()) {
+    throw new Error('answer_receipt_id_required')
+  }
   if (atom.payload.kind !== 'question') throw new Error('answer_requires_question_atom')
   if (atom.approvalState !== 'approved') throw new Error('answer_requires_approved_atom')
   if (validateG24InterventionAtom(atom).length > 0) {
@@ -992,6 +1029,7 @@ export function recordG24Answer(
   return {
     receiptId: answer.receiptId,
     atomVersion: atom.atomVersion,
+    interventionFingerprint: atom.payloadFingerprint,
     answerKind: answer.kind,
     value: answer.value?.trim() || null,
     immutableCaseEvidence: true,
@@ -1026,32 +1064,39 @@ function deriveG24AnswerCorrectionImpact(
   graph: G24AnswerDependencyGraph,
 ): { derivativeRefs: string[]; decisionRefs: string[] } {
   if (!graph.graphVersion.trim()) throw new Error('correction_dependency_graph_version_required')
+  for (const [ref, dependencies] of [
+    ...Object.entries(graph.derivativeDependencies),
+    ...Object.entries(graph.decisionDependencies),
+  ]) {
+    if (!ref.trim() || dependencies.some((dependency) => !dependency.trim())) {
+      throw new Error('correction_dependency_graph_malformed')
+    }
+  }
   const affected = new Set([originalAnswerReceiptId])
   const derivativeRefs = new Set<string>()
+  const decisionRefs = new Set<string>()
   let changed = true
   while (changed) {
     changed = false
     for (const [ref, dependencies] of Object.entries(graph.derivativeDependencies)) {
-      if (!ref.trim() || dependencies.some((dependency) => !dependency.trim())) {
-        throw new Error('correction_dependency_graph_malformed')
-      }
       if (!derivativeRefs.has(ref) && dependencies.some((dependency) => affected.has(dependency))) {
         derivativeRefs.add(ref)
         affected.add(ref)
         changed = true
       }
     }
-  }
-  const decisionRefs = Object.entries(graph.decisionDependencies)
-    .filter(([ref, dependencies]) => {
-      if (!ref.trim() || dependencies.some((dependency) => !dependency.trim())) {
-        throw new Error('correction_dependency_graph_malformed')
+    for (const [ref, dependencies] of Object.entries(graph.decisionDependencies)) {
+      if (!decisionRefs.has(ref) && dependencies.some((dependency) => affected.has(dependency))) {
+        decisionRefs.add(ref)
+        affected.add(ref)
+        changed = true
       }
-      return dependencies.some((dependency) => affected.has(dependency))
-    })
-    .map(([ref]) => ref)
-    .sort(compareText)
-  return { derivativeRefs: [...derivativeRefs].sort(compareText), decisionRefs }
+    }
+  }
+  return {
+    derivativeRefs: [...derivativeRefs].sort(compareText),
+    decisionRefs: [...decisionRefs].sort(compareText),
+  }
 }
 
 export function correctG24Answer(
@@ -1064,6 +1109,9 @@ export function correctG24Answer(
 ): G24AnswerCorrectionReceipt {
   if (original.receiptId === replacement.receiptId) throw new Error('replacement_receipt_must_be_new')
   if (original.atomVersion !== replacement.atomVersion) {
+    throw new Error('replacement_answer_atom_mismatch')
+  }
+  if (original.interventionFingerprint !== replacement.interventionFingerprint) {
     throw new Error('replacement_answer_atom_mismatch')
   }
   if (!details.receiptId.trim()) throw new Error('correction_receipt_id_required')
@@ -1318,7 +1366,7 @@ export interface G24ReleaseUseResult {
 }
 
 function equalSorted(left: readonly string[], right: readonly string[]): boolean {
-  return [...left].sort(compareText).join('|') === [...right].sort(compareText).join('|')
+  return JSON.stringify([...left].sort(compareText)) === JSON.stringify([...right].sort(compareText))
 }
 
 function equalStringRecord(left: Record<string, string>, right: Record<string, string>): boolean {
@@ -1606,6 +1654,7 @@ export interface G24LifecycleReceipt {
   afterVersion: string
   actorClass: G24LifecycleActorClass
   actorRefs: string[]
+  identityControlVersionRef: string
   authority: G24LifecycleAuthority
   authorityVersionRef: string
   precondition: G24LifecyclePrecondition
@@ -1618,6 +1667,8 @@ export interface G24LifecycleReceipt {
 export interface G24LifecycleSnapshot {
   state: G24EngagementStateOrNone
   version: string | null
+  namedLeaderRef: string
+  identityControlVersion: string
   receipts: G24LifecycleReceipt[]
 }
 
@@ -1627,6 +1678,7 @@ export interface G24LifecycleTransitionRequest {
   afterVersion: string
   actorClass: G24LifecycleActorClass
   actorRefs: string[]
+  identityControlVersionRef: string
   authority: G24LifecycleAuthority
   authorityVersionRef: string
   precondition: G24LifecyclePrecondition
@@ -1646,22 +1698,28 @@ function fingerprintG24LifecycleRequest(request: G24LifecycleTransitionRequest):
 function lifecycleActorRefsAreValid(
   actorClass: G24LifecycleActorClass,
   actorRefs: readonly string[],
+  namedLeaderRef: string,
 ): boolean {
   const refs = [...new Set(actorRefs.map((ref) => ref.trim()).filter(Boolean))]
   if (actorClass === 'krish') return refs.length === 1 && refs[0] === 'krish'
   if (actorClass === 'named_leader_and_krish') {
-    return refs.includes('krish') && refs.some((ref) => ref !== 'krish')
+    return refs.length === 2 && refs.includes('krish') && refs.includes(namedLeaderRef)
   }
   if (actorClass === 'krish_or_krish_recording_named_leader_decline_or_withdrawal') {
-    return refs.includes('krish')
+    return (
+      refs.includes('krish') && refs.every((ref) => ref === 'krish' || ref === namedLeaderRef)
+    )
   }
-  return refs.length > 0
+  return refs.length === 1 && (refs[0] === 'krish' || refs[0] === namedLeaderRef)
 }
 
 export function applyG24LifecycleTransition(
   snapshot: G24LifecycleSnapshot,
   request: G24LifecycleTransitionRequest,
 ): { accepted: boolean; reason: string; snapshot: G24LifecycleSnapshot } {
+  if (!snapshot.namedLeaderRef.trim() || !snapshot.identityControlVersion.trim()) {
+    return { accepted: false, reason: 'lifecycle_identity_binding_missing', snapshot: structuredClone(snapshot) }
+  }
   const requestFingerprint = fingerprintG24LifecycleRequest(request)
   const prior = snapshot.receipts.find((receipt) => receipt.idempotencyKey === request.idempotencyKey)
   if (prior) {
@@ -1695,7 +1753,8 @@ export function applyG24LifecycleTransition(
   }
   if (
     request.actorClass !== definition.actor ||
-    !lifecycleActorRefsAreValid(request.actorClass, request.actorRefs) ||
+    !lifecycleActorRefsAreValid(request.actorClass, request.actorRefs, snapshot.namedLeaderRef) ||
+    request.identityControlVersionRef !== snapshot.identityControlVersion ||
     request.authority !== definition.authority ||
     !request.authorityVersionRef.trim()
   ) {
@@ -1724,6 +1783,7 @@ export function applyG24LifecycleTransition(
     afterVersion: request.afterVersion,
     actorClass: request.actorClass,
     actorRefs: [...new Set(request.actorRefs)].sort(compareText),
+    identityControlVersionRef: request.identityControlVersionRef,
     authority: request.authority,
     authorityVersionRef: request.authorityVersionRef,
     precondition: request.precondition,
@@ -1738,6 +1798,8 @@ export function applyG24LifecycleTransition(
     snapshot: {
       state: definition.to,
       version: request.afterVersion,
+      namedLeaderRef: snapshot.namedLeaderRef,
+      identityControlVersion: snapshot.identityControlVersion,
       receipts: [...snapshot.receipts, receipt],
     },
   }
@@ -1772,7 +1834,6 @@ export type G24ExecutionStatus =
   | 'slow_held'
   | 'stale_rejected'
   | 'attempt_budget_held'
-  | 'malformed_rejected'
 
 export interface G24ExecutionReceipt {
   receiptId: string
@@ -1789,6 +1850,23 @@ export interface G24ExecutionReceipt {
   approvalCreated: false
   deliveryCreated: false
 }
+
+export type G24EnrichmentAttemptResult =
+  | {
+      receipt: G24ExecutionReceipt
+      receipts: G24ExecutionReceipt[]
+      replayed: boolean
+      rejection: null
+    }
+  | {
+      receipt: null
+      receipts: G24ExecutionReceipt[]
+      replayed: false
+      rejection: {
+        status: 'malformed_rejected'
+        durableReceiptCreated: false
+      }
+    }
 
 export function createG24EnrichmentExecutionPlan(
   selector: G24SelectorResult,
@@ -1826,7 +1904,32 @@ export function recordG24EnrichmentAttempt(input: {
     outcome: 'succeeded' | 'failed'
     sourceRef?: string
   }
-}): { receipt: G24ExecutionReceipt; receipts: G24ExecutionReceipt[]; replayed: boolean } {
+}): G24EnrichmentAttemptResult {
+  const receiptIdIsValid =
+    typeof input.attempt.receiptId === 'string' && Boolean(input.attempt.receiptId.trim())
+  const idempotencyKeyIsValid =
+    typeof input.attempt.idempotencyKey === 'string' && Boolean(input.attempt.idempotencyKey.trim())
+  const planVersionIsValid =
+    typeof input.plan.planVersion === 'string' && Boolean(input.plan.planVersion.trim())
+  const malformed =
+    !receiptIdIsValid ||
+    !idempotencyKeyIsValid ||
+    !Number.isFinite(input.attempt.elapsedMs) ||
+    input.attempt.elapsedMs < 0 ||
+    !(['succeeded', 'failed'] as unknown[]).includes(input.attempt.outcome) ||
+    !planVersionIsValid ||
+    !Number.isFinite(input.plan.maximumWallClockMs) ||
+    input.plan.maximumWallClockMs <= 0 ||
+    !Number.isInteger(input.plan.maximumAttempts) ||
+    input.plan.maximumAttempts <= 0
+  if (malformed) {
+    return {
+      receipt: null,
+      receipts: structuredClone(input.priorReceipts),
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    }
+  }
   const attemptFingerprint = JSON.stringify({
     plan: input.plan,
     currentSelectorVersion: input.currentSelector.selectorResultVersion,
@@ -1846,7 +1949,12 @@ export function recordG24EnrichmentAttempt(input: {
       prior.planVersion === input.plan.planVersion &&
       prior.attemptFingerprint === attemptFingerprint
     if (!sameAttempt) throw new Error('execution_idempotency_key_collision')
-    return { receipt: structuredClone(prior), receipts: structuredClone(input.priorReceipts), replayed: true }
+    return {
+      receipt: structuredClone(prior),
+      receipts: structuredClone(input.priorReceipts),
+      replayed: true,
+      rejection: null,
+    }
   }
   if (input.priorReceipts.some(({ receiptId }) => receiptId === input.attempt.receiptId)) {
     throw new Error('execution_receipt_id_collision')
@@ -1854,26 +1962,9 @@ export function recordG24EnrichmentAttempt(input: {
 
   const attemptNumber = input.priorReceipts.length + 1
   let status: G24ExecutionStatus
-  const receiptIdIsValid =
-    typeof input.attempt.receiptId === 'string' && Boolean(input.attempt.receiptId.trim())
-  const idempotencyKeyIsValid =
-    typeof input.attempt.idempotencyKey === 'string' && Boolean(input.attempt.idempotencyKey.trim())
-  const planVersionIsValid =
-    typeof input.plan.planVersion === 'string' && Boolean(input.plan.planVersion.trim())
-  const malformed =
-    !receiptIdIsValid ||
-    !idempotencyKeyIsValid ||
-    !Number.isFinite(input.attempt.elapsedMs) ||
-    input.attempt.elapsedMs < 0 ||
-    !(['succeeded', 'failed'] as unknown[]).includes(input.attempt.outcome) ||
-    !planVersionIsValid ||
-    !Number.isFinite(input.plan.maximumWallClockMs) ||
-    input.plan.maximumWallClockMs <= 0 ||
-    !Number.isInteger(input.plan.maximumAttempts) ||
-    input.plan.maximumAttempts <= 0
-  if (malformed) {
-    status = 'malformed_rejected'
-  } else if (
+  if (
+    input.currentSelector.route !== 'enrich' ||
+    !input.currentSelector.actionable ||
     input.currentSelector.selectorResultVersion !== input.plan.selectorResultVersion ||
     input.currentSelector.selectorFingerprint !== input.plan.selectorFingerprint ||
     fingerprintG24SelectorResult(input.currentSelector) !== input.currentSelector.selectorFingerprint
@@ -1911,5 +2002,6 @@ export function recordG24EnrichmentAttempt(input: {
     receipt,
     receipts: [...structuredClone(input.priorReceipts), receipt],
     replayed: false,
+    rejection: null,
   }
 }

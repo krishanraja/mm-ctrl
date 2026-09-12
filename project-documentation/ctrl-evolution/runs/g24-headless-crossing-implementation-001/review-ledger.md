@@ -41,9 +41,23 @@ The repair must preserve the frozen architecture while closing the reproduced se
 7. Carry a versioned applicable-control manifest and dependency-graph fingerprint through selector and pending Release checks so deleting a declared applicable edge fails at selection, compile and before use.
 8. Narrow every written claim to structural consistency within caller-supplied data until a server-only canonical ingress proves authenticity and completeness.
 
-## Current round
+## Review round 2
 
-The repaired implementation was frozen at `adfa6e0bd126d1b223e915fe2622cdc28356cef5` for independent review. That commit has 110 focused checks passing, 66 adjacent operator-Brain checks passing, no new TypeScript errors, clean changed-file lint, passing documentation contracts and a successful direct Vite production compilation across 2,812 modules. These results do not close the review. Until independent adjudication clears the exact repaired bytes, the implementation state is `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+**Frozen code:** `adfa6e0bd126d1b223e915fe2622cdc28356cef5`
+
+**Truthful state correction:** `7f898adc8ea822e93c6f1c5bf7c2a651d5449d01`
+
+**Adjudication:** `VETO`
+
+The broad first repair closed the original five root defects, but fresh exact-byte attacks found six remaining structural seams. The sealed selector omitted its current case, evidence namespace and trusted evaluation binding. A candidate could contradict a private envelope by self-labelling reuse public. Correction compared only atom version and did not traverse decision-to-decision dependencies. Canonical-version arrays used a delimiter-collidable comparison. An invalid actor reference could satisfy an actor class. Malformed execution emitted a purported append-only receipt without valid identity, and a handcrafted enrichment plan could execute against a reuse selector.
+
+The documentation-only state correction passed review and remains valid history. It did not alter code and could not cure the veto.
+
+## Repair round 2
+
+The current repair seals case, evidence namespace and full trusted evaluation into the selector fingerprint; requires reuse evidence namespace consistency; binds answer correction to the exact intervention fingerprint; traverses derivative and decision dependencies to a fixed point; compares exact arrays without delimiters; binds lifecycle actors to the snapshot's named leader and identity-control version; refuses blank answer receipts; emits no durable execution receipt for malformed envelopes; and requires the exact current selector to be actionable enrichment before accepting an enrichment attempt.
+
+The repair worktree has 113 focused checks passing. These results do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state is `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 
