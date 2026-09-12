@@ -248,7 +248,9 @@ These defects shared one architectural cause: exactness was being inferred from 
 
 The current repair replaces lossy projection with a strict recursive snapshot boundary. Admissible values are finite JSON-like primitives, ordinary own-data objects and dense vanilla arrays. It rejects accessors, functions, symbols, symbol keys, hidden properties, extra array keys, sparse arrays, custom prototypes, nonfinite values and cycles. Shared acyclic references are copied as repeated values rather than confused with cycles. Stateful APIs snapshot before semantic reads, transfer valid private issuance proofs to their owned copies where necessary, then validate, fingerprint, derive and use only those copies. Lifecycle snapshots and requests additionally require their exact known field sets before receipt issuance.
 
-One hundred and fifty focused checks pass. The new attacks cover hidden options and effects, sparse issued answer and correction evidence, custom array behaviour, cyclic approved content, accessor-backed selector authority, dependency graphs, execution plans and Release projections, malformed graph collections and unsupported lifecycle fields. The moving bytes remain unverified until frozen exact-byte review.
+One hundred and fifty focused checks pass. The new attacks cover hidden options and effects, sparse issued answer and correction evidence, custom array behaviour, cyclic approved content, accessor-backed selector authority, dependency graphs, execution plans and Release projections, malformed graph collections and unsupported lifecycle fields.
+
+The repair is frozen at `1befb0c2d5c3d9581ebc488e9d0e9e67f822c77c`, tree `c8d3b09ccd813627a675417eff55a78bf12caceb`. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
