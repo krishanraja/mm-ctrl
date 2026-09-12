@@ -4991,14 +4991,12 @@ export function recordG24EnrichmentAttempt(input: {
           }),
         )
       : null
-  const terminalPlanFingerprint = terminalPrefixFingerprint
-    ? g24Sha256(
-        stringifyG24Data({
-          domain: 'g24:terminal-execution-plan:v1',
-          planFingerprint: input.plan.planFingerprint,
-        }),
-      )
-    : null
+  const terminalPlanFingerprint = g24Sha256(
+    stringifyG24Data({
+      domain: 'g24:terminal-execution-plan:v1',
+      planFingerprint: input.plan.planFingerprint,
+    }),
+  )
   const terminalRequestFingerprint = terminalPrefixFingerprint
     ? g24Sha256(
         stringifyG24Data({
@@ -5009,10 +5007,11 @@ export function recordG24EnrichmentAttempt(input: {
         }),
       )
     : null
-  const issuedTerminalState = terminalPlanFingerprint
-    ? g24TerminalExecutionReceiptByPlanFingerprint.get(terminalPlanFingerprint)
-    : undefined
-  if (issuedTerminalState) {
+  const issuedTerminalState = g24TerminalExecutionReceiptByPlanFingerprint.get(
+    terminalPlanFingerprint,
+  )
+  const reconstructTerminalReceipt = Boolean(issuedTerminalState && !prior)
+  if (issuedTerminalState && !prior) {
     const sameTerminalAttempt =
       issuedTerminalState.prefixFingerprint === terminalPrefixFingerprint &&
       issuedTerminalState.requestFingerprint === terminalRequestFingerprint
@@ -5062,7 +5061,7 @@ export function recordG24EnrichmentAttempt(input: {
   }
   Object.seal(receipt)
   g24ExecutionReceiptProofs.set(receipt, fingerprintG24ExecutionReceipt(receipt))
-  if (issuedTerminalState) {
+  if (issuedTerminalState && reconstructTerminalReceipt) {
     const receiptFingerprint = g24Sha256(
       stringifyG24Data({
         domain: 'g24:terminal-execution-receipt:v1',
@@ -5106,7 +5105,6 @@ export function recordG24EnrichmentAttempt(input: {
   }
   if (receiptIdAlreadyUsed) throw new Error('execution_receipt_id_collision')
   if (
-    terminalPlanFingerprint &&
     terminalPrefixFingerprint &&
     terminalRequestFingerprint
   ) {

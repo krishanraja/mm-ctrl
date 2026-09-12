@@ -5129,6 +5129,18 @@ describe('G24 strict owned-data boundary', () => {
       replayed: false,
       rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
     })
+    const freshBranchAfterTerminal = issue(planB, [], 'post-terminal-fresh-branch')
+    expect(freshBranchAfterTerminal).toEqual({
+      receipt: null,
+      receipts: [],
+      replayed: false,
+      rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
+    })
+    const ordinaryReplayAfterTerminal = issue(planA, branchA.receipts, 'branch-a')
+    expect(ordinaryReplayAfterTerminal).toMatchObject({
+      replayed: true,
+      receipt: { receiptId: 'execution-receipt:canonical-terminal:branch-a' },
+    })
   })
 
   it('captures a stateful command once and never traverses unselected ledger data', () => {
