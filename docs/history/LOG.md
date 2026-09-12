@@ -4,6 +4,14 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-12
+
+- reconciled at `618bf91`: NOW.md head moved from `860dea0` (G16) to `618bf91`, covering sixteen non-steward commits: G17 Brain adapter primitives (#385), G18 synthetic Brain population (#388), G19 synthetic population lab and its founder-approved scrollbar lock (#389, #391), G20 universal capture and Claude bridge contract (#392), two canon-block syncs (#387, #390), and three published Answers (#380, #381, #384). "What changed recently" gained one bullet per item; none contradicted `docs/current/` or `docs/current/release-state.md`, which already carried the G16 receipt these commits build on.
+- reconciled at `618bf91`: `CHANGELOG.md` gained the missing 2026-09-08 entry for G17 to G20; it previously stopped at the same-day Living Brain substrate entry and had no record of the four PRs merged after it.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`), because cloud previews use a per-session hostname Vite's DNS-rebinding guard rejected.
+- rolled from NOW.md: 2026-08-11 company recognition restored in onboarding (PR #369); shell unified (PR #368); commercial authority established (PR #367) with one human-readable owner for buyer, offer and claims and drift checks in CI; Blind Spot trusted-advisor instrument (PR #366) released and verified in production.
+- rolled from NOW.md: 2026-08-10 canonical current documentation (PR #365) separating current truth from history, and Make Your Mind Up unified with CTRL (PR #362): one product, one data spine, no-login delivery.
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.

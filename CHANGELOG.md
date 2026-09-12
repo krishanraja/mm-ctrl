@@ -2,9 +2,18 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-08
+Last reconciled: 2026-09-12
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
+
+## 2026-09-08 - G17 to G20: Brain adapter primitives, a synthetic population lab, and the Claude bridge contract
+
+All four merged to `main` on 2026-09-08, after the Living Brain substrate entry below. No production migration, deployment, connector or UI build is authorised by any of them.
+
+- **G17** wrote the encryption and idempotency primitives a future Brain write adapter needs (PR #385): `brain-crypto.ts` requires an exact 32-byte key with no fallback or passphrase padding, uses AES-256-GCM, and fails hard on a missing key, changed context or malformed envelope; `brain-ingest-core.ts` fingerprints the canonical payload so a retried request returns the original receipt instead of writing twice. 13 focused tests pass. The next step needs an isolated Supabase development branch costing $0.01344 an hour, and creating it needs the founder's confirmation first (`project-documentation/ctrl-evolution/g17-service-adapter-contract.md`).
+- **G18** built a 48-account synthetic Brain population as a test oracle, not a testimonial (PR #388, `test: add G18 synthetic Brain population`). Every account is marked `synthetic_demo` on the reserved `.invalid` domain and records what a diagnostic must notice, must not infer, and the smallest defensible next move; deterministic volume expansion produces 1,672 input events without inventing more people. No Supabase branch or fixture has been seeded.
+- **G19** turned that population into an unlinked, preview-flagged range lab at `/operator/lab/synthetic-population/:accountId` (PR #389), then locked it after Krish's own approval: "Looks good as a dashboard for all my customers, for just me to use," conditioned on a more brand-consistent scrollbar (PR #391). The locked revision replaced only browser-default scrollbar styling; 61 deterministic and React checks and 8 protected-preview Chromium journeys still pass, and layout, routes, fixtures and logic are unchanged.
+- **G20** locked the universal-capture and Claude-bridge contract (PR #392): "Document one-gesture private-staging capture, purpose-bound read-only Claude context capsules, provenance-preserving return, and the next synthetic proof gate." The first Claude bridge is read-only; write-back is deferred and can only ever create a proposed source in private staging (`project-documentation/ctrl-evolution/g20-universal-capture-claude-bridge-contract.md`).
 
 ## 2026-09-08 - Fail-closed Living Brain substrate
 
