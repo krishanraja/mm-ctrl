@@ -63,3 +63,39 @@ Owned truth: identity, consent, audience, provenance, correction and retention b
 - Durable stance: validate the live value the caller will use. Serialization safety cannot substitute for total nested-object safety when the exported boundary accepts broader input.
 - Raw ruling: [`subject_audience_lifecycle_safety.json`](../runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
+
+## G24-R2-ARCHITECTURE-COUNCIL-001
+
+- Verdict: veto.
+- Failure found: continuation, permission expiry, sensitive questioning, capture, delivery and correction were directionally separated but their actors, authority receipts and pre-use invalidation were not executable.
+- Final disposition: sustained narrowly for lifecycle, permission and intervention authority; consented capture, delivery and erasure mechanics stayed at later gates.
+- Durable stance: commercial state is never data permission, and permission change, correction and erasure remain distinct even when they invalidate overlapping derivatives.
+- Raw ruling: [`subject-audience-lifecycle-safety.md`](../runs/g24-r2-architecture-council-001/subject-audience-lifecycle-safety.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r2-architecture-council-001/adjudication.md).
+
+## G24-R3-ARCHITECTURE-COUNCIL-002
+
+- Verdict: veto.
+- Failure found: the terminal engagement state `released` could be reached from acceptance of a close outcome, conflating relationship closure with the separate R1 Release authority.
+- Final disposition: sustained and merged with lifecycle totality. The repair is a `closed` relationship terminal plus an explicit rule that no lifecycle state grants or proves Release authority.
+- Durable stance: close and portable release are separate human acts. A close may occur without a release, and a release requires its own current exact-scope authority.
+- Raw ruling: [`subject-audience-lifecycle-safety.md`](../runs/g24-r3-architecture-council-002/subject-audience-lifecycle-safety.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r3-architecture-council-002/adjudication.md).
+
+## G24-R4-ARCHITECTURE-COUNCIL-003
+
+- Verdict: pass with watchpoints.
+- Finding: R4 made the engagement graph exact, separated `closed` from portable Release and denied permission renewal through commercial continuation or reopen.
+- Final disposition: broken through sustained defect `P-01`. Correct subject, audience, purpose and leader authority were insufficient if a dependent challenger change could leave the pending projection epistemically stale.
+- Durable stance: scope and lifecycle validity include the current controlling lineage of the content, not only the named recipient and permission envelope.
+- Raw ruling: [`subject-audience-lifecycle-safety.md`](../runs/g24-r4-architecture-council-003/subject-audience-lifecycle-safety.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r4-architecture-council-003/adjudication.md).
+
+## G24-R5-ARCHITECTURE-COUNCIL-004
+
+- Verdict: pass with watchpoints.
+- Finding: dependency invalidation remains bound to the exact projection lineage and cannot widen subject, audience, purpose, permission or lifecycle scope.
+- Final disposition: criterion holds. Under-recorded applicable lineage must fail eligibility, while unrelated lineage remains unaffected.
+- Durable stance: scope validity depends on both the human authority envelope and the complete current lineage of what is being released.
+- Raw ruling: [`subject-audience-lifecycle-safety.md`](../runs/g24-r5-architecture-council-004/subject-audience-lifecycle-safety.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r5-architecture-council-004/adjudication.md).

@@ -1,0 +1,47 @@
+{
+  "schema_version": "ctrl.council.pack-a.v1",
+  "run_id": "g24-r4-architecture-council-003",
+  "standard": {
+    "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/standard.md",
+    "version": "g24-r4-terminal-trust-seam-recheck-v1",
+    "sha256": "8e227ccb4c9ad2a7a6b9dfd97df9a9bb24dad3e44e1f9153a75cf11720819e3b"
+  },
+  "submission": [
+    {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-blueprint-r4.md",
+      "sha256": "d4c611ef25094d4dfa08dbcb3c41b756f14cbbf615b5255fb896347d203b266a"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-contract-r4.json",
+      "sha256": "58c056ca26bd45a87bb460240637decdd853894c18b1a8173b9cc3297c7a927c"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-r4-delta.json",
+      "sha256": "4cc685d736e295319c1199ddf521f16adae415e50a03f81459c8ab1c671f8c85"
+    }
+  ],
+  "dependency_sets": [
+    "r1_accepted_baseline",
+    "r2_frozen_direction",
+    "r3_frozen_repair_dependency"
+  ],
+  "specialists": [
+    "human-agency",
+    "epistemic-integrity",
+    "subject-audience-lifecycle-safety",
+    "consequential-usefulness",
+    "living-brain-integrity",
+    "human-comprehension-and-access",
+    "behavioural-and-implementation-reality"
+  ],
+  "sealed_exclusions": [
+    "project-documentation/ctrl-evolution/runs/g24-r2-architecture-council-001",
+    "project-documentation/ctrl-evolution/runs/g24-r3-architecture-council-002",
+    "project-documentation/ctrl-evolution/judge-history",
+    "other_specialist_outputs",
+    "builder_commentary",
+    "founder_prediction",
+    "conversation_history"
+  ],
+  "authority": "local_review_records_only"
+}

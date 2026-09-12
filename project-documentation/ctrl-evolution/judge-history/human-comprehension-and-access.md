@@ -65,3 +65,39 @@ Owned truth: a busy non-technical person can understand the immediate state and 
 - Evidence limit: adult proxy agreement is not child-comprehension or product-usability proof.
 - Raw ruling: [`human_comprehension_and_access.json`](../runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
+
+## G24-R2-ARCHITECTURE-COUNCIL-001
+
+- Verdict: pass with watchpoints.
+- Finding: one visible question, progressive disclosure and natural controls were strong, but the machine contract did not preserve exact wording, rendered control, honest premise rejection and visible consequence as one version.
+- Final disposition: the direction survived and the missing intervention atom became a current architecture repair; rendered comprehension remained later evidence.
+- Durable stance: question, control and consequence must ask for the same answer type. Optional notes cannot hide required meaning.
+- Raw ruling: [`human-comprehension-and-access.md`](../runs/g24-r2-architecture-council-001/human-comprehension-and-access.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r2-architecture-council-001/adjudication.md).
+
+## G24-R3-ARCHITECTURE-COUNCIL-002
+
+- Verdict: pass with watchpoints.
+- Finding: R3 bound wording, grammar, control, complete options or comparator, write-in, honest exits, disclosed effect and visible consequence into one versioned atom.
+- Cross-examination: pass survived. Exact semantic fixtures, twelve-year-old comprehension, one-handed use and recovery remain G24.C/D proof.
+- Durable stance: architecture must preserve a simple human atom, but documentation cannot prove that a real person understands or enjoys its rendered expression.
+- Raw ruling: [`human-comprehension-and-access.md`](../runs/g24-r3-architecture-council-002/human-comprehension-and-access.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r3-architecture-council-002/adjudication.md).
+
+## G24-R4-ARCHITECTURE-COUNCIL-003
+
+- Verdict: pass with watchpoints.
+- Finding: R4 preserved the one-intervention boundary, natural controls, premise rejection, honest exits, visible consequence and hidden technical machinery.
+- Final disposition: the criterion held at architecture gate G24.A. Rendered comprehension, child-level language, one-handed mobile use, accessibility and failed-save recovery remain later proof.
+- Durable stance: architectural simplicity is a protected semantic boundary, not evidence that real wording or interaction is yet understandable.
+- Raw ruling: [`human-comprehension-and-access.md`](../runs/g24-r4-architecture-council-003/human-comprehension-and-access.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r4-architecture-council-003/adjudication.md).
+
+## G24-R5-ARCHITECTURE-COUNCIL-004
+
+- Verdict: pass with watchpoints.
+- Finding: R5 is an invisible Release guard and preserves the one customer-facing intervention boundary, natural controls, honest exits and deeper detail one layer away.
+- Final disposition: criterion holds at architecture gate. Real language, mobile use, accessibility and failure recovery remain unproven.
+- Durable stance: internal completeness may become more rigorous without making the leader administer or even notice the machinery.
+- Raw ruling: [`human-comprehension-and-access.md`](../runs/g24-r5-architecture-council-004/human-comprehension-and-access.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r5-architecture-council-004/adjudication.md).

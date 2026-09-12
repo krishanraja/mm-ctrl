@@ -62,3 +62,39 @@ Owned truth: memory remains versioned, inspectable, portable, correctable and re
 - Durable stance: immutable evidence, claim-level correction and deterministic projection remain protected. A live system must establish currentness at the trusted store or caller boundary rather than asking a static snapshot to prove an undeclared fact.
 - Raw ruling: [`living_brain_integrity.json`](../runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
+
+## G24-R2-ARCHITECTURE-COUNCIL-001
+
+- Verdict: pass with watchpoints.
+- Finding: R2 inherited one canonical Brain, proposal-only learning, permissioned reuse and correction-aware rebuilds, but its new planner objects and lifecycle state were not yet explicitly owned.
+- Final disposition: the Brain core survived; object ownership and lifecycle became required shared architecture repairs.
+- Durable stance: new intelligence objects remain projections, proposals or receipts over canonical state. None may become a shadow Brain or award itself standing.
+- Raw ruling: [`living-brain-integrity.md`](../runs/g24-r2-architecture-council-001/living-brain-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r2-architecture-council-001/adjudication.md).
+
+## G24-R3-ARCHITECTURE-COUNCIL-002
+
+- Verdict: pass with watchpoints.
+- Finding: all nine R2 objects mapped to R1, derivative standing and private cross-case reasoning were prohibited, and controlling changes invalidated dependent projections.
+- Cross-examination: no-shadow-Brain core survived. Claims of epistemic and selector totality remain conditional on the sustained policy, lifecycle and selector repairs.
+- Durable stance: reference-based inheritance is sound only when every meaning-producing policy and freshness boundary is also current and version-bound.
+- Raw ruling: [`living-brain-integrity.md`](../runs/g24-r3-architecture-council-002/living-brain-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r3-architecture-council-002/adjudication.md).
+
+## G24-R4-ARCHITECTURE-COUNCIL-003
+
+- Verdict: pass with watchpoints.
+- Finding: R4 preserved one canonical Brain, typed derivative artifacts, correction history and no self-promotion by model outputs or receipts.
+- Final disposition: broken through sustained defect `P-01`. A portable pending projection could outlive the controlling challenger result unless its dependency was made unavoidable.
+- Durable stance: one canonical Brain is not enough if downstream projections can shed the exact lineage that governs their current standing.
+- Raw ruling: [`living-brain-integrity.md`](../runs/g24-r4-architecture-council-003/living-brain-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r4-architecture-council-003/adjudication.md).
+
+## G24-R5-ARCHITECTURE-COUNCIL-004
+
+- Verdict: pass with watchpoints.
+- Finding: selector-influenced pending projections retain the complete lineage governing their standing while the existing R1 Release object and one canonical Brain remain the only roots.
+- Final disposition: criterion holds. Runtime must still prove no missing edge, orphaned projection, rewritten history or duplicate validity root.
+- Durable stance: a derivative remains trustworthy only while it retains the complete current lineage of the canonical Brain and evidence that produced it.
+- Raw ruling: [`living-brain-integrity.md`](../runs/g24-r5-architecture-council-004/living-brain-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r5-architecture-council-004/adjudication.md).

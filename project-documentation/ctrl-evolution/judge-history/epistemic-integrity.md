@@ -63,3 +63,39 @@ Owned truth: every claim earns its standing from attributable evidence, visible 
 - Durable stance: standing follows the evidence design. A trusted receipt cannot upgrade association into causation.
 - Raw ruling: [`epistemic_integrity.json`](../runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
+
+## G24-R2-ARCHITECTURE-COUNCIL-001
+
+- Verdict: veto.
+- Failure found: R2 named evidence coverage and least-burden routing without binding claim standing, source capability, trusted cutoff, provenance independence, contradiction and applicability to the R1 trust root.
+- Final disposition: sustained and collapsed into the R2 adjudication's object-ownership, inherited-integrity and total-selector repairs.
+- Durable stance: canonical identifiers and confidence labels do not earn meaning. The selector must consume capable, current and contradiction-aware evidence under a trusted cutoff.
+- Raw ruling: [`epistemic-integrity.md`](../runs/g24-r2-architecture-council-001/epistemic-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r2-architecture-council-001/adjudication.md).
+
+## G24-R3-ARCHITECTURE-COUNCIL-002
+
+- Verdict: veto.
+- Failure found: R3 enumerated source capability, sufficiency, causal standing, applicability and counterevidence but did not bind their selector-eligible production to a current version of existing R1 governance and independent-challenger authority. It also permitted an undefined provisional result for invalid input.
+- Final disposition: both defects sustained. The first was narrowed to a versioned binding rather than a new evidence system; the second merged with the Reality selector veto.
+- Durable stance: trusted code needs a current semantic policy and challenger result, not merely fields to validate. Model-authored labels cannot make themselves eligible.
+- Raw ruling: [`epistemic-integrity.md`](../runs/g24-r3-architecture-council-002/epistemic-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r3-architecture-council-002/adjudication.md).
+
+## G24-R4-ARCHITECTURE-COUNCIL-003
+
+- Verdict: pass with watchpoints.
+- Finding: R4 correctly bound selector standing to current governance and independent-challenger versions and made invalid control non-actionable.
+- Final disposition: broken through sustained defect `P-01`. A changed dependent challenger could invalidate a selector result while one conforming implementation left its pending Release projection eligible.
+- Durable stance: every decision-shaping projection must retain the complete controlling watermark set that gave its included content standing, not a hand-selected subset.
+- Raw ruling: [`epistemic-integrity.md`](../runs/g24-r4-architecture-council-003/epistemic-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r4-architecture-council-003/adjudication.md).
+
+## G24-R5-ARCHITECTURE-COUNCIL-004
+
+- Verdict: pass with watchpoints.
+- Finding: R5 makes complete controlling lineage functional rather than a hand-selected list, explicitly includes dependent policy and challenger versions and fails stale projections before use.
+- Final disposition: criterion holds. Physical transitive closure, independent control mutation and atomic use-time enforcement remain later proof.
+- Durable stance: a named watermark list is a floor only when the governing rule unambiguously requires every applicable control that can change standing.
+- Raw ruling: [`epistemic-integrity.md`](../runs/g24-r5-architecture-council-004/epistemic-integrity.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r5-architecture-council-004/adjudication.md).

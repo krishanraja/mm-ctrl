@@ -63,3 +63,39 @@ Owned truth: the proposed behaviour and system must survive real work, sparse st
 - Durable stance: a green finite gate proves its enumerated baselines, attacks and invariants. It never becomes evidence for arbitrary input, live freshness, diagnostic intelligence or product value.
 - Raw ruling: [`behavioural_and_implementation_reality.json`](../runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
+
+## G24-R2-ARCHITECTURE-COUNCIL-001
+
+- Verdict: veto.
+- Failure found: the route tree had ingredients and demonstration quadrants but no one total semantic owner, typed inputs, hard precedence, budgets or fail-closed output on malformed or contradictory state.
+- Final disposition: sustained as the total-selector repair. Exact algorithms, values, schemas and runtime failure injection stayed at G24.C.
+- Durable stance: an implementer must not infer the route oracle from expected fixtures. One trusted boundary must own exhaustive results and inspectable abstention.
+- Raw ruling: [`behavioural-and-implementation-reality.md`](../runs/g24-r2-architecture-council-001/behavioural-and-implementation-reality.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r2-architecture-council-001/adjudication.md).
+
+## G24-R3-ARCHITECTURE-COUNCIL-002
+
+- Verdict: veto.
+- Failure found: lifecycle transitions used undeclared grouped source tokens, preparation had no exit, and prose permitted an undefined provisional selector result while the contract named only five routes.
+- Final disposition: lifecycle totality sustained and merged with close-versus-Release; selector ambiguity sustained and merged with Epistemic Integrity.
+- Durable stance: every declared state-machine endpoint must be an exact state, every live state needs its intended exits, and invalid control state must have one unambiguous non-actionable result.
+- Raw ruling: [`behavioural-and-implementation-reality.md`](../runs/g24-r3-architecture-council-002/behavioural-and-implementation-reality.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r3-architecture-council-002/adjudication.md).
+
+## G24-R4-ARCHITECTURE-COUNCIL-003
+
+- Verdict: pass with watchpoints.
+- Finding: R4 replaced grouped lifecycle shorthand with six exact states and thirteen explicit edges, made invalid selector state total and separated close from Release.
+- Final disposition: broken through sustained defect `P-01`. The explicit pending Release invalidator list allowed opposite expected outcomes for one dependent challenger-only change.
+- Durable stance: generic inheritance cannot rescue an explicit downstream list whose omission lets two conforming implementations behave differently; architecture must lock the expected result before runtime proof.
+- Raw ruling: [`behavioural-and-implementation-reality.md`](../runs/g24-r4-architecture-council-003/behavioural-and-implementation-reality.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r4-architecture-council-003/adjudication.md).
+
+## G24-R5-ARCHITECTURE-COUNCIL-004
+
+- Verdict: pass with watchpoints.
+- Finding: the complete-set rule makes a literal partial allowlist nonconforming, missing applicable lineage fails eligibility and the dependent-only mutation has one required result while its unrelated control survives.
+- Final disposition: criterion holds at architecture gate. Atomic check-use, concurrent stale work, receipt idempotency and full lineage materialisation remain later runtime proof.
+- Durable stance: architecture must settle expected outcomes; working code must later prove them under races, omissions and malformed state.
+- Raw ruling: [`behavioural-and-implementation-reality.md`](../runs/g24-r5-architecture-council-004/behavioural-and-implementation-reality.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r5-architecture-council-004/adjudication.md).

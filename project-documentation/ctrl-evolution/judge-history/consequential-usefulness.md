@@ -63,3 +63,39 @@ Owned truth: the Brain sharpens a live high-value decision rather than producing
 - Protected strength: the other eleven contracts retain materially different select, stop, bound or reshape effects across four consequential decision families.
 - Raw ruling: [`consequential_usefulness.json`](../runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json).
 - Cross-examination: [`standards-prosecutor.json`](../runs/g21-internal-range-freeze-005/standards-prosecutor.json), [`veto-defense.json`](../runs/g21-internal-range-freeze-005/veto-defense.json) and [`founder-calibration.json`](../runs/g21-internal-range-freeze-005/founder-calibration.json).
+
+## G24-R2-ARCHITECTURE-COUNCIL-001
+
+- Verdict: veto.
+- Failure found: disciplined intervention routing could still be demonstrated on a low-value or generic decision without proving consequential altitude or incremental value.
+- Final disposition: narrowed. R1 already owns the consequential decision frame, so no new value root was added; high-value, low-value and competent-baseline fixtures became later blocking proof.
+- Durable stance: better routing is not value by itself. The intervention must name the material effect on one accepted consequential decision and later beat a competent same-evidence baseline.
+- Raw ruling: [`consequential-usefulness.md`](../runs/g24-r2-architecture-council-001/consequential-usefulness.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r2-architecture-council-001/adjudication.md).
+
+## G24-R3-ARCHITECTURE-COUNCIL-002
+
+- Verdict: pass with watchpoints.
+- Finding: R3 bound expected material effect to the accepted R1 decision frame and explicitly rejected planner-authored route movement as value.
+- Cross-examination: pass survived. Concrete discrimination, independently observed change and lift over a competent baseline remain blocking later proof rather than new G24.A architecture.
+- Durable stance: use the existing consequential frame as the value authority; never reward interruption, completion, relationship activity or a route label as outcome evidence.
+- Raw ruling: [`consequential-usefulness.md`](../runs/g24-r3-architecture-council-002/consequential-usefulness.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r3-architecture-council-002/adjudication.md).
+
+## G24-R4-ARCHITECTURE-COUNCIL-003
+
+- Verdict: pass with watchpoints.
+- Finding: R4 retained decision-frame binding, a load-bearing variable, a disclosed material effect and the distinction between real consequence and planner-authored activity.
+- Final disposition: the criterion held. Decision-quality lift, customer return and commercial value remain later empirical gates.
+- Durable stance: an architecture can define what meaningful movement is without claiming it has produced that movement; observed lift still requires a competent baseline and independent evidence.
+- Raw ruling: [`consequential-usefulness.md`](../runs/g24-r4-architecture-council-003/consequential-usefulness.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r4-architecture-council-003/adjudication.md).
+
+## G24-R5-ARCHITECTURE-COUNCIL-004
+
+- Verdict: pass with watchpoints.
+- Finding: R5 prevents stale selector-influenced work from being used without turning invalidation, receipts, rebuilds or planner movement into evidence of decision value.
+- Final disposition: criterion holds. Decision lift and commercial value remain later empirical claims against a competent baseline.
+- Durable stance: trust machinery protects value but is not itself the value; the product must still improve a consequential human decision.
+- Raw ruling: [`consequential-usefulness.md`](../runs/g24-r5-architecture-council-004/consequential-usefulness.md).
+- Adjudication: [`adjudication.md`](../runs/g24-r5-architecture-council-004/adjudication.md).
