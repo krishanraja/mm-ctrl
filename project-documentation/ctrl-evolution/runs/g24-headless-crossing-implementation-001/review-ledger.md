@@ -164,6 +164,24 @@ The current repair validates the complete supplied execution ledger for identity
 
 The repair was frozen at `ede48c33f42a7f6859dba3a19b201ca32bf1343a`, tree `28608fa04a1a57ecf81d4567fd84384df01b78bf`, with 136 focused checks passing, including exact reproductions of every round-seven attack. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 8
+
+**Frozen code:** `ede48c33f42a7f6859dba3a19b201ca32bf1343a`
+
+**Truthful state correction:** `85be5e38f5e74389d55bb14acecc500a66b67981`
+
+**Adjudication:** `VETO`
+
+Every round-seven reproduction closed. The exact review then distinguished canonical receipt shape from actual kernel issuance. A byte-perfect but never-issued execution receipt could seed the supplied ledger, consume an attempt and influence replay or collisions. A lifecycle receipt could be altered self-consistently and its request fingerprint recomputed because historical actor, authority, precondition, identity, evidence, root and version constraints were not all rechecked against the fixed transition table. Both histories could therefore look internally plausible without having traversed the kernel.
+
+The same reasoning applied to immutable answer evidence and correction, even though that exact path had not yet produced a separate reviewer veto. Treating old bytes as issued merely because they were well-shaped would repeat the root defect.
+
+## Repair round 8
+
+The current repair gives lifecycle, execution and answer receipts private in-process issuance proofs. Every supplied history requires both canonical full-object structure and exact issuance proof before it can influence state, replay, collision, budget or correction. Proofs are preserved across kernel-produced defensive clones but are not minted for caller reconstructions. Lifecycle history is anchored at `none` and `null`, matches every historical actor, authority and precondition to the fixed thirteen-edge table, binds identity control and nonempty precondition evidence, enforces continuity and historical version non-reuse, and matches the current snapshot tip. Restart rehydration remains explicitly closed until trusted canonical ingress can authenticate durable receipts.
+
+The moving worktree retains 136 focused checks, now including rejection of proofless reconstructed lifecycle, execution and answer receipts. It remains under repair until frozen and independently reviewed.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

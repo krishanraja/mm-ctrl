@@ -941,6 +941,9 @@ describe('G24 versioned intervention and answer effects', () => {
     }
     const first = recordG24Answer(atom, answer, [])
     expect(recordG24Answer(atom, answer, [first])).toEqual(first)
+    expect(() => recordG24Answer(atom, answer, structuredClone([first]))).toThrow(
+      'answer_receipt_ledger_invalid',
+    )
     expect(() =>
       recordG24Answer(
         atom,
@@ -2033,7 +2036,7 @@ describe('G24 engagement lifecycle', () => {
 
     expect(applyG24LifecycleTransition(rebound, request)).toMatchObject({
       accepted: false,
-      reason: 'actor_or_authority_invalid',
+      reason: 'lifecycle_receipt_history_invalid',
       snapshot: rebound,
     })
   })
@@ -2133,6 +2136,12 @@ describe('G24 engagement lifecycle', () => {
     ) as G24LifecycleTransition
     const request = lifecycleRequest(open, { afterVersion: 'preparing:v1' })
     const first = applyG24LifecycleTransition(initial, request)
+    const reconstructed = structuredClone(first.snapshot)
+    expect(applyG24LifecycleTransition(reconstructed, request)).toMatchObject({
+      accepted: false,
+      reason: 'lifecycle_receipt_history_invalid',
+      snapshot: reconstructed,
+    })
     const forged = structuredClone(first.snapshot)
     forged.receipts[0].afterState = 'completed' as never
     forged.receipts[0].actorRefs = ['attacker']
@@ -2464,6 +2473,18 @@ describe('G24 bounded enrichment execution', () => {
       currentSelector: selector,
       priorReceipts: [],
       attempt,
+    })
+    const reconstructed = structuredClone(first.receipts)
+    const reconstructedReplay = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: reconstructed,
+      attempt,
+    })
+    expect(reconstructedReplay.receipt).toBeNull()
+    expect(reconstructedReplay.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
     })
     const forged = structuredClone(first.receipts)
     forged[0].status = 'proposed_evidence'
