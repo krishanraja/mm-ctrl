@@ -3170,7 +3170,7 @@ describe('G24 bounded enrichment execution', () => {
     })
 
     const hiddenProjection = structuredClone(first.receipts[0])
-    addHiddenJsonProjection(first.receipts[0], hiddenProjection)
+    expect(() => addHiddenJsonProjection(first.receipts[0], hiddenProjection)).toThrow()
     first.receipts[0].status = 'proposed_evidence'
     first.receipts[0].sourceRef = 'forged-hidden-source:v1'
     const hiddenForgery = recordG24EnrichmentAttempt({
@@ -5221,5 +5221,112 @@ describe('G24 strict owned-data boundary', () => {
     })
     expect(result.receipt).toMatchObject({ attemptNumber: 1 })
     expect(unrelatedReads).toBe(0)
+  })
+
+  it('recovers authentic history when the outer command envelope is malformed', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:outer-recovery:round-25:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 4,
+    })
+    const issue = (priorReceipts: G24ExecutionReceipt[], id: string) =>
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts,
+        attempt: {
+          receiptId: `execution-receipt:outer-recovery:${id}`,
+          idempotencyKey: `execution-attempt:outer-recovery:${id}`,
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      })
+    const first = issue([], '1')
+    const second = issue(first.receipts, '2')
+    const nextAttempt = {
+      receiptId: 'execution-receipt:outer-recovery:3',
+      idempotencyKey: 'execution-attempt:outer-recovery:3',
+      elapsedMs: 1,
+      outcome: 'failed' as const,
+    }
+    const base = {
+      plan,
+      currentSelector: selector,
+      priorReceipts: second.receipts,
+      attempt: nextAttempt,
+    }
+    const symbolExtra = { ...base }
+    Object.defineProperty(symbolExtra, Symbol('unsupported'), {
+      value: 'must-not-enter',
+      enumerable: true,
+    })
+    const malformedCommands = [
+      { ...base, unsupported: 'must-not-enter' },
+      symbolExtra,
+      {
+        plan,
+        currentSelector: selector,
+        priorReceipts: second.receipts,
+      },
+    ]
+
+    for (const malformedCommand of malformedCommands) {
+      expect(recordG24EnrichmentAttempt(malformedCommand as never)).toEqual({
+        receipt: null,
+        receipts: second.receipts,
+        replayed: false,
+        rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+      })
+    }
+  })
+
+  it('seals every issued receipt while still detecting canonical-field mutation', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:sealed-receipts:round-25:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    const attempt = {
+      receiptId: 'execution-receipt:sealed-receipts:1',
+      idempotencyKey: 'execution-attempt:sealed-receipts:1',
+      elapsedMs: 1,
+      outcome: 'failed' as const,
+    }
+    const first = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: [],
+      attempt,
+    })
+    expect(Object.isSealed(first.receipt)).toBe(true)
+    expect(Object.isSealed(first.receipts[0])).toBe(true)
+    expect(() =>
+      Object.defineProperty(first.receipts[0], 'unsupportedAuthority', {
+        value: true,
+        enumerable: true,
+      }),
+    ).toThrow()
+    expect(() =>
+      Object.defineProperty(first.receipts[0], Symbol('unsupportedAuthority'), {
+        value: true,
+        enumerable: true,
+      }),
+    ).toThrow()
+
+    first.receipts[0].status = 'proposed_evidence'
+    const rejected = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: first.receipts,
+      attempt,
+    })
+    expect(rejected).toEqual({
+      receipt: null,
+      receipts: [],
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
   })
 })
