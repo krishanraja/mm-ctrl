@@ -194,7 +194,12 @@ function stringifyG24Data(value: unknown): string {
 }
 
 function validDate(value: string | undefined): number | undefined {
-  if (!value) return undefined
+  if (
+    !value ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)
+  ) {
+    return undefined
+  }
   const parsed = Date.parse(value)
   return Number.isFinite(parsed) ? parsed : undefined
 }
@@ -817,6 +822,7 @@ function g24SelectorResultSemanticShapeIsValid(value: unknown): value is G24Sele
             ROUTE_ORDER.indexOf(alternative.route)) ||
         !Number.isFinite(alternative.burden) ||
         alternative.burden < 0 ||
+        Object.is(alternative.burden, -0) ||
         alternative.eligible !== (alternative.rejectionReasons.length === 0) ||
         !g24StringArrayIsCanonicalNormalForm(alternative.rejectionReasons),
     ) ||
@@ -943,6 +949,23 @@ function g24SelectorResultHasExactEnvelope(value: unknown): value is G24Selector
   return g24HasExactOwnKeys(value, keys)
 }
 
+const g24SelectorResultProofs = new WeakMap<G24SelectorResult, string>()
+
+function g24SelectorResultProof(result: G24SelectorResult): string {
+  return stringifyG24Data(result)
+}
+
+function transferG24SelectorResultProof(
+  snapshot: Extract<G24PlainSnapshot<unknown>, { ok: true }>,
+  result: G24SelectorResult,
+): void {
+  const source = g24SourceForOwned(snapshot, result)
+  const proof = source ? g24SelectorResultProofs.get(source) : undefined
+  if (proof === g24SelectorResultProof(result)) {
+    g24SelectorResultProofs.set(result, proof)
+  }
+}
+
 function g24SelectorResultIsExact(value: unknown): value is G24SelectorResult {
   if (!g24SelectorResultSemanticShapeIsValid(value)) return false
   const canonicalFields = [
@@ -984,13 +1007,21 @@ function g24SelectorResultIsExact(value: unknown): value is G24SelectorResult {
     return false
   }
   const computed = fingerprintG24SelectorResult(value as G24SelectorResult)
-  return g24FingerprintIsValid(computed) && computed === value.selectorFingerprint
+  return (
+    g24FingerprintIsValid(computed) &&
+    computed === value.selectorFingerprint &&
+    g24SelectorResultProofs.get(value) === g24SelectorResultProof(value)
+  )
 }
 
 function finalizeG24SelectorResult(
   result: Omit<G24SelectorResult, 'selectorFingerprint'> | G24SelectorResult,
 ): G24SelectorResult {
-  return { ...result, selectorFingerprint: fingerprintG24SelectorResult(result) }
+  const finalized = { ...result, selectorFingerprint: fingerprintG24SelectorResult(result) }
+  if (g24FingerprintIsValid(finalized.selectorFingerprint)) {
+    g24SelectorResultProofs.set(finalized, g24SelectorResultProof(finalized))
+  }
+  return finalized
 }
 
 const RESOLVING_ROUTE_ORDER: G24ResolvingRoute[] = ['enrich', 'ask', 'session']
@@ -1036,7 +1067,9 @@ function candidateEligibility(
     candidate.route === 'reuse' && !candidate.reuseEvidenceRef.trim()
       ? 'reuse_evidence_reference_missing'
       : '',
-    !Number.isFinite(candidate.burden) || candidate.burden < 0 ? 'invalid_burden' : '',
+    !Number.isFinite(candidate.burden) || candidate.burden < 0 || Object.is(candidate.burden, -0)
+      ? 'invalid_burden'
+      : '',
   ].filter(Boolean)
   const normalizedCandidateReasons = candidate.rejectionReasons
     .map((reason) => reason.trim())
@@ -1049,6 +1082,7 @@ function candidateEligibility(
     eligible: rejectionReasons.length === 0,
     burden:
       Number.isFinite(candidate.burden) && candidate.burden >= 0
+        && !Object.is(candidate.burden, -0)
         ? candidate.burden
         : Number.MAX_SAFE_INTEGER,
     rejectionReasons,
@@ -1301,6 +1335,9 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
         rejectionReasons.some((reason) => !g24IdentifierIsCanonical(reason)),
     )
       ? 'candidate_rejection_reasons_not_canonical'
+      : '',
+    input.candidates.some(({ burden }) => Object.is(burden, -0))
+      ? 'candidate_burden_not_canonical'
       : '',
   ].filter(Boolean)
 
@@ -1696,6 +1733,7 @@ export function createG24InterventionAtom(
   if (!selectorSnapshot.ok || !atomSnapshot.ok) {
     throw new Error('intervention_atom_requires_plain_data')
   }
+  transferG24SelectorResultProof(selectorSnapshot, selectorSnapshot.value)
   selector = selectorSnapshot.value
   atom = atomSnapshot.value
   if (!g24SelectorResultIsExact(selector)) {
@@ -1994,6 +2032,7 @@ export function approveG24InterventionAtom(
   atom = atomSnapshot.value
   currentSelector = selectorSnapshot.value
   binding = bindingSnapshot.value
+  transferG24SelectorResultProof(selectorSnapshot, currentSelector)
   if (
     !g24InterventionAtomHasExactShape(atom) ||
     !g24IsRecord(currentSelector) ||
@@ -2781,6 +2820,8 @@ export interface G24ReleaseCompileResult {
   errors: string[]
 }
 
+const g24ReleaseProjectionFingerprintsByVersion = new Map<string, string>()
+
 function compareWatermarks(
   expected: readonly G24ControlWatermark[],
   current: readonly G24ControlWatermark[],
@@ -2817,6 +2858,11 @@ export function compileG24PendingRelease(input: {
       return { projection: null, errors: ['release_compile_requires_plain_data'] }
     }
     input = inputSnapshot.value
+    if (Array.isArray(input.selectorResults)) {
+      input.selectorResults.forEach((selector) =>
+        transferG24SelectorResultProof(inputSnapshot, selector),
+      )
+    }
     if (
       !g24HasExactOwnKeys(input, [
         'projectionVersion',
@@ -3007,6 +3053,19 @@ export function compileG24PendingRelease(input: {
   if (projection.projectionFingerprint === '__g24_invalid_nonplain_data__') {
     return { projection: null, errors: ['release_projection_fingerprint_invalid'] }
   }
+  const priorProjectionFingerprint = g24ReleaseProjectionFingerprintsByVersion.get(
+    projection.projectionVersion,
+  )
+  if (
+    priorProjectionFingerprint &&
+    priorProjectionFingerprint !== projection.projectionFingerprint
+  ) {
+    return { projection: null, errors: ['release_projection_version_collision'] }
+  }
+  g24ReleaseProjectionFingerprintsByVersion.set(
+    projection.projectionVersion,
+    projection.projectionFingerprint,
+  )
   return { projection, errors: [] }
   } catch {
     return { projection: null, errors: ['release_compile_shape_invalid'] }
@@ -3031,6 +3090,8 @@ export interface G24ReleaseAuthority {
 export interface G24ReleaseInvalidationReceipt {
   receiptId: string
   projectionVersion: string
+  projectionFingerprint: string
+  observedControlStateFingerprint: string
   changedControls: string[]
   appendOnly: true
   approvalCreated: false
@@ -3346,6 +3407,11 @@ export function evaluateG24PendingReleaseUse(input: {
     const receipt: G24ReleaseInvalidationReceipt = {
       receiptId: input.receiptId,
       projectionVersion: input.projection.projectionVersion,
+      projectionFingerprint: input.projection.projectionFingerprint,
+      observedControlStateFingerprint: stringifyG24Data({
+        trustedAsOf: input.trustedAsOf,
+        controls: input.controls,
+      }),
       changedControls,
       appendOnly: true,
       approvalCreated: false,
@@ -4211,6 +4277,7 @@ export function createG24EnrichmentExecutionPlan(
   if (!selectorSnapshot.ok || !inputSnapshot.ok) {
     throw new Error('enrichment_plan_requires_plain_data')
   }
+  transferG24SelectorResultProof(selectorSnapshot, selectorSnapshot.value)
   selector = selectorSnapshot.value
   input = inputSnapshot.value
   if (
@@ -4280,6 +4347,7 @@ export function recordG24EnrichmentAttempt(input: {
   ) {
     return malformedResult()
   }
+  transferG24SelectorResultProof(inputSnapshot, ownedInput.currentSelector)
   const attemptKeys = ['receiptId', 'idempotencyKey', 'elapsedMs', 'outcome']
   if (Object.prototype.hasOwnProperty.call(ownedInput.attempt, 'sourceRef')) {
     attemptKeys.push('sourceRef')

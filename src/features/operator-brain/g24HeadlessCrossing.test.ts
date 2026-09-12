@@ -3488,9 +3488,9 @@ describe('G24 strict owned-data boundary', () => {
   })
 
   it('preserves __proto__ selector identity through official Release compilation and use', () => {
-    const selector = structuredClone(selectedFixture())
-    selector.selectorResultVersion = '__proto__'
-    selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+    const selectorInput = buildG24CrossingSelectorFixtures().lowExternalHighInternal
+    selectorInput.selectorResultVersion = '__proto__'
+    const selector = selectG24Intervention(selectorInput)
     const controls = buildG24FixtureControls()
     const result = compileG24PendingRelease({
       projectionVersion: 'release-projection:prototype-selector:v1',
@@ -4371,6 +4371,131 @@ describe('G24 strict owned-data boundary', () => {
       evaluateG24PendingReleaseUse({
         projection,
         controls: audienceChanged,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
+  })
+
+  it('requires in-process selector issuance before any self-consistent route rewrite can compile', () => {
+    const variants: Array<(selector: G24SelectorResult) => void> = [
+      (selector) => {
+        const ask = selector.alternatives.find(({ route }) => route === 'ask')
+        if (!ask) throw new Error('expected ask alternative')
+        ask.burden = 8
+        selector.route = 'session'
+        selector.reasonCode = 'tacit_interdependence'
+      },
+      (selector) => {
+        selector.alternatives = selector.alternatives.filter(({ route }) => route !== 'ask')
+        selector.route = 'session'
+        selector.reasonCode = 'tacit_interdependence'
+      },
+      (selector) => {
+        const enrich = selector.alternatives.find(({ route }) => route === 'enrich')
+        if (!enrich) throw new Error('expected enrich alternative')
+        enrich.eligible = true
+        enrich.rejectionReasons = []
+        selector.route = 'enrich'
+        selector.reasonCode = 'source_eligible'
+      },
+    ]
+    for (const [index, mutate] of variants.entries()) {
+      const selector = selectedFixture('highExternalHighInternal')
+      mutate(selector)
+      selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+      expect(selector.selectorFingerprint).not.toBe('__g24_invalid_nonplain_data__')
+      const compiled = compileG24PendingRelease({
+        projectionVersion: `release:selector-issuance:round-18:${index}:v1`,
+        purpose: selector.purposeRef,
+        audience: selector.audienceRef,
+        selectorResults: [selector],
+        controls: buildG24FixtureControls(),
+        trustedAsOf: G24_FIXTURE_NOW,
+        includedCanonicalSourceVersions: ['source-set:v1'],
+        includedCanonicalBrainVersions: ['brain-set:v1'],
+      })
+      expect(compiled.projection).toBeNull()
+      expect(compiled.errors).toContain('selector_result_invalid')
+    }
+  })
+
+  it('rejects timezone-less instants and negative-zero burden before authority can vary by runtime', () => {
+    const timezoneLess = buildG24CrossingSelectorFixtures().lowExternalHighInternal
+    timezoneLess.trustedAsOf = '2027-01-01T00:30:00'
+    timezoneLess.trustedEvaluation.trustedAsOf = timezoneLess.trustedAsOf
+    timezoneLess.controls.identity_version.validUntil = '2027-01-01T03:00:00.000Z'
+    const timezoneGraph = fingerprintG24ControlGraph(
+      timezoneLess.controlManifest.applicableControlKeys,
+      timezoneLess.controls,
+    )
+    timezoneLess.controlManifest.graphFingerprint = timezoneGraph
+    timezoneLess.trustedEvaluation.controlGraphFingerprint = timezoneGraph
+    expect(selectG24Intervention(timezoneLess)).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+
+    const negativeZero = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    const ask = negativeZero.candidates.find(({ route }) => route === 'ask')
+    if (!ask) throw new Error('expected ask candidate')
+    ask.burden = -0
+    const held = selectG24Intervention(negativeZero)
+    expect(held).toMatchObject({ route: 'abstain_hold', actionable: false })
+    expect(held.selectorFingerprint).not.toBe('__g24_invalid_nonplain_data__')
+    expect(held.alternatives.some(({ burden }) => Object.is(burden, -0))).toBe(false)
+  })
+
+  it('binds invalidation identity to exact projection and observed current controls', () => {
+    const controls = buildG24FixtureControls()
+    const selector = selectedFixture()
+    const version = 'release:identity-binding:round-18:v1'
+    const first = compileG24PendingRelease({
+      projectionVersion: version,
+      purpose: selector.purposeRef,
+      audience: selector.audienceRef,
+      selectorResults: [selector],
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source:a:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(first.errors).toEqual([])
+    const second = compileG24PendingRelease({
+      projectionVersion: version,
+      purpose: selector.purposeRef,
+      audience: selector.audienceRef,
+      selectorResults: [selector],
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source:b:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(second).toEqual({ projection: null, errors: ['release_projection_version_collision'] })
+
+    const projection = first.projection as G24PendingReleaseProjection
+    const controlsV2 = cloneControls(controls)
+    controlsV2.authority_version.version = 'authority_version:observed:v2'
+    const controlsV3 = cloneControls(controls)
+    controlsV3.authority_version.version = 'authority_version:observed:v3'
+    const receiptId = 'release-invalidation:observed:round-18:v1'
+    const issued = evaluateG24PendingReleaseUse({
+      projection,
+      controls: controlsV2,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId,
+    })
+    expect(issued.receipt).toMatchObject({
+      projectionFingerprint: projection.projectionFingerprint,
+    })
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls: controlsV3,
         trustedAsOf: G24_FIXTURE_NOW,
         receiptId,
       }),
