@@ -57,8 +57,31 @@ The documentation-only state correction passed review and remains valid history.
 
 The current repair seals case, evidence namespace and full trusted evaluation into the selector fingerprint; requires reuse evidence namespace consistency; binds answer correction to the exact intervention fingerprint; traverses derivative and decision dependencies to a fixed point; compares exact arrays without delimiters; binds lifecycle actors to the snapshot's named leader and identity-control version; refuses blank answer receipts; emits no durable execution receipt for malformed envelopes; and requires the exact current selector to be actionable enrichment before accepting an enrichment attempt.
 
-The repair worktree has 113 focused checks passing. These results do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state is `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+The repaired commit had 113 focused checks passing. Those checks did not close review. The bytes were frozen at `6dc6a0e5b3230384b1e2cc8cffc8319deb7de68b` and independently attacked again.
+
+## Review round 3
+
+**Frozen code:** `6dc6a0e5b3230384b1e2cc8cffc8319deb7de68b`
+
+**Adjudication:** `VETO`
+
+The exact third-round bytes repaired every round-two defect, but two independent reviewers reproduced six further structural failures:
+
+1. The selector fingerprint did not carry the challenger outcome or exact search boundary.
+2. A current case and evidence namespace could contradict each other while same-case reuse remained actionable.
+3. Release invalidation could claim an append-only receipt with a blank identity.
+4. A lifecycle version could be reused after later versions, making stale history current again through an ABA sequence.
+5. A caller could handcraft an atom whose mutable state merely said `approved` and record immutable answer evidence without traversing Krish's approval transition.
+6. The approval function rechecked much of its supplied binding against the atom, but did not re-establish that the atom's purpose, audience, sensitivity, frame and evidence matched the exact current selector.
+
+The reviewers also confirmed that every round-two failure was genuinely repaired. This third veto therefore records deeper progress rather than regression or a shifting standard.
+
+## Repair round 3
+
+The current worktree seals the challenger outcome and exact boundary into both trusted evaluation and selector identity; explicitly binds the evidence namespace to the current case; refuses identityless Release invalidation; fingerprints control state and validity windows; rejects empty canonical source or Brain version sets; prevents lifecycle reuse of every historical before or after version; validates current lifecycle identity and authority before idempotent replay; and adds a version-matched Krish approval receipt plus an in-process transition proof before an answer can become immutable evidence. Approval now reconstructs the canonical atom against the exact current selector, including purpose, audience, sensitivity, frame and evidence, rather than trusting a self-consistent handcrafted envelope.
+
+The repair worktree has 120 focused checks passing, including exact reproductions of the third-round attacks. These results still do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 
-This local kernel does not prove authoritative input provenance, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
+This local kernel does not prove authoritative input provenance, durable approval rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

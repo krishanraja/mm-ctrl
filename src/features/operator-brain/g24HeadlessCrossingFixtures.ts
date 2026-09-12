@@ -139,6 +139,7 @@ function baseSelectorInput(version: string): G24SelectorInput {
     selectorResultVersion: version,
     currentCaseRef: 'case:maya:decision-014',
     evidenceNamespace: 'customer:maya/private/case:decision-014',
+    evidenceNamespaceCaseRef: 'case:maya:decision-014',
     purposeRef: 'Resolve the quality-standard transfer gap.',
     audienceRef: 'named_leader_private',
     sensitivityRef: 'private',
@@ -165,6 +166,8 @@ function baseSelectorInput(version: string): G24SelectorInput {
       trustedCutoffVersion: 'trusted_cutoff:v1',
       epistemicPolicyVersion: 'epistemic_policy_version:v1',
       independentChallengerResultVersion: 'independent_challenger_result_version:v1',
+      challengerResult: 'none_found_within_declared_boundary',
+      challengerSearchBoundary: 'Current decision sources through the trusted cutoff.',
       controlManifestVersion: 'control-manifest:v1',
       controlGraphFingerprint,
       trustedAsOf: G24_FIXTURE_NOW,
@@ -238,6 +241,7 @@ export function buildG24CrossingSelectorFixtures(): Record<string, G24SelectorIn
   laterDecisionBlocked.evidenceState = 'contradiction'
   laterDecisionBlocked.unresolvedEvidenceRefs = ['countercase:high-novelty-research:v1']
   laterDecisionBlocked.challengerResult = 'countercase_found'
+  laterDecisionBlocked.trustedEvaluation.challengerResult = 'countercase_found'
   laterDecisionBlocked.expectedMaterialEffect =
     'Prevent a prior quality standard from being transferred where a live countercase defeats it.'
   laterDecisionBlocked.candidates = [

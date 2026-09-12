@@ -10,6 +10,7 @@ import {
   createG24InterventionAtom,
   evaluateG24PendingReleaseUse,
   fingerprintG24ControlGraph,
+  fingerprintG24InterventionAtom,
   recordG24Answer,
   recordG24EnrichmentAttempt,
   renderG24SelectorReceipt,
@@ -172,11 +173,15 @@ function approvedQuestionAtom(
     controlVersion: atom.controlVersion,
     purpose: atom.purpose,
     audience: atom.audience,
+    sensitivity: atom.sensitivity,
     channel: atom.channel,
     timing: atom.timing,
     decisionFrameVersion: atom.decisionFrameVersion,
     evidenceVersions: [...atom.evidenceVersions],
     payloadFingerprint: atom.payloadFingerprint,
+    approvalReceiptId: `approval:${atom.atomVersion}`,
+    approvedByRef: 'krish',
+    approvalAuthorityVersionRef: 'krish-approval-authority:v1',
   })
 }
 
@@ -440,9 +445,33 @@ describe('G24 headless Crossing selector', () => {
     const differentNamespace = structuredClone(baselineInput)
     differentNamespace.currentCaseRef = 'case:maya:decision-099'
     differentNamespace.evidenceNamespace = 'customer:maya/private/case:decision-099'
+    differentNamespace.evidenceNamespaceCaseRef = 'case:maya:decision-099'
     const differentNamespaceResult = selectG24Intervention(differentNamespace)
     expect(differentNamespaceResult.route).toBe('enrich')
     expect(differentNamespaceResult.selectorFingerprint).not.toBe(baseline.selectorFingerprint)
+
+    const contradictoryNamespace = structuredClone(baselineInput)
+    contradictoryNamespace.evidenceNamespaceCaseRef = 'case:maya:decision-099'
+    expect(selectG24Intervention(contradictoryNamespace)).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+
+    const countercaseInput = structuredClone(baselineInput)
+    countercaseInput.challengerResult = 'countercase_found'
+    countercaseInput.challengerSearchBoundary = 'A narrower current countercase boundary.'
+    countercaseInput.trustedEvaluation = {
+      ...countercaseInput.trustedEvaluation,
+      evaluationVersion: 'trusted-evaluation:countercase:v2',
+      challengerResult: 'countercase_found',
+      challengerSearchBoundary: 'A narrower current countercase boundary.',
+    }
+    countercaseInput.candidates = countercaseInput.candidates.map((candidate) => ({
+      ...candidate,
+      trustedEvaluationVersion: 'trusted-evaluation:countercase:v2',
+    }))
+    const countercaseResult = selectG24Intervention(countercaseInput)
+    expect(countercaseResult.selectorFingerprint).not.toBe(baseline.selectorFingerprint)
   })
 
   it('rejects ambiguous duplicate route proposals instead of taking the first one', () => {
@@ -545,13 +574,24 @@ describe('G24 versioned intervention and answer effects', () => {
       controlVersion: atom.controlVersion,
       purpose: atom.purpose,
       audience: atom.audience,
+      sensitivity: atom.sensitivity,
       channel: atom.channel,
       timing: atom.timing,
       decisionFrameVersion: atom.decisionFrameVersion,
       evidenceVersions: [...atom.evidenceVersions],
       payloadFingerprint: atom.payloadFingerprint,
+      approvalReceiptId: `approval:${atom.atomVersion}`,
+      approvedByRef: 'krish',
+      approvalAuthorityVersionRef: 'krish-approval-authority:v1',
     })
     expect(approved.approvalState).toBe('approved')
+    expect(approved.approvalReceipt).toMatchObject({
+      atomVersion: atom.atomVersion,
+      selectorResultVersion: selector.selectorResultVersion,
+      selectorFingerprint: selector.selectorFingerprint,
+      payloadFingerprint: atom.payloadFingerprint,
+      approvedByRef: 'krish',
+    })
 
     const silentlyChanged = structuredClone(atom)
     if (silentlyChanged.payload.kind === 'question') {
@@ -566,11 +606,15 @@ describe('G24 versioned intervention and answer effects', () => {
         controlVersion: silentlyChanged.controlVersion,
         purpose: silentlyChanged.purpose,
         audience: silentlyChanged.audience,
+        sensitivity: silentlyChanged.sensitivity,
         channel: silentlyChanged.channel,
         timing: silentlyChanged.timing,
         decisionFrameVersion: silentlyChanged.decisionFrameVersion,
         evidenceVersions: [...silentlyChanged.evidenceVersions],
         payloadFingerprint: silentlyChanged.payloadFingerprint,
+        approvalReceiptId: `approval:${silentlyChanged.atomVersion}`,
+        approvedByRef: 'krish',
+        approvalAuthorityVersionRef: 'krish-approval-authority:v1',
       }),
     ).toThrow('intervention_approval_binding_mismatch')
 
@@ -579,6 +623,7 @@ describe('G24 versioned intervention and answer effects', () => {
       selectorFingerprint: _selectorFingerprint,
       payloadFingerprint: _payloadFingerprint,
       approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
       ...atomInput
     } = atom
     expect(() =>
@@ -623,11 +668,68 @@ describe('G24 versioned intervention and answer effects', () => {
         controlVersion: atom.controlVersion,
         purpose: atom.purpose,
         audience: atom.audience,
+        sensitivity: atom.sensitivity,
         channel: atom.channel,
         timing: atom.timing,
         decisionFrameVersion: atom.decisionFrameVersion,
         evidenceVersions: [...atom.evidenceVersions],
         payloadFingerprint: atom.payloadFingerprint,
+        approvalReceiptId: `approval:${atom.atomVersion}`,
+        approvedByRef: 'krish',
+        approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+      }),
+    ).toThrow('intervention_approval_binding_mismatch')
+  })
+
+  it('rejects a serialized or handcrafted approved atom that did not traverse approval', () => {
+    const approved = approvedQuestionAtom()
+    const reconstructed = structuredClone(approved)
+
+    expect(() =>
+      recordG24Answer(reconstructed, {
+        receiptId: 'answer:forged-approval',
+        kind: 'option',
+        value: 'Higher customer preference',
+      }),
+    ).toThrow('answer_requires_approved_atom')
+  })
+
+  it('will not approve a self-consistent atom whose semantics contradict the current selector', () => {
+    const selector = selectedFixture('highExternalHighInternal')
+    const legitimate = questionAtom(selector)
+    const forged: G24InterventionAtom = {
+      ...structuredClone(legitimate),
+      purpose: 'An unrelated purpose.',
+      audience: 'public',
+      sensitivity: 'public',
+      channel: 'email',
+      timing: 'now',
+      decisionFrameVersion: 'decision-frame:unrelated:v1',
+      evidenceVersions: ['evidence:unrelated:v1'],
+    }
+    const {
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
+      ...forgedContent
+    } = forged
+    forged.payloadFingerprint = fingerprintG24InterventionAtom(forgedContent)
+
+    expect(() =>
+      approveG24InterventionAtom(forged, selector, {
+        atomVersion: forged.atomVersion,
+        controlVersion: forged.controlVersion,
+        purpose: forged.purpose,
+        audience: forged.audience,
+        sensitivity: forged.sensitivity,
+        channel: forged.channel,
+        timing: forged.timing,
+        decisionFrameVersion: forged.decisionFrameVersion,
+        evidenceVersions: [...forged.evidenceVersions],
+        payloadFingerprint: forged.payloadFingerprint,
+        approvalReceiptId: `approval:${forged.atomVersion}`,
+        approvedByRef: 'krish',
+        approvalAuthorityVersionRef: 'krish-approval-authority:v1',
       }),
     ).toThrow('intervention_approval_binding_mismatch')
   })
@@ -723,11 +825,15 @@ describe('G24 versioned intervention and answer effects', () => {
       controlVersion: atom.controlVersion,
       purpose: atom.purpose,
       audience: atom.audience,
+      sensitivity: atom.sensitivity,
       channel: atom.channel,
       timing: atom.timing,
       decisionFrameVersion: atom.decisionFrameVersion,
       evidenceVersions: [...atom.evidenceVersions],
       payloadFingerprint: atom.payloadFingerprint,
+      approvalReceiptId: `approval:${atom.atomVersion}`,
+      approvedByRef: 'krish',
+      approvalAuthorityVersionRef: 'krish-approval-authority:v1',
     })
     const receipt = recordG24Answer(approvedAtom, {
       receiptId: 'voice-answer:v1',
@@ -814,6 +920,30 @@ describe('G24 versioned intervention and answer effects', () => {
         },
       }),
     ).toThrow('replacement_answer_atom_mismatch')
+  })
+
+  it('requires correction receipt identity to differ from both answer receipts', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(atom, {
+      receiptId: 'answer:v1',
+      kind: 'option',
+      value: 'Fewer rewrites',
+    })
+    const replacement = recordG24Answer(atom, {
+      receiptId: 'answer:v2',
+      kind: 'option',
+      value: 'Higher customer preference',
+    })
+    expect(() =>
+      correctG24Answer(original, replacement, {
+        receiptId: 'answer:v1',
+        dependencyGraph: {
+          graphVersion: 'answer-dependency-graph:v1',
+          derivativeDependencies: {},
+          decisionDependencies: {},
+        },
+      }),
+    ).toThrow('correction_receipt_identity_invalid')
   })
 })
 
@@ -915,6 +1045,26 @@ describe('G24 dependent Release closure', () => {
     expect(result.projection).toBeNull()
     expect(result.errors).toContain(
       'selector:high-external-high-internal:v1:selector_result_mutated_without_new_version',
+    )
+  })
+
+  it('refuses Release compilation without canonical source and Brain version identity', () => {
+    const result = compileG24PendingRelease({
+      projectionVersion: 'release-projection:missing-canonical:v1',
+      purpose: 'A purpose.',
+      audience: 'named_leader_private',
+      selectorResults: [selectedFixture()],
+      controls: buildG24FixtureControls(),
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: [],
+      includedCanonicalBrainVersions: [''],
+    })
+    expect(result.projection).toBeNull()
+    expect(result.errors).toEqual(
+      expect.arrayContaining([
+        'canonical_source_version_required',
+        'canonical_brain_version_required',
+      ]),
     )
   })
 
@@ -1119,6 +1269,25 @@ describe('G24 dependent Release closure', () => {
     expect(result.receipt?.externalSideEffectCreated).toBe(false)
   })
 
+  it('fails closed without fabricating an invalidation receipt when receipt identity is blank', () => {
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(selectedFixture(), controls)
+    controls.permission_version.version = 'permission_version:changed'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: buildExactG24ReleaseAuthority(projection),
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: '',
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
+  })
+
   it('requires trusted reevaluation and new exact authority after rebuild', () => {
     const controlsV1 = buildG24FixtureControls()
     const selectorV1 = selectedFixture()
@@ -1148,6 +1317,7 @@ describe('G24 dependent Release closure', () => {
         evaluationVersion: 'trusted-evaluation:v2',
         independentChallengerResultVersion:
           'independent_challenger_result_version:v2-resolved',
+        challengerResult: 'countercase_found',
         controlManifestVersion: 'control-manifest:v2',
         controlGraphFingerprint: graphFingerprintV2,
       },
@@ -1358,6 +1528,84 @@ describe('G24 engagement lifecycle', () => {
     const retry = applyG24LifecycleTransition(first.snapshot, request)
     expect(retry).toMatchObject({ accepted: true, reason: 'idempotent_replay' })
     expect(retry.snapshot.receipts).toHaveLength(1)
+  })
+
+  it('does not replay an old request across a changed lifecycle identity binding', () => {
+    const initial: G24LifecycleSnapshot = {
+      state: 'none',
+      version: null,
+      namedLeaderRef: 'leader:maya',
+      identityControlVersion: 'identity-control:maya:v1',
+      receipts: [],
+    }
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const request = lifecycleRequest(open, {
+      afterVersion: 'preparing:v1',
+      idempotencyKey: 'open:one',
+      receiptId: 'receipt:open:one',
+    })
+    const first = applyG24LifecycleTransition(initial, request)
+    const rebound = {
+      ...first.snapshot,
+      identityControlVersion: 'identity-control:maya:v2',
+    }
+
+    expect(applyG24LifecycleTransition(rebound, request)).toMatchObject({
+      accepted: false,
+      reason: 'actor_or_authority_invalid',
+      snapshot: rebound,
+    })
+  })
+
+  it('never makes a previously used lifecycle version current again', () => {
+    let snapshot: G24LifecycleSnapshot = {
+      state: 'none',
+      version: null,
+      namedLeaderRef: 'leader:maya',
+      identityControlVersion: 'identity-control:maya:v1',
+      receipts: [],
+    }
+    const transition = (id: G24LifecycleTransition['id']) =>
+      G24_LIFECYCLE_TRANSITIONS.find((candidate) => candidate.id === id) as G24LifecycleTransition
+    const advance = (
+      id: G24LifecycleTransition['id'],
+      fromVersion: string | null,
+      afterVersion: string,
+    ) => {
+      const result = applyG24LifecycleTransition(
+        snapshot,
+        lifecycleRequest(transition(id), {
+          fromVersion,
+          afterVersion,
+          idempotencyKey: `idempotency:${id}:${afterVersion}`,
+          receiptId: `receipt:${id}:${afterVersion}`,
+        }),
+      )
+      expect(result.accepted).toBe(true)
+      snapshot = result.snapshot
+    }
+
+    advance('open_preparation', null, 'preparing:v1')
+    advance('accept_intensive_proof', 'preparing:v1', 'intensive_proof:v1')
+    advance('continue_after_intensive_proof', 'intensive_proof:v1', 'continuing:v1')
+    advance('renew_continuing_period', 'continuing:v1', 'continuing:v2')
+
+    const aba = applyG24LifecycleTransition(
+      snapshot,
+      lifecycleRequest(transition('renew_continuing_period'), {
+        fromVersion: 'continuing:v2',
+        afterVersion: 'continuing:v1',
+        idempotencyKey: 'idempotency:renew:aba',
+        receiptId: 'receipt:renew:aba',
+      }),
+    )
+    expect(aba).toMatchObject({
+      accepted: false,
+      reason: 'after_version_already_used',
+      snapshot,
+    })
   })
 
   it('rejects reuse of an idempotency key for a different transition request', () => {

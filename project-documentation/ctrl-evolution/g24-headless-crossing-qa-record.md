@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel under repaired-byte re-review, not connected to product runtime
+**State:** local deterministic kernel under third-veto repair and exact-byte re-review, not connected to product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -18,7 +18,7 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - trusted semantic outcomes bound to the exact current decision requirement, evidence coverage, cutoff, policy, challenger and evaluation versions rather than accepted through a planner-authored confidence flag;
 - least-burden selection only after route capability, permission, freshness, audience, provenance independence, use-specific sufficiency, counterevidence, deadline, budget and material-effect eligibility;
 - declared private cross-case reuse rejected, with structurally complete immutable public-reference reuse admitted outside the same case;
-- one versioned question or session atom with exact content, control, purpose, audience, channel, timing, evidence and decision-frame approval binding;
+- one versioned question or session atom with exact content, control, purpose, audience, sensitivity, channel, timing, evidence and decision-frame binding to a version-matched Krish approval receipt and in-process approval transition;
 - all four honest question exits without adverse inference, forced re-ask or automatic session escalation;
 - immutable answer evidence, rebuildable case effects, pending human-owned proposals and correction impact derived from a versioned supplied dependency graph;
 - one answer retiring a now-obsolete prepared question, an optional voice critical incident creating only a reviewable learning proposal, and a later different decision where prior judgement is either reused or blocked by a countercase;
@@ -53,11 +53,11 @@ The identities and internal evidence are wholly synthetic. No simulated consent 
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 113 checks passed in one file.
+- `npm run brain:g24:headless-check`: 120 checks passed in one file.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
-- The exact six-state, thirteen-edge lifecycle table passed one positive check per edge; every edge rejected wrong actor class, empty authority version and missing precondition evidence. Implied edges, stale or unadvanced versions, duplicate receipt identities and idempotency collisions were rejected without state change.
+- The exact six-state, thirteen-edge lifecycle table passed one positive check per edge; every edge rejected wrong actor class, empty authority version and missing precondition evidence. Implied edges, stale, unadvanced or historically reused versions, changed identity bindings on replay, duplicate receipt identities and idempotency collisions were rejected without state change.
 - `npm run brain:g21:check`: 66 adjacent operator-Brain checks passed across six files.
 - `npm run docs:check`: passed, including the frozen G24 R1 through R5 contracts, R5 council and founder-lock verifier.
 - `npm run typecheck`: no new TypeScript errors against the repository baseline.
@@ -75,6 +75,7 @@ This is a semantic and deterministic data-and-intelligence kernel, not productio
 - superiority to a competent human or general AI given the same evidence;
 - model output quality, cost, latency, retries or provider behaviour;
 - atomic database check-and-use under concurrency;
+- durable approval-receipt authenticity or rehydration after process restart;
 - stale queue, worker or delivery rejection in a real runtime;
 - customer comprehension, delight, haptics, progressive disclosure or mobile usability;
 - consented capture, multi-speaker handling, withdrawal, erasure, export or deterministic re-import;

@@ -168,7 +168,10 @@ export function fingerprintG24ControlGraph(
             key,
             lineageId: control.lineageId,
             version: control.version,
+            state: control.state,
             dependencies: [...control.dependencies].sort(compareText),
+            validFrom: control.validFrom ?? null,
+            validUntil: control.validUntil ?? null,
           }
         : { key, missing: true }
     }),
@@ -220,6 +223,8 @@ export interface G24TrustedEvaluationBinding {
   trustedCutoffVersion: string
   epistemicPolicyVersion: string
   independentChallengerResultVersion: string
+  challengerResult: G24ChallengerResult
+  challengerSearchBoundary: string | null
   controlManifestVersion: string
   controlGraphFingerprint: string
   trustedAsOf: string
@@ -229,6 +234,7 @@ export interface G24SelectorInput {
   selectorResultVersion: string
   currentCaseRef: string
   evidenceNamespace: string
+  evidenceNamespaceCaseRef: string
   purposeRef: string
   audienceRef: string
   sensitivityRef: string
@@ -298,6 +304,7 @@ export const G24_SELECTOR_INPUT_SCHEMA = z
     selectorResultVersion: z.string(),
     currentCaseRef: z.string(),
     evidenceNamespace: z.string(),
+    evidenceNamespaceCaseRef: z.string(),
     purposeRef: z.string(),
     audienceRef: z.string(),
     sensitivityRef: z.string(),
@@ -326,6 +333,12 @@ export const G24_SELECTOR_INPUT_SCHEMA = z
         trustedCutoffVersion: z.string(),
         epistemicPolicyVersion: z.string(),
         independentChallengerResultVersion: z.string(),
+        challengerResult: z.enum([
+          'countercase_found',
+          'none_found_within_declared_boundary',
+          'indeterminate',
+        ]),
+        challengerSearchBoundary: z.string().nullable(),
         controlManifestVersion: z.string(),
         controlGraphFingerprint: z.string(),
         trustedAsOf: z.string(),
@@ -365,6 +378,7 @@ export interface G24SelectorResult {
   selectorResultVersion: string
   currentCaseRef: string
   evidenceNamespace: string
+  evidenceNamespaceCaseRef: string
   purposeRef: string
   audienceRef: string
   sensitivityRef: string
@@ -382,6 +396,8 @@ export interface G24SelectorResult {
   applicableControlKeys: string[]
   controlGraphFingerprint: string
   trustedEvaluation: G24TrustedEvaluationBinding
+  challengerResult: G24ChallengerResult
+  challengerSearchBoundary: string | null
   controllingWatermarks: G24ControlWatermark[]
   controllingFingerprint: string
   selectorFingerprint: string
@@ -398,6 +414,7 @@ export function fingerprintG24SelectorResult(
     selectorResultVersion: result.selectorResultVersion,
     currentCaseRef: result.currentCaseRef,
     evidenceNamespace: result.evidenceNamespace,
+    evidenceNamespaceCaseRef: result.evidenceNamespaceCaseRef,
     purposeRef: result.purposeRef,
     audienceRef: result.audienceRef,
     sensitivityRef: result.sensitivityRef,
@@ -421,6 +438,8 @@ export function fingerprintG24SelectorResult(
     applicableControlKeys: [...result.applicableControlKeys].sort(compareText),
     controlGraphFingerprint: result.controlGraphFingerprint,
     trustedEvaluation: result.trustedEvaluation,
+    challengerResult: result.challengerResult,
+    challengerSearchBoundary: result.challengerSearchBoundary,
     controllingWatermarks: [...result.controllingWatermarks].sort((left, right) =>
       compareText(left.key, right.key),
     ),
@@ -515,6 +534,7 @@ function heldSelectorResult(
     selectorResultVersion: input.selectorResultVersion,
     currentCaseRef: input.currentCaseRef,
     evidenceNamespace: input.evidenceNamespace,
+    evidenceNamespaceCaseRef: input.evidenceNamespaceCaseRef,
     purposeRef: input.purposeRef,
     audienceRef: input.audienceRef,
     sensitivityRef: input.sensitivityRef,
@@ -532,6 +552,8 @@ function heldSelectorResult(
     applicableControlKeys: [...input.controlManifest.applicableControlKeys].sort(compareText),
     controlGraphFingerprint: input.controlManifest.graphFingerprint,
     trustedEvaluation: structuredClone(input.trustedEvaluation),
+    challengerResult: input.challengerResult,
+    challengerSearchBoundary: input.challengerSearchBoundary ?? null,
     controllingWatermarks: closure.watermarks,
     controllingFingerprint: fingerprintG24Watermarks(closure.watermarks),
     expiry: earliestExpiry(closure.watermarks, input.controls),
@@ -552,6 +574,7 @@ function malformedG24SelectorResult(inputValue: unknown, errors: string[]): G24S
     selectorResultVersion: textOr('selectorResultVersion', 'invalid-selector-envelope'),
     currentCaseRef: textOr('currentCaseRef', 'invalid-case'),
     evidenceNamespace: textOr('evidenceNamespace', 'invalid-evidence-namespace'),
+    evidenceNamespaceCaseRef: textOr('evidenceNamespaceCaseRef', 'invalid-case'),
     purposeRef: textOr('purposeRef', 'invalid-purpose'),
     audienceRef: textOr('audienceRef', 'invalid-audience'),
     sensitivityRef: textOr('sensitivityRef', 'invalid-sensitivity'),
@@ -575,10 +598,14 @@ function malformedG24SelectorResult(inputValue: unknown, errors: string[]): G24S
       trustedCutoffVersion: '',
       epistemicPolicyVersion: '',
       independentChallengerResultVersion: '',
+      challengerResult: 'indeterminate',
+      challengerSearchBoundary: null,
       controlManifestVersion: '',
       controlGraphFingerprint: '',
       trustedAsOf: '',
     },
+    challengerResult: 'indeterminate',
+    challengerSearchBoundary: null,
     controllingWatermarks: [],
     controllingFingerprint: '',
     expiry: null,
@@ -620,6 +647,9 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
     !input.selectorResultVersion.trim() ? 'selector_result_version_missing' : '',
     !input.currentCaseRef.trim() ? 'current_case_ref_missing' : '',
     !input.evidenceNamespace.trim() ? 'evidence_namespace_missing' : '',
+    input.evidenceNamespaceCaseRef !== input.currentCaseRef
+      ? 'evidence_namespace_case_mismatch'
+      : '',
     !input.purposeRef.trim() ? 'purpose_ref_missing' : '',
     !input.audienceRef.trim() ? 'audience_ref_missing' : '',
     !input.sensitivityRef.trim() ? 'sensitivity_ref_missing' : '',
@@ -657,6 +687,13 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
     input.trustedEvaluation.independentChallengerResultVersion !==
     input.controls.independent_challenger_result_version?.version
       ? 'trusted_evaluation_challenger_mismatch'
+      : '',
+    input.trustedEvaluation.challengerResult !== input.challengerResult
+      ? 'trusted_evaluation_challenger_outcome_mismatch'
+      : '',
+    input.trustedEvaluation.challengerSearchBoundary !==
+    (input.challengerSearchBoundary ?? null)
+      ? 'trusted_evaluation_challenger_boundary_mismatch'
       : '',
     input.trustedEvaluation.trustedAsOf !== input.trustedAsOf
       ? 'trusted_evaluation_as_of_mismatch'
@@ -824,11 +861,25 @@ export interface G24InterventionAtom {
   evidenceVersions: string[]
   payloadFingerprint: string
   approvalState: 'proposed' | 'approved' | 'edited' | 'held' | 'suppressed'
+  approvalReceipt: G24InterventionApprovalReceipt | null
   payload: G24QuestionPayload | G24SessionPayload
 }
 
+export interface G24InterventionApprovalReceipt {
+  receiptId: string
+  atomVersion: string
+  selectorResultVersion: string
+  selectorFingerprint: string
+  payloadFingerprint: string
+  approvedByRef: 'krish'
+  approvalAuthorityVersionRef: string
+  approvalFingerprint: string
+}
+
+const g24ApprovedAtomInstances = new WeakSet<G24InterventionAtom>()
+
 export function fingerprintG24InterventionAtom(
-  atom: Omit<G24InterventionAtom, 'payloadFingerprint' | 'approvalState'>,
+  atom: Omit<G24InterventionAtom, 'payloadFingerprint' | 'approvalState' | 'approvalReceipt'>,
 ): string {
   return JSON.stringify({
     atomVersion: atom.atomVersion,
@@ -850,7 +901,11 @@ export function createG24InterventionAtom(
   selector: G24SelectorResult,
   atom: Omit<
     G24InterventionAtom,
-    'selectorResultVersion' | 'selectorFingerprint' | 'payloadFingerprint' | 'approvalState'
+    | 'selectorResultVersion'
+    | 'selectorFingerprint'
+    | 'payloadFingerprint'
+    | 'approvalState'
+    | 'approvalReceipt'
   >,
 ): G24InterventionAtom {
   if (selector.route !== 'ask' && selector.route !== 'session') {
@@ -940,13 +995,50 @@ export function createG24InterventionAtom(
     ...withoutFingerprint,
     payloadFingerprint: fingerprintG24InterventionAtom(withoutFingerprint),
     approvalState: 'proposed',
+    approvalReceipt: null,
   }
 }
 
 export function validateG24InterventionAtom(atom: G24InterventionAtom): string[] {
-  const { payloadFingerprint: _payloadFingerprint, approvalState: _approvalState, ...content } = atom
+  const {
+    payloadFingerprint: _payloadFingerprint,
+    approvalState: _approvalState,
+    approvalReceipt: _approvalReceipt,
+    ...content
+  } = atom
   const expected = fingerprintG24InterventionAtom(content)
   return expected === atom.payloadFingerprint ? [] : ['intervention_payload_changed_without_new_version']
+}
+
+function fingerprintG24ApprovalReceipt(
+  receipt: Omit<G24InterventionApprovalReceipt, 'approvalFingerprint'>,
+): string {
+  return JSON.stringify(receipt)
+}
+
+function interventionAtomMatchesSelector(
+  atom: G24InterventionAtom,
+  selector: G24SelectorResult,
+): boolean {
+  if (atom.approvalState !== 'proposed' || atom.approvalReceipt !== null) return false
+  try {
+    const {
+      selectorResultVersion: _selectorResultVersion,
+      selectorFingerprint: _selectorFingerprint,
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
+      ...atomInput
+    } = atom
+    const canonical = createG24InterventionAtom(selector, atomInput)
+    return (
+      canonical.selectorResultVersion === atom.selectorResultVersion &&
+      canonical.selectorFingerprint === atom.selectorFingerprint &&
+      canonical.payloadFingerprint === atom.payloadFingerprint
+    )
+  } catch {
+    return false
+  }
 }
 
 export function approveG24InterventionAtom(
@@ -962,6 +1054,10 @@ export function approveG24InterventionAtom(
     decisionFrameVersion: string
     evidenceVersions: string[]
     payloadFingerprint: string
+    sensitivity: string
+    approvalReceiptId: string
+    approvedByRef: 'krish'
+    approvalAuthorityVersionRef: string
   },
 ): G24InterventionAtom {
   const bindingMatches =
@@ -970,19 +1066,42 @@ export function approveG24InterventionAtom(
     currentSelector.selectorResultVersion === atom.selectorResultVersion &&
     currentSelector.selectorFingerprint === atom.selectorFingerprint &&
     fingerprintG24SelectorResult(currentSelector) === currentSelector.selectorFingerprint &&
+    interventionAtomMatchesSelector(atom, currentSelector) &&
     binding.atomVersion === atom.atomVersion &&
     binding.controlVersion === atom.controlVersion &&
     binding.purpose === atom.purpose &&
     binding.audience === atom.audience &&
+    binding.sensitivity === atom.sensitivity &&
     binding.channel === atom.channel &&
     binding.timing === atom.timing &&
     binding.decisionFrameVersion === atom.decisionFrameVersion &&
     equalSorted(binding.evidenceVersions, atom.evidenceVersions) &&
-    binding.payloadFingerprint === atom.payloadFingerprint
+    binding.payloadFingerprint === atom.payloadFingerprint &&
+    Boolean(binding.approvalReceiptId.trim()) &&
+    binding.approvedByRef === 'krish' &&
+    Boolean(binding.approvalAuthorityVersionRef.trim())
   if (!bindingMatches || validateG24InterventionAtom(atom).length > 0) {
     throw new Error('intervention_approval_binding_mismatch')
   }
-  return { ...structuredClone(atom), approvalState: 'approved' }
+  const receiptWithoutFingerprint: Omit<G24InterventionApprovalReceipt, 'approvalFingerprint'> = {
+    receiptId: binding.approvalReceiptId,
+    atomVersion: atom.atomVersion,
+    selectorResultVersion: atom.selectorResultVersion,
+    selectorFingerprint: atom.selectorFingerprint,
+    payloadFingerprint: atom.payloadFingerprint,
+    approvedByRef: binding.approvedByRef,
+    approvalAuthorityVersionRef: binding.approvalAuthorityVersionRef,
+  }
+  const approved: G24InterventionAtom = {
+    ...structuredClone(atom),
+    approvalState: 'approved',
+    approvalReceipt: {
+      ...receiptWithoutFingerprint,
+      approvalFingerprint: fingerprintG24ApprovalReceipt(receiptWithoutFingerprint),
+    },
+  }
+  g24ApprovedAtomInstances.add(approved)
+  return approved
 }
 
 export type G24AnswerKind = 'option' | 'write_in' | 'voice' | 'unknown' | 'defer' | 'refuse' | 'premise_wrong'
@@ -1010,7 +1129,31 @@ export function recordG24Answer(
     throw new Error('answer_receipt_id_required')
   }
   if (atom.payload.kind !== 'question') throw new Error('answer_requires_question_atom')
-  if (atom.approvalState !== 'approved') throw new Error('answer_requires_approved_atom')
+  const approvalReceipt = atom.approvalReceipt
+  if (
+    atom.approvalState !== 'approved' ||
+    !approvalReceipt ||
+    approvalReceipt.atomVersion !== atom.atomVersion ||
+    approvalReceipt.selectorResultVersion !== atom.selectorResultVersion ||
+    approvalReceipt.selectorFingerprint !== atom.selectorFingerprint ||
+    approvalReceipt.payloadFingerprint !== atom.payloadFingerprint ||
+    approvalReceipt.approvedByRef !== 'krish' ||
+    !approvalReceipt.receiptId.trim() ||
+    !approvalReceipt.approvalAuthorityVersionRef.trim() ||
+    approvalReceipt.approvalFingerprint !==
+      fingerprintG24ApprovalReceipt({
+        receiptId: approvalReceipt.receiptId,
+        atomVersion: approvalReceipt.atomVersion,
+        selectorResultVersion: approvalReceipt.selectorResultVersion,
+        selectorFingerprint: approvalReceipt.selectorFingerprint,
+        payloadFingerprint: approvalReceipt.payloadFingerprint,
+        approvedByRef: approvalReceipt.approvedByRef,
+        approvalAuthorityVersionRef: approvalReceipt.approvalAuthorityVersionRef,
+      }) ||
+    !g24ApprovedAtomInstances.has(atom)
+  ) {
+    throw new Error('answer_requires_approved_atom')
+  }
   if (validateG24InterventionAtom(atom).length > 0) {
     throw new Error('answer_requires_current_exact_atom')
   }
@@ -1108,6 +1251,14 @@ export function correctG24Answer(
   },
 ): G24AnswerCorrectionReceipt {
   if (original.receiptId === replacement.receiptId) throw new Error('replacement_receipt_must_be_new')
+  if (
+    !original.receiptId.trim() ||
+    !replacement.receiptId.trim() ||
+    details.receiptId === original.receiptId ||
+    details.receiptId === replacement.receiptId
+  ) {
+    throw new Error('correction_receipt_identity_invalid')
+  }
   if (original.atomVersion !== replacement.atomVersion) {
     throw new Error('replacement_answer_atom_mismatch')
   }
@@ -1283,6 +1434,18 @@ export function compileG24PendingRelease(input: {
   if (!input.projectionVersion.trim()) errors.push('projection_version_required')
   if (!input.purpose.trim()) errors.push('purpose_required')
   if (!input.audience.trim()) errors.push('audience_required')
+  if (
+    input.includedCanonicalSourceVersions.length === 0 ||
+    input.includedCanonicalSourceVersions.some((version) => !version.trim())
+  ) {
+    errors.push('canonical_source_version_required')
+  }
+  if (
+    input.includedCanonicalBrainVersions.length === 0 ||
+    input.includedCanonicalBrainVersions.some((version) => !version.trim())
+  ) {
+    errors.push('canonical_brain_version_required')
+  }
   const uniqueErrors = [...new Set(errors)].sort(compareText)
   if (uniqueErrors.length > 0) return { projection: null, errors: uniqueErrors }
 
@@ -1361,6 +1524,7 @@ export interface G24ReleaseUseResult {
     | 'eligible'
     | 'controlling_state_invalid'
     | 'controlling_watermark_changed'
+    | 'invalidation_receipt_identity_invalid'
     | 'release_authority_missing_or_mismatched'
   receipt: G24ReleaseInvalidationReceipt | null
 }
@@ -1437,6 +1601,13 @@ export function evaluateG24PendingReleaseUse(input: {
   ].sort(compareText)
 
   if (changedControls.length > 0) {
+    if (typeof input.receiptId !== 'string' || !input.receiptId.trim()) {
+      return {
+        eligible: false,
+        reason: 'invalidation_receipt_identity_invalid',
+        receipt: null,
+      }
+    }
     return {
       eligible: false,
       reason: stateErrors.length > 0 ? 'controlling_state_invalid' : 'controlling_watermark_changed',
@@ -1720,37 +1891,8 @@ export function applyG24LifecycleTransition(
   if (!snapshot.namedLeaderRef.trim() || !snapshot.identityControlVersion.trim()) {
     return { accepted: false, reason: 'lifecycle_identity_binding_missing', snapshot: structuredClone(snapshot) }
   }
-  const requestFingerprint = fingerprintG24LifecycleRequest(request)
-  const prior = snapshot.receipts.find((receipt) => receipt.idempotencyKey === request.idempotencyKey)
-  if (prior) {
-    if (prior.requestFingerprint !== requestFingerprint) {
-      return {
-        accepted: false,
-        reason: 'idempotency_key_collision',
-        snapshot: structuredClone(snapshot),
-      }
-    }
-    return {
-      accepted: true,
-      reason: 'idempotent_replay',
-      snapshot: structuredClone(snapshot),
-    }
-  }
-  if (snapshot.receipts.some((receipt) => receipt.receiptId === request.receiptId)) {
-    return { accepted: false, reason: 'receipt_id_collision', snapshot: structuredClone(snapshot) }
-  }
   const definition = G24_LIFECYCLE_TRANSITIONS.find(({ id }) => id === request.transitionId)
   if (!definition) return { accepted: false, reason: 'transition_unknown', snapshot: structuredClone(snapshot) }
-  if (snapshot.state !== definition.from) {
-    return { accepted: false, reason: 'transition_edge_not_allowed', snapshot: structuredClone(snapshot) }
-  }
-  if (definition.from === 'none') {
-    if (request.fromVersion !== null || snapshot.version !== null) {
-      return { accepted: false, reason: 'from_version_must_be_none', snapshot: structuredClone(snapshot) }
-    }
-  } else if (request.fromVersion !== snapshot.version) {
-    return { accepted: false, reason: 'from_version_mismatch', snapshot: structuredClone(snapshot) }
-  }
   if (
     request.actorClass !== definition.actor ||
     !lifecycleActorRefsAreValid(request.actorClass, request.actorRefs, snapshot.namedLeaderRef) ||
@@ -1770,8 +1912,45 @@ export function applyG24LifecycleTransition(
   if (!request.afterVersion.trim() || !request.idempotencyKey.trim() || !request.receiptId.trim()) {
     return { accepted: false, reason: 'transition_envelope_incomplete', snapshot: structuredClone(snapshot) }
   }
+  const requestFingerprint = fingerprintG24LifecycleRequest(request)
+  const prior = snapshot.receipts.find((receipt) => receipt.idempotencyKey === request.idempotencyKey)
+  if (prior) {
+    if (prior.requestFingerprint !== requestFingerprint) {
+      return {
+        accepted: false,
+        reason: 'idempotency_key_collision',
+        snapshot: structuredClone(snapshot),
+      }
+    }
+    return {
+      accepted: true,
+      reason: 'idempotent_replay',
+      snapshot: structuredClone(snapshot),
+    }
+  }
+  if (snapshot.receipts.some((receipt) => receipt.receiptId === request.receiptId)) {
+    return { accepted: false, reason: 'receipt_id_collision', snapshot: structuredClone(snapshot) }
+  }
+  if (snapshot.state !== definition.from) {
+    return { accepted: false, reason: 'transition_edge_not_allowed', snapshot: structuredClone(snapshot) }
+  }
+  if (definition.from === 'none') {
+    if (request.fromVersion !== null || snapshot.version !== null) {
+      return { accepted: false, reason: 'from_version_must_be_none', snapshot: structuredClone(snapshot) }
+    }
+  } else if (request.fromVersion !== snapshot.version) {
+    return { accepted: false, reason: 'from_version_mismatch', snapshot: structuredClone(snapshot) }
+  }
   if (request.afterVersion === snapshot.version) {
     return { accepted: false, reason: 'after_version_must_advance', snapshot: structuredClone(snapshot) }
+  }
+  if (
+    snapshot.receipts.some(
+      (receipt) =>
+        receipt.beforeVersion === request.afterVersion || receipt.afterVersion === request.afterVersion,
+    )
+  ) {
+    return { accepted: false, reason: 'after_version_already_used', snapshot: structuredClone(snapshot) }
   }
   const receipt: G24LifecycleReceipt = {
     receiptId: request.receiptId,
