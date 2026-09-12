@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after twenty-five vetoes, frozen at `5dc193851a2452d77fc2080c195028adf9ab1115` and tree `61d87d44ab39a027d50b8707ddf64cfdfacf5880`; 211 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** local deterministic kernel repaired after twenty-six vetoes, frozen at `807f1d659888d1bdd57acf9ba314e0c72316cf02` and tree `510651e652463feffcd0a4ed6fd157aa8d22f097`; 211 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -42,6 +42,7 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - one-view command capture and bounded allowlisted receipt-ledger projection before nested snapshot, with unrelated array data never enumerated or read.
 - single-use same-process terminal finality per canonical plan fingerprint, including equivalent-plan replay, stale-selector non-poisoning and competing authentic-branch rejection.
 - sealed exact-key execution receipts, outer-malformed history recovery and fixed-size terminal-registry identities with deterministic replay reconstruction.
+- plan-wide finality after terminalization, rejecting every new caller-selected branch while preserving exact events already carried by valid causal history.
 
 ## Deterministic fixtures
 
@@ -75,13 +76,14 @@ The fixture range includes:
 26. exponential valid-chain growth, unbounded over-budget receipt creation, and plain-malformed splice or junk ledger recovery; and
 27. oversized dense ledgers with hostile entries, stale terminal-boundary calls, exact pre-terminal-prefix replay, competing terminal identities, full-ledger replay and caller mutation of returned terminal bytes; and
 28. equivalent separately issued plans, competing authentic terminal branches, stateful command substitution of a 100,000-entry ledger and unrelated array accessor keys; and
-29. malformed outer commands over authentic multi-receipt history, post-issuance string and symbol additions, canonical-field mutation, cloned-receipt sealing and fixed-digest terminal replay.
+29. malformed outer commands over authentic multi-receipt history, post-issuance string and symbol additions, canonical-field mutation, cloned-receipt sealing and fixed-digest terminal replay; and
+30. fresh empty-ledger issuance after terminalization, plus continued exact replay of an ordinary receipt already present in valid causal history.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 211 checks passed in one file on the frozen round-twenty-five repair.
+- `npm run brain:g24:headless-check`: 211 checks passed in one file on the frozen round-twenty-six repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.

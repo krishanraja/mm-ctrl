@@ -683,6 +683,34 @@ Two hundred and eleven focused checks pass locally. New checks cover outer strin
 
 The repair is frozen at `5dc193851a2452d77fc2080c195028adf9ab1115`, tree `61d87d44ab39a027d50b8707ddf64cfdfacf5880`, source blob `872d3da1b57ac7c4c2c3cda43a12cce039bf7654` and test blob `213caa0b0735ac394a3d8263a36ade7723ea250c`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 26
+
+**Frozen code:** `5dc193851a2452d77fc2080c195028adf9ab1115`
+
+**Frozen tree:** `61d87d44ab39a027d50b8707ddf64cfdfacf5880`
+
+**Frozen source blob:** `872d3da1b57ac7c4c2c3cda43a12cce039bf7654`
+
+**Frozen test blob:** `213caa0b0735ac394a3d8263a36ade7723ea250c`
+
+**Truthful state correction:** `45004a0ad1eb4f79775ca42be4395fae997dd5b1`
+
+**Adjudication:** `VETO`
+
+The adjudicator passed the exact bytes after verifying outer-malformed history preservation, sealed receipt behaviour, fixed-digest terminal replay, equivalent-plan and branch rejection, all 211 focused checks and adjacent gates. The defense reviewer reproduced those successes and measured the fixed-digest registry improvement: retained heap for 100 terminalized plans fell from approximately 25.5 MB to 0.7 MB. The defense reviewer then found one finality hole, and that stricter verdict governs.
+
+After a one-attempt plan issued its ordinary receipt and terminal over-budget receipt, the same already-terminalized plan could be called again with an empty ledger. Because terminal state was looked up only when the caller-supplied ordinal was over budget, each fresh empty-ledger branch appeared to be attempt one and could mint another `proposed_evidence` or held receipt. Terminal receipt uniqueness therefore held only at the terminal ordinal, not across every later new issuance for the canonical plan.
+
+This finding sharpens terminal meaning: finality is a property of the canonical plan, not merely a particular terminal call. Once terminalized, caller-selected history cannot reopen the plan. Exact replay of an event already present in a valid supplied ledger remains different from new issuance and may remain available.
+
+## Repair round 26
+
+The canonical terminal-plan digest is now derived and looked up on every valid enrichment-attempt call, regardless of caller-supplied ordinal. If the plan is terminalized and the requested idempotency identity is not already present in the valid supplied ledger, the call is accepted only when it exactly matches the stored terminal prefix and request for deterministic reconstruction. Every other new call, including a fresh empty-ledger branch that appears under budget, returns `attempt_budget_exhausted` without a receipt.
+
+Exact replay of an ordinary receipt already carried by valid causal history still follows the existing idempotency path. Exact terminal replay from a full ledger likewise remains stable. The focused test now asserts post-terminal empty-branch rejection and ordinary in-ledger replay alongside equivalent-plan and competing-branch finality. The total remains two hundred and eleven focused checks.
+
+The repair is frozen at `807f1d659888d1bdd57acf9ba314e0c72316cf02`, tree `510651e652463feffcd0a4ed6fd157aa8d22f097`, source blob `a2a8fd9a0b82a70c174ad01a00d887b0405874ff` and test blob `dd3801426161c7fb099030926dd2393db803e0a5`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
