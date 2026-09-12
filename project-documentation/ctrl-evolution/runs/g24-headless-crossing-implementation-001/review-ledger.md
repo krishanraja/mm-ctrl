@@ -585,6 +585,37 @@ Two hundred and four focused checks pass locally. The new tests independently ve
 
 The repair is frozen at `2b91f104dd22f9696aa24fcaeb3cc18bf4d3b474`, tree `5321a7103dbf22a769fe0df5b7feac92a4db5b70`, source blob `5d251648861a00e1cb09f0478aca0cdc008966ec` and test blob `58b148ae8863af1163045104bd30b7804c05d4ba`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 23
+
+**Frozen code:** `2b91f104dd22f9696aa24fcaeb3cc18bf4d3b474`
+
+**Frozen tree:** `5321a7103dbf22a769fe0df5b7feac92a4db5b70`
+
+**Frozen source blob:** `5d251648861a00e1cb09f0478aca0cdc008966ec`
+
+**Frozen test blob:** `58b148ae8863af1163045104bd30b7804c05d4ba`
+
+**Truthful state correction:** `7caed974980a7d0ad6727eaa2422b27c8bcbe3f3`
+
+**Adjudication:** `VETO`
+
+The adjudicator passed the exact round-twenty-two bytes after independently matching the pure SHA-256 implementation to standard vectors and Node, replaying all 33 chain positions, closing branch splice and malformed plain-scalar recovery, and confirming all 204 focused checks plus the adjacent gates. The defense reviewer reproduced those successes but found two narrower defects. The stricter current-gate verdict governs:
+
+1. The 33-receipt bound was checked only after recursively snapshotting the caller's ledger. Dense oversized input was therefore rejected eventually but could still consume work proportional to its supplied size before rejection. The reviewer measured approximately 793 milliseconds for 100,000 entries and 5.47 seconds for 500,000 entries.
+2. The one-terminal-receipt rule applied only to the returned full ledger. Reusing the same authentic pre-terminal prefix with different receipt and idempotency identities could mint multiple distinct `attempt_budget_held` receipts. Exact replay from the full ledger worked, but the terminal boundary was not final from the authentic prefix that created it.
+
+The SHA-256 chain itself remained correct under standard vectors, Unicode and large payload probes. The availability concern is now bounded input admission, not digest correctness. Durable restart, concurrent writers and authoritative prefix acceptance remain outside this local kernel; same-process terminal finality is a current obligation because the kernel explicitly claims one terminal receipt.
+
+## Repair round 23
+
+Receipt-ledger admission now reads the caller's own `priorReceipts` data descriptor and performs a guarded plain-array length preflight before any recursive snapshot or entry inspection. Oversized, inherited, accessor-backed, custom-prototype and otherwise non-admissible ledgers return the defined malformed hold with no recovered replacement. The independent recovery path repeats the bound so no later path can re-enter an oversized ledger.
+
+Terminal issuance is now registered against the exact issued plan object and a domain-separated digest of plan fingerprint, authentic prior-chain tip and terminal ordinal. The first exact over-budget request may mint the sole terminal receipt. An exact repeat from the same pre-terminal prefix returns a defensive proof-preserving replay of that receipt; any different request from the terminalized prefix returns `attempt_budget_exhausted` without a new receipt. An invalid or stale selector cannot consume the terminal slot, and caller mutation of returned terminal bytes cannot poison the stored replay. The registry is plan-owned through a weak key, so a discarded issued plan does not create permanent global retention.
+
+Two hundred and six focused checks pass locally. The new checks prove that a 34-entry dense ledger containing hostile proxies is rejected with zero entry inspections, and that stale boundary calls, exact stale-prefix replay, competing terminal identities, full-ledger replay and caller mutation all preserve one terminal event.
+
+The repair is frozen at `d2d20616e0000d01fbf1f95409260487c0479eaa`, tree `f2cf807a0b772fd473966693c63cec5249fbbce1`, source blob `f6e23fe3f19ab437a21f6606cf60607f3228d854` and test blob `855c65f2d483dcf0134fa217b349c939d0e8bd47`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
