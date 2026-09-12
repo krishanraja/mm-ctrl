@@ -590,6 +590,23 @@ describe('G24 headless Crossing selector', () => {
     expect(receipt).not.toContain('epistemic_policy_version')
     expect(receipt.split('\n')).toHaveLength(6)
   })
+
+  it('renders eligible standing only for an exactly issued selector result', () => {
+    const issued = selectedFixture('highExternalHighInternal')
+    expect(renderG24SelectorReceipt(issued)).toContain(
+      'Standing: eligible for the next governed step',
+    )
+    expect(renderG24SelectorReceipt(structuredClone(issued))).toBe(
+      'Standing: held with no action',
+    )
+
+    const rewritten = structuredClone(issued)
+    rewritten.route = 'session'
+    rewritten.reasonCode = 'tacit_interdependence'
+    rewritten.expectedMaterialEffect = 'Invented material effect.'
+    rewritten.selectorFingerprint = fingerprintG24SelectorResult(rewritten)
+    expect(renderG24SelectorReceipt(rewritten)).toBe('Standing: held with no action')
+  })
 })
 
 describe('G24 versioned intervention and answer effects', () => {
@@ -4446,7 +4463,6 @@ describe('G24 strict owned-data boundary', () => {
     ask.burden = -0
     const held = selectG24Intervention(negativeZero)
     expect(held).toMatchObject({ route: 'abstain_hold', actionable: false })
-    expect(held.selectorFingerprint).not.toBe('__g24_invalid_nonplain_data__')
     expect(held.alternatives.some(({ burden }) => Object.is(burden, -0))).toBe(false)
   })
 
@@ -4504,5 +4520,112 @@ describe('G24 strict owned-data boundary', () => {
       reason: 'invalidation_receipt_identity_invalid',
       receipt: null,
     })
+  })
+
+  it('rejects impossible instants and negative zero at the shared owned-data boundary', () => {
+    for (const invalid of [
+      '2027-02-30T00:00:00.000Z',
+      '2027-01-01T24:00:00.000Z',
+      '2027-01-01T00:00:00+23:59',
+    ]) {
+      const input = buildG24CrossingSelectorFixtures().highExternalHighInternal
+      input.controls.identity_version.validUntil = invalid
+      const graphFingerprint = fingerprintG24ControlGraph(
+        input.controlManifest.applicableControlKeys,
+        input.controls,
+      )
+      input.controlManifest.graphFingerprint = graphFingerprint
+      input.trustedEvaluation.controlGraphFingerprint = graphFingerprint
+      expect(selectG24Intervention(input), invalid).toMatchObject({
+        route: 'abstain_hold',
+        actionable: false,
+      })
+    }
+
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:negative-zero:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    const attempt = {
+      receiptId: 'execution:negative-zero:v1',
+      idempotencyKey: 'execution:negative-zero:v1',
+      elapsedMs: 0,
+      outcome: 'failed' as const,
+    }
+    const first = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: [],
+      attempt,
+    })
+    expect(first.receipt).not.toBeNull()
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: first.receipts,
+        attempt: { ...attempt, elapsedMs: -0 },
+      }),
+    ).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+  })
+
+  it('requires the exact issued projection at use and confines replay identity to applicable controls', () => {
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(
+      selectedFixture(),
+      controls,
+      'release:issued-use:round-19:v1',
+    )
+    projection.includedCanonicalSourceVersions = ['source:rewritten:v1']
+    projection.projectionFingerprint = fingerprintG24PendingReleaseProjection(projection)
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: buildExactG24ReleaseAuthority(projection),
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:rewritten-projection:round-19:v1',
+      }),
+    ).toMatchObject({ eligible: false, reason: 'controlling_state_invalid' })
+
+    const exactProjection = compileProjection(
+      selectedFixture(),
+      controls,
+      'release:confined-replay:round-19:v1',
+    )
+    const changed = cloneControls(controls)
+    changed.authority_version.version = 'authority_version:confined:v2'
+    const receiptId = 'release-invalidation:confined-replay:round-19:v1'
+    const first = evaluateG24PendingReleaseUse({
+      projection: exactProjection,
+      controls: changed,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId,
+    })
+    expect(first.receipt).not.toBeNull()
+    changed.unrelated_lineage_version.version = 'unrelated_lineage_version:confined:v2'
+    const replay = evaluateG24PendingReleaseUse({
+      projection: exactProjection,
+      controls: changed,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId,
+    })
+    expect(replay.receipt).toEqual(first.receipt)
+
+    changed.independent_challenger_result_version.dependencies.reverse()
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection: exactProjection,
+        controls: changed,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }).receipt,
+    ).toEqual(first.receipt)
   })
 })

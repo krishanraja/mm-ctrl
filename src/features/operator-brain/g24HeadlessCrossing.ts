@@ -84,7 +84,9 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
         return { ok: true, value: current }
       }
       if (typeof current === 'number') {
-        return Number.isFinite(current) ? { ok: true, value: current } : { ok: false }
+        return Number.isFinite(current) && !Object.is(current, -0)
+          ? { ok: true, value: current }
+          : { ok: false }
       }
       if (typeof current !== 'object' || active.has(current)) return { ok: false }
       active.add(current)
@@ -194,9 +196,34 @@ function stringifyG24Data(value: unknown): string {
 }
 
 function validDate(value: string | undefined): number | undefined {
+  if (!value) return undefined
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?(Z|([+-])(\d{2}):(\d{2}))$/.exec(
+    value,
+  )
+  if (!match) return undefined
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText] = match
+  const year = Number(yearText)
+  const month = Number(monthText)
+  const day = Number(dayText)
+  const hour = Number(hourText)
+  const minute = Number(minuteText)
+  const second = Number(secondText)
+  const offsetHour = match[10] === undefined ? 0 : Number(match[10])
+  const offsetMinute = match[11] === undefined ? 0 : Number(match[11])
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
+  const daysInMonth =
+    month >= 1 && month <= 12
+      ? [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1]
+      : 0
   if (
-    !value ||
-    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)
+    day < 1 ||
+    day > daysInMonth ||
+    hour > 23 ||
+    minute > 59 ||
+    second > 59 ||
+    offsetHour > 14 ||
+    offsetMinute > 59 ||
+    (offsetHour === 14 && offsetMinute !== 0)
   ) {
     return undefined
   }
@@ -3308,6 +3335,39 @@ function equalStringRecord(left: Record<string, string>, right: Record<string, s
   return normalize(left) === normalize(right)
 }
 
+function fingerprintG24ObservedReleaseControlState(
+  projection: G24PendingReleaseProjection,
+  controls: G24ControlRegistry,
+  trustedAsOf: string,
+): string {
+  const applicableKeys = [
+    ...new Set(
+      Object.values(projection.selectorControlManifests).flatMap(
+        ({ applicableControlKeys }) => applicableControlKeys,
+      ),
+    ),
+  ].sort(compareText)
+  return stringifyG24Data({
+    trustedAsOf,
+    controls: applicableKeys.map((key) => {
+      const control = Object.prototype.hasOwnProperty.call(controls, key)
+        ? controls[key]
+        : undefined
+      return control
+        ? {
+            key,
+            lineageId: control.lineageId,
+            version: control.version,
+            state: control.state,
+            dependencies: [...control.dependencies].sort(compareText),
+            validFrom: control.validFrom ?? null,
+            validUntil: control.validUntil ?? null,
+          }
+        : { key, missing: true }
+    }),
+  })
+}
+
 export function evaluateG24PendingReleaseUse(input: {
   projection: G24PendingReleaseProjection
   authority?: G24ReleaseAuthority
@@ -3350,6 +3410,12 @@ export function evaluateG24PendingReleaseUse(input: {
     input.projection.projectionFingerprint
   ) {
     stateErrors.push('release_projection_mutated_without_new_version')
+  }
+  if (
+    g24ReleaseProjectionFingerprintsByVersion.get(input.projection.projectionVersion) !==
+    input.projection.projectionFingerprint
+  ) {
+    stateErrors.push('release_projection_not_issued')
   }
   const selectorVersions = [...input.projection.selectorResultVersions].sort(compareText)
   const rootVersions = Object.keys(input.projection.selectorControlRoots).sort(compareText)
@@ -3408,10 +3474,11 @@ export function evaluateG24PendingReleaseUse(input: {
       receiptId: input.receiptId,
       projectionVersion: input.projection.projectionVersion,
       projectionFingerprint: input.projection.projectionFingerprint,
-      observedControlStateFingerprint: stringifyG24Data({
-        trustedAsOf: input.trustedAsOf,
-        controls: input.controls,
-      }),
+      observedControlStateFingerprint: fingerprintG24ObservedReleaseControlState(
+        input.projection,
+        input.controls,
+        input.trustedAsOf,
+      ),
       changedControls,
       appendOnly: true,
       approvalCreated: false,
@@ -4022,12 +4089,8 @@ export function renderG24SelectorReceipt(result: G24SelectorResult): string {
     const snapshot = snapshotG24PlainData(result)
     if (!snapshot.ok) return 'Standing: held with no action'
     result = snapshot.value
-    if (
-      !Array.isArray(result.unresolvedEvidenceRefs) ||
-      !result.unresolvedEvidenceRefs.every((ref) => typeof ref === 'string')
-    ) {
-      return 'Standing: held with no action'
-    }
+    transferG24SelectorResultProof(snapshot, result)
+    if (!g24SelectorResultIsExact(result)) return 'Standing: held with no action'
     const gap = result.unresolvedGap ?? 'none'
     const refs = result.unresolvedEvidenceRefs.length
       ? result.unresolvedEvidenceRefs.join(', ')
