@@ -450,6 +450,42 @@ One hundred and ninety-six focused checks pass locally. Three new grouped tests 
 
 The repair is frozen at `c006c6518e4488c32778bf1afc72fae218fc3759`, tree `7d67a63dae3bcad121ef28e774d9156a8d0d179a`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 19
+
+**Frozen code:** `c006c6518e4488c32778bf1afc72fae218fc3759`
+
+**Frozen tree:** `7d67a63dae3bcad121ef28e774d9156a8d0d179a`
+
+**Frozen source blob:** `1c2ead6c5ccbc3be35e81ee3e4c689ddeecce3a1`
+
+**Frozen test blob:** `c2b2e336878a516d067cee4151d7c511229a3f84`
+
+**Truthful state correction:** `3e3041fca05e0f55f0b5ce0358aed2a9901268fc`
+
+**Adjudication:** `VETO`
+
+The selector issuance proof held across atom creation, approval, Release compilation and enrichment planning and execution. Coherent selector reconstruction, post-return route rewriting and prior attacks were rejected. The reviewers nevertheless found five remaining identity and claim-boundary defects:
+
+1. Negative zero was rejected only in selector burden. An execution attempt with `elapsedMs: -0` and one with positive zero still shared JSON identity and could replay as the same event.
+2. Explicit-zone date syntax still admitted impossible calendar and clock values because `Date.parse` normalized values such as 30 February and hour 24 instead of rejecting them.
+3. The projection-version registry protected compilation but was not consulted at use. A returned projection could be rewritten, publicly refingerprinted and paired with matching authority while retaining the issued version.
+4. Invalidation replay fingerprinted the entire supplied control registry. An unrelated control change, or dependency order alone, could turn an exact relevant event into an identity collision even though neither changed the applicable closure.
+5. The public selector receipt renderer checked structure but not issuance. A structured clone or coherent self-refingerprinted rewrite could therefore display eligible standing even though every action path rejected it.
+
+The panel treated the fifth finding as especially instructive: a read-only explanation is still a claim boundary. Visible standing must carry the same authenticity standard as an action-bearing consumer.
+
+## Repair round 19
+
+The strict owned-data boundary now rejects negative zero for every numeric field. Date validation now checks the actual Gregorian day, clock components and RFC 3339 numeric-offset range before parsing, so an explicit zone cannot make an impossible instant actionable.
+
+Release use now requires the exact projection-version and fingerprint pair recorded by local issuance. Invalidation identity is derived only from the projection's applicable control closure, with canonical key and dependency ordering, while still binding each relevant control's lineage, version, state and validity bounds plus trusted evaluation time. Unrelated lineage and nonsemantic input order no longer disturb exact replay.
+
+The selector receipt renderer now transfers proof only through the strict owned snapshot and requires the exact private selector issuance proof before it may render eligible standing. Structured clones and coherent public refingerprints render only the existing held result.
+
+One hundred and ninety-nine focused checks pass locally. Three new grouped checks cover impossible instants, shared negative-zero rejection, exact issued projection use, relevant-closure invalidation replay, dependency-order normalization and renderer rejection of structured clones and coherent rewrites.
+
+The repair is frozen at `e77609806c3526ccd62205ce550723f4871bfa8e`, tree `946e4a44f477d434527fe00d883e16e75146ee4e`, source blob `3e12e6fa25d147680c893f7b9e3d0097eef3d279` and test blob `c25eb50f8cbb830d3516e0429ff9d60eb624ed30`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after eighteen vetoes, frozen at `c006c6518e4488c32778bf1afc72fae218fc3759` and tree `7d67a63dae3bcad121ef28e774d9156a8d0d179a`; 196 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** local deterministic kernel repaired after nineteen vetoes, frozen at `e77609806c3526ccd62205ce550723f4871bfa8e` and tree `946e4a44f477d434527fe00d883e16e75146ee4e`; 199 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -35,6 +35,7 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - trusted selector evaluation versions bound to their same-key controlling watermarks, route-specific evidence semantics and fresh-closure expiry, with malformed answer, correction and approval ledgers rejected before property operations.
 - deterministic least-burden route precedence and eligibility equivalence carried in selector-result bytes, temporal expiry ordering and local collision-safe approval and invalidation receipt identity.
 - in-process selector issuance proof, explicit-zone deterministic time, negative-zero exclusion and invalidation receipts bound to exact projection and observed control state.
+- shared negative-zero exclusion, strict real-instant validation, exact issued-projection use, relevant-closure invalidation identity and issuance-proven visible standing.
 
 ## Deterministic fixtures
 
@@ -61,13 +62,14 @@ The fixture range includes:
 19. invalid-fingerprint sentinels, unknown proof fields, padded issuance identities, explicit blank validity bounds, duplicate Release canonical forms, malformed public calls and maximum-length sparse arrays; and
 20. forged trusted-evaluation versions, route-semantic contradictions, stale selector expiry, duplicate unresolved evidence, intervention evidence-order ambiguity and malformed approval, answer and correction ledgers; and
 21. route-precedence relabelling, contradictory alternative eligibility, sufficient resolving gaps, non-normal producer inputs, timezone-offset expiry order and approval and invalidation receipt collisions; and
-22. coherent selector-story rewrites, timezone-less route divergence, negative-zero burden equivalence, same-version projection collisions and under-recorded invalidation observations.
+22. coherent selector-story rewrites, timezone-less route divergence, negative-zero burden equivalence, same-version projection collisions and under-recorded invalidation observations; and
+23. impossible calendar and clock instants, negative-zero execution identity, post-issuance projection rewriting, unrelated-lineage and dependency-order replay noise, and proofless eligible receipt rendering.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 196 checks passed in one file on the frozen round-eighteen repair.
+- `npm run brain:g24:headless-check`: 199 checks passed in one file on the frozen round-nineteen repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
