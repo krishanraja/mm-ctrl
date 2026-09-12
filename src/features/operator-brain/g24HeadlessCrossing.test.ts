@@ -3901,4 +3901,132 @@ describe('G24 strict owned-data boundary', () => {
       )
     },
   )
+
+  it('rejects every self-refingerprinted semantic selector mutation before Release', () => {
+    const mutations: Array<[string, (selector: G24SelectorResult) => void]> = [
+      ['route', (selector) => (selector.route = 'forged_route' as never)],
+      ['actionable', (selector) => (selector.actionable = 'false' as never)],
+      ['reasonCode', (selector) => (selector.reasonCode = { forged: true } as never)],
+      ['unresolvedGap', (selector) => (selector.unresolvedGap = 'guess' as never)],
+      [
+        'trustedEvaluation',
+        (selector) => (selector.trustedEvaluation.evaluationVersion = ''),
+      ],
+      [
+        'challengerBinding',
+        (selector) => (selector.trustedEvaluation.challengerResult = 'countercase_found'),
+      ],
+      [
+        'evidenceNamespaceCaseRef',
+        (selector) => (selector.evidenceNamespaceCaseRef = 'case:someone-else'),
+      ],
+      ['expiry', (selector) => (selector.expiry = 'not-a-date')],
+      [
+        'replanningTrigger',
+        (selector) => (selector.replanningTrigger = 'never' as never),
+      ],
+      [
+        'alternatives',
+        (selector) =>
+          (selector.alternatives = [
+            { route: 'reuse', eligible: 'yes' as never, rejectionReasons: [] },
+          ]),
+      ],
+      [
+        'provisionalDiagnostic',
+        (selector) => (selector.provisionalDiagnostic = 99 as never),
+      ],
+    ]
+
+    for (const [name, mutate] of mutations) {
+      const selector = selectedFixture('quiet')
+      expect(selector).toMatchObject({ route: 'abstain_hold', actionable: false })
+      mutate(selector)
+      selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+      expect(selector.selectorFingerprint, name).toBe('__g24_invalid_nonplain_data__')
+      const compiled = compileG24PendingRelease({
+        projectionVersion: `release-projection:invalid-selector:${name}:v1`,
+        purpose: selector.purposeRef,
+        audience: selector.audienceRef,
+        selectorResults: [selector],
+        controls: buildG24FixtureControls(),
+        trustedAsOf: G24_FIXTURE_NOW,
+        includedCanonicalSourceVersions: ['source-set:v1'],
+        includedCanonicalBrainVersions: ['brain-set:v1'],
+      })
+      expect(compiled.projection, name).toBeNull()
+      expect(compiled.errors, name).toContain('selector_result_invalid')
+    }
+  })
+
+  it('rejects reordered Release bytes even when their public fingerprint is unchanged', () => {
+    const selector = selectedFixture()
+    const controls = buildG24FixtureControls()
+    const compiled = compileG24PendingRelease({
+      projectionVersion: 'release-projection:order:v1',
+      purpose: selector.purposeRef,
+      audience: selector.audienceRef,
+      selectorResults: [selector],
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source:b', 'source:a'],
+      includedCanonicalBrainVersions: ['brain:b', 'brain:a'],
+    })
+    expect(compiled.errors).toEqual([])
+    const projection = compiled.projection as G24PendingReleaseProjection
+    const originalFingerprint = projection.projectionFingerprint
+    projection.includedCanonicalSourceVersions.reverse()
+    projection.includedCanonicalBrainVersions.reverse()
+    expect(fingerprintG24PendingReleaseProjection(projection)).toBe(originalFingerprint)
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: buildExactG24ReleaseAuthority(projection),
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:reordered:v1',
+      }),
+    ).toEqual({ eligible: false, reason: 'controlling_state_invalid', receipt: null })
+  })
+
+  it('fails malformed session agenda types with a defined contract error', () => {
+    const selector = selectedFixture('lowExternalLowInternal')
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        atomVersion: 'session-plan:malformed-agenda:v1',
+        controlVersion: 'session-control:v1',
+        purpose: selector.purposeRef,
+        audience: selector.audienceRef,
+        sensitivity: selector.sensitivityRef,
+        channel: 'operator-led-session',
+        timing: 'next-consented-session',
+        decisionFrameVersion: selector.acceptedDecisionFrameRef,
+        evidenceVersions: [selector.evidenceCoverageRef],
+        payload: {
+          kind: 'session',
+          exactAgenda: [7],
+          leaderVisiblePurpose: 'Name the hidden dependencies.',
+          expectedEndState: 'A reviewable dependency map.',
+          leaderCanDeclineRejectOrReframe: true,
+          noContactScheduleCaptureOrLearningAuthority: true,
+        } as never,
+      }),
+    ).toThrow('intervention_atom_shape_invalid')
+  })
+
+  it('rejects unsupported answer-command fields before immutable evidence issuance', () => {
+    const atom = approvedQuestionAtom()
+    expect(() =>
+      recordG24Answer(
+        atom,
+        {
+          receiptId: 'answer:unsupported-command:v1',
+          kind: 'option',
+          value: 'Fewer rewrites',
+          unsupported: 'must-not-be-ignored',
+        } as never,
+        [],
+      ),
+    ).toThrow('answer_shape_invalid')
+  })
 })

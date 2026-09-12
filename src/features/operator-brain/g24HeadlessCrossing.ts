@@ -572,6 +572,230 @@ export interface G24SelectorResult {
   provisionalDiagnostic?: string
 }
 
+const g24SelectorAlternativeResultSchema = z
+  .object({
+    route: z.enum(['reuse', 'enrich', 'ask', 'session']),
+    eligible: z.boolean(),
+    rejectionReasons: z.array(z.string()),
+  })
+  .strict()
+
+const g24SelectorResultSchema = z
+  .object({
+    selectorResultVersion: z.string(),
+    currentCaseRef: z.string(),
+    evidenceNamespace: z.string(),
+    evidenceNamespaceCaseRef: z.string(),
+    purposeRef: z.string(),
+    audienceRef: z.string(),
+    sensitivityRef: z.string(),
+    acceptedDecisionFrameRef: z.string(),
+    decisionRequirementRef: z.string(),
+    evidenceCoverageRef: z.string(),
+    route: z.enum(G24_SELECTOR_ROUTES),
+    reasonCode: z.enum([
+      'current_sufficient',
+      'source_eligible',
+      'one_human_fact_required',
+      'tacit_interdependence',
+      'insufficient_authority',
+      'source_incapable',
+      'unresolved_contradiction',
+      'unknowable',
+      'deadline',
+      'budget',
+      'no_material_effect',
+      'invalid_input',
+    ]),
+    unresolvedGap: z.enum(['sufficient', 'gap', 'ambiguity', 'contradiction']).nullable(),
+    unresolvedEvidenceRefs: z.array(z.string()),
+    expectedMaterialEffect: z.string(),
+    alternatives: z.array(g24SelectorAlternativeResultSchema),
+    controlRootKeys: z.array(z.string()),
+    controlManifestVersion: z.string(),
+    applicableControlKeys: z.array(z.string()),
+    controlGraphFingerprint: z.string(),
+    trustedEvaluation: z
+      .object({
+        evaluationVersion: z.string(),
+        decisionRequirementVersion: z.string(),
+        evidenceCoverageVersion: z.string(),
+        trustedCutoffVersion: z.string(),
+        epistemicPolicyVersion: z.string(),
+        independentChallengerResultVersion: z.string(),
+        challengerResult: z.enum([
+          'countercase_found',
+          'none_found_within_declared_boundary',
+          'indeterminate',
+        ]),
+        challengerSearchBoundary: z.string().nullable(),
+        controlManifestVersion: z.string(),
+        controlGraphFingerprint: z.string(),
+        trustedAsOf: z.string(),
+      })
+      .strict(),
+    challengerResult: z.enum([
+      'countercase_found',
+      'none_found_within_declared_boundary',
+      'indeterminate',
+    ]),
+    challengerSearchBoundary: z.string().nullable(),
+    controllingWatermarks: z.array(
+      z.object({ key: z.string(), lineageId: z.string(), version: z.string() }).strict(),
+    ),
+    controllingFingerprint: z.string(),
+    selectorFingerprint: z.string().optional(),
+    expiry: z.string().nullable(),
+    replanningTrigger: z.literal('controlling_change_or_expiry'),
+    actionable: z.boolean(),
+    provisionalDiagnostic: z.string().optional(),
+  })
+  .strict()
+
+function g24StringArrayIsCanonicalNormalForm(value: readonly string[]): boolean {
+  return (
+    value.every(g24IdentifierIsCanonical) &&
+    new Set(value).size === value.length &&
+    value.every((entry, index) => index === 0 || compareText(value[index - 1], entry) <= 0)
+  )
+}
+
+function g24SelectorResultSemanticShapeIsValid(value: unknown): value is G24SelectorResult {
+  const parsed = g24SelectorResultSchema.safeParse(value)
+  if (!parsed.success || !g24IsRecord(value)) return false
+  const result = parsed.data
+  const hasSelectorFingerprint = Object.prototype.hasOwnProperty.call(
+    value,
+    'selectorFingerprint',
+  )
+  const expectedKeys = [
+    'selectorResultVersion',
+    'currentCaseRef',
+    'evidenceNamespace',
+    'evidenceNamespaceCaseRef',
+    'purposeRef',
+    'audienceRef',
+    'sensitivityRef',
+    'acceptedDecisionFrameRef',
+    'decisionRequirementRef',
+    'evidenceCoverageRef',
+    'route',
+    'reasonCode',
+    'unresolvedGap',
+    'unresolvedEvidenceRefs',
+    'expectedMaterialEffect',
+    'alternatives',
+    'controlRootKeys',
+    'controlManifestVersion',
+    'applicableControlKeys',
+    'controlGraphFingerprint',
+    'trustedEvaluation',
+    'challengerResult',
+    'challengerSearchBoundary',
+    'controllingWatermarks',
+    'controllingFingerprint',
+    'expiry',
+    'replanningTrigger',
+    'actionable',
+  ]
+  if (hasSelectorFingerprint) expectedKeys.push('selectorFingerprint')
+  if (Object.prototype.hasOwnProperty.call(value, 'provisionalDiagnostic')) {
+    expectedKeys.push('provisionalDiagnostic')
+  }
+  if (!g24HasExactOwnKeys(value, expectedKeys)) return false
+
+  const canonicalIds = [
+    result.selectorResultVersion,
+    result.currentCaseRef,
+    result.evidenceNamespace,
+    result.evidenceNamespaceCaseRef,
+    result.purposeRef,
+    result.audienceRef,
+    result.sensitivityRef,
+    result.acceptedDecisionFrameRef,
+    result.decisionRequirementRef,
+    result.evidenceCoverageRef,
+    result.controlManifestVersion,
+    result.trustedEvaluation.evaluationVersion,
+    result.trustedEvaluation.decisionRequirementVersion,
+    result.trustedEvaluation.evidenceCoverageVersion,
+    result.trustedEvaluation.trustedCutoffVersion,
+    result.trustedEvaluation.epistemicPolicyVersion,
+    result.trustedEvaluation.independentChallengerResultVersion,
+    result.trustedEvaluation.controlManifestVersion,
+  ]
+  if (!canonicalIds.every(g24IdentifierIsCanonical)) return false
+  if (
+    !g24FingerprintIsValid(result.controlGraphFingerprint) ||
+    !g24FingerprintIsValid(result.controllingFingerprint) ||
+    !g24FingerprintIsValid(result.trustedEvaluation.controlGraphFingerprint)
+  ) {
+    return false
+  }
+  if (
+    result.evidenceNamespaceCaseRef !== result.currentCaseRef ||
+    result.trustedEvaluation.controlManifestVersion !== result.controlManifestVersion ||
+    result.trustedEvaluation.controlGraphFingerprint !== result.controlGraphFingerprint ||
+    result.trustedEvaluation.challengerResult !== result.challengerResult ||
+    result.trustedEvaluation.challengerSearchBoundary !== result.challengerSearchBoundary ||
+    !g24IdentifierIsCanonical(result.trustedEvaluation.trustedAsOf) ||
+    validDate(result.trustedEvaluation.trustedAsOf) === undefined ||
+    (result.expiry !== null &&
+      (!g24IdentifierIsCanonical(result.expiry) || validDate(result.expiry) === undefined)) ||
+    (result.challengerSearchBoundary !== null &&
+      !g24IdentifierIsCanonical(result.challengerSearchBoundary)) ||
+    (result.challengerResult === 'none_found_within_declared_boundary' &&
+      result.challengerSearchBoundary === null) ||
+    (result.route !== 'abstain_hold' && !result.expectedMaterialEffect.trim())
+  ) {
+    return false
+  }
+  const routeForReason: Record<G24SelectorReasonCode, G24SelectorRoute> = {
+    current_sufficient: 'reuse',
+    source_eligible: 'enrich',
+    one_human_fact_required: 'ask',
+    tacit_interdependence: 'session',
+    insufficient_authority: 'abstain_hold',
+    source_incapable: 'abstain_hold',
+    unresolved_contradiction: 'abstain_hold',
+    unknowable: 'abstain_hold',
+    deadline: 'abstain_hold',
+    budget: 'abstain_hold',
+    no_material_effect: 'abstain_hold',
+    invalid_input: 'abstain_hold',
+  }
+  if (
+    routeForReason[result.reasonCode] !== result.route ||
+    result.actionable !== (result.route !== 'abstain_hold')
+  ) {
+    return false
+  }
+  if (
+    !g24StringArrayIsCanonicalNormalForm(result.unresolvedEvidenceRefs) ||
+    !g24StringArrayIsCanonicalNormalForm(result.controlRootKeys) ||
+    !g24StringArrayIsCanonicalNormalForm(result.applicableControlKeys) ||
+    !result.controlRootKeys.every((key) => result.applicableControlKeys.includes(key)) ||
+    new Set(result.alternatives.map(({ route }) => route)).size !== result.alternatives.length ||
+    result.alternatives.some(
+      (alternative, index) =>
+        (index > 0 &&
+          ROUTE_ORDER.indexOf(result.alternatives[index - 1].route) >
+            ROUTE_ORDER.indexOf(alternative.route)) ||
+        !g24StringArrayIsCanonicalNormalForm(alternative.rejectionReasons),
+    ) ||
+    result.controllingWatermarks.some((watermark, index) =>
+      index > 0
+        ? compareText(result.controllingWatermarks[index - 1].key, watermark.key) >= 0
+        : false,
+    ) ||
+    !result.controllingWatermarks.every(g24WatermarkIsStructurallyValid) ||
+    fingerprintG24Watermarks(result.controllingWatermarks) !== result.controllingFingerprint
+  ) {
+    return false
+  }
+  return true
+}
+
 export function fingerprintG24SelectorResult(
   result: Omit<G24SelectorResult, 'selectorFingerprint'> | G24SelectorResult,
 ): string {
@@ -579,6 +803,7 @@ export function fingerprintG24SelectorResult(
     const snapshot = snapshotG24PlainData(result)
     if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
     result = snapshot.value
+    if (!g24SelectorResultSemanticShapeIsValid(result)) return G24_INVALID_FINGERPRINT
     return stringifyG24Data({
     selectorResultVersion: result.selectorResultVersion,
     currentCaseRef: result.currentCaseRef,
@@ -665,7 +890,7 @@ function g24SelectorResultHasExactEnvelope(value: unknown): value is G24Selector
 }
 
 function g24SelectorResultIsExact(value: unknown): value is G24SelectorResult {
-  if (!g24SelectorResultHasExactEnvelope(value)) return false
+  if (!g24SelectorResultSemanticShapeIsValid(value)) return false
   const canonicalFields = [
     value.selectorResultVersion,
     value.currentCaseRef,
@@ -1163,14 +1388,19 @@ function g24InterventionPayloadHasExactShape(
     return false
   }
   if (payload.kind === 'session') {
-    return g24HasExactOwnKeys(payload, [
-      'kind',
-      'exactAgenda',
-      'leaderVisiblePurpose',
-      'expectedEndState',
-      'leaderCanDeclineRejectOrReframe',
-      'noContactScheduleCaptureOrLearningAuthority',
-    ])
+    return (
+      g24HasExactOwnKeys(payload, [
+        'kind',
+        'exactAgenda',
+        'leaderVisiblePurpose',
+        'expectedEndState',
+        'leaderCanDeclineRejectOrReframe',
+        'noContactScheduleCaptureOrLearningAuthority',
+      ]) &&
+      g24IsStringArray(payload.exactAgenda) &&
+      typeof payload.leaderVisiblePurpose === 'string' &&
+      typeof payload.expectedEndState === 'string'
+    )
   }
   if (
     !g24HasExactOwnKeys(payload, [
@@ -1186,6 +1416,13 @@ function g24InterventionPayloadHasExactShape(
       'visibleUnknownConsequence',
       'answerEffects',
     ]) ||
+    typeof payload.visibleWording !== 'string' ||
+    typeof payload.renderedControlPayload !== 'string' ||
+    !g24IsStringArray(payload.optionsOrComparator) ||
+    !g24IsStringArray(payload.honestExits) ||
+    typeof payload.materialEffectDisclosure !== 'string' ||
+    typeof payload.visibleChangedConsequence !== 'string' ||
+    typeof payload.visibleUnknownConsequence !== 'string' ||
     !g24IsRecord(payload.answerEffects)
   ) {
     return false
@@ -1198,7 +1435,11 @@ function g24InterventionPayloadHasExactShape(
         'visibleConsequence',
         'retireInterventionRefs',
         'pendingHumanOwnedProposal',
-      ]),
+      ]) &&
+      typeof effect.visibleConsequence === 'string' &&
+      g24IsStringArray(effect.retireInterventionRefs) &&
+      (effect.pendingHumanOwnedProposal === null ||
+        typeof effect.pendingHumanOwnedProposal === 'string'),
   )
 }
 
@@ -1772,6 +2013,14 @@ export function recordG24Answer(
   const ledgerSnapshot = snapshotG24PlainData(priorReceipts)
   if (!atomSnapshot.ok || !answerSnapshot.ok || !ledgerSnapshot.ok) {
     throw new Error('answer_requires_plain_data')
+  }
+  if (!g24IsRecord(answerSnapshot.value)) throw new Error('answer_shape_invalid')
+  const answerKeys = ['receiptId', 'kind']
+  if (Object.prototype.hasOwnProperty.call(answerSnapshot.value, 'value')) {
+    answerKeys.push('value')
+  }
+  if (!g24HasExactOwnKeys(answerSnapshot.value, answerKeys)) {
+    throw new Error('answer_shape_invalid')
   }
   if (!Array.isArray(ledgerSnapshot.value)) throw new Error('answer_receipt_ledger_required')
   const atomSource = g24SourceForOwned(atomSnapshot, atomSnapshot.value)
@@ -2495,7 +2744,11 @@ export function compileG24PendingRelease(input: {
           compareText(left, right),
         ),
       ),
-      selectorControlRoots,
+      selectorControlRoots: Object.fromEntries(
+        Object.entries(selectorControlRoots).sort(([left], [right]) =>
+          compareText(left, right),
+        ),
+      ),
       selectorControlManifests: Object.fromEntries(
         Object.entries(selectorControlManifests).sort(([left], [right]) =>
           compareText(left, right),
@@ -2598,8 +2851,7 @@ function g24ControlManifestIsStructurallyValid(value: unknown): value is G24Cont
     g24IdentifierIsCanonical(value.manifestVersion) &&
     g24IsStringArray(value.applicableControlKeys) &&
     value.applicableControlKeys.length > 0 &&
-    value.applicableControlKeys.every(g24IdentifierIsCanonical) &&
-    new Set(value.applicableControlKeys).size === value.applicableControlKeys.length &&
+    g24StringArrayIsCanonicalNormalForm(value.applicableControlKeys) &&
     g24FingerprintIsValid(value.graphFingerprint)
   )
 }
@@ -2672,10 +2924,7 @@ function g24PendingReleaseProjectionIsStructurallyValid(
   const selectorRootsAreCanonicalAndUnique =
     g24IsRecord(value.selectorControlRoots) &&
     Object.values(value.selectorControlRoots).every(
-      (roots) =>
-        g24IsStringArray(roots) &&
-        roots.every(g24IdentifierIsCanonical) &&
-        new Set(roots).size === roots.length,
+      (roots) => g24IsStringArray(roots) && g24StringArrayIsCanonicalNormalForm(roots),
     )
   const selectorWatermarksAreCanonicalAndUnique =
     g24IsRecord(value.selectorControllingWatermarks) &&
@@ -2683,7 +2932,9 @@ function g24PendingReleaseProjectionIsStructurallyValid(
       (watermarks) =>
         Array.isArray(watermarks) &&
         watermarks.every(g24WatermarkIsStructurallyValid) &&
-        new Set(watermarks.map(({ key }) => key)).size === watermarks.length,
+        watermarks.every((watermark, index) =>
+          index === 0 ? true : compareText(watermarks[index - 1].key, watermark.key) < 0,
+        ),
     )
   return (
     g24IdentifierIsCanonical(value.projectionVersion) &&
@@ -2691,7 +2942,7 @@ function g24PendingReleaseProjectionIsStructurallyValid(
     g24IdentifierIsCanonical(value.purpose) &&
     g24IdentifierIsCanonical(value.audience) &&
     selectorVersions.length > 0 &&
-    selectorVersions.every(g24IdentifierIsCanonical) &&
+    g24StringArrayIsCanonicalNormalForm(selectorVersions) &&
     selectorVersionSet.size === selectorVersions.length &&
     selectorFingerprintsAreValid &&
     selectorRootsAreCanonicalAndUnique &&
@@ -2699,15 +2950,15 @@ function g24PendingReleaseProjectionIsStructurallyValid(
     Object.values(value.selectorControlManifests).every(g24ControlManifestIsStructurallyValid) &&
     selectorWatermarksAreCanonicalAndUnique &&
     topWatermarks.every(g24WatermarkIsStructurallyValid) &&
-    new Set(topWatermarks.map(({ key }) => key)).size === topWatermarks.length &&
+    topWatermarks.every((watermark, index) =>
+      index === 0 ? true : compareText(topWatermarks[index - 1].key, watermark.key) < 0,
+    ) &&
     g24FingerprintIsValid(value.controllingFingerprint) &&
     fingerprintG24Watermarks(topWatermarks) === value.controllingFingerprint &&
     canonicalSources.length > 0 &&
-    canonicalSources.every(g24IdentifierIsCanonical) &&
-    new Set(canonicalSources).size === canonicalSources.length &&
+    g24StringArrayIsCanonicalNormalForm(canonicalSources) &&
     canonicalBrains.length > 0 &&
-    canonicalBrains.every(g24IdentifierIsCanonical) &&
-    new Set(canonicalBrains).size === canonicalBrains.length
+    g24StringArrayIsCanonicalNormalForm(canonicalBrains)
   )
 }
 
@@ -2739,21 +2990,16 @@ function g24ReleaseAuthorityIsStructurallyValid(
     g24IdentifierIsCanonical(value.audience) &&
     g24IsStringArray(value.selectorResultVersions) &&
     value.selectorResultVersions.length > 0 &&
-    value.selectorResultVersions.every(g24IdentifierIsCanonical) &&
-    new Set(value.selectorResultVersions).size === value.selectorResultVersions.length &&
+    g24StringArrayIsCanonicalNormalForm(value.selectorResultVersions) &&
     g24IsStringRecord(value.selectorResultFingerprints) &&
     Object.values(value.selectorResultFingerprints).every(g24FingerprintIsValid) &&
     g24FingerprintIsValid(value.controllingFingerprint) &&
     g24IsStringArray(value.includedCanonicalSourceVersions) &&
     value.includedCanonicalSourceVersions.length > 0 &&
-    value.includedCanonicalSourceVersions.every(g24IdentifierIsCanonical) &&
-    new Set(value.includedCanonicalSourceVersions).size ===
-      value.includedCanonicalSourceVersions.length &&
+    g24StringArrayIsCanonicalNormalForm(value.includedCanonicalSourceVersions) &&
     g24IsStringArray(value.includedCanonicalBrainVersions) &&
     value.includedCanonicalBrainVersions.length > 0 &&
-    value.includedCanonicalBrainVersions.every(g24IdentifierIsCanonical) &&
-    new Set(value.includedCanonicalBrainVersions).size ===
-      value.includedCanonicalBrainVersions.length
+    g24StringArrayIsCanonicalNormalForm(value.includedCanonicalBrainVersions)
   )
 }
 

@@ -331,6 +331,32 @@ One hundred and seventy-nine focused checks pass locally. Fourteen new checks co
 
 The repair is frozen at `5f18f2cfc39996a3136cd96112a58fa8cb5ed918`, tree `66a750c4263a854eb581109cac0661bdf7517731`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 15
+
+**Frozen code:** `5f18f2cfc39996a3136cd96112a58fa8cb5ed918`
+
+**Truthful state correction:** `6940d66229cbefca9dc58e6d3d7a971c99d710a8`
+
+**Adjudication:** `VETO`
+
+Every round-fourteen reproduction held. Both reviewers independently reproduced a selector-result semantic bypass: a genuine quiet hold could be changed to an invented route and truthy non-Boolean actionability, paired with malformed reason, diagnostic, namespace or trusted-evaluation values, then given a new public fingerprint. Release compilation accepted the self-consistent but semantically invalid bytes and matching structural authority made the projection eligible. The result validator checked exact outer keys and selected identifiers, but not the complete nested runtime schema or route/reason/actionability and trusted-evaluation relationships.
+
+Three adjacent defects were also reproduced:
+
+1. Compiler-sorted canonical source and Brain arrays could be reversed after issuance without changing the sorting fingerprint. Use required uniqueness but not canonical order, so the mutated non-normal bytes remained eligible under matching authority.
+2. A session payload with the declared keys but a non-string agenda item reached `.trim()` and threw a raw TypeError instead of the defined fail-closed contract error.
+3. An answer command could carry an unsupported own field which was silently ignored while immutable evidence was issued.
+
+These are current-gate implementation defects, not trusted-ingress limitations. They show that exact outer keysets must be paired with complete nested runtime schemas, cross-field semantics and one byte-normal form wherever a public fingerprint canonicalizes order.
+
+## Repair round 15
+
+The moving repair adds one strict runtime selector-result schema covering all outer and nested fields, exact optional fields, route and reason enums, literal Boolean actionability, trusted-evaluation and challenger bindings, evidence namespace and case equality, canonical dates, valid fingerprints, unique and canonically ordered alternatives, controls, evidence references and watermarks, and route/reason/actionability agreement. The public selector fingerprint now returns the reserved invalid sentinel for semantic-invalid bytes, and every consumer continues to require both a valid stored fingerprint and exact recomputation.
+
+Release compilation emits sorted selector-root maps. Projection and authority use now require compiler-canonical order for selector, canonical source, canonical Brain, manifest-control, root and watermark arrays, so order mutation cannot preserve usable identity even where the public fingerprint sorts. Session and question payload shape checks validate every nested collection and every value used through string or array operations before semantic validation. Answer commands now admit exactly `receiptId`, `kind` and optional `value`.
+
+One hundred and eighty-three focused checks pass locally. Four new tests collectively attack eleven self-refingerprinted selector semantic mutations, reordered Release bytes, malformed session agenda values and answer-command extra fields. This moving repair remains unverified until its exact committed bytes pass fresh independent review.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

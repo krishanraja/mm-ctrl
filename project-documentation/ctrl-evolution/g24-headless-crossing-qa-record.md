@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after fourteen vetoes, frozen at `5f18f2cfc39996a3136cd96112a58fa8cb5ed918` and tree `66a750c4263a854eb581109cac0661bdf7517731`; 179 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** local deterministic kernel in moving repair after fifteen vetoes; 183 focused checks pass, but the repaired bytes are not yet frozen or independently verified and remain disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -61,7 +61,7 @@ The identities and internal evidence are wholly synthetic. No simulated consent 
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 179 checks passed in one file on the frozen round-fourteen repair.
+- `npm run brain:g24:headless-check`: 183 checks passed in one file on the moving round-fifteen repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
