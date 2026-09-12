@@ -4950,4 +4950,130 @@ describe('G24 strict owned-data boundary', () => {
     expect(exhausted.receipts).toEqual(receipts)
     expect(JSON.stringify(receipts).length).toBeLessThan(1_000_000)
   })
+
+  it('rejects an oversized receipt ledger before inspecting any receipt entry', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:oversized-preflight:round-23:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    let entryInspections = 0
+    const guardedEntry = new Proxy(
+      {},
+      {
+        get() {
+          entryInspections += 1
+          throw new Error('oversized_receipt_entry_inspected')
+        },
+        getOwnPropertyDescriptor() {
+          entryInspections += 1
+          throw new Error('oversized_receipt_entry_inspected')
+        },
+        ownKeys() {
+          entryInspections += 1
+          throw new Error('oversized_receipt_entry_inspected')
+        },
+      },
+    )
+    const oversizedLedger = Array(34).fill(guardedEntry) as G24ExecutionReceipt[]
+
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: oversizedLedger,
+        attempt: {
+          receiptId: 'execution-receipt:oversized-preflight:round-23:v1',
+          idempotencyKey: 'execution-attempt:oversized-preflight:round-23:v1',
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      }),
+    ).toEqual({
+      receipt: null,
+      receipts: [],
+      replayed: false,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+    expect(entryInspections).toBe(0)
+  })
+
+  it('mints one terminal receipt per authentic prefix and only replays that exact request', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:terminal-finality:round-23:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    const issue = (
+      priorReceipts: G24ExecutionReceipt[],
+      id: string,
+      currentSelector: G24SelectorResult = selector,
+    ) =>
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector,
+        priorReceipts,
+        attempt: {
+          receiptId: `execution-receipt:terminal-finality:${id}`,
+          idempotencyKey: `execution-attempt:terminal-finality:${id}`,
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      })
+
+    const first = issue([], '1')
+    const second = issue(first.receipts, '2')
+    const authenticPrefix = second.receipts
+    const staleAtBoundary = issue(
+      authenticPrefix,
+      'stale-terminal',
+      selectedFixture('lowExternalHighInternal'),
+    )
+    expect(staleAtBoundary).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
+    })
+    expect(staleAtBoundary.receipts).toEqual(authenticPrefix)
+
+    const terminal = issue(authenticPrefix, 'terminal')
+    expect(terminal).toMatchObject({
+      replayed: false,
+      rejection: null,
+      receipt: {
+        receiptId: 'execution-receipt:terminal-finality:terminal',
+        attemptNumber: 3,
+        status: 'attempt_budget_held',
+      },
+    })
+    terminal.receipt!.receiptId = 'caller-mutated-terminal'
+    terminal.receipts[2].idempotencyKey = 'caller-mutated-terminal'
+
+    const replayFromPrefix = issue(authenticPrefix, 'terminal')
+    expect(replayFromPrefix).toMatchObject({
+      replayed: true,
+      rejection: null,
+      receipt: {
+        receiptId: 'execution-receipt:terminal-finality:terminal',
+        idempotencyKey: 'execution-attempt:terminal-finality:terminal',
+        attemptNumber: 3,
+        status: 'attempt_budget_held',
+      },
+    })
+    expect(replayFromPrefix.receipts).toHaveLength(3)
+
+    const competingTerminal = issue(authenticPrefix, 'competing-terminal')
+    expect(competingTerminal).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
+    })
+    expect(competingTerminal.receipts).toEqual(authenticPrefix)
+
+    const replayFromFullLedger = issue(replayFromPrefix.receipts, 'terminal')
+    expect(replayFromFullLedger.replayed).toBe(true)
+    expect(replayFromFullLedger.receipts).toEqual(replayFromPrefix.receipts)
+  })
 })
