@@ -12,6 +12,7 @@ import {
   evaluateG24PendingReleaseUse,
   fingerprintG24ControlGraph,
   fingerprintG24InterventionAtom,
+  fingerprintG24PendingReleaseProjection,
   fingerprintG24SelectorResult,
   fingerprintG24Watermarks,
   recordG24Answer,
@@ -3392,5 +3393,249 @@ describe('G24 strict owned-data boundary', () => {
       reason: 'release_authority_missing_or_mismatched',
       receipt: null,
     })
+  })
+
+  it('never rereads caller properties after taking an owned snapshot', () => {
+    const throwOnGet = <T extends object>(target: T): T =>
+      new Proxy(target, {
+        get: (_target, property) => {
+          throw new Error(`caller_get:${String(property)}`)
+        },
+      })
+
+    expect(selectG24Intervention(throwOnGet({}))).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+
+    const atom = approvedQuestionAtom()
+    const first = recordG24Answer(
+      atom,
+      { receiptId: 'answer:owned-snapshot', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    expect(
+      recordG24Answer(
+        atom,
+        { receiptId: 'answer:owned-snapshot', kind: 'option', value: 'Fewer rewrites' },
+        throwOnGet([first]),
+      ),
+    ).toEqual(first)
+
+    const replacement = recordG24Answer(
+      atom,
+      {
+        receiptId: 'answer:owned-snapshot:replacement',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [first],
+    )
+    expect(
+      correctG24Answer(
+        first,
+        replacement,
+        throwOnGet({
+          receiptId: 'correction:owned-snapshot',
+          idempotencyKey: 'correction:owned-snapshot:idempotency',
+          priorCorrections: [],
+          dependencyGraph: {
+            graphVersion: 'answer-dependency-graph:owned-snapshot:v1',
+            derivativeDependencies: {},
+            decisionDependencies: {},
+          },
+        }),
+      ),
+    ).toMatchObject({ receiptId: 'correction:owned-snapshot' })
+
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    expect(
+      applyG24LifecycleTransition(
+        throwOnGet({
+          state: 'none',
+          version: null,
+          namedLeaderRef: 'leader:maya',
+          identityControlVersion: 'identity-control:maya:v1',
+          receipts: [],
+        }),
+        lifecycleRequest(open),
+      ),
+    ).toMatchObject({ accepted: true, reason: 'transition_accepted' })
+
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:owned-snapshot:v1',
+      maximumWallClockMs: 2_000,
+      maximumAttempts: 1,
+    })
+    expect(
+      recordG24EnrichmentAttempt(
+        throwOnGet({
+          plan,
+          currentSelector: selector,
+          priorReceipts: [],
+          attempt: {
+            receiptId: 'execution:owned-snapshot',
+            idempotencyKey: 'execution:owned-snapshot:idempotency',
+            elapsedMs: 10,
+            outcome: 'failed' as const,
+          },
+        }),
+      ).receipt,
+    ).toMatchObject({ receiptId: 'execution:owned-snapshot' })
+  })
+
+  it('preserves __proto__ selector identity through official Release compilation and use', () => {
+    const selector = structuredClone(selectedFixture())
+    selector.selectorResultVersion = '__proto__'
+    selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+    const controls = buildG24FixtureControls()
+    const result = compileG24PendingRelease({
+      projectionVersion: 'release-projection:prototype-selector:v1',
+      purpose: selector.purposeRef,
+      audience: selector.audienceRef,
+      selectorResults: [selector],
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(result.errors).toEqual([])
+    const projection = result.projection as G24PendingReleaseProjection
+    expect(projection.projectionFingerprint).not.toBe('__g24_invalid_nonplain_data__')
+    expect(Object.prototype.hasOwnProperty.call(projection.selectorControlRoots, '__proto__')).toBe(
+      true,
+    )
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: buildExactG24ReleaseAuthority(projection),
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:prototype-selector',
+      }),
+    ).toEqual({ eligible: true, reason: 'eligible', receipt: null })
+  })
+
+  it('rejects padded canonical identities across compile, approval, authority and invalidation', () => {
+    const selector = selectedFixture()
+    const compileInput = {
+      projectionVersion: 'release-projection:canonical:v1',
+      purpose: selector.purposeRef,
+      audience: selector.audienceRef,
+      selectorResults: [selector],
+      controls: buildG24FixtureControls(),
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    }
+    for (const mutation of [
+      { projectionVersion: ' release-projection:canonical:v1 ' },
+      { includedCanonicalSourceVersions: [' source-set:v1 '] },
+      { includedCanonicalBrainVersions: [' brain-set:v1 '] },
+    ]) {
+      expect(compileG24PendingRelease({ ...compileInput, ...mutation }).projection).toBeNull()
+    }
+
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(selector, controls)
+    const authority = buildExactG24ReleaseAuthority(projection, ' authority:padded:v1 ')
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority,
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:padded-authority',
+      }),
+    ).toMatchObject({ eligible: false, reason: 'release_authority_missing_or_mismatched' })
+
+    const changedControls = cloneControls(controls)
+    changedControls.permission_version.version = 'permission_version:changed'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: buildExactG24ReleaseAuthority(projection),
+        controls: changedControls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: ' receipt:padded ',
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
+
+    const approvalSelector = selectedFixture('highExternalHighInternal')
+    const approvalAtom = questionAtom(approvalSelector)
+    expect(() =>
+      approveG24InterventionAtom(approvalAtom, approvalSelector, {
+        atomVersion: approvalAtom.atomVersion,
+        controlVersion: approvalAtom.controlVersion,
+        purpose: approvalAtom.purpose,
+        audience: approvalAtom.audience,
+        sensitivity: approvalAtom.sensitivity,
+        channel: approvalAtom.channel,
+        timing: approvalAtom.timing,
+        decisionFrameVersion: approvalAtom.decisionFrameVersion,
+        evidenceVersions: [...approvalAtom.evidenceVersions],
+        payloadFingerprint: approvalAtom.payloadFingerprint,
+        approvalReceiptId: ' approval:padded ',
+        approvedByRef: 'krish',
+        approvalAuthorityVersionRef: 'authority_version:v1',
+      }),
+    ).toThrow('intervention_approval_binding_mismatch')
+  })
+
+  it.each([
+    'purpose',
+    'audience',
+    'projectionVersion',
+    'canonicalSource',
+    'selectorFingerprint',
+    'controlManifestVersion',
+  ])('rejects a blank Release binding: %s', (field) => {
+    const controls = buildG24FixtureControls()
+    const projection = structuredClone(compileProjection(selectedFixture(), controls))
+    const selectorVersion = projection.selectorResultVersions[0]
+    if (field === 'purpose') projection.purpose = ''
+    if (field === 'audience') projection.audience = ''
+    if (field === 'projectionVersion') projection.projectionVersion = ''
+    if (field === 'canonicalSource') projection.includedCanonicalSourceVersions = ['']
+    if (field === 'selectorFingerprint') {
+      projection.selectorResultFingerprints[selectorVersion] = ''
+    }
+    if (field === 'controlManifestVersion') {
+      projection.selectorControlManifests[selectorVersion].manifestVersion = ''
+    }
+    projection.projectionFingerprint = fingerprintG24PendingReleaseProjection(projection)
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: buildExactG24ReleaseAuthority(projection),
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: `release-check:blank-${field}`,
+      }),
+    ).toMatchObject({ eligible: false, reason: 'controlling_state_invalid' })
+  })
+
+  it('makes public fingerprint and rendering helpers total for plain malformed values', () => {
+    expect(fingerprintG24SelectorResult({} as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+    expect(fingerprintG24InterventionAtom({} as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+    expect(fingerprintG24PendingReleaseProjection({} as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+    expect(fingerprintG24Watermarks({} as never)).toBe('__g24_invalid_nonplain_data__')
+    expect(fingerprintG24ControlGraph({} as never, {} as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+    expect(renderG24SelectorReceipt({} as never)).toBe('Standing: held with no action')
   })
 })

@@ -70,11 +70,15 @@ function compareText(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0
 }
 
-type G24PlainSnapshot<T> = { ok: true; value: T } | { ok: false }
+type G24PlainCopy = { ok: true; value: unknown } | { ok: false }
+type G24PlainSnapshot<T> =
+  | { ok: true; value: T; sourceForOwned: WeakMap<object, object> }
+  | { ok: false }
 
 function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
   const active = new WeakSet<object>()
-  const copy = (current: unknown): G24PlainSnapshot<unknown> => {
+  const sourceForOwned = new WeakMap<object, object>()
+  const copy = (current: unknown): G24PlainCopy => {
     try {
       if (current === null || typeof current === 'string' || typeof current === 'boolean') {
         return { ok: true, value: current }
@@ -89,8 +93,19 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
       if (Array.isArray(current)) {
         if (Object.getPrototypeOf(current) !== Array.prototype) return { ok: false }
         const names = Object.getOwnPropertyNames(current)
+        const lengthDescriptor = Object.getOwnPropertyDescriptor(current, 'length')
+        if (
+          !lengthDescriptor ||
+          !Object.prototype.hasOwnProperty.call(lengthDescriptor, 'value') ||
+          typeof lengthDescriptor.value !== 'number' ||
+          !Number.isSafeInteger(lengthDescriptor.value) ||
+          lengthDescriptor.value < 0
+        ) {
+          return { ok: false }
+        }
+        const length = lengthDescriptor.value
         const expectedNames = [
-          ...Array.from({ length: current.length }, (_, index) => String(index)),
+          ...Array.from({ length }, (_, index) => String(index)),
           'length',
         ]
         if (
@@ -100,7 +115,7 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
           return { ok: false }
         }
         const result: unknown[] = []
-        for (let index = 0; index < current.length; index += 1) {
+        for (let index = 0; index < length; index += 1) {
           const descriptor = Object.getOwnPropertyDescriptor(current, String(index))
           if (
             !descriptor ||
@@ -113,6 +128,7 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
           if (!child.ok) return child
           result.push(child.value)
         }
+        sourceForOwned.set(result, current)
         return { ok: true, value: result }
       }
 
@@ -137,6 +153,7 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
           writable: true,
         })
       }
+      sourceForOwned.set(result, current)
       return { ok: true, value: result }
     } catch {
       return { ok: false }
@@ -144,7 +161,30 @@ function snapshotG24PlainData<T>(value: T): G24PlainSnapshot<T> {
       if (typeof current === 'object' && current !== null) active.delete(current)
     }
   }
-  return copy(value) as G24PlainSnapshot<T>
+  const copied = copy(value)
+  return copied.ok
+    ? { ok: true, value: copied.value as T, sourceForOwned }
+    : { ok: false }
+}
+
+function g24SourceForOwned<T extends object>(
+  snapshot: Extract<G24PlainSnapshot<unknown>, { ok: true }>,
+  owned: T,
+): T | undefined {
+  return snapshot.sourceForOwned.get(owned) as T | undefined
+}
+
+function g24IdentifierIsCanonical(value: unknown): value is string {
+  return typeof value === 'string' && value.length > 0 && value === value.trim()
+}
+
+function g24SetOwn<T>(record: Record<string, T>, key: string, value: T): void {
+  Object.defineProperty(record, key, {
+    value,
+    enumerable: true,
+    configurable: true,
+    writable: true,
+  })
 }
 
 function stringifyG24Data(value: unknown): string {
@@ -257,11 +297,12 @@ export function fingerprintG24ControlGraph(
   applicableControlKeys: readonly string[],
   controls: G24ControlRegistry,
 ): string {
-  const inputSnapshot = snapshotG24PlainData({ applicableControlKeys, controls })
-  if (!inputSnapshot.ok) return '__g24_invalid_nonplain_data__'
-  applicableControlKeys = inputSnapshot.value.applicableControlKeys
-  controls = inputSnapshot.value.controls
-  return stringifyG24Data(
+  try {
+    const inputSnapshot = snapshotG24PlainData({ applicableControlKeys, controls })
+    if (!inputSnapshot.ok) return '__g24_invalid_nonplain_data__'
+    applicableControlKeys = inputSnapshot.value.applicableControlKeys
+    controls = inputSnapshot.value.controls
+    return stringifyG24Data(
     [...new Set(applicableControlKeys)].sort(compareText).map((key) => {
       const control = Object.prototype.hasOwnProperty.call(controls, key) ? controls[key] : undefined
       return control
@@ -276,18 +317,25 @@ export function fingerprintG24ControlGraph(
           }
         : { key, missing: true }
     }),
-  )
+    )
+  } catch {
+    return '__g24_invalid_nonplain_data__'
+  }
 }
 
 export function fingerprintG24Watermarks(watermarks: readonly G24ControlWatermark[]): string {
-  const snapshot = snapshotG24PlainData(watermarks)
-  if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
-  watermarks = snapshot.value
-  return stringifyG24Data(
-    [...watermarks]
-      .sort((left, right) => compareText(left.key, right.key))
-      .map(({ key, lineageId, version }) => ({ key, lineageId, version })),
-  )
+  try {
+    const snapshot = snapshotG24PlainData(watermarks)
+    if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
+    watermarks = snapshot.value
+    return stringifyG24Data(
+      [...watermarks]
+        .sort((left, right) => compareText(left.key, right.key))
+        .map(({ key, lineageId, version }) => ({ key, lineageId, version })),
+    )
+  } catch {
+    return '__g24_invalid_nonplain_data__'
+  }
 }
 
 export type G24EvidenceState = 'sufficient' | 'gap' | 'ambiguity' | 'contradiction'
@@ -515,10 +563,11 @@ export interface G24SelectorResult {
 export function fingerprintG24SelectorResult(
   result: Omit<G24SelectorResult, 'selectorFingerprint'> | G24SelectorResult,
 ): string {
-  const snapshot = snapshotG24PlainData(result)
-  if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
-  result = snapshot.value
-  return stringifyG24Data({
+  try {
+    const snapshot = snapshotG24PlainData(result)
+    if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
+    result = snapshot.value
+    return stringifyG24Data({
     selectorResultVersion: result.selectorResultVersion,
     currentCaseRef: result.currentCaseRef,
     evidenceNamespace: result.evidenceNamespace,
@@ -558,7 +607,10 @@ export function fingerprintG24SelectorResult(
     ...(typeof result.provisionalDiagnostic === 'string'
       ? { provisionalDiagnostic: result.provisionalDiagnostic }
       : {}),
-  })
+    })
+  } catch {
+    return '__g24_invalid_nonplain_data__'
+  }
 }
 
 function finalizeG24SelectorResult(
@@ -733,7 +785,7 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
   const parsed = G24_SELECTOR_INPUT_SCHEMA.safeParse(inputSnapshot.value)
   if (!parsed.success) {
     return malformedG24SelectorResult(
-      inputValue,
+      inputSnapshot.value,
       parsed.error.issues.map(
         (issue) => `malformed:${issue.path.join('.') || 'root'}:${issue.code}`,
       ),
@@ -1010,23 +1062,27 @@ function g24ApprovedAtomProof(atom: G24InterventionAtom): string {
 export function fingerprintG24InterventionAtom(
   atom: Omit<G24InterventionAtom, 'payloadFingerprint' | 'approvalState' | 'approvalReceipt'>,
 ): string {
-  const snapshot = snapshotG24PlainData(atom)
-  if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
-  atom = snapshot.value
-  return stringifyG24Data({
-    atomVersion: atom.atomVersion,
-    selectorResultVersion: atom.selectorResultVersion,
-    selectorFingerprint: atom.selectorFingerprint,
-    controlVersion: atom.controlVersion,
-    purpose: atom.purpose,
-    audience: atom.audience,
-    sensitivity: atom.sensitivity,
-    channel: atom.channel,
-    timing: atom.timing,
-    decisionFrameVersion: atom.decisionFrameVersion,
-    evidenceVersions: [...atom.evidenceVersions].sort(compareText),
-    payload: atom.payload,
-  })
+  try {
+    const snapshot = snapshotG24PlainData(atom)
+    if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
+    atom = snapshot.value
+    return stringifyG24Data({
+      atomVersion: atom.atomVersion,
+      selectorResultVersion: atom.selectorResultVersion,
+      selectorFingerprint: atom.selectorFingerprint,
+      controlVersion: atom.controlVersion,
+      purpose: atom.purpose,
+      audience: atom.audience,
+      sensitivity: atom.sensitivity,
+      channel: atom.channel,
+      timing: atom.timing,
+      decisionFrameVersion: atom.decisionFrameVersion,
+      evidenceVersions: [...atom.evidenceVersions].sort(compareText),
+      payload: atom.payload,
+    })
+  } catch {
+    return '__g24_invalid_nonplain_data__'
+  }
 }
 
 export function createG24InterventionAtom(
@@ -1318,11 +1374,9 @@ export function approveG24InterventionAtom(
     binding.decisionFrameVersion === atom.decisionFrameVersion &&
     equalSorted(binding.evidenceVersions, atom.evidenceVersions) &&
     binding.payloadFingerprint === atom.payloadFingerprint &&
-    typeof binding.approvalReceiptId === 'string' &&
-    Boolean(binding.approvalReceiptId.trim()) &&
+    g24IdentifierIsCanonical(binding.approvalReceiptId) &&
     binding.approvedByRef === 'krish' &&
-    typeof binding.approvalAuthorityVersionRef === 'string' &&
-    Boolean(binding.approvalAuthorityVersionRef.trim()) &&
+    g24IdentifierIsCanonical(binding.approvalAuthorityVersionRef) &&
     binding.approvalAuthorityVersionRef === currentAuthorityWatermark?.version
   if (!bindingMatches || validateG24InterventionAtom(atom).length > 0) {
     throw new Error('intervention_approval_binding_mismatch')
@@ -1407,21 +1461,24 @@ export function recordG24Answer(
   answer: { receiptId: string; kind: G24AnswerKind; value?: string | string[] },
   priorReceipts: readonly G24AnswerReceipt[],
 ): G24AnswerReceipt {
-  if (!Array.isArray(priorReceipts)) throw new Error('answer_receipt_ledger_required')
+  if (priorReceipts === undefined) throw new Error('answer_receipt_ledger_required')
   const atomSnapshot = snapshotG24PlainData(atom)
   const answerSnapshot = snapshotG24PlainData(answer)
   const ledgerSnapshot = snapshotG24PlainData(priorReceipts)
   if (!atomSnapshot.ok || !answerSnapshot.ok || !ledgerSnapshot.ok) {
     throw new Error('answer_requires_plain_data')
   }
-  const atomProof = g24ApprovedAtomProofs.get(atom)
-  if (atomProof === g24ApprovedAtomProof(atom)) {
+  if (!Array.isArray(ledgerSnapshot.value)) throw new Error('answer_receipt_ledger_required')
+  const atomSource = g24SourceForOwned(atomSnapshot, atomSnapshot.value)
+  const atomProof = atomSource ? g24ApprovedAtomProofs.get(atomSource) : undefined
+  if (atomProof === g24ApprovedAtomProof(atomSnapshot.value)) {
     g24ApprovedAtomProofs.set(atomSnapshot.value, atomProof)
   }
-  priorReceipts.forEach((receipt, index) => {
-    const proof = g24AnswerReceiptProofs.get(receipt)
+  ledgerSnapshot.value.forEach((receipt) => {
+    const source = g24SourceForOwned(ledgerSnapshot, receipt)
+    const proof = source ? g24AnswerReceiptProofs.get(source) : undefined
     if (proof === fingerprintG24AnswerReceipt(receipt)) {
-      g24AnswerReceiptProofs.set(ledgerSnapshot.value[index], proof)
+      g24AnswerReceiptProofs.set(receipt, proof)
     }
   })
   atom = atomSnapshot.value
@@ -1717,27 +1774,32 @@ export function correctG24Answer(
     priorCorrections: readonly G24AnswerCorrectionReceipt[]
   },
 ): G24AnswerCorrectionReceipt {
-  if (!Array.isArray(details.priorCorrections)) {
-    throw new Error('correction_receipt_ledger_required')
-  }
   const originalSnapshot = snapshotG24PlainData(original)
   const replacementSnapshot = snapshotG24PlainData(replacement)
   const detailsSnapshot = snapshotG24PlainData(details)
   if (!originalSnapshot.ok || !replacementSnapshot.ok || !detailsSnapshot.ok) {
     throw new Error('correction_requires_plain_data')
   }
-  const originalProof = g24AnswerReceiptProofs.get(original)
-  if (originalProof === fingerprintG24AnswerReceipt(original)) {
+  if (!Array.isArray(detailsSnapshot.value.priorCorrections)) {
+    throw new Error('correction_receipt_ledger_required')
+  }
+  const originalSource = g24SourceForOwned(originalSnapshot, originalSnapshot.value)
+  const originalProof = originalSource ? g24AnswerReceiptProofs.get(originalSource) : undefined
+  if (originalProof === fingerprintG24AnswerReceipt(originalSnapshot.value)) {
     g24AnswerReceiptProofs.set(originalSnapshot.value, originalProof)
   }
-  const replacementProof = g24AnswerReceiptProofs.get(replacement)
-  if (replacementProof === fingerprintG24AnswerReceipt(replacement)) {
+  const replacementSource = g24SourceForOwned(replacementSnapshot, replacementSnapshot.value)
+  const replacementProof = replacementSource
+    ? g24AnswerReceiptProofs.get(replacementSource)
+    : undefined
+  if (replacementProof === fingerprintG24AnswerReceipt(replacementSnapshot.value)) {
     g24AnswerReceiptProofs.set(replacementSnapshot.value, replacementProof)
   }
-  details.priorCorrections.forEach((receipt, index) => {
-    const proof = g24AnswerCorrectionReceiptProofs.get(receipt)
+  detailsSnapshot.value.priorCorrections.forEach((receipt) => {
+    const source = g24SourceForOwned(detailsSnapshot, receipt)
+    const proof = source ? g24AnswerCorrectionReceiptProofs.get(source) : undefined
     if (proof === fingerprintG24AnswerCorrectionReceipt(receipt)) {
-      g24AnswerCorrectionReceiptProofs.set(detailsSnapshot.value.priorCorrections[index], proof)
+      g24AnswerCorrectionReceiptProofs.set(receipt, proof)
     }
   })
   original = originalSnapshot.value
@@ -1874,16 +1936,20 @@ export function fingerprintG24PendingReleaseProjection(
     | Omit<G24PendingReleaseProjection, 'projectionFingerprint'>
     | G24PendingReleaseProjection,
 ): string {
-  const snapshot = snapshotG24PlainData(projection)
-  if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
-  projection = snapshot.value
-  const sortedStringRecord = (record: Record<string, string>) =>
-    Object.entries(record).sort(([left], [right]) => compareText(left, right))
-  const sortedArrayRecord = <T>(record: Record<string, T[]>, sortItem: (left: T, right: T) => number) =>
-    Object.entries(record)
-      .sort(([left], [right]) => compareText(left, right))
-      .map(([key, values]) => [key, [...values].sort(sortItem)])
-  return stringifyG24Data({
+  try {
+    const snapshot = snapshotG24PlainData(projection)
+    if (!snapshot.ok) return '__g24_invalid_nonplain_data__'
+    projection = snapshot.value
+    const sortedStringRecord = (record: Record<string, string>) =>
+      Object.entries(record).sort(([left], [right]) => compareText(left, right))
+    const sortedArrayRecord = <T>(
+      record: Record<string, T[]>,
+      sortItem: (left: T, right: T) => number,
+    ) =>
+      Object.entries(record)
+        .sort(([left], [right]) => compareText(left, right))
+        .map(([key, values]) => [key, [...values].sort(sortItem)])
+    return stringifyG24Data({
     projectionVersion: projection.projectionVersion,
     purpose: projection.purpose,
     audience: projection.audience,
@@ -1909,7 +1975,10 @@ export function fingerprintG24PendingReleaseProjection(
     controllingFingerprint: projection.controllingFingerprint,
     includedCanonicalSourceVersions: [...projection.includedCanonicalSourceVersions].sort(compareText),
     includedCanonicalBrainVersions: [...projection.includedCanonicalBrainVersions].sort(compareText),
-  })
+    })
+  } catch {
+    return '__g24_invalid_nonplain_data__'
+  }
 }
 
 export interface G24ReleaseCompileResult {
@@ -1947,17 +2016,43 @@ export function compileG24PendingRelease(input: {
   includedCanonicalSourceVersions: string[]
   includedCanonicalBrainVersions: string[]
 }): G24ReleaseCompileResult {
-  const inputSnapshot = snapshotG24PlainData(input)
-  if (!inputSnapshot.ok) {
-    return { projection: null, errors: ['release_compile_requires_plain_data'] }
-  }
-  input = inputSnapshot.value
-  const errors: string[] = []
-  const merged = new Map<string, G24ControlWatermark>()
-  const selectorControlRoots: Record<string, string[]> = {}
-  const selectorControlManifests: Record<string, G24ControlManifest> = {}
-  const selectorResultFingerprints: Record<string, string> = {}
-  const selectorControllingWatermarks: Record<string, G24ControlWatermark[]> = {}
+  try {
+    const inputSnapshot = snapshotG24PlainData(input)
+    if (!inputSnapshot.ok) {
+      return { projection: null, errors: ['release_compile_requires_plain_data'] }
+    }
+    input = inputSnapshot.value
+    if (
+      !g24HasExactOwnKeys(input, [
+        'projectionVersion',
+        'purpose',
+        'audience',
+        'selectorResults',
+        'controls',
+        'trustedAsOf',
+        'includedCanonicalSourceVersions',
+        'includedCanonicalBrainVersions',
+      ]) ||
+      typeof input.projectionVersion !== 'string' ||
+      typeof input.purpose !== 'string' ||
+      typeof input.audience !== 'string' ||
+      !Array.isArray(input.selectorResults) ||
+      !g24ControlRegistryIsStructurallyValid(input.controls) ||
+      typeof input.trustedAsOf !== 'string' ||
+      !g24IsStringArray(input.includedCanonicalSourceVersions) ||
+      !g24IsStringArray(input.includedCanonicalBrainVersions)
+    ) {
+      return { projection: null, errors: ['release_compile_shape_invalid'] }
+    }
+    const errors: string[] = []
+    const merged = new Map<string, G24ControlWatermark>()
+    const selectorControlRoots = Object.create(null) as Record<string, string[]>
+    const selectorControlManifests = Object.create(null) as Record<string, G24ControlManifest>
+    const selectorResultFingerprints = Object.create(null) as Record<string, string>
+    const selectorControllingWatermarks = Object.create(null) as Record<
+      string,
+      G24ControlWatermark[]
+    >
   const selectorVersions = input.selectorResults.map(({ selectorResultVersion }) =>
     selectorResultVersion.trim(),
   )
@@ -1991,8 +2086,17 @@ export function compileG24PendingRelease(input: {
     if (!selector.actionable || selector.route === 'abstain_hold') {
       errors.push(`${selector.selectorResultVersion}:non_actionable_selector_cannot_compile_release`)
     }
-    if (!selector.selectorResultVersion.trim()) {
+    if (!g24IdentifierIsCanonical(selector.selectorResultVersion)) {
       errors.push('selector_result_version_required')
+    }
+    if (!g24IdentifierIsCanonical(selector.selectorFingerprint)) {
+      errors.push(`${selector.selectorResultVersion}:selector_fingerprint_required`)
+    }
+    if (!g24IdentifierIsCanonical(selector.controlManifestVersion)) {
+      errors.push(`${selector.selectorResultVersion}:control_manifest_version_required`)
+    }
+    if (!g24IdentifierIsCanonical(selector.controlGraphFingerprint)) {
+      errors.push(`${selector.selectorResultVersion}:control_graph_fingerprint_required`)
     }
     if (selector.audienceRef !== input.audience) {
       errors.push(`${selector.selectorResultVersion}:selector_release_audience_mismatch`)
@@ -2000,14 +2104,22 @@ export function compileG24PendingRelease(input: {
     if (selector.purposeRef !== input.purpose) {
       errors.push(`${selector.selectorResultVersion}:selector_release_purpose_mismatch`)
     }
-    selectorControlRoots[selector.selectorResultVersion] = closure.roots
-    selectorControlManifests[selector.selectorResultVersion] = {
+    g24SetOwn(selectorControlRoots, selector.selectorResultVersion, closure.roots)
+    g24SetOwn(selectorControlManifests, selector.selectorResultVersion, {
       manifestVersion: selector.controlManifestVersion,
       applicableControlKeys: [...selector.applicableControlKeys].sort(compareText),
       graphFingerprint: selector.controlGraphFingerprint,
-    }
-    selectorResultFingerprints[selector.selectorResultVersion] = selector.selectorFingerprint
-    selectorControllingWatermarks[selector.selectorResultVersion] = closure.watermarks
+    })
+    g24SetOwn(
+      selectorResultFingerprints,
+      selector.selectorResultVersion,
+      selector.selectorFingerprint,
+    )
+    g24SetOwn(
+      selectorControllingWatermarks,
+      selector.selectorResultVersion,
+      closure.watermarks,
+    )
     for (const watermark of closure.watermarks) {
       const existing = merged.get(watermark.key)
       if (
@@ -2022,18 +2134,22 @@ export function compileG24PendingRelease(input: {
   }
 
   if (input.selectorResults.length === 0) errors.push('selector_result_required')
-  if (!input.projectionVersion.trim()) errors.push('projection_version_required')
-  if (!input.purpose.trim()) errors.push('purpose_required')
-  if (!input.audience.trim()) errors.push('audience_required')
+  if (!g24IdentifierIsCanonical(input.projectionVersion)) errors.push('projection_version_required')
+  if (!g24IdentifierIsCanonical(input.purpose)) errors.push('purpose_required')
+  if (!g24IdentifierIsCanonical(input.audience)) errors.push('audience_required')
   if (
     input.includedCanonicalSourceVersions.length === 0 ||
-    input.includedCanonicalSourceVersions.some((version) => !version.trim())
+    input.includedCanonicalSourceVersions.some(
+      (version) => !g24IdentifierIsCanonical(version),
+    )
   ) {
     errors.push('canonical_source_version_required')
   }
   if (
     input.includedCanonicalBrainVersions.length === 0 ||
-    input.includedCanonicalBrainVersions.some((version) => !version.trim())
+    input.includedCanonicalBrainVersions.some(
+      (version) => !g24IdentifierIsCanonical(version),
+    )
   ) {
     errors.push('canonical_brain_version_required')
   }
@@ -2075,12 +2191,16 @@ export function compileG24PendingRelease(input: {
         compareText,
       ),
   }
-  return {
-    projection: {
+  const projection: G24PendingReleaseProjection = {
       ...projectionWithoutFingerprint,
       projectionFingerprint: fingerprintG24PendingReleaseProjection(projectionWithoutFingerprint),
-    },
-    errors: [],
+  }
+  if (projection.projectionFingerprint === '__g24_invalid_nonplain_data__') {
+    return { projection: null, errors: ['release_projection_fingerprint_invalid'] }
+  }
+  return { projection, errors: [] }
+  } catch {
+    return { projection: null, errors: ['release_compile_shape_invalid'] }
   }
 }
 
@@ -2132,7 +2252,7 @@ function g24IsStringRecord(value: unknown): value is Record<string, string> {
   return (
     g24IsRecord(value) &&
     Object.entries(value).every(
-      ([key, entry]) => Boolean(key.trim()) && key === key.trim() && typeof entry === 'string',
+      ([key, entry]) => g24IdentifierIsCanonical(key) && g24IdentifierIsCanonical(entry),
     )
   )
 }
@@ -2141,9 +2261,9 @@ function g24WatermarkIsStructurallyValid(value: unknown): value is G24ControlWat
   return (
     g24IsRecord(value) &&
     g24HasExactOwnKeys(value, ['key', 'lineageId', 'version']) &&
-    typeof value.key === 'string' &&
-    typeof value.lineageId === 'string' &&
-    typeof value.version === 'string'
+    g24IdentifierIsCanonical(value.key) &&
+    g24IdentifierIsCanonical(value.lineageId) &&
+    g24IdentifierIsCanonical(value.version)
   )
 }
 
@@ -2151,9 +2271,11 @@ function g24ControlManifestIsStructurallyValid(value: unknown): value is G24Cont
   return (
     g24IsRecord(value) &&
     g24HasExactOwnKeys(value, ['manifestVersion', 'applicableControlKeys', 'graphFingerprint']) &&
-    typeof value.manifestVersion === 'string' &&
+    g24IdentifierIsCanonical(value.manifestVersion) &&
     g24IsStringArray(value.applicableControlKeys) &&
-    typeof value.graphFingerprint === 'string'
+    value.applicableControlKeys.length > 0 &&
+    value.applicableControlKeys.every(g24IdentifierIsCanonical) &&
+    g24IdentifierIsCanonical(value.graphFingerprint)
   )
 }
 
@@ -2167,13 +2289,14 @@ function g24ControlRegistryIsStructurallyValid(value: unknown): value is G24Cont
     return (
       g24HasExactOwnKeys(entry, keys) &&
       registryKey === entry.key &&
-      typeof entry.key === 'string' &&
-      typeof entry.lineageId === 'string' &&
-      typeof entry.version === 'string' &&
+      g24IdentifierIsCanonical(entry.key) &&
+      g24IdentifierIsCanonical(entry.lineageId) &&
+      g24IdentifierIsCanonical(entry.version) &&
       (['current', 'unknown', 'mismatched', 'invalid', 'indeterminate'] as unknown[]).includes(
         entry.state,
       ) &&
       g24IsStringArray(entry.dependencies) &&
+      entry.dependencies.every(g24IdentifierIsCanonical) &&
       (!Object.prototype.hasOwnProperty.call(entry, 'validFrom') ||
         typeof entry.validFrom === 'string') &&
       (!Object.prototype.hasOwnProperty.call(entry, 'validUntil') ||
@@ -2205,12 +2328,18 @@ function g24PendingReleaseProjectionIsStructurallyValid(
   ) {
     return false
   }
+  const selectorVersions = g24IsStringArray(value.selectorResultVersions)
+    ? value.selectorResultVersions
+    : []
+  const selectorVersionSet = new Set(selectorVersions)
   return (
-    typeof value.projectionVersion === 'string' &&
-    typeof value.projectionFingerprint === 'string' &&
-    typeof value.purpose === 'string' &&
-    typeof value.audience === 'string' &&
-    g24IsStringArray(value.selectorResultVersions) &&
+    g24IdentifierIsCanonical(value.projectionVersion) &&
+    g24IdentifierIsCanonical(value.projectionFingerprint) &&
+    g24IdentifierIsCanonical(value.purpose) &&
+    g24IdentifierIsCanonical(value.audience) &&
+    selectorVersions.length > 0 &&
+    selectorVersions.every(g24IdentifierIsCanonical) &&
+    selectorVersionSet.size === selectorVersions.length &&
     g24IsStringRecord(value.selectorResultFingerprints) &&
     g24IsRecord(value.selectorControlRoots) &&
     Object.values(value.selectorControlRoots).every(g24IsStringArray) &&
@@ -2223,9 +2352,13 @@ function g24PendingReleaseProjectionIsStructurallyValid(
     ) &&
     Array.isArray(value.controllingWatermarks) &&
     value.controllingWatermarks.every(g24WatermarkIsStructurallyValid) &&
-    typeof value.controllingFingerprint === 'string' &&
+    g24IdentifierIsCanonical(value.controllingFingerprint) &&
     g24IsStringArray(value.includedCanonicalSourceVersions) &&
-    g24IsStringArray(value.includedCanonicalBrainVersions)
+    value.includedCanonicalSourceVersions.length > 0 &&
+    value.includedCanonicalSourceVersions.every(g24IdentifierIsCanonical) &&
+    g24IsStringArray(value.includedCanonicalBrainVersions) &&
+    value.includedCanonicalBrainVersions.length > 0 &&
+    value.includedCanonicalBrainVersions.every(g24IdentifierIsCanonical)
   )
 }
 
@@ -2248,18 +2381,24 @@ function g24ReleaseAuthorityIsStructurallyValid(
       'includedCanonicalSourceVersions',
       'includedCanonicalBrainVersions',
     ]) &&
-    typeof value.authorityVersion === 'string' &&
-    typeof value.authorityControlVersion === 'string' &&
+    g24IdentifierIsCanonical(value.authorityVersion) &&
+    g24IdentifierIsCanonical(value.authorityControlVersion) &&
     value.actor === 'named_leader' &&
-    typeof value.projectionVersion === 'string' &&
-    typeof value.projectionFingerprint === 'string' &&
-    typeof value.purpose === 'string' &&
-    typeof value.audience === 'string' &&
+    g24IdentifierIsCanonical(value.projectionVersion) &&
+    g24IdentifierIsCanonical(value.projectionFingerprint) &&
+    g24IdentifierIsCanonical(value.purpose) &&
+    g24IdentifierIsCanonical(value.audience) &&
     g24IsStringArray(value.selectorResultVersions) &&
+    value.selectorResultVersions.length > 0 &&
+    value.selectorResultVersions.every(g24IdentifierIsCanonical) &&
     g24IsStringRecord(value.selectorResultFingerprints) &&
-    typeof value.controllingFingerprint === 'string' &&
+    g24IdentifierIsCanonical(value.controllingFingerprint) &&
     g24IsStringArray(value.includedCanonicalSourceVersions) &&
-    g24IsStringArray(value.includedCanonicalBrainVersions)
+    value.includedCanonicalSourceVersions.length > 0 &&
+    value.includedCanonicalSourceVersions.every(g24IdentifierIsCanonical) &&
+    g24IsStringArray(value.includedCanonicalBrainVersions) &&
+    value.includedCanonicalBrainVersions.length > 0 &&
+    value.includedCanonicalBrainVersions.every(g24IdentifierIsCanonical)
   )
 }
 
@@ -2362,7 +2501,7 @@ export function evaluateG24PendingReleaseUse(input: {
   ].sort(compareText)
 
   if (changedControls.length > 0) {
-    if (typeof input.receiptId !== 'string' || !input.receiptId.trim()) {
+    if (!g24IdentifierIsCanonical(input.receiptId)) {
       return {
         eligible: false,
         reason: 'invalidation_receipt_identity_invalid',
@@ -2684,7 +2823,7 @@ function lifecycleRefsAreCanonical(refs: readonly string[]): boolean {
 }
 
 function lifecycleIdentifierIsCanonical(value: string): boolean {
-  return typeof value === 'string' && value.length > 0 && value === value.trim()
+  return g24IdentifierIsCanonical(value)
 }
 
 function g24HasExactOwnKeys(value: object, keys: readonly string[]): boolean {
@@ -2836,18 +2975,25 @@ export function applyG24LifecycleTransition(
       'preconditionEvidenceRefs',
       'idempotencyKey',
       'receiptId',
-    ])
+    ]) ||
+    !Array.isArray(snapshotCopy.value.receipts) ||
+    !Array.isArray(requestCopy.value.actorRefs) ||
+    !Array.isArray(requestCopy.value.preconditionEvidenceRefs)
   ) {
     return { accepted: false, reason: 'lifecycle_envelope_unknown_fields', snapshot: snapshotCopy.value }
   }
-  snapshot.receipts.forEach((receipt, index) => {
-    const proof = g24LifecycleReceiptProofs.get(receipt)
+  snapshotCopy.value.receipts.forEach((receipt) => {
+    const source = g24SourceForOwned(snapshotCopy, receipt)
+    const proof = source ? g24LifecycleReceiptProofs.get(source) : undefined
     if (proof === fingerprintG24LifecycleReceipt(receipt)) {
-      g24LifecycleReceiptProofs.set(snapshotCopy.value.receipts[index], proof)
+      g24LifecycleReceiptProofs.set(receipt, proof)
     }
   })
-  const snapshotProof = g24LifecycleSnapshotProofs.get(snapshot)
-  if (snapshotProof === fingerprintG24LifecycleSnapshot(snapshot)) {
+  const snapshotSource = g24SourceForOwned(snapshotCopy, snapshotCopy.value)
+  const snapshotProof = snapshotSource
+    ? g24LifecycleSnapshotProofs.get(snapshotSource)
+    : undefined
+  if (snapshotProof === fingerprintG24LifecycleSnapshot(snapshotCopy.value)) {
     g24LifecycleSnapshotProofs.set(snapshotCopy.value, snapshotProof)
   }
   snapshot = snapshotCopy.value
@@ -2955,21 +3101,31 @@ export function applyG24LifecycleTransition(
 }
 
 export function renderG24SelectorReceipt(result: G24SelectorResult): string {
-  const snapshot = snapshotG24PlainData(result)
-  if (!snapshot.ok) return 'Standing: held with no action'
-  result = snapshot.value
-  const gap = result.unresolvedGap ?? 'none'
-  const refs = result.unresolvedEvidenceRefs.length
-    ? result.unresolvedEvidenceRefs.join(', ')
-    : 'none'
-  return [
-    `Route: ${result.route}`,
-    `Why: ${result.reasonCode}`,
-    `Known gap: ${gap}`,
-    `Evidence carried forward: ${refs}`,
-    `What this could change: ${result.expectedMaterialEffect || 'No material effect established'}`,
-    `Standing: ${result.actionable ? 'eligible for the next governed step' : 'held with no action'}`,
-  ].join('\n')
+  try {
+    const snapshot = snapshotG24PlainData(result)
+    if (!snapshot.ok) return 'Standing: held with no action'
+    result = snapshot.value
+    if (
+      !Array.isArray(result.unresolvedEvidenceRefs) ||
+      !result.unresolvedEvidenceRefs.every((ref) => typeof ref === 'string')
+    ) {
+      return 'Standing: held with no action'
+    }
+    const gap = result.unresolvedGap ?? 'none'
+    const refs = result.unresolvedEvidenceRefs.length
+      ? result.unresolvedEvidenceRefs.join(', ')
+      : 'none'
+    return [
+      `Route: ${result.route}`,
+      `Why: ${result.reasonCode}`,
+      `Known gap: ${gap}`,
+      `Evidence carried forward: ${refs}`,
+      `What this could change: ${result.expectedMaterialEffect || 'No material effect established'}`,
+      `Standing: ${result.actionable ? 'eligible for the next governed step' : 'held with no action'}`,
+    ].join('\n')
+  } catch {
+    return 'Standing: held with no action'
+  }
 }
 
 export interface G24EnrichmentExecutionPlan {
@@ -3170,15 +3326,21 @@ export function recordG24EnrichmentAttempt(input: {
       rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
     }
   }
-  const planProof = g24EnrichmentExecutionPlanProofs.get(input.plan)
-  if (planProof === fingerprintG24EnrichmentExecutionPlan(input.plan)) {
+  const ownedPlan = inputSnapshot.value.plan
+  const planSource =
+    typeof ownedPlan === 'object' && ownedPlan !== null
+      ? g24SourceForOwned(inputSnapshot, ownedPlan)
+      : undefined
+  const planProof = planSource ? g24EnrichmentExecutionPlanProofs.get(planSource) : undefined
+  if (planProof === fingerprintG24EnrichmentExecutionPlan(ownedPlan)) {
     g24EnrichmentExecutionPlanProofs.set(inputSnapshot.value.plan, planProof)
   }
-  if (Array.isArray(input.priorReceipts)) {
-    input.priorReceipts.forEach((receipt, index) => {
-      const proof = g24ExecutionReceiptProofs.get(receipt)
+  if (Array.isArray(inputSnapshot.value.priorReceipts)) {
+    inputSnapshot.value.priorReceipts.forEach((receipt) => {
+      const source = g24SourceForOwned(inputSnapshot, receipt)
+      const proof = source ? g24ExecutionReceiptProofs.get(source) : undefined
       if (proof === fingerprintG24ExecutionReceipt(receipt)) {
-        g24ExecutionReceiptProofs.set(inputSnapshot.value.priorReceipts[index], proof)
+        g24ExecutionReceiptProofs.set(receipt, proof)
       }
     })
   }

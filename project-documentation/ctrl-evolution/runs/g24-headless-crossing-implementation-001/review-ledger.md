@@ -277,6 +277,31 @@ One hundred and fifty-five focused checks pass. The five new blocking reproducti
 
 The repair is frozen at `7be88d7e746996c2476d05cbe7592c767080011c`, tree `c826bdbd41010b057920c883f4bf03cf43502ae3`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 13
+
+**Frozen code:** `7be88d7e746996c2476d05cbe7592c767080011c`
+
+**Truthful state correction:** `3a005eedc5c78b31613991d38e44294a56d0da57`
+
+**Adjudication:** `VETO`
+
+The round-twelve `undefined`, prototype-authority, revoked-Proxy, malformed-authority and correction-dependency attacks held. The exact review found four connected consistency defects:
+
+1. Several APIs took an owned snapshot but then reread the caller object while transferring issuance proofs or constructing a malformed result. Stateful Proxies could therefore throw after snapshot in selector, answer, correction, lifecycle and execution paths.
+2. Release compilation built selector-index maps as ordinary objects and assigned unchecked selector versions into them. A valid selector named `__proto__` erased its own map entries, changed a map prototype and produced a non-null projection whose fingerprint was the invalid-data sentinel.
+3. Canonical identity was not shared across official creation paths. Padded projection, source, Brain, authority, invalidation-receipt and approval-receipt identities could be retained in proof-bearing objects.
+4. Release use checked runtime types but omitted several compiler-level semantic invariants. Self-consistent projections with blank purpose, audience, projection version, canonical-source version, selector fingerprint or control-manifest version could be paired with matching authority and evaluated as eligible. Public fingerprint and receipt-rendering helpers could also throw on plain malformed shapes.
+
+The common root was incomplete ownership and invariant reuse: the snapshot did not carry safe source-to-copy proof provenance, and creation, fingerprint and use boundaries did not share one canonical-identity and total-function policy.
+
+## Repair round 13
+
+The current repair makes the snapshot return an internal source mapping for each owned object. Issuance proofs are now looked up by object identity only and compared against the owned copy's fingerprint; no caller property is reread after ownership transfer. Array length is copied from its own data descriptor so even a Proxy `get` trap is never invoked. The malformed selector branch now uses the owned snapshot.
+
+Release compiler maps are null-prototype records populated with explicit own properties, and invalid fingerprint sentinels cannot be returned as successful projections. One canonical-identifier predicate now governs compile inputs, selector and manifest bindings, approval receipts, Release projection and authority structures, canonical source and Brain versions and invalidation receipt issuance. Release use checks exact typed bindings before evaluation. The exported selector, atom, Release, watermark and control-graph fingerprint functions and selector receipt renderer now return their documented safe result for malformed plain shapes rather than throwing.
+
+One hundred and sixty-five focused checks pass. The ten new checks cover every round-thirteen reproduction: post-snapshot caller `get` traps across selector, answer, correction, lifecycle and execution; official `__proto__` selector compilation and eligible use without key loss; padded compile, approval, authority and invalidation identities; six blank Release bindings; and total public fingerprint and render helpers. The moving bytes remain unverified until frozen exact-byte review.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
