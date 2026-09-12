@@ -96,7 +96,7 @@ Every earlier veto reproduction remained repaired. Founder calibration found no 
 
 The current repair replaces object-membership proof with an approval-time proof of the exact atom and approval-receipt fingerprints; binds approval authority to the current selector authority watermark; carries approval receipt identity, authority and fingerprint into every answer; validates runtime answer kind and value; enforces compatibility with the rendered single-choice, ranked, bounded-text, scoped-write-in or voice grammar; requires a current answer-receipt ledger; replays an exact duplicate deterministically; and rejects identity collisions. It also makes watermark fingerprinting collision-safe and refuses blank selector identities or a Release audience that differs from an included selector.
 
-The repair worktree has 126 focused checks passing. These results do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+The repair was frozen at `63f0e04222a8af0eb655101e9a2955ff6f5a4158` with 126 focused checks passing. These results do not close review. The exact code bytes are under independent attack again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 
