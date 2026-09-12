@@ -70,6 +70,35 @@ function compareText(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0
 }
 
+function stringifyG24Data(value: unknown): string {
+  const seen = new WeakSet<object>()
+  const project = (current: unknown): unknown => {
+    if (current === null || typeof current === 'string' || typeof current === 'boolean') {
+      return current
+    }
+    if (typeof current === 'number') {
+      return Number.isFinite(current) ? current : ['__g24_nonfinite_number__', String(current)]
+    }
+    if (typeof current === 'undefined') return ['__g24_undefined__']
+    if (typeof current === 'bigint') return ['__g24_bigint__', current.toString()]
+    if (typeof current === 'symbol') return ['__g24_symbol__', current.description ?? '']
+    if (typeof current === 'function') return ['__g24_function__']
+    if (seen.has(current)) return ['__g24_cycle__']
+    seen.add(current)
+    const entries = Object.keys(current)
+      .sort(compareText)
+      .map((key) => {
+        const descriptor = Object.getOwnPropertyDescriptor(current, key)
+        if (!descriptor || !Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+          return [key, ['__g24_accessor__']]
+        }
+        return [key, project(descriptor.value)]
+      })
+    return [Array.isArray(current) ? '__g24_array__' : '__g24_object__', entries]
+  }
+  return JSON.stringify(project(value))
+}
+
 function validDate(value: string | undefined): number | undefined {
   if (!value) return undefined
   const parsed = Date.parse(value)
@@ -160,7 +189,7 @@ export function fingerprintG24ControlGraph(
   applicableControlKeys: readonly string[],
   controls: G24ControlRegistry,
 ): string {
-  return JSON.stringify(
+  return stringifyG24Data(
     [...new Set(applicableControlKeys)].sort(compareText).map((key) => {
       const control = Object.prototype.hasOwnProperty.call(controls, key) ? controls[key] : undefined
       return control
@@ -179,7 +208,7 @@ export function fingerprintG24ControlGraph(
 }
 
 export function fingerprintG24Watermarks(watermarks: readonly G24ControlWatermark[]): string {
-  return JSON.stringify(
+  return stringifyG24Data(
     [...watermarks]
       .sort((left, right) => compareText(left.key, right.key))
       .map(({ key, lineageId, version }) => ({ key, lineageId, version })),
@@ -411,7 +440,7 @@ export interface G24SelectorResult {
 export function fingerprintG24SelectorResult(
   result: Omit<G24SelectorResult, 'selectorFingerprint'> | G24SelectorResult,
 ): string {
-  return JSON.stringify({
+  return stringifyG24Data({
     selectorResultVersion: result.selectorResultVersion,
     currentCaseRef: result.currentCaseRef,
     evidenceNamespace: result.evidenceNamespace,
@@ -889,7 +918,7 @@ export interface G24InterventionApprovalReceipt {
 const g24ApprovedAtomProofs = new WeakMap<G24InterventionAtom, string>()
 
 function g24ApprovedAtomProof(atom: G24InterventionAtom): string {
-  return JSON.stringify({
+  return stringifyG24Data({
     atomVersion: atom.atomVersion,
     payloadFingerprint: atom.payloadFingerprint,
     approvalFingerprint: atom.approvalReceipt?.approvalFingerprint ?? null,
@@ -899,7 +928,7 @@ function g24ApprovedAtomProof(atom: G24InterventionAtom): string {
 export function fingerprintG24InterventionAtom(
   atom: Omit<G24InterventionAtom, 'payloadFingerprint' | 'approvalState' | 'approvalReceipt'>,
 ): string {
-  return JSON.stringify({
+  return stringifyG24Data({
     atomVersion: atom.atomVersion,
     selectorResultVersion: atom.selectorResultVersion,
     selectorFingerprint: atom.selectorFingerprint,
@@ -1118,7 +1147,7 @@ export function validateG24InterventionAtom(atom: G24InterventionAtom): string[]
 function fingerprintG24ApprovalReceipt(
   receipt: Omit<G24InterventionApprovalReceipt, 'approvalFingerprint'>,
 ): string {
-  return JSON.stringify(receipt)
+  return stringifyG24Data(receipt)
 }
 
 function interventionAtomMatchesSelector(
@@ -1257,7 +1286,7 @@ export interface G24AnswerReceipt {
 const g24AnswerReceiptProofs = new WeakMap<G24AnswerReceipt, string>()
 
 function fingerprintG24AnswerReceipt(receipt: G24AnswerReceipt): string {
-  return JSON.stringify(receipt)
+  return stringifyG24Data(receipt)
 }
 
 function cloneG24AnswerReceiptWithProof(receipt: G24AnswerReceipt): G24AnswerReceipt {
@@ -1423,7 +1452,7 @@ export function recordG24Answer(
   g24AnswerReceiptProofs.set(receipt, fingerprintG24AnswerReceipt(receipt))
   const prior = priorReceipts.find(({ receiptId }) => receiptId === receipt.receiptId)
   if (prior) {
-    if (JSON.stringify(prior) !== JSON.stringify(receipt)) {
+    if (stringifyG24Data(prior) !== stringifyG24Data(receipt)) {
       throw new Error('answer_receipt_id_collision')
     }
     return cloneG24AnswerReceiptWithProof(prior)
@@ -1436,8 +1465,11 @@ export interface G24AnswerCorrectionReceipt {
   idempotencyKey: string
   atomVersion: string
   correctsAnswerReceiptId: string
+  originalAnswerFingerprint: string
   replacementAnswerReceiptId: string
+  replacementAnswerFingerprint: string
   dependencyGraphVersion: string
+  dependencyGraphFingerprint: string
   retiredDerivativeRefs: string[]
   affectedDecisionRefs: string[]
   rebuildRequired: true
@@ -1446,7 +1478,7 @@ export interface G24AnswerCorrectionReceipt {
 const g24AnswerCorrectionReceiptProofs = new WeakMap<G24AnswerCorrectionReceipt, string>()
 
 function fingerprintG24AnswerCorrectionReceipt(receipt: G24AnswerCorrectionReceipt): string {
-  return JSON.stringify(receipt)
+  return stringifyG24Data(receipt)
 }
 
 function cloneG24AnswerCorrectionReceiptWithProof(
@@ -1466,19 +1498,65 @@ export interface G24AnswerDependencyGraph {
   decisionDependencies: Record<string, string[]>
 }
 
+function canonicalizeG24AnswerDependencyRecord(
+  record: Record<string, string[]>,
+): [string, string[]][] {
+  if (!record || typeof record !== 'object' || Array.isArray(record)) {
+    throw new Error('correction_dependency_graph_malformed')
+  }
+  const canonical: [string, string[]][] = []
+  for (const [ref, dependencies] of Object.entries(record)) {
+    if (
+      typeof ref !== 'string' ||
+      !ref.trim() ||
+      ref !== ref.trim() ||
+      !Array.isArray(dependencies) ||
+      dependencies.length !== new Set(dependencies).size ||
+      dependencies.some(
+        (dependency) =>
+          typeof dependency !== 'string' ||
+          !dependency.trim() ||
+          dependency !== dependency.trim(),
+      )
+    ) {
+      throw new Error('correction_dependency_graph_malformed')
+    }
+    canonical.push([ref, [...dependencies].sort(compareText)])
+  }
+  return canonical.sort(([left], [right]) => compareText(left, right))
+}
+
+function fingerprintG24AnswerDependencyGraph(graph: G24AnswerDependencyGraph): string {
+  if (
+    !graph ||
+    typeof graph !== 'object' ||
+    Array.isArray(graph) ||
+    typeof graph.graphVersion !== 'string' ||
+    !graph.graphVersion.trim() ||
+    graph.graphVersion !== graph.graphVersion.trim()
+  ) {
+    throw new Error('correction_dependency_graph_version_required')
+  }
+  const derivativeDependencies = canonicalizeG24AnswerDependencyRecord(
+    graph.derivativeDependencies,
+  )
+  const decisionDependencies = canonicalizeG24AnswerDependencyRecord(graph.decisionDependencies)
+  const derivativeRefs = new Set(derivativeDependencies.map(([ref]) => ref))
+  if (decisionDependencies.some(([ref]) => derivativeRefs.has(ref))) {
+    throw new Error('correction_dependency_graph_malformed')
+  }
+  return stringifyG24Data({
+    graphVersion: graph.graphVersion,
+    derivativeDependencies,
+    decisionDependencies,
+  })
+}
+
 function deriveG24AnswerCorrectionImpact(
   originalAnswerReceiptId: string,
   graph: G24AnswerDependencyGraph,
 ): { derivativeRefs: string[]; decisionRefs: string[] } {
-  if (!graph.graphVersion.trim()) throw new Error('correction_dependency_graph_version_required')
-  for (const [ref, dependencies] of [
-    ...Object.entries(graph.derivativeDependencies),
-    ...Object.entries(graph.decisionDependencies),
-  ]) {
-    if (!ref.trim() || dependencies.some((dependency) => !dependency.trim())) {
-      throw new Error('correction_dependency_graph_malformed')
-    }
-  }
+  fingerprintG24AnswerDependencyGraph(graph)
   const affected = new Set([originalAnswerReceiptId])
   const derivativeRefs = new Set<string>()
   const decisionRefs = new Set<string>()
@@ -1597,14 +1675,18 @@ export function correctG24Answer(
   ) {
     throw new Error('replacement_answer_receipt_not_issued')
   }
+  const dependencyGraphFingerprint = fingerprintG24AnswerDependencyGraph(details.dependencyGraph)
   const impact = deriveG24AnswerCorrectionImpact(original.receiptId, details.dependencyGraph)
   const receipt: G24AnswerCorrectionReceipt = {
     receiptId: details.receiptId,
     idempotencyKey: details.idempotencyKey,
     atomVersion: original.atomVersion,
     correctsAnswerReceiptId: original.receiptId,
+    originalAnswerFingerprint: fingerprintG24AnswerReceipt(original),
     replacementAnswerReceiptId: replacement.receiptId,
+    replacementAnswerFingerprint: fingerprintG24AnswerReceipt(replacement),
     dependencyGraphVersion: details.dependencyGraph.graphVersion,
+    dependencyGraphFingerprint,
     retiredDerivativeRefs: impact.derivativeRefs,
     affectedDecisionRefs: impact.decisionRefs,
     rebuildRequired: true,
@@ -1613,7 +1695,7 @@ export function correctG24Answer(
     ({ idempotencyKey }) => idempotencyKey === details.idempotencyKey,
   )
   if (prior) {
-    if (JSON.stringify(prior) !== JSON.stringify(receipt)) {
+    if (stringifyG24Data(prior) !== stringifyG24Data(receipt)) {
       throw new Error('correction_idempotency_key_collision')
     }
     return cloneG24AnswerCorrectionReceiptWithProof(prior)
@@ -1652,7 +1734,7 @@ export function fingerprintG24PendingReleaseProjection(
     Object.entries(record)
       .sort(([left], [right]) => compareText(left, right))
       .map(([key, values]) => [key, [...values].sort(sortItem)])
-  return JSON.stringify({
+  return stringifyG24Data({
     projectionVersion: projection.projectionVersion,
     purpose: projection.purpose,
     audience: projection.audience,
@@ -1885,12 +1967,12 @@ export interface G24ReleaseUseResult {
 }
 
 function equalSorted(left: readonly string[], right: readonly string[]): boolean {
-  return JSON.stringify([...left].sort(compareText)) === JSON.stringify([...right].sort(compareText))
+  return stringifyG24Data([...left].sort(compareText)) === stringifyG24Data([...right].sort(compareText))
 }
 
 function equalStringRecord(left: Record<string, string>, right: Record<string, string>): boolean {
   const normalize = (value: Record<string, string>) =>
-    JSON.stringify(Object.entries(value).sort(([leftKey], [rightKey]) => compareText(leftKey, rightKey)))
+    stringifyG24Data(Object.entries(value).sort(([leftKey], [rightKey]) => compareText(leftKey, rightKey)))
   return normalize(left) === normalize(right)
 }
 
@@ -2202,11 +2284,11 @@ const g24LifecycleReceiptProofs = new WeakMap<G24LifecycleReceipt, string>()
 const g24LifecycleSnapshotProofs = new WeakMap<G24LifecycleSnapshot, string>()
 
 function fingerprintG24LifecycleReceipt(receipt: G24LifecycleReceipt): string {
-  return JSON.stringify(receipt)
+  return stringifyG24Data(receipt)
 }
 
 function fingerprintG24LifecycleSnapshot(snapshot: G24LifecycleSnapshot): string {
-  return JSON.stringify(snapshot)
+  return stringifyG24Data(snapshot)
 }
 
 function cloneG24LifecycleSnapshotWithProofs(
@@ -2242,7 +2324,7 @@ export interface G24LifecycleTransitionRequest {
 }
 
 function fingerprintG24LifecycleRequest(request: G24LifecycleTransitionRequest): string {
-  return JSON.stringify({
+  return stringifyG24Data({
     ...request,
     actorRefs: [...request.actorRefs].sort(compareText),
     preconditionEvidenceRefs: [...request.preconditionEvidenceRefs].sort(compareText),
@@ -2369,8 +2451,8 @@ function g24LifecycleHistoryIsStructurallyValid(snapshot: G24LifecycleSnapshot):
       (previous !== undefined &&
         (receipt.beforeState !== previous.afterState ||
           receipt.beforeVersion !== previous.afterVersion)) ||
-      JSON.stringify(receipt) !==
-        JSON.stringify(buildCanonicalG24LifecycleReceipt(definition, request))
+      stringifyG24Data(receipt) !==
+        stringifyG24Data(buildCanonicalG24LifecycleReceipt(definition, request))
     ) {
       return false
     }
@@ -2435,7 +2517,7 @@ export function applyG24LifecycleTransition(
     const canonicalPrior = buildCanonicalG24LifecycleReceipt(definition, request)
     if (
       prior.requestFingerprint !== requestFingerprint ||
-      JSON.stringify(prior) !== JSON.stringify(canonicalPrior)
+      stringifyG24Data(prior) !== stringifyG24Data(canonicalPrior)
     ) {
       return {
         accepted: false,
@@ -2519,7 +2601,7 @@ const g24EnrichmentExecutionPlanProofs = new WeakMap<G24EnrichmentExecutionPlan,
 export function fingerprintG24EnrichmentExecutionPlan(
   plan: Omit<G24EnrichmentExecutionPlan, 'planFingerprint'>,
 ): string {
-  return JSON.stringify({
+  return stringifyG24Data({
     planVersion: plan.planVersion,
     selectorResultVersion: plan.selectorResultVersion,
     selectorFingerprint: plan.selectorFingerprint,
@@ -2555,7 +2637,7 @@ export interface G24ExecutionReceipt {
 const g24ExecutionReceiptProofs = new WeakMap<G24ExecutionReceipt, string>()
 
 function fingerprintG24ExecutionReceipt(receipt: G24ExecutionReceipt): string {
-  return JSON.stringify(receipt)
+  return stringifyG24Data(receipt)
 }
 
 function cloneG24ExecutionReceiptsWithProofs(
@@ -2742,7 +2824,7 @@ export function recordG24EnrichmentAttempt(input: {
       rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
     }
   }
-  const attemptFingerprint = JSON.stringify({
+  const attemptFingerprint = stringifyG24Data({
     plan: input.plan,
     currentSelectorVersion: input.currentSelector.selectorResultVersion,
     currentSelectorFingerprint: input.currentSelector.selectorFingerprint,
@@ -2815,7 +2897,7 @@ export function recordG24EnrichmentAttempt(input: {
       prior.planFingerprint === input.plan.planFingerprint &&
       prior.attemptFingerprint === attemptFingerprint
     if (!sameAttemptIdentity) throw new Error('execution_idempotency_key_collision')
-    if (JSON.stringify(prior) !== JSON.stringify(receipt)) {
+    if (stringifyG24Data(prior) !== stringifyG24Data(receipt)) {
       throw new Error('execution_receipt_history_invalid')
     }
     return {

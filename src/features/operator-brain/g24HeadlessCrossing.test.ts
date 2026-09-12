@@ -44,6 +44,14 @@ function cloneControls(controls: G24ControlRegistry): G24ControlRegistry {
   return structuredClone(controls)
 }
 
+function addHiddenJsonProjection(target: object, projection: unknown): void {
+  Object.defineProperty(target, 'toJSON', {
+    value: () => projection,
+    enumerable: false,
+    configurable: true,
+  })
+}
+
 function lifecycleRequest(
   transition: G24LifecycleTransition,
   overrides: Partial<G24LifecycleTransitionRequest> = {},
@@ -1008,6 +1016,22 @@ describe('G24 versioned intervention and answer effects', () => {
     ).toThrow('answer_receipt_ledger_required')
   })
 
+  it('rejects a hidden JSON projection over mutated issued answer evidence', () => {
+    const atom = approvedQuestionAtom()
+    const answer = {
+      receiptId: 'answer:hidden-json:v1',
+      kind: 'option' as const,
+      value: 'Higher customer preference',
+    }
+    const issued = recordG24Answer(atom, answer, [])
+    addHiddenJsonProjection(issued, structuredClone(issued))
+    issued.value = 'Fewer rewrites'
+
+    expect(() => recordG24Answer(atom, answer, [issued])).toThrow(
+      'answer_receipt_ledger_invalid',
+    )
+  })
+
   it('rejects answers to proposed atoms and approval against a changed selector under the same version', () => {
     const atom = questionAtom()
     expect(() =>
@@ -1078,6 +1102,26 @@ describe('G24 versioned intervention and answer effects', () => {
         value: 'Higher customer preference',
       }, []),
     ).toThrow('answer_requires_approved_atom')
+  })
+
+  it('rejects a hidden JSON projection over post-approval atom mutation', () => {
+    const approved = approvedQuestionAtom()
+    if (approved.payload.kind !== 'question') throw new Error('expected question atom')
+    addHiddenJsonProjection(approved.payload, structuredClone(approved.payload))
+    approved.payload.answerEffects['Higher customer preference'].pendingHumanOwnedProposal =
+      'FORGED AFTER APPROVAL'
+
+    expect(() =>
+      recordG24Answer(
+        approved,
+        {
+          receiptId: 'answer:hidden-json-post-approval',
+          kind: 'option',
+          value: 'Higher customer preference',
+        },
+        [],
+      ),
+    ).toThrow('answer_requires_current_exact_atom')
   })
 
   it('will not approve a self-consistent atom whose semantics contradict the current selector', () => {
@@ -1494,6 +1538,91 @@ describe('G24 versioned intervention and answer effects', () => {
         priorCorrections: [structuredClone(first)],
       }),
     ).toThrow('correction_receipt_ledger_invalid')
+
+    addHiddenJsonProjection(first, structuredClone(first))
+    first.affectedDecisionRefs = ['forged:decision']
+    expect(() =>
+      correctG24Answer(original, replacementB, {
+        receiptId: 'answer-correction:collision',
+        idempotencyKey: 'answer-correction:collision:idempotency',
+        dependencyGraph,
+        priorCorrections: [first],
+      }),
+    ).toThrow('correction_receipt_ledger_invalid')
+  })
+
+  it('binds correction replay to full answer and dependency graph content', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(
+      atom,
+      { receiptId: 'answer:binding:original', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacementB = recordG24Answer(
+      atom,
+      { receiptId: 'answer:binding:replacement', kind: 'option', value: 'Faster approval' },
+      [original],
+    )
+    const replacementC = recordG24Answer(
+      atom,
+      {
+        receiptId: 'answer:binding:replacement',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original],
+    )
+    const firstGraph = {
+      graphVersion: 'answer-dependency-graph:binding:v1',
+      derivativeDependencies: {},
+      decisionDependencies: {},
+    }
+    const differentSameEffectGraph = {
+      graphVersion: 'answer-dependency-graph:binding:v1',
+      derivativeDependencies: { 'unrelated:derivative': ['unrelated:answer'] },
+      decisionDependencies: {},
+    }
+    const details = {
+      receiptId: 'answer-correction:binding',
+      idempotencyKey: 'answer-correction:binding:idempotency',
+      dependencyGraph: firstGraph,
+      priorCorrections: [],
+    }
+    const first = correctG24Answer(original, replacementB, details)
+
+    expect(() =>
+      correctG24Answer(original, replacementC, {
+        ...details,
+        priorCorrections: [first],
+      }),
+    ).toThrow('correction_idempotency_key_collision')
+    expect(() =>
+      correctG24Answer(original, replacementB, {
+        ...details,
+        dependencyGraph: differentSameEffectGraph,
+        priorCorrections: [first],
+      }),
+    ).toThrow('correction_idempotency_key_collision')
+    expect(() =>
+      correctG24Answer(original, replacementB, {
+        ...details,
+        dependencyGraph: {
+          graphVersion: ' answer-dependency-graph:padded:v1 ',
+          derivativeDependencies: {},
+          decisionDependencies: {},
+        },
+      }),
+    ).toThrow('correction_dependency_graph_version_required')
+    expect(() =>
+      correctG24Answer(original, replacementB, {
+        ...details,
+        dependencyGraph: {
+          graphVersion: 'answer-dependency-graph:padded:v1',
+          derivativeDependencies: { 'derived:padded': [' answer:binding:original '] },
+          decisionDependencies: {},
+        },
+      }),
+    ).toThrow('correction_dependency_graph_malformed')
   })
 })
 
@@ -2227,6 +2356,32 @@ describe('G24 engagement lifecycle', () => {
     })
   })
 
+  it('rejects hidden JSON projections over mutated lifecycle snapshot and receipt bytes', () => {
+    const opened = issuedLifecycleSnapshotAt('preparing')
+    const originalSnapshot = structuredClone(opened)
+    const originalReceipt = structuredClone(opened.receipts[0])
+    addHiddenJsonProjection(opened, originalSnapshot)
+    addHiddenJsonProjection(opened.receipts[0], originalReceipt)
+    opened.receipts[0].invalidation = 'forged_invalidation'
+    opened.receipts[0].receiptType = 'forged_receipt' as never
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
+
+    expect(
+      applyG24LifecycleTransition(
+        opened,
+        lifecycleRequest(accept, {
+          fromVersion: opened.version,
+          afterVersion: 'intensive_proof:hidden-json:v1',
+        }),
+      ),
+    ).toMatchObject({
+      accepted: false,
+      reason: 'lifecycle_receipt_history_invalid',
+    })
+  })
+
   it('does not replay an old request across a changed lifecycle identity binding', () => {
     const initial: G24LifecycleSnapshot = {
       state: 'none',
@@ -2719,6 +2874,23 @@ describe('G24 bounded enrichment execution', () => {
     expect(replay.receipt).toBeNull()
     expect(replay.replayed).toBe(false)
     expect(replay.rejection).toEqual({
+      status: 'malformed_rejected',
+      durableReceiptCreated: false,
+    })
+
+    const hiddenProjection = structuredClone(first.receipts[0])
+    addHiddenJsonProjection(first.receipts[0], hiddenProjection)
+    first.receipts[0].status = 'proposed_evidence'
+    first.receipts[0].sourceRef = 'forged-hidden-source:v1'
+    const hiddenForgery = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: first.receipts,
+      attempt,
+    })
+    expect(hiddenForgery.receipt).toBeNull()
+    expect(hiddenForgery.replayed).toBe(false)
+    expect(hiddenForgery.rejection).toEqual({
       status: 'malformed_rejected',
       durableReceiptCreated: false,
     })

@@ -203,6 +203,28 @@ The current repair defensively clones the complete successful lifecycle snapshot
 
 The repair was frozen at `d5561f2a0bbacff0161689049c8cd93cd8447f9d`, tree `3bc4a43119b7f21def35a44f8ce4c4573002399f`, with 140 focused checks, including the exact four review-round-nine reproductions. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 10
+
+**Frozen code:** `d5561f2a0bbacff0161689049c8cd93cd8447f9d`
+
+**Truthful state correction:** `bff92c4779de254cc440121b1993fcaf653bdd2d`
+
+**Adjudication:** `VETO`
+
+Every round-nine lifecycle and correction-ledger reproduction closed. The reviewers confirmed isolated accepted snapshots, a sealed lifecycle root, rejection of non-root empty history, ordinary mutation rejection, proof-preserving replay and clone continuation, and ordinary correction collision handling. They then found two deeper identity failures and one shared serialization failure:
+
+1. Correction replay bound answer receipt IDs but not the full issued original and replacement answer bytes. Separately issued same-ID answers with different content could therefore replay one correction as another.
+2. Correction replay bound a dependency-graph version and derived impact but not the graph's complete canonical content. Distinct graphs with the same version and downstream impact collapsed into one event, while padded graph identifiers could silently under-record affected lineage.
+3. Every receipt proof that used live-object `JSON.stringify` could be steered by a caller-added `toJSON` hook. Post-approval atom mutation, answer mutation, correction mutation and lifecycle receipt mutation were all reproduced despite an apparently matching proof.
+
+The third finding reopened a previously repaired post-approval mutation class through a JavaScript serialization hook. It showed that exact receipt shape was still being measured through caller-controlled behaviour rather than plain data.
+
+## Repair round 10
+
+The current repair fingerprints an explicit descriptor-based plain-data projection, so object-defined serialization hooks cannot hide mutated bytes and uncloneable extra values cannot collapse every fingerprint into one fallback identity. The shared primitive now governs control, selector, atom, approval, answer, correction, Release, lifecycle, plan and execution fingerprints and replay comparisons. Correction receipts additionally bind deterministic full fingerprints of the original answer, replacement answer and complete canonical dependency graph. Dependency graphs now require a canonical version, node and dependency references, complete runtime shape, unique dependency edges and no derivative/decision node collision before impact derivation.
+
+One hundred and forty-four focused checks pass, including hidden-serialization attacks against approved atom content, answer evidence, correction history, lifecycle snapshots and execution receipts, plus same-ID answer-content collisions, distinct same-version graphs and padded graph references. The moving bytes remain unverified until frozen exact-byte review.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
