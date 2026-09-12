@@ -201,7 +201,7 @@ The panel distinguished these as one class of defect: individual receipts were i
 
 The current repair defensively clones the complete successful lifecycle snapshot while preserving proofs, seals every nonempty lifecycle snapshot to its exact issued root and contents, and permits empty history only at the `none` and null-version root. It adds an in-process issued correction-receipt ledger with canonical receipt and idempotency identities, exact full-object replay, separate receipt and idempotency collision failures, proof-preserving defensive clones and rejection of caller reconstructions.
 
-One hundred and forty focused checks now pass, including the exact four review-round-nine reproductions. The moving bytes remain unverified until they are frozen and independently reviewed.
+The repair was frozen at `d5561f2a0bbacff0161689049c8cd93cd8447f9d`, tree `3bc4a43119b7f21def35a44f8ce4c4573002399f`, with 140 focused checks, including the exact four review-round-nine reproductions. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
