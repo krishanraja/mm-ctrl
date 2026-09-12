@@ -43,7 +43,7 @@ The repair must preserve the frozen architecture while closing the reproduced se
 
 ## Current round
 
-The repair worktree has 110 focused checks passing, 66 adjacent operator-Brain checks passing, no new TypeScript errors, clean changed-file lint, passing documentation contracts and a successful direct Vite production compilation across 2,812 modules. These results do not close the review. The repaired bytes must be frozen in a new commit and reviewed independently. Until then the implementation state is `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+The repaired implementation was frozen at `adfa6e0bd126d1b223e915fe2622cdc28356cef5` for independent review. That commit has 110 focused checks passing, 66 adjacent operator-Brain checks passing, no new TypeScript errors, clean changed-file lint, passing documentation contracts and a successful direct Vite production compilation across 2,812 modules. These results do not close the review. Until independent adjudication clears the exact repaired bytes, the implementation state is `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 
