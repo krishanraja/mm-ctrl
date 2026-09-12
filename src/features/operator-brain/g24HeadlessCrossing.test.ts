@@ -4865,5 +4865,89 @@ describe('G24 strict owned-data boundary', () => {
       status: 'malformed_rejected',
       durableReceiptCreated: false,
     })
+
+    const plainMalformed = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: spliced,
+      attempt: {
+        receiptId: 'execution-receipt:spliced-plain-malformed',
+        idempotencyKey: 'execution-attempt:spliced-plain-malformed',
+        elapsedMs: 1,
+        outcome: 'bogus' as never,
+      },
+    })
+    expect(plainMalformed.receipts).toEqual([])
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: [{}] as G24ExecutionReceipt[],
+        attempt: {
+          receiptId: 'execution-receipt:junk-plain-malformed',
+          idempotencyKey: 'execution-attempt:junk-plain-malformed',
+          elapsedMs: 1,
+          outcome: 'bogus' as never,
+        },
+      }).receipts,
+    ).toEqual([])
+  })
+
+  it('uses a fixed digest chain and stops after one terminal over-budget receipt', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    expect(() =>
+      createG24EnrichmentExecutionPlan(selector, {
+        planVersion: 'enrichment-plan:unbounded:round-22:v1',
+        maximumWallClockMs: 1_000,
+        maximumAttempts: 33,
+      }),
+    ).toThrow('enrichment_plan_budget_invalid')
+
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:bounded-chain:round-22:v1',
+      maximumWallClockMs: 1_000,
+      maximumAttempts: 2,
+    })
+    let receipts: G24ExecutionReceipt[] = []
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      const result = recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: receipts,
+        attempt: {
+          receiptId: `execution-receipt:bounded-chain:${attempt}`,
+          idempotencyKey: `execution-attempt:bounded-chain:${attempt}`,
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      })
+      expect(result.receipt).not.toBeNull()
+      receipts = result.receipts
+    }
+    expect(receipts.map(({ priorLedgerFingerprint }) => priorLedgerFingerprint)).toEqual([
+      'sha256:4cd1558a10de35a773ee2a78707a4e9f687e2833e13bb40d69f98d41b1fd1ed0',
+      expect.stringMatching(/^sha256:[0-9a-f]{64}$/),
+      expect.stringMatching(/^sha256:[0-9a-f]{64}$/),
+    ])
+    expect(receipts[2].status).toBe('attempt_budget_held')
+
+    const exhausted = recordG24EnrichmentAttempt({
+      plan,
+      currentSelector: selector,
+      priorReceipts: receipts,
+      attempt: {
+        receiptId: 'execution-receipt:bounded-chain:4',
+        idempotencyKey: 'execution-attempt:bounded-chain:4',
+        elapsedMs: 1,
+        outcome: 'failed',
+      },
+    })
+    expect(exhausted).toMatchObject({
+      receipt: null,
+      replayed: false,
+      rejection: { status: 'attempt_budget_exhausted', durableReceiptCreated: false },
+    })
+    expect(exhausted.receipts).toEqual(receipts)
+    expect(JSON.stringify(receipts).length).toBeLessThan(1_000_000)
   })
 })
