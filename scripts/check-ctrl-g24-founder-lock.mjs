@@ -41,8 +41,14 @@ check('UI remains closed', lock.includes('customer-facing UI work'))
 check('external actions remain closed', lock.includes('deployment, feature enablement, merge or release'))
 check('revisit trigger is observable', lock.includes('credible conforming case') && lock.includes('later named proof gate falsifies'))
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
-check('canonical next action is headless build', state.includes('**CURRENT_NEXT_ACTION:** Implement the local headless Crossing'))
-check('design state routes to headless build', designState.includes('implement and verify the local headless Crossing'))
+check(
+  'canonical next action remains inside the headless build gate',
+  state.includes('**CURRENT_NEXT_ACTION:** Complete the remaining local G24.C semantic attacks'),
+)
+check(
+  'design state remains inside the headless build gate',
+  designState.includes('extend the verified local headless Crossing into the remaining G24.C'),
+)
 check('lock contains no em dash', !lock.includes('—'))
 
 if (failures.length) {
