@@ -552,6 +552,39 @@ Two hundred and three focused checks pass locally. The new grouped execution tes
 
 The repair is frozen at `012b119af208011aab3eb4540601ce6d160825fd`, tree `59ba8df181c6fc35ff584da49727befff8e89c62`, source blob `baa6dcb701c87cbf3eaee25c52b76f358196a85b` and test blob `2f65279be175501e8f4e0f6d98dd1bd925872924`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 22
+
+**Frozen code:** `012b119af208011aab3eb4540601ce6d160825fd`
+
+**Frozen tree:** `59ba8df181c6fc35ff584da49727befff8e89c62`
+
+**Frozen source blob:** `baa6dcb701c87cbf3eaee25c52b76f358196a85b`
+
+**Frozen test blob:** `2f65279be175501e8f4e0f6d98dd1bd925872924`
+
+**Truthful state correction:** `5904489a5226deb59b69a4a419cd198ad9520f0e`
+
+**Adjudication:** `VETO`
+
+The causal chain closed branch splicing in ordinary validation, and exhaustive visible probes rejected all 237 tested `Cc`, `Cf`, `Zl` and `Zp` code points. Longer forks, reordering, reconstruction, output mutation and genuine replay also behaved correctly. Two implementation flaws remained:
+
+1. `priorLedgerFingerprint` stored the complete prior ledger as JSON, including every earlier embedded prefix. Genuine history therefore grew exponentially: approximately 135 KB at attempt one, 240 MB at attempt eight, then an invalid-string-length exception at attempt nine. A low plan budget did not bound this because every additional over-budget call could still mint another held receipt.
+2. A plain but semantically invalid command such as an unknown outcome passed the strict snapshot and reached a malformed branch that directly cloned the supplied receipt list before causal validation. A spliced authentic branch or even a junk object could therefore be returned as if it were preserved state, despite no new receipt being issued.
+
+This was an important availability correction: a sound authenticity mechanism is not sound if normal valid use makes its representation explode, and every malformed path must preserve only verified history rather than merely avoid new action.
+
+## Repair round 22
+
+The execution ledger now uses a fixed 256-bit SHA-256 chain. Genesis is domain-separated, and every next chain tip hashes the prior fixed digest with the canonical current receipt. Each receipt stores only the fixed digest of its prior history. Validation walks once through the ordered chain rather than recursively embedding earlier ledgers.
+
+Enrichment plans are capped at 32 executable attempts. At most one further append-only `attempt_budget_held` receipt may document the first over-budget attempt; later new attempts return `attempt_budget_exhausted` without another durable receipt. Plan creation, public plan fingerprinting, ledger validation and recovery share that bound.
+
+Every post-snapshot malformed result now returns only the independently recovered, issuance-proven and causally valid prior ledger. Spliced and junk ledgers return an empty untrusted replacement even when the malformed command itself is ordinary plain data.
+
+Two hundred and four focused checks pass locally. The new tests independently verify the SHA-256 genesis digest, fixed 71-character chain identities, bounded ledger size, plan-limit rejection, one terminal over-budget receipt, no later receipt, and both splice and junk recovery through a plain malformed outcome.
+
+The repair is frozen at `2b91f104dd22f9696aa24fcaeb3cc18bf4d3b474`, tree `5321a7103dbf22a769fe0df5b7feac92a4db5b70`, source blob `5d251648861a00e1cb09f0478aca0cdc008966ec` and test blob `58b148ae8863af1163045104bd30b7804c05d4ba`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
