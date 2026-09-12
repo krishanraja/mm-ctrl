@@ -4029,4 +4029,234 @@ describe('G24 strict owned-data boundary', () => {
       ),
     ).toThrow('answer_shape_invalid')
   })
+
+  it('binds every trusted evaluation version to the same-key controlling watermark', () => {
+    const fields = [
+      'decisionRequirementVersion',
+      'evidenceCoverageVersion',
+      'trustedCutoffVersion',
+      'epistemicPolicyVersion',
+      'independentChallengerResultVersion',
+    ] as const
+    for (const field of fields) {
+      const selector = selectedFixture()
+      selector.trustedEvaluation[field] = `forged:${field}:v1`
+      selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+      expect(selector.selectorFingerprint, field).toBe('__g24_invalid_nonplain_data__')
+      expect(
+        compileG24PendingRelease({
+          projectionVersion: `release-projection:forged-${field}:v1`,
+          purpose: selector.purposeRef,
+          audience: selector.audienceRef,
+          selectorResults: [selector],
+          controls: buildG24FixtureControls(),
+          trustedAsOf: G24_FIXTURE_NOW,
+          includedCanonicalSourceVersions: ['source-set:v1'],
+          includedCanonicalBrainVersions: ['brain-set:v1'],
+        }).errors,
+      ).toContain('selector_result_invalid')
+    }
+  })
+
+  it('rejects self-refingerprinted selector route contradictions', () => {
+    const mutations: Array<[string, G24SelectorResult, (selector: G24SelectorResult) => void]> = [
+      [
+        'expiry-before-trusted-as-of',
+        selectedFixture(),
+        (selector) => (selector.expiry = '2020-01-01T00:00:00.000Z'),
+      ],
+      [
+        'indeterminate-actionable',
+        selectedFixture(),
+        (selector) => {
+          selector.challengerResult = 'indeterminate'
+          selector.trustedEvaluation.challengerResult = 'indeterminate'
+        },
+      ],
+      [
+        'reuse-with-unresolved-evidence',
+        selectedFixture(),
+        (selector) => {
+          selector.unresolvedGap = 'gap'
+          selector.unresolvedEvidenceRefs = ['evidence:missing:v1']
+        },
+      ],
+      [
+        'actionable-diagnostic',
+        selectedFixture('highExternalHighInternal'),
+        (selector) => (selector.provisionalDiagnostic = 'quietly forged'),
+      ],
+      [
+        'no-alternatives',
+        selectedFixture('highExternalHighInternal'),
+        (selector) => (selector.alternatives = []),
+      ],
+      [
+        'selected-route-ineligible',
+        selectedFixture('highExternalHighInternal'),
+        (selector) => {
+          const selected = selector.alternatives.find(({ route }) => route === selector.route)
+          if (!selected) throw new Error('expected selected alternative')
+          selected.eligible = false
+          selected.rejectionReasons = ['forged_rejection']
+        },
+      ],
+      [
+        'ask-without-gap',
+        selectedFixture('highExternalHighInternal'),
+        (selector) => {
+          selector.unresolvedGap = null
+          selector.unresolvedEvidenceRefs = []
+        },
+      ],
+    ]
+    for (const [name, selector, mutate] of mutations) {
+      mutate(selector)
+      selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+      expect(selector.selectorFingerprint, name).toBe('__g24_invalid_nonplain_data__')
+    }
+  })
+
+  it('holds duplicated unresolved evidence input rather than issuing an actionable selector', () => {
+    const input = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    input.unresolvedEvidenceRefs = [
+      input.unresolvedEvidenceRefs[0],
+      input.unresolvedEvidenceRefs[0],
+    ]
+    expect(selectG24Intervention(input)).toMatchObject({
+      route: 'abstain_hold',
+      reasonCode: 'invalid_input',
+      actionable: false,
+    })
+  })
+
+  it('rechecks selector expiry against the fresh control closure during Release compile', () => {
+    const selector = selectedFixture()
+    selector.expiry = '2099-01-01T00:00:00.000Z'
+    selector.selectorFingerprint = fingerprintG24SelectorResult(selector)
+    expect(selector.selectorFingerprint).not.toBe('__g24_invalid_nonplain_data__')
+    const compiled = compileG24PendingRelease({
+      projectionVersion: 'release-projection:forged-expiry:v1',
+      purpose: selector.purposeRef,
+      audience: selector.audienceRef,
+      selectorResults: [selector],
+      controls: buildG24FixtureControls(),
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(compiled.projection).toBeNull()
+    expect(compiled.errors).toContain(
+      `${selector.selectorResultVersion}:selector_expiry_changed`,
+    )
+  })
+
+  it('canonicalizes intervention evidence order and rejects duplicate or reordered identity', () => {
+    const selector = selectedFixture('highExternalHighInternal')
+    const base = questionAtom(selector)
+    const {
+      selectorResultVersion: _selectorResultVersion,
+      selectorFingerprint: _selectorFingerprint,
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
+      ...input
+    } = base
+    input.atomVersion = 'question-plan:evidence-normal-form:v1'
+    input.evidenceVersions = ['evidence:z:v1', selector.evidenceCoverageRef]
+    const canonical = createG24InterventionAtom(selector, input)
+    expect(canonical.evidenceVersions).toEqual([
+      selector.evidenceCoverageRef,
+      'evidence:z:v1',
+    ])
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...input,
+        atomVersion: 'question-plan:evidence-duplicate:v1',
+        evidenceVersions: [selector.evidenceCoverageRef, selector.evidenceCoverageRef],
+      }),
+    ).toThrow('intervention_atom_approval_binding_incomplete')
+
+    canonical.evidenceVersions.reverse()
+    expect(validateG24InterventionAtom(canonical)).toEqual(['intervention_atom_invalid_shape'])
+    expect(fingerprintG24InterventionAtom(canonical as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+  })
+
+  it('fails malformed approval, answer and correction values with defined contract errors', () => {
+    const selector = selectedFixture('highExternalHighInternal')
+    const atom = questionAtom(selector)
+    const binding = {
+      atomVersion: atom.atomVersion,
+      controlVersion: atom.controlVersion,
+      purpose: atom.purpose,
+      audience: atom.audience,
+      sensitivity: atom.sensitivity,
+      channel: atom.channel,
+      timing: atom.timing,
+      decisionFrameVersion: atom.decisionFrameVersion,
+      evidenceVersions: 7,
+      payloadFingerprint: atom.payloadFingerprint,
+      approvalReceiptId: `approval:${atom.atomVersion}`,
+      approvedByRef: 'krish' as const,
+      approvalAuthorityVersionRef: 'authority_version:v1',
+    }
+    expect(() => approveG24InterventionAtom(atom, selector, binding as never)).toThrow(
+      'intervention_approval_shape_invalid',
+    )
+
+    const malformedSelector = structuredClone(selector)
+    malformedSelector.controllingWatermarks[0] = null as never
+    expect(() =>
+      approveG24InterventionAtom(atom, malformedSelector, {
+        ...binding,
+        evidenceVersions: [...atom.evidenceVersions],
+      }),
+    ).toThrow('intervention_approval_shape_invalid')
+
+    const approved = approvedQuestionAtom()
+    const command = {
+      receiptId: 'answer:malformed-boundary:v1',
+      kind: 'option' as const,
+      value: 'Fewer rewrites',
+    }
+    expect(() => recordG24Answer({} as never, command, [])).toThrow(
+      'answer_requires_current_exact_atom',
+    )
+    expect(() =>
+      recordG24Answer({ ...approved, payload: null } as never, command, []),
+    ).toThrow('answer_requires_current_exact_atom')
+    expect(() => recordG24Answer(approved, command, [null] as never)).toThrow(
+      'answer_receipt_ledger_invalid',
+    )
+
+    const original = recordG24Answer(
+      approved,
+      { receiptId: 'answer:malformed-correction:original', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacement = recordG24Answer(
+      approved,
+      {
+        receiptId: 'answer:malformed-correction:replacement',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original],
+    )
+    ;(original as unknown as { receiptId: null }).receiptId = null
+    expect(() =>
+      correctG24Answer(original, replacement, {
+        receiptId: 'correction:malformed-answer:v1',
+        idempotencyKey: 'correction:malformed-answer:v1',
+        priorCorrections: [],
+        dependencyGraph: {
+          graphVersion: 'answer-dependency-graph:malformed-answer:v1',
+          derivativeDependencies: {},
+          decisionDependencies: {},
+        },
+      }),
+    ).toThrow('replacement_answer_approval_mismatch')
+  })
 })
