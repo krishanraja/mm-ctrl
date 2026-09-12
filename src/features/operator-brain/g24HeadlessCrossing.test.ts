@@ -3638,4 +3638,267 @@ describe('G24 strict owned-data boundary', () => {
     )
     expect(renderG24SelectorReceipt({} as never)).toBe('Standing: held with no action')
   })
+
+  it('never accepts the invalid-data sentinel as a real selector or plan identity', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    ;(selector as unknown as { alternatives: unknown }).alternatives = {}
+    selector.selectorFingerprint = '__g24_invalid_nonplain_data__'
+    expect(
+      compileG24PendingRelease({
+        projectionVersion: 'release-projection:sentinel:v1',
+        purpose: selector.purposeRef,
+        audience: selector.audienceRef,
+        selectorResults: [selector],
+        controls: buildG24FixtureControls(),
+        trustedAsOf: G24_FIXTURE_NOW,
+        includedCanonicalSourceVersions: ['source-set:v1'],
+        includedCanonicalBrainVersions: ['brain-set:v1'],
+      }).projection,
+    ).toBeNull()
+    expect(() =>
+      createG24EnrichmentExecutionPlan(selector, {
+        planVersion: 'enrichment-plan:sentinel:v1',
+        maximumWallClockMs: 100,
+        maximumAttempts: 1,
+      }),
+    ).toThrow('enrichment_plan_requires_actionable_enrich_route')
+    expect(
+      recordG24EnrichmentAttempt({
+        plan: {
+          planVersion: 'enrichment-plan:sentinel:v1',
+          selectorResultVersion: selector.selectorResultVersion,
+          selectorFingerprint: '__g24_invalid_nonplain_data__',
+          maximumWallClockMs: 100,
+          maximumAttempts: 1,
+          planFingerprint: '__g24_invalid_nonplain_data__',
+        },
+        currentSelector: selector,
+        priorReceipts: [],
+        attempt: {
+          receiptId: 'execution:sentinel:v1',
+          idempotencyKey: 'execution:sentinel:v1',
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      }),
+    ).toMatchObject({ receipt: null, rejection: { status: 'malformed_rejected' } })
+  })
+
+  it('holds padded selector and control identities and an explicitly blank validity bound', () => {
+    const paddedSelector = buildG24CrossingSelectorFixtures().highExternalLowInternal
+    paddedSelector.selectorResultVersion = ' selector:padded:v1 '
+    expect(selectG24Intervention(paddedSelector)).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+
+    const paddedControl = buildG24CrossingSelectorFixtures().highExternalLowInternal
+    paddedControl.controls.authority_version.version = ' authority_version:v1 '
+    expect(selectG24Intervention(paddedControl)).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+
+    const blankExpiry = buildG24CrossingSelectorFixtures().highExternalLowInternal
+    blankExpiry.controls.authority_version.validUntil = ''
+    expect(selectG24Intervention(blankExpiry)).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+  })
+
+  it.each(['sourceVersions', 'brainVersions', 'roots', 'selectorWatermarks', 'watermarks'])(
+    'rejects duplicate canonical Release data even after a new public fingerprint: %s',
+    (field) => {
+      const controls = buildG24FixtureControls()
+      const projection = structuredClone(compileProjection(selectedFixture(), controls))
+      const selectorVersion = projection.selectorResultVersions[0]
+      if (field === 'sourceVersions') {
+        projection.includedCanonicalSourceVersions.push(
+          projection.includedCanonicalSourceVersions[0],
+        )
+      }
+      if (field === 'brainVersions') {
+        projection.includedCanonicalBrainVersions.push(
+          projection.includedCanonicalBrainVersions[0],
+        )
+      }
+      if (field === 'roots') {
+        projection.selectorControlRoots[selectorVersion].push(
+          projection.selectorControlRoots[selectorVersion][0],
+        )
+      }
+      if (field === 'selectorWatermarks') {
+        projection.selectorControllingWatermarks[selectorVersion].push(
+          structuredClone(projection.selectorControllingWatermarks[selectorVersion][0]),
+        )
+      }
+      if (field === 'watermarks') {
+        projection.controllingWatermarks.push(
+          structuredClone(projection.controllingWatermarks[0]),
+        )
+        projection.controllingFingerprint = fingerprintG24Watermarks(
+          projection.controllingWatermarks,
+        )
+      }
+      projection.projectionFingerprint = fingerprintG24PendingReleaseProjection(projection)
+      expect(
+        evaluateG24PendingReleaseUse({
+          projection,
+          authority: buildExactG24ReleaseAuthority(projection),
+          controls,
+          trustedAsOf: G24_FIXTURE_NOW,
+          receiptId: `release-check:duplicate-${field}`,
+        }),
+      ).toEqual({ eligible: false, reason: 'controlling_state_invalid', receipt: null })
+    },
+  )
+
+  it('makes malformed closure, atom, plan and execution entry points fail closed', () => {
+    expect(resolveG24ControlClosure(null as never, null as never, null as never)).toMatchObject({
+      watermarks: [],
+      errors: expect.arrayContaining(['control_closure_shape_invalid']),
+    })
+    expect(validateG24InterventionAtom(null as never)).toEqual([
+      'intervention_atom_invalid_shape',
+    ])
+    expect(fingerprintG24EnrichmentExecutionPlan(null)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+    expect(recordG24EnrichmentAttempt({} as never)).toMatchObject({
+      receipt: null,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+    expect(recordG24EnrichmentAttempt({ plan: null } as never)).toMatchObject({
+      receipt: null,
+      rejection: { status: 'malformed_rejected', durableReceiptCreated: false },
+    })
+
+    const hugeSparse: unknown[] = []
+    hugeSparse.length = 4_294_967_295
+    expect(fingerprintG24Watermarks(hugeSparse as never)).toBe(
+      '__g24_invalid_nonplain_data__',
+    )
+  })
+
+  it('rejects unsupported fields throughout atom, plan, attempt and correction proof envelopes', () => {
+    const approved = approvedQuestionAtom() as G24InterventionAtom & { unsupported?: string }
+    approved.unsupported = 'must-not-be-invisible'
+    expect(() =>
+      recordG24Answer(
+        approved,
+        { receiptId: 'answer:atom-extra', kind: 'option', value: 'Fewer rewrites' },
+        [],
+      ),
+    ).toThrow()
+
+    const receiptExtra = approvedQuestionAtom()
+    ;(receiptExtra.approvalReceipt as G24InterventionAtom['approvalReceipt'] & {
+      unsupported?: string
+    }).unsupported = 'must-not-be-invisible'
+    expect(() =>
+      recordG24Answer(
+        receiptExtra,
+        { receiptId: 'answer:receipt-extra', kind: 'option', value: 'Fewer rewrites' },
+        [],
+      ),
+    ).toThrow()
+
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:exact-envelope:v1',
+      maximumWallClockMs: 100,
+      maximumAttempts: 1,
+    }) as G24EnrichmentExecutionPlan & { unsupported?: string }
+    plan.unsupported = 'must-not-be-invisible'
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: [],
+        attempt: {
+          receiptId: 'execution:plan-extra:v1',
+          idempotencyKey: 'execution:plan-extra:v1',
+          elapsedMs: 1,
+          outcome: 'failed',
+        },
+      }),
+    ).toMatchObject({ receipt: null, rejection: { status: 'malformed_rejected' } })
+
+    const cleanPlan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:attempt-envelope:v1',
+      maximumWallClockMs: 100,
+      maximumAttempts: 1,
+    })
+    expect(
+      recordG24EnrichmentAttempt({
+        plan: cleanPlan,
+        currentSelector: selector,
+        priorReceipts: [],
+        attempt: {
+          receiptId: 'execution:attempt-extra:v1',
+          idempotencyKey: 'execution:attempt-extra:v1',
+          elapsedMs: 1,
+          outcome: 'failed',
+          unsupported: 'must-not-be-invisible',
+        } as never,
+      }),
+    ).toMatchObject({ receipt: null, replayed: false, rejection: { status: 'malformed_rejected' } })
+
+    const answerAtom = approvedQuestionAtom()
+    const original = recordG24Answer(
+      answerAtom,
+      { receiptId: 'answer:graph-extra:original', kind: 'option', value: 'Fewer rewrites' },
+      [],
+    )
+    const replacement = recordG24Answer(
+      answerAtom,
+      {
+        receiptId: 'answer:graph-extra:replacement',
+        kind: 'option',
+        value: 'Higher customer preference',
+      },
+      [original],
+    )
+    expect(() =>
+      correctG24Answer(original, replacement, {
+        receiptId: 'correction:graph-extra:v1',
+        idempotencyKey: 'correction:graph-extra:v1',
+        priorCorrections: [],
+        dependencyGraph: {
+          graphVersion: 'answer-dependency-graph:extra:v1',
+          derivativeDependencies: {},
+          decisionDependencies: {},
+          unsupported: 'must-not-be-invisible',
+        } as never,
+      }),
+    ).toThrow('correction_dependency_graph_version_required')
+  })
+
+  it.each(['atomVersion', 'controlVersion', 'channel', 'timing', 'evidenceVersion'])(
+    'rejects padded intervention identity before approval: %s',
+    (field) => {
+      const selector = selectedFixture('highExternalHighInternal')
+      const atomInput = {
+        atomVersion: 'question-plan:canonical:v1',
+        controlVersion: 'question-control:canonical:v1',
+        purpose: 'Resolve the quality-standard transfer gap.',
+        audience: 'named_leader_private',
+        sensitivity: 'private',
+        channel: 'mobile_companion',
+        timing: 'before_next_operator_session',
+        decisionFrameVersion: 'decision-frame:ai-marketing-operating-model:v3',
+        evidenceVersions: ['coverage:decision-014:v4'],
+        payload: questionAtom(selector).payload,
+      }
+      if (field === 'atomVersion') atomInput.atomVersion = ' question-plan:canonical:v1 '
+      if (field === 'controlVersion') atomInput.controlVersion = ' question-control:canonical:v1 '
+      if (field === 'channel') atomInput.channel = ' mobile_companion '
+      if (field === 'timing') atomInput.timing = ' before_next_operator_session '
+      if (field === 'evidenceVersion') atomInput.evidenceVersions = [' coverage:decision-014:v4 ']
+      expect(() => createG24InterventionAtom(selector, atomInput)).toThrow(
+        'intervention_atom_approval_binding_incomplete',
+      )
+    },
+  )
 })

@@ -304,6 +304,31 @@ One hundred and sixty-five focused checks pass. The ten new checks cover every r
 
 The repair is frozen at `685a8db4f266965834e9d06c70b3e9337fb5b272`, tree `4e7cf69f940376bea3ab0a1bcd192ecf8a801ad8`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 14
+
+**Frozen code:** `685a8db4f266965834e9d06c70b3e9337fb5b272`
+
+**Truthful state correction:** `3dd8fc034d482315c3db81b84a6d1a5cd9211353`
+
+**Adjudication:** `VETO`
+
+Every round-thirteen reproduction held, including post-snapshot ownership, `__proto__` selector identity, padded Release and approval boundaries, blank Release bindings and total public helpers. The reviewers then found four related proof-normal-form failures:
+
+1. The invalid-data fingerprint sentinel was still a nonblank string. A malformed selector or plan could store that sentinel as if it were a genuine exact identity, allowing downstream compilation or execution to reason from stale selected fields.
+2. Several official issuance paths still accepted padded selector, atom, control, channel, timing and evidence identities, while an explicitly present blank control validity bound was interpreted as no bound.
+3. Pending Release use accepted duplicate selector versions, source and Brain versions, control roots and watermark keys if the caller recomputed the public projection and authority fingerprints. The compiler and use boundary therefore did not share one canonical normal form.
+4. Proof-bearing atom, approval, plan, attempt and correction-graph identities still fingerprinted selected fields rather than requiring an exact outer schema. Unsupported fields could become invisible authority. Malformed plan, execution, atom-validation and control-closure inputs could also throw, and sparse arrays with very large declared lengths could drive unnecessary allocation.
+
+The common root was now narrower than the previous ownership defect: exact copied bytes were available, but not every proof boundary rejected unknown fields, duplicate canonical forms or the reserved invalid identity before semantic use.
+
+## Repair round 14
+
+The moving repair makes the invalid fingerprint a reserved value that can never satisfy identity validation or issuance. Selector, intervention atom, approval receipt, enrichment plan, execution attempt, execution receipt and answer-dependency graph boundaries now require exact known field sets, canonical identifiers and valid non-sentinel fingerprints before they can create, transfer or consume an issuance proof. Atom approval state and receipt presence must agree.
+
+Control closure now validates its complete runtime envelope before traversal. Explicit validity bounds must be canonical parseable dates. Release compilation and use reject duplicate selector, canonical source, canonical Brain, root, manifest-control and watermark identities; Release use also recomputes the controlling-watermark fingerprint as a derived invariant. Array ownership validates a bounded dense keyset before allocating or iterating by the declared length. Malformed atom, plan, execution and closure calls return or throw only their defined fail-closed outcomes.
+
+One hundred and seventy-nine focused checks pass locally. Fourteen new checks cover reserved-sentinel selectors and plans; padded selector, authority-control, atom, channel, timing and evidence identities; blank explicit validity; duplicate Release forms after recomputed public fingerprints and matching authority; unknown atom, approval, plan, attempt and correction-graph fields; malformed public entry points; and a maximum-length sparse array without proportional allocation. This moving repair is not verified until its exact committed bytes pass fresh independent review.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
