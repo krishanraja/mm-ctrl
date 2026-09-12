@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after twenty-three vetoes, frozen at `d2d20616e0000d01fbf1f95409260487c0479eaa` and tree `f2cf807a0b772fd473966693c63cec5249fbbce1`; 206 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** local deterministic kernel repaired after twenty-four vetoes, frozen at `8ac8f6a8e2f48eb56f7b8ac80c17401d34e1b30f` and tree `8552dc3554646a60daa7485b7ad8bf3912120e5a`; 209 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -39,8 +39,8 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - invalid projection failures that cannot consume receipt identity, current-transitive invalidation observation, control-safe line rendering and preservation of valid execution history across malformed commands.
 - causally chained execution history and visible receipt fields protected from Unicode format controls.
 - fixed SHA-256 execution-chain identity, hard plan and ledger bounds, one terminal over-budget receipt, and one proof-valid recovery path for every malformed command.
-- receipt-ledger length admission before recursive snapshot or entry inspection, including a repeated bound on recovery.
-- single-use same-process terminal-prefix finality with exact defensive replay, stale-selector non-poisoning and competing terminal rejection.
+- one-view command capture and bounded allowlisted receipt-ledger projection before nested snapshot, with unrelated array data never enumerated or read.
+- single-use same-process terminal finality per canonical plan fingerprint, including equivalent-plan replay, stale-selector non-poisoning and competing authentic-branch rejection.
 
 ## Deterministic fixtures
 
@@ -72,13 +72,14 @@ The fixture range includes:
 24. invalid-projection receipt poisoning, newly reached child, grandchild and missing-control identity, visible-standing line injection, and malformed-command ledger erasure; and
 25. same-plan authentic branch splicing and Unicode bidirectional, isolate, zero-width and BOM receipt controls; and
 26. exponential valid-chain growth, unbounded over-budget receipt creation, and plain-malformed splice or junk ledger recovery; and
-27. oversized dense ledgers with hostile entries, stale terminal-boundary calls, exact pre-terminal-prefix replay, competing terminal identities, full-ledger replay and caller mutation of returned terminal bytes.
+27. oversized dense ledgers with hostile entries, stale terminal-boundary calls, exact pre-terminal-prefix replay, competing terminal identities, full-ledger replay and caller mutation of returned terminal bytes; and
+28. equivalent separately issued plans, competing authentic terminal branches, stateful command substitution of a 100,000-entry ledger and unrelated array accessor keys.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 206 checks passed in one file on the frozen round-twenty-three repair.
+- `npm run brain:g24:headless-check`: 209 checks passed in one file on the frozen round-twenty-four repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.

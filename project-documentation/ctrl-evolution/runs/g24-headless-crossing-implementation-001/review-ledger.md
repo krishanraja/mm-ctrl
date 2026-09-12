@@ -616,6 +616,39 @@ Two hundred and six focused checks pass locally. The new checks prove that a 34-
 
 The repair is frozen at `d2d20616e0000d01fbf1f95409260487c0479eaa`, tree `f2cf807a0b772fd473966693c63cec5249fbbce1`, source blob `f6e23fe3f19ab437a21f6606cf60607f3228d854` and test blob `855c65f2d483dcf0134fa217b349c939d0e8bd47`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 24
+
+**Frozen code:** `d2d20616e0000d01fbf1f95409260487c0479eaa`
+
+**Frozen tree:** `f2cf807a0b772fd473966693c63cec5249fbbce1`
+
+**Frozen source blob:** `f6e23fe3f19ab437a21f6606cf60607f3228d854`
+
+**Frozen test blob:** `855c65f2d483dcf0134fa217b349c939d0e8bd47`
+
+**Truthful state correction:** `5119ca7c431d5cd6f1696deef6a565af916ed108`
+
+**Adjudication:** `VETO`
+
+Both reviewers verified that the ordinary round-twenty-three attacks closed, all 206 focused checks passed and the adjacent gates remained stable. They then independently reproduced two current-gate defects:
+
+1. Terminal state was keyed by the issued plan object's JavaScript identity. Two separately and legitimately issued byte-identical plans had the same canonical fingerprint but different weak keys, so each could mint a different terminal receipt from the same authentic prefix. Separate authentic branches under one plan could also each retain a terminal entry, making the nested per-plan map grow with forks.
+2. The ledger preflight and full input snapshot observed caller-owned values separately. A stateful command proxy could present an empty ledger to preflight and a 100,000-entry ledger to the later snapshot, which traversed every hostile entry before rejection. A zero-length array with 400,000 unrelated own keys also forced full key enumeration despite having no receipt entries.
+
+The review clarifies the correct boundary: exact terminal identity belongs to the canonical plan, not an incidental object instance or caller-selected branch. Bounded receipt work also requires one captured command view and a projection of only semantic receipt indices and fields; repeatedly asking adversarial objects to describe all their properties cannot provide a meaningful local work bound.
+
+## Repair round 24
+
+The command root is now captured once from exact own data descriptors before any nested snapshot. The later owned snapshot receives only those captured values, so a time-varying outer object cannot substitute a different ledger between checking and use.
+
+Receipt-ledger capture checks one observed array length before reading indices, caps it at 33 and copies only those bounded numeric entries. Each entry is reduced through the fixed receipt-field allowlist before proof and causal-chain validation. Unrelated container keys, symbols and accessors are neither enumerated nor read; they cannot enter the owned semantic value. Receipt extras likewise cannot enter calculation, while every allowlisted receipt value must still match the private issuance proof. This is deliberate bounded canonical projection, not acceptance of an extra field as evidence or instruction.
+
+Terminal state is now keyed by the exact canonical plan fingerprint and contains one prefix plus one terminal receipt. A separately issued byte-identical plan therefore sees the same final boundary. The first authentic branch to terminalize the plan establishes the sole terminal state; exact same-prefix and same-request use replays it, while a different request or a competing authentic branch returns `attempt_budget_exhausted` without minting. Registry growth is reduced to at most one terminal state per exact plan rather than one per caller-created fork; durable lifecycle and rehydration remain the later ingress obligation.
+
+Two hundred and nine focused checks pass locally. Three new checks cover separately issued equivalent plans, competing authentic branches, exact equivalent-plan replay, one-view stateful command capture with a hidden 100,000-entry alternative, and a zero-length ledger carrying 10,000 unrelated accessor keys with zero accessor reads.
+
+The repair is frozen at `8ac8f6a8e2f48eb56f7b8ac80c17401d34e1b30f`, tree `8552dc3554646a60daa7485b7ad8bf3912120e5a`, source blob `1faeb23d341d1f6f90c8707bafb322d507c90490` and test blob `729161718eda4065d8922a3f80c28f541772d207`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
