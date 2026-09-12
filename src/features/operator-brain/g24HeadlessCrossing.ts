@@ -179,10 +179,11 @@ export function fingerprintG24ControlGraph(
 }
 
 export function fingerprintG24Watermarks(watermarks: readonly G24ControlWatermark[]): string {
-  return [...watermarks]
-    .sort((left, right) => compareText(left.key, right.key))
-    .map(({ key, lineageId, version }) => `${key}=${lineageId}@${version}`)
-    .join('|')
+  return JSON.stringify(
+    [...watermarks]
+      .sort((left, right) => compareText(left.key, right.key))
+      .map(({ key, lineageId, version }) => ({ key, lineageId, version })),
+  )
 }
 
 export type G24EvidenceState = 'sufficient' | 'gap' | 'ambiguity' | 'contradiction'
@@ -876,7 +877,15 @@ export interface G24InterventionApprovalReceipt {
   approvalFingerprint: string
 }
 
-const g24ApprovedAtomInstances = new WeakSet<G24InterventionAtom>()
+const g24ApprovedAtomProofs = new WeakMap<G24InterventionAtom, string>()
+
+function g24ApprovedAtomProof(atom: G24InterventionAtom): string {
+  return JSON.stringify({
+    atomVersion: atom.atomVersion,
+    payloadFingerprint: atom.payloadFingerprint,
+    approvalFingerprint: atom.approvalReceipt?.approvalFingerprint ?? null,
+  })
+}
 
 export function fingerprintG24InterventionAtom(
   atom: Omit<G24InterventionAtom, 'payloadFingerprint' | 'approvalState' | 'approvalReceipt'>,
@@ -961,6 +970,7 @@ export function createG24InterventionAtom(
       atom.payload.answerGrammar === 'ranked_choice'
         ? atom.payload.optionsOrComparator
         : ['default']),
+      ...(atom.payload.scopedWriteIn ? ['default'] : []),
     ]
     for (const key of requiredEffectKeys) {
       const effect = atom.payload.answerEffects[key]
@@ -1060,6 +1070,9 @@ export function approveG24InterventionAtom(
     approvalAuthorityVersionRef: string
   },
 ): G24InterventionAtom {
+  const currentAuthorityWatermark = currentSelector.controllingWatermarks.find(
+    ({ key }) => key === 'authority_version',
+  )
   const bindingMatches =
     currentSelector.actionable &&
     (currentSelector.route === 'ask' || currentSelector.route === 'session') &&
@@ -1077,9 +1090,12 @@ export function approveG24InterventionAtom(
     binding.decisionFrameVersion === atom.decisionFrameVersion &&
     equalSorted(binding.evidenceVersions, atom.evidenceVersions) &&
     binding.payloadFingerprint === atom.payloadFingerprint &&
+    typeof binding.approvalReceiptId === 'string' &&
     Boolean(binding.approvalReceiptId.trim()) &&
     binding.approvedByRef === 'krish' &&
-    Boolean(binding.approvalAuthorityVersionRef.trim())
+    typeof binding.approvalAuthorityVersionRef === 'string' &&
+    Boolean(binding.approvalAuthorityVersionRef.trim()) &&
+    binding.approvalAuthorityVersionRef === currentAuthorityWatermark?.version
   if (!bindingMatches || validateG24InterventionAtom(atom).length > 0) {
     throw new Error('intervention_approval_binding_mismatch')
   }
@@ -1100,16 +1116,29 @@ export function approveG24InterventionAtom(
       approvalFingerprint: fingerprintG24ApprovalReceipt(receiptWithoutFingerprint),
     },
   }
-  g24ApprovedAtomInstances.add(approved)
+  g24ApprovedAtomProofs.set(approved, g24ApprovedAtomProof(approved))
   return approved
 }
 
 export type G24AnswerKind = 'option' | 'write_in' | 'voice' | 'unknown' | 'defer' | 'refuse' | 'premise_wrong'
 
+const G24_ANSWER_KINDS: readonly G24AnswerKind[] = [
+  'option',
+  'write_in',
+  'voice',
+  'unknown',
+  'defer',
+  'refuse',
+  'premise_wrong',
+]
+
 export interface G24AnswerReceipt {
   receiptId: string
   atomVersion: string
   interventionFingerprint: string
+  approvalReceiptId: string
+  approvalFingerprint: string
+  approvalAuthorityVersionRef: string
   answerKind: G24AnswerKind
   value: string | null
   immutableCaseEvidence: true
@@ -1124,9 +1153,24 @@ export interface G24AnswerReceipt {
 export function recordG24Answer(
   atom: G24InterventionAtom,
   answer: { receiptId: string; kind: G24AnswerKind; value?: string },
+  priorReceipts: readonly G24AnswerReceipt[],
 ): G24AnswerReceipt {
+  if (!Array.isArray(priorReceipts)) throw new Error('answer_receipt_ledger_required')
+  const priorReceiptIds = priorReceipts.map(({ receiptId }) => receiptId)
+  if (
+    priorReceiptIds.some((receiptId) => typeof receiptId !== 'string' || !receiptId.trim()) ||
+    new Set(priorReceiptIds).size !== priorReceiptIds.length
+  ) {
+    throw new Error('answer_receipt_ledger_invalid')
+  }
   if (typeof answer.receiptId !== 'string' || !answer.receiptId.trim()) {
     throw new Error('answer_receipt_id_required')
+  }
+  if (typeof answer.kind !== 'string' || !G24_ANSWER_KINDS.includes(answer.kind)) {
+    throw new Error('answer_kind_invalid')
+  }
+  if (answer.value !== undefined && typeof answer.value !== 'string') {
+    throw new Error('answer_value_invalid')
   }
   if (atom.payload.kind !== 'question') throw new Error('answer_requires_question_atom')
   const approvalReceipt = atom.approvalReceipt
@@ -1138,7 +1182,9 @@ export function recordG24Answer(
     approvalReceipt.selectorFingerprint !== atom.selectorFingerprint ||
     approvalReceipt.payloadFingerprint !== atom.payloadFingerprint ||
     approvalReceipt.approvedByRef !== 'krish' ||
+    typeof approvalReceipt.receiptId !== 'string' ||
     !approvalReceipt.receiptId.trim() ||
+    typeof approvalReceipt.approvalAuthorityVersionRef !== 'string' ||
     !approvalReceipt.approvalAuthorityVersionRef.trim() ||
     approvalReceipt.approvalFingerprint !==
       fingerprintG24ApprovalReceipt({
@@ -1150,7 +1196,7 @@ export function recordG24Answer(
         approvedByRef: approvalReceipt.approvedByRef,
         approvalAuthorityVersionRef: approvalReceipt.approvalAuthorityVersionRef,
       }) ||
-    !g24ApprovedAtomInstances.has(atom)
+    g24ApprovedAtomProofs.get(atom) !== g24ApprovedAtomProof(atom)
   ) {
     throw new Error('answer_requires_approved_atom')
   }
@@ -1161,18 +1207,30 @@ export function recordG24Answer(
   if (honestExit && !atom.payload.honestExits.includes(answer.kind as never)) {
     throw new Error(`answer_exit_not_offered:${answer.kind}`)
   }
+  const answerMatchesGrammar =
+    honestExit ||
+    (answer.kind === 'option' &&
+      (atom.payload.answerGrammar === 'single_choice' ||
+        atom.payload.answerGrammar === 'ranked_choice')) ||
+    (answer.kind === 'write_in' &&
+      (atom.payload.answerGrammar === 'bounded_text' || atom.payload.scopedWriteIn)) ||
+    (answer.kind === 'voice' && atom.payload.answerGrammar === 'voice_critical_incident')
+  if (!answerMatchesGrammar) throw new Error('answer_kind_incompatible_with_grammar')
   if (!honestExit && !answer.value?.trim()) throw new Error('answer_value_required')
   const effectKey = honestExit
     ? answer.kind
-    : atom.payload.answerGrammar === 'single_choice' || atom.payload.answerGrammar === 'ranked_choice'
+    : answer.kind === 'option'
       ? answer.value?.trim()
       : 'default'
   const effect = effectKey ? atom.payload.answerEffects[effectKey] : undefined
   if (!effect) throw new Error(`answer_effect_not_declared:${effectKey ?? 'missing'}`)
-  return {
+  const receipt: G24AnswerReceipt = {
     receiptId: answer.receiptId,
     atomVersion: atom.atomVersion,
     interventionFingerprint: atom.payloadFingerprint,
+    approvalReceiptId: approvalReceipt.receiptId,
+    approvalFingerprint: approvalReceipt.approvalFingerprint,
+    approvalAuthorityVersionRef: approvalReceipt.approvalAuthorityVersionRef,
     answerKind: answer.kind,
     value: answer.value?.trim() || null,
     immutableCaseEvidence: true,
@@ -1183,6 +1241,14 @@ export function recordG24Answer(
     automaticReaskPressure: false,
     automaticSessionEscalation: false,
   }
+  const prior = priorReceipts.find(({ receiptId }) => receiptId === receipt.receiptId)
+  if (prior) {
+    if (JSON.stringify(prior) !== JSON.stringify(receipt)) {
+      throw new Error('answer_receipt_id_collision')
+    }
+    return structuredClone(prior)
+  }
+  return receipt
 }
 
 export interface G24AnswerCorrectionReceipt {
@@ -1264,6 +1330,13 @@ export function correctG24Answer(
   }
   if (original.interventionFingerprint !== replacement.interventionFingerprint) {
     throw new Error('replacement_answer_atom_mismatch')
+  }
+  if (
+    original.approvalFingerprint !== replacement.approvalFingerprint ||
+    original.approvalReceiptId !== replacement.approvalReceiptId ||
+    original.approvalAuthorityVersionRef !== replacement.approvalAuthorityVersionRef
+  ) {
+    throw new Error('replacement_answer_approval_mismatch')
   }
   if (!details.receiptId.trim()) throw new Error('correction_receipt_id_required')
   const impact = deriveG24AnswerCorrectionImpact(original.receiptId, details.dependencyGraph)
@@ -1408,6 +1481,12 @@ export function compileG24PendingRelease(input: {
     }
     if (!selector.actionable || selector.route === 'abstain_hold') {
       errors.push(`${selector.selectorResultVersion}:non_actionable_selector_cannot_compile_release`)
+    }
+    if (!selector.selectorResultVersion.trim()) {
+      errors.push('selector_result_version_required')
+    }
+    if (selector.audienceRef !== input.audience) {
+      errors.push(`${selector.selectorResultVersion}:selector_release_audience_mismatch`)
     }
     selectorControlRoots[selector.selectorResultVersion] = closure.roots
     selectorControlManifests[selector.selectorResultVersion] = {

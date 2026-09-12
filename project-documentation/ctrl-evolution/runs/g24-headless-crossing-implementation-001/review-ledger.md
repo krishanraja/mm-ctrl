@@ -80,7 +80,23 @@ The reviewers also confirmed that every round-two failure was genuinely repaired
 
 The current worktree seals the challenger outcome and exact boundary into both trusted evaluation and selector identity; explicitly binds the evidence namespace to the current case; refuses identityless Release invalidation; fingerprints control state and validity windows; rejects empty canonical source or Brain version sets; prevents lifecycle reuse of every historical before or after version; validates current lifecycle identity and authority before idempotent replay; and adds a version-matched Krish approval receipt plus an in-process transition proof before an answer can become immutable evidence. Approval now reconstructs the canonical atom against the exact current selector, including purpose, audience, sensitivity, frame and evidence, rather than trusting a self-consistent handcrafted envelope.
 
-The repair worktree has 120 focused checks passing, including exact reproductions of the third-round attacks. These results still do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
+The repair had 120 focused checks passing, including exact reproductions of the third-round attacks. It was frozen at `3f399992b3273e896e292d4be0ab6ff4c5e52aa7` for another independent exact-byte review.
+
+## Review round 4
+
+**Frozen code:** `3f399992b3273e896e292d4be0ab6ff4c5e52aa7`
+
+**Adjudication:** `VETO`
+
+Both independent reviewers reproduced a post-approval mutation bypass. The in-process proof remembered only the approved object's identity, so a caller could mutate that same object, recompute every public fingerprint and record answer evidence against bytes Krish never approved. The implementation defense additionally found that approval authority was required only to be nonblank rather than equal to the selector's current authority watermark, and that unknown or grammar-incompatible answer kinds could create immutable evidence. The implementation adjudicator separately found that answer receipt IDs were not checked against a current receipt ledger, so one ID could denote different answer evidence.
+
+Every earlier veto reproduction remained repaired. Founder calibration found no product-direction conflict and no question for Krish, while warning that this local mechanism still does not authenticate a human approval or survive restart.
+
+## Repair round 4
+
+The current repair replaces object-membership proof with an approval-time proof of the exact atom and approval-receipt fingerprints; binds approval authority to the current selector authority watermark; carries approval receipt identity, authority and fingerprint into every answer; validates runtime answer kind and value; enforces compatibility with the rendered single-choice, ranked, bounded-text, scoped-write-in or voice grammar; requires a current answer-receipt ledger; replays an exact duplicate deterministically; and rejects identity collisions. It also makes watermark fingerprinting collision-safe and refuses blank selector identities or a Release audience that differs from an included selector.
+
+The repair worktree has 126 focused checks passing. These results do not close review. The bytes must be frozen in a new commit and independently attacked again. Until that adjudication clears, the implementation state remains `UNDER_REPAIR_REVIEW`, not verified and not runtime-ready.
 
 ## Preserved proof limits
 

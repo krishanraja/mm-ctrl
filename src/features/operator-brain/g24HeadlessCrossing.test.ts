@@ -11,6 +11,8 @@ import {
   evaluateG24PendingReleaseUse,
   fingerprintG24ControlGraph,
   fingerprintG24InterventionAtom,
+  fingerprintG24SelectorResult,
+  fingerprintG24Watermarks,
   recordG24Answer,
   recordG24EnrichmentAttempt,
   renderG24SelectorReceipt,
@@ -135,6 +137,12 @@ function questionAtom(selector = selectedFixture('highExternalHighInternal')): G
           retireInterventionRefs: ['question:next-proof-signal:v1'],
           pendingHumanOwnedProposal: 'Use customer preference as the proof threshold.',
         },
+        default: {
+          caseEffect: 'rebuild_required',
+          visibleConsequence: 'The proposed proof now uses the result you named.',
+          retireInterventionRefs: ['question:next-proof-signal:v1'],
+          pendingHumanOwnedProposal: 'Review the named customer result as the proof threshold.',
+        },
         unknown: {
           caseEffect: 'no_case_change',
           visibleConsequence: 'Nothing changes. The gap remains open.',
@@ -181,7 +189,7 @@ function approvedQuestionAtom(
     payloadFingerprint: atom.payloadFingerprint,
     approvalReceiptId: `approval:${atom.atomVersion}`,
     approvedByRef: 'krish',
-    approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+    approvalAuthorityVersionRef: 'authority_version:v1',
   })
 }
 
@@ -582,7 +590,7 @@ describe('G24 versioned intervention and answer effects', () => {
       payloadFingerprint: atom.payloadFingerprint,
       approvalReceiptId: `approval:${atom.atomVersion}`,
       approvedByRef: 'krish',
-      approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+      approvalAuthorityVersionRef: 'authority_version:v1',
     })
     expect(approved.approvalState).toBe('approved')
     expect(approved.approvalReceipt).toMatchObject({
@@ -592,6 +600,24 @@ describe('G24 versioned intervention and answer effects', () => {
       payloadFingerprint: atom.payloadFingerprint,
       approvedByRef: 'krish',
     })
+
+    expect(() =>
+      approveG24InterventionAtom(atom, selector, {
+        atomVersion: atom.atomVersion,
+        controlVersion: atom.controlVersion,
+        purpose: atom.purpose,
+        audience: atom.audience,
+        sensitivity: atom.sensitivity,
+        channel: atom.channel,
+        timing: atom.timing,
+        decisionFrameVersion: atom.decisionFrameVersion,
+        evidenceVersions: [...atom.evidenceVersions],
+        payloadFingerprint: atom.payloadFingerprint,
+        approvalReceiptId: `approval:stale-authority:${atom.atomVersion}`,
+        approvedByRef: 'krish',
+        approvalAuthorityVersionRef: 'authority_version:stale',
+      }),
+    ).toThrow('intervention_approval_binding_mismatch')
 
     const silentlyChanged = structuredClone(atom)
     if (silentlyChanged.payload.kind === 'question') {
@@ -614,7 +640,7 @@ describe('G24 versioned intervention and answer effects', () => {
         payloadFingerprint: silentlyChanged.payloadFingerprint,
         approvalReceiptId: `approval:${silentlyChanged.atomVersion}`,
         approvedByRef: 'krish',
-        approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+        approvalAuthorityVersionRef: 'authority_version:v1',
       }),
     ).toThrow('intervention_approval_binding_mismatch')
 
@@ -639,7 +665,7 @@ describe('G24 versioned intervention and answer effects', () => {
       receiptId: 'answer:v1',
       kind: 'option',
       value: 'Higher customer preference',
-    })
+    }, [])
     expect(receipt).toMatchObject({
       immutableCaseEvidence: true,
       caseEffect: 'rebuild_required',
@@ -650,6 +676,27 @@ describe('G24 versioned intervention and answer effects', () => {
     })
   })
 
+  it('replays one exact answer receipt and rejects the same identity for different evidence', () => {
+    const atom = approvedQuestionAtom()
+    const answer = {
+      receiptId: 'answer:idempotent:v1',
+      kind: 'option' as const,
+      value: 'Higher customer preference',
+    }
+    const first = recordG24Answer(atom, answer, [])
+    expect(recordG24Answer(atom, answer, [first])).toEqual(first)
+    expect(() =>
+      recordG24Answer(
+        atom,
+        { ...answer, value: 'Fewer rewrites' },
+        [first],
+      ),
+    ).toThrow('answer_receipt_id_collision')
+    expect(() =>
+      (recordG24Answer as unknown as (...args: unknown[]) => unknown)(atom, answer),
+    ).toThrow('answer_receipt_ledger_required')
+  })
+
   it('rejects answers to proposed atoms and approval against a changed selector under the same version', () => {
     const atom = questionAtom()
     expect(() =>
@@ -657,7 +704,7 @@ describe('G24 versioned intervention and answer effects', () => {
         receiptId: 'answer:unapproved',
         kind: 'option',
         value: 'Higher customer preference',
-      }),
+      }, []),
     ).toThrow('answer_requires_approved_atom')
 
     const changedSelector = selectedFixture('highExternalHighInternal')
@@ -676,7 +723,7 @@ describe('G24 versioned intervention and answer effects', () => {
         payloadFingerprint: atom.payloadFingerprint,
         approvalReceiptId: `approval:${atom.atomVersion}`,
         approvedByRef: 'krish',
-        approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+        approvalAuthorityVersionRef: 'authority_version:v1',
       }),
     ).toThrow('intervention_approval_binding_mismatch')
   })
@@ -690,7 +737,35 @@ describe('G24 versioned intervention and answer effects', () => {
         receiptId: 'answer:forged-approval',
         kind: 'option',
         value: 'Higher customer preference',
-      }),
+      }, []),
+    ).toThrow('answer_requires_approved_atom')
+  })
+
+  it('rejects same-version atom mutation after a legitimate approval transition', () => {
+    const approved = approvedQuestionAtom()
+    approved.purpose = 'An unrelated purpose after approval.'
+    if (approved.payload.kind === 'question') {
+      approved.payload.visibleWording = 'Silently replaced after approval?'
+    }
+    const {
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
+      ...mutatedContent
+    } = approved
+    approved.payloadFingerprint = fingerprintG24InterventionAtom(mutatedContent)
+    if (!approved.approvalReceipt) throw new Error('expected approval receipt')
+    approved.approvalReceipt.payloadFingerprint = approved.payloadFingerprint
+    const { approvalFingerprint: _approvalFingerprint, ...mutatedReceipt } =
+      approved.approvalReceipt
+    approved.approvalReceipt.approvalFingerprint = JSON.stringify(mutatedReceipt)
+
+    expect(() =>
+      recordG24Answer(approved, {
+        receiptId: 'answer:post-approval-mutation',
+        kind: 'option',
+        value: 'Higher customer preference',
+      }, []),
     ).toThrow('answer_requires_approved_atom')
   })
 
@@ -729,7 +804,7 @@ describe('G24 versioned intervention and answer effects', () => {
         payloadFingerprint: forged.payloadFingerprint,
         approvalReceiptId: `approval:${forged.atomVersion}`,
         approvedByRef: 'krish',
-        approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+        approvalAuthorityVersionRef: 'authority_version:v1',
       }),
     ).toThrow('intervention_approval_binding_mismatch')
   })
@@ -740,15 +815,55 @@ describe('G24 versioned intervention and answer effects', () => {
         receiptId: '',
         kind: 'option',
         value: 'Higher customer preference',
-      }),
+      }, []),
     ).toThrow('answer_receipt_id_required')
+  })
+
+  it('rejects a runtime answer kind outside the exact answer grammar', () => {
+    expect(() =>
+      recordG24Answer(approvedQuestionAtom(), {
+        receiptId: 'answer:invalid-kind',
+        kind: 'bogus',
+        value: 'yes',
+      } as never, []),
+    ).toThrow('answer_kind_invalid')
+
+    expect(() =>
+      recordG24Answer(approvedQuestionAtom(), {
+        receiptId: 'answer:invalid-value',
+        kind: 'option',
+        value: 42,
+      } as never, []),
+    ).toThrow('answer_value_invalid')
+  })
+
+  it('requires the answer kind to match the exact rendered grammar', () => {
+    expect(() =>
+      recordG24Answer(approvedQuestionAtom(), {
+        receiptId: 'answer:wrong-voice-kind',
+        kind: 'voice',
+        value: 'yes',
+      }, []),
+    ).toThrow('answer_kind_incompatible_with_grammar')
+
+    expect(
+      recordG24Answer(approvedQuestionAtom(), {
+        receiptId: 'answer:scoped-write-in',
+        kind: 'write_in',
+        value: 'Repeat purchase rate',
+      }, []),
+    ).toMatchObject({
+      answerKind: 'write_in',
+      value: 'Repeat purchase rate',
+      pendingHumanOwnedProposal: 'Review the named customer result as the proof threshold.',
+    })
   })
 
   it.each(['unknown', 'defer', 'refuse', 'premise_wrong'] as const)(
     'treats %s as an honest exit with no adverse automation',
     (kind) => {
       expect(
-        recordG24Answer(approvedQuestionAtom(), { receiptId: `answer:${kind}`, kind }),
+        recordG24Answer(approvedQuestionAtom(), { receiptId: `answer:${kind}`, kind }, []),
       ).toMatchObject({
         answerKind: kind,
         caseEffect: 'no_case_change',
@@ -833,13 +948,13 @@ describe('G24 versioned intervention and answer effects', () => {
       payloadFingerprint: atom.payloadFingerprint,
       approvalReceiptId: `approval:${atom.atomVersion}`,
       approvedByRef: 'krish',
-      approvalAuthorityVersionRef: 'krish-approval-authority:v1',
+      approvalAuthorityVersionRef: 'authority_version:v1',
     })
     const receipt = recordG24Answer(approvedAtom, {
       receiptId: 'voice-answer:v1',
       kind: 'voice',
       value: 'The work sounded polished but nobody could say what decision it changed.',
-    })
+    }, [])
     expect(receipt).toMatchObject({
       immutableCaseEvidence: true,
       caseEffect: 'rebuild_required',
@@ -856,12 +971,12 @@ describe('G24 versioned intervention and answer effects', () => {
       receiptId: 'answer:v1',
       kind: 'option',
       value: 'Fewer rewrites',
-    })
+    }, [])
     const replacement = recordG24Answer(atom, {
       receiptId: 'answer:v2',
       kind: 'option',
       value: 'Higher customer preference',
-    })
+    }, [original])
     const correction = correctG24Answer(original, replacement, {
       receiptId: 'answer-correction:v1',
       dependencyGraph: {
@@ -901,13 +1016,13 @@ describe('G24 versioned intervention and answer effects', () => {
       receiptId: 'answer:v1',
       kind: 'option',
       value: 'Fewer rewrites',
-    })
+    }, [])
     const replacement = {
       ...recordG24Answer(atom, {
         receiptId: 'answer:v2',
         kind: 'option',
         value: 'Higher customer preference',
-      }),
+      }, [original]),
       interventionFingerprint: 'different-approved-atom-fingerprint',
     }
     expect(() =>
@@ -928,12 +1043,12 @@ describe('G24 versioned intervention and answer effects', () => {
       receiptId: 'answer:v1',
       kind: 'option',
       value: 'Fewer rewrites',
-    })
+    }, [])
     const replacement = recordG24Answer(atom, {
       receiptId: 'answer:v2',
       kind: 'option',
       value: 'Higher customer preference',
-    })
+    }, [original])
     expect(() =>
       correctG24Answer(original, replacement, {
         receiptId: 'answer:v1',
@@ -1066,6 +1181,50 @@ describe('G24 dependent Release closure', () => {
         'canonical_brain_version_required',
       ]),
     )
+  })
+
+  it('refuses a blank selector identity or a Release audience wider than its selector', () => {
+    const blankVersion = selectedFixture()
+    blankVersion.selectorResultVersion = ''
+    blankVersion.selectorFingerprint = fingerprintG24SelectorResult(blankVersion)
+    const blankResult = compileG24PendingRelease({
+      projectionVersion: 'release-projection:blank-selector:v1',
+      purpose: 'A purpose.',
+      audience: 'named_leader_private',
+      selectorResults: [blankVersion],
+      controls: buildG24FixtureControls(),
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(blankResult.projection).toBeNull()
+    expect(blankResult.errors).toContain('selector_result_version_required')
+
+    const widened = compileG24PendingRelease({
+      projectionVersion: 'release-projection:widened-audience:v1',
+      purpose: 'A purpose.',
+      audience: 'public',
+      selectorResults: [selectedFixture()],
+      controls: buildG24FixtureControls(),
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(widened.projection).toBeNull()
+    expect(widened.errors).toContain(
+      'selector:low-external-high-internal:v1:selector_release_audience_mismatch',
+    )
+  })
+
+  it('uses collision-safe watermark identity', () => {
+    const one = fingerprintG24Watermarks([
+      { key: 'a', lineageId: 'b', version: 'c|d=e@f' },
+    ])
+    const two = fingerprintG24Watermarks([
+      { key: 'a', lineageId: 'b', version: 'c' },
+      { key: 'd', lineageId: 'e', version: 'f' },
+    ])
+    expect(one).not.toBe(two)
   })
 
   it('refuses to compile any invalid or held selector into a pending Release projection', () => {
