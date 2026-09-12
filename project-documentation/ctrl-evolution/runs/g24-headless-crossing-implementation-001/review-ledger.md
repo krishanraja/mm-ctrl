@@ -521,6 +521,37 @@ Two hundred and two focused checks pass locally. Three new grouped checks cover 
 
 The repair is frozen at `a08978a5e8518d6059f9963a6a4238d341ae84bd`, tree `5c49f8159f7f79396570c2a1abb9212a343039ad`, source blob `e755382546f5f48d2c8cc0dd8aae9e298e63fece` and test blob `bbc8c2a679e9df7d1adad0045a8ae4c78a0d4af5`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 21
+
+**Frozen code:** `a08978a5e8518d6059f9963a6a4238d341ae84bd`
+
+**Frozen tree:** `5c49f8159f7f79396570c2a1abb9212a343039ad`
+
+**Frozen source blob:** `e755382546f5f48d2c8cc0dd8aae9e298e63fece`
+
+**Frozen test blob:** `bbc8c2a679e9df7d1adad0045a8ae4c78a0d4af5`
+
+**Truthful state correction:** `2b1cb0d8ce64ced17ad9420b9d661b5c129739e0`
+
+**Adjudication:** `VETO`
+
+Every direct round-twenty repair held. Projection-integrity and invalid-time failures minted no receipt; current children, deeper descendants, cycles and missing-to-present controls changed invalidation identity; unreachable controls and dependency order did not. C0, C1 and Unicode line separators could not inject protocol lines, and a genuine canonical ledger survived malformed command data. Two narrower defects remained:
+
+1. Execution issuance proof authenticated each receipt but not its causal predecessor. Two independent branches under the same plan could therefore be spliced into a sequence of genuine attempt-one and attempt-two receipts, preserved as apparently valid history and extended with a third receipt even though attempt two had never followed the supplied attempt one.
+2. The visible renderer's control filter omitted Unicode format characters. Bidirectional overrides, isolates, zero-width format characters and BOM could remain in an issued visible field and alter how the authenticated line protocol appeared.
+
+The first finding distinguishes authentic records from authentic history: a list of individually genuine events does not prove that those events form the sequence claimed by their container.
+
+## Repair round 21
+
+Every execution receipt now carries the exact canonical fingerprint of its complete prior ledger. Genesis binds the empty prefix; each later receipt binds the exact ordered predecessor history. Normal validation and malformed-command recovery both verify every prefix link before replay, budget calculation, preservation or append. Mixed branches, reordered authentic receipts and causal splices cannot be treated as append-only history.
+
+Visible receipt fields now also reject the Unicode `Cf` format category in addition to C0, C1 and Unicode line separators. The regression set includes bidirectional overrides, isolates, terminators, zero-width characters and BOM.
+
+Two hundred and three focused checks pass locally. The new grouped execution test builds two independently genuine same-plan branches, attempts both ordinary append and malformed recovery of a splice, and requires an empty untrusted replacement while preserving valid branch continuation. The renderer test probes RLO, LRO, LRI, PDF, PDI, zero-width and BOM controls.
+
+The repair is frozen at `012b119af208011aab3eb4540601ce6d160825fd`, tree `59ba8df181c6fc35ff584da49727befff8e89c62`, source blob `baa6dcb701c87cbf3eaee25c52b76f358196a85b` and test blob `2f65279be175501e8f4e0f6d98dd1bd925872924`. The exact bytes are under independent review and remain unverified until that review clears.
+
 ## Preserved proof limits
 
 This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.

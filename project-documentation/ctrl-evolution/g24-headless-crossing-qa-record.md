@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after twenty vetoes, frozen at `a08978a5e8518d6059f9963a6a4238d341ae84bd` and tree `5c49f8159f7f79396570c2a1abb9212a343039ad`; 202 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** local deterministic kernel repaired after twenty-one vetoes, frozen at `012b119af208011aab3eb4540601ce6d160825fd` and tree `59ba8df181c6fc35ff584da49727befff8e89c62`; 203 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -37,6 +37,7 @@ Within the caller-supplied structural envelope, the tested mechanics are:
 - in-process selector issuance proof, explicit-zone deterministic time, negative-zero exclusion and invalidation receipts bound to exact projection and observed control state.
 - shared negative-zero exclusion, strict real-instant validation, exact issued-projection use, relevant-closure invalidation identity and issuance-proven visible standing.
 - invalid projection failures that cannot consume receipt identity, current-transitive invalidation observation, control-safe line rendering and preservation of valid execution history across malformed commands.
+- causally chained execution history and visible receipt fields protected from Unicode format controls.
 
 ## Deterministic fixtures
 
@@ -65,13 +66,14 @@ The fixture range includes:
 21. route-precedence relabelling, contradictory alternative eligibility, sufficient resolving gaps, non-normal producer inputs, timezone-offset expiry order and approval and invalidation receipt collisions; and
 22. coherent selector-story rewrites, timezone-less route divergence, negative-zero burden equivalence, same-version projection collisions and under-recorded invalidation observations; and
 23. impossible calendar and clock instants, negative-zero execution identity, post-issuance projection rewriting, unrelated-lineage and dependency-order replay noise, and proofless eligible receipt rendering; and
-24. invalid-projection receipt poisoning, newly reached child, grandchild and missing-control identity, visible-standing line injection, and malformed-command ledger erasure.
+24. invalid-projection receipt poisoning, newly reached child, grandchild and missing-control identity, visible-standing line injection, and malformed-command ledger erasure; and
+25. same-plan authentic branch splicing and Unicode bidirectional, isolate, zero-width and BOM receipt controls.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 202 checks passed in one file on the frozen round-twenty repair.
+- `npm run brain:g24:headless-check`: 203 checks passed in one file on the frozen round-twenty-one repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
