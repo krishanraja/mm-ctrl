@@ -3929,7 +3929,7 @@ describe('G24 strict owned-data boundary', () => {
         'alternatives',
         (selector) =>
           (selector.alternatives = [
-            { route: 'reuse', eligible: 'yes' as never, rejectionReasons: [] },
+            { route: 'reuse', eligible: 'yes' as never, burden: 0, rejectionReasons: [] },
           ]),
       ],
       [
@@ -4258,5 +4258,126 @@ describe('G24 strict owned-data boundary', () => {
         },
       }),
     ).toThrow('replacement_answer_approval_mismatch')
+  })
+
+  it('rejects forged route precedence and contradictory alternative eligibility', () => {
+    const forcedSession = selectedFixture('highExternalHighInternal')
+    forcedSession.route = 'session'
+    forcedSession.reasonCode = 'tacit_interdependence'
+    forcedSession.selectorFingerprint = fingerprintG24SelectorResult(forcedSession)
+    expect(forcedSession.selectorFingerprint).toBe('__g24_invalid_nonplain_data__')
+
+    const sufficientAsk = selectedFixture('highExternalHighInternal')
+    sufficientAsk.unresolvedGap = 'sufficient'
+    sufficientAsk.selectorFingerprint = fingerprintG24SelectorResult(sufficientAsk)
+    expect(sufficientAsk.selectorFingerprint).toBe('__g24_invalid_nonplain_data__')
+
+    const rejectedButEligible = selectedFixture('highExternalHighInternal')
+    const selected = rejectedButEligible.alternatives.find(
+      ({ route }) => route === rejectedButEligible.route,
+    )
+    if (!selected) throw new Error('expected selected alternative')
+    selected.rejectionReasons = ['route_not_permitted']
+    rejectedButEligible.selectorFingerprint = fingerprintG24SelectorResult(rejectedButEligible)
+    expect(rejectedButEligible.selectorFingerprint).toBe('__g24_invalid_nonplain_data__')
+  })
+
+  it('holds non-normal challenger boundaries and candidate rejection reasons before routing', () => {
+    const paddedBoundary = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    paddedBoundary.challengerSearchBoundary = ' Current boundary. '
+    paddedBoundary.trustedEvaluation.challengerSearchBoundary = ' Current boundary. '
+    const heldBoundary = selectG24Intervention(paddedBoundary)
+    expect(heldBoundary).toMatchObject({
+      route: 'abstain_hold',
+      reasonCode: 'invalid_input',
+      actionable: false,
+    })
+    expect(heldBoundary.selectorFingerprint).not.toBe('__g24_invalid_nonplain_data__')
+
+    const paddedRejection = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    const ask = paddedRejection.candidates.find(({ route }) => route === 'ask')
+    if (!ask) throw new Error('expected ask candidate')
+    ask.rejectionReasons = [' route_not_permitted ']
+    const heldRejection = selectG24Intervention(paddedRejection)
+    expect(heldRejection).toMatchObject({
+      route: 'abstain_hold',
+      reasonCode: 'invalid_input',
+      actionable: false,
+    })
+    expect(heldRejection.selectorFingerprint).not.toBe('__g24_invalid_nonplain_data__')
+  })
+
+  it('derives expiry by instant rather than lexical date order', () => {
+    const input = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    input.controls.identity_version.validUntil = '2027-01-01T00:00:00+05:00'
+    input.controls.subject_version.validUntil = '2026-12-31T20:00:00.000Z'
+    const graphFingerprint = fingerprintG24ControlGraph(
+      input.controlManifest.applicableControlKeys,
+      input.controls,
+    )
+    input.controlManifest.graphFingerprint = graphFingerprint
+    input.trustedEvaluation.controlGraphFingerprint = graphFingerprint
+    expect(selectG24Intervention(input).expiry).toBe('2027-01-01T00:00:00+05:00')
+  })
+
+  it('prevents approval and Release invalidation receipt IDs denoting different events', () => {
+    const selector = selectedFixture('highExternalHighInternal')
+    const firstAtom = questionAtom(selector)
+    const {
+      selectorResultVersion: _selectorResultVersion,
+      selectorFingerprint: _selectorFingerprint,
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      approvalReceipt: _approvalReceipt,
+      ...secondInput
+    } = firstAtom
+    secondInput.atomVersion = 'question-plan:approval-collision:v2'
+    const secondAtom = createG24InterventionAtom(selector, secondInput)
+    const approve = (atom: G24InterventionAtom) =>
+      approveG24InterventionAtom(atom, selector, {
+        atomVersion: atom.atomVersion,
+        controlVersion: atom.controlVersion,
+        purpose: atom.purpose,
+        audience: atom.audience,
+        sensitivity: atom.sensitivity,
+        channel: atom.channel,
+        timing: atom.timing,
+        decisionFrameVersion: atom.decisionFrameVersion,
+        evidenceVersions: [...atom.evidenceVersions],
+        payloadFingerprint: atom.payloadFingerprint,
+        approvalReceiptId: 'approval:collision:round-17:v1',
+        approvedByRef: 'krish' as const,
+        approvalAuthorityVersionRef: 'authority_version:v1',
+      })
+    expect(approve(firstAtom).approvalState).toBe('approved')
+    expect(() => approve(secondAtom)).toThrow('intervention_approval_receipt_id_collision')
+
+    const controls = buildG24FixtureControls()
+    const projection = compileProjection(selectedFixture(), controls, 'release:collision:round-17:v1')
+    const authorityChanged = cloneControls(controls)
+    authorityChanged.authority_version.version = 'authority_version:collision:v2'
+    const audienceChanged = cloneControls(controls)
+    audienceChanged.audience_version.version = 'audience_version:collision:v2'
+    const receiptId = 'release-invalidation:collision:round-17:v1'
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls: authorityChanged,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }).receipt,
+    ).not.toBeNull()
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        controls: audienceChanged,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId,
+      }),
+    ).toEqual({
+      eligible: false,
+      reason: 'invalidation_receipt_identity_invalid',
+      receipt: null,
+    })
   })
 })

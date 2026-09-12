@@ -536,6 +536,7 @@ export type G24SelectorReasonCode =
 export interface G24SelectorAlternative {
   route: Exclude<G24SelectorRoute, 'abstain_hold'>
   eligible: boolean
+  burden: number
   rejectionReasons: string[]
 }
 
@@ -576,6 +577,7 @@ const g24SelectorAlternativeResultSchema = z
   .object({
     route: z.enum(['reuse', 'enrich', 'ask', 'session']),
     eligible: z.boolean(),
+    burden: z.number(),
     rejectionReasons: z.array(z.string()),
   })
   .strict()
@@ -792,7 +794,9 @@ function g24SelectorResultSemanticShapeIsValid(value: unknown): value is G24Sele
       (result.unresolvedGap !== null || result.unresolvedEvidenceRefs.length > 0)) ||
     (result.actionable &&
       result.route !== 'reuse' &&
-      (result.unresolvedGap === null || result.unresolvedEvidenceRefs.length === 0))
+      (result.unresolvedGap === null ||
+        result.unresolvedGap === 'sufficient' ||
+        result.unresolvedEvidenceRefs.length === 0))
   ) {
     return false
   }
@@ -811,6 +815,9 @@ function g24SelectorResultSemanticShapeIsValid(value: unknown): value is G24Sele
         (index > 0 &&
           ROUTE_ORDER.indexOf(result.alternatives[index - 1].route) >
             ROUTE_ORDER.indexOf(alternative.route)) ||
+        !Number.isFinite(alternative.burden) ||
+        alternative.burden < 0 ||
+        alternative.eligible !== (alternative.rejectionReasons.length === 0) ||
         !g24StringArrayIsCanonicalNormalForm(alternative.rejectionReasons),
     ) ||
     result.controllingWatermarks.some((watermark, index) =>
@@ -822,6 +829,22 @@ function g24SelectorResultSemanticShapeIsValid(value: unknown): value is G24Sele
     fingerprintG24Watermarks(result.controllingWatermarks) !== result.controllingFingerprint
   ) {
     return false
+  }
+  if (result.actionable && result.route !== 'reuse') {
+    const leastBurdenEligibleRoute = result.alternatives
+      .filter(
+        (alternative) =>
+          alternative.eligible &&
+          RESOLVING_ROUTE_ORDER.includes(alternative.route as G24ResolvingRoute),
+      )
+      .sort((left, right) => {
+        if (left.burden !== right.burden) return left.burden - right.burden
+        return (
+          RESOLVING_ROUTE_ORDER.indexOf(left.route as G24ResolvingRoute) -
+          RESOLVING_ROUTE_ORDER.indexOf(right.route as G24ResolvingRoute)
+        )
+      })[0]?.route
+    if (leastBurdenEligibleRoute !== result.route) return false
   }
   return true
 }
@@ -855,6 +878,7 @@ export function fingerprintG24SelectorResult(
       .map((alternative) => ({
         route: alternative.route,
         eligible: alternative.eligible,
+        burden: alternative.burden,
         rejectionReasons: [...alternative.rejectionReasons].sort(compareText),
       })),
     controlRootKeys: [...result.controlRootKeys].sort(compareText),
@@ -1014,12 +1038,19 @@ function candidateEligibility(
       : '',
     !Number.isFinite(candidate.burden) || candidate.burden < 0 ? 'invalid_burden' : '',
   ].filter(Boolean)
-  const rejectionReasons = [...new Set([...candidate.rejectionReasons, ...generatedReasons])].sort(
-    compareText,
-  )
+  const normalizedCandidateReasons = candidate.rejectionReasons
+    .map((reason) => reason.trim())
+    .filter(Boolean)
+  const rejectionReasons = [
+    ...new Set([...normalizedCandidateReasons, ...generatedReasons]),
+  ].sort(compareText)
   return {
     route: candidate.route,
     eligible: rejectionReasons.length === 0,
+    burden:
+      Number.isFinite(candidate.burden) && candidate.burden >= 0
+        ? candidate.burden
+        : Number.MAX_SAFE_INTEGER,
     rejectionReasons,
   }
 }
@@ -1031,7 +1062,7 @@ function earliestExpiry(
   const expiries = watermarks
     .map(({ key }) => controls[key]?.validUntil)
     .filter((value): value is string => Boolean(value))
-    .sort(compareText)
+    .sort((left, right) => Date.parse(left) - Date.parse(right) || compareText(left, right))
   return expiries[0] ?? null
 }
 
@@ -1042,6 +1073,18 @@ function heldSelectorResult(
   diagnostic: string,
   alternatives: G24SelectorAlternative[],
 ): G24SelectorResult {
+  const challengerBoundaryIsNormal =
+    input.challengerSearchBoundary !== undefined &&
+    g24IdentifierIsCanonical(input.challengerSearchBoundary) &&
+    input.trustedEvaluation.challengerSearchBoundary === input.challengerSearchBoundary
+  const challengerSearchBoundary = challengerBoundaryIsNormal
+    ? input.challengerSearchBoundary ?? null
+    : null
+  const challengerResult =
+    input.challengerResult === 'none_found_within_declared_boundary' &&
+    challengerSearchBoundary === null
+      ? 'indeterminate'
+      : input.challengerResult
   return finalizeG24SelectorResult({
     selectorResultVersion: input.selectorResultVersion,
     currentCaseRef: input.currentCaseRef,
@@ -1063,9 +1106,13 @@ function heldSelectorResult(
     controlManifestVersion: input.controlManifest.manifestVersion,
     applicableControlKeys: [...input.controlManifest.applicableControlKeys].sort(compareText),
     controlGraphFingerprint: input.controlManifest.graphFingerprint,
-    trustedEvaluation: structuredClone(input.trustedEvaluation),
-    challengerResult: input.challengerResult,
-    challengerSearchBoundary: input.challengerSearchBoundary ?? null,
+    trustedEvaluation: {
+      ...structuredClone(input.trustedEvaluation),
+      challengerResult,
+      challengerSearchBoundary,
+    },
+    challengerResult,
+    challengerSearchBoundary,
     controllingWatermarks: closure.watermarks,
     controllingFingerprint: fingerprintG24Watermarks(closure.watermarks),
     expiry: earliestExpiry(closure.watermarks, input.controls),
@@ -1231,6 +1278,14 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
     (input.challengerSearchBoundary ?? null)
       ? 'trusted_evaluation_challenger_boundary_mismatch'
       : '',
+    input.challengerSearchBoundary !== undefined &&
+    !g24IdentifierIsCanonical(input.challengerSearchBoundary)
+      ? 'challenger_boundary_not_canonical'
+      : '',
+    input.trustedEvaluation.challengerSearchBoundary !== null &&
+    !g24IdentifierIsCanonical(input.trustedEvaluation.challengerSearchBoundary)
+      ? 'trusted_challenger_boundary_not_canonical'
+      : '',
     input.trustedEvaluation.trustedAsOf !== input.trustedAsOf
       ? 'trusted_evaluation_as_of_mismatch'
       : '',
@@ -1239,6 +1294,13 @@ export function selectG24Intervention(inputValue: unknown): G24SelectorResult {
         trustedEvaluationVersion !== input.trustedEvaluation.evaluationVersion,
     )
       ? 'candidate_trusted_evaluation_mismatch'
+      : '',
+    input.candidates.some(
+      ({ rejectionReasons }) =>
+        rejectionReasons.length !== new Set(rejectionReasons).size ||
+        rejectionReasons.some((reason) => !g24IdentifierIsCanonical(reason)),
+    )
+      ? 'candidate_rejection_reasons_not_canonical'
       : '',
   ].filter(Boolean)
 
@@ -1420,6 +1482,7 @@ export interface G24InterventionApprovalReceipt {
 }
 
 const g24ApprovedAtomProofs = new WeakMap<G24InterventionAtom, string>()
+const g24ApprovalReceiptFingerprintsById = new Map<string, string>()
 
 function g24InterventionPayloadHasExactShape(
   payload: unknown,
@@ -2001,6 +2064,13 @@ export function approveG24InterventionAtom(
   if (!g24FingerprintIsValid(approvalFingerprint)) {
     throw new Error('intervention_approval_fingerprint_invalid')
   }
+  const priorApprovalFingerprint = g24ApprovalReceiptFingerprintsById.get(
+    binding.approvalReceiptId,
+  )
+  if (priorApprovalFingerprint && priorApprovalFingerprint !== approvalFingerprint) {
+    throw new Error('intervention_approval_receipt_id_collision')
+  }
+  g24ApprovalReceiptFingerprintsById.set(binding.approvalReceiptId, approvalFingerprint)
   const approved: G24InterventionAtom = {
     ...structuredClone(atom),
     approvalState: 'approved',
@@ -2979,6 +3049,8 @@ export interface G24ReleaseUseResult {
   receipt: G24ReleaseInvalidationReceipt | null
 }
 
+const g24ReleaseInvalidationReceiptFingerprintsById = new Map<string, string>()
+
 function g24IsStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((entry) => typeof entry === 'string')
 }
@@ -3271,18 +3343,34 @@ export function evaluateG24PendingReleaseUse(input: {
         receipt: null,
       }
     }
+    const receipt: G24ReleaseInvalidationReceipt = {
+      receiptId: input.receiptId,
+      projectionVersion: input.projection.projectionVersion,
+      changedControls,
+      appendOnly: true,
+      approvalCreated: false,
+      deliveryCreated: false,
+      externalSideEffectCreated: false,
+    }
+    const receiptFingerprint = stringifyG24Data(receipt)
+    const priorReceiptFingerprint = g24ReleaseInvalidationReceiptFingerprintsById.get(
+      receipt.receiptId,
+    )
+    if (priorReceiptFingerprint && priorReceiptFingerprint !== receiptFingerprint) {
+      return {
+        eligible: false,
+        reason: 'invalidation_receipt_identity_invalid',
+        receipt: null,
+      }
+    }
+    g24ReleaseInvalidationReceiptFingerprintsById.set(
+      receipt.receiptId,
+      receiptFingerprint,
+    )
     return {
       eligible: false,
       reason: stateErrors.length > 0 ? 'controlling_state_invalid' : 'controlling_watermark_changed',
-      receipt: {
-        receiptId: input.receiptId,
-        projectionVersion: input.projection.projectionVersion,
-        changedControls,
-        appendOnly: true,
-        approvalCreated: false,
-        deliveryCreated: false,
-        externalSideEffectCreated: false,
-      },
+      receipt,
     }
   }
 
