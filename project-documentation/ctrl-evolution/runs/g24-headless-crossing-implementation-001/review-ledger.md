@@ -223,7 +223,7 @@ The third finding reopened a previously repaired post-approval mutation class th
 
 The current repair fingerprints an explicit descriptor-based plain-data projection, so object-defined serialization hooks cannot hide mutated bytes and uncloneable extra values cannot collapse every fingerprint into one fallback identity. The shared primitive now governs control, selector, atom, approval, answer, correction, Release, lifecycle, plan and execution fingerprints and replay comparisons. Correction receipts additionally bind deterministic full fingerprints of the original answer, replacement answer and complete canonical dependency graph. Dependency graphs now require a canonical version, node and dependency references, complete runtime shape, unique dependency edges and no derivative/decision node collision before impact derivation.
 
-One hundred and forty-four focused checks pass, including hidden-serialization attacks against approved atom content, answer evidence, correction history, lifecycle snapshots and execution receipts, plus same-ID answer-content collisions, distinct same-version graphs and padded graph references. The moving bytes remain unverified until frozen exact-byte review.
+The repair was frozen at `c5a6432c9545f4bc04622dd6e0265fa8695cc167`, tree `f55b9e9d1b676cf8cf95cefb16928217be5cff21`, with 144 focused checks, including hidden-serialization attacks against approved atom content, answer evidence, correction history, lifecycle snapshots and execution receipts, plus same-ID answer-content collisions, distinct same-version graphs and padded graph references. The exact bytes are under independent review and remain unverified until that review clears.
 
 ## Preserved proof limits
 
