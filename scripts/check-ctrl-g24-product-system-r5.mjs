@@ -84,7 +84,11 @@ for (const phrase of ['The one repair', 'complete controlling watermark set', 'l
 check('QA keeps runtime claims unproven', qa.includes('does not prove a physical dependency graph') && qa.includes('atomic invalidation'))
 check('canonical state links R5 blueprint', state.includes('[G24 R5 dependent Release watermark repair](g24-product-system-blueprint-r5.md)'))
 check('canonical state links R5 contract', state.includes('[R5 machine contract](g24-product-system-contract-r5.json)'))
-check('design state routes to G24 R5', designState.includes('G24 R5 dependent Release watermark repair'))
+check(
+  'design state routes to G24 R5 or its founder-locked implementation state',
+  designState.includes('G24 R5 dependent Release watermark repair')
+    || designState.includes('founder-locked G24 R1 through R5 architecture'),
+)
 
 for (const [name, content] of [['blueprint', blueprint], ['contract', contractText], ['delta', deltaText], ['QA', qa]]) {
   check(`${name} has no em dash`, !content.includes('—'))
@@ -97,4 +101,3 @@ if (failures.length) {
 }
 
 console.log('ok: G24 R5 closes dependent Release watermarks without reopening product direction or external action')
-

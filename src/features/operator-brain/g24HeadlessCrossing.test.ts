@@ -9,6 +9,7 @@ import {
   createG24EnrichmentExecutionPlan,
   createG24InterventionAtom,
   evaluateG24PendingReleaseUse,
+  fingerprintG24ControlGraph,
   recordG24Answer,
   recordG24EnrichmentAttempt,
   renderG24SelectorReceipt,
@@ -18,6 +19,8 @@ import {
   type G24ControlRegistry,
   type G24InterventionAtom,
   type G24LifecycleSnapshot,
+  type G24LifecycleTransition,
+  type G24LifecycleTransitionRequest,
   type G24PendingReleaseProjection,
   type G24SelectorInput,
   type G24SelectorResult,
@@ -34,6 +37,34 @@ import {
 
 function cloneControls(controls: G24ControlRegistry): G24ControlRegistry {
   return structuredClone(controls)
+}
+
+function lifecycleRequest(
+  transition: G24LifecycleTransition,
+  overrides: Partial<G24LifecycleTransitionRequest> = {},
+): G24LifecycleTransitionRequest {
+  const actorRefs =
+    transition.actor === 'krish'
+      ? ['krish']
+      : transition.actor === 'named_leader_and_krish'
+        ? ['krish', 'leader:maya']
+        : transition.actor === 'krish_or_krish_recording_named_leader_decline_or_withdrawal'
+          ? ['krish', 'leader:maya']
+          : ['leader:maya']
+  return {
+    transitionId: transition.id,
+    fromVersion: transition.from === 'none' ? null : `${transition.from}:v1`,
+    afterVersion: `${transition.to}:v2`,
+    actorClass: transition.actor,
+    actorRefs,
+    authority: transition.authority,
+    authorityVersionRef: `authority:${transition.id}:v1`,
+    precondition: transition.precondition,
+    preconditionEvidenceRefs: [`precondition:${transition.id}:v1`],
+    idempotencyKey: `idempotency:${transition.id}`,
+    receiptId: `receipt:${transition.id}`,
+    ...overrides,
+  }
 }
 
 function selectedFixture(name = 'lowExternalHighInternal'): G24SelectorResult {
@@ -131,6 +162,23 @@ function questionAtom(selector = selectedFixture('highExternalHighInternal')): G
   })
 }
 
+function approvedQuestionAtom(
+  selector = selectedFixture('highExternalHighInternal'),
+): G24InterventionAtom {
+  const atom = questionAtom(selector)
+  return approveG24InterventionAtom(atom, selector, {
+    atomVersion: atom.atomVersion,
+    controlVersion: atom.controlVersion,
+    purpose: atom.purpose,
+    audience: atom.audience,
+    channel: atom.channel,
+    timing: atom.timing,
+    decisionFrameVersion: atom.decisionFrameVersion,
+    evidenceVersions: [...atom.evidenceVersions],
+    payloadFingerprint: atom.payloadFingerprint,
+  })
+}
+
 describe('G24 headless Crossing selector', () => {
   it('matches the frozen semantic oracle without receiving the answers as input', () => {
     const fixtures = buildG24CrossingSelectorFixtures()
@@ -198,6 +246,7 @@ describe('G24 headless Crossing selector', () => {
   it('forbids private cross-case reasoning but permits current immutable public reference reuse', () => {
     const privateCrossCase = buildG24CrossingSelectorFixtures().lowExternalHighInternal
     privateCrossCase.candidates[0].reuseOrigin = 'same_person_other_case'
+    privateCrossCase.candidates[0].originCaseRef = 'case:maya:decision-008'
     privateCrossCase.candidates[0].containsPrivateReasoning = true
     expect(selectG24Intervention(privateCrossCase)).toMatchObject({
       route: 'abstain_hold',
@@ -206,6 +255,10 @@ describe('G24 headless Crossing selector', () => {
 
     const publicImmutable = buildG24CrossingSelectorFixtures().lowExternalHighInternal
     publicImmutable.candidates[0].reuseOrigin = 'public_immutable'
+    publicImmutable.candidates[0].originCaseRef = 'public:case:industry-reference'
+    publicImmutable.candidates[0].reuseEvidenceRef = 'evidence:public:industry-reference:v1'
+    publicImmutable.candidates[0].publicSourceRef = 'public-source:industry-report'
+    publicImmutable.candidates[0].immutableContentVersion = 'sha256:public-report-v1'
     publicImmutable.candidates[0].immutableReference = true
     publicImmutable.candidates[0].containsPrivateReasoning = false
     expect(selectG24Intervention(publicImmutable).route).toBe('reuse')
@@ -302,11 +355,20 @@ describe('G24 headless Crossing selector', () => {
     expect(selectG24Intervention(complete).provisionalDiagnostic).toContain(
       'missing_reference:new_applicable_policy_control',
     )
+
+    const deletedEdge = buildG24CrossingSelectorFixtures().lowExternalHighInternal
+    deletedEdge.controls.canonical_source_versions.dependencies = []
+    const deletedEdgeResult = selectG24Intervention(deletedEdge)
+    expect(deletedEdgeResult).toMatchObject({ route: 'abstain_hold', actionable: false })
+    expect(deletedEdgeResult.provisionalDiagnostic).toContain(
+      'under_recorded_applicable_control:source_permission_grant',
+    )
+    expect(deletedEdgeResult.provisionalDiagnostic).toContain('control_manifest_graph_mismatch')
   })
 
   it('requires trusted evaluation and a declared boundary for a bounded-none challenger result', () => {
     const missingTrust = buildG24CrossingSelectorFixtures().highExternalLowInternal
-    missingTrust.trustedEvaluation = false
+    missingTrust.trustedEvaluation.epistemicPolicyVersion = 'epistemic-policy:untrusted:v0'
     expect(selectG24Intervention(missingTrust).route).toBe('abstain_hold')
 
     const missingBoundary = buildG24CrossingSelectorFixtures().highExternalLowInternal
@@ -314,6 +376,41 @@ describe('G24 headless Crossing selector', () => {
     expect(selectG24Intervention(missingBoundary).provisionalDiagnostic).toContain(
       'challenger_boundary_missing',
     )
+  })
+
+  it('binds trusted semantic outcomes to the current decision, coverage, cutoff, policy and challenger versions', () => {
+    const mutations: Array<(input: G24SelectorInput) => void> = [
+      (input) => {
+        input.trustedEvaluation.decisionRequirementVersion = 'decision-requirement:wrong'
+      },
+      (input) => {
+        input.trustedEvaluation.evidenceCoverageVersion = 'coverage:wrong'
+      },
+      (input) => {
+        input.trustedEvaluation.trustedCutoffVersion = 'cutoff:wrong'
+      },
+      (input) => {
+        input.trustedEvaluation.epistemicPolicyVersion = 'policy:wrong'
+      },
+      (input) => {
+        input.trustedEvaluation.independentChallengerResultVersion = 'challenger:wrong'
+      },
+      (input) => {
+        input.trustedEvaluation.trustedAsOf = '2026-09-11T00:00:00.000Z'
+      },
+      (input) => {
+        input.candidates[0].trustedEvaluationVersion = 'trusted-evaluation:wrong'
+      },
+    ]
+    for (const mutate of mutations) {
+      const input = buildG24CrossingSelectorFixtures().highExternalLowInternal
+      mutate(input)
+      expect(selectG24Intervention(input)).toMatchObject({
+        route: 'abstain_hold',
+        reasonCode: 'invalid_input',
+        actionable: false,
+      })
+    }
   })
 
   it('rejects ambiguous duplicate route proposals instead of taking the first one', () => {
@@ -373,9 +470,45 @@ describe('G24 versioned intervention and answer effects', () => {
     })
   })
 
+  it('creates a prepared session without granting contact, scheduling, capture or learning authority', () => {
+    const selector = selectedFixture('lowExternalLowInternal')
+    expect(
+      createG24InterventionAtom(selector, {
+        atomVersion: 'session-opportunity:v1',
+        controlVersion: 'session-control:v1',
+        purpose: 'Resolve the incentive and quality-standard conflict.',
+        audience: 'named_leader_private',
+        sensitivity: 'private',
+        channel: 'operator_pull_only',
+        timing: 'next_operator_review',
+        decisionFrameVersion: selector.acceptedDecisionFrameRef,
+        evidenceVersions: [selector.evidenceCoverageRef],
+        payload: {
+          kind: 'session',
+          exactAgenda: [
+            'Name the customer proof the rebuild must earn.',
+            'Test whether incentives or capability are the stronger cause.',
+            'Agree the stop condition for a bounded pilot.',
+          ],
+          leaderVisiblePurpose: 'Leave with a testable route, not a generic AI commitment.',
+          expectedEndState: 'One leader-owned proof threshold and one stop condition.',
+          leaderCanDeclineRejectOrReframe: true,
+          noContactScheduleCaptureOrLearningAuthority: true,
+        },
+      }),
+    ).toMatchObject({
+      approvalState: 'proposed',
+      payload: {
+        kind: 'session',
+        noContactScheduleCaptureOrLearningAuthority: true,
+      },
+    })
+  })
+
   it('requires exact content, control, purpose, audience, channel, timing and evidence approval binding', () => {
-    const atom = questionAtom()
-    const approved = approveG24InterventionAtom(atom, {
+    const selector = selectedFixture('highExternalHighInternal')
+    const atom = questionAtom(selector)
+    const approved = approveG24InterventionAtom(atom, selector, {
       atomVersion: atom.atomVersion,
       controlVersion: atom.controlVersion,
       purpose: atom.purpose,
@@ -396,7 +529,7 @@ describe('G24 versioned intervention and answer effects', () => {
       'intervention_payload_changed_without_new_version',
     ])
     expect(() =>
-      approveG24InterventionAtom(silentlyChanged, {
+      approveG24InterventionAtom(silentlyChanged, selector, {
         atomVersion: silentlyChanged.atomVersion,
         controlVersion: silentlyChanged.controlVersion,
         purpose: silentlyChanged.purpose,
@@ -408,10 +541,24 @@ describe('G24 versioned intervention and answer effects', () => {
         payloadFingerprint: silentlyChanged.payloadFingerprint,
       }),
     ).toThrow('intervention_approval_binding_mismatch')
+
+    const {
+      selectorResultVersion: _selectorResultVersion,
+      selectorFingerprint: _selectorFingerprint,
+      payloadFingerprint: _payloadFingerprint,
+      approvalState: _approvalState,
+      ...atomInput
+    } = atom
+    expect(() =>
+      createG24InterventionAtom(selector, {
+        ...atomInput,
+        audience: 'public',
+      }),
+    ).toThrow('intervention_atom_selector_binding_mismatch')
   })
 
   it('keeps an answer immutable while making human-owned change only a pending proposal', () => {
-    const receipt = recordG24Answer(questionAtom(), {
+    const receipt = recordG24Answer(approvedQuestionAtom(), {
       receiptId: 'answer:v1',
       kind: 'option',
       value: 'Higher customer preference',
@@ -426,11 +573,38 @@ describe('G24 versioned intervention and answer effects', () => {
     })
   })
 
+  it('rejects answers to proposed atoms and approval against a changed selector under the same version', () => {
+    const atom = questionAtom()
+    expect(() =>
+      recordG24Answer(atom, {
+        receiptId: 'answer:unapproved',
+        kind: 'option',
+        value: 'Higher customer preference',
+      }),
+    ).toThrow('answer_requires_approved_atom')
+
+    const changedSelector = selectedFixture('highExternalHighInternal')
+    changedSelector.expectedMaterialEffect = 'A changed effect under the same nominal selector version.'
+    expect(() =>
+      approveG24InterventionAtom(atom, changedSelector, {
+        atomVersion: atom.atomVersion,
+        controlVersion: atom.controlVersion,
+        purpose: atom.purpose,
+        audience: atom.audience,
+        channel: atom.channel,
+        timing: atom.timing,
+        decisionFrameVersion: atom.decisionFrameVersion,
+        evidenceVersions: [...atom.evidenceVersions],
+        payloadFingerprint: atom.payloadFingerprint,
+      }),
+    ).toThrow('intervention_approval_binding_mismatch')
+  })
+
   it.each(['unknown', 'defer', 'refuse', 'premise_wrong'] as const)(
     'treats %s as an honest exit with no adverse automation',
     (kind) => {
       expect(
-        recordG24Answer(questionAtom(), { receiptId: `answer:${kind}`, kind }),
+        recordG24Answer(approvedQuestionAtom(), { receiptId: `answer:${kind}`, kind }),
       ).toMatchObject({
         answerKind: kind,
         caseEffect: 'no_case_change',
@@ -442,7 +616,9 @@ describe('G24 versioned intervention and answer effects', () => {
   )
 
   it('turns an optional voice critical incident into evidence and only a pending learning proposal', () => {
-    const selector = selectedFixture('highExternalHighInternal')
+    const selectorInput = buildG24CrossingSelectorFixtures().highExternalHighInternal
+    selectorInput.purposeRef = 'Learn the first quality signal from a real incident.'
+    const selector = selectG24Intervention(selectorInput)
     const atom = createG24InterventionAtom(selector, {
       atomVersion: 'voice-critical-incident:v1',
       controlVersion: 'voice-control:v1',
@@ -500,7 +676,18 @@ describe('G24 versioned intervention and answer effects', () => {
         },
       },
     })
-    const receipt = recordG24Answer(atom, {
+    const approvedAtom = approveG24InterventionAtom(atom, selector, {
+      atomVersion: atom.atomVersion,
+      controlVersion: atom.controlVersion,
+      purpose: atom.purpose,
+      audience: atom.audience,
+      channel: atom.channel,
+      timing: atom.timing,
+      decisionFrameVersion: atom.decisionFrameVersion,
+      evidenceVersions: [...atom.evidenceVersions],
+      payloadFingerprint: atom.payloadFingerprint,
+    })
+    const receipt = recordG24Answer(approvedAtom, {
       receiptId: 'voice-answer:v1',
       kind: 'voice',
       value: 'The work sounded polished but nobody could say what decision it changed.',
@@ -516,7 +703,7 @@ describe('G24 versioned intervention and answer effects', () => {
   })
 
   it('records correction as repair across every named affected decision', () => {
-    const atom = questionAtom()
+    const atom = approvedQuestionAtom()
     const original = recordG24Answer(atom, {
       receiptId: 'answer:v1',
       kind: 'option',
@@ -529,8 +716,19 @@ describe('G24 versioned intervention and answer effects', () => {
     })
     const correction = correctG24Answer(original, replacement, {
       receiptId: 'answer-correction:v1',
-      retiredDerivativeRefs: ['question:obsolete:v1', 'coverage:decision-014:v4'],
-      affectedDecisionRefs: ['decision:current:v1', 'decision:later:v1'],
+      dependencyGraph: {
+        graphVersion: 'answer-dependency-graph:v1',
+        derivativeDependencies: {
+          'coverage:decision-014:v4': ['answer:v1'],
+          'question:obsolete:v1': ['coverage:decision-014:v4'],
+          'question:unrelated:v1': ['answer:unrelated:v1'],
+        },
+        decisionDependencies: {
+          'decision:current:v1': ['coverage:decision-014:v4'],
+          'decision:later:v1': ['question:obsolete:v1'],
+          'decision:unrelated:v1': ['question:unrelated:v1'],
+        },
+      },
     })
     expect(correction).toMatchObject({
       correctsAnswerReceiptId: 'answer:v1',
@@ -538,6 +736,37 @@ describe('G24 versioned intervention and answer effects', () => {
       rebuildRequired: true,
     })
     expect(correction.affectedDecisionRefs).toEqual(['decision:current:v1', 'decision:later:v1'])
+    expect(correction.retiredDerivativeRefs).toEqual([
+      'coverage:decision-014:v4',
+      'question:obsolete:v1',
+    ])
+  })
+
+  it('rejects a correction whose replacement answer belongs to another atom', () => {
+    const atom = approvedQuestionAtom()
+    const original = recordG24Answer(atom, {
+      receiptId: 'answer:v1',
+      kind: 'option',
+      value: 'Fewer rewrites',
+    })
+    const replacement = {
+      ...recordG24Answer(atom, {
+        receiptId: 'answer:v2',
+        kind: 'option',
+        value: 'Higher customer preference',
+      }),
+      atomVersion: 'question-plan:different:v1',
+    }
+    expect(() =>
+      correctG24Answer(original, replacement, {
+        receiptId: 'answer-correction:v1',
+        dependencyGraph: {
+          graphVersion: 'answer-dependency-graph:v1',
+          derivativeDependencies: {},
+          decisionDependencies: {},
+        },
+      }),
+    ).toThrow('replacement_answer_atom_mismatch')
   })
 })
 
@@ -577,6 +806,52 @@ describe('G24 dependent Release closure', () => {
     )
   })
 
+  it('rejects a deleted applicable edge at selector, Release compile, and before use', () => {
+    const selectorInput = buildG24CrossingSelectorFixtures().lowExternalHighInternal
+    selectorInput.controls.canonical_source_versions.dependencies = []
+    expect(selectG24Intervention(selectorInput)).toMatchObject({
+      route: 'abstain_hold',
+      actionable: false,
+    })
+
+    const selector = selectedFixture()
+    const projection = compileProjection(selector)
+    const changedControls = buildG24FixtureControls()
+    changedControls.canonical_source_versions.dependencies = []
+    const compileResult = compileG24PendingRelease({
+      projectionVersion: 'release-projection:deleted-edge:v1',
+      purpose: 'A purpose.',
+      audience: 'named_leader_private',
+      selectorResults: [selector],
+      controls: changedControls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(compileResult.projection).toBeNull()
+    expect(compileResult.errors).toEqual(
+      expect.arrayContaining([
+        'selector:low-external-high-internal:v1:control_manifest_graph_changed',
+        'selector:low-external-high-internal:v1:under_recorded_applicable_control:source_permission_grant',
+      ]),
+    )
+
+    const useResult = evaluateG24PendingReleaseUse({
+      projection,
+      authority: buildExactG24ReleaseAuthority(projection),
+      controls: changedControls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId: 'release-check:deleted-edge',
+    })
+    expect(useResult).toMatchObject({ eligible: false })
+    expect(useResult.receipt?.changedControls).toEqual(
+      expect.arrayContaining([
+        'selector:low-external-high-internal:v1:control_manifest_graph_changed',
+        'selector:low-external-high-internal:v1:under_recorded_applicable_control:source_permission_grant',
+      ]),
+    )
+  })
+
   it('refuses a selector whose route changed without a new sealed result version', () => {
     const selector = selectedFixture('highExternalHighInternal')
     selector.route = 'session'
@@ -593,6 +868,27 @@ describe('G24 dependent Release closure', () => {
     expect(result.projection).toBeNull()
     expect(result.errors).toContain(
       'selector:high-external-high-internal:v1:selector_result_mutated_without_new_version',
+    )
+  })
+
+  it('refuses to compile any invalid or held selector into a pending Release projection', () => {
+    const input = buildG24CrossingSelectorFixtures().highExternalLowInternal
+    input.challengerResult = 'indeterminate'
+    const selector = selectG24Intervention(input)
+    expect(selector).toMatchObject({ route: 'abstain_hold', actionable: false })
+    const result = compileG24PendingRelease({
+      projectionVersion: 'release-projection:held:v1',
+      purpose: 'A purpose.',
+      audience: 'named_leader_private',
+      selectorResults: [selector],
+      controls: input.controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(result.projection).toBeNull()
+    expect(result.errors).toContain(
+      'selector:high-external-low-internal:v1:non_actionable_selector_cannot_compile_release',
     )
   })
 
@@ -617,6 +913,54 @@ describe('G24 dependent Release closure', () => {
         receiptId: 'release-check:eligible',
       }),
     ).toEqual({ eligible: true, reason: 'eligible', receipt: null })
+
+    const emptyAuthorityVersion = buildExactG24ReleaseAuthority(projection, '')
+    expect(
+      evaluateG24PendingReleaseUse({
+        projection,
+        authority: emptyAuthorityVersion,
+        controls,
+        trustedAsOf: G24_FIXTURE_NOW,
+        receiptId: 'release-check:empty-authority-version',
+      }),
+    ).toMatchObject({ eligible: false, reason: 'release_authority_missing_or_mismatched' })
+  })
+
+  it('rejects a same-version projection whose selector binding was removed', () => {
+    const controls = buildG24FixtureControls()
+    const first = selectedFixture('lowExternalHighInternal')
+    const secondInput = buildG24CrossingSelectorFixtures().laterDecisionTransfer
+    secondInput.selectorResultVersion = 'selector:second:v1'
+    const second = selectG24Intervention(secondInput)
+    const compiled = compileG24PendingRelease({
+      projectionVersion: 'release-projection:two-selectors:v1',
+      purpose: 'A purpose.',
+      audience: 'named_leader_private',
+      selectorResults: [first, second],
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      includedCanonicalSourceVersions: ['source-set:v1'],
+      includedCanonicalBrainVersions: ['brain-set:v1'],
+    })
+    expect(compiled.errors).toEqual([])
+    const projection = compiled.projection as G24PendingReleaseProjection
+    delete projection.selectorControlRoots['selector:second:v1']
+    delete projection.selectorControllingWatermarks['selector:second:v1']
+
+    const result = evaluateG24PendingReleaseUse({
+      projection,
+      authority: buildExactG24ReleaseAuthority(projection),
+      controls,
+      trustedAsOf: G24_FIXTURE_NOW,
+      receiptId: 'release-check:deleted-selector-binding',
+    })
+    expect(result).toMatchObject({ eligible: false, reason: 'controlling_state_invalid' })
+    expect(result.receipt?.changedControls).toEqual(
+      expect.arrayContaining([
+        'release_projection_mutated_without_new_version',
+        'release_projection_selector_binding_incomplete',
+      ]),
+    )
   })
 
   it('invalidates before use when each controlling dependency changes independently', () => {
@@ -713,11 +1057,32 @@ describe('G24 dependent Release closure', () => {
     const controlsV2 = cloneControls(controlsV1)
     controlsV2.independent_challenger_result_version.version =
       'independent_challenger_result_version:v2-resolved'
+    const baseV2 = buildG24CrossingSelectorFixtures().lowExternalHighInternal
+    const graphFingerprintV2 = fingerprintG24ControlGraph(
+      baseV2.controlManifest.applicableControlKeys,
+      controlsV2,
+    )
     const selectorInputV2: G24SelectorInput = {
-      ...buildG24CrossingSelectorFixtures().lowExternalHighInternal,
+      ...baseV2,
       selectorResultVersion: 'selector:low-external-high-internal:v2',
       controls: controlsV2,
+      controlManifest: {
+        ...baseV2.controlManifest,
+        manifestVersion: 'control-manifest:v2',
+        graphFingerprint: graphFingerprintV2,
+      },
       challengerResult: 'countercase_found',
+      trustedEvaluation: {
+        ...baseV2.trustedEvaluation,
+        evaluationVersion: 'trusted-evaluation:v2',
+        independentChallengerResultVersion:
+          'independent_challenger_result_version:v2-resolved',
+        controlManifestVersion: 'control-manifest:v2',
+        controlGraphFingerprint: graphFingerprintV2,
+      },
+      candidates: baseV2.candidates.map(
+        (candidate) => ({ ...candidate, trustedEvaluationVersion: 'trusted-evaluation:v2' }),
+      ),
     }
     const selectorV2 = selectG24Intervention(selectorInputV2)
     const projectionV2 = compileProjection(selectorV2, controlsV2, 'release-projection:v2')
@@ -746,82 +1111,142 @@ describe('G24 dependent Release closure', () => {
 
 describe('G24 engagement lifecycle', () => {
   it.each(G24_LIFECYCLE_TRANSITIONS)(
-    'accepts the explicit %s edge from %s to %s with a receipt',
-    (transitionId, from, to) => {
+    'accepts the explicit $id edge from $from to $to with exact authority and a receipt',
+    (transition) => {
       const snapshot: G24LifecycleSnapshot = {
-        state: from,
-        version: from === 'none' ? null : `${from}:v1`,
+        state: transition.from,
+        version: transition.from === 'none' ? null : `${transition.from}:v1`,
         receipts: [],
       }
-      const result = applyG24LifecycleTransition(snapshot, {
-        transitionId,
-        fromVersion: snapshot.version,
-        afterVersion: `${to}:v2`,
-        actorAndAuthoritySatisfied: true,
-        preconditionSatisfied: true,
-        idempotencyKey: `idempotency:${transitionId}`,
-        receiptId: `receipt:${transitionId}`,
-      })
+      const result = applyG24LifecycleTransition(snapshot, lifecycleRequest(transition))
       expect(result.accepted).toBe(true)
-      expect(result.snapshot.state).toBe(to)
+      expect(result.snapshot.state).toBe(transition.to)
       expect(result.snapshot.receipts).toHaveLength(1)
+      expect(result.snapshot.receipts[0]).toMatchObject({
+        actorClass: transition.actor,
+        authority: transition.authority,
+        precondition: transition.precondition,
+        invalidation: transition.invalidation,
+        receiptType: transition.receipt,
+      })
     },
   )
 
-  it('rejects implied edges, stale versions and missing authority without changing state', () => {
+  it('rejects implied edges and stale versions without changing state', () => {
     const snapshot: G24LifecycleSnapshot = {
       state: 'preparing',
       version: 'preparing:v1',
       receipts: [],
     }
+    const pauseContinuing = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'pause_continuing',
+    ) as G24LifecycleTransition
     expect(
-      applyG24LifecycleTransition(snapshot, {
-        transitionId: 'pause_continuing',
-        fromVersion: 'preparing:v1',
-        afterVersion: 'paused:v1',
-        actorAndAuthoritySatisfied: true,
-        preconditionSatisfied: true,
-        idempotencyKey: 'bad-edge',
-        receiptId: 'bad-edge-receipt',
-      }),
+      applyG24LifecycleTransition(
+        snapshot,
+        lifecycleRequest(pauseContinuing, {
+          fromVersion: 'preparing:v1',
+          afterVersion: 'paused:v1',
+          idempotencyKey: 'bad-edge',
+          receiptId: 'bad-edge-receipt',
+        }),
+      ),
     ).toMatchObject({ accepted: false, reason: 'transition_edge_not_allowed', snapshot })
 
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
     expect(
-      applyG24LifecycleTransition(snapshot, {
-        transitionId: 'accept_intensive_proof',
-        fromVersion: 'preparing:stale',
-        afterVersion: 'intensive:v1',
-        actorAndAuthoritySatisfied: true,
-        preconditionSatisfied: true,
-        idempotencyKey: 'stale-edge',
-        receiptId: 'stale-edge-receipt',
-      }),
+      applyG24LifecycleTransition(
+        snapshot,
+        lifecycleRequest(accept, {
+          fromVersion: 'preparing:stale',
+          afterVersion: 'intensive:v1',
+          idempotencyKey: 'stale-edge',
+          receiptId: 'stale-edge-receipt',
+        }),
+      ),
     ).toMatchObject({ accepted: false, reason: 'from_version_mismatch', snapshot })
+  })
 
+  it.each(G24_LIFECYCLE_TRANSITIONS)(
+    'rejects wrong actor, authority, and precondition evidence for $id',
+    (transition) => {
+      const snapshot: G24LifecycleSnapshot = {
+        state: transition.from,
+        version: transition.from === 'none' ? null : `${transition.from}:v1`,
+        receipts: [],
+      }
+      const wrongActor = transition.actor === 'krish' ? 'named_leader_or_krish' : 'krish'
+      const base = lifecycleRequest(transition)
+      expect(
+        applyG24LifecycleTransition(snapshot, {
+          ...base,
+          actorClass: wrongActor,
+          actorRefs: wrongActor === 'krish' ? ['krish'] : ['leader:maya'],
+        }),
+      ).toMatchObject({ accepted: false, reason: 'actor_or_authority_invalid', snapshot })
+
+      expect(
+        applyG24LifecycleTransition(snapshot, {
+          ...base,
+          authorityVersionRef: '',
+        }),
+      ).toMatchObject({ accepted: false, reason: 'actor_or_authority_invalid', snapshot })
+
+      expect(
+        applyG24LifecycleTransition(snapshot, {
+          ...base,
+          preconditionEvidenceRefs: [],
+        }),
+      ).toMatchObject({ accepted: false, reason: 'precondition_unsatisfied', snapshot })
+    },
+  )
+
+  it('rejects an unadvanced lifecycle version and duplicate receipt identity', () => {
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
+    const preparing: G24LifecycleSnapshot = {
+      state: 'preparing',
+      version: 'preparing:v1',
+      receipts: [],
+    }
     expect(
-      applyG24LifecycleTransition(snapshot, {
-        transitionId: 'accept_intensive_proof',
-        fromVersion: 'preparing:v1',
-        afterVersion: 'intensive:v1',
-        actorAndAuthoritySatisfied: false,
-        preconditionSatisfied: true,
-        idempotencyKey: 'no-authority',
-        receiptId: 'no-authority-receipt',
-      }),
-    ).toMatchObject({ accepted: false, reason: 'actor_or_authority_invalid', snapshot })
+      applyG24LifecycleTransition(
+        preparing,
+        lifecycleRequest(accept, { afterVersion: 'preparing:v1' }),
+      ),
+    ).toMatchObject({ accepted: false, reason: 'after_version_must_advance', snapshot: preparing })
+
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const first = applyG24LifecycleTransition(
+      { state: 'none', version: null, receipts: [] },
+      lifecycleRequest(open, { receiptId: 'receipt:shared' }),
+    )
+    expect(
+      applyG24LifecycleTransition(
+        first.snapshot,
+        lifecycleRequest(accept, {
+          receiptId: 'receipt:shared',
+          idempotencyKey: 'accept:different-key',
+        }),
+      ),
+    ).toMatchObject({ accepted: false, reason: 'receipt_id_collision', snapshot: first.snapshot })
   })
 
   it('makes an idempotent retry return the recorded state without a duplicate receipt', () => {
     const initial: G24LifecycleSnapshot = { state: 'none', version: null, receipts: [] }
-    const request = {
-      transitionId: 'open_preparation' as const,
-      fromVersion: null,
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const request = lifecycleRequest(open, {
       afterVersion: 'preparing:v1',
-      actorAndAuthoritySatisfied: true,
-      preconditionSatisfied: true,
       idempotencyKey: 'open:one',
       receiptId: 'receipt:open:one',
-    }
+    })
     const first = applyG24LifecycleTransition(initial, request)
     const retry = applyG24LifecycleTransition(first.snapshot, request)
     expect(retry).toMatchObject({ accepted: true, reason: 'idempotent_replay' })
@@ -830,24 +1255,27 @@ describe('G24 engagement lifecycle', () => {
 
   it('rejects reuse of an idempotency key for a different transition request', () => {
     const initial: G24LifecycleSnapshot = { state: 'none', version: null, receipts: [] }
-    const first = applyG24LifecycleTransition(initial, {
-      transitionId: 'open_preparation',
-      fromVersion: null,
-      afterVersion: 'preparing:v1',
-      actorAndAuthoritySatisfied: true,
-      preconditionSatisfied: true,
-      idempotencyKey: 'open:one',
-      receiptId: 'receipt:open:one',
-    })
-    const collision = applyG24LifecycleTransition(first.snapshot, {
-      transitionId: 'accept_intensive_proof',
-      fromVersion: 'preparing:v1',
-      afterVersion: 'intensive:v1',
-      actorAndAuthoritySatisfied: true,
-      preconditionSatisfied: true,
-      idempotencyKey: 'open:one',
-      receiptId: 'receipt:different',
-    })
+    const open = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'open_preparation',
+    ) as G24LifecycleTransition
+    const accept = G24_LIFECYCLE_TRANSITIONS.find(
+      ({ id }) => id === 'accept_intensive_proof',
+    ) as G24LifecycleTransition
+    const first = applyG24LifecycleTransition(
+      initial,
+      lifecycleRequest(open, {
+        afterVersion: 'preparing:v1',
+        idempotencyKey: 'open:one',
+        receiptId: 'receipt:open:one',
+      }),
+    )
+    const collision = applyG24LifecycleTransition(
+      first.snapshot,
+      lifecycleRequest(accept, {
+        idempotencyKey: 'open:one',
+        receiptId: 'receipt:different',
+      }),
+    )
     expect(collision).toMatchObject({ accepted: false, reason: 'idempotency_key_collision' })
     expect(collision.snapshot).toEqual(first.snapshot)
   })
@@ -983,6 +1411,75 @@ describe('G24 bounded enrichment execution', () => {
         attempt: { ...attempt, receiptId: 'enrichment-receipt:collision' },
       }),
     ).toThrow('execution_idempotency_key_collision')
+    expect(() =>
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: first.receipts,
+        attempt: { ...attempt, elapsedMs: 501 },
+      }),
+    ).toThrow('execution_idempotency_key_collision')
+    expect(() =>
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: first.receipts,
+        attempt: {
+          ...attempt,
+          idempotencyKey: 'enrichment-attempt:different',
+        },
+      }),
+    ).toThrow('execution_receipt_id_collision')
+  })
+
+  it.each([
+    [{ receiptId: '', idempotencyKey: 'key', elapsedMs: 10, outcome: 'failed' }, 'empty receipt'],
+    [{ receiptId: 'receipt', idempotencyKey: '', elapsedMs: 10, outcome: 'failed' }, 'empty key'],
+    [
+      { receiptId: 'receipt', idempotencyKey: 'key', elapsedMs: -1, outcome: 'failed' },
+      'negative elapsed time',
+    ],
+    [
+      { receiptId: 'receipt', idempotencyKey: 'key', elapsedMs: 10, outcome: 'unknown' },
+      'unknown outcome',
+    ],
+  ] as const)('rejects a malformed execution envelope: $1', (attempt, _label) => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:v1',
+      maximumWallClockMs: 2_000,
+      maximumAttempts: 2,
+    })
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: [],
+        attempt: attempt as never,
+      }).receipt,
+    ).toMatchObject({ status: 'malformed_rejected', sourceRef: null })
+  })
+
+  it('holds a claimed success that has no source reference', () => {
+    const selector = selectedFixture('highExternalLowInternal')
+    const plan = createG24EnrichmentExecutionPlan(selector, {
+      planVersion: 'enrichment-plan:v1',
+      maximumWallClockMs: 2_000,
+      maximumAttempts: 2,
+    })
+    expect(
+      recordG24EnrichmentAttempt({
+        plan,
+        currentSelector: selector,
+        priorReceipts: [],
+        attempt: {
+          receiptId: 'receipt:no-source',
+          idempotencyKey: 'attempt:no-source',
+          elapsedMs: 10,
+          outcome: 'succeeded',
+        },
+      }).receipt,
+    ).toMatchObject({ status: 'failed_held', sourceRef: null })
   })
 
   it('holds attempts beyond the exact attempt budget', () => {

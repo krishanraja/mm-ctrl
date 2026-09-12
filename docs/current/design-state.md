@@ -4,9 +4,9 @@ Status: Current production release record; superseded as the material evolution 
 Owner: Mindmaker
 Last verified: 2026-09-12 for state routing; the Blind Spot release evidence below remains unchanged
 
-This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine and proposed G24 R5 dependent Release watermark repair. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
+This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine, founder-locked G24 R1 through R5 architecture and repaired local headless Crossing kernel under independent byte review. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
 
-**The one current evolution action:** extend the verified local headless Crossing into the remaining G24.C semantic and execution attacks, then independently gate the exact bytes. Customer-facing UI and every external action remain closed.
+**The one current evolution action:** independently gate the exact repaired headless Crossing bytes. If they clear, close trusted canonical ingress and continue the remaining G24.C semantic attacks. Customer-facing UI and every external action remain closed.
 
 ## Current phase
 

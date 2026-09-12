@@ -129,7 +129,8 @@ check(
   designState.includes('G24 R2 adaptive intelligence and experience extension')
     || designState.includes('G24 R3 executable trust-seam repair')
     || designState.includes('G24 R4 terminal trust-seam candidate')
-    || designState.includes('G24 R5 dependent Release watermark repair'),
+    || designState.includes('G24 R5 dependent Release watermark repair')
+    || designState.includes('founder-locked G24 R1 through R5 architecture'),
 )
 
 for (const [name, content] of [

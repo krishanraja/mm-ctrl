@@ -1,5 +1,6 @@
 import {
   G24_MINIMUM_CONTROL_KEYS,
+  fingerprintG24ControlGraph,
   fingerprintG24Watermarks,
   type G24ControlReference,
   type G24ControlRegistry,
@@ -11,7 +12,7 @@ import {
 } from './g24HeadlessCrossing'
 
 export const G24_FIXTURE_NOW = '2026-09-12T12:00:00.000Z'
-export const G24_FIXTURE_EXPIRY = '2026-10-12T12:00:00.000Z'
+export const G24_FIXTURE_EXPIRY = '2027-09-12T12:00:00.000Z'
 
 function control(key: string, dependencies: string[] = []): G24ControlReference {
   return {
@@ -116,27 +117,57 @@ function routeCandidate(
     useSpecificSufficient: eligible,
     counterevidenceTreated: eligible,
     reuseOrigin: 'same_case',
+    originCaseRef: 'case:maya:decision-014',
+    reuseEvidenceRef: 'evidence:maya:decision-014:v1',
+    publicSourceRef: null,
+    immutableContentVersion: null,
     immutableReference: true,
     containsPrivateReasoning: false,
+    trustedEvaluationVersion: 'trusted-evaluation:v1',
     rejectionReasons: [],
   }
 }
 
 function baseSelectorInput(version: string): G24SelectorInput {
+  const controls = buildG24FixtureControls()
+  const applicableControlKeys = Object.keys(controls)
+    .filter((key) => key !== 'unrelated_lineage_version')
+    .sort()
+  const controlGraphFingerprint = fingerprintG24ControlGraph(applicableControlKeys, controls)
   return {
     selectorResultVersion: version,
+    currentCaseRef: 'case:maya:decision-014',
+    evidenceNamespace: 'customer:maya/private/case:decision-014',
+    purposeRef: 'Resolve the quality-standard transfer gap.',
+    audienceRef: 'named_leader_private',
+    sensitivityRef: 'private',
     acceptedDecisionFrameRef: 'decision-frame:ai-marketing-operating-model:v3',
     decisionRequirementRef: 'decision-requirement:proof-before-rebuild:v2',
     evidenceCoverageRef: 'coverage:decision-014:v4',
     trustedAsOf: G24_FIXTURE_NOW,
     decisionConsequence: 'consequential',
     controlRootKeys: [...G24_FIXTURE_CONTROL_ROOTS],
-    controls: buildG24FixtureControls(),
+    controlManifest: {
+      manifestVersion: 'control-manifest:v1',
+      applicableControlKeys,
+      graphFingerprint: controlGraphFingerprint,
+    },
+    controls,
     evidenceState: 'gap',
     unresolvedEvidenceRefs: ['gap:customer-quality-result'],
     expectedMaterialEffect:
       'Distinguish a bounded proof of the new operating model from an immediate division rebuild.',
-    trustedEvaluation: true,
+    trustedEvaluation: {
+      evaluationVersion: 'trusted-evaluation:v1',
+      decisionRequirementVersion: 'decision_requirement_version:v1',
+      evidenceCoverageVersion: 'evidence_coverage_version:v1',
+      trustedCutoffVersion: 'trusted_cutoff:v1',
+      epistemicPolicyVersion: 'epistemic_policy_version:v1',
+      independentChallengerResultVersion: 'independent_challenger_result_version:v1',
+      controlManifestVersion: 'control-manifest:v1',
+      controlGraphFingerprint,
+      trustedAsOf: G24_FIXTURE_NOW,
+    },
     challengerResult: 'none_found_within_declared_boundary',
     challengerSearchBoundary: 'Current decision sources through the trusted cutoff.',
     candidates: [],
@@ -166,6 +197,7 @@ export function buildG24CrossingSelectorFixtures(): Record<string, G24SelectorIn
   ]
 
   const lowExternalLowInternal = baseSelectorInput('selector:low-external-low-internal:v1')
+  lowExternalLowInternal.purposeRef = 'Resolve the incentive and quality-standard conflict.'
   lowExternalLowInternal.evidenceState = 'contradiction'
   lowExternalLowInternal.unresolvedEvidenceRefs = [
     'contradiction:tool-capability-versus-behaviour-change',
@@ -231,8 +263,11 @@ export function buildExactG24ReleaseAuthority(
 ): G24ReleaseAuthority {
   return {
     authorityVersion,
+    authorityControlVersion:
+      projection.controllingWatermarks.find(({ key }) => key === 'authority_version')?.version ?? '',
     actor: 'named_leader',
     projectionVersion: projection.projectionVersion,
+    projectionFingerprint: projection.projectionFingerprint,
     purpose: projection.purpose,
     audience: projection.audience,
     selectorResultVersions: [...projection.selectorResultVersions],

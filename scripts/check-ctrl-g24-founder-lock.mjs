@@ -43,11 +43,11 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the headless build gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Complete the remaining local G24.C semantic attacks'),
+  state.includes('**CURRENT_NEXT_ACTION:** Independently gate the exact repaired headless Crossing bytes'),
 )
 check(
   'design state remains inside the headless build gate',
-  designState.includes('extend the verified local headless Crossing into the remaining G24.C'),
+  designState.includes('independently gate the exact repaired headless Crossing bytes'),
 )
 check('lock contains no em dash', !lock.includes('—'))
 

@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel verified, not connected to product runtime
+**State:** local deterministic kernel under repaired-byte re-review, not connected to product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -8,26 +8,27 @@
 
 The new pure TypeScript kernel and synthetic fixture pack implement the backstage crossing from current decision evidence to exactly one governed next route. They do not call a model, network, database, browser, provider or customer surface.
 
-The verified mechanics are:
+Within the caller-supplied structural envelope, the tested mechanics are:
 
-- complete transitive control closure, with the R5 named controls treated as a floor rather than an exhaustive list;
-- a strict runtime schema boundary that converts malformed or novel envelopes into a non-actionable hold rather than an exception or guessed route;
+- transitive control closure relative to a versioned applicable-control manifest and dependency graph, with the R5 named controls treated as a floor rather than an exhaustive list;
+- a strict structural envelope boundary that converts malformed or novel values into a non-actionable hold rather than an exception or guessed route;
 - exactly one result from `reuse`, `enrich`, `ask`, `session` or `abstain_hold`;
 - fail-closed behaviour for missing, unknown, mismatched, future-dated, expired, invalid and indeterminate control;
 - separation of invalid control from a valid evidence gap, ambiguity or contradiction;
+- trusted semantic outcomes bound to the exact current decision requirement, evidence coverage, cutoff, policy, challenger and evaluation versions rather than accepted through a planner-authored confidence flag;
 - least-burden selection only after route capability, permission, freshness, audience, provenance independence, use-specific sufficiency, counterevidence, deadline, budget and material-effect eligibility;
-- private cross-case reasoning blocked, with only current immutable public-reference reuse admitted outside the same case;
+- declared private cross-case reuse rejected, with structurally complete immutable public-reference reuse admitted outside the same case;
 - one versioned question or session atom with exact content, control, purpose, audience, channel, timing, evidence and decision-frame approval binding;
 - all four honest question exits without adverse inference, forced re-ask or automatic session escalation;
-- immutable answer evidence, rebuildable case effects, pending human-owned proposals and correction repair across named decisions;
+- immutable answer evidence, rebuildable case effects, pending human-owned proposals and correction impact derived from a versioned supplied dependency graph;
 - one answer retiring a now-obsolete prepared question, an optional voice critical incident creating only a reviewable learning proposal, and a later different decision where prior judgement is either reused or blocked by a countercase;
-- all six engagement states and exactly thirteen allowed receipt-bearing transitions, separate from Release;
-- pending Release compilation against each selector result and its complete controlling watermark closure;
+- all six engagement states and exactly thirteen allowed receipt-bearing transitions, each structurally bound to its exact actor class, authority class, precondition class, version advance, receipt type and invalidation effect, separate from Release;
+- pending Release compilation against each selector result and its controlling watermark closure relative to the supplied manifest and graph;
 - before-use invalidation when any recorded dependency changes, including the independent challenger while canonical source and Brain versions stay fixed;
 - no global invalidation when an unrelated lineage changes;
 - an append-only invalidation receipt with no approval, delivery or external side effect; and
-- a fresh trusted evaluation plus a new exact named-leader authority after rebuild.
-- bounded enrichment attempts that hold slow, failed, stale, over-budget and duplicate-collision outcomes without awarding standing or changing the Brain.
+- a fresh structurally bound trusted evaluation plus a new exact named-leader authority after rebuild; and
+- bounded enrichment attempts that hold malformed, slow, failed, stale, over-budget and duplicate-collision outcomes without awarding standing or changing the Brain.
 
 ## Deterministic fixtures
 
@@ -45,18 +46,18 @@ The fixture range includes:
 10. a later materially different decision that permits or blocks judgement transfer; and
 11. related and unrelated lineage mutations;
 12. low-value work that does not earn an interruption;
-13. forbidden private cross-case reuse and permitted immutable public reference reuse; and
+13. structurally declared private cross-case reuse and immutable public reference reuse; and
 14. malformed, slow, failed, duplicate, stale and over-budget execution envelopes.
 
 The identities and internal evidence are wholly synthetic. No simulated consent or invented private material about a real person is present.
 
 ## Verification evidence
 
-- `npm run brain:g24:headless-check`: 84 checks passed in one file.
+- `npm run brain:g24:headless-check`: 110 checks passed in one file.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.
-- The exact six-state, thirteen-edge lifecycle table passed one positive check per edge; implied edges, stale versions, missing authority and idempotency collisions were rejected without state change.
+- The exact six-state, thirteen-edge lifecycle table passed one positive check per edge; every edge rejected wrong actor class, empty authority version and missing precondition evidence. Implied edges, stale or unadvanced versions, duplicate receipt identities and idempotency collisions were rejected without state change.
 - `npm run brain:g21:check`: 66 adjacent operator-Brain checks passed across six files.
 - `npm run docs:check`: passed, including the frozen G24 R1 through R5 contracts, R5 council and founder-lock verifier.
 - `npm run typecheck`: no new TypeScript errors against the repository baseline.
@@ -80,6 +81,8 @@ This is a semantic and deterministic data-and-intelligence kernel, not productio
 - decision-quality lift, customer return, willingness to pay or any marketing claim.
 
 Those remain at G24.C, G24.D and the named consented-data, runtime, founder, assisted-pilot, delivery and cutover gates. No interface should be polished around this kernel until its next semantic attacks are complete.
+
+The current pure function accepts a caller-supplied applicable-control manifest, dependency graph, controls, trusted time, evaluation bindings, actor references, authority references, precondition evidence and eligibility outcomes. It proves structural self-consistency, not their authenticity or completeness against canonical storage. Before any runtime integration, a server-only adapter must derive that envelope from authoritative stores, resolve canonical references and trusted time, derive rather than accept policy-owned eligibility, reject model-authored standing and pass only the sealed envelope into this kernel. Until that ingress exists and is attacked, no caller can treat structural validity as trusted standing.
 
 ## External-state receipt
 
