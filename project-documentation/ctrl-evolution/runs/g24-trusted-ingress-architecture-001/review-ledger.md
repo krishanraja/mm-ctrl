@@ -179,3 +179,22 @@ Both technical reviewers verified the exact frozen archive and rejected R6. The 
 8. Outbox dispatch lacked an exact reaper path from orphaned `dispatched` to immutable ambiguity. Attempt state mutation lost the dispatched identity, and reconciliation evidence did not bind the exact attempt, ordinal, fence and worker.
 
 R6 did permanently close conceptual overlay ambiguity, establish one effective artifact, register all sixteen operations, preserve the historical replay envelope, retain thirteen-set CAS, make Release watermarks complete but extensible and remove caller-carried proof bytes. R7 must preserve those gains while closing the eight executable seams. The founder-locked semantic `edit` action remains: R7 will implement it as safe staging followed by exact presentation and later approval, not remove it from the product vocabulary. No adapter, database or runtime implementation opens from R6.
+
+## R7 repair rationale before review
+
+Krish said “yes to both”: continue the contract repair and keep the complete reasoning durable. No new product decision was inferred. The technical repair therefore keeps the approved product experience fixed and changes only executable trust semantics.
+
+The chronology matters. R6 passed every declared check yet was still vetoed because those checks observed named fields rather than the whole semantic graph. The failure was not lack of specification volume. It was that silent JavaScript `undefined`, universal authority ordering, unconditional write sets, caller-asserted presentation, mutable consumption, generic proof prose and mutable outbox attempts each left an implementer room to build two incompatible systems that both appeared conforming.
+
+R7 responds by making ambiguity structurally difficult:
+
+1. It starts from R6's exact effective JSON shape, rejects every new undefined value before serialization and resolves every used type and reference through one closed graph.
+2. It places registry lookup before fresh authority so replay can remain historical disclosure rather than accidentally becoming re-execution.
+3. It gives approval, release and lifecycle execution branch-specific reads, writes and forbidden writes.
+4. It distinguishes server challenge issuance, actual foreground display and explicit human acknowledgement. This preserves the recurring product lesson that generated, prefetched or hidden content is not something a human has seen.
+5. It makes lifecycle issue receipts immutable and records combination and transition consumption separately, with exact nonce and pair-collision outcomes.
+6. It replaces proof-family advice with exact authoritative table, schema, row identity, fingerprint, equality, current-state and failure mappings.
+7. It defines canonical bytes for every supported field shape and gives every authority-bearing record family a stable fingerprint domain and ordered preimage.
+8. It replaces mutable outbox attempts with append-only reservation, dispatch, terminal and reconciliation events, including the exact lease-expiry path for an orphaned dispatch.
+
+This is deliberately invisible product infrastructure. It should make the later experience feel simpler and safer, not expose receipts, TTLs, hashes or state-machine language to a leader. R7 remains unimplemented and awaits exact independent attack.
