@@ -248,3 +248,33 @@ R8 converts each R7 ambiguity into one testable identity:
 8. The checker uses own-property reference traversal and attacks evaluator parity, domain uniqueness, complete fingerprint preimages, proof-field coverage, claim authority and exact transition conditions.
 
 The expected user experience is unchanged: one simple review, one deliberate approval and no visible infrastructure ceremony. R8 remains unimplemented and awaits exact independent attack.
+
+## Review round 8
+
+**Frozen commit:** `87447e58c956bfb0e1ca989bb2f9aa98bbf40426`
+
+**Frozen tree:** `f47e5c73bb90983959f05b397a48a58557175418`
+
+**Human contract blob:** `1cba95b21248953a22d2a8e5420ddb64b7c6ca64`
+
+**Machine contract blob:** `e6f3434d9ee591756be646bc726dd6ee0af56f6e`
+
+**Checker blob:** `a793c1a054d20f2838679a20f0d1d56eaa37c4f0`
+
+**Materializer blob:** `196247dd966a896c5cab5b703d82eb5f4ead6ce9`
+
+**QA blob:** `d04500077ed8f2337ce36021f9a4d67bdd6e1be6`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the frozen archive and rejected R8. Exact generation, forty-nine declared mutations, the full documentation suite and all 211 kernel tests passed. The separate founder calibration again found high alignment and no product veto. It confirmed that authenticated foreground attestation is the honest human boundary, while warning never to claim it proves attention or comprehension and never to expose its machinery.
+
+R8 preserved evaluator operation parity, one effect vocabulary, stable lifecycle retry identity, complete fingerprint links and a materially stronger causal outbox direction. Five implementation roots remain:
+
+1. Structural watermark members preserve control identifiers but omit `lineage_ref` and `version_ref`. A controlling version change can therefore produce the same set, and the set preimage still names values absent from the member schema.
+2. Proof rows remain locator shells rather than content-bearing authority. Candidate members, policy content, intervention content, answer-chain order, dependency edges and lifecycle preconditions are absent. Several semantic fingerprints are incorrectly reused as row-envelope fingerprints, allowing same-scope row splicing or different content under the same declared proof shape.
+3. Visibility secondary idempotency names a stable attestation projection but defines no schema, preimage or collision-before-fresh-evaluation phase. Prior-acknowledgement failure conflicts with promised same-projection success.
+4. Evaluator export values are maps used as if they were schemas. Closed operation and proof export-map schemas and proof-export parity are absent.
+5. The outbox lacks a typed genesis event, exact event-kind-to-payload binding and a durable invocation-start record between dispatch and provider call. Without that record, recovery cannot distinguish a committed dispatch never called from a call whose outcome is unknown.
+
+R9 must make each claimed authority reconstructible from actual bytes or exact set members. It must preserve the complete control identity, close the evaluator manifest, order visibility collision resolution before fresh evaluation and turn provider invocation into its own immutable causal event. No product decision is required and no adapter, database or runtime work opens from R8.
