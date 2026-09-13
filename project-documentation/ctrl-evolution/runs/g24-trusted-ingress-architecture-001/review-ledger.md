@@ -736,3 +736,18 @@ Replay will be a pure historical projection: every field except replay status, s
 Lifecycle consumption will fingerprint and resolve its authority-bearing role. Graph checking will reject extra path segments and duplicate joins, while lifecycle vocabulary will scan both keys and values and admit only exact field-reference punctuation.
 
 R19 changes no visible product behaviour and opens no implementation or external action.
+
+## Review round 19
+
+**Frozen commit/tree:** `0851d07d99d4f25ce315c7d7b2e60f75f97bb46d` / `6c69a32065f164c920330380578928a9a87b9084`
+
+**Human / machine / QA:** `8c98c7b7fc244418a2d488edbdd1f1f3d065081d` / `e25c5b4a3e073e827a348355ce0ca7024aab3d5a` / `7c20d371b58878f4b2fd6017d8546b54e6dfe22a`
+
+**Checker / materializer / founder checker:** `3161cea5b3f3b1b730249203f29010dd81df695f` / `0746d04e8b6a2d9afd1113f79d597eab0067bcf6` / `338eebaa993ed95a5d56084c48c75cef2fb3af33`
+
+**Machine SHA-256:** `017bab6d0e6e96341ae9ba4341e1f77c8452730e720c7e8a6c165e57b7079dd7`
+**Adjudication:** `VETO`
+
+Both technical reviewers verified and rejected R19 despite all declared checks and 211 kernel tests passing. Founder alignment remained high with no product veto or decision. The lifecycle-role repair, exact committed replay, result unions, graph paths, ambiguity actor identity and provider failure closure survived.
+
+Four roots remain: terminal-consumption and result fingerprints form an impossible hash cycle while obsolete branch receipts remain; durable committed holds and held replay lack authoritative rows and derivation; case actor identity is caller data rather than the server session principal; and case-control holds lack canonical fingerprints and total malformed/exhaustion outcomes. R20 must close only those roots and keep all implementation and external action closed.
