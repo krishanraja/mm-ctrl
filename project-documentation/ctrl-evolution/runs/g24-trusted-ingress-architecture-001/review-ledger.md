@@ -910,3 +910,34 @@ R24 made authority visible to the architecture but did not yet make ordering, re
 The result union must be total. Committed retries replay without new work. Every hold has explicit persistence and replay behavior, and no hold can acquire a committed receipt.
 
 R25 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 25
+
+**Frozen commit/tree:** `d1033ec3feba099a50defa2c4f9b2db53e7f32bc` / `5bbc9bda2da993b1f65b58cb51f2df1be4025122`
+
+**Human / machine / QA:** `a451b9c7606c426fff9dddfc31cfe8645e799f7a` / `c3c3fb3ba4047471b253e17ef803a47f39372e7c` / `3f5b6355d2706c2446e4acb2e727892caeca9339`
+
+**Checker / materializer / founder checker:** `942a0685e66b58aa971f48e4a4b9235e7a2c5a47` / `f7d17d34eee2b2752e4585b2ba9e33ba95b5744b` / `1676fc6252fbd98c9de93c77129eed7f556b767e`
+
+**Machine SHA-256:** `8def0d4f99db236425f0b69a98f2987176d3dc5e6fad46594103b87579d716f5`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R25 despite exact materialization, forty-eight mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its server-owned ordering direction, registry-first replay, distinct bootstrap and admin proofs, nonce ledger, schema-bound authority artifacts and total result intent survive. Six executable roots remain:
+
+1. The old selector protocol and new partition-head protocol coexist. R26 needs one authority-order protocol with exact partition schema refs, database uniqueness, head-to-max-row equality and atomic postconditions.
+2. Registry rows still use nullable branch fields. Original committed and persisted-hold rows must be separate closed variants, while replay is a deterministic projection rather than a durable registry state.
+3. Replay results carry dynamic `replayed_at`, so identical concurrent retries are not byte-deterministic. Any time evidence must be a separate uniquely keyed replay event.
+4. Nonce uniqueness uses a generic verifier ref. Bootstrap requires a family-specific verifier-set fingerprint over two distinct signer and key identities, while admin and delegated proofs require their exact verifier identity. Invalid or unverified proofs must never poison a nonce.
+5. Live assertion and projection artifact rows do not const-bind their expected schemas or persist a parsed-content fingerprint under those exact schemas.
+6. Authority writer names and session proof rules conflict. One executor must own all closed writes, and session evidence must require exact current issuer and evaluator authority if both trusted joins remain.
+
+No founder choice is required. R26 must close only these selector, branch, nonce, artifact and authority-coherence seams, preserve R25 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R26 repair rationale before review
+
+R25 introduced the right stores but left two interpretations of current selection and let branch-specific authority collapse back into nullable rows. R26 must make the partition head and unique maximum row one invariant, and make original committed and held outcomes the only durable registry states.
+
+Nonce consumption must be proof-family-specific and occur only after successful proof verification. Session authority must be exact issuer-and-evaluator conjunction, never an ambiguous alternative.
+
+R26 changes no visible product behaviour and opens no adapter, database, runtime or external action.
