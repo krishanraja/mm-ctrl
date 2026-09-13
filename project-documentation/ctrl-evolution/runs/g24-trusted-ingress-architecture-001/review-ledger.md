@@ -1342,3 +1342,34 @@ R38 made authority breadth visible but did not make every replay binding executa
 The manifest envelope, row schema, enforcement constants, negative fixtures and hash contracts are pinned outside candidate data. Every semantic ref resolves through an explicit one-owner map, and every declared hash is recomputed from its literal domain-separated canonical preimage.
 
 R39 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 39
+
+**Frozen commit/tree:** `a1f77e801ad0e69e820c445b99b7083f153e6854` / `7834ee1ea160a0e5be9ba913383de1a606548af9`
+
+**Human / machine / QA:** `be33c81d19225fa88e14886fe4aa285bfecc9899` / `895a6f87a80f2c6715e24f51e9ffcf5fcd025393` / `1757047d970338c088afd4076746d9d8eba8f7c9`
+
+**Checker / materializer / founder checker:** `c2326214d3777fc0f8ca130f4fa6b48919ebe457` / `7b267538e478baa422e4965082285593e7e2f57a` / `9099ab26bfd263d9c924271bf0f7aadee6b01827`
+
+**Machine SHA-256:** `4e97cea81b88da7d712d8e2ab8ee1b80e29a76992a419d2a4ef9d6cc331772c7`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R39. Its twenty executable durable-selection bindings, four branch-class fixtures, self-sealed manifest envelope, literal hash preimages and explicit dependency-owner direction survive. Six executable roots remain:
+
+1. Three inherited replay bindings still use `selected_variant` pseudo-paths: two hold-row sources and one replay-payload fingerprint source. R40 must resolve both hold and both payload variants through exact typed properties.
+2. Replay derivation still declares R38 registry and binding-authority versions while referencing R39 objects. Every authority reference and version pair must resolve exactly.
+3. The classifier fingerprint uses an undocumented `row` wrapper while its declared preimage describes a different representation. R40 needs one closed wrapper schema and exact independent recomputation.
+4. Canonical JSON accepts non-finite numbers, negative zero and unsupported JavaScript values. Strict recursive domain validation must precede every canonicalization and hash.
+5. Dependency ownership still ignores unresolved first segments and compound aliases. Every semantic reference occurrence needs an exact source path, literal value and one manifested owner, including operation case, derived and workload predicates.
+6. Restart fixtures contain projections rather than stored durable artifacts. R40 must persist canonical registry and hold values, bytes, hashes and fingerprint preimages, then re-resolve and recompute them after simulated restart before classification.
+
+No founder choice is required. R40 must close only these typed-reference, exact-version, fingerprint-preimage, canonical-domain, semantic-owner and durable-restart seams, preserve R39 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R40 repair rationale before review
+
+R39 closed the newly added durable bindings but did not remove three inherited pseudo-paths or prove restart from actual stored artifacts. R40 makes every replay binding discriminator-aware, binds exact authority versions, gives the classifier one closed fingerprint preimage and rejects every unsupported canonical value before hashing.
+
+Every semantic reference occurrence is now enumerated with one owner and included in transitive authority hashes. Restart reconstructs the original registry and hold records from canonical bytes and independently recomputes their fingerprints before recovering the durable selection.
+
+R40 changes no visible product behaviour and opens no adapter, database, runtime or external action.
