@@ -645,3 +645,47 @@ The root case binding will remain internal: one explicitly named case-control-pl
 Ambiguity will remain conservative but become exact. Worker and reaper evidence must carry the event-specific reason and authenticated recorder selected by the same outcome row. Non-lease failures will be an explicit closed set with `at_least_one` semantics, so concurrent failures cannot create a fallthrough choice.
 
 R17 changes no visible product behaviour and opens no implementation or external action.
+
+## Review round 17
+
+**Frozen commit:** `0c7db13d1a70d1f9758c73d719b97165c4199be0`
+
+**Frozen tree:** `ac90df421c9c06d97a7d6eefa6df2d5ee1a9cc40`
+
+**Human contract blob:** `c2d0e61da0a6d792fe1fa5277f76831b6006f55c`
+
+**Machine contract blob:** `ca38baf41a45acdfefd93f15147b052f199bdfaf`
+
+**QA blob:** `680d3d882c76619a4d023d8724a69719d2696937`
+
+**Checker blob:** `48757a1166aae47ea44f2616440b961b7b543d66`
+
+**Materializer blob:** `2eb550c7dba223895509ac7b4f4935d3a61b17fd`
+
+**Founder-lock checker blob:** `0ff1ab0618ce4b76e00e1d505ca2281239f68b8d`
+
+**Machine SHA-256:** `2615ccfe048cfccfcc5ae10cc206419d28382295c0c801004638abc7033dfd2e`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R17. Exact materialization, thirty-three declared mutation probes, the documentation suite, founder lock and all 211 locked-kernel tests passed but remained non-dispositive. Founder calibration found high alignment, no product veto and no founder decision. It confirmed that bytes, schemas, receipts, row versions, grant seals, compare-and-swap, worker/reaper ambiguity and failure accounting must remain invisible. Migration-only bootstrap is acceptable only at this unimplemented seam; it cannot become permanent per-customer onboarding.
+
+R17 permanently separated canonical JSON bytes from fingerprint framing, bound result blobs to operation, exported schema, selected schema, branch and content, made response bytes content-bearing, and joined result blob, response blob and success in one atomic claim. It also named one internal case-control writer, split ambiguity reasons and recorder classes, persisted transition actors and closed provider failure codes. Five executable roots remain after reconciling both attacks:
+
+1. Result-schema derivation special-cases only `use_release`, but `approve_intervention` is also a discriminated union with three variants. Its selected schema is therefore required both to equal the exported union and to equal one variant, making every approval result impossible.
+2. Release terminal proof still joins deleted `result_schema_version` fields and gives its terminal fingerprint both universal and branch-specific authorities. No exact terminal proof can satisfy the stale join.
+3. Case rotation claims append-only rows while instructing the writer to update the prior row. Caller-supplied validity time permits backdating. The promised idempotent control receipt has no closed row, request fingerprint, replay rule or collision outcome.
+4. Ambiguity transition actors and evidence recorders are independently authorised but not required to be the same identity. Two different authorised workers or reapers can sign one claimed observation.
+5. Checker closure accepts `_ref_extra`, proof-map targets are not resolved mechanically against referenced schemas, and mutations can detach response identity or actor authority without failing.
+
+No founder choice is needed. R18 must inventory every discriminated result union, repair Release onto selected-schema and one fingerprint authority, make case rotation append-only and server-timed with a closed replay-safe control receipt, bind transition actor to payload recorder, and make the checker resolve every declared field path and exact authority relation.
+
+## R18 repair rationale before review
+
+R17 fixed the local objects but did not prove that every consumer still spoke their new vocabulary. R18 must treat schema evolution as a graph: every exported union member, proof join, terminal result, response equality and transition actor must resolve against the actual closed schema it references.
+
+Case history must remain truly append-only. Rotation will append a later server-timed row and leave the prior row untouched; the deterministic current selector makes the later row current. A closed control-operation registry and receipt will distinguish exact replay from same-key collision and bind the old and new row fingerprints.
+
+The universal result fingerprint will be the sole terminal payload authority. Branch schemas still validate structure and extract the declared receipt, but they will not compete for fingerprint identity. Ambiguity evidence and its transition will name the same authenticated recorder byte for byte.
+
+R18 changes no visible product behaviour and opens no adapter, database, runtime or external action.
