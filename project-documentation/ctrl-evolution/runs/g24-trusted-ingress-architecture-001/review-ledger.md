@@ -751,3 +751,34 @@ R19 changes no visible product behaviour and opens no implementation or external
 Both technical reviewers verified and rejected R19 despite all declared checks and 211 kernel tests passing. Founder alignment remained high with no product veto or decision. The lifecycle-role repair, exact committed replay, result unions, graph paths, ambiguity actor identity and provider failure closure survived.
 
 Four roots remain: terminal-consumption and result fingerprints form an impossible hash cycle while obsolete branch receipts remain; durable committed holds and held replay lack authoritative rows and derivation; case actor identity is caller data rather than the server session principal; and case-control holds lack canonical fingerprints and total malformed/exhaustion outcomes. R20 must close only those roots and keep all implementation and external action closed.
+
+## Review round 20
+
+**Frozen commit/tree:** `19443d23d92cc670a3cc1150327694ae879c2f6d` / `52d7cba70ced4a130dab90eb39aca1b3e51fdbb2`
+
+**Human / machine / QA:** `b020ed658e22849747cdef6093e808820f07b8a2` / `0b88f1c29f0234622e8c0f323e1c3930b1777e8c` / `62a8f46e33c821d1e41008b47aece31d4354ec66`
+
+**Checker / materializer / founder checker:** `59103a5acb8276e22e3e035e7c75276c11db6900` / `59f43bd0e51cdc50a83d5ebb1c7ca472e224e34d` / `2840343a2b254f5cfa9bb110038c6b1cab71ed0c`
+
+**Machine SHA-256:** `1d8f062eee31f7b29ac9383ac7f06525f7b4e256091103ef7093ce29c1434a5c`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R20 despite exact materialization, thirty-four declared mutation probes, the documentation chain, founder lock and all 211 locked-kernel tests passing. The acyclic Release precommit sequence, removal of active legacy branch receipts, universal outbox result lineage, committed-hold row and blob, server-session actor intent, total case-control outcomes and exact lifecycle property-key direction survive as requirements. Six executable roots remain:
+
+1. The operation-result schema inventory still names the stale R12 `use_release` union and R6/R11 branches. It is not bound to the effective R20 union and branch schema versions.
+2. The inherited `held` and `replayed_held` response variants lack exact schema versions and object types. The committed-hold row, blob and replay derivation therefore cannot bind one exact response schema.
+3. Session and revocation authority are prose rather than closed evidence. No trusted issuer and evaluator identities, server-derived principal row, account-to-stable-actor join, expiry, standing, exact source identities, deterministic current selection or same-snapshot transaction and compare-and-swap obligations make the claimed actor executable.
+4. Case hold fingerprints have domains but no closed typed input schemas, exact unavailable sentinel bytes, correlation-id derivation, exhaustive admission-row-to-reason mapping, availability bits or canonical encoding contract.
+5. The Release issuance dependency graph is linear through outbox assembly. It does not branch after outcome selection, prove exactly one outbox genesis for pending delivery, prove an explicit no-outbox path for invalidation, then rejoin only at the atomic commit.
+6. The checker does not mutate these exact stale-schema, response-shape, session-authority, revocation-snapshot, hold-input and branch-DAG seams strongly enough to establish closure.
+
+No founder choice is required. R21 must close only these executable seams while preserving R20 byte-for-byte and keeping every runtime, customer, database and external action closed.
+
+## R21 repair rationale before review
+
+R20 established the intended identities but left some of their authorities as prose or stale references. R21 must bind every result and response to the exact effective schema, make live-session and revocation evidence closed and current in one transaction snapshot, and make each hold fingerprint a typed canonical function rather than a named domain.
+
+Release issuance must branch only after the result outcome is known. Pending delivery assembles exactly one outbox genesis; invalidated-before-use executes one explicit no-outbox assertion. Both branches rejoin only at the atomic commit.
+
+R21 changes no visible product behaviour and opens no adapter, database, runtime or external action.
