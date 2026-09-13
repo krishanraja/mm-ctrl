@@ -64,3 +64,31 @@ Both reviewers confirmed that R2 repaired the R1 checker bypass, candidate compl
 Two human-agency clarifications also carry into R3. Every replay returning protected bytes must recheck current authentication and case/audience eligibility. Only the named leader may change the semantic answer attributed to them; an operator may propose a transcription or attribution repair but cannot silently rewrite the leader's answer.
 
 R3 must also state that this registry covers only the currently verified kernel seam. It does not yet claim to implement the full leader-owned final call, Brain learning proposal or later customer relationship loop.
+
+## Review round 3
+
+**Frozen commit:** `6e965e8a4b2011e881f737b0860e3d471fe0d4d5`
+
+**Frozen tree:** `030bce8a96f3f83282c71cdee85bc11084030c09`
+
+**Human contract blob:** `3c7c160af855a952c074af205a0bad870a6e6890`
+
+**Machine contract blob:** `3998cd606c54fdd460758d7b594b26f0ed5ee071`
+
+**Checker blob:** `de268afdb7726e523921f6deb7f0f7a7160a717f`
+
+**QA blob:** `3ec24916a042c8d21dfedeaed6d77edaeec74fc9`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact bytes and rejected R3. The checker resisted direct semantic mutation, and R3 materially repaired typed intents, result storage, credential rotation, replay reauthorisation, operator answer ownership, set-name parity, evaluator versioning, abort-local proof state, outbox leases and limit mapping. The non-voting founder calibration found high alignment and no product choice requiring Krish. Seven remaining implementation ambiguities govern the R4 repair:
+
+1. Invalid requests could not satisfy the required held envelope because malformed or missing operation IDs and classes cannot be returned as valid canonical fields. A pre-admission rejection envelope is required, while held must be reserved for admitted operations.
+2. Approve, edit, hold and suppress shared one approval write and result. R4 must discriminate their effects so only approve or an exact newly versioned edit can confer approval; hold and suppress must remain nonapproval transitions.
+3. Principal variants lacked field schemas, actor and capability enums, case-specific equality predicates and an exact operation and lifecycle authorisation matrix.
+4. Result and proof families still used undefined schema labels. The evaluator ABI had no exact manifest digest, operation export map or unique-active-selection rule.
+5. Set-seal membership was named but the digest preimage framing remained ambiguous. Scalar-version inclusion was also left to "where applicable" rather than one exact per-operation map.
+6. The resolver closure was not bound to one transaction attempt, connection, principal, case, snapshot, bundle digest and owner family, and was not single-use. Held operations also had no durable terminal replay rule.
+7. The outbox omitted the authority-failure transition, canonical provider-idempotency guarantee owner and reconciliation evidence schema. Limit ordering grouped individual failures and omitted streaming raw transport, decompressed size, token, nesting, property and string ceilings.
+
+R4 must not reopen the product direction. It must close these exact backstage seams, extend the checker with negative fixtures and retain the same unimplemented local-only claim.

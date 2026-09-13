@@ -22,9 +22,17 @@ const r3Paths = {
   machine: 'project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r3.json',
   qa: 'project-documentation/ctrl-evolution/g24-trusted-ingress-r3-qa-record.md',
 }
+const r4Paths = {
+  human: 'project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r4.md',
+  machine: 'project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r4.json',
+  qa: 'project-documentation/ctrl-evolution/g24-trusted-ingress-r4-qa-record.md',
+}
 const r3Human = read(r3Paths.human)
 const r3 = parse(r3Paths.machine)
 const r3Qa = read(r3Paths.qa)
+const r4Human = read(r4Paths.human)
+const r4 = parse(r4Paths.machine)
+const r4Qa = read(r4Paths.qa)
 
 check('exact rejected R2 human bytes remain preserved', sha256(r2Paths.human) === '63ebf3a652a3a3a49febd493df0141942d9a51bc40fe893ecbcb2a96a19e962e')
 check('exact rejected R2 machine bytes remain preserved', sha256(r2Paths.machine) === '9d479ec45c1ae57bcff864968e534b6d803eb4338da87c535f0165abf5515089')
@@ -32,6 +40,12 @@ check('exact rejected R2 QA bytes remain preserved', sha256(r2Paths.qa) === '774
 check('exact R3 human bytes', sha256(r3Paths.human) === 'dc6d84e8aee45b3fcaa913a7b245cc8c4303f4deb319dd21ac98d6fb6d168cf0')
 check('exact R3 machine bytes', sha256(r3Paths.machine) === 'd20eb7930836cad1dd42fec67c853ee2571baf348cb335317a7509f3700e9db7')
 check('exact R3 QA bytes', sha256(r3Paths.qa) === '0a64cae0fa07e0a67a6b1ccc5a299439b40b426184c6b98ce192ebb1199b970b')
+check('exact R4 human bytes', sha256(r4Paths.human) === '658e34cca78d9b35e8994078892a87ef2d97c45f0ec92d58dd68955dc04b5004')
+check('exact R4 machine bytes', sha256(r4Paths.machine) === '4ff8bc3748deda96f94c2fac0ad5b698bd38200ce814b268c848ed8290973d59')
+check('exact R4 QA bytes', sha256(r4Paths.qa) === '7f967c29f69d9e53b344e332d7c6edb5bc212d7bbdcd8038a0503a7c40f5d69f')
+check('exact R4 human bytes', sha256(r4Paths.human) === '658e34cca78d9b35e8994078892a87ef2d97c45f0ec92d58dd68955dc04b5004')
+check('exact R4 machine bytes', sha256(r4Paths.machine) === '4ff8bc3748deda96f94c2fac0ad5b698bd38200ce814b268c848ed8290973d59')
+check('exact R4 QA bytes', sha256(r4Paths.qa) === '7f967c29f69d9e53b344e332d7c6edb5bc212d7bbdcd8038a0503a7c40f5d69f')
 
 check('R3 state is honest', r3.status === 'second_repair_candidate_under_independent_review' && r3.claim_limit === 'unimplemented_local_repair_contract_only')
 check('R3 exact predecessor', r3.supersedes_commit === '3f94599065528c52f59135a48f5d6c93494699f9')
@@ -137,10 +151,134 @@ check('QA preserves implementation limit', r3Qa.includes('No code, endpoint, dat
 const emDash = String.fromCodePoint(0x2014)
 check('R3 files contain no em dash', !r3Human.includes(emDash) && !r3Qa.includes(emDash))
 
+const r4OperationNames = ['select_intervention', 'create_intervention', 'approve_intervention', 'record_answer', 'correct_answer', 'record_answer_transcription_repair', 'apply_lifecycle_transition', 'compile_release', 'use_release', 'create_enrichment_plan', 'record_enrichment_attempt']
+const r4ProofFamilies = ['selector_result', 'intervention_approval', 'answer', 'correction', 'lifecycle', 'pending_release_and_authority', 'enrichment_plan', 'execution_receipt']
+const r4SetSeals = ['control_universe', 'applicable_controls', 'control_closure_edges', 'visible_sources', 'visible_assertions', 'accepted_brain_items', 'accepted_brain_relationships', 'route_capability_registry', 'receipt_chain_tips', 'evaluator_registry', 'provider_capability_registry']
+const r4LifecycleTransitions = ['open_preparation', 'accept_intensive_proof', 'close_preparation', 'continue_after_intensive_proof', 'renew_continuing_period', 'pause_intensive_proof', 'pause_continuing', 'resume_continuing', 'close_intensive_proof', 'close_continuing', 'close_paused', 'complete_close', 'open_new_preparation_after_close']
+const r4LimitOrder = ['raw_transport_bytes', 'decompressed_bytes', 'json_tokens', 'json_nesting_depth', 'json_property_count', 'string_code_units', 'escape_sequences', 'request_bytes', 'intent_bytes', 'answer_text_bytes', 'note_bytes', 'selected_rows', 'control_keys', 'control_edges', 'control_depth', 'visible_sources', 'visible_assertions', 'brain_items', 'brain_relationships', 'non_execution_receipts', 'execution_receipts', 'snapshot_bytes', 'evaluator_ms', 'database_statement_ms', 'operation_transaction_ms', 'serialization_retries']
+const r4NegativeFamilies = ['pre_admission_envelope', 'committed_hold_replay', 'approval_branch_effects', 'principal_operation_matrix', 'lifecycle_authority_matrix', 'result_payload_schemas', 'proof_bundle_schemas', 'evaluator_unique_active_and_artifact', 'set_seal_binary_framing', 'snapshot_cas_per_operation', 'resolver_binding_and_single_use', 'transaction_abort_poisoning', 'outbox_authority_and_payload', 'outbox_concurrency_and_crash', 'outbox_reconciliation', 'total_limit_order']
+
+const collectR4Failures = candidate => {
+  const found = []
+  const assert = (name, condition) => {
+    if (!condition) found.push(name)
+  }
+  const same = (left, right) => JSON.stringify(left) === JSON.stringify(right)
+
+  assert('identity', candidate.schema_version === 'ctrl.g24.trusted-canonical-ingress.r4.v1' && candidate.status === 'third_repair_candidate_under_independent_review')
+  assert('predecessor', candidate.supersedes?.commit === '6e965e8a4b2011e881f737b0860e3d471fe0d4d5' && candidate.supersedes?.tree === '030bce8a96f3f83282c71cdee85bc11084030c09' && candidate.supersedes?.human_blob === '3c7c160af855a952c074af205a0bad870a6e6890' && candidate.supersedes?.machine_blob === '3998cd606c54fdd460758d7b594b26f0ed5ee071' && candidate.supersedes?.qa_blob === '3ec24916a042c8d21dfedeaed6d77edaeec74fc9' && candidate.supersedes?.checker_blob === 'de268afdb7726e523921f6deb7f0f7a7160a717f')
+  assert('scope', candidate.scope?.verified_headless_kernel_seam === true && ['leader_final_business_call', 'accepted_brain_learning', 'complete_portable_release', 'customer_messaging', 'continuing_relationship', 'decision_quality_advantage', 'customer_comprehension_delight_or_value'].every(key => candidate.scope[key] === false))
+  assert('closed authority', ['adapter_implementation', 'runtime_connection', 'supabase_change', 'customer_data', 'external_research', 'model_call', 'external_send', 'deployment', 'merge', 'release', 'legacy_backend_deletion'].every(value => candidate.authority?.closed?.includes(value)))
+
+  assert('admission order', candidate.request_admission?.streaming_checks_before_materialization?.at(-1) === 'current_operation_authority' && same(candidate.request_admission?.admission_requires, ['authenticated_principal', 'valid_operation_id', 'valid_requested_case_ref', 'known_operation_class', 'exact_valid_intent', 'current_operation_authority']))
+  assert('pre-admission has no operation row or echo', candidate.request_admission?.pre_admission_failure?.result === 'request_rejected' && candidate.request_admission.pre_admission_failure.operation_registry_row === false && candidate.request_admission.pre_admission_failure.echo_invalid_request_value === false && candidate.request_admission.pre_admission_failure.persist_invalid_request_value === false)
+  assert('rejection schema cannot require request identity', same(candidate.request_rejected_schema?.exact_keys, ['status', 'correlation_id', 'rejection_code', 'evaluated_at']) && same(candidate.request_rejected_schema?.required, ['status', 'correlation_id', 'rejection_code', 'evaluated_at']) && candidate.request_rejected_schema?.additional_properties === false && ['operation_id', 'operation_class', 'requested_case_ref', 'intent'].every(key => candidate.request_rejected_schema?.forbidden?.includes(key)))
+  assert('rejection codes bounded', candidate.rejection_codes?.includes('raw_transport_bytes_exceeded') && candidate.rejection_codes?.includes('duplicate_json_key') && candidate.rejection_codes?.includes('not_authorized') && candidate.rejection_codes?.includes('service_temporarily_unavailable'))
+
+  assert('human principal closed', same(candidate.principal_schemas?.human_session?.properties?.actor_class?.values, ['krish_operator', 'authorized_operator', 'named_leader']) && candidate.principal_schemas?.human_session?.properties?.principal_kind?.const === 'human_session' && candidate.principal_schemas?.human_session?.additional_properties === false)
+  assert('workload principal closed', same(candidate.principal_schemas?.workload_identity?.properties?.capability_class?.values, ['selector_executor', 'intervention_compiler', 'release_compiler', 'enrichment_planner', 'enrichment_worker', 'delivery_worker', 'outbox_lease_reaper', 'provider_reconciler']) && candidate.principal_schemas?.workload_identity?.properties?.principal_kind?.const === 'workload_identity' && candidate.principal_schemas?.workload_identity?.additional_properties === false)
+  assert('case equality predicates', candidate.case_authority_bindings?.named_leader_predicate?.includes('equals_case_named_leader_ref') && candidate.case_authority_bindings?.krish_operator_predicate?.includes('equals_engagement_operator_ref') && candidate.case_authority_bindings?.authorized_operator_predicate?.includes('current_operator_grant_member'))
+  assert('operation authority exact', same(Object.keys(candidate.operation_authority ?? {}), r4OperationNames) && same(candidate.operation_authority?.correct_answer, ['named_leader_predicate_and_subject_of_original_answer']) && same(candidate.operation_authority?.approve_intervention, ['krish_operator_predicate']))
+  assert('workload predicates exact', same(Object.keys(candidate.workload_authority_predicates ?? {}), ['workload_selector_executor_predicate', 'workload_intervention_compiler_predicate', 'workload_release_compiler_predicate', 'workload_enrichment_planner_predicate', 'workload_enrichment_worker_predicate_and_matches_plan_assignment', 'workload_delivery_worker_predicate', 'workload_outbox_lease_reaper_predicate', 'workload_provider_reconciler_predicate']) && Object.values(candidate.workload_authority_predicates ?? {}).every(predicate => predicate.stable_workload_must_match_current_case_grant === true))
+  assert('lifecycle authority exact', same(Object.keys(candidate.lifecycle_authority ?? {}).filter(key => key !== 'two_party_receipt_schema'), r4LifecycleTransitions) && r4LifecycleTransitions.every(key => Array.isArray(candidate.lifecycle_authority?.[key]) && candidate.lifecycle_authority[key].length === 1))
+  assert('two-party lifecycle receipt exact', candidate.lifecycle_authority?.two_party_receipt_schema?.consumed_at_must_be_absent_before_use === true && candidate.lifecycle_authority?.two_party_receipt_schema?.consume_atomically_with_transition === true && candidate.lifecycle_authority?.accept_intensive_proof?.[0]?.includes('exact_case_actors_transition_and_predecessor'))
+
+  assert('approval branches exact', same(Object.keys(candidate.approval_effects ?? {}).filter(key => key !== 'discriminator'), ['approve', 'edit', 'hold', 'suppress']) && candidate.approval_effects?.approve?.delivery_eligible === true && candidate.approval_effects?.edit?.write_set?.includes('new_immutable_intervention_atom_version') && candidate.approval_effects?.hold?.delivery_eligible === false && candidate.approval_effects?.hold?.standing === 'not_approved' && candidate.approval_effects?.suppress?.delivery_eligible === false && candidate.approval_effects?.suppress?.reselection_eligible === false)
+  assert('approval nonapproval cannot issue approval receipt', !candidate.approval_effects?.hold?.write_set?.some(value => value.includes('approval_receipt')) && !candidate.approval_effects?.suppress?.write_set?.some(value => value.includes('approval_receipt')))
+
+  assert('operation states exact', same(candidate.operation_registry?.durable_states, ['committed_success', 'committed_hold']) && same(candidate.operation_registry?.transaction_local_states, ['admitted_pending']) && candidate.operation_registry?.transaction_abort_leaves_registry_row === false)
+  assert('committed hold replay exact', candidate.operation_registry?.post_admission_hold_consumes_operation_id === true && candidate.operation_registry?.reevaluate_committed_hold_with_same_operation_id === false && candidate.operation_registry?.fresh_evaluation_after_hold_requires_new_operation_id === true && candidate.operation_registry?.response_loss_recovery === 'reauthorize_then_return_exact_committed_success_or_hold')
+  assert('replay reauthorizes', same(candidate.operation_registry?.every_replay_checks, ['current_authentication', 'current_operation_authority', 'case_membership', 'audience', 'retention_eligibility']))
+  assert('failed replay does not mutate registry', candidate.operation_registry?.failed_replay_authority_result === 'request_rejected_not_authorized_without_registry_mutation_or_protected_bytes')
+  assert('response union exact', same(candidate.response_union?.variants, ['request_rejected', 'committed', 'held', 'replayed_committed', 'replayed_held']) && same(Object.keys(candidate.response_union?.schemas ?? {}), ['request_rejected', 'committed', 'held', 'replayed_committed', 'replayed_held']))
+  assert('held uses evaluation fingerprint', candidate.response_union?.schemas?.held?.exact_keys?.includes('evaluation_fingerprint') && !candidate.response_union?.schemas?.held?.exact_keys?.includes('snapshot_fingerprint') && candidate.response_union?.schemas?.replayed_held?.exact_keys?.includes('evaluation_fingerprint'))
+  assert('held evaluation fingerprint is framed', candidate.held_evaluation_fingerprint?.domain_ascii === 'CTRL-G24-HELD-EVALUATION-R4' && candidate.held_evaluation_fingerprint?.variable_field_frame === 'uint32_big_endian_byte_length_then_utf8_bytes' && candidate.held_evaluation_fingerprint?.zero_known_dependencies_allowed === true)
+  assert('success replay preserves exact payload', candidate.response_union?.replayed_success_payload_bytes_equal_original === true && candidate.response_union?.replayed_hold_code_and_committed_time_equal_original === true)
+
+  assert('operation names exact', same(candidate.operation_names, r4OperationNames))
+  assert('result schemas exact', same(Object.keys(candidate.result_payload_schemas ?? {}), r4OperationNames))
+  for (const name of r4OperationNames) {
+    const schema = candidate.result_payload_schemas?.[name]
+    assert(`result schema ${name}`, typeof schema?.schema_version === 'string' && schema.schema_version.includes('.r4.v1') && (schema.additional_properties === false || schema.discriminator === 'decision'))
+  }
+  assert('approval result variants closed', same(Object.keys(candidate.result_payload_schemas?.approve_intervention?.variants ?? {}), ['approved', 'edited_and_approved', 'held_without_approval', 'suppressed_without_approval']) && Object.values(candidate.result_payload_schemas?.approve_intervention?.variants ?? {}).every(schema => schema.additional_properties === false))
+  assert('transcription result cannot claim mutation', candidate.result_payload_schemas?.record_answer_transcription_repair?.properties?.changed_answer?.const === false && candidate.result_payload_schemas?.record_answer_transcription_repair?.properties?.changed_case_effect?.const === false && candidate.result_payload_schemas?.record_answer_transcription_repair?.properties?.changed_brain?.const === false)
+
+  assert('evaluator result exports exact', same(Object.keys(candidate.evaluator_abi?.operation_result_exports ?? {}), r4OperationNames) && r4OperationNames.every(name => candidate.evaluator_abi?.operation_result_exports?.[name] === candidate.result_payload_schemas?.[name]?.schema_version))
+  assert('evaluator proof exports exact', same(Object.keys(candidate.evaluator_abi?.proof_family_exports ?? {}), r4ProofFamilies) && r4ProofFamilies.every(name => candidate.evaluator_abi?.proof_family_exports?.[name] === candidate.proof_bundle_schemas?.extensions?.[name]?.schema_version))
+  assert('evaluator bytes and unique activity closed', candidate.evaluator_abi?.manifest_sha256_must_match_loaded_immutable_manifest_bytes === true && candidate.evaluator_abi?.artifact_sha256_must_be_computed_from_loaded_immutable_evaluator_bytes === true && candidate.evaluator_abi?.overlapping_active_members_for_selection_key === 'registry_invalid' && candidate.evaluator_abi?.required_match_count === 1 && candidate.evaluator_abi?.checked_before_kernel_execution === true)
+  assert('evaluator member fields typed', candidate.evaluator_abi?.registry_member_schema?.additional_properties === false && Object.keys(candidate.evaluator_abi?.registry_member_schema?.properties ?? {}).length === candidate.evaluator_abi?.registry_member_schema?.required?.length)
+  assert('proof family names exact', same(candidate.proof_family_names, r4ProofFamilies) && same(Object.keys(candidate.proof_bundle_schemas?.extensions ?? {}), r4ProofFamilies))
+  assert('proof envelope closed', same(candidate.proof_bundle_schemas?.envelope?.exact_keys, ['common', 'extension']) && candidate.proof_bundle_schemas?.envelope?.additional_properties === false)
+  assert('proof common closed', candidate.proof_bundle_schemas?.common?.additional_properties === false && candidate.proof_bundle_schemas?.common?.exact_keys?.includes('canonical_record_bytes_b64url') && candidate.proof_bundle_schemas?.common?.exact_keys?.includes('current_set_seals'))
+  assert('proof extensions closed and typed', r4ProofFamilies.every(name => candidate.proof_bundle_schemas?.extensions?.[name]?.additional_properties === false && Object.keys(candidate.proof_bundle_schemas.extensions[name].properties ?? {}).length === candidate.proof_bundle_schemas.extensions[name].required?.length && candidate.proof_bundle_schemas.extensions[name].authority_checks?.length > 0))
+
+  assert('set seal universe exact', same(candidate.set_seals, r4SetSeals))
+  assert('set seal objects exact', candidate.set_seal_object_schema?.additional_properties === false && same(candidate.all_eleven_set_seals?.exact_keys, r4SetSeals) && same(candidate.all_eleven_set_seals?.required, r4SetSeals) && candidate.all_eleven_set_seals?.additional_properties === false && candidate.all_eleven_set_seals?.property_key_must_equal_nested_set_kind === true)
+  assert('set seal binary frame exact', candidate.set_seal_encoding?.domain_ascii === 'CTRL-G24-SET-SEAL-R4' && candidate.set_seal_encoding?.variable_field_frame === 'uint32_big_endian_byte_length_then_utf8_bytes' && same(candidate.set_seal_encoding?.preimage_order, ['domain_ascii', 'set_kind_framed', 'set_schema_version_framed', 'owner_lineage_version_framed', 'uint64_big_endian_member_count', 'sorted_unique_raw_sha256_member_bytes']) && candidate.set_seal_encoding?.member_fingerprint_encoding === '32_raw_bytes_from_lowercase_hex_sha256' && candidate.set_seal_encoding?.sort === 'ascending_unsigned_byte_lexicographic' && candidate.set_seal_encoding?.digest === 'sha256_of_exact_preimage')
+  assert('set seal invalid cases closed', ['duplicates', 'duplicate_identity_different_bytes', 'invalid_member', 'count_mismatch', 'unsupported_encoding'].every(key => candidate.set_seal_encoding?.[key] === 'invalid_no_seal'))
+  assert('snapshot map exact', same(Object.keys(candidate.snapshot_and_cas_by_operation ?? {}), r4OperationNames) && r4OperationNames.every(name => same(candidate.snapshot_and_cas_by_operation[name].set_seals, r4SetSeals)))
+  assert('snapshot scalar map exact', r4OperationNames.every(name => same(Object.keys(candidate.snapshot_and_cas_by_operation?.[name]?.scalar_versions ?? {}), ['case_scope_version', 'engagement_version', 'plan_version']) && candidate.snapshot_and_cas_by_operation[name].scalar_versions.case_scope_version === 'current' && candidate.snapshot_and_cas_by_operation[name].scalar_versions.engagement_version === 'current' && candidate.snapshot_and_cas_by_operation[name].scalar_versions.plan_version === (name === 'record_enrichment_attempt' ? 'current' : 'not_applicable')))
+  assert('snapshot and CAS cannot omit or alias', candidate.snapshot_cas_rule?.snapshot_and_final_compare_and_swap_use_exact_entry === true && candidate.snapshot_cas_rule?.aggregate_aliases_allowed === false)
+
+  const resolverBindings = ['transaction_attempt_id', 'database_connection_nonce_hash', 'stable_principal_ref', 'case_ref', 'snapshot_fingerprint', 'canonical_bundle_digest', 'owner_family', 'expires_at']
+  assert('resolver carries bundle and exact bindings', candidate.resolver_capability?.constructor === 'createG24IngressExecutionContext(resolverCapability)' && candidate.resolver_capability?.canonical_bundle_argument_separate === false && candidate.resolver_capability?.bundle_carried_inside_closure === true && same(candidate.resolver_capability?.internal_bindings, resolverBindings))
+  assert('resolver is single use and terminally invalidated', candidate.resolver_capability?.single_use === true && same(candidate.resolver_capability?.invalidated_by, ['first_use', 'commit', 'rollback', 'timeout', 'cancellation', 'connection_loss']) && candidate.resolver_capability?.caller_serializable === false && candidate.resolver_capability?.browser_exported === false)
+  assert('proof state cannot poison later transaction', candidate.proof_registry?.scope === 'transaction_local_draft_only' && candidate.proof_registry?.process_global_registry_used_by_ingress === false && candidate.proof_registry?.abort_behavior === 'discard_entire_execution_context' && candidate.proof_registry?.post_commit_response_source === 'immutable_committed_operation_row')
+
+  assert('provider capability schema closed', candidate.provider_capability_schema?.additional_properties === false && candidate.provider_capability_schema?.properties?.idempotency_guaranteed?.type === 'boolean' && candidate.provider_capability_schema?.selection === 'exactly_one_half_open_active_member_for_provider_and_operation_and_time')
+  assert('outbox states and authority exact', same(candidate.outbox?.states, ['pending', 'claimed', 'confirmed', 'failed', 'unknown']) && same(Object.keys(candidate.outbox?.actor_authority ?? {}), ['claim_and_send', 'expire_to_unknown', 'reconcile_unknown']))
+  assert('outbox is leased and fenced', candidate.outbox?.claim?.atomic_compare_and_swap === true && candidate.outbox?.claim?.writes?.includes('lease_expires_at') && candidate.outbox?.claim?.writes?.includes('monotonic_fencing_token') && candidate.outbox?.claim?.second_live_claim === false && candidate.outbox?.stale_fence_can_transition === false)
+  assert('outbox authority failure cannot call provider', same(candidate.outbox?.pre_provider_checks, ['current_effect_authority', 'exact_payload_fingerprint', 'exact_payload_bytes', 'exactly_one_current_provider_capability']) && candidate.outbox?.pre_provider_failure?.provider_called === false)
+  assert('outbox transitions exact', candidate.outbox?.transitions?.length === 9 && candidate.outbox.transitions.some(item => item.from === 'claimed' && item.to === 'unknown' && item.requires.includes('no_current_idempotency_guarantee')) && candidate.outbox.transitions.some(item => item.from === 'claimed' && item.to === 'claimed' && item.requires.includes('ambiguous_provider_outcome') && item.requires.includes('provider_attempts_below_limit')) && candidate.outbox.transitions.filter(item => item.from === 'unknown').every(item => item.requires.includes('no_provider_call')) && candidate.outbox?.provider_attempt_limit === 3)
+  assert('outbox reconciliation closed', candidate.outbox?.reconciliation_evidence_schema?.additional_properties === false && candidate.outbox?.reconciliation_evidence_schema?.properties?.payload_fingerprint?.type === 'sha256' && candidate.outbox?.unknown_auto_resend === false && candidate.outbox?.reconciliation_can_send === false && candidate.outbox?.external_call_authorized_in_phase === false)
+
+  assert('limit order exact', same(candidate.limit_order, r4LimitOrder) && same(Object.keys(candidate.limits ?? {}), r4LimitOrder))
+  assert('limits all exact and positive', r4LimitOrder.every(name => Number.isSafeInteger(candidate.limits?.[name]?.value) && candidate.limits[name].value > 0 && typeof candidate.limits[name].phase === 'string' && typeof candidate.limits[name].failure === 'string'))
+  assert('raw limits precede materialization', r4LimitOrder.slice(0, 7).every(name => candidate.limits?.[name]?.phase === 'pre_admission_stream' && candidate.rejection_codes?.includes(candidate.limits[name].failure)))
+  assert('post-admission hold codes closed', r4LimitOrder.slice(7).every(name => candidate.limits?.[name]?.phase.startsWith('post_admission_') && candidate.hold_codes?.includes(candidate.limits[name].failure)))
+  assert('limit semantics exact', candidate.limit_semantics?.decompressed_equals_raw_under_identity_encoding === true && candidate.limit_semantics?.json_token_grammar === 'each_RFC8259_structural_string_number_true_false_or_null_token' && candidate.limit_semantics?.json_nesting_depth === 'root_container_depth_one_maximum_open_container_count' && candidate.limit_semantics?.json_property_count === 'total_object_member_count_across_document' && candidate.limit_semantics?.first_failure_in_total_order_wins === true && candidate.limit_semantics?.side_effect_before_limit_success === false)
+  assert('negative families exact', same(candidate.required_negative_fixture_families, r4NegativeFamilies))
+  assert('claim honest', candidate.claim_limit === 'unimplemented_local_repair_contract_only')
+  return found
+}
+
+for (const failure of collectR4Failures(r4)) failures.push(`R4 ${failure}`)
+
+const mutationProbes = [
+  ['pre-admission identity echo', candidate => candidate.request_rejected_schema.forbidden.splice(0, 1)],
+  ['approval hold standing', candidate => { candidate.approval_effects.hold.delivery_eligible = true }],
+  ['principal actor universe', candidate => candidate.principal_schemas.human_session.properties.actor_class.values.push('generic_admin')],
+  ['operation authority map', candidate => { candidate.operation_authority.correct_answer = ['krish_operator_predicate'] }],
+  ['lifecycle authority map', candidate => { candidate.lifecycle_authority.accept_intensive_proof = ['krish_operator_predicate'] }],
+  ['result schema map', candidate => { delete candidate.result_payload_schemas.correct_answer }],
+  ['proof family schema', candidate => { candidate.proof_bundle_schemas.extensions.answer.additional_properties = true }],
+  ['evaluator selection', candidate => { candidate.evaluator_abi.required_match_count = 2 }],
+  ['seal frame', candidate => { candidate.set_seal_encoding.variable_field_frame = 'plain_concatenation' }],
+  ['snapshot CAS set', candidate => candidate.snapshot_and_cas_by_operation.use_release.set_seals.pop()],
+  ['resolver reuse', candidate => { candidate.resolver_capability.single_use = false }],
+  ['abort poisoning', candidate => { candidate.proof_registry.process_global_registry_used_by_ingress = true }],
+  ['outbox authority', candidate => { candidate.outbox.pre_provider_failure.provider_called = true }],
+  ['outbox crash', candidate => { candidate.outbox.unknown_auto_resend = true }],
+  ['outbox reconciliation', candidate => { candidate.outbox.reconciliation_can_send = true }],
+  ['limit order', candidate => candidate.limit_order.reverse()],
+]
+for (const [name, mutate] of mutationProbes) {
+  const candidate = structuredClone(r4)
+  mutate(candidate)
+  check(`R4 mutation rejected: ${name}`, collectR4Failures(candidate).length > 0)
+}
+
+check('R4 human and machine agree on request rejection', r4Human.includes('request_rejected') && r4.request_admission.pre_admission_failure.result === 'request_rejected')
+check('R4 human and machine agree on eleven seals', r4Human.includes('R4 uses eleven seals') && r4.set_seals.length === 11)
+check('R4 human and machine agree on single-use resolver', r4Human.includes('It can be consumed once') && r4.resolver_capability.single_use === true)
+check('R4 QA preserves implementation limit', r4Qa.includes('No code, endpoint, database function, schema, role, proof bridge, outbox, provider call, customer data path or runtime connection implements R4'))
+check('R4 files contain no em dash', !r4Human.includes(emDash) && !r4Qa.includes(emDash))
+
 if (failures.length) {
-  console.error(`G24 trusted ingress R3 failed ${failures.length} check(s):`)
+  console.error(`G24 trusted ingress R4 failed ${failures.length} check(s):`)
   for (const failure of failures) console.error(`- ${failure}`)
   process.exit(1)
 }
 
-console.log('ok: rejected R2 preserved and exact G24 trusted ingress R3 invariants verified')
+console.log('ok: rejected R2 and R3 preserved; exact G24 trusted ingress R4 invariants and mutation probes verified')
