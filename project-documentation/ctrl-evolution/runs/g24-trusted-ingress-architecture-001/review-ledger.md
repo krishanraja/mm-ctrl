@@ -1189,3 +1189,33 @@ An outcome may describe what happened and carry its result fingerprint, but it c
 The dependency graph must be derived from the same fingerprint, content-address and equality rules that the stores execute. History must be materialized before the final receipt or hold and before the registry that binds it. Replay must resolve only identities reachable from that one registry row.
 
 R34 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 34
+
+**Frozen commit/tree:** `45ba363f08324240f311bba2610e9ad93c640624` / `595874408a4a143bc5e09743652470d0f10d4211`
+
+**Human / machine / QA:** `b22f1a67b26887c24d949b68f5f2de352752ca4a` / `d5ac663afdaad34064855423ea674aff6e40976a` / `4ac59a24d6ad6f9594660c4e97eb7e147e79af26`
+
+**Checker / materializer / founder checker:** `2facfea73d44d4edb27d0866336d5846c0639eba` / `8f82687e9ab571c1125556b00be76930ae08fa62` / `c7de3e0cb6f6334a6e31378c28999e87542c12a0`
+
+**Machine SHA-256:** `d69744b686f24877debaa4988102039010a092fa6a1ac9bfdc43d005d410bdcc`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R34. Its removal of result self-addresses, canonical result artifact identity, ninety branch bindings, result-before-history ordering and registry-authoritative replay sources survive. Five executable roots remain:
+
+1. The R32 `authority_operation_historical_response_field_bindings` remains active and omits `result_bytes_sha256`, while newer replay equalities compete with it. One R35 normative mapping must be the sole historical-response binding authority.
+2. The identity graph is one conjunctive graph that requires mutually unavailable receipt, hold and session-evidence nodes, then hides that contradiction by filtering edges. R35 must define exact committed, ordinary-held and session-held rule sets and graphs.
+3. Committed registry identity must depend only on its final receipt and history. Held registry identity must depend only on its final hold and history. Ordinary held issuance must never require session evidence.
+4. Replay paths do not explicitly resolve the exact result artifact between registry or hold resolution and historical-response resolution. Each replay class must select the same original issuance graph and preserve exact source precedence and anti-splice rules.
+5. Checker coverage does not reject competing field-binding authority, missing result-byte mapping, singular dependency graphs, unavailable cross-branch dependencies, missing exact result-artifact resolution or reordered replay sources.
+
+No founder choice is required. R35 must close only these binding-authority, branch-graph and replay-path seams, preserve R34 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R35 repair rationale before review
+
+R34 made result artifacts honest but described mutually exclusive branches as if every branch issued every identity. R35 must make the identity derivation itself discriminated. Each branch class gets a complete rule set, dependency graph and issuance path with no unavailable node and no filtered edge.
+
+Historical response construction must have one active binding authority. Replay must follow the exact original branch class, resolve its authoritative registry or hold row, resolve the exact result artifact, then resolve history and the pre-materialized replay artifacts.
+
+R35 changes no visible product behaviour and opens no adapter, database, runtime or external action.
