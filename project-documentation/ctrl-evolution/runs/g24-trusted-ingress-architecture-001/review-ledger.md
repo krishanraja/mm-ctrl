@@ -1281,3 +1281,33 @@ R36 made branch selection exhaustive but treated every session hold as if the sa
 Replay must read the committed branch decision, never infer it again from a newer table. Every control row is closed, every normative authority is independently manifested by exact path and hash, and every replay path begins from its durable registry authority.
 
 R37 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 37
+
+**Frozen commit/tree:** `2e9feb68809ff9238490b3a4283ff64ddfc59768` / `f16fa5e8d9ef8cae053989cb853c53fa2c4b68de`
+
+**Human / machine / QA:** `0e58e93def26767078beb293b59d539f77ba8485` / `50a1e34efa3bf87fc352202fd88f83a331766c37` / `f497961b647ab45fda96ce6933ce8fa0a247fed8`
+
+**Checker / materializer / founder checker:** `b9b41fd90300c11c476aa26e4c9e140abc9bb78e` / `cbf55da5c40667a3deed91ee3d9dce5b9db586b5` / `f0be47a00af5afc71887d924ce39710821806e67`
+
+**Machine SHA-256:** `94c3a1838a7331e7687b2f374fb64b7a03cf551ee597b93342e8f9882133eb92`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R37. Its exact ninety-row split, durable selector identity, raw-versus-verified session evidence classes, four acyclic issuance paths and registry-first replay order survive. The shared executable roots are:
+
+1. The five-row authority manifest covers only newly labelled controls. It does not close the inherited proof, operation, outbox, transaction, write-set, evidence, issuance and replay authorities that the R37 paths actually execute. Nested unmarked caller precedence can therefore survive outside its marker scan.
+2. Replay registry authority and replay resolution bindings remain on R35 and R34 semantics. They do not bind all five durable selection fields across committed registry, held registry, hold row and classifier, and their source-precedence and anti-splice authority can diverge from the R37 branch map.
+3. Exact reproductions still permit caller-supplied proof authority, caller-selected `use_release`, provider-callback outbox authority, two raw-session nonce rows, deletion or swapping of raw and verified evidence references, caller-selected replay authority references and weakening of the recursive scan rule.
+4. R37 hashes authority objects with insertion-order `JSON.stringify`. It does not define a domain-separated canonical manifest preimage or close the transitive dependency hash graph, so co-mutated authority and manifest rows are not an independent trust anchor.
+5. Prior focused controls are run only against their frozen earlier candidate. R38 must either reapply them to the materialized candidate or prove every unchanged prior core by exact immutable hash.
+
+No founder choice is required. R38 must close only these transitive-authority, replay-binding, execution-control, canonical-hash and prior-core seams, preserve all frozen R6 through R37 artifacts byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R38 repair rationale before review
+
+R37 made the newest branch controls explicit but did not close the full authority graph they depend on. R38 manifests every reachable top-level semantic authority, and each top-level hash covers all nested objects beneath it. Membership is pinned independently from candidate markers, names and counts.
+
+Replay must carry the same five durable selection facts through registry, hold, classifier and binding authority. Proof, operation, outbox, transaction, evidence and issuance controls must remain server-owned, exact and invisible. Canonical manifest hashing and immutable R37 core hashes make semantic co-mutation and insertion-order tricks detectable.
+
+R38 changes no visible product behaviour and opens no adapter, database, runtime or external action.
