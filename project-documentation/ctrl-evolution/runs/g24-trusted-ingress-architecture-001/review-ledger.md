@@ -294,3 +294,33 @@ R9 therefore makes five narrow repairs:
 5. Outbox creation has one atomic genesis. Every transition binds an exact payload schema, reference and fingerprint plus the current predecessor. Provider invocation requires its own committed event and yields a non-serializable, in-process, single-use capability. A crash before that event can be marked definitely not invoked; a crash after it is ambiguous and cannot trigger an automatic resend without a current exact idempotency guarantee.
 
 The visible experience remains unchanged and deliberately simple. The leader sees a specific question or proposed move, the operator sees an honest review and approval action, and neither sees hashes, receipts, transition graphs or delivery recovery machinery. R9 remains unimplemented and awaits exact independent attack.
+
+## Review round 9
+
+**Frozen commit:** `c1a0fd1909598157559ab4e6e4737374216bdba2`
+
+**Frozen tree:** `3b9f15c123f24252db2c2c0ca7db1743af8fe015`
+
+**Human contract blob:** `08ff5907c86ed2534ce753183222625dd2559fb0`
+
+**Machine contract blob:** `7d736361ca92ec44e13e0e9cc7c5a0c0264b8bc3`
+
+**Checker blob:** `ce4434f0aafb537c1781bfebe651b91d4d023c78`
+
+**Materializer blob:** `b2bca59702123ee65e7f40e73eb122e0440935cc`
+
+**QA blob:** `c167b3f83583583773a635c30300f0023d4072af`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R9. Exact generation, thirty-three declared mutations, the complete documentation suite and all 211 kernel tests passed. The separate founder calibration found high alignment, no product veto and no founder decision required. It confirmed that R9 preserves human first and last gates, leader-owned truth, Edit as the visible action, narrow foreground attestation and invisible machinery.
+
+R9 permanently improved closed evaluator operation and proof parity, collision-before-fresh visibility retry, distinct semantic and row-envelope fingerprints, content-bearing row scaffolding, atomic outbox genesis and the conservative distinction between definitely not called and may have called. Three implementation roots remain:
+
+1. Watermark authority is duplicated. `type_registry.controlling_watermark_member` requires lineage and version, while the inherited `controlling_watermarks.member_schema` still permits versionless R8 members. The changed variants also retain R8 schema versions.
+2. Proof reconstruction does not yet reproduce the locked kernel. Selector rows invent `route_1` through `route_4` instead of `reuse`, `enrich`, `ask` and `session`; they omit eligibility, provenance, actual finite burden, rejection reasons and trusted-evaluation version. Answer and lifecycle authority omit material meaning, cross-row equality remains incomplete, answer-chain genesis and set schema versions are undefined, dependency targets are untyped and lifecycle has no exact transition-to-precondition map.
+3. Outbox payload causality can be cross-wired. A transition does not require the payload effect to equal its effect or uniquely consume the payload. Reconciliation success and failure share a schema without an exact branch discriminator. Invocation capability issuance and consumption are not each uniquely evidenced, so authentic payload rows can be reused in another causal path.
+
+Checker bypasses accepted a stale duplicate watermark schema, a weakened selector burden field, an arbitrary reconciliation-failure condition, provider-success declared as no call and a cross-wired reconciliation payload schema.
+
+R10 must establish one watermark authority, reproduce the exact locked kernel's selector, answer and lifecycle semantics through recursively resolvable proof rows and make every outbox payload and invocation capability unique to one effect, predecessor and branch. No product decision is required and no adapter, database or runtime work opens from R9.
