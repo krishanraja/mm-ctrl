@@ -368,3 +368,19 @@ R10 permanently removed the duplicate watermark schema, restored the real route 
 Accepted checker bypasses included arbitrary selector reason and rejection derivation, forged answer and lifecycle equality paths, implementation-defined watermark change semantics, old reconciliation schema selection, arbitrary provider-call condition, an `always` invocation recheck and weakened payload-consumption fingerprinting.
 
 R11 must replace each remaining descriptive invariant with a closed derivation table or exact equality set, extend canonical bytes before fingerprinting new values and tie outbox genesis to one successful operation result and canonical payload. No product decision is required and no adapter, database or runtime work opens from R10.
+
+## R11 repair rationale before review
+
+Krish again authorised both parts of the established loop: continue the exact repair and preserve the reasoning durably. This remains a technical truthfulness repair, not a new product direction and not authority to touch UI, data, providers or production.
+
+R10's failure is valuable product evidence. A product can appear to “know” why it chose a question while its contract only stores a route label, can appear to respect an answer while its effect is not derived from the approved question, and can appear crash-safe while a later clean-looking terminal hides an earlier uncertain call. Those are all versions of the same failure: polished language standing in for reconstructible causality. That is precisely the behaviour Krish has repeatedly rejected in the visible product as vague AI theatre and verbal overclaiming.
+
+R11 therefore makes five narrow repairs:
+
+1. Every newly fingerprinted value has one exact byte representation, including finite numbers, null, nullable values, base64url payloads and discriminator-bound answers.
+2. The selector records the exact zero-to-four candidates it actually received, separates input and generated rejection reasons and uses one ordered table for sufficient evidence, unresolved gaps and holds. Candidate and watermark sets are sealed under their actual owner versions.
+3. A leader answer resolves one exact atom, approval, authority and closed question contract. Its effect key and every resulting case field are mechanically derived from that contract. Lifecycle and Release authority receive the same byte-equality treatment.
+4. Watermark changes use a total classification table with invalid null states rejected and variant identity included in set bytes.
+5. Outbox consumption is field-equal across payload, transition and consumption; invocation authority must still be live at the call boundary; no-invocation exhaustion requires zero invocation history; and every effect has one immutable successful-operation origin and canonical payload.
+
+The experience promise is unchanged. A leader should encounter one clear, timely prompt or proposal, not the machinery below it. The machinery exists so CTRL can be minimal without becoming simplistic, confident without inventing authority and helpful without silently acting beyond the human's first and last gates. R11 remains local and unimplemented until its exact frozen bytes survive independent attack.
