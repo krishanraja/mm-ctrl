@@ -92,3 +92,31 @@ Both technical reviewers verified the exact bytes and rejected R3. The checker r
 7. The outbox omitted the authority-failure transition, canonical provider-idempotency guarantee owner and reconciliation evidence schema. Limit ordering grouped individual failures and omitted streaming raw transport, decompressed size, token, nesting, property and string ceilings.
 
 R4 must not reopen the product direction. It must close these exact backstage seams, extend the checker with negative fixtures and retain the same unimplemented local-only claim.
+
+## Review round 4
+
+**Frozen commit:** `5e4ec8f6309a68542cd18b74e709d3490ec02b58`
+
+**Frozen tree:** `fa6c9be4afb6822df421747cb98f66da8281c585`
+
+**Human contract blob:** `736599d4ae3d34671872e2d531947b735a4d5d70`
+
+**Machine contract blob:** `b9f4f628a0c7a6bae4ecbb61b4a3f1c6fb12f0e1`
+
+**Checker blob:** `abc6a745ad464878aa3e5ba7fc17d3720efbf84e`
+
+**QA blob:** `32082df0a31cf0ff37ac3858c30a3d48b7981e69`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact bytes and rejected R4. The sixteen mutation probes passed, and R4 materially repaired pre-admission rejection, principal classes, approval branches, concrete result and proof schemas, evaluator export selection, binary seal framing, resolver isolation, raw parser bounds and outbox reconciliation. The founder calibration again found high alignment and no product decision requiring Krish. The stricter review found seven remaining roots:
+
+1. `use_release` had only a successful pending-delivery payload. It omitted the locked kernel outcome that appends an invalidation receipt and creates no outbox when a controlling watermark has changed.
+2. R4 replaced snapshot and compare-and-swap but never defined the snapshot fingerprint bytes. Operator and workload grant seals were not included, and no rule forced their change through case-scope version.
+3. Set sealing rejected duplicate identities without defining the identity projection for each set kind.
+4. Operation-registry uniqueness scope was absent. Serialization exhaustion allowed two different outcomes, and the held evaluation fingerprint used an undefined known-dependency set.
+5. Proof bytes lacked an exact genesis, predecessor encoding, bundle digest frame and decoded-byte equality to common scope, fingerprints and authoritative rows.
+6. Fresh lifecycle execution required an unconsumed two-party receipt, but replay incorrectly reran that consumed execution predicate instead of checking only current disclosure authority. The joint receipt also lacked complete field, action and issuance schemas. Edited approval did not bind visibility to the final edited atom.
+7. R3 size annotations and R4 post-admission limits gave the same oversized answer two possible outcomes. Outbox calls lacked a durable fenced attempt reservation and exact success-evidence schema, so crashes could evade the claimed three-attempt ceiling.
+
+R5 may change only these seams. It must preserve the R4 gains, the single canonical Brain, leader-owned semantic state, invisible customer complexity and the unimplemented local-only claim.
