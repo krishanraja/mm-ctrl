@@ -1,0 +1,92 @@
+{
+  "schema_version": "ctrl.g24.trusted-canonical-ingress.v1",
+  "status": "candidate_under_independent_review",
+  "date": "2026-09-13",
+  "authority": {
+    "allowed": [
+      "local_contract",
+      "deterministic_checker",
+      "independent_review",
+      "state_route_update"
+    ],
+    "closed": [
+      "runtime_connection",
+      "supabase_branch_or_schema_change",
+      "customer_data",
+      "external_research",
+      "model_call_or_spend",
+      "email_or_connector_action",
+      "deployment",
+      "merge",
+      "release",
+      "legacy_backend_deletion"
+    ]
+  },
+  "untrusted_command_allowlist": [
+    "operation_id",
+    "requested_case_ref",
+    "requested_operation_class",
+    "presented_session"
+  ],
+  "untrusted_command_rules": {
+    "unknown_fields_rejected": true,
+    "caller_material_authority_fields_used": false,
+    "invalid_command_result": "non_actionable_hold_without_side_effect"
+  },
+  "server_resolved": [
+    "actor_and_live_session",
+    "workspace_subject_case_and_engagement",
+    "purpose_audience_sensitivity_permission_and_named_authority",
+    "accepted_decision_frame_requirement_and_material_consequence",
+    "complete_applicable_control_manifest_and_transitive_graph",
+    "canonical_sources_assertions_and_accepted_brain_versions",
+    "evidence_coverage_provenance_roots_conflicts_and_gaps",
+    "epistemic_policy_and_independent_challenger_result",
+    "registered_route_capabilities_deadline_and_budgets",
+    "relevant_approval_answer_correction_lifecycle_release_and_plan_history",
+    "database_trusted_time_transaction_identity_and_snapshot_revision"
+  ],
+  "transaction_rules": {
+    "one_consistent_snapshot": true,
+    "partial_snapshot_actionable": false,
+    "prepared_envelope_is_action_authority": false,
+    "atomic_recheck_before_use": true,
+    "newly_applicable_control_invalidates": true,
+    "unrelated_lineage_invalidates": false,
+    "durable_append_and_uniqueness_owned_by_database": true
+  },
+  "rehydration_rules": {
+    "matching_json_is_proof": false,
+    "requires_canonical_database_provenance": true,
+    "requires_exact_schema_and_fingerprint": true,
+    "requires_complete_predecessor_chain": true,
+    "requires_identity_scope_and_authority_validation": true,
+    "can_revive_expired_or_invalidated_state": false
+  },
+  "plan_finality": {
+    "attempt_allocation_is_atomic": true,
+    "receipt_and_idempotency_identity_unique": true,
+    "budget_is_server_derived": true,
+    "terminal_state_survives_restart": true,
+    "alternate_history_reopens_terminal_plan": false,
+    "concurrent_last_attempt_has_multiple_winners": false,
+    "concurrent_terminal_has_multiple_receipts": false
+  },
+  "fail_closed_on": [
+    "missing_or_duplicate_current_state",
+    "incomplete_page_or_history",
+    "unknown_schema_or_version",
+    "decryption_or_authentication_failure",
+    "ambiguous_currentness",
+    "limit_timeout_or_cancellation",
+    "cross_scope_substitution",
+    "stale_or_revoked_authority"
+  ],
+  "hold_contract": {
+    "partial_kernel_envelope_returned": false,
+    "fabricated_receipt_returned": false,
+    "brain_or_external_side_effect": false
+  },
+  "required_attack_families": 12,
+  "claim_limit": "local_architecture_contract_only"
+}

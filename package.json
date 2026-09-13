@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "cross-env ROLLUP_DISABLE_NATIVE=1 vite",
-    "docs:check": "node scripts/check-docs.mjs && node scripts/check-ctrl-phase2-evals.mjs && node scripts/check-ctrl-g13-living-brain.mjs && node scripts/check-ctrl-brain-canary.mjs && node scripts/check-ctrl-g24-product-system.mjs && node scripts/check-ctrl-g24-product-system-r2.mjs && node scripts/check-ctrl-g24-product-system-r3.mjs && node scripts/check-ctrl-g24-product-system-r4.mjs && node scripts/check-ctrl-g24-product-system-r5.mjs && node scripts/check-ctrl-g24-r5-council.mjs && node scripts/check-ctrl-g24-founder-lock.mjs",
+    "docs:check": "node scripts/check-docs.mjs && node scripts/check-ctrl-phase2-evals.mjs && node scripts/check-ctrl-g13-living-brain.mjs && node scripts/check-ctrl-brain-canary.mjs && node scripts/check-ctrl-g24-product-system.mjs && node scripts/check-ctrl-g24-product-system-r2.mjs && node scripts/check-ctrl-g24-product-system-r3.mjs && node scripts/check-ctrl-g24-product-system-r4.mjs && node scripts/check-ctrl-g24-product-system-r5.mjs && node scripts/check-ctrl-g24-r5-council.mjs && node scripts/check-ctrl-g24-founder-lock.mjs && node scripts/check-ctrl-g24-trusted-ingress.mjs",
     "evals:check": "node scripts/check-ctrl-phase2-evals.mjs",
     "brain:g13:check": "node scripts/check-ctrl-g13-living-brain.mjs",
     "brain:g13:render-check": "node scripts/check-ctrl-g13-rendered-proof.mjs",
