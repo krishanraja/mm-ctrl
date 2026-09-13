@@ -601,3 +601,47 @@ R15 fixed local names while still trusting hand-selected closure boundaries. R16
 Dead-process recovery will prefer honesty over speculative retry. Once an invocation lease expires without a committed successor, the durable state cannot prove what happened inside a vanished process, so the reaper records ambiguity. Only a live fenced worker may prove a pre-provider failure and append a no-call abort. Ordered outcomes and transition authorization must be exact derivatives of one another.
 
 R16 changes no product behaviour or visible surface. It remains local and unimplemented pending exact independent review.
+
+## Review round 16
+
+**Frozen commit:** `040438d234cd136e91525adced80894ff0b6eaba`
+
+**Frozen tree:** `0eb278cfe2b5da1827de54a676ea0a308eb78bb4`
+
+**Human contract blob:** `a254b7e91a2bc548b576cf996ba91a898aa2c530`
+
+**Machine contract blob:** `92cededb5ea803291e2350b96e0c49c635665a9a`
+
+**QA blob:** `08f9bfcf8b2f86c2c7d3d2d43b3dbd9d49bd3f91`
+
+**Checker blob:** `3a1df844ecaac513da692aeceb9caf865cc467a2`
+
+**Materializer blob:** `9166d9dd81e921bf806c03511db8bb3fd392948c`
+
+**Founder-lock checker blob:** `ec07584960c22867cbb0e971871d00aff955c079`
+
+**Machine SHA-256:** `479f3011d7250861fb8ec6472e43dafffa210be9c6a419e72767246e26ae516f`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact archive and rejected R16. Exact materialization, thirty declared mutation probes, the documentation suite and all 211 locked-kernel tests passed but remained non-dispositive. Founder calibration found high alignment, no product veto and no founder decision. It confirmed that ambiguous external delivery remains a quiet operator exception rather than customer-facing technical ceremony.
+
+R16 permanently made result blobs closed, bounded, content-hashed and atomically joined to a completely fingerprinted success envelope. It made case rows scoped and deterministically current, bound evaluator version and artifact, closed lifecycle vocabulary globally, aligned provider transitions to selected outcomes, removed unsafe reaper no-call authority and routed every expired current invoking tip to reaper ambiguity. Five executable roots remain:
+
+1. Result-blob canonicalization points to binary fingerprint field encoding while its row rule requires canonical JSON. The exact canonical JSON byte authority is not named consistently.
+2. A success and blob may agree on any result schema without binding that schema to the operation class and selected evaluator export. Discriminated results do not distinguish the exported union schema from the selected variant. A deterministic payload-fingerprint rule is also missing for most operations.
+3. Canonical response bytes and response fingerprint remain unresolved references rather than content-bearing authoritative rows with exact schema, bytes, length, hash and derivation.
+4. Case authority selection is deterministic but issuance is not. No sole producer, capability, rotation compare-and-swap, ownership rule or direct-write prohibition defines who can create, rotate or expire the root leader/operator binding.
+5. Worker and lease-expiry ambiguity share a schema whose reason and recorder are not bound to the selected event and actor. Priority-six failure is not a closed `at_least_one` set, so simultaneous failures can be interpreted differently.
+
+Checker hardening must also require the predecessor suffix to equal `_ref`, not merely begin with it, and must validate exact outcome rows, transition actor-authority references, case predicates and transition actor classes. R17 must define one canonical JSON encoder, bind every result to its operation ABI, resolve response bytes, make case-authority issuance executable, split or condition ambiguity evidence by event and actor, and close the failure set. No founder decision is required if case authority remains an internal, explicitly authorised control-plane responsibility.
+
+## R17 repair rationale before review
+
+R16 proved that hashing bytes is not enough when the contract does not identify which bytes and schema are authoritative. R17 must bind operation class, exported union schema, selected variant schema, canonical JSON bytes and payload fingerprint into one derivation. Response bytes require the same treatment rather than inheriting trust from a sealed reference.
+
+The root case binding will remain internal: one explicitly named case-control-plane authority may issue or rotate it under serializable compare-and-swap, with every other writer prohibited. This does not change who decides customer truth; it makes the existing leader/operator assignment executable.
+
+Ambiguity will remain conservative but become exact. Worker and reaper evidence must carry the event-specific reason and authenticated recorder selected by the same outcome row. Non-lease failures will be an explicit closed set with `at_least_one` semantics, so concurrent failures cannot create a fallthrough choice.
+
+R17 changes no visible product behaviour and opens no implementation or external action.
