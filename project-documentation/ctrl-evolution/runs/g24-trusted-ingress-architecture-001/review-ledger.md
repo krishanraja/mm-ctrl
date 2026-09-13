@@ -689,3 +689,50 @@ Case history must remain truly append-only. Rotation will append a later server-
 The universal result fingerprint will be the sole terminal payload authority. Branch schemas still validate structure and extract the declared receipt, but they will not compete for fingerprint identity. Ambiguity evidence and its transition will name the same authenticated recorder byte for byte.
 
 R18 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 18
+
+**Frozen commit:** `7163c4fde940aa20602862574a69bd0737853279`
+
+**Frozen tree:** `577e3bd5fbbae68fb0dfe871a74027ec2f8ff744`
+
+**Human contract blob:** `e1ea7f93ed0270e7c0f8a293b7d16718f5572379`
+
+**Machine contract blob:** `e50ff594859f1bcb990dfac3f06a97f37de68608`
+
+**QA blob:** `1dc02d31ebb1ba0f3f8eb952e781b6b5d30feca5`
+
+**Checker blob:** `7ae75557164342eabdbcfe5959f5997ec125630f`
+
+**Materializer blob:** `31334c1b25d191d3bb4dc9a1a0e1babcd5d92f3f`
+
+**Founder-lock checker blob:** `07fff83e1289859f6b37c713b771ab1a051c031f`
+
+**Machine SHA-256:** `a6e8c78ab2a14979930b65b409350e377e8f9167268c741003257e952b5d8579`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact archive and vetoed R18. Its thirty-nine declared mutations, full documentation suite, founder lock and all 211 locked-kernel tests passed but remained non-dispositive. Founder calibration again found high alignment, no product veto and no founder decision. It confirmed that the new provenance machinery must remain backstage and that migration bootstrap is not a production onboarding design.
+
+R18 permanently inventoried both discriminated result families, propagated selected schema and branch through fresh result, response and success, repaired Release onto selected schema and one universal result fingerprint, made case history append-only and server-timed, and bound ambiguity actor to recorder. Four current roots remain:
+
+1. Both Release branches echo a terminal receipt identifier, but neither branch receipt is an authoritative row. The existing terminal-consumption row can become the sole receipt, but its exact reference and fingerprint must be bound atomically into both result branches.
+2. `replayed_committed` has a closed shape but no exhaustive derivation from the stored success and result blob. Metadata can be substituted while preserving the original payload bytes.
+3. Lifecycle single-action consumption uses `actor_role` to choose human authority, but omits that role from semantic and envelope fingerprints and does not join it byte-for-byte to the consumed action receipt.
+4. Case-control idempotency scopes disagree about `subject_ref`; replay admission order is undefined after operator transfer; caller identity is absent from request and receipt; and collision results remain prose rather than a closed result union.
+
+Checker bypasses accepted extra path segments, duplicate joins, invented Release extraction fields, substituted replay metadata, arbitrary lifecycle role, detached control keys and missing receipt rules. The lifecycle scanner also accepted extended property keys and hyphen-suffixed reference spellings.
+
+No founder choice is required. The bounded R19 default is original-author-only replay: fresh execution requires the exact current Krish operator; an existing exact operation may be replayed only to the authenticated actor recorded in the original request and receipt. This preserves retry after an operator transfer without disclosing the old control receipt to a new or unrelated actor.
+
+## R19 repair rationale before review
+
+R18 made the principal graph resolvable but left three authority-bearing labels outside that graph: Release receipt identity, replay envelope identity and lifecycle actor role. R19 must make each one a fingerprinted equality rather than a schema-valid assertion.
+
+The Release terminal-consumption row will be the sole terminal receipt. Both result branches may retain their human-readable branch field names, but those fields, committed `result_ref` and terminal `terminal_receipt_ref` must equal the same consumption-row reference, with its fingerprint included in the branch derivation and the operation transaction.
+
+Replay will be a pure historical projection: every field except replay status, server-generated replay time and fixed non-current flags must equal committed success or the resolved immutable result blob. Case control will use one four-part scoped idempotency key everywhere, bind authenticated actor into request and receipt, and evaluate existing-operation replay or collision before fresh-current authority and compare-and-swap checks.
+
+Lifecycle consumption will fingerprint and resolve its authority-bearing role. Graph checking will reject extra path segments and duplicate joins, while lifecycle vocabulary will scan both keys and values and admit only exact field-reference punctuation.
+
+R19 changes no visible product behaviour and opens no implementation or external action.
