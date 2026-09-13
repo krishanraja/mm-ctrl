@@ -384,3 +384,38 @@ R11 therefore makes five narrow repairs:
 5. Outbox consumption is field-equal across payload, transition and consumption; invocation authority must still be live at the call boundary; no-invocation exhaustion requires zero invocation history; and every effect has one immutable successful-operation origin and canonical payload.
 
 The experience promise is unchanged. A leader should encounter one clear, timely prompt or proposal, not the machinery below it. The machinery exists so CTRL can be minimal without becoming simplistic, confident without inventing authority and helpful without silently acting beyond the human's first and last gates. R11 remains local and unimplemented until its exact frozen bytes survive independent attack.
+
+## Review round 11
+
+**Frozen commit:** `2ce2d7e5651c69ee1b17dd667322d7710d587b12`
+
+**Frozen tree:** `11ab9948dd8f3f7cbc9bf5525de2e294189b2bb4`
+
+**Human contract blob:** `1ab7b517cab49f362df782f21b287062436b6798`
+
+**Machine contract blob:** `d2e515b2090ff981634a2f3af38b9c35daa5584e`
+
+**QA blob:** `f3531b677820be2ceba32e94f7bfb9677aee4bc7`
+
+**Checker blob:** `3db5420dfe250e0379588da06aa4efae7d48592b`
+
+**Materializer blob:** `e070144500e315a2223586ef27539be70b270b7a`
+
+**Founder-lock checker blob:** `ff129fbe6b2837550b7080ee229e13553fc26c01`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R11. Exact generation, thirty-nine declared mutations, the complete documentation suite and all 211 locked-kernel tests passed but remained non-dispositive. The founder calibration found high alignment and no product veto. It confirmed that the customer should see one clear prompt or proposal while all policy, receipt, watermark and delivery machinery remains invisible.
+
+R11 permanently improved canonical primitive encoding, the selector's real zero-to-four candidate set and precedence, question-effect derivation intent, lifecycle catalogue projection, watermark change classification, payload-consumption equality and invocation freshness. Six executable roots remain:
+
+1. Release projection and authority are circular. The pending projection fingerprint contains the authority fingerprint while authority now contains the projection fingerprint. `compile_release` must create the projection first, so no deterministic issuance order exists.
+2. Leader and Release authority have no authorised issuing operation. The operation registry writes neither authority row, and the accepted Release request has no authoritative row, fingerprint or issuance path.
+3. Lifecycle identity and evidence remain prose-bound. Actor identity, authority version, predecessor state and precondition evidence do not resolve through closed content-bearing owner rows or seals; joint human action receipts and their exact consumption are absent.
+4. The question schema and answer kernel disagree. Only ranked choice may be capped at five, yet R11 caps every grammar. Blank, padded, reserved or control-bearing options and proposals are admitted by the question contract while the answer path rejects them. Proposal types also disagree.
+5. Outbox origin can multiply authority and a failed final pre-call recheck has no executable path. Origin is not unique by exact committed operation, result and branch; it confuses operation ID with operation class and omits subject scope and provider target. After an invocation event, no honest `provider_called=false` transition exists.
+6. Versioning remains incomplete. Operation and proof export-map schemas changed without new versions, and the R11 invalidation row retains an embedded R8 self-version constant. The hand-written schema-change manifest is not complete by construction.
+
+Additional exact joins are required between answer authority, visibility identity and the authenticated answer principal, and between selected route and atom kind. Accepted checker bypasses included a domain-only pending-projection fingerprint, deleted answer authority derivation, unconditional lifecycle identity prose, deleted compile-Release reads, stale export-map versions and mismatched invalidation self-version.
+
+R12 must make Release authority one-way and issuable, give every human authority an exact operation path, resolve lifecycle identity and evidence through closed owners, reproduce every question normalization rule and grammar-specific bound, make outbox origin uniquely consumptive and add an invocation-aborted-before-provider event, and derive version changes mechanically. No founder choice is required. No adapter, database or runtime implementation opens from R11.
