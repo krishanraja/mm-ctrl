@@ -1373,3 +1373,33 @@ R39 closed the newly added durable bindings but did not remove three inherited p
 Every semantic reference occurrence is now enumerated with one owner and included in transitive authority hashes. Restart reconstructs the original registry and hold records from canonical bytes and independently recomputes their fingerprints before recovering the durable selection.
 
 R40 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 40
+
+**Frozen commit/tree:** `92badf816ce36605aa83f8849d37cdeb4a029af3` / `843a3977ccc65e796ab515cb6821dfbdfe8343b1`
+
+**Human / machine / QA:** `7a3120203e76065b6d426d53dba6aa64945025f7` / `63f6b5222dc7350c2685c6a8ae2fc0d3e97fcd81` / `505d073fdfc1aa405fe880022921c92c97e94db3`
+
+**Checker / materializer / founder checker:** `cb1277704693feeb265809c00ef5eee09f428619` / `76ca5e83b276ed5b189a8385d78d5d58601a4742` / `29e1b10946ee8f85c68f315baf7ee519e49a7234`
+
+**Machine SHA-256:** `74434ed998ef047bc8ee855732688f20d061fd7d3ebd3981993047526cbcd535`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R40. Its discriminator-aware replay bindings, exact authority versions, closed classifier preimage, strict scalar canonical domain, expanded 203-row authority manifest and stored-artifact restart direction survive. Three shared executable roots remain:
+
+1. Validation and hashing still inspect mutable JavaScript objects directly. Accessors, proxies, reflective traps, descriptor changes and source mutation leave a check/use seam. R41 must take one owned immutable snapshot before any validation, hash or semantic use and reject every reflective or unsupported input shape.
+2. The restart fixture constructor emits schema-invalid placeholder values for typed enums and exact-literal unions, does not independently validate all seven rows and reuses or fabricates identity values rather than deriving coherent unique row references from a declared preimage.
+3. Semantic-reference discovery still relies on suffix and regular-expression inference. It does not independently pin an exact reference-field registry, and compound or wildcard reference forms remain outside literal typed resolution.
+
+The reproduced attacks include a value that changes between validation and use; getter, proxy, throwing-reflection, non-enumerable, symbol, sparse-array, invalid-Unicode and unsupported-value inputs; typed-enum and sentinel-invalid fixture rows; duplicate or fabricated operation and row identities; unresolved compound and wildcard references; and unregistered semantic reference occurrences.
+
+No founder choice is required. R41 must close only these immutable-snapshot, exact-fixture and explicit-reference-registry seams, preserve R40 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R41 repair rationale before review
+
+R40 rejected unsafe scalar values but did not first sever input ownership from the caller. R41 copies supported input exactly once into owned recursively frozen data before validation, hashing or use.
+
+Restart evidence is now constructed and independently validated against exact selected schemas with coherent unique identities and dependency-ordered row refs, bytes and fingerprints. Semantic references are listed as exact occurrences under a closed explicit registry, and compound or wildcard pseudo-references become discriminator-aware paths to actual declared fields.
+
+R41 changes no visible product behaviour and opens no adapter, database, runtime or external action.
