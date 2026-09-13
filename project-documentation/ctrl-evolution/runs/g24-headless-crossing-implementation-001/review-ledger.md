@@ -711,6 +711,26 @@ Exact replay of an ordinary receipt already carried by valid causal history stil
 
 The repair is frozen at `807f1d659888d1bdd57acf9ba314e0c72316cf02`, tree `510651e652463feffcd0a4ed6fd157aa8d22f097`, source blob `a2a8fd9a0b82a70c174ad01a00d887b0405874ff` and test blob `dd3801426161c7fb099030926dd2393db803e0a5`. The exact bytes are under independent review and remain unverified until that review clears.
 
+## Review round 27
+
+**Frozen code:** `807f1d659888d1bdd57acf9ba314e0c72316cf02`
+
+**Frozen tree:** `510651e652463feffcd0a4ed6fd157aa8d22f097`
+
+**Frozen source blob:** `a2a8fd9a0b82a70c174ad01a00d887b0405874ff`
+
+**Frozen test blob:** `dd3801426161c7fb099030926dd2393db803e0a5`
+
+**Adjudication:** `PASS`
+
+The implementation defense and independent adjudicator both verified the exact identities and passed the same frozen bytes. They independently reproduced the round-twenty-six bypass on `5dc193851a2452d77fc2080c195028adf9ab1115`, then confirmed it is closed on `807f1d659888d1bdd57acf9ba314e0c72316cf02`.
+
+After terminalization, fresh empty, truncated, complete pre-terminal, alternate authentic branch and separately issued equivalent-plan prefixes cannot mint another receipt. New, colliding and competing terminal identities likewise remain exhausted. Exact ordinary in-ledger replay, terminal-prefix replay and full-terminal-ledger replay remain valid and proof-bearing. Mutation of a returned terminal receipt cannot change deterministic reconstruction. Proofless, spliced, reordered, canonically mutated and malformed histories do not reopen issuance, while a malformed outer command preserves only genuine sealed causal history.
+
+Both reviewers passed the five frozen G24 contract checks and all 211 focused tests. The adjudicator additionally passed 66 adjacent G21 checks, documentation checks, changed-file lint, zero-new-error TypeScript comparison and `git diff --check`. The defense measured approximately 0.6 MB retained after 100 distinct terminalized plans, compared with approximately 25.5 MB before the fixed-digest repair. No current local-gate defect was reproduced.
+
+The exact local kernel is therefore independently verified within this build contract. This pass does not extend authority or evidence into trusted ingress, restart durability, transactional concurrency, production runtime, user experience, model intelligence, external action or customer value.
+
 ## Preserved proof limits
 
-This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. Trusted canonical ingress is the next technical boundary only after the repaired-byte review clears.
+This local kernel does not prove authoritative input provenance, durable approval or enrichment-plan rehydration, production concurrency, real model intelligence, customer comprehension, customer data handling, efficacy, delight, willingness to pay or any external action. The repaired-byte review has cleared; trusted canonical ingress is now the next technical boundary.

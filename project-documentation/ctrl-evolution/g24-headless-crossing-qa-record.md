@@ -1,6 +1,6 @@
 # G24 headless Crossing QA record
 
-**State:** local deterministic kernel repaired after twenty-six vetoes, frozen at `807f1d659888d1bdd57acf9ba314e0c72316cf02` and tree `510651e652463feffcd0a4ed6fd157aa8d22f097`; 211 focused checks pass, but the exact bytes are not yet independently verified and remain disconnected from product runtime
+**State:** independently verified local deterministic kernel after twenty-six exact-byte vetoes and a round-twenty-seven two-reviewer pass; frozen at `807f1d659888d1bdd57acf9ba314e0c72316cf02` and tree `510651e652463feffcd0a4ed6fd157aa8d22f097`; 211 focused checks pass and the kernel remains disconnected from product runtime
 
 **Authority:** the bounded local build opened by Krish's 12 September 2026 answer "yes to both" and recorded in the [build contract](g24-headless-crossing-build-contract.md).
 
@@ -84,6 +84,10 @@ The identities and internal evidence are wholly synthetic. No simulated consent 
 ## Verification evidence
 
 - `npm run brain:g24:headless-check`: 211 checks passed in one file on the frozen round-twenty-six repair.
+- Two independent reviewers verified the exact commit, tree, source blob and test blob in round twenty-seven and returned `PASS` after reproducing the round-twenty-six failure on its predecessor and attacking the repaired bytes.
+- Post-terminal fresh issuance was rejected from empty, truncated, complete pre-terminal, alternate authentic branch and equivalent-plan prefixes, while exact ordinary and terminal replay remained valid.
+- Proofless, spliced, reordered, canonically mutated and malformed histories could not reopen issuance; malformed outer commands preserved only genuine sealed causal history.
+- Fixed-digest terminal state retained approximately 0.6 MB after 100 distinct terminalized plans in the independent defense probe, compared with approximately 25.5 MB before the repair.
 - Eight route cases matched a frozen oracle that the selector never receives. The competent same-evidence baseline made the same eight calls, so this run records no claimed decision-quality advantage.
 - Every minimum controlling dimension was independently made invalid at selector time.
 - Every watermark in the compiled Release lineage was independently version-mutated before use and rejected with zero approval, delivery or external side effect.

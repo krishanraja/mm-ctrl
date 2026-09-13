@@ -42,12 +42,12 @@ check('external actions remain closed', lock.includes('deployment, feature enabl
 check('revisit trigger is observable', lock.includes('credible conforming case') && lock.includes('later named proof gate falsifies'))
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
-  'canonical next action remains inside the headless build gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Independently gate the exact repaired headless Crossing bytes'),
+  'canonical next action remains inside the trusted-ingress gate',
+  state.includes('**CURRENT_NEXT_ACTION:** Specify and independently attack the server-resolved canonical ingress boundary'),
 )
 check(
-  'design state remains inside the headless build gate',
-  designState.includes('independently gate the exact repaired headless Crossing bytes'),
+  'design state remains inside the trusted-ingress gate',
+  designState.includes('specify and independently attack trusted canonical ingress'),
 )
 check('lock contains no em dash', !lock.includes('—'))
 
