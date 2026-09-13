@@ -878,3 +878,35 @@ R23 established the required authority identities but left historical revocation
 The root remains one immutable externally pinned bootstrap singleton. Rotation is explicitly outside R24 and fails closed. Live-principal artifacts become immutable content-addressed evidence, and selected schema identity extends the existing outbox origin rather than a sidecar.
 
 R24 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 24
+
+**Frozen commit/tree:** `bcb77069cf1506ba0ad1d3a34de58567e219d5c8` / `0f90a1d2fb970081707b55210dff3292cfb79aff`
+
+**Human / machine / QA:** `5630f6316f9700b42e1104c57c0bdf4ce9b272c6` / `b6354df68f14a8b8b3fa050eb9f033b07089a8b7` / `2ca9dd5cef16dabd82aae7eb11abddfd7640f02b`
+
+**Checker / materializer / founder checker:** `74f2a1d28418e31488b8c65e7e75312d7521120a` / `130c937638f19e43a43ec2dd3b52b0a487d73f22` / `912d0447c41f1e975799f0dec686ceb6f2a6eb49`
+
+**Machine SHA-256:** `559a62f56feb915f8f8d9b70acb540c4700e2e30d8dea2773a55205f4e6d7721`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R24 despite exact materialization, fifty-three mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its nonresurrecting latest-row direction, durable operation and receipt stores, exact role separation, immutable root scope, principal artifact stores and single outbox origin survive. Seven executable roots remain:
+
+1. Target rows still carry authoritative order fields. Server transaction time and a monotonic partition head must own `valid_from`, row version and order so a caller cannot submit a backdated or non-tip row.
+2. Registry replay and collision resolution must precede proof nonce and currentness checks. An exact committed retry must replay its stored response and receipt without proof revalidation or new effects, while a changed request holds.
+3. Root bootstrap proof is incorrectly reused for issuer and evaluator administration. A distinct externally pinned root-admin capability is required. Every proof needs an exact signed preimage and fingerprint, and root bootstrap needs two distinct signer identities and signatures with a 2-of-2 threshold.
+4. Proof nonces have no durable atomic consumption ledger or exact committed-replay exception.
+5. Authority request, target, proof, result and replay response artifacts are named but lack separate immutable content-addressed stores with exact schema binding, size limits, canonical decode and re-encode equality, fingerprints, retention and restart failure.
+6. Authority results lack one exact fingerprint and total first-match lifecycle. Persisted holds and held replay are not fully defined, and branch receipt and result non-nullability is incomplete.
+7. Recursively changed case-control receipt and dependent authority-read-set schemas and fingerprint domains retain stale versions.
+
+No founder choice is required. R25 must close only these transaction, replay, proof, artifact and lifecycle seams, preserve R24 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R25 repair rationale before review
+
+R24 made authority visible to the architecture but did not yet make ordering, retries and cryptographic proof consumption one executable transaction. R25 must move row ordering to the server partition head, resolve replay before proof freshness, and bind every authority byte to one exact content-addressed store.
+
+The result union must be total. Committed retries replay without new work. Every hold has explicit persistence and replay behavior, and no hold can acquire a committed receipt.
+
+R25 changes no visible product behaviour and opens no adapter, database, runtime or external action.
