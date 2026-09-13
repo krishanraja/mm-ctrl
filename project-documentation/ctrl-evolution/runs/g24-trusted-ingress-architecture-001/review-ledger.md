@@ -148,3 +148,34 @@ Both technical reviewers verified the exact frozen bytes and rejected R5. The co
 7. The checker still accepts semantic downgrades including MD5 snapshot or chain digests, boolean timestamp and projection-version fields, missing provider rechecks and weakened success evidence.
 
 R6 must be one fully materialised effective contract, or an exact mechanically materialised patch whose generated effective document is frozen and validated as the authority. It will preserve the R4 replay envelope and exact original payload bytes; adding `current_standing: false` to a replay envelope is compatible with that rule, while claiming byte equality for the whole original response is not. No adapter, database or runtime implementation opens from R5.
+
+## Review round 6
+
+**Frozen commit:** `1354994738571e9c7bb0ec42969d654887e7bc3b`
+
+**Frozen tree:** `2c7bfcb57d340e18cccfffa8451ea422e422b6cf`
+
+**Human contract blob:** `db714610dd2ecddd8f7b282c4e8ded7ff9c457d4`
+
+**Machine contract blob:** `76a5bf1f5d14a904dc660f0632caf54eff16e32e`
+
+**Checker blob:** `ad67d6f3c673f9b25ff032627325cfbdbe2f3772`
+
+**Materializer blob:** `bae058a50c5f34a08dc8a35641c3ded930554470`
+
+**QA blob:** `a817257f924405896f1fad71b24a4be7c150eaa0`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R6. The generated effective document, full documentation suite, thirty-seven declared mutations and all 211 headless kernel checks passed, but semantic traversal and adversarial inspection found eight remaining roots. The non-voting founder calibration again found high alignment and no product veto.
+
+1. Several used primitive and discriminated types were absent because the materializer read nonexistent R3 properties and JSON serialization silently omitted `undefined`. `invalid_command_hold` was also a dangling result code.
+2. Universal fresh-operation authority still ran before registry lookup, contradicting disclosure-only replay. Request admission and replay lookup require an exact phase order.
+3. Operation maps were key-complete but branch effects were not. Release invalidation inherited an unconditional success write set, approval omitted atomic visibility consumption and lifecycle transition omitted atomic joint-receipt consumption.
+4. Visibility remained an authenticated caller assertion rather than evidence that exact rendered bytes were foregrounded and explicitly acknowledged. It needs a server-issued single-use presentation challenge and later acknowledgement.
+5. Lifecycle nonce and combined-pair collisions lacked exact cross-operation outcomes. Mutable `consumed_at` fields destabilised receipt fingerprints; consumption must be separate append-only state.
+6. Proof bundles used server-side references but did not map each family to one exact canonical owner row, extension equalities, current-version rule and failure code. Generic constraint strings still allowed different implementations to select different rows.
+7. Fingerprint field encoding was undefined, absent optional bytes were incomplete and mutable state was included in supposedly stable receipt and outbox fingerprints.
+8. Outbox dispatch lacked an exact reaper path from orphaned `dispatched` to immutable ambiguity. Attempt state mutation lost the dispatched identity, and reconciliation evidence did not bind the exact attempt, ordinal, fence and worker.
+
+R6 did permanently close conceptual overlay ambiguity, establish one effective artifact, register all sixteen operations, preserve the historical replay envelope, retain thirteen-set CAS, make Release watermarks complete but extensible and remove caller-carried proof bytes. R7 must preserve those gains while closing the eight executable seams. The founder-locked semantic `edit` action remains: R7 will implement it as safe staging followed by exact presentation and later approval, not remove it from the product vocabulary. No adapter, database or runtime implementation opens from R6.
