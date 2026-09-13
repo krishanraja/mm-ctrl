@@ -36,3 +36,31 @@ Both technical reviewers verified the exact candidate and rejected it. The non-v
 
 The single canonical Brain, model non-authority, privacy intent, audience isolation, database-owned durability, terminal-finality goal, local-only claim and closed external actions remain sound. R2 must repair the executable seams without redesigning those choices.
 
+## Review round 2
+
+**Frozen commit:** `3f94599065528c52f59135a48f5d6c93494699f9`
+
+**Frozen tree:** `e700a88e0959f009ad67e6b41766e9885f20ecb6`
+
+**Human contract blob:** `654e98ab90f34f99b908f9eb76adb83fc8775794`
+
+**Machine contract blob:** `61efcc194339205ac2989703e236216af0f3a9ac`
+
+**Checker blob:** `7f3cc5ad5ccf9042132185ac5384b8a38a3814d4`
+
+**QA blob:** `46a610f38219b7105ab1edc226bf9d87db587f58`
+
+**Adjudication:** `VETO`
+
+Both reviewers confirmed that R2 repaired the R1 checker bypass, candidate completeness, explicit limits, session transport, serializable transaction intent, write-role ownership and broad restart-proof responsibility. The founder calibration again found the backstage direction aligned and no product choice requiring Krish. Six implementation blockers remained:
+
+1. The operation entries named fields but did not define their types, enums, identifier grammar, optional-versus-null semantics, canonical bytes or exact result envelopes.
+2. Exact replay promised original bytes while the registry stored only a fingerprint. Binding session-instance hash as operation identity also conflicted with safe replay by the same actor after legitimate session rotation. Read-only replay did not explicitly recheck current access.
+3. The snapshot and compare-and-swap sets used different and partly undefined seal names. Domain-separated canonical set encoding, duplicate rejection and invalid sentinels were absent.
+4. The proof bridge listed families without exact inputs or outputs. More critically, the frozen kernel mutates process-global proof and collision registries before database commit, so an aborted or serialization-failed transaction could leak uncommitted issuance or terminal state into later work.
+5. The outbox had no atomic worker claim, lease, fencing token, compare-and-swap state transitions or crash-after-provider-success rule.
+6. Numeric limits existed, but their byte-counting grammar and hold-code mapping were not machine-readable.
+
+Two human-agency clarifications also carry into R3. Every replay returning protected bytes must recheck current authentication and case/audience eligibility. Only the named leader may change the semantic answer attributed to them; an operator may propose a transcription or attribution repair but cannot silently rewrite the leader's answer.
+
+R3 must also state that this registry covers only the currently verified kernel seam. It does not yet claim to implement the full leader-owned final call, Brain learning proposal or later customer relationship loop.
