@@ -419,3 +419,15 @@ R11 permanently improved canonical primitive encoding, the selector's real zero-
 Additional exact joins are required between answer authority, visibility identity and the authenticated answer principal, and between selected route and atom kind. Accepted checker bypasses included a domain-only pending-projection fingerprint, deleted answer authority derivation, unconditional lifecycle identity prose, deleted compile-Release reads, stale export-map versions and mismatched invalidation self-version.
 
 R12 must make Release authority one-way and issuable, give every human authority an exact operation path, resolve lifecycle identity and evidence through closed owners, reproduce every question normalization rule and grammar-specific bound, make outbox origin uniquely consumptive and add an invocation-aborted-before-provider event, and derive version changes mechanically. No founder choice is required. No adapter, database or runtime implementation opens from R11.
+
+## R12 repair rationale before review
+
+R11 failed for the same reason several visible prototypes failed: a credible-looking object existed without a credible path by which it could become true. A Release authority that depends on a projection whose fingerprint already depends on that authority is the architectural equivalent of a confident but meaningless sentence. The repair must remove the circularity, not explain it more elegantly.
+
+R12 establishes an executable order. Projection comes first. Named human approval creates one accepted request and authority bound one-way to it. Use comes last and rechecks present conditions. Answer authority receives the same explicit issuance path. Lifecycle human actions and evidence become closed, resolvable records with exact single consumption rather than identifiers supported by prose.
+
+The question contract is corrected to the locked human experience: five is a ranked-choice ceiling, not a universal ceiling; blank, padded, reserved or control-bearing choices and consequences are invalid; and the question's declared proposal is the same type the answer receipt can preserve. The authenticated named leader, visible question, authority receipt and answer now resolve to one identity.
+
+Delivery receives two final protections. One successful operation result branch can create only one effect and attempt budget, and a worker that loses authority after recording invocation-start but before calling the provider has one honest non-calling transition. It never has to pretend the provider failed, claim ambiguity or strand the causal tip.
+
+Finally, schema-version obligations are generated from the actual before-and-after schema graph. A hand-written list can no longer quietly omit a changed export container or embedded self-version. R12 changes no approved visible product behaviour and opens no external action.
