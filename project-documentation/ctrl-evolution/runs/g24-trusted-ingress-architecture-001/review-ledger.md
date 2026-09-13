@@ -336,3 +336,35 @@ R10 therefore narrows three roots without changing product direction:
 3. Every outbox payload exposes and equals the transition effect, and one unique consumption is committed atomically with the payload and transition. Reconciliation success and failure use distinct schemas. Invocation-start is the durable consumption of call authority, with a single-use process capability and current authority rechecks immediately before the provider boundary. A three-reservation abandoned path terminates without inventing a provider call.
 
 The user experience remains one clear proposal, one honest human review and one deliberate action. None of the added machinery is a surface requirement. R10 remains unimplemented and awaits exact independent attack.
+
+## Review round 10
+
+**Frozen commit:** `2785675b75c808e01eef9ab2d950510f355ca9b8`
+
+**Frozen tree:** `b76346f5dc404672e74d9be454bdaa6bb137477e`
+
+**Human contract blob:** `189d7e8a74069457ef877016e230677b154b821e`
+
+**Machine contract blob:** `7369577c25079d71afe44d4c0dc6883f53016557`
+
+**Checker blob:** `fb11b948120aaf5eb5caed989153612055d226e1`
+
+**Materializer blob:** `d1d4e2fbcdb1ce0e78f4c0542982e336387648bd`
+
+**QA blob:** `e85b2171d80e3721b624daa7c46eecb3d822b67a`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R10. Exact generation, thirty-six declared mutations, the complete documentation suite and all 211 kernel tests passed. The founder calibration again found high alignment, no product veto and no founder decision required. It confirmed that the real route vocabulary, human-owned answer meaning, named acting human, deliberate gates and invisible infrastructure all remain faithful to the product.
+
+R10 permanently removed the duplicate watermark schema, restored the real route vocabulary, made answer and lifecycle rows materially richer, added proof-set version scaffolding, bound payload maps to effects, separated reconciliation outcomes and made invocation authority explicit. Five executable roots remain:
+
+1. Canonical field encoding does not yet define numbers, null, nullable tags or discriminated values, although R10 fingerprints those fields.
+2. Selector semantics remain descriptive rather than exact. The locked kernel allows a candidate subset, gives `reuse` precedence only for sufficient evidence and ranks `enrich`, `ask` and `session` only for unresolved gaps. R10 still contains an inherited “all four” phrase, does not define the exact rejection-reason derivation or bind every result field, and leaves the selector candidate set and watermark set incompletely owned.
+3. Answer and lifecycle proofs remain spliceable. Answer effects are not derived from the exact approved question option/effect contract. Lifecycle owner, actor, authority, precondition, receipt and invalidation fields are not all byte-equal to the selected catalogue row and current identities.
+4. Watermark-change labels have no exact value-pattern and precedence table. Impossible null patterns remain admissible, and the complete set encoding still contains an ambiguous generic member token.
+5. Outbox consumption and origin are incomplete. Consumption fields are not all required equal to the payload and transition. Invocation rechecks omit lease expiry and current-tip status. A prior ambiguous invocation can be hidden by a later “never invoked” terminal. Reconciliation transition rows still name the generic schema while the payload map names the distinct schemas. Effect creation is not yet tied to the exact successful operation branch and canonical payload bytes.
+
+Accepted checker bypasses included arbitrary selector reason and rejection derivation, forged answer and lifecycle equality paths, implementation-defined watermark change semantics, old reconciliation schema selection, arbitrary provider-call condition, an `always` invocation recheck and weakened payload-consumption fingerprinting.
+
+R11 must replace each remaining descriptive invariant with a closed derivation table or exact equality set, extend canonical bytes before fingerprinting new values and tie outbox genesis to one successful operation result and canonical payload. No product decision is required and no adapter, database or runtime work opens from R10.
