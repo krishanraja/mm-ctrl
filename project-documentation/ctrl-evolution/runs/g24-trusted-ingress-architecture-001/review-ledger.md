@@ -120,3 +120,31 @@ Both technical reviewers verified the exact bytes and rejected R4. The sixteen m
 7. R3 size annotations and R4 post-admission limits gave the same oversized answer two possible outcomes. Outbox calls lacked a durable fenced attempt reservation and exact success-evidence schema, so crashes could evade the claimed three-attempt ceiling.
 
 R5 may change only these seams. It must preserve the R4 gains, the single canonical Brain, leader-owned semantic state, invisible customer complexity and the unimplemented local-only claim.
+
+## Review round 5
+
+**Frozen commit:** `32b378582c18316ac3fb156ae82df60b3f29bb9b`
+
+**Frozen tree:** `05a29d2d038700d9e8b5c2b6509ad68bb797369b`
+
+**Human contract blob:** `80a6ca30e17fcf98cb137f272aeeda83b046dcb3`
+
+**Machine contract blob:** `b20653edc02055b7253cc86261a849f9ec416b5e`
+
+**Checker blob:** `c60650832d5b693ad44446fb5f2ee3ba8acdc3f1`
+
+**QA blob:** `821e0e3e069e90f6d2bfcd1905eae79cc18980b5`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen bytes and rejected R5. The contract, documentation suite and twenty-seven declared mutations passed, but those checks were non-dispositive. The non-voting founder calibration found high alignment and no product veto. R5 preserved the correct direction around thirteen-set snapshots, grant seals, fixed member identities, fresh-versus-replay authority, pre-admission request-owned limits and durably counted provider attempts. Seven implementation roots remain:
+
+1. The conceptual overlay cannot be materialised deterministically. It has no exact JSON Pointer patch set or complete effective document, and it contradicts inherited R4 result, replay and registry clauses.
+2. Edited approval still fabricates visibility by creating, presenting and approving a new atom in one operation. It must be staged and presented first, then approved in a later human-authorised operation over that exact version and content fingerprint.
+3. Lifecycle leader action, operator action and combination mint authority outside the closed operation registry. They need the same request identity, result, replay, snapshot, limit and serialization rules as every other canonical write path.
+4. Release invalidation lacks one projection-version type, a closed controlling-watermark universe and order, exact watermark-set bytes, receipt fingerprint bytes and idempotent finality.
+5. Authority-bearing lifecycle, invalidation and provider-success records lack exact fingerprint preimages. Decoded proof payload schemas and authoritative reference vocabulary are still delegated to future implementers.
+6. The outbox cannot distinguish a reserved attempt from one already dispatched. A durable single-use dispatch transition is required, and ordinals one through three must each permit exactly one call while a fourth reservation and call remain impossible.
+7. The checker still accepts semantic downgrades including MD5 snapshot or chain digests, boolean timestamp and projection-version fields, missing provider rechecks and weakened success evidence.
+
+R6 must be one fully materialised effective contract, or an exact mechanically materialised patch whose generated effective document is frozen and validated as the authority. It will preserve the R4 replay envelope and exact original payload bytes; adding `current_standing: false` to a replay envelope is compatible with that rule, while claiming byte equality for the whole original response is not. No adapter, database or runtime implementation opens from R5.
