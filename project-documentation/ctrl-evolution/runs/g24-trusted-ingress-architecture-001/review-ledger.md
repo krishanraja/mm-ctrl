@@ -559,3 +559,45 @@ R14 made each local relation more exact but accidentally introduced a parallel t
 Lifecycle collision and combination rules must use the same `*_receipt_ref` and nullable predecessor vocabulary as the authoritative rows. Provider recovery must also have a responsible actor after a worker dies: an expired, consumed or maybe-called current tip belongs to the reaper's ambiguity path, never a false no-call abort.
 
 R15 changes no product behaviour or surface. It remains local and unimplemented pending exact independent review.
+
+## Review round 15
+
+**Frozen commit:** `0977caef12a0ef525702e23e0b248170b22c417d`
+
+**Frozen tree:** `bc2f388b0931d6db6f35e7dcd7e881fbcce13f9e`
+
+**Human contract blob:** `dc6ac63dc1c51482d9f3fe4ee3440c72e2a9d8be`
+
+**Machine contract blob:** `c75c81c48d65b5c9f9dfc495ecdc44e3d90ed690`
+
+**QA blob:** `151c693981d4e10b7a779d313ca93c765b674885`
+
+**Checker blob:** `9d30e424ceb82a144b75fd6bc1d2d5971cb28665`
+
+**Materializer blob:** `7dfacc58ec2151249cd5aac9286213da0776a184`
+
+**Founder-lock checker blob:** `799448145a9749e142e8b6bcc4777b6908ea6289`
+
+**Machine SHA-256:** `66b5c9c8fcfe61a12ebbf07ec465990745d731e22fe8b4ea67a86453d515b0d2`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact archive and rejected R15. The exact generator, twenty-two declared mutation probes, documentation suite and 211 locked-kernel tests passed but remained non-dispositive. Founder calibration found high alignment, no product veto and no founder decision. It confirmed that conservative dead-worker recovery is invisible infrastructure, not a customer workflow.
+
+R15 permanently repaired the one canonical operation registry and exact Release result-branch derivation. It also moved the principal lifecycle combine and collision structures to authoritative receipt vocabulary and introduced the intended reaper ambiguity branch. Five executable roots remain after reconciling both attacks:
+
+1. Lifecycle vocabulary closure is hand-enumerated and omits an authority predicate and other active proof, evaluator, result and fingerprint nodes. The omitted two-party predicate still uses old action-fingerprint, joint-receipt and predecessor names.
+2. Expired invocation recovery is contradictory. The ordered table distinguishes unconsumed no-call abort from ambiguity, but a dead process's non-serializable capability cannot be proven unconsumed by the reaper. Broad transition guards also authorize both abort and ambiguity for the same durable state.
+3. Canonical result payload bytes are only an unresolved identifier. There is no closed append-only byte row with exact content, length, content hash, unique selection and a complete committed-success envelope fingerprint.
+4. Case authority binding is fingerprinted but not a workspace-and-subject-scoped, append-only, uniquely current authoritative row. `current` therefore lacks a deterministic source selection.
+5. Lifecycle evaluator results bind version but not `evaluator_artifact_sha256` to every written evidence row and the selected evaluator-registry member.
+
+Accepted checker bypasses inserted legacy lifecycle vocabulary into omitted active nodes, made transition authorization disagree with ordered recovery, removed canonical-registry conditions, left result bytes unresolved, made the terminal outcome call twice, and allowed an evaluator result to name a different artifact. R16 must scan the whole active effective graph, route every expired current invocation tip to ambiguity unless a durable provider-boundary proof exists, materialize canonical result bytes and fingerprint the success envelope, make case authority deterministically current, and close evaluator artifact identity. No product choice is required.
+
+## R16 repair rationale before review
+
+R15 fixed local names while still trusting hand-selected closure boundaries. R16 removes that discretion. Lifecycle vocabulary will be rejected across the effective document rather than across a list that can omit a dependency. Result bytes and case authority will become independently resolvable, scoped records rather than asserted references.
+
+Dead-process recovery will prefer honesty over speculative retry. Once an invocation lease expires without a committed successor, the durable state cannot prove what happened inside a vanished process, so the reaper records ambiguity. Only a live fenced worker may prove a pre-provider failure and append a no-call abort. Ordered outcomes and transition authorization must be exact derivatives of one another.
+
+R16 changes no product behaviour or visible surface. It remains local and unimplemented pending exact independent review.
