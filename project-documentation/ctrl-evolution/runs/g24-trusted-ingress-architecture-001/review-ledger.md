@@ -1128,3 +1128,34 @@ R31 established the correct pre-result hold-row reference but still allowed the 
 Every stored identity must now resolve through declared fields and one canonical source. The two session nonce rows are exact projections of the selected issuer and evaluator proofs, while replay may return only the canonical response already bound to the same operation and original result.
 
 R32 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 32
+
+**Frozen commit/tree:** `6d08ade0766d843c1a724b57da3ecec1637ac0a1` / `b9beba3ade0c98371f894aa6acebe6184b52af07`
+
+**Human / machine / QA:** `3f8d1a53ced68757d9da734cc747cbe9694aac48` / `d0eb74c71e64e78768463f353959142fd1cd40f0` / `bfd4d40034350ea84709b7757976727ff9f44114`
+
+**Checker / materializer / founder checker:** `37ccb33994ca1096a98abe3bbdc8e71d3a3c5d4f` / `e2992bd111ffad124593947982e29e3db833a110` / `52b006e1497898521a35507ca9d3d71a2680ccae`
+
+**Machine SHA-256:** `f392cd5338bf5ade8c07e1724bfbd44fda0906bd8ee6d4726a60d45e219559c0`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R32 despite exact materialization, forty-four mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its result-independent hold reference, declared raw operands, exact dual nonce rows, singular projection domain and content-addressed replay triples survive. Six executable roots remain:
+
+1. Every committed result still includes the final receipt fingerprint while the receipt fingerprint includes the result triple. Ordinary and session committed branches therefore contain a result-to-receipt fixed point.
+2. Session hold issuance still computes the hold-row reference in parallel with its evidence even though the actual hold-row preimage includes that evidence. Evidence must be stored first, then the hold-row reference, then result identity, then final hold fingerprint.
+3. Replay bindings do not yet make the committed or held registry the sole authority for operation, branch, result, historical response and, for held outcomes, exact hold-row identity. Payload copies remain vulnerable to cross-row splicing.
+4. The held result timestamp is not explicitly equal to the precommit hold timestamp, final hold-row timestamp and held-registry timestamp across all seventy-five held variants.
+5. Residual compound prose can still imply evidence-to-result authority even where the field graph intends the opposite. R33 must remove those reverse claims and machine-check the complete dependency graph.
+6. Checker coverage does not yet reject ordinary and session receipt cycles, missing evidence-before-hold edges, reverse semantic clauses, registry/result/history A-B-C splicing, held timestamp mismatch or omitted dependency edges.
+
+No founder choice is required. R33 must close only these committed-receipt, session-hold-order, replay-authority, timestamp and checker seams, preserve R32 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R33 repair rationale before review
+
+R32 made the held branch acyclic but left the same mistake on committed receipts. R33 must derive a precommit receipt identity from request, target, proof and authority inputs, let the committed result reference only that identity, then compute the final receipt fingerprint from the completed result.
+
+Session hold evidence must become an actual predecessor of the hold-row reference, not a parallel input. Replay must copy only from one authoritative registry row and the exact artifacts that row binds. Held time is one server timestamp preserved through result, hold, registry and replay.
+
+R33 changes no visible product behaviour and opens no adapter, database, runtime or external action.
