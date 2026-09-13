@@ -198,3 +198,36 @@ R7 responds by making ambiguity structurally difficult:
 8. It replaces mutable outbox attempts with append-only reservation, dispatch, terminal and reconciliation events, including the exact lease-expiry path for an orphaned dispatch.
 
 This is deliberately invisible product infrastructure. It should make the later experience feel simpler and safer, not expose receipts, TTLs, hashes or state-machine language to a leader. R7 remains unimplemented and awaits exact independent attack.
+
+## Review round 7
+
+**Frozen commit:** `a95f210be0d4de611e8862821c050907add88d00`
+
+**Frozen tree:** `793480d472a4ff22d7a9dd4fa5a00887e314b815`
+
+**Human contract blob:** `cd2cf1c2e7fd2e6776e294ba1ea28d9f991c0904`
+
+**Machine contract blob:** `98d5eb83e422cec8eaa056a8bf3b668763afcaa5`
+
+**Checker blob:** `33922ff8bda4d2b2a89390fd1d1b035283a17db0`
+
+**Materializer blob:** `9a9324b0b32266bd735028468e48c83ffa211620`
+
+**QA blob:** `4c5ee8acee7b3d9ef7a179b3590107ef543b37b0`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R7. The full documentation suite, fifty-two declared mutations and all 211 kernel tests passed but remained non-dispositive. The separate founder calibration found high alignment and no product veto. It reiterated that the backstage sequence must remain invisible and that this trust contract does not prove consequential intelligence or customer value.
+
+R7 materially closed the undefined type graph, fresh-versus-replay ordering, human presentation model, immutable lifecycle consumption, canonical field encoding and orphan-dispatch direction. Eight implementation roots remain:
+
+1. Applicable-control watermark IDs use a narrower ASCII grammar than canonical control IDs. A valid control containing `/`, Unicode or more than 128 characters can make the required complete watermark set impossible.
+2. The new presentation-challenge operation is absent from the evaluator ABI, while visibility exports still point to R6. Complete actor, case, atom, fingerprint, expiry and unconsumed-challenge equalities are not materialized. Viewer choice and competing acknowledgement outcomes remain ambiguous.
+3. Lifecycle nonce and pair-collision phrases name codes absent from the rejection and hold enums. “Same canonical action bytes” incorrectly includes server-generated identifiers and times, and a new operation ID has no exact registry-commit behavior when secondary idempotency returns an existing authority record.
+4. Proof maps still resolve generic shells rather than every authority-bearing row. Selector policy, intervention atom, leader authority, visibility, correction chain and dependency graph, lifecycle snapshot and authority, enrichment budget and terminal state, and execution terminal state lack exact row mappings. Generic row schemas omit those semantic bindings and fingerprint themselves circularly.
+5. Presentation challenge, visibility acknowledgement, lifecycle action-combination consumption and joint-transition consumption schemas do not link their fingerprint fields to the new fingerprint definitions. Reservation and dispatch have the same orphaned-link problem.
+6. Approval's legacy effect map omits the visibility consumption required by its new operation branches. The release invalidation branch and the inherited release invalidation contract use different write names. These duplicate semantic maps can disagree.
+7. The outbox state machine jumps from ambiguous to reserved even though reservation requires a current claim and fence. It has no ambiguous-to-claimed transition, no schemas for claim and terminal events, and no one-terminal-event uniqueness across success, failure, ambiguity and reconciliation. Conflicting terminal history remains possible.
+8. The checker still accepts inherited-property references, a corrupted evaluator export, collapsed fingerprint domains, omitted preimage fields, missing terminal uniqueness, duplicate-effect drift, removed claim authority and weakened transition conditions.
+
+R8 must repair only these roots and preserve the R7 gains. A structural applicable-control watermark member will avoid narrowing canonical control IDs. Secondary idempotency will compare a stable caller-intent projection and still commit an exact result for the new operation ID. Every proof dependency will resolve to a closed authority-bearing row or sealed set with a non-circular fingerprint. One canonical branch-effect map and one append-only terminal-event ledger will eliminate duplicate truth. No adapter, database or runtime implementation opens from R7.
