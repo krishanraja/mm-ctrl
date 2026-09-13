@@ -1250,3 +1250,34 @@ R35 defined three honest paths but did not define a complete selector that makes
 Each branch root must name only material that exists in that branch. One top-level registry must make every normative authority explicit and reject any unregistered competitor without relying on a predictable property name.
 
 R36 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 36
+
+**Frozen commit/tree:** `d7a1790536756e2c12b4841b1edebf19d8b3b7bc` / `b5ca1bcc6238d809cf0b01c17a7b032a9f42c70b`
+
+**Human / machine / QA:** `82d725fb2804d77e9566f92e822d4d3b121599a2` / `f6331799468babc833ca6bfdb5f21e656826a3d1` / `b437d96aa7fd3bff0246ec1315b5adad80bbc2a0`
+
+**Checker / materializer / founder checker:** `0c27d2f9da67b773c2afe3161bb53560117fce01` / `66783bbf155199e1294a540992df1d61915aa2fe` / `cb29630aab8de27768467a93c3e8a5685d1ed66f`
+
+**Machine SHA-256:** `dda6415555de50b7cb960f2cc2b809f50e9a55b91eb0e14c62d3920e4a6c2c4f`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R36. Its exhaustive ninety-row selector, exact committed and ordinary roots, durable result-before-history and payload-before-envelope ordering and explicit authority registry direction survive. Six executable roots remain:
+
+1. Session held outcomes are still one class even though stale-head and valid-proof invalid-target holds consume two verified nonces, while authorization, invalid-proof and internal-failure holds must remain raw and non-consuming. R37 must split these into exact verified-consuming and raw-non-consuming classes, evidence schemas and DAGs.
+2. Fresh selection identity, proof family, branch class and evidence kind are not persisted in the original registry or hold lineage. Replay can therefore reinterpret old rows through the current selector table instead of reading the exact versioned decision that was committed.
+3. Selector, replay-classifier and authority-registry rows have no closed exact schemas. Extra fields, caller overrides, fallback semantics and altered source meanings remain representable.
+4. Authority completeness is derived from mutable candidate `normative` flags and a circular expected count. R37 needs an independently declared frozen path, schema, version and hash manifest plus recursive detection of unmanifested authority markers.
+5. Replay paths must begin with the correct registry authority and use one exact ordered vocabulary. Source precedence, anti-splice and derivation references must remain mandatory, not descriptive accessories.
+6. Checker coverage does not yet reject verified-versus-raw session source confusion, missing durable selection identity, non-closed control rows, caller overrides, nested unmanifested authority or replay vocabulary drift.
+
+No founder choice is required. R37 must close only these session split, durable classification, closed-control, independent-manifest and replay-order seams, preserve R36 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R37 repair rationale before review
+
+R36 made branch selection exhaustive but treated every session hold as if the same evidence existed. R37 must distinguish verified consuming holds from raw non-consuming holds at selection time and carry that exact decision into immutable registry and hold identity.
+
+Replay must read the committed branch decision, never infer it again from a newer table. Every control row is closed, every normative authority is independently manifested by exact path and hash, and every replay path begins from its durable registry authority.
+
+R37 changes no visible product behaviour and opens no adapter, database, runtime or external action.
