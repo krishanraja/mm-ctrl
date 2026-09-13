@@ -782,3 +782,35 @@ R20 established the intended identities but left some of their authorities as pr
 Release issuance must branch only after the result outcome is known. Pending delivery assembles exactly one outbox genesis; invalidated-before-use executes one explicit no-outbox assertion. Both branches rejoin only at the atomic commit.
 
 R21 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 21
+
+**Frozen commit/tree:** `754994c868c31c29ffe5ed077ac3668d7ed9b95c` / `47cf682d18791aae7af2262908585450454b68f1`
+
+**Human / machine / QA:** `2a5645411ced2866d56fc7eff882f65f6ea049d0` / `eaca9579126df4d203c22052fe94350cefa803f6` / `b0a730d9661d9d5a182831368e33947c1afbe649`
+
+**Checker / materializer / founder checker:** `01acee8d9fb2e4d6b5f47efa2c6b4fcbc1c75582` / `e46a5f69417aa58d466236fda1e1aea355e345b9` / `37f630c4ca138c061fd8ccf464bb68693e4e48af`
+
+**Machine SHA-256:** `25f783047ba0272cca05ca742aa856df5d485e7392bcc2ce66da351378ebdb9f`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R21 despite exact materialization, forty-five mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its exact result inventory, versioned held history, typed sentinel-bearing holds, serializable session intent and branch-complete Release issuance graph survive as requirements. Seven executable roots remain:
+
+1. No closed server-presented principal binds the live session projection byte-for-byte to `principal_schemas.human_session`, selected session evidence and the request and current-case workspace. Session-instance lookup and the principal-kind and actor-class joins are incomplete.
+2. The five session, issuer, evaluator, account-binding and account-standing stores lack a sole-writer and direct-DML contract, issuance and transition operations, bootstrap trust anchor and exact trusted-authority joins. Issuer and evaluator self-appointment and untrusted account-standing transitions remain expressible.
+3. Case-control receipts do not persist the complete session-authority read set and snapshot fingerprint, so commit-time authority cannot be rehydrated and audited exactly.
+4. Hold fingerprints name dependency slots but do not define one exact source path, source schema, scalar type and canonical encoding for every dependency. Raw bytes and identifier encodings can be substituted.
+5. `replayed_committed` lacks an exact version and type. Held replay still contains an impossible whole-payload byte-equality assertion instead of exhaustive historical field equalities with only explicit replay fields allowed to differ.
+6. The `use_release` schema inventory binds version strings but not canonical schema bytes or digests, and the derivation object itself is unversioned. A branch schema can change semantically while retaining its version.
+7. The checker does not attack cross-workspace confused-deputy joins, writer and issuer authority, receipt read-set persistence, raw-versus-identifier dependency encoding, replay field substitution or same-version schema mutation.
+
+No founder choice is required. R22 must close only these trust-boundary seams, preserve R21 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R22 repair rationale before review
+
+R21 made the authority sources explicit but not yet executable as one end-to-end principal presentation and audit chain. R22 must make the live principal a closed server projection, make every authority store writer-owned and trust-anchored, and persist the exact authority read set used by every case-control receipt.
+
+Hold dependencies and result-schema identity must bind canonical typed bytes rather than labels. Committed and held replay must be exact historical projections with only named replay fields allowed to differ.
+
+R22 changes no visible product behaviour and opens no adapter, database, runtime or external action.
