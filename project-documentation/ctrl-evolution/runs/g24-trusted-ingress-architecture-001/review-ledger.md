@@ -231,3 +231,20 @@ R7 materially closed the undefined type graph, fresh-versus-replay ordering, hum
 8. The checker still accepts inherited-property references, a corrupted evaluator export, collapsed fingerprint domains, omitted preimage fields, missing terminal uniqueness, duplicate-effect drift, removed claim authority and weakened transition conditions.
 
 R8 must repair only these roots and preserve the R7 gains. A structural applicable-control watermark member will avoid narrowing canonical control IDs. Secondary idempotency will compare a stable caller-intent projection and still commit an exact result for the new operation ID. Every proof dependency will resolve to a closed authority-bearing row or sealed set with a non-circular fingerprint. One canonical branch-effect map and one append-only terminal-event ledger will eliminate duplicate truth. No adapter, database or runtime implementation opens from R7.
+
+## R8 repair rationale before review
+
+No new product decision is required. Both technical reviewers agreed that weakening actual foreground review to passive telemetry or unauthenticated client assertion would require Krish; R8 does not do that. It treats the operator's explicit foreground action as an authenticated human attestation to one exact version and makes no claim about comprehension.
+
+R8 converts each R7 ambiguity into one testable identity:
+
+1. Control watermarks are structural objects carrying the complete canonical control identifier, so the control universe and watermark universe cannot disagree about legal characters or length.
+2. Evaluator exports and operation results have exact seventeen-key parity.
+3. Challenge issuance server-resolves the viewer and exact five-minute expiry. Acknowledgement binds actor, current operator, case, atom, version, content fingerprint, challenge fingerprint, expiry and prior-use absence. Later approval consumes one unique acknowledgement record.
+4. Lifecycle collision comparison uses a stable intent projection that excludes server-generated record identity and time. Every new operation ID still commits an ordinary registry success or named hold.
+5. Every proof authority field maps to a family-specific owner row, dependent row or complete set seal. Each row has an exact partition, deterministic valid-time selection and linked non-circular fingerprint.
+6. Approval and release each have one authoritative effect map rather than two prose-equivalent copies.
+7. Outbox state is one causal append-only graph. A unique predecessor key allows exactly one successor, and typed claim, failure and unknown payloads eliminate symbolic transitions.
+8. The checker uses own-property reference traversal and attacks evaluator parity, domain uniqueness, complete fingerprint preimages, proof-field coverage, claim authority and exact transition conditions.
+
+The expected user experience is unchanged: one simple review, one deliberate approval and no visible infrastructure ceremony. R8 remains unimplemented and awaits exact independent attack.
