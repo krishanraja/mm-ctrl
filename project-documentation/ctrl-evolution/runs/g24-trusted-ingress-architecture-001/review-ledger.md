@@ -1064,3 +1064,36 @@ R29 established the right atomic boundary but left several repeated identities c
 Replay must have one payload store, one envelope store and one historical response store. Every replay must resolve the exact original registry or hold row without a first-use write or ambiguous alias.
 
 R30 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 30
+
+**Frozen commit/tree:** `044f8bfe3983f955b549df698c3389a4e10ab3db` / `2fa3936c754f0be5fec6b504cd97505a6f4529c9`
+
+**Human / machine / QA:** `318c30a30ea1fc710571362634b06c1dbb5554fd` / `3c3f60bc05dca78f99b6559fa3b7462126594308` / `c6677de81360abf40c9631323911458d86ee8139`
+
+**Checker / materializer / founder checker:** `cfdc108a14fd28519b666fa1d679d0a2fc3f5cca` / `fba0d48fa2dd31f4732cd94541ce8b3683bbcb3d` / `0b3d691e4baa9ac02dc11cf50949dccbf8727255`
+
+**Machine SHA-256:** `78bbac3dc89bb89ce4309161ab43f4e62456fb7f86616f61f7dd454a3b55b03b`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R30 despite exact materialization, forty-five mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its exact parent provenance, server-derived bundle projection, discriminated nonce read sets, session-hold evidence direction and single replay-store direction survive. Eight executable roots remain:
+
+1. Session hold evidence includes the result that references it, creating a fingerprint cycle. Evidence must be issued first without result fields, then the result may reference evidence.
+2. All seventy-five held result variants still carry legacy `hold_ref`. Every branch and fingerprint must use the exact SHA-256 `hold_row_ref` and join result, hold row, held registry, historical response and replay.
+3. Held replay still compresses registry and hold identity into ambiguous source fields. Held replay must carry both exact held-registry and hold-row refs and fingerprints, while committed replay carries its exact committed-registry ref and fingerprint.
+4. Historical response accepts an attacker-selected response schema. A closed operation-and-branch matrix must select one exact schema ref and version, and its fingerprint must bind operation, branch, schema identity, payload identity and result identity.
+5. Bundle projection nonce-subject and verifier fingerprints are described but not defined as exact formulas against the named prior domains, selected authority rows and proof-key artifacts.
+6. Session hold evidence lacks field-by-field equality tables to the exact request, read set, receipt evidence, hold row and raw artifact stores.
+7. Opaque raw refs use inconsistent identifier and SHA-256 types. R31 must use SHA-256 content addresses across stores, hold rows and evidence, with exact role constants.
+8. Checker coverage does not yet prove the issuance graph acyclic, migrate all seventy-five held results, enforce dual held-replay identity, close the historical schema matrix, verify projection formulas or reject raw-ref type drift.
+
+No founder choice is required. R31 must close only these cycle, held-result, replay-source, response-schema, formula, evidence-equality and raw-address seams, preserve R30 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R31 repair rationale before review
+
+R30 introduced the right evidence object but let that evidence depend on the result that depended on it. R31 must make the issuance order executable: select and validate evidence inputs, store evidence, compute the result with the evidence identity, then bind result and evidence through the hold row, registry, historical response and replay in one transaction.
+
+Every held result must use the same content-addressed hold-row vocabulary. Replay must preserve both held-registry and hold-row identity, and historical response selection must be a closed operation-and-branch fact rather than caller input.
+
+R31 changes no visible product behaviour and opens no adapter, database, runtime or external action.
