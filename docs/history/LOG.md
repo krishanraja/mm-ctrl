@@ -4,6 +4,13 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-13
+
+- reconciled at `618bf91`: 16 non-steward commits since the last reconciliation (`860dea0`) had no NOW.md, CHANGELOG.md or current-doc entries for G17 to G20. `CHANGELOG.md` gained dated entries for the G17 strict Brain adapter primitives (PR #385), the G18 synthetic population lab (`8ca3393`), the G19 range lab and its founder-approved scrollbar correction (PRs #389, #391), the G20 universal capture and Claude bridge contract (PR #392), and the three published Answers (PRs #380, #381, #384). `docs/current/architecture.md` and `release-state.md` were checked against the code and left unchanged: both still correctly describe Brain server-side writes as future work, since none of G17 to G20 wired a runtime caller, migration, key or UI to the live substrate. `docs/current/features.md` already listed the synthetic Brain lab route from an earlier author commit and needed no correction.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`).
+- rolled from NOW.md: 2026-08-11 company recognition restored in onboarding (PR #369), shell unified (PR #368), commercial authority established (PR #367), Blind Spot trusted-advisor instrument (PR #366) released and verified in production.
+- rolled from NOW.md: 2026-08-10 canonical current documentation (PR #365) and Make Your Mind Up unified with CTRL (PR #362).
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.

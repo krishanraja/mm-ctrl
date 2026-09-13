@@ -2,9 +2,44 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-08
+Last reconciled: 2026-09-13
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
+
+## 2026-09-08 - G20 universal capture and Claude bridge contract
+
+Merged to `main` at `618bf91` (PR #392). Founder-confirmed product requirement and governing architecture contract; no connector, write path or UI implementation authorised.
+
+- Krish's own words set the requirement: "The ability to paste stuff in really quickly and easily, and the ability to prompt stuff out to Claude, would be good because the Claude UI is often where I do things." The contract locks two gestures on one context-circulation substrate: **Add to Brain** (paste, speak, drop, upload, share or forward into private staging with an immediate receipt, no metadata form) and **Use in Claude** (an explicit, expiring, revocable context capsule scoped to one task, read only, retrieved through a private remote MCP connector).
+- Whole-Brain clipboard exports, duplicate Claude Project truth, unsupported web-prompt injection and any Claude write-back into trusted memory are explicitly rejected. The first vertical slice remains synthetic, unlinked and gated on a rendered founder approval, not this document. See [the contract](./project-documentation/ctrl-evolution/g20-universal-capture-claude-bridge-contract.md).
+
+## 2026-09-08 - G19 synthetic Brain range lab approved and scrollbar-corrected
+
+Implemented on PR #389 and refined on PR #391, merged to `main` at `569e3aa` and `b435f15`.
+
+- The 48-account internal range lab passed 61 deterministic and React checks plus eight Chromium acceptance tests locally and against a protected Vercel preview, covering no-scroll desktop use, mobile disclosure, keyboard navigation, empty evidence, long-token pressure, Arabic and mixed-direction text, inert script-shaped input and fail-closed unknown IDs.
+- Krish approved it on 8 September 2026 as his own cross-customer range dashboard, "for just me to use," conditional on a more brand-consistent scrollbar. That single correction (thin dark track, restrained green thumb, no layout or logic change) is the only change PR #391 makes; the locked baseline and its checksums are recorded in the [G19 QA record](./project-documentation/ctrl-evolution/design/g19-synthetic-population-lab-qa-record.md).
+- This approves an internal operator instrument, not the customer-facing Brain experience or the full product.
+
+## 2026-09-08 - G18 synthetic Brain population and edge-case lab
+
+Landed at `8ca3393`. Deterministic corpus, test oracle and protected-preview UI harness complete; no database seeding or diagnostic model run.
+
+- 48 fictional leaders and exactly 1,672 deterministic input events act as test oracles, not demo copy, covering every G16 source type and audience, every designed UI state, and adversarial cases: prompt injection, corrupt OCR, multilingual and right-to-left text, a single token over 500 characters, and a 1,000-event burst that must preserve ordering and idempotency.
+- The oracles are non-negotiable: empty evidence cannot produce a personality judgement, a repeated request cannot create repeated evidence, and untrusted source text can be stored but must never instruct the system. See [the lab record](./project-documentation/ctrl-evolution/g18-synthetic-population-lab.md).
+- The unlinked, non-indexable `/operator/lab/synthetic-population/:accountId` route reads this population for quality assurance only; no current customer-facing route or database row exists.
+
+## 2026-09-08 - G17 strict Brain adapter primitives
+
+Merged at `0aa7175` (PR #385). Thirteen focused tests pass; no runtime calls the new modules and no production migration, key or Edge Function deployment exists.
+
+- `brain-crypto.ts` rejects the legacy memory cipher's padded-key, published-fallback behaviour. It requires an exact 32-byte random key, AES-256-GCM with a fresh IV, associated data binding workspace/subject/record/field, and hard failure on a missing key, changed context or tampered ciphertext.
+- `brain-ingest-core.ts` makes retries a first-class truth problem: a canonical payload fingerprint decides whether a repeated `ingest_key` returns the original receipt, is rejected as a conflict, or creates once, so a repeated request can never create repeated evidence.
+- The next gate is a founder decision, not code: creating one isolated, data-less Supabase development branch at $0.01344 per hour to run the committed four-identity behavioural suite, which the read-only management connection cannot execute. See [the adapter contract](./project-documentation/ctrl-evolution/g17-service-adapter-contract.md).
+
+## 2026-09-08 - Three Answers published on decision quality and AI trust
+
+PRs #380, #381 and #384 published or revised public `/answers` pages: what makes an AI decision tool trustworthy enough for a leadership team, cutting through AI news noise as a judgement problem rather than a filtering one, and why tasks done is not the same measure as decisions improved. Each states CTRL's own first-party position and a named claim gap against the sources it cites; none change product behaviour.
 
 ## 2026-09-08 - Fail-closed Living Brain substrate
 
