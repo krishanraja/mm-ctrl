@@ -1097,3 +1097,34 @@ R30 introduced the right evidence object but let that evidence depend on the res
 Every held result must use the same content-addressed hold-row vocabulary. Replay must preserve both held-registry and hold-row identity, and historical response selection must be a closed operation-and-branch fact rather than caller input.
 
 R31 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 31
+
+**Frozen commit/tree:** `07d817469775ada105d0c5b16e0e8afd9c7dee27` / `df7013cc04e9363e113a502bf6856a446ec73895`
+
+**Human / machine / QA:** `eb22381a8525d12bb932bc65ce6e874d9879a4ef` / `34e7c64b8442f0e3cd470e512819708f4d28838a` / `b6973ec196b8c86a4787fbdbd33cac25bb8e332b`
+
+**Checker / materializer / founder checker:** `60a8284ea9b36e01b9623c41211e9a604e5030c6` / `4a385c4878b5a9335ff2f17f79aa21cfd18b1944` / `9835190a02059749bb36aa32aecd393290e1331c`
+
+**Machine SHA-256:** `a068f7fbf9efa8e3b5c353a8968a729c5b729933bfb1f7784bb516ee1d9317ff`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R31 despite exact materialization, fifty-one mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its acyclic pre-result evidence direction, universal SHA-256 hold-row reference, split replay source identities, closed response matrix, projection formulas and consistent raw reference types survive. Six executable roots remain:
+
+1. All seventy-five held result variants still carry the final `hold_fingerprint`, so result identity and final hold fingerprint form a fixed point. `hold_row_ref` must be the sole pre-result hold identity. Final hold fingerprint may be computed only after the result triple exists.
+2. All five opaque raw stores name nonexistent `raw_bytes_sha256` operands in their unique keys and content-address rules. Every operand must resolve to the declared `opaque_bytes_sha256` property.
+3. Issuer and evaluator nonce rows are not joined field by field to the selected bundle projection, canonical proof, operation and outcome. Receipt, read-set and consuming-hold evidence must resolve the same exact two rows so a nonce from another bundle cannot be spliced in.
+4. The R31 projection derivation still names the R30 projection fingerprint domain. The R32 schema, derivation and fingerprint authority must name one exact R32 domain and preimage.
+5. Replay lookup triples are not fully proved to resolve their canonical payload and envelope stores, and historical response equalities contain ambiguous or nonexistent operands. Operation, branch, result, payload, response, registry and hold identities must resolve through exact field-level equalities.
+6. Checker coverage does not yet detect the result-to-hold fixed point, stale evidence reverse dependencies, old projection domains, undeclared operands, nonce-row splicing, unrelated replay artifacts, operation mismatch or nonexistent equality fields.
+
+No founder choice is required. R32 must close only these hold-fingerprint, operand, nonce-row, projection-domain, replay-resolution and checker seams, preserve R31 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R32 repair rationale before review
+
+R31 established the correct pre-result hold-row reference but still allowed the final hold fingerprint to leak back into the result. R32 must make issuance strictly one way: evidence and hold-row reference first, result second, final hold fingerprint third, then registry, historical response and pre-materialized replay.
+
+Every stored identity must now resolve through declared fields and one canonical source. The two session nonce rows are exact projections of the selected issuer and evaluator proofs, while replay may return only the canonical response already bound to the same operation and original result.
+
+R32 changes no visible product behaviour and opens no adapter, database, runtime or external action.
