@@ -519,3 +519,43 @@ R13 closed reachability but not all identity. The remaining defects are variatio
 The repair is technical only. It will complete the provider vocabulary migration, bind Release terminal consumption to the exact committed branch, unify lifecycle action identity and fingerprints, ground case authority in one canonical fingerprint, remove or bind duplicate evaluator identity, reproduce retirement-reference validation exactly and replace overlapping final-recheck prose with ordered, exhaustive precedence.
 
 The visible experience and approved product direction do not change. R14 remains local and unimplemented until frozen bytes survive both independent attacks.
+
+## Review round 14
+
+**Frozen commit:** `7fa5d5b23f7bcd20d4460993fdae4cbfc5df52dc`
+
+**Frozen tree:** `b9a79885003bf8dedb6f8ccd96cdb84689d58f56`
+
+**Human contract blob:** `027257a3b9d92a018a211a39eaf5f6c38eb5e953`
+
+**Machine contract blob:** `fbc53e06e1b78e192676b274120aac521a474488`
+
+**QA blob:** `5292f265ff14bfc572f897d367f66f56ca400ee2`
+
+**Checker blob:** `3a0c9f5c3504c47c340e3ed0c1ad10f0b7427a3e`
+
+**Materializer blob:** `b29f7d48ad457fbd9be54f9193e3e208d851cd6f`
+
+**Founder-lock checker blob:** `21d82cc1829be41a1f6c4e64c0e71326c2fb064f`
+
+**Machine SHA-256:** `79d6dfa3a9f19c9258e380dd59c4b962c01eaa7ee4ddc18b94f5269df65403e2`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R14. Its nineteen declared semantic mutations, documentation suite and 211 locked-kernel tests passed but remained non-dispositive. Founder calibration found high alignment, no product veto and no founder choice. It reaffirmed that all internal operations must collapse into one natural visible action.
+
+R14 permanently completed provider-target field equalities, grounded case authority in a complete fingerprint, repaired nullable stable lifecycle identity, paired most consumption references and fingerprints, aligned retirement strings to the kernel and imposed ordered provider precedence. Three executable roots remain:
+
+1. Release consumption invents a second committed-success schema keyed by `operation_ref` instead of extending the canonical registry keyed by `operation_id`. Branch extraction does not define exact result-reference and result-fingerprint derivation for both Release outcomes.
+2. Active lifecycle combine, nonce-collision and legacy fingerprint structures still contain `predecessor_lifecycle_version`, `action_ref` or old receipt vocabulary. Collision and replay cannot be implemented against the authoritative R14 rows.
+3. The ordered provider table strands an expired current tip after capability consumption or a possible call. The live worker is no longer authoritative, while the reaper's no-call row requires an unconsumed capability. The existing lease-expiry ambiguity transition needs an exact higher-priority reaper route.
+
+Accepted checker bypasses substituted arbitrary Release equalities, arbitrary provider actors and actions, and stale lifecycle fingerprint preimages. R15 must extend the one canonical operation registry, recursively eliminate legacy lifecycle tokens from the active graph and add the missing reaper ambiguity outcome. No product decision is required.
+
+## R15 repair rationale before review
+
+R14 made each local relation more exact but accidentally introduced a parallel truth source for Release results. R15 returns to one authority: the existing operation registry. Both Release branches must mechanically expose the exact result reference, recomputed result fingerprint and terminal receipt used by the consumption row.
+
+Lifecycle collision and combination rules must use the same `*_receipt_ref` and nullable predecessor vocabulary as the authoritative rows. Provider recovery must also have a responsible actor after a worker dies: an expired, consumed or maybe-called current tip belongs to the reaper's ambiguity path, never a false no-call abort.
+
+R15 changes no product behaviour or surface. It remains local and unimplemented pending exact independent review.
