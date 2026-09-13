@@ -1311,3 +1311,34 @@ R37 made the newest branch controls explicit but did not close the full authorit
 Replay must carry the same five durable selection facts through registry, hold, classifier and binding authority. Proof, operation, outbox, transaction, evidence and issuance controls must remain server-owned, exact and invisible. Canonical manifest hashing and immutable R37 core hashes make semantic co-mutation and insertion-order tricks detectable.
 
 R38 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 38
+
+**Frozen commit/tree:** `a09740b6fb0e65740aae413281f372dc975a9bde` / `bcd807e58788845e0e67ee32dfa4a9966b6c4f4d`
+
+**Human / machine / QA:** `49e083cf88d6217d20761c937681c52861992afe` / `333afb740bb7273318be25b7fdd0117f255e40f7` / `71a068a7fa34c0623ad8b440d392ac52b9b690c9`
+
+**Checker / materializer / founder checker:** `dddf206852f01dce8a5eecbeca621f3a7d2165db` / `eb4b4f3ab3042b63cad637f09f69814224d1cef2` / `d58cd2072b15bb4357c6569ac0dd1ef0fd898a04`
+
+**Machine SHA-256:** `442ff0188b00110bee9e79feb889f5c728b18d31815e7bb8bb0d6b46e0cffb01`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R38. Its expanded authority inventory, canonical top-level hashing, five durable selection facts, exact branch split and preserved R37 core identities survive. Six executable roots remain:
+
+1. Replay bindings target durable-selection fields that do not exist in the replay payload schemas. The safe repair is to bind the authoritative fields from original registry and hold lineage directly into the replay classifier rather than inventing replay-payload fields.
+2. Fifteen binding sources are pseudo paths, use `selected_variant` conventions and do not resolve through discriminator-specific schema properties. R39 needs typed source and destination schema refs, variants and declared fields.
+3. No executable restart fixture proves reconstruction across committed, ordinary-held, verified-session-held and raw-session-held outcomes, or rejects five-field splicing.
+4. The manifest does not independently seal its own envelope, row-schema expectations, enforcement constants, negative fixtures and metadata semantics. Candidate-authored manifest data can therefore weaken the mechanism that claims to seal it.
+5. Declared graph and transitive hash preimages do not literally match the fields used to compute them. R39 must close exact domain, version, path, row and dependency inputs under the canonical codec.
+6. Lexical dependency inference misses semantic aliases and can leave referenced authorities with an empty dependency set. Every semantic ref needs one explicit manifested owner, with unresolved, multiply owned and caller-owned refs rejected.
+
+No founder choice is required. R39 must close only these executable-binding, restart, manifest-self-sealing, literal-hash and dependency-owner seams, preserve R38 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R39 repair rationale before review
+
+R38 made authority breadth visible but did not make every replay binding executable or the manifest independently self-sealing. R39 keeps the five durable selection facts in the authoritative original registry and hold lineage, resolves twenty typed discriminator-aware bindings to actual properties and proves all four restart classes with splice rejection.
+
+The manifest envelope, row schema, enforcement constants, negative fixtures and hash contracts are pinned outside candidate data. Every semantic ref resolves through an explicit one-owner map, and every declared hash is recomputed from its literal domain-separated canonical preimage.
+
+R39 changes no visible product behaviour and opens no adapter, database, runtime or external action.
