@@ -941,3 +941,33 @@ R25 introduced the right stores but left two interpretations of current selectio
 Nonce consumption must be proof-family-specific and occur only after successful proof verification. Session authority must be exact issuer-and-evaluator conjunction, never an ambiguous alternative.
 
 R26 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 26
+
+**Frozen commit/tree:** `4f63710f16ea75b2b9240a1ae523f381e1c138ed` / `d8f35462560107b829a5a4f6d718387577a0eb3b`
+
+**Human / machine / QA:** `f3b4770a8e833d4cb4a9466c841aadcd95e00cdc` / `28fdbb8082829f922679ac7ade9d5f196277e563` / `c11dc9c6a5aa46b3d81bd8be2b8af0faf4dd5e89`
+
+**Checker / materializer / founder checker:** `c16da74d2769b3580b04f1de97d4bbd5bc93c261` / `2981b59e857df9ace7c615d2997e190148eb0bbc` / `de76e17631717394a2c9298eaea0dac9472392ea`
+
+**Machine SHA-256:** `05a40077658eb1a6e6cf655e2325712fbef6b93f078e46db1cc069d665d73988`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R26 despite exact materialization, forty-two mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its unified authority order, branch-discriminated originals, deterministic replay direction, family-specific nonce subjects, const-bound principal artifacts and dual session authority survive. Five executable roots remain:
+
+1. Collision still competes with the registry identities it is meant to protect. It must be a deterministic no-write projection from the existing registry row and incoming canonical request identity, not a durable original or replay source.
+2. Session operations name two proofs but lack one closed dual-proof bundle with exact subproof identities, role and scope equalities, bundle fingerprint, two persisted proof triples and exactly two atomic nonce consumptions.
+3. Nonce behavior is expressed in overlapping prose and tables. One exact branch-effect table must be the sole authority and invalid or preverification paths must never consume a nonce.
+4. Malformed target and proof bytes cannot enter parsed artifact stores, yet hold rows refer to them. Bounded opaque raw stores are required for target and each proof slot.
+5. Generic and per-operation replay schemas coexist. One operation-discriminated, timestamp-free replay schema and fingerprint must be the sole replay authority.
+
+No founder choice is required. R27 must close only these collision, dual-proof, nonce, raw-evidence and replay seams, preserve R26 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R27 repair rationale before review
+
+R26 made original committed and held states explicit but still allowed derived collision and replay behavior to masquerade as durable outcomes. R27 must make both pure deterministic projections and leave the registry immutable.
+
+Session proof authority must become one exact bundle that preserves two independent proof and nonce identities. Malformed bytes must be held as bounded opaque evidence without pretending they parsed successfully.
+
+R27 changes no visible product behaviour and opens no adapter, database, runtime or external action.
