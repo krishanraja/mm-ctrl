@@ -1219,3 +1219,34 @@ R34 made result artifacts honest but described mutually exclusive branches as if
 Historical response construction must have one active binding authority. Replay must follow the exact original branch class, resolve its authoritative registry or hold row, resolve the exact result artifact, then resolve history and the pre-materialized replay artifacts.
 
 R35 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 35
+
+**Frozen commit/tree:** `73eb2e505671247d1fdfc749ef7707eba64a9401` / `309c2540f6eaf5409fcd9419c4e70ea81221204b`
+
+**Human / machine / QA:** `9ed721ed509da0b3d94a27e6a752660d5fecbc89` / `d5edc9fd47849b308bc18a61ca7e24abf26ac365` / `1442ca099dab556eb054c237c6ce5ea156b25741`
+
+**Checker / materializer / founder checker:** `754a57126a9dbf5e4719b9f4f429954b1332fb46` / `34c9f4caf8a9b81b5705e914f84d7738faabdb74` / `1bc3f2f8682d67774c9f80721dd6525536289140`
+
+**Machine SHA-256:** `319ddcb2f180d0f1b93785df8ec2571c1a7a3bac6a8b1e9f08310049a4ea89a8`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers rejected R35. Its one historical-response binding authority, three branch-specific graphs, ordinary-held exclusion of session evidence and result-before-history replay step survive. Six executable roots remain:
+
+1. No exhaustive fresh branch-class selector proves which of the three graphs applies to each operation and result branch. R36 must map all ninety operation-and-result combinations, with fifteen committed, sixty ordinary-held and fifteen session-held rows.
+2. The three rule sets still share a generic validated-precommit root whose source inventory includes both receipt and hold material. Each branch class needs its own exact available-source root and explicit forbidden unavailable sources.
+3. Replay branch classification is prose. It must bind operation family, held-registry hold schema, session-evidence availability, result branch and exact replay path to the same branch class selected during fresh execution.
+4. Replay checks do not yet prove payload materialization precedes envelope materialization in every class, alongside result-before-history.
+5. The historical-response binding authority is singular by naming convention only. R36 needs an exhaustive top-level normative authority registry with exact keys, local schema refs and versions, and must reject any unregistered competing authority regardless of its key name.
+6. Checker coverage does not yet reject branch-row swaps, an always-committed selector, generic precommit roots, proof-family mismatch, replay-classifier drift, envelope-before-payload order or evasively named competing authority.
+
+No founder choice is required. R36 must close only these selection, exact-source, replay-classification and authority-registry seams, preserve R35 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R36 repair rationale before review
+
+R35 defined three honest paths but did not define a complete selector that makes exactly one path inevitable. R36 must classify every fresh result and every replay from closed operation, proof-family, branch, hold-schema and session-evidence facts.
+
+Each branch root must name only material that exists in that branch. One top-level registry must make every normative authority explicit and reject any unregistered competitor without relying on a predictable property name.
+
+R36 changes no visible product behaviour and opens no adapter, database, runtime or external action.
