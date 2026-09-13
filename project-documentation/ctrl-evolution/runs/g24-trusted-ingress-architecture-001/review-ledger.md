@@ -1002,3 +1002,34 @@ R27 chose the correct authorities but did not propagate them through every store
 Artifact manifests must be regenerated only from schemas that exist. Replay becomes an immutable payload followed by an acyclic envelope, while collision identity is computed without any write.
 
 R28 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 28
+
+**Frozen commit/tree:** `e3fcddbd7f4bc61c91122211831c0daf7d5ebc92` / `cdbccc1b8f6e50258177b9ad1a13789cd950ac7b`
+
+**Human / machine / QA:** `feda2c1d9243f3399bf3ded495dfd6a7faacdde3` / `057d0ab12da16fdd02ce170561ded0c00a5267a1` / `b8191a7284b389cd4ca1a9782ab488a0793849f3`
+
+**Checker / materializer / founder checker:** `35244b2b2e7439a011ca9a6aacd426ad76fae558` / `2268c6fc1ecc8bab15dc1f990d44e8d206c38896` / `d3a1a2eab6a1cef15b98242079c52a7d7a41ceb3`
+
+**Machine SHA-256:** `6c0f8c998506bf8df1a43c6b3b669e355513d346050b2fc1fef4d5482c4e3f69`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R28 despite exact materialization, thirty-seven mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its rebuilt session request identities, discriminated dual receipts and holds, active manifests, acyclic replay direction and no-write collision identity survive. Six executable roots remain:
+
+1. The dual bundle still carries duplicated proof, nonce-subject and verifier values without exact field-by-field joins to resolved canonical subproof artifacts and selected authority subjects.
+2. Nonce rows have a fingerprint but no canonical receipt ref, content-addressed receipt identity or exact lookup, and the authority read set has no const-bound content-addressed artifact store.
+3. Proof validation, nonce inserts, evidence artifacts, target and head mutation, registry, result, receipt and hold writes are not enclosed by one explicit serializable all-or-none branch transaction.
+4. Malformed dual-bundle bytes lack their own opaque store and the hold truth table does not bind every raw slot to its exact artifact family, leaving role-splice ambiguity.
+5. Replay points to original registry or hold refs that are not content-addressed row identities, and the first replay may require writing payload or envelope artifacts despite the claimed no-write replay path.
+6. Checker coverage does not reject bundle join drift, nonce and read-set resolution gaps, partial branch commit, raw role splicing, missing malformed-bundle evidence or unresolved first replay.
+
+No founder choice is required. R29 must close only these truth-join, receipt, transaction, raw-evidence and replay-source seams, preserve R28 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R29 repair rationale before review
+
+R28 made the correct evidence shapes visible but did not yet prove that every repeated value came from one canonical source or that every durable branch appears atomically. R29 must make the bundle a projection of resolved proofs and authority subjects, give nonce and read-set evidence exact content addresses, and define one serializable all-or-none write boundary.
+
+Malformed bundle evidence must remain role-specific. Replay artifacts are pre-materialized atomically with the original outcome so every replay is resolution only and cannot make a first-use write.
+
+R29 changes no visible product behaviour and opens no adapter, database, runtime or external action.
