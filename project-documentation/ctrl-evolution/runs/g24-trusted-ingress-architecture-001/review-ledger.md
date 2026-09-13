@@ -431,3 +431,48 @@ The question contract is corrected to the locked human experience: five is a ran
 Delivery receives two final protections. One successful operation result branch can create only one effect and attempt budget, and a worker that loses authority after recording invocation-start but before calling the provider has one honest non-calling transition. It never has to pretend the provider failed, claim ambiguity or strand the causal tip.
 
 Finally, schema-version obligations are generated from the actual before-and-after schema graph. A hand-written list can no longer quietly omit a changed export container or embedded self-version. R12 changes no approved visible product behaviour and opens no external action.
+
+## Review round 12
+
+**Frozen commit:** `7749ce273239cb1c162310b597c899c56d0016f0`
+
+**Frozen tree:** `a845038133ff172ccae66c5d71524e5457404767`
+
+**Human contract blob:** `e89aa7dd41b2ba61f4574f633df0ccb8a3e36da7`
+
+**Machine contract blob:** `286eedd1710bbe44296b2d5de8d191a84479930e`
+
+**QA blob:** `2ea101a91e482d41f656a36a2f20f40ae803cd4a`
+
+**Checker blob:** `01938981b637d8d767253dad5da53fe73d75f8cf`
+
+**Materializer blob:** `58ded8df313ee002771286563496b58aade1fc3c`
+
+**Founder-lock checker blob:** `0cbe41a0dffe3eb836207a91d0a7a06b222bec5e`
+
+**Machine SHA-256:** `8e530d681073afa4a5a461353c2b5e00c33199ce055103fe1f6195c1d78e3a06`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and reproduced blocking defects. The declared materializer, checker, founder lock, documentation suite and all 211 locked-kernel tests passed but were non-dispositive. The founder calibration found high alignment, no product veto and no founder decision. It confirmed that human authority remains explicit while its receipt machinery must stay hidden behind natural actions.
+
+R12 permanently improved one-way projection fingerprints, explicit human authority operations, case identity rows, lifecycle receipt scaffolding, question grammar bounds, operation-result origin identity, an abort-before-provider event and mechanically derived schema-version obligations. Eight executable roots remain:
+
+1. Release issuance is still circular at the operation boundary. `compile_release` requires the accepted request that `issue_release_authority` only creates after the projection exists. A pre-authority projection request must be distinct from later human acceptance.
+2. The public request discriminator still exposes seventeen operations and rejects both R12 authority issuers. Operation names, request dispatch, evaluator exports and result schemas therefore disagree.
+3. Release authority retains an orphan `approval_receipt_ref` and has no unique terminal consumption, so one accepted authority could be replayed into more than one use or invalidation path.
+4. Root lifecycle action is impossible. Both human action intents and authoritative action receipts require a non-null predecessor even though `open_preparation` requires null and no current lifecycle row.
+5. Lifecycle precondition evidence has no authorised producer. The row and prose resolution exist, but no closed evaluator operation or atomic server derivation commits its evidence, result, CAS and fingerprint.
+6. Leader-answer authority does not yet bind every exact visibility, question, approval, identity and authenticated-principal field, and its use is not uniquely consumed by the answer.
+7. The worker cannot execute the new abort path because it is assigned only to the lease reaper. Tip-superseded and lease-failure outcomes are not reason-scoped. Genesis also retains an equality naming the removed `source_operation_id`.
+8. The transition event container is labelled R12 while its required embedded `event_schema_version` remains R9. Question validation also overclaims control-character and trimming rules the locked kernel does not enforce.
+
+Checker bypasses reproduced arbitrary compile ABI and public-dispatch drift, a non-null root predecessor, evidence with no issuer, reusable Release and answer authority, an arbitrary abort actor, deleted genesis equalities and a stale transition self-version. R13 must close those executable paths without changing product behaviour. No adapter, database or runtime work opens from R12.
+
+## R13 repair rationale before review
+
+R12 again demonstrated that adding a named object is not the same as giving it an executable lifecycle. An authority that can be issued but not dispatched, consumed or invalidated exactly is still theatre; so is precondition evidence with no authorised evaluator and an abort event the active worker cannot write.
+
+R13 therefore has one narrow purpose: make every newly claimed operation reachable from the public request boundary, make Release compilation precede rather than depend on human acceptance, make human authorities single-use, make root lifecycle and precondition evaluation executable, and make the outbox's no-call path internally self-consistent. The question contract will describe only the validation the locked kernel actually performs.
+
+The visible product remains unchanged. These repairs exist so one natural human action has a truthful, replay-safe meaning underneath it. R13 remains local, unimplemented and closed to UI, external data, model calls, database change, deployment, merge and release until its exact bytes survive independent attack.
