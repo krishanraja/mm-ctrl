@@ -814,3 +814,36 @@ R21 made the authority sources explicit but not yet executable as one end-to-end
 Hold dependencies and result-schema identity must bind canonical typed bytes rather than labels. Committed and held replay must be exact historical projections with only named replay fields allowed to differ.
 
 R22 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 22
+
+**Frozen commit/tree:** `68f4795c587554560d82ada219f3f50a8fedcc6c` / `96d562563a44715049f9b982501ed450db29ecfc`
+
+**Human / machine / QA:** `4a15b50c36e01fea1269bd534642c49200378072` / `0a15525c30fafbb835fa9fb6c5097895edcfecb4` / `c7fce751c05ed6ea8e6ba5d4eb87f31efb2452f5`
+
+**Checker / materializer / founder checker:** `5c9561c64df2fcd2372db2656152e442d0680b57` / `19609212270125e830d605cb2530a32bbc48cfd7` / `ce1d8d63a62af21c4e311b7a068a14fa4284a2aa`
+
+**Machine SHA-256:** `d7a4907da81bdb1a042bbba8f480e6fc70f13b7b317ab90ed8d784912ad6f8d7`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R22 despite exact materialization, forty-two mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its server-presented projection direction, five-store writer boundary, receipt read-set intent, typed hold projection, exact replay fields and schema-digest propagation survive. Eight executable roots remain:
+
+1. The root trust anchor is still prose around a self-hashed row rather than one externally pinned authoritative singleton with deterministic current selection, bootstrap proof and rollback-safe rotation.
+2. Authority operations are labels rather than distinct closed request, result and receipt protocols. Issuer, evaluator and account-binding rows have no explicit active, revoked, expired or offboarded transition standing that makes prior rows non-current.
+3. The live principal is derived from durable session evidence instead of being independently authenticated at the server boundary and then joined to it.
+4. Receipt read sets omit complete composite lookup keys and immutable live-principal and presented-projection artifact bytes or resolvable content addresses needed after restart.
+5. Hold dependency codec references do not resolve to closed versioned codecs, so raw SHA-256 and identifier bytes are not independently distinguishable.
+6. Result-schema digests use insertion-order JSON rather than the existing Unicode-codepoint-sorted canonical object-key rules.
+7. The selected result-schema digest does not reach every universal result, committed-success and pending-outbox authority identity and restart equality.
+8. The checker does not attack root singleton and artifact removal, genuine trust joins, byte-identical revoke and restore, missing standing, circular live-principal derivation, incomplete receipt scope and artifacts, unresolved codecs, insertion-order digest drift, held replay operation substitution or pending-outbox digest omission.
+
+No founder choice is required. R23 must close only these trust-boundary seams, preserve R22 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R23 repair rationale before review
+
+R22 named the right authority layers but did not yet give each one an independently anchored byte identity and executable transition protocol. R23 must make root trust externally pinned, every authority operation distinct and replay-safe, and live authentication independent from durable evidence.
+
+Restart proof must resolve the complete authority read set and content-addressed live principal artifacts. Codecs and schema serialization must resolve to one exact canonical byte grammar. The selected result-schema digest must become part of every downstream authority identity.
+
+R23 changes no visible product behaviour and opens no adapter, database, runtime or external action.
