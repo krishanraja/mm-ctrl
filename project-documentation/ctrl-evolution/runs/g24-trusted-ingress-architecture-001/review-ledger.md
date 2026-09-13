@@ -1159,3 +1159,33 @@ R32 made the held branch acyclic but left the same mistake on committed receipts
 Session hold evidence must become an actual predecessor of the hold-row reference, not a parallel input. Replay must copy only from one authoritative registry row and the exact artifacts that row binds. Held time is one server timestamp preserved through result, hold, registry and replay.
 
 R33 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 33
+
+**Frozen commit/tree:** `a190ccf434c8a88ed4e87f667c12912f4e4af7b3` / `1815e5bde6877ac9fe5c5fbb4c0e561b5d8702a8`
+
+**Human / machine / QA:** `eee9b31e0bff3854ab90d6c6fbff33cf40f64936` / `f4b37a63ec470070b6a5561c770bfb6055bfb391` / `feb1953289567efee6ef41136b7eedf19497c591`
+
+**Checker / materializer / founder checker:** `85f918a872655c056397e5e9b9e40fc9a5275b69` / `58dffadf48afc023eb9bf54c7b731c55d41109c1` / `b59d44cce676de387f9bc38693bfd0b37d90da9e`
+
+**Machine SHA-256:** `785e1ab73e85a1bbd2f5396012da689325137791d42970cff42b45ddb0aeef8f`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R33. Its acyclic committed receipt identity, evidence-before-hold order, exact held timestamps, registry-authoritative replay framing, historical result-byte binding and retained dual nonce joins survive. Five executable roots remain:
+
+1. Every committed result payload still contains `result_ref`, while the result artifact reference is the SHA-256 of canonical result bytes. This creates a self-referential content address because the bytes contain the value that must equal their own hash.
+2. All seventy-five held results omit `result_ref`, but replay still sources historical result identity from decoded outcome `result_ref`. Held replay therefore depends on a field that cannot exist.
+3. Historical `result_ref` must come only from the selected result artifact reference, while `result_bytes_sha256` must equal that artifact's canonical byte hash and `result_fingerprint` must equal the decoded result fingerprint. No decoded outcome may author its own artifact identity.
+4. The dependency graph omits the result-fingerprint-to-result-artifact edge and the historical-response-to-registry edge. Its branch ordering can therefore place registry material before the history that the registry binds.
+5. Checker coverage does not yet prove source existence, type parity and exact local binding coverage across all fifteen committed and seventy-five held result variants, or reject missing, reversed and stale result/history dependencies.
+
+No founder choice is required. R34 must close only these result-artifact, history-binding, dependency-graph and checker seams, preserve R33 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R34 repair rationale before review
+
+An outcome may describe what happened and carry its result fingerprint, but it cannot declare the content address of its own bytes. R34 must compute the result fingerprint, serialize the exact result, derive the artifact reference from those bytes and make that artifact the sole source of historical and replay result identity.
+
+The dependency graph must be derived from the same fingerprint, content-address and equality rules that the stores execute. History must be materialized before the final receipt or hold and before the registry that binds it. Replay must resolve only identities reachable from that one registry row.
+
+R34 changes no visible product behaviour and opens no adapter, database, runtime or external action.
