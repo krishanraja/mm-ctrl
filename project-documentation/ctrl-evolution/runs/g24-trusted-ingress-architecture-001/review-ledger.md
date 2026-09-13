@@ -1033,3 +1033,34 @@ R28 made the correct evidence shapes visible but did not yet prove that every re
 Malformed bundle evidence must remain role-specific. Replay artifacts are pre-materialized atomically with the original outcome so every replay is resolution only and cannot make a first-use write.
 
 R29 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 29
+
+**Frozen commit/tree:** `c6362ca899d164d2ec632d80f65f6c2e766f782c` / `02fba885bba9d0cd62c5db975a743937f96fa54b`
+
+**Human / machine / QA:** `813bb02cf91d9a27fce94291fa23c278d5357979` / `b6690b3e4c2145e1f28bf5728d8ed5b864fb7778` / `f5980a6126a1563bf28b5be771acc81f15433a7b`
+
+**Checker / materializer / founder checker:** `8a4090e3b4ec662020ff1bf9d976832d1c9e1b74` / `5c39273c17895c848313b3aaad8b7803dd8ac30c` / `ba46e2c4fd49e0668eeef7a6c42dd2a9042cac84`
+
+**Machine SHA-256:** `2f020a872e112a5fc07079f9128a8ee9952b8f4741005a295c0333d680eb4395`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R29 despite exact materialization, thirty-nine mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its resolved bundle joins, content-addressed nonce and read-set evidence, serializable all-or-none branch boundary, role-specific malformed evidence and pre-materialized replay direction survive. Six executable roots remain:
+
+1. Parent provenance is wrong for the frozen R28 checker, materializer and founder checker. R30 must record and assert every exact parent identity.
+2. Bundle workspace and bundle identity are under-specified. Workspace must come from decoded target intent and current partition joins, while the bundle ref and one canonical runtime truth projection must be server-derived and cover every non-derived bundle field.
+3. The session authority read set still inherits a singular nonce receipt fingerprint. Ordinary and dual-session read sets must be closed discriminated variants, with the session variant binding exactly the issuer and evaluator nonce receipts.
+4. Consuming session holds have no closed evidence row joining bundle, projection, proofs, nonce receipts, read set, head, target or raw evidence and result. Non-consuming proof failures must bind only bounded raw evidence and consume no nonce.
+5. Replay has competing store authorities and lacks one closed original historical response artifact. Registry and hold source references must be unambiguous, single-valued and atomically pre-materialized.
+6. Checker coverage does not yet reject parent provenance drift, unprojected bundle keys, caller bundle refs, singular nonce inheritance, missing consuming-hold lineage, competing replay stores or historical response splicing.
+
+No founder choice is required. R30 must close only these provenance, bundle, read-set, hold-evidence and replay seams, preserve R29 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R30 repair rationale before review
+
+R29 established the right atomic boundary but left several repeated identities capable of diverging. R30 must make the bundle and its runtime truth projection entirely server-derived, distinguish ordinary from dual-session nonce evidence, and ensure every consuming hold carries the exact evidence that justified nonce consumption.
+
+Replay must have one payload store, one envelope store and one historical response store. Every replay must resolve the exact original registry or hold row without a first-use write or ambiguous alias.
+
+R30 changes no visible product behaviour and opens no adapter, database, runtime or external action.
