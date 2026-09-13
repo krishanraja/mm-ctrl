@@ -324,3 +324,15 @@ R9 permanently improved closed evaluator operation and proof parity, collision-b
 Checker bypasses accepted a stale duplicate watermark schema, a weakened selector burden field, an arbitrary reconciliation-failure condition, provider-success declared as no call and a cross-wired reconciliation payload schema.
 
 R10 must establish one watermark authority, reproduce the exact locked kernel's selector, answer and lifecycle semantics through recursively resolvable proof rows and make every outbox payload and invocation capability unique to one effect, predecessor and branch. No product decision is required and no adapter, database or runtime work opens from R9.
+
+## R10 repair rationale before review
+
+The R9 veto exposed a recurring architectural lesson: preserving the names of locked concepts is not the same as reproducing their meaning. A candidate called `route_1` cannot prove the locked `reuse` route, a fingerprint called burden cannot replace a finite burden value, and a lifecycle authority row that names two eligible people cannot prove which person acted. The same is true of delivery: a valid payload is not causally valid unless it is bound to this effect, this predecessor, this branch and one unique consumption.
+
+R10 therefore narrows three roots without changing product direction:
+
+1. The type registry becomes the sole watermark authority. Each base and applicable-control member has an exact R10 variant, identity, lineage, version and fingerprint preimage. Release invalidation records both the bound and current values so a change, removal or new applicability has one meaning.
+2. Canonical proof rows now reproduce the locked headless kernel. Selector candidates use `reuse`, `enrich`, `ask` and `session` with the actual eligibility, provenance, burden, rejection and trusted-evaluation fields. The selected result binds the evidence state, material effect, controls, challenger and least-burden rule. Answer rows carry the complete human-owned case effect and automatic-action prohibitions. Lifecycle authority names the acting human and resolves through the exact thirteen-transition catalogue. Cross-row equality, typed dependencies, exact genesis and versioned set ownership close the remaining splicing paths.
+3. Every outbox payload exposes and equals the transition effect, and one unique consumption is committed atomically with the payload and transition. Reconciliation success and failure use distinct schemas. Invocation-start is the durable consumption of call authority, with a single-use process capability and current authority rechecks immediately before the provider boundary. A three-reservation abandoned path terminates without inventing a provider call.
+
+The user experience remains one clear proposal, one honest human review and one deliberate action. None of the added machinery is a surface requirement. R10 remains unimplemented and awaits exact independent attack.
