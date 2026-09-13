@@ -27,12 +27,20 @@ const r4Paths = {
   machine: 'project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r4.json',
   qa: 'project-documentation/ctrl-evolution/g24-trusted-ingress-r4-qa-record.md',
 }
+const r5Paths = {
+  human: 'project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r5.md',
+  machine: 'project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r5.json',
+  qa: 'project-documentation/ctrl-evolution/g24-trusted-ingress-r5-qa-record.md',
+}
 const r3Human = read(r3Paths.human)
 const r3 = parse(r3Paths.machine)
 const r3Qa = read(r3Paths.qa)
 const r4Human = read(r4Paths.human)
 const r4 = parse(r4Paths.machine)
 const r4Qa = read(r4Paths.qa)
+const r5Human = read(r5Paths.human)
+const r5 = parse(r5Paths.machine)
+const r5Qa = read(r5Paths.qa)
 
 check('exact rejected R2 human bytes remain preserved', sha256(r2Paths.human) === '63ebf3a652a3a3a49febd493df0141942d9a51bc40fe893ecbcb2a96a19e962e')
 check('exact rejected R2 machine bytes remain preserved', sha256(r2Paths.machine) === '9d479ec45c1ae57bcff864968e534b6d803eb4338da87c535f0165abf5515089')
@@ -43,6 +51,9 @@ check('exact R3 QA bytes', sha256(r3Paths.qa) === '0a64cae0fa07e0a67a6b1ccc5a299
 check('exact R4 human bytes', sha256(r4Paths.human) === '658e34cca78d9b35e8994078892a87ef2d97c45f0ec92d58dd68955dc04b5004')
 check('exact R4 machine bytes', sha256(r4Paths.machine) === '4ff8bc3748deda96f94c2fac0ad5b698bd38200ce814b268c848ed8290973d59')
 check('exact R4 QA bytes', sha256(r4Paths.qa) === '7f967c29f69d9e53b344e332d7c6edb5bc212d7bbdcd8038a0503a7c40f5d69f')
+check('exact R5 human bytes', sha256(r5Paths.human) === '3943d577b901fab94921533da0ded46a823201708fd93665c4aa3e37749f8404')
+check('exact R5 machine bytes', sha256(r5Paths.machine) === 'd3f4e5edb3b5bf10409300cc2ed25c55316c096e2da8fabc26ffc91f9aeadee8')
+check('exact R5 QA bytes', sha256(r5Paths.qa) === '75ce3e4bd3a51f5a2a956e520c1732fb4f7e560e183ee4681f7c20e2542be22b')
 check('exact R4 human bytes', sha256(r4Paths.human) === '658e34cca78d9b35e8994078892a87ef2d97c45f0ec92d58dd68955dc04b5004')
 check('exact R4 machine bytes', sha256(r4Paths.machine) === '4ff8bc3748deda96f94c2fac0ad5b698bd38200ce814b268c848ed8290973d59')
 check('exact R4 QA bytes', sha256(r4Paths.qa) === '7f967c29f69d9e53b344e332d7c6edb5bc212d7bbdcd8038a0503a7c40f5d69f')
@@ -275,10 +286,169 @@ check('R4 human and machine agree on single-use resolver', r4Human.includes('It 
 check('R4 QA preserves implementation limit', r4Qa.includes('No code, endpoint, database function, schema, role, proof bridge, outbox, provider call, customer data path or runtime connection implements R4'))
 check('R4 files contain no em dash', !r4Human.includes(emDash) && !r4Qa.includes(emDash))
 
+const r5SetSeals = [...r4SetSeals, 'operator_grants', 'workload_grants']
+const r5ReplacementSections = [
+  'use_release_result_and_invalidation',
+  'set_seals_snapshot_and_compare_and_swap',
+  'set_member_identity',
+  'operation_registry_and_hold_fingerprint',
+  'proof_lineage_bundle_and_semantic_binding',
+  'fresh_execution_replay_lifecycle_and_edited_visibility',
+  'limit_phases_outbox_attempts_and_success_evidence',
+]
+const r5IdentityProjections = {
+  control_universe: ['control_id'],
+  applicable_controls: ['control_id'],
+  control_closure_edges: ['source_control_id', 'target_control_id', 'edge_kind'],
+  visible_sources: ['source_ref'],
+  visible_assertions: ['assertion_ref'],
+  accepted_brain_items: ['item_ref'],
+  accepted_brain_relationships: ['relationship_ref'],
+  route_capability_registry: ['route_id', 'capability_ref'],
+  receipt_chain_tips: ['chain_kind', 'scope_ref'],
+  evaluator_registry: ['evaluator_id', 'policy_lineage_ref', 'active_from'],
+  provider_capability_registry: ['provider_ref', 'operation_class', 'active_from'],
+  operator_grants: ['grant_ref'],
+  workload_grants: ['grant_ref'],
+}
+const r5DecodedFieldNames = {
+  selector_result: ['candidate_set_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  intervention_approval: ['intervention_atom_bytes_b64url', 'approval_receipt_bytes_b64url', 'visible_effect_receipt_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  answer: ['answer_receipt_bytes_b64url', 'leader_authority_bytes_b64url', 'visible_effect_receipt_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  correction: ['answer_chain_bytes_b64url', 'correction_receipt_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  lifecycle: ['lifecycle_snapshot_bytes_b64url', 'authority_action_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  pending_release_and_authority: ['pending_release_bytes_b64url', 'release_authority_receipt_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  enrichment_plan: ['plan_bytes_b64url', 'budget_policy_bytes_b64url', 'terminal_state_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+  execution_receipt: ['execution_receipt_bytes_b64url', 'terminal_state_bytes_b64url', 'canonical_record_bytes_b64url', 'predecessor_chain_bytes_b64url'],
+}
+
+function collectR5Failures(candidate) {
+  const found = []
+  const same = (left, right) => JSON.stringify(left) === JSON.stringify(right)
+  const assert = (name, condition) => {
+    if (!condition) found.push(name)
+  }
+
+  assert('schema and status exact', candidate.schema_version === 'ctrl.g24.trusted-ingress.r5.v1' && candidate.status === 'fourth_repair_candidate_under_independent_review')
+  assert('exact R4 predecessor', candidate.supersedes?.commit === '5e4ec8f6309a68542cd18b74e709d3490ec02b58' && candidate.supersedes?.human_sha256 === '658e34cca78d9b35e8994078892a87ef2d97c45f0ec92d58dd68955dc04b5004' && candidate.supersedes?.machine_sha256 === '4ff8bc3748deda96f94c2fac0ad5b698bd38200ce814b268c848ed8290973d59' && candidate.supersedes?.qa_sha256 === '7f967c29f69d9e53b344e332d7c6edb5bc212d7bbdcd8038a0503a7c40f5d69f')
+  assert('inheritance exact and bounded', candidate.inheritance?.rule === 'all_r4_fields_remain_exact_except_named_replacements' && candidate.inheritance?.conflict_precedence === 'r5_named_replacement_wins' && candidate.inheritance?.unlisted_r4_field_reinterpretation === false && same(candidate.inheritance?.replaced_sections, r5ReplacementSections))
+  assert('implementation and external authority remain closed', same(candidate.authority?.closed, ['adapter_implementation', 'runtime_connection', 'supabase_change', 'customer_data', 'external_research', 'model_call', 'external_send', 'deployment', 'merge', 'release', 'legacy_backend_deletion']))
+  assert('scope remains honest', candidate.scope?.verified_headless_kernel_seam === true && ['leader_final_business_call', 'accepted_brain_learning', 'complete_portable_release', 'customer_messaging', 'continuing_relationship', 'intelligence', 'comprehension', 'delight', 'value'].every(key => candidate.scope?.[key] === false))
+  assert('lifecycle recorder joins the closed workload universe only', same(candidate.workload_capability_class_override?.effective_values, ['selector_executor', 'intervention_compiler', 'release_compiler', 'enrichment_planner', 'enrichment_worker', 'delivery_worker', 'outbox_lease_reaper', 'provider_reconciler', 'lifecycle_authority_recorder']) && candidate.workload_capability_class_override?.all_other_r4_workload_principal_fields_unchanged === true && candidate.workload_capability_class_override?.new_class_authority === 'may_only_combine_matching_current_human_lifecycle_actions_into_joint_receipt' && candidate.workload_capability_class_override?.new_class_grant_source === 'current_case_workload_grants_set')
+
+  assert('release use result is exact two-way union', candidate.release_use?.schema_version === 'ctrl.g24.result.use-release.r5.v1' && candidate.release_use?.discriminator === 'standing' && candidate.release_use?.additional_properties === false && same(Object.keys(candidate.release_use?.variants ?? {}), ['pending_delivery', 'invalidated_before_use']))
+  assert('pending delivery writes exact release and outbox effects', same(candidate.release_use?.variants?.pending_delivery?.exact_keys, ['standing', 'release_use_receipt_ref', 'outbox_effect_ref']) && same(candidate.release_use?.variants?.pending_delivery?.required, ['standing', 'release_use_receipt_ref', 'outbox_effect_ref']) && candidate.release_use?.variants?.pending_delivery?.additional_properties === false && same(candidate.release_use?.variants?.pending_delivery?.write_set, ['release_use_receipt', 'outbox_effect']))
+  const invalidated = candidate.release_use?.variants?.invalidated_before_use
+  assert('invalidated result is closed and non-delivering', invalidated?.additional_properties === false && same(invalidated?.exact_keys, invalidated?.required) && invalidated?.properties?.standing?.const === 'invalidated_before_use' && invalidated?.properties?.delivery_eligible?.const === false && invalidated?.properties?.outbox_created?.const === false)
+  assert('invalidated write set and forbidden effects exact', same(invalidated?.write_set, ['release_projection_invalidation_receipt']) && same(invalidated?.forbidden_write_set, ['release_use_receipt', 'outbox_effect', 'approval_receipt', 'delivery_receipt']))
+  assert('release selection and rebuild safety exact', candidate.release_use?.selection === 'if_any_bound_controlling_watermark_differs_choose_invalidated_before_use_else_pending_delivery' && candidate.release_use?.selection_precedes_generic_snapshot_changed_hold_for_use_release === true && candidate.release_use?.concurrent_controlling_watermark_change === 'serializable_attempt_retries_then_selects_invalidated_before_use_against_current_state' && candidate.release_use?.unrelated_lineage_change_invalidates === false && candidate.release_use?.rebuild_confers_use_or_delivery_authority === false)
+  const invalidationReceipt = candidate.release_use?.invalidation_receipt_schema
+  assert('invalidation receipt keyset and properties exact', invalidationReceipt?.additional_properties === false && same(invalidationReceipt?.exact_keys, invalidationReceipt?.required) && same(invalidationReceipt?.exact_keys, Object.keys(invalidationReceipt?.properties ?? {})) && invalidationReceipt?.properties?.receipt_fingerprint?.type === 'sha256' && invalidationReceipt?.append_only === true && invalidationReceipt?.atomic_with_use_result === true)
+  assert('effective evaluator ABI exports the R5 release result', candidate.evaluator_abi_override?.operation_result_exports?.use_release === candidate.release_use?.schema_version && candidate.evaluator_abi_override?.all_other_r4_operation_result_exports_unchanged === true && candidate.evaluator_abi_override?.all_r4_proof_family_exports_unchanged === true && candidate.evaluator_abi_override?.decoded_proof_payload_exports_added === 'one_closed_payload_schema_for_every_proof_decoded_field_binding' && candidate.evaluator_abi_override?.manifest_canonical_bytes_cover_r5_overrides_and_all_decoded_payload_exports === true && candidate.evaluator_abi_override?.manifest_sha256_recomputed_from_effective_r5_manifest === true && candidate.evaluator_abi_override?.worker_attestation_must_match_effective_r5_manifest === true)
+
+  assert('thirteen set seals exact', same(candidate.set_seals, r5SetSeals))
+  assert('identity projection universe and order exact', same(Object.keys(candidate.set_member_identity_projections ?? {}), r5SetSeals) && r5SetSeals.every(name => same(candidate.set_member_identity_projections?.[name], r5IdentityProjections[name])))
+  assert('identity frame exact', candidate.set_member_identity_encoding?.domain_ascii === 'CTRL-G24-SET-MEMBER-IDENTITY-R5' && candidate.set_member_identity_encoding?.variable_field_frame === 'uint32_big_endian_byte_length_then_utf8_bytes' && same(candidate.set_member_identity_encoding?.preimage_order, ['domain_ascii', 'set_kind_framed', 'ordered_projection_values_framed']) && same(candidate.set_member_identity_encoding?.member_entry_order, ['identity_bytes_framed', 'raw_complete_record_sha256']))
+  assert('duplicate identity behavior exact', candidate.set_member_identity_encoding?.duplicate_identity_same_bytes === 'invalid_no_seal' && candidate.set_member_identity_encoding?.duplicate_identity_different_bytes === 'invalid_no_seal' && candidate.set_member_identity_encoding?.missing_extra_null_noncanonical_or_unsupported_projection_field === 'invalid_no_seal')
+  assert('R5 seal frame includes member identity', candidate.set_seal_encoding?.domain_ascii === 'CTRL-G24-SET-SEAL-R5' && candidate.set_seal_encoding?.variable_field_frame === 'uint32_big_endian_byte_length_then_utf8_bytes' && same(candidate.set_seal_encoding?.preimage_order, ['domain_ascii', 'set_kind_framed', 'set_schema_version_framed', 'owner_lineage_version_framed', 'uint64_big_endian_member_count', 'sorted_unique_member_entries']) && candidate.set_seal_encoding?.member_entry_ref === 'set_member_identity_encoding.member_entry_order')
+  assert('snapshot binary preimage exact', candidate.snapshot?.domain_ascii === 'CTRL-G24-TRUSTED-SNAPSHOT-R5' && candidate.snapshot?.variable_field_frame === 'uint32_big_endian_byte_length_then_utf8_bytes' && candidate.snapshot?.hash_encoding === '32_raw_bytes_from_lowercase_hex_sha256' && candidate.snapshot?.integer_encoding === 'uint64_big_endian' && same(candidate.snapshot?.preimage_order, ['domain_ascii', 'operation_id_framed', 'operation_class_framed', 'request_fingerprint_raw', 'intent_fingerprint_raw', 'stable_principal_ref_framed', 'principal_authority_version_framed', 'thirteen_set_seal_objects_in_fixed_order', 'case_scope_version_framed', 'engagement_version_framed', 'plan_version_framed']))
+  assert('snapshot uses all sets and scalars', candidate.snapshot?.set_order_ref === 'set_seals' && same(candidate.snapshot?.scalar_order, ['case_scope_version', 'engagement_version', 'plan_version']) && candidate.snapshot_and_cas?.every_operation_set_seals_ref === 'set_seals' && same(candidate.snapshot_and_cas?.every_operation_scalar_versions, ['case_scope_version', 'engagement_version', 'plan_version']) && candidate.snapshot_and_cas?.same_snapshot_and_final_cas_bytes === true)
+  assert('snapshot CAS and grant revocation exact', candidate.snapshot?.final_compare_and_swap === 'recompute_exact_preimage_in_same_serializable_transaction_and_require_byte_equality' && candidate.snapshot?.any_set_or_scalar_change === 'snapshot_changed_hold' && candidate.snapshot?.aggregate_aliases_allowed === false && candidate.snapshot?.set_or_scalar_omission_allowed === false && candidate.snapshot?.grant_mutation_rule === 'operator_grants_or_workload_grants_change_advances_case_scope_version_in_same_authority_mutation')
+
+  assert('operation registry unique key exact', same(candidate.operation_registry?.unique_key, ['workspace_ref', 'operation_id']) && same(candidate.operation_registry?.first_admission_bindings, ['stable_principal_ref', 'case_derived_subject', 'requested_case_ref', 'operation_class', 'request_fingerprint', 'intent_fingerprint']) && candidate.operation_registry?.same_key_different_binding === 'operation_identity_conflict_hold' && candidate.operation_registry?.credential_instance_part_of_identity === false)
+  assert('serialization exhaustion has one noncommitting result', candidate.operation_registry?.serialization_exhaustion?.result === 'request_rejected' && candidate.operation_registry?.serialization_exhaustion?.code === 'service_temporarily_unavailable' && candidate.operation_registry?.serialization_exhaustion?.operation_registry_row === false && candidate.operation_registry?.serialization_exhaustion?.committed_hold === false && candidate.operation_registry?.serialization_exhaustion?.same_operation_id_may_retry === true && candidate.operation_registry?.serialization_retry_hold_exists === false)
+  assert('held fingerprint covers fixed complete dependencies', candidate.held_evaluation_fingerprint?.domain_ascii === 'CTRL-G24-HELD-EVALUATION-R5' && same(candidate.held_evaluation_fingerprint?.preimage_order, ['domain_ascii', 'workspace_ref_framed', 'operation_id_framed', 'operation_class_framed', 'request_fingerprint_raw', 'intent_fingerprint_raw', 'hold_code_framed', 'thirteen_dependency_slots_in_set_order', 'three_scalar_slots_in_scalar_order']) && candidate.held_evaluation_fingerprint?.dependency_slots_ref === 'set_seals' && same(candidate.held_evaluation_fingerprint?.scalar_slots, ['case_scope_version', 'engagement_version', 'plan_version']) && candidate.held_evaluation_fingerprint?.slot_omission_allowed === false)
+  assert('held invalid sentinel is domain separated per set', candidate.held_evaluation_fingerprint?.invalid_or_unavailable_slot?.domain_ascii === 'CTRL-G24-HELD-DEPENDENCY-SENTINEL-R5' && same(candidate.held_evaluation_fingerprint?.invalid_or_unavailable_slot?.preimage_order, ['domain_ascii', 'set_kind_framed', 'literal_invalid_or_unavailable_framed']) && candidate.held_evaluation_fingerprint?.invalid_or_unavailable_slot?.digest === 'sha256_of_exact_preimage')
+
+  assert('proof genesis exact', candidate.proof_lineage?.genesis?.domain_ascii === 'CTRL-G24-PROOF-GENESIS-R5' && same(candidate.proof_lineage?.genesis?.preimage_order, ['domain_ascii', 'owner_family_framed']) && candidate.proof_lineage?.genesis?.digest === 'sha256_of_exact_preimage')
+  assert('proof append exact', candidate.proof_lineage?.append?.domain_ascii === 'CTRL-G24-PROOF-CHAIN-R5' && same(candidate.proof_lineage?.append?.preimage_order, ['domain_ascii', 'owner_family_framed', 'predecessor_chain_tip_raw', 'canonical_record_fingerprint_raw', 'uint64_big_endian_append_ordinal']) && candidate.proof_lineage?.append?.first_predecessor === 'family_genesis' && candidate.proof_lineage?.append?.ordinal_starts_at === 1 && candidate.proof_lineage?.append?.ordinal_must_equal_exact_next === true)
+  assert('proof bundle digest exact', candidate.proof_bundle?.domain_ascii === 'CTRL-G24-PROOF-BUNDLE-R5' && candidate.proof_bundle?.variable_field_frame === 'uint32_big_endian_byte_length_then_utf8_bytes' && same(candidate.proof_bundle?.preimage_order, ['domain_ascii', 'owner_family_framed', 'common_canonical_bytes_sha256_raw', 'extension_canonical_bytes_sha256_raw']) && candidate.proof_bundle?.canonical_json_grammar === 'r3_canonical_json_utf8')
+  assert('decoded proof bytes are cryptographically and semantically bound', candidate.proof_bundle?.base64url_decoding_required_before_use === true && candidate.proof_bundle?.decoded_bytes_must_parse_as_declared_closed_schema === true && candidate.proof_bundle?.decoded_bytes_must_recanonicalize_byte_equal === true && candidate.proof_bundle?.decoded_canonical_record_sha256_must_equal_declared_fingerprint === true && candidate.proof_bundle?.common_and_extension_must_agree === true && same(candidate.proof_bundle?.required_common_equalities, ['workspace_ref', 'subject_ref', 'case_ref', 'snapshot_fingerprint', 'predecessor_chain_tip']) && candidate.proof_bundle?.required_authoritative_equalities?.includes('canonical_record_fingerprint'))
+  const decoded = candidate.decoded_proof_record_envelope
+  assert('decoded proof record envelope exact', decoded?.additional_properties === false && same(decoded?.exact_keys, decoded?.required) && same(decoded?.exact_keys, Object.keys(decoded?.properties ?? {})) && decoded?.properties?.authoritative_record_fingerprint?.type === 'sha256' && decoded?.canonical_bytes === 'r3_canonical_json_utf8' && decoded?.all_common_fields_equal_bundle_common === true && decoded?.record_ref_kind_and_fingerprint_equal_authoritative_row === true && decoded?.payload_equal_authoritative_row_projection === true)
+  assert('every encoded proof field has an authoritative decoded binding', same(Object.keys(candidate.proof_decoded_field_bindings ?? {}), r4ProofFamilies) && r4ProofFamilies.every(family => same(Object.keys(candidate.proof_decoded_field_bindings?.[family] ?? {}), r5DecodedFieldNames[family]) && Object.entries(candidate.proof_decoded_field_bindings[family]).every(([field, binding]) => field.endsWith('_bytes_b64url') && Array.isArray(binding) && binding.length === 2)))
+  assert('proof family semantic binding universe exact', same(Object.keys(candidate.proof_family_semantic_bindings ?? {}), r4ProofFamilies) && r4ProofFamilies.every(name => Array.isArray(candidate.proof_family_semantic_bindings?.[name]) && candidate.proof_family_semantic_bindings[name].length >= 3))
+
+  assert('fresh and replay authority are separated', same(candidate.authority_phases?.fresh_execution_checks, ['current_authentication', 'current_exact_operation_authority', 'current_case_equality', 'current_operator_and_workload_grants', 'current_unconsumed_joint_lifecycle_receipt_when_required']) && same(candidate.authority_phases?.replay_disclosure_checks, ['current_authentication', 'stable_principal_current_case_eligibility', 'stable_principal_current_audience_eligibility', 'retention_eligibility']) && candidate.authority_phases?.replay_reruns_fresh_execution_authority === false && candidate.authority_phases?.replay_mutates === false && candidate.authority_phases?.replay_current_standing === false)
+  const action = candidate.lifecycle_authority?.action_schema
+  assert('lifecycle action receipt exact', action?.additional_properties === false && same(action?.exact_keys, action?.required) && same(action?.exact_keys, Object.keys(action?.properties ?? {})) && action?.properties?.actor_class?.values?.includes('named_leader') && action?.properties?.actor_class?.values?.includes('krish_operator') && action?.separately_authenticated === true && action?.append_only === true)
+  const joint = candidate.lifecycle_authority?.joint_receipt_schema
+  assert('joint lifecycle receipt exact', joint?.additional_properties === false && joint?.exact_keys?.length === 18 && joint?.required?.length === 17 && same(joint?.optional, ['consumed_at']) && same(joint?.exact_keys, Object.keys(joint?.properties ?? {})) && joint?.properties?.leader_action_fingerprint?.type === 'sha256' && joint?.properties?.operator_action_fingerprint?.type === 'sha256' && joint?.properties?.receipt_fingerprint?.type === 'sha256')
+  assert('joint receipt issuance and consumption exact', same(joint?.combine_requires, ['exactly_one_current_leader_action', 'exactly_one_current_operator_action', 'same_case_ref', 'same_transition_id', 'same_predecessor_lifecycle_version', 'actors_equal_current_case_bindings', 'authority_versions_equal_current_case_bindings', 'both_actions_unexpired', 'current_lifecycle_authority_recorder_grant']) && joint?.recorder_can_invent_human_authority === false && joint?.consumed_at_must_be_absent_before_fresh_execution === true && joint?.consume_atomically_with_transition === true)
+  assert('lifecycle recorder cannot grant or execute', candidate.lifecycle_authority?.recorder_workload?.capability_class === 'lifecycle_authority_recorder' && candidate.lifecycle_authority?.recorder_workload?.stable_workload_must_match_current_case_grant === true && candidate.lifecycle_authority?.recorder_workload?.can_execute_transition === false)
+  assert('lifecycle issuance protocol is explicit and server resolved', same(Object.keys(candidate.lifecycle_authority?.issuance_protocol ?? {}), ['leader_action', 'operator_action', 'combine', 'each_step_serializable', 'caller_supplied_actor_or_authority_version', 'server_resolves_current_actor_authority_and_time', 'failed_step_writes', 'joint_receipt_single_use']) && candidate.lifecycle_authority?.issuance_protocol?.leader_action?.authenticated_principal === 'current_named_leader_human_session' && candidate.lifecycle_authority?.issuance_protocol?.operator_action?.authenticated_principal === 'current_engagement_operator_human_session' && candidate.lifecycle_authority?.issuance_protocol?.combine?.authenticated_principal === 'current_lifecycle_authority_recorder_workload' && candidate.lifecycle_authority?.issuance_protocol?.each_step_serializable === true && candidate.lifecycle_authority?.issuance_protocol?.caller_supplied_actor_or_authority_version === false && candidate.lifecycle_authority?.issuance_protocol?.server_resolves_current_actor_authority_and_time === true && candidate.lifecycle_authority?.issuance_protocol?.failed_step_writes === false && candidate.lifecycle_authority?.issuance_protocol?.joint_receipt_single_use === true)
+  assert('edited approval visibility exact', same(candidate.edited_approval_visibility?.write_order, ['new_immutable_intervention_atom_version', 'new_visible_effect_receipt_bound_to_new_atom', 'new_approval_receipt_bound_to_new_atom']) && same(candidate.edited_approval_visibility?.binding_fields, ['intervention_atom_ref', 'intervention_atom_version', 'intervention_atom_content_fingerprint']) && candidate.edited_approval_visibility?.same_binding_required_for_visibility_and_approval === true && candidate.edited_approval_visibility?.pre_edit_visibility_receipt_reuse_allowed === false && candidate.edited_approval_visibility?.result_returns_new_visibility_receipt_ref === true)
+
+  assert('limit order is inherited complete order', same(candidate.limit_order, r4LimitOrder))
+  assert('all request-owned byte limits are pre-admission', same(Object.keys(candidate.limit_phase_overrides ?? {}), ['request_bytes', 'intent_bytes', 'answer_text_bytes', 'note_bytes', 'serialization_retries']) && ['request_bytes', 'intent_bytes', 'answer_text_bytes', 'note_bytes'].every(name => candidate.limit_phase_overrides?.[name]?.phase === 'pre_admission_canonical' && candidate.limit_phase_overrides[name].operation_registry_row === false && candidate.rejection_codes_added?.includes(candidate.limit_phase_overrides[name].failure)))
+  assert('serialization limit is noncommitting service unavailable', candidate.limit_phase_overrides?.serialization_retries?.phase === 'pre_commit_transaction' && candidate.limit_phase_overrides?.serialization_retries?.failure === 'service_temporarily_unavailable' && candidate.limit_phase_overrides?.serialization_retries?.operation_registry_row === false)
+  assert('removed ambiguous hold codes exact', same(candidate.hold_codes_removed, ['request_bytes_hold', 'intent_bytes_hold', 'answer_text_bytes_hold', 'note_bytes_hold', 'serialization_retry_hold']))
+  assert('effective rejection codes are closed and unique', same(candidate.effective_rejection_codes, [...r4.rejection_codes, 'request_bytes_exceeded', 'intent_bytes_exceeded', 'answer_text_bytes_exceeded', 'note_bytes_exceeded']) && candidate.effective_rejection_codes.length === new Set(candidate.effective_rejection_codes).size)
+  assert('effective hold codes remove every ambiguous outcome', same(candidate.effective_hold_codes, r4.hold_codes.filter(code => !candidate.hold_codes_removed.includes(code))) && candidate.effective_hold_codes.length === new Set(candidate.effective_hold_codes).size)
+  assert('limit semantics produce one outcome', candidate.limit_semantics?.r3_max_annotations_consumed_only_by_r5_admission_engine === true && candidate.limit_semantics?.independent_schema_failure_from_r3_max_annotations === false && candidate.limit_semantics?.request_owned_content_limits_complete_before_admission === true && candidate.limit_semantics?.state_and_execution_limits_commit_hold_after_admission === true && candidate.limit_semantics?.first_failure_in_total_order_wins === true && candidate.limit_semantics?.one_input_one_limit_outcome === true && candidate.limit_semantics?.side_effect_before_all_applicable_limits_pass === false)
+
+  const reservation = candidate.outbox_attempt?.reservation_schema
+  assert('outbox attempt reservation schema exact', reservation?.additional_properties === false && reservation?.exact_keys?.length === 12 && reservation?.required?.length === 11 && same(reservation?.optional, ['outcome']) && same(reservation?.exact_keys, Object.keys(reservation?.properties ?? {})) && reservation?.properties?.attempt_ordinal?.maximum === 3)
+  assert('outbox attempt outcome is discriminated', same(reservation?.properties?.state?.values, ['reserved', 'confirmed', 'definitively_failed', 'ambiguous']) && same(reservation?.cross_field_rules, ['outcome_absent_iff_state_reserved', 'outcome_required_iff_state_confirmed_definitively_failed_or_ambiguous', 'state_confirmed_requires_matching_provider_success_evidence']))
+  assert('outbox attempts commit and count before call', same(candidate.outbox_attempt?.unique_key, ['outbox_effect_ref', 'attempt_ordinal']) && same(candidate.outbox_attempt?.reserve_cas_writes, ['attempt_reservation', 'committed_attempt_count_increment']) && candidate.outbox_attempt?.reservation_commits_before_provider_call === true && candidate.outbox_attempt?.provider_call_requires_reread_of_committed_reservation === true && candidate.outbox_attempt?.each_retry_requires_new_reservation === true)
+  assert('crashes and leases cannot evade three-attempt ceiling', candidate.outbox_attempt?.crash_after_reservation_consumes_attempt === true && candidate.outbox_attempt?.lease_or_worker_change_resets_attempt_count === false && candidate.outbox_attempt?.maximum_committed_reservations === 3 && candidate.outbox_attempt?.provider_call_at_or_above_maximum === false)
+  assert('ambiguous outcome rules exact', candidate.outbox_attempt?.ambiguous_without_current_idempotency_guarantee === 'unknown_no_automatic_resend' && candidate.outbox_attempt?.ambiguous_with_current_idempotency_guarantee_below_maximum === 'may_reserve_exact_next_attempt' && candidate.outbox_attempt?.ambiguous_with_current_idempotency_guarantee_at_maximum === 'unknown_no_automatic_resend')
+  const success = candidate.provider_success_evidence_schema
+  assert('provider success evidence schema exact', success?.additional_properties === false && same(success?.exact_keys, success?.required) && same(success?.exact_keys, Object.keys(success?.properties ?? {})) && success?.properties?.provider_receipt_bytes_fingerprint?.type === 'sha256' && success?.must_match_current_attempt_reservation === true && success?.only_evidence_allowing_confirmed === true)
+
+  assert('negative fixture families exact', same(candidate.required_negative_fixture_families, ['release_use_invalidation', 'thirteen_set_snapshot_and_cas', 'set_member_identity_projection', 'registry_unique_key_and_exhaustion', 'complete_hold_fingerprint', 'proof_lineage_and_semantic_bytes', 'fresh_execution_vs_replay_disclosure', 'two_party_action_and_joint_receipts', 'edited_approval_visibility', 'single_limit_outcome', 'durable_outbox_attempt_reservation', 'provider_success_evidence']))
+  assert('claim remains local and unimplemented', candidate.claim_limit === 'unimplemented_local_repair_contract_only')
+  return found
+}
+
+for (const failure of collectR5Failures(r5)) failures.push(`R5 ${failure}`)
+
+const r5MutationProbes = [
+  ['release invalidation outbox', candidate => { candidate.release_use.variants.invalidated_before_use.properties.outbox_created.const = true }],
+  ['release invalidation race precedence', candidate => { candidate.release_use.selection_precedes_generic_snapshot_changed_hold_for_use_release = false }],
+  ['release invalidation receipt schema', candidate => { delete candidate.release_use.invalidation_receipt_schema.properties.receipt_fingerprint }],
+  ['release evaluator export', candidate => { candidate.evaluator_abi_override.operation_result_exports.use_release = 'ctrl.g24.result.use-release.r4.v1' }],
+  ['lifecycle recorder workload universe', candidate => candidate.workload_capability_class_override.effective_values.pop()],
+  ['grant seal omitted', candidate => candidate.set_seals.pop()],
+  ['snapshot principal authority version', candidate => candidate.snapshot.preimage_order.splice(6, 1)],
+  ['set member identity projection', candidate => { candidate.set_member_identity_projections.evaluator_registry = ['evaluator_id'] }],
+  ['duplicate identity accepted', candidate => { candidate.set_member_identity_encoding.duplicate_identity_different_bytes = 'accepted' }],
+  ['registry unique scope', candidate => { candidate.operation_registry.unique_key = ['operation_id'] }],
+  ['serialization second outcome', candidate => { candidate.operation_registry.serialization_exhaustion.committed_hold = true }],
+  ['hold dependency omission', candidate => { candidate.held_evaluation_fingerprint.slot_omission_allowed = true }],
+  ['proof genesis', candidate => { candidate.proof_lineage.genesis.domain_ascii = 'generic' }],
+  ['proof bundle frame', candidate => candidate.proof_bundle.preimage_order.pop()],
+  ['proof canonical fingerprint bypass', candidate => { candidate.proof_bundle.decoded_canonical_record_sha256_must_equal_declared_fingerprint = false }],
+  ['decoded proof envelope authority', candidate => { candidate.decoded_proof_record_envelope.record_ref_kind_and_fingerprint_equal_authoritative_row = false }],
+  ['decoded proof field binding', candidate => { delete candidate.proof_decoded_field_bindings.answer.answer_receipt_bytes_b64url }],
+  ['replay reruns execution authority', candidate => { candidate.authority_phases.replay_reruns_fresh_execution_authority = true }],
+  ['lifecycle required field deletion', candidate => candidate.lifecycle_authority.joint_receipt_schema.required.splice(0, 1)],
+  ['lifecycle exact key deletion', candidate => candidate.lifecycle_authority.joint_receipt_schema.exact_keys.splice(0, 1)],
+  ['lifecycle issuance server authority', candidate => { candidate.lifecycle_authority.issuance_protocol.caller_supplied_actor_or_authority_version = true }],
+  ['edited visibility reuse', candidate => { candidate.edited_approval_visibility.pre_edit_visibility_receipt_reuse_allowed = true }],
+  ['request limit changed to hold', candidate => { candidate.limit_phase_overrides.answer_text_bytes.phase = 'post_admission_canonical' }],
+  ['removed hold code restored', candidate => candidate.effective_hold_codes.push('serialization_retry_hold')],
+  ['outbox provider key changed on retry', candidate => { candidate.outbox_attempt.each_retry_requires_new_reservation = false }],
+  ['outbox attempt commit removed', candidate => { candidate.outbox_attempt.reservation_commits_before_provider_call = false }],
+  ['provider success fingerprint weakened', candidate => { candidate.provider_success_evidence_schema.properties.provider_receipt_bytes_fingerprint.type = 'boolean' }],
+]
+for (const [name, mutate] of r5MutationProbes) {
+  const candidate = structuredClone(r5)
+  mutate(candidate)
+  check(`R5 mutation rejected: ${name}`, collectR5Failures(candidate).length > 0)
+}
+
+check('R5 human and machine agree on release invalidation', r5Human.includes('invalidated_before_use') && r5.release_use.variants.invalidated_before_use.properties.outbox_created.const === false)
+check('R5 human and machine agree on thirteen seals', r5Human.includes('thirteen set seals') && r5.set_seals.length === 13)
+check('R5 human and machine agree on fresh versus replay authority', r5Human.includes('Replay never reruns those one-time execution predicates') && r5.authority_phases.replay_reruns_fresh_execution_authority === false)
+check('R5 human and machine agree on durable provider attempts', r5Human.includes('reservation and increment commit before the network call') && r5.outbox_attempt.reservation_commits_before_provider_call === true)
+check('R5 QA preserves implementation limit', r5Qa.includes('No code, endpoint, database function, schema, role, proof bridge, outbox, provider call, customer data path or runtime connection implements R5'))
+check('R5 files contain no em dash', !r5Human.includes(emDash) && !r5Qa.includes(emDash))
+
 if (failures.length) {
-  console.error(`G24 trusted ingress R4 failed ${failures.length} check(s):`)
+  console.error(`G24 trusted ingress R5 failed ${failures.length} check(s):`)
   for (const failure of failures) console.error(`- ${failure}`)
   process.exit(1)
 }
 
-console.log('ok: rejected R2 and R3 preserved; exact G24 trusted ingress R4 invariants and mutation probes verified')
+console.log('ok: rejected R2 through R4 preserved; G24 trusted ingress R5 invariants and mutation probes verified')

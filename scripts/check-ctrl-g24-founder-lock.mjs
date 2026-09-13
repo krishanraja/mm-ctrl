@@ -43,11 +43,11 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Independently attack the exact G24 trusted canonical ingress R4 repair'),
+  state.includes('**CURRENT_NEXT_ACTION:** Independently attack the exact G24 trusted canonical ingress R5 repair'),
 )
 check(
   'design state remains inside the trusted-ingress gate',
-  designState.includes('independently attack the exact trusted canonical ingress R4 repair'),
+  designState.includes('independently attack the exact trusted canonical ingress R5 repair'),
 )
 check('lock contains no em dash', !lock.includes('—'))
 
