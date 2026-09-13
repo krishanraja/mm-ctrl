@@ -971,3 +971,34 @@ R26 made original committed and held states explicit but still allowed derived c
 Session proof authority must become one exact bundle that preserves two independent proof and nonce identities. Malformed bytes must be held as bounded opaque evidence without pretending they parsed successfully.
 
 R27 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 27
+
+**Frozen commit/tree:** `41984124b10f31aeb51a55aaee1639d2b074652c` / `f12c5e7d6ba6563a670b869b0213e9dc4342a949`
+
+**Human / machine / QA:** `7f722c1347b13df3cb2134f4bc53041d38262c21` / `8b75c07a474a5b36d450aeb11b89622332c70966` / `f8d48414b7b38f9b886c51f5b2981b339522f035`
+
+**Checker / materializer / founder checker:** `bcdcfa1e81efe49ec8023cb8f56e38d9e4573845` / `22676ccae71ab383add30262476ce95571fc8f91` / `d3a1a2eab6a1cef15b98242079c52a7d7a41ceb3`
+
+**Machine SHA-256:** `269d2b29d9e1b894c8c2bc5168c939fb0af92d3ce5bfe4b4de71a9d16348db0b`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R27 despite exact materialization, thirty mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its no-write collision direction, explicit dual proof, sole nonce branch table, opaque malformed-input evidence and single replay direction survive. Six executable roots remain:
+
+1. The three session operation request schemas retain R26 versions and their request fingerprints still bind deleted issuer and evaluator request fields rather than the R27 dual bundle.
+2. The dual bundle and receipt evidence are not closed content-addressed stores, while the committed receipt remains a singular-proof row that cannot persist both proof and nonce identities.
+3. Held evidence still uses one raw proof slot. Session holds need distinct issuer and evaluator slots, optional raw bundle evidence and exact availability or unavailable semantics.
+4. Result and replay artifact manifests retain forty-five deleted per-operation replay and collision refs. Replay needs one resolvable acyclic payload and envelope model with exhaustive source equalities.
+5. The no-write collision response carries a fresh incoming request artifact ref despite prohibiting an artifact write. Its content address must derive directly from the canonical incoming request hash.
+6. The checker does not recursively reject stale schema refs, same-version semantic drift, dual-bundle substitution, composite nonce authority, replay splicing or nondeterministic collision identity.
+
+No founder choice is required. R28 must close only these schema, receipt, hold, manifest, replay and collision seams, preserve R27 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R28 repair rationale before review
+
+R27 chose the correct authorities but did not propagate them through every stored byte and consumer. R28 must make the dual bundle the exact request and receipt authority for session operations, preserve both role-specific nonce receipts, and keep malformed evidence explicit without falsely parsing it.
+
+Artifact manifests must be regenerated only from schemas that exist. Replay becomes an immutable payload followed by an acyclic envelope, while collision identity is computed without any write.
+
+R28 changes no visible product behaviour and opens no adapter, database, runtime or external action.
