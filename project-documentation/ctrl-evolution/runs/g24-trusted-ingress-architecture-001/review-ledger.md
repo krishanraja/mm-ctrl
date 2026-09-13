@@ -847,3 +847,34 @@ R22 named the right authority layers but did not yet give each one an independen
 Restart proof must resolve the complete authority read set and content-addressed live principal artifacts. Codecs and schema serialization must resolve to one exact canonical byte grammar. The selected result-schema digest must become part of every downstream authority identity.
 
 R23 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 23
+
+**Frozen commit/tree:** `6b490c0860edfa83142e28d1a8336abea07b3d2f` / `35b4189c6126897e8ba0fae0eba59dc135811868`
+
+**Human / machine / QA:** `53b3f55d9401a0821a9cbd0cc2e10d5b85d990aa` / `5615db579bbb371e35689b0bc2f0bd3dd1a593f4` / `521b6c533a847b9b791ccf43f855487ea7912338`
+
+**Checker / materializer / founder checker:** `0ef6e41dece5b7b7c5c5d3d973a5df9b3d37edb8` / `0598e3d23811636ae2a115b591a056a6507cab63` / `e76287f451f82e7ae90524d70ee93e274ad0879d`
+
+**Machine SHA-256:** `4b191c1215fd0d7ea8a2d15ec8a42475e50ef88f0c24dcdba51c035a1da6b584`
+
+**Adjudication:** `VETO`
+
+Both independent technical reviewers verified and rejected R23 despite exact materialization, fifty-six mutation probes, the founder lock, full documentation chain and all 211 locked-kernel tests passing. Its external deployment pin, independent live assertion, canonical schema serialization, typed codecs, complete authority read-set intent and selected-result-schema lineage survive. Six executable roots remain:
+
+1. Append-only authority selectors filter to active rows before ordering. A later revoked, offboarded or expired row can therefore resurrect an older active row. Selection must choose the latest row across every standing first, then authorize only an active and time-valid latest row. A tie or duplicate must hold.
+2. Authority-operation protocols have schemas but no durable operation registry and authoritative receipt store binding canonical request, target, result and receipt blobs. Restart replay, collision, target decoding, immutable partition enforcement and exact standing transitions are therefore not executable.
+3. Authority proofs remain opaque bytes with ambiguous issuer-or-evaluator privileges. Closed proof schemas must bind role, root capability, audience, scope, expiry, nonce, algorithm and verifier, and every operation must name exactly one permitted authority class.
+4. Root rotation cannot safely make an immutable deployment pin and database row change atomically. R24 must narrow root scope to one externally pinned immutable singleton and fail closed on rotation until a separately reviewed staged protocol exists.
+5. Authority receipts name live and projected principal artifacts but do not define their immutable content-addressed stores, complete root and deployment configuration read set, or pinned-attestor snapshot required for restart.
+6. The selected result-schema digest is attached to a sidecar pending origin instead of extending the existing authoritative outbox effect origin, fingerprint, genesis equality and restart lookup. Two competing origin authorities remain.
+
+No founder choice is required. R24 must close only these executable seams, version every changed semantic object, preserve R23 byte-for-byte and keep all runtime, database, UI and external action closed.
+
+## R24 repair rationale before review
+
+R23 established the required authority identities but left historical revocation, operation replay and proof privileges open to implementation choice. R24 must make latest-row selection non-resurrecting, make operation receipt identity durable and restart-complete, and give every privileged operation one exact typed proof authority.
+
+The root remains one immutable externally pinned bootstrap singleton. Rotation is explicitly outside R24 and fails closed. Live-principal artifacts become immutable content-addressed evidence, and selected schema identity extends the existing outbox origin rather than a sidecar.
+
+R24 changes no visible product behaviour and opens no adapter, database, runtime or external action.
