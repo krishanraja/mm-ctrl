@@ -278,3 +278,19 @@ R8 preserved evaluator operation parity, one effect vocabulary, stable lifecycle
 5. The outbox lacks a typed genesis event, exact event-kind-to-payload binding and a durable invocation-start record between dispatch and provider call. Without that record, recovery cannot distinguish a committed dispatch never called from a call whose outcome is unknown.
 
 R9 must make each claimed authority reconstructible from actual bytes or exact set members. It must preserve the complete control identity, close the evaluator manifest, order visibility collision resolution before fresh evaluation and turn provider invocation into its own immutable causal event. No product decision is required and no adapter, database or runtime work opens from R8.
+
+## R9 repair rationale before review
+
+Krish confirmed “yes to both”: continue the exact contract repair and keep the reasoning durable. R9 changes no approved product behaviour, opens no external action and does not convert an implementation defect into a founder choice.
+
+The R8 review clarified why passing named-field checks was insufficient. A proof is not reconstructible merely because it points at rows; the rows must contain the actual semantic material, the set members must have typed identities and ordering, and each dependency must be tied to the same owner and snapshot. Likewise, an outbox does not become crash-safe merely because state transitions are append-only; it needs a unique genesis, an exact event-to-payload binding and an immutable moment separating “definitely not called” from “may have called.”
+
+R9 therefore makes five narrow repairs:
+
+1. Base and applicable-control watermarks carry kind, lineage and version in both their schema and identity projection, so a lineage-only or version-only change invalidates an old release.
+2. Operation and proof export maps are validated by separate closed schemas. Operation specs, result payload schemas and evaluator exports must agree exactly.
+3. Visibility secondary idempotency has a closed stable projection and fingerprint. Existing acknowledgement collision resolution occurs before the fresh no-prior-ack predicate. The claim remains deliberately narrow: this is an authenticated acknowledgement of exact foregrounded content, never proof of attention or comprehension.
+4. Nineteen authoritative row types carry content, not locator shells. Semantic and row-envelope fingerprints are separate. Selector candidates, answer chains, dependency edges and lifecycle preconditions use typed member schemas. Dependency and seal equality spans extension, canonical owner, dependent row and one exact scope.
+5. Outbox creation has one atomic genesis. Every transition binds an exact payload schema, reference and fingerprint plus the current predecessor. Provider invocation requires its own committed event and yields a non-serializable, in-process, single-use capability. A crash before that event can be marked definitely not invoked; a crash after it is ambiguous and cannot trigger an automatic resend without a current exact idempotency guarantee.
+
+The visible experience remains unchanged and deliberately simple. The leader sees a specific question or proposed move, the operator sees an honest review and approval action, and neither sees hashes, receipts, transition graphs or delivery recovery machinery. R9 remains unimplemented and awaits exact independent attack.
