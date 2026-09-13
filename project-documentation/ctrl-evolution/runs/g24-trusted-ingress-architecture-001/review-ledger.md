@@ -476,3 +476,46 @@ R12 again demonstrated that adding a named object is not the same as giving it a
 R13 therefore has one narrow purpose: make every newly claimed operation reachable from the public request boundary, make Release compilation precede rather than depend on human acceptance, make human authorities single-use, make root lifecycle and precondition evaluation executable, and make the outbox's no-call path internally self-consistent. The question contract will describe only the validation the locked kernel actually performs.
 
 The visible product remains unchanged. These repairs exist so one natural human action has a truthful, replay-safe meaning underneath it. R13 remains local, unimplemented and closed to UI, external data, model calls, database change, deployment, merge and release until its exact bytes survive independent attack.
+
+## Review round 13
+
+**Frozen commit:** `6452461bd48fd451623b0fde3c9a36d0108ca47e`
+
+**Frozen tree:** `5dd3a287f829ce2a65263321e2343d4931bec4c5`
+
+**Human contract blob:** `7b875fd283f044b00ad453f33feecba193c656c1`
+
+**Machine contract blob:** `a4e0a3c0a019bf8c3ebb496a545059df6400c97c`
+
+**QA blob:** `c62b84b6996aa0d8303383d8e45ecf9d0352936c`
+
+**Checker blob:** `f4b8ad129d21c0975518adc82143b1d1b4b79d02`
+
+**Materializer blob:** `8f9c64274b60a6c80626913a7038d01e3351f873`
+
+**Founder-lock checker blob:** `722c2c815d268b7f9c1a0953f2d7b9039910176e`
+
+**Machine SHA-256:** `4dd0f8694c68aba2a61b3e1ec0699c9844327df73ac3fa8b74691910a4b8267d`
+
+**Adjudication:** `VETO`
+
+Both technical reviewers verified the exact frozen archive and rejected R13. Exact materialization, twenty-seven declared mutation probes, the documentation suite and all 211 locked-kernel tests passed but remained non-dispositive. Founder calibration found high alignment, no product veto and no founder decision. It confirmed that twenty internal operations must remain one natural question or one comprehensible Release decision in the visible product.
+
+R13 permanently removed Release's future-acceptance dependency, restored public operation parity, added terminal Release consumption, made lifecycle genesis nullable, introduced an authorised precondition evaluator, narrowed question claims to kernel behaviour and separated worker and reaper abort authority. Six implementation roots remain:
+
+1. The provider-operation rename is incomplete. Schemas expose `provider_operation_class` while identity arrays, uniqueness keys, predicates and multiple fingerprint preimages retain nonexistent `provider_operation_ref` tokens.
+2. Terminal Release consumption is not joined to the exact committed `use_release` operation result, result fingerprint, terminal branch and branch-specific receipt. Its operation, result and outcome fields can be spliced.
+3. Lifecycle still contains a non-null R8 stable-action projection and an impossible joint equality that makes distinct leader and operator actions equal. Combination and single-transition consumptions omit exact action-fingerprint joins.
+4. Canonical case identity requires an ungrounded `case_authority_binding_fingerprint`. The canonical case authority binding has neither a fingerprint field nor a fingerprint preimage, so the projection cannot reconstruct it.
+5. Lifecycle evaluator evidence does not equate its duplicate `evaluator_version_ref` to the current registry member and result. Provider-target derivation likewise omits exact equality for `provider_key_grammar_version` and `verification_source_ref`, despite hashing them.
+6. The final provider-call outcome table overlaps without precedence, and retirement references remain stricter than the locked kernel because they use canonical identifiers rather than exact trimmed nonblank strings.
+
+Accepted checker bypasses erased or rewired each of those relations while returning no failures. R14 must validate semantic equality, fingerprint preimages and recursive field vocabulary rather than relying on field presence or join counts. No adapter, database or runtime implementation opens from R13.
+
+## R14 repair rationale before review
+
+R13 closed reachability but not all identity. The remaining defects are variations of the same problem: two authentic objects can still be joined through an unchecked name, fingerprint or branch. Presence is not causality. R14 must make every link computable from exact bytes and make every provider-bound outcome deterministic.
+
+The repair is technical only. It will complete the provider vocabulary migration, bind Release terminal consumption to the exact committed branch, unify lifecycle action identity and fingerprints, ground case authority in one canonical fingerprint, remove or bind duplicate evaluator identity, reproduce retirement-reference validation exactly and replace overlapping final-recheck prose with ordered, exhaustive precedence.
+
+The visible experience and approved product direction do not change. R14 remains local and unimplemented until frozen bytes survive both independent attacks.
