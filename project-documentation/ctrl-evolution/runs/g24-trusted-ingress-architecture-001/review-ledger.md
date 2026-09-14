@@ -1499,3 +1499,35 @@ R43 proved that each artifact can be individually well formed, but individual va
 The same complete verifier now checks all 44 wrappers, 104 exact-one resolutions and 418 correlations across four restart classes. These controls remain invisible machinery for one canonical Brain and leader-owned truth. They add no customer ceremony.
 
 R44 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 44
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `24ee1aa3a308de2bdc99b0188a1694246d486a4d` / `b5877b1b24dd8d92143f3b30a91eb3fdd4aeb353`
+
+**Human / machine / QA:** `74e55f3e3b3743d2b0d754b0f6b870d01570236e` / `5a3209cab19395404399afeb3d54750932394e21` / `788fcf2a3fdc7ea63270d4268cf01910fa0ff602`
+
+**Checker / materializer / founder checker:** `80a0c4de8bcc4ff6cf33c525700f0a2c75105e5c` / `5860b588b629ce65887930028322721e431b86e6` / `e60b99f0c74dcc9f893c6d827c012a1f23d4bb1a`
+
+**Machine SHA-256:** `f792939ee19cb9359023bb5a65d192f2a4422c68d17db94c097e6c8e717acf7e`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R44 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R44's sole role-keyed stores, exact branch role sets, exact-one resolution direction, complete wrapper validation, bounded snapshot controls and four restart paths survive. Five executable roots remain:
+
+1. Payload fingerprint validation trusts a declared preimage supplied beside the artifact instead of deriving that preimage exclusively from the selected schema and actual payload. A proof can therefore launder a malicious preimage through coherently resealed wrapper hashes.
+2. The committed fixture conflates the submitted target intent, the server-materialized committed row and the row-version identity. One content hash is made to stand for incompatible identities.
+3. The committed final receipt and its ordinary proof nonce-consumption receipt are not materialized as exact authoritative rows. Seeded receipt values therefore appear in the result and registry without resolvable receipt lineage.
+4. Selected-lineage resolution skips absent matches during generation and does not consistently compare every companion byte hash and fingerprint. Zero matches must fail, not disappear.
+5. Correlation coverage omits final receipt, committed target row, row-version, ordinary nonce, partition-head and authority-order facts.
+
+No founder choice is required. R45 must close only these fingerprint-derivation, committed-target-identity, receipt, nonce and exhaustive-resolution seams, preserve R44 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R45 repair rationale before review
+
+R44 established one artifact truth per fixture. R45 now proves that truth from the selected schema and payload rather than accepting adjacent fingerprint claims. It also separates the leader's submitted intent from the authoritative row created by the system and from that row's version identity.
+
+The committed path gains an exact final receipt and nonce-consumption receipt, while exhaustive resolution binds each selected reference together with its byte hash and fingerprint. These controls remain hidden machinery for preserving leader-owned truth, correction history and one canonical Brain without adding customer ceremony.
+
+R45 changes no visible product behaviour and opens no adapter, database, runtime or external action.
