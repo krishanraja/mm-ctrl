@@ -78,7 +78,7 @@
     "brain:g24:ingress-r44-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r44.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r44.mjs",
     "brain:g24:ingress-r45-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r45.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r45.mjs",
     "brain:g24:ingress-r46-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r46.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r46.mjs",
-    "postdocs:check": "npm run brain:g24:ingress-r49-check",
+    "postdocs:check": "npm run brain:g24:ingress-r50-check",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node standards/check-standards.mjs",
@@ -98,7 +98,8 @@
     "test:e2e": "playwright test",
     "brain:g24:ingress-r47-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r47.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r47.mjs",
     "brain:g24:ingress-r48-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r48.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r48.mjs",
-    "brain:g24:ingress-r49-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r49.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r49.mjs"
+    "brain:g24:ingress-r49-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r49.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r49.mjs",
+    "brain:g24:ingress-r50-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r50.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r50.mjs"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",

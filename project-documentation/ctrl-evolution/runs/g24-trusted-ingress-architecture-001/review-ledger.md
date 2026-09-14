@@ -1653,3 +1653,36 @@ R48 proved a session receipt could be materialized but did not prove that all ar
 R49 also replaces value-shaped fallback classification with explicit schema-field authority. It inventories persisted identity from all active schemas, not the examples currently instantiated, and requires every named authority path to resolve. Schema-declared reference equalities are generated across the full persisted universe.
 
 These repairs stay backstage. They protect one canonical Brain and leader-owned truth without adding customer approval ceremony or visible technical language. R49 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 49
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `1443d76220ecfede1c11a0c3e327b1b66624538e` / `20878619501306f16c7c00011a11ad14337f3f74`
+
+**Human / machine / QA:** `fb975a475080a2aa3831470be181c49eb4e15502` / `26ab69d8243d2985ff8f1bd25017fdcc089809eb` / `6608dca94b4dcac193bb1316bc685995e0ab7314`
+
+**Checker / materializer / founder checker:** `cc26b1a996d78566d771fbedf3b83f20fd533cef` / `22b28ed5c594fb0a8fedc0b124e1eaa15fc0f40f` / `ff33a41a38fbd9302084b9cd61909aca7e8c0c47`
+
+**Machine SHA-256:** `947f72ad8f1bf3eb7bb2d6b0b094c7c349bf2141bbbe161393b61275ddf96c7d`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R49 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R49's coherent target, workspace and time lineage, explicit non-artifact classification, complete active persisted-schema inventory, 315 identity kinds, 509 equality rows, 150 exact-one references, 450 correlations, 9,801 semantic references and 226-row self-sealed manifest survive. Six executable roots remain:
+
+1. R49 describes content addresses with new domain-separated preimages even though active stores use raw SHA-256 of canonical bytes. The index resolves paths but does not execute every formula or distinguish content addresses from fingerprints and row versions.
+2. Wrapper fingerprints are absent from the complete persisted identity index even though all content-addressed stores persist wrapper rows.
+3. The session fixture uses synthetic proof and authority fingerprints rather than actual selected issuer and evaluator registry rows with cryptographically valid signed proofs.
+4. Non-artifact classification is generated from the five fixtures rather than the complete active schema universe. The five reference fields in a valid `issue_case_session_issuer` request therefore lack complete independently pinned classification proof.
+5. The 509 equality rows list fields and companions but do not form an executable typed target authority capable of rejecting cross-artifact splices across the complete universe.
+6. Some manifest source authority is finalized after the source snapshot, so the seal does not prove the exact final emitted semantic bytes.
+
+No founder choice is required. R50 must close only these formula, wrapper, signed-authority, full-schema classification, typed-equality and final-byte snapshot seams, preserve R49 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R50 repair rationale before review
+
+R49 expanded the inventory but still treated identities as labels. R50 makes each identity formula executable and aligns raw content addresses with the actual store bytes while keeping semantic fingerprints and versions separate.
+
+R50 also replaces synthetic role authority with two actual current registry rows and valid deterministic Ed25519 proof fixtures. Complete-schema reference classification and typed equality records are generated after all payload, wrapper and row schemas are final. Every manifest input is finalized before the immutable source snapshot.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R50 changes no visible product behaviour and opens no adapter, database, runtime or external action.
