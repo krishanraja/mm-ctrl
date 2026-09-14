@@ -1686,3 +1686,36 @@ R49 expanded the inventory but still treated identities as labels. R50 makes eac
 R50 also replaces synthetic role authority with two actual current registry rows and valid deterministic Ed25519 proof fixtures. Complete-schema reference classification and typed equality records are generated after all payload, wrapper and row schemas are final. Every manifest input is finalized before the immutable source snapshot.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R50 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 50
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `5aa968557c30d791cc453c601aba293f77ef71e5` / `a6adb90cd48c1ed1431386a9f6e0f178b9c45528`
+
+**Human / machine / QA:** `401da9977b1d466af3a7b424641bffd565b87e20` / `0a8f16a70ab3610a699f85818031a9d4bc1426d6` / `e7c289b0331ee45459a5aff50a1565704f26fca0`
+
+**Checker / materializer / founder checker:** `7ba324eff370510a20b13bc6e67b81fe9aee1c42` / `9955f17a07883ac16bf1c535bbfd4dee5a42e04d` / `8a4779d6c610186785e24d665d7f29fb3a24f01a`
+
+**Machine SHA-256:** `25133f8ef3de92c89ec4dfff4afb167f6591775e4fca765833d3930867bb3a99`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R50 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. They disagreed on one reproduction: the defense established that the proof signatures were made over canonical JSON rather than the required `canonical_field_encoding`; the adjudicator verified them over its interpretation of the declared preimage. R51 therefore must remove interpretation by producing and checking the exact signed bytes independently.
+
+R50's aligned raw content-address primitives, 133 wrapper schemas, 450 indexed identities, actual current issuer and evaluator rows, valid Ed25519 key material, exact authority joins, 777 schema classifications and equalities, 154 selected references, 462 correlations and final-byte manifest survive. Four blocking roots remain:
+
+1. The signed preimage byte encoding is not implemented byte for byte. The proofs can verify over JSON even though the contract names `canonical_field_encoding`.
+2. Persisted-store discovery still depends on the canonical content-store shape and omits the five opaque raw-input stores, proof-nonce persistence and specialized wrapper shapes from one exhaustive store authority.
+3. Wrapper `canonical_schema_ref` is treated like an artifact reference, and fixture validation does not exhaustively traverse every persisted wrapper row.
+4. Three hundred and twenty-four internal exact-one equality rows still have no exact target or closed operation, branch and store discriminator.
+
+No founder choice is required. R51 must repair only byte encoding, exhaustive store and identity coverage, wrapper semantics and internal target closure while keeping runtime, database, UI and external action closed.
+
+## R51 repair rationale before review
+
+R51 makes exact field bytes the signed truth. The materializer and checker use independent encoders, persist byte evidence, verify both signatures over field encoding and prove both fail over JSON.
+
+R51 also replaces store-shape discovery with one explicit union, includes opaque and nonce wrapper identities, validates stored wrapper rows, treats schema references as schema references and replaces every internal unavailable target with an exact or closed discriminated target.
+
+These changes remain backstage. They protect canonical evidence and human authority without creating customer ceremony or visible technical language.
