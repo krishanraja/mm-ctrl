@@ -1621,3 +1621,35 @@ R47 made semantic authority final before its manifest but did not apply that sam
 R48 also gives both committed receipt variants exact identity formulas and proves the session variant with a fully materialized isolated fixture. Persisted identity kinds are derived from actual selected schemas rather than a remembered list.
 
 These controls remain invisible machinery for one canonical Brain and leader-owned truth. R48 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 48
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `840400dbceb9a561d86536b6742f7ffa2628eeb4` / `9305badda4913afe3ff38f144b243419e78554dd`
+
+**Human / machine / QA:** `f88df59c1d6eb823d5bf1303235087d284deb814` / `65ea004500bb9b85584409b0001aa454ea8cfe7f` / `724ab4e646e48c487a57df81408f48d5521bb3f1`
+
+**Checker / materializer / founder checker:** `f7086b76e1319ea1f27d1779b79427ac638f9b56` / `d812ed0c72a56d619a99bd57f740189b285432d0` / `0b9c5159be7439c52cee1163ce97d37acdae0a42`
+
+**Machine SHA-256:** `2416c4630db647c5feed283d662a2e80d2b7450f267f71dec3cec985a1762afc`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R48 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R48's finalization-first lineage generation, two committed receipt identities, single role-keyed fixture stores, 149 exact-one references, 447 correlations, 102 fixture-derived identity kinds, 7,104 semantic references and 221-row self-sealed manifest survive. Five executable roots remain:
+
+1. The session-committed registry's target-intent reference and hash do not identify its actual target artifact, and the committed registry has no target-intent fingerprint field.
+2. The session projection names `workspace_restart` while the target intent names a different workspace, and both role proofs expire exactly at the server commit instead of strictly containing it.
+3. A generic unmatched-string runtime or external classification lets fabricated internal references bypass exact-one artifact resolution.
+4. Persisted identity coverage is derived from selected fixture roles rather than the complete active schema universe, omitting uninstantiated request, target, proof, result and committed-target store identities.
+5. Thirty-four identity authority paths do not resolve to actual normative objects, and selected-fixture equality checks do not prove every schema-declared cross-artifact equality.
+
+No founder choice is required. R49 must close only these session consistency, explicit reference classification, complete persisted-schema identity, authority resolution and full equality-coverage seams, preserve R48 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R49 repair rationale before review
+
+R48 proved a session receipt could be materialized but did not prove that all artifacts in that fixture described the same issuable event. R49 rebuilds the fixture from one target, workspace, time window and dependency order, then binds the target intent as an exact reference, byte hash and fingerprint in the committed registry.
+
+R49 also replaces value-shaped fallback classification with explicit schema-field authority. It inventories persisted identity from all active schemas, not the examples currently instantiated, and requires every named authority path to resolve. Schema-declared reference equalities are generated across the full persisted universe.
+
+These repairs stay backstage. They protect one canonical Brain and leader-owned truth without adding customer approval ceremony or visible technical language. R49 changes no visible product behaviour and opens no adapter, database, runtime or external action.
