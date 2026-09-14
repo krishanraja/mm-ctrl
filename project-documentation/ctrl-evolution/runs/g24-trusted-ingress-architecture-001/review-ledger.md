@@ -1971,3 +1971,36 @@ R59 inventories all 21 ordering declarations and executes one of six closed hand
 Intervention inner bytes must now equal the exact canonical encoding of the selected question or session schema, and visible consequence or proposal text must equal its trimmed form. The conditional exclusion set is independently reconstructed from identity fixtures and unproved rules, with exact row, count and uniqueness equality.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R59 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 59
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `5be0a57b17ea4f1e5f74d555dfe055ec6c10bc70` / `046da2aae9e0911e8a2158f536f316431fad4705`
+
+**Human / machine / QA:** `4becf0463b058e351268db0f37257d3b0d05e42e` / `68443f175edb12a9d1185c722145e381236c807a` / `6186325f10d15c715779719b26284d2545df54c1`
+
+**Checker / materializer / founder checker:** `8788fd8572374915439c681bb57ec28a70959387` / `6112182d472e1d49cff52ec8a29a8e558a03bd91` / `dac7cd3b3bfe0be14c6bfb8a14d5565ef5da892b`
+
+**Machine SHA-256:** `f59d3453f8c790585e7b781d09546ce71e41d99dc60eb81f1f9890098426afcb`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R59 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R59's array and exact-member semantics, five noncompanion ordering handlers, canonical intervention bytes and keysets, declared fingerprints, exact consequence and proposal trimming, shared joint evidence and inherited controls survive. The combined independent findings found four remaining roots:
+
+1. `matching_evidence_refs` checked only sorted references and equal array lengths. It never proved that each fingerprint belonged to the same-position referenced evidence row, so a fingerprint-only swap passed.
+2. Intervention `payload_schema_version` remained a generated placeholder instead of the exact question or session schema version selected by `atom_kind`.
+3. The question-display predicate incorrectly required the displayed bytes to equal their trimmed form. The frozen rule requires nonblank content after trim while preserving the exact original bytes.
+4. Conditional exclusion derivation inspected only the top-level fixture schema. It missed unproved rules reachable through the selected question contract and its answer-effect items, and therefore understated the exclusion evidence.
+
+No founder choice is required. R60 repairs only evidence pair resolution, per-site ordering fixtures, intervention version binding, exact question-display semantics and recursive actual-selected-schema exclusions while keeping runtime, database, UI and external action closed.
+
+## R60 repair rationale before review
+
+R60 binds every lifecycle evidence reference to an exact resolved fingerprint pair and attacks swapped fingerprints, missing pairs, substituted references and duplicate resolution. All 21 ordering sites now carry an independently rederived canonical positive and negative fixture.
+
+Question and session intervention atoms bind their payload version to the exact selected schema. Display wording preserves its original bytes while remaining nonblank after trim; exact trim stays confined to consequence and proposal rules that declare it.
+
+Exclusion derivation now recursively follows actual nullable, reference, array and discriminator selections. It records 371 exact identity-rule-schema-value paths and excludes 128 of 129 conditionally touched identities, including the nested question evidence while rejecting an unreachable question branch on the session fixture.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R60 changes no visible product behaviour and opens no adapter, database, runtime or external action.
