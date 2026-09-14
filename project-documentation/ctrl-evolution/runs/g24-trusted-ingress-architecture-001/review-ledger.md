@@ -1591,3 +1591,33 @@ R46 made lineage selection exhaustive but left two different stories about how c
 R47 also captures one immutable final semantic source snapshot before generating its registry, owner graph and hashes. Manifest targets come from an independently declared set rather than current object existence, so construction order cannot silently add or remove authority.
 
 These controls remain invisible machinery for one canonical Brain and leader-owned truth. R47 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 47
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `b32c3170aa1d8b87a1b18afedfe78fcf33e0fd69` / `0cd4e615d044eac28486b5688cadb510512ae72f`
+
+**Human / machine / QA:** `12af75555c677e2ed8d403579c2e4f2786836657` / `bd7a8663892317deae01fe5427a77dca4dd2fc7e` / `89e58ae935084109447b1d30dc931b59e0e0fdf6`
+
+**Checker / materializer / founder checker:** `84f0571139f5498a3271b98782e30802fb40564c` / `da76506f4b3438d5701b61e2dc6e0c7aee08efd6` / `a5f1d0f1082e543342f30ca8cafde1adfea99b6d`
+
+**Machine SHA-256:** `5f63a9e6544b2597583c80f3c6dbd3c30fb14eec6123d9c7ae9f813b7f45d97d`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R47 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R47's sole persisted identity direction, final semantic snapshot, 6,449 reference occurrences and 220-row self-sealed manifest survive. Three executable roots remain:
+
+1. R47 reissues the committed fixture after importing R46 but retains R46 traversal, resolution and correlation tables. Final artifact bytes can therefore disagree with the lineage proof. Reproduced drift includes 15 resolution rows, 3 self-reference rows and 45 correlation rows.
+2. The active receipt authority describes only the ordinary 24-field committed receipt. The session dual-proof 43-field committed receipt has no equivalent materialized identity authority or positive artifact fixture.
+3. The 13-row persisted identity inventory is manually written instead of being derived from the finalized persisted schemas and active receipt variants.
+
+No founder choice is required. R48 must close only these finalization-order, complete receipt-variant and schema-derived identity-inventory seams, preserve R47 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R48 repair rationale before review
+
+R47 made semantic authority final before its manifest but did not apply that same rule to fixture lineage. R48 completes every artifact issue and reissue first, then regenerates all traversal, resolution and correlation evidence from the final role stores.
+
+R48 also gives both committed receipt variants exact identity formulas and proves the session variant with a fully materialized isolated fixture. Persisted identity kinds are derived from actual selected schemas rather than a remembered list.
+
+These controls remain invisible machinery for one canonical Brain and leader-owned truth. R48 changes no visible product behaviour and opens no adapter, database, runtime or external action.
