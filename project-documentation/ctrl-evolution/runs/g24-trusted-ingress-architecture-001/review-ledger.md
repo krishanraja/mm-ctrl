@@ -2004,3 +2004,32 @@ Question and session intervention atoms bind their payload version to the exact 
 Exclusion derivation now recursively follows actual nullable, reference, array and discriminator selections. It records 371 exact identity-rule-schema-value paths and excludes 128 of 129 conditionally touched identities, including the nested question evidence while rejecting an unreachable question branch on the session fixture.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R60 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 60
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `a3409b5e426792c21567fe720120fd54aac6f1a2` / `2b87bd74df4d799c1d02c0ecc2cdc6427b97e0ad`
+
+**Human / machine / QA:** `832506fc46a5cbb543754fa06e91c151b517a0e5` / `2c24807c4688d1c1f324ffcbcec9556581ca2c05` / `b922611629b7eaab04c0148bce6e9871e11371ec`
+
+**Checker / materializer / founder checker:** `8bb8b00fbdfc42e19b0eac79b10d3da16a8094b5` / `efb446ce4ce5966391baba6f9ccad93247196d65` / `0ba9ffe75f02422a9abd5584f37d602558b4b0c2`
+
+**Machine SHA-256:** `84649d380038d33eb14429fade87300c4cc317967c5b78a416d356dd7ebddb06`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R60 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R60's recursive exclusions, kind-bound intervention versions, exact question-display semantics, shared complete-joint evidence and inherited security controls survive. The combined independent findings found two remaining roots:
+
+1. `matching_evidence_refs` trusted caller-created resolved pairs instead of dereferencing authoritative evidence. Full containing-schema validation had no legitimate way to supply those pairs, while a caller could make the direct handler self-authenticate copied or coherently swapped fingerprints.
+2. The 21 declared ordering fixtures were comparator fragments rather than complete schema-valid values for their actual occurrence sites. Several fragments violated exact members or omitted required object fields, so their count did not prove integration with recursive schema validation.
+
+No founder choice is required. R61 repairs only authoritative evidence dereference and full-schema ordering-site integration while keeping runtime, database, UI and external action closed.
+
+## R61 repair rationale before review
+
+R61 resolves each lifecycle evidence reference through a non-serializable trusted validation context created from the same frozen snapshot. The resolver proves exact cardinality, canonical bytes, content address, target store, schema reference and version, then recomputes the row fingerprint before positional comparison. Caller bytes cannot supply or replace this context.
+
+R61 also materializes one complete positive and negative containing-schema payload for each of the 21 exact ordering sites. Every fixture binds the frozen path, schema version and selected-spec hash. Its positive executes full recursive validation; its negative changes only the ordered field, reseals declared dependents and must fail specifically at ordering.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R61 changes no visible product behaviour and opens no adapter, database, runtime or external action.
