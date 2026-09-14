@@ -1467,3 +1467,35 @@ R42 proved a coherent restart story but some evidence existed only as self-consi
 Snapshot construction is immune to inherited numeric setters, key bytes share the same pre-allocation limits as values, and every semantic reference records its exact nested target or an explicit runtime discriminator. These controls remain invisible machinery for preserving one canonical Brain, leader-owned truth and correction history without customer ceremony.
 
 R43 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 43
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `2c7df0c4214750bce6bae73ffb740268abc14e94` / `85dfd2a433eac82cd4bfae13d111d45ab1144bc5`
+
+**Human / machine / QA:** `e71cd4471c37f404bf02ca9496c723bffcae5b65` / `33ebc0ed50396296422241b01d1f5a78cc252705` / `ef358bcc9e6703d4fa37fae60d5a27120967db7d`
+
+**Checker / materializer / founder checker:** `cd6664a5099b036cfe8f6863260ba3a5e143d41c` / `aced119abd94df5eb7625b27e7d72e19dc6213f7` / `c674f2dbaff0b23636b287d04a5b0b795ff1f2df`
+
+**Machine SHA-256:** `6f0143c6ea8d0c13f795073d2c02c1328b1deb093ae3fbecce2c33d3af7627ae`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R43 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R43's persisted content-addressed rows, exact schema validation, bounded owned snapshots, nested reference inventory and four restart paths survive. Five executable roots remain:
+
+1. Fixtures keep named artifact objects and a separate loose artifact array. Two individually valid copies can disagree, so one role-keyed store must become sole truth.
+2. Selected lineage reference triples are not all required to resolve to exactly one row in that sole store.
+3. Persisted wrappers are not fully validated against an exact wrapper schema, declared payload-fingerprint preimage and declared store-row-fingerprint preimage. Some checks compare a field to itself.
+4. Correlation coverage remains partly handpicked, while an older `verifyLineage` path is not the sole verifier. Registry hold branch and fingerprint, session evidence, held registry, payload and envelope lineage can diverge.
+5. Reproduced attacks include replacing a bundle-truth-projection role with a valid target clone, valid rows in the wrong role, missing or duplicate rows, wrapper resealing, proof, nonce and raw-evidence splices, and a registry-only hold-branch reseal while replay payload remains old.
+
+No founder choice is required. R44 must close only these sole-store, exact-one-resolution, complete-wrapper and single-correlation-verifier seams, preserve R43 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R44 repair rationale before review
+
+R43 proved that each artifact can be individually well formed, but individual validity is not enough when two copies can disagree. R44 makes one closed role-keyed persisted store authoritative for each fixture and derives every view, resolution and correlation from it.
+
+The same complete verifier now checks all 44 wrappers, 104 exact-one resolutions and 418 correlations across four restart classes. These controls remain invisible machinery for one canonical Brain and leader-owned truth. They add no customer ceremony.
+
+R44 changes no visible product behaviour and opens no adapter, database, runtime or external action.
