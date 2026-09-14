@@ -1403,3 +1403,35 @@ R40 rejected unsafe scalar values but did not first sever input ownership from t
 Restart evidence is now constructed and independently validated against exact selected schemas with coherent unique identities and dependency-ordered row refs, bytes and fingerprints. Semantic references are listed as exact occurrences under a closed explicit registry, and compound or wildcard pseudo-references become discriminator-aware paths to actual declared fields.
 
 R41 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 41
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `a52ca705f1e0ff4dc2b6354a1b0d4fea64b9c8f9` / `3c4ac97b483e6a1b11670531a04384655944154b`
+
+**Human / machine / QA:** `46edaf251c4afecb088568f6962f3b5ef082cf70` / `e0efc391d87e9b851fc8e96cc8101f9725e45f45` / `906324acc1368e3aa8e6a3571b18589aeb7c43ed`
+
+**Checker / materializer / founder checker:** `f2ff6749f6e7a324148076d294b15ef9a8f63efa` / `95d813d5f19ddb7d449bb4e084bd848d485633f2` / `9ed048bb245ba27a8eb0c1730e91faf4a691e924`
+
+**Machine SHA-256:** `d9631f1a458ec635a594a90066f6efb7a6449bd3840490b54c80b51398e865f2`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R41. Their verdicts were delivered through independent reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R41's owned snapshot direction, exact schema validation, seven stored registry and hold artifacts, four branch-class restart cases and explicit reference registry survive. Five executable roots remain:
+
+1. Fixture row references still use one fixture-only formula instead of the exact identity preimage declared by each selected authoritative registry or hold schema. A request fingerprint can change while the fixture retains the old row reference.
+2. Restart validation checks only a subset of the cross-record lineage. Request, operation, idempotency, selection, result, history, evidence, proof, nonce, registry, payload and envelope facts need one complete equality authority that rejects a cross-row splice even after resealing.
+3. Snapshot and canonicalization code still invokes mutable shared intrinsics after capture. Pollution of array iteration, mapping, object-key and JSON methods can change or interrupt check and use.
+4. Array and object resources are not bounded before length-sized allocation or traversal. Huge sparse arrays, maximum-length sparse arrays and descriptor traps can consume resources before the intended rejection.
+5. The reference field inventory is seeded from the prior candidate's map and misses the wider independently scanned reference universe. The reproduced scan found 1,295 absent categories and occurrences beyond the inherited list.
+
+No founder choice is required. R42 must close only these normative-row-identity, complete-correlation, captured-primordial, resource-bound and independent-reference-universe seams, preserve R41 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R42 repair rationale before review
+
+R41 established the right ownership boundary but proved some restart facts through fixture conventions rather than the authoritative schemas themselves. R42 derives every stored registry and hold identity from the exact selected schema declaration, then verifies the complete request-to-replay lineage before issue or reconstruction.
+
+Canonical processing now uses captured trusted primitives over a bounded owned snapshot. The independent reference vocabulary scans the complete manifested machine and records 5,236 exact occurrences rather than trusting an inherited map. These controls remain hidden infrastructure for preserving leader-owned truth, correction history and one canonical Brain without adding customer ceremony.
+
+R42 changes no visible product behaviour and opens no adapter, database, runtime or external action.
