@@ -1719,3 +1719,35 @@ R51 makes exact field bytes the signed truth. The materializer and checker use i
 R51 also replaces store-shape discovery with one explicit union, includes opaque and nonce wrapper identities, validates stored wrapper rows, treats schema references as schema references and replaces every internal unavailable target with an exact or closed discriminated target.
 
 These changes remain backstage. They protect canonical evidence and human authority without creating customer ceremony or visible technical language.
+
+## Review round 51
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `bd64b937d6378896dd10b00e7a63460c97d21ad1` / `3e1315fa93f7715ce2245de3d732beb7b0bec696`
+
+**Human / machine / QA:** `c6d84cb911bd7388b324068e65717c8fc4ce5bba` / `ca7c68ecc490db5e2a586a0edecdfd3a8167deb0` / `8817e4e2cc34c766e3b9117765d64cd3f1ccbe92`
+
+**Checker / materializer / founder checker:** `8d505e062fa6d6e12b594c765ae299acd0577c35` / `d067227cfa86c8c5d79e91cb0e6ab1eabd15855a` / `44a3fb5d2019959b9138fb5276b227d2ec655668`
+
+**Machine SHA-256:** `0c7afec2de092b4fed968c2c10d2dc3b33cb9e80fdcc52c8a1393d26aab534d8`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R51 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R51's exact proof-signature field bytes, exhaustive wrapper traversal, explicit opaque and nonce stores, zero internal unavailable targets, closed discriminators and final semantic snapshot survive. Five executable roots remain:
+
+1. Two hundred and five fingerprint authorities declare `canonical_field_encoding` while their materialized identities use canonical JSON bytes. The issuer nonce mismatch reproduction proves the declared codec and computed bytes differ.
+2. The persisted-store union remains hand assembled and omits active durable families including result, response and hold blob stores, live and presented principal stores, partition heads and replay lookup variants.
+3. Internal target selection still admits a universe meta-container and `DISCRIMINATED_BY_*` placeholders instead of finite concrete schema, variant, version and identity-formula targets.
+4. The semantic scanner uses suffix inference without enforcing the pinned non-suffix field list. Known `then` and `source` dependencies can therefore disappear from the owner graph and manifest.
+5. Wrapper and typed-equality paths still rely on meta-target selection rather than one complete concrete target authority across the durable store graph.
+
+No founder choice is required. R52 must repair only codec truth, bidirectional store discovery, concrete selector totality and complete non-suffix semantic reference closure while keeping runtime, database, UI and external action closed.
+
+## R52 repair rationale before review
+
+R51 made proof signatures exact but left fingerprints claiming a different codec from the bytes actually used. R52 versions those fingerprint authorities to the already normative canonical JSON encoder and keeps proof signatures on the separate field encoder.
+
+R52 also discovers durable stores from both writers and readers, replaces every meta selector with a finite exact target, and scans pinned non-suffix semantic references alongside the tokenized vocabulary. Identity, equality, owner and manifest evidence are regenerated only after those sources are final.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R52 changes no visible product behaviour and opens no adapter, database, runtime or external action.
