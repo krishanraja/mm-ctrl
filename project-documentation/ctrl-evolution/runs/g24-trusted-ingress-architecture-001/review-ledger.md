@@ -1846,3 +1846,35 @@ R54 proved many native identities but did not prove that every fixture was valid
 R55 also removes the target-fingerprint fallback, collapses only the duplicate nonce alias and makes the six hold-result fields use their actual result-reference and companion roles. The independent checker found and repaired three producer defects before accepting the focused gate.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R55 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 55
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `aeddd13d8dc64f90f8aa97dd878ae5d562596a47` / `1fc179fd5c81e99a441dbda91261035c78c5d680`
+
+**Human / machine / QA:** `d8aa9580194348181f9121e1548927b07ba9e9f2` / `f26d62d636298c317581535775cb1589e2524b8d` / `e64d20651024cb3e87b2a3d6543f7e5389a80018`
+
+**Checker / materializer / founder checker:** `c8e5ef71796ae188d413c4aab58a0ae87477af02` / `a0cd3f0388b4f5c60f904a9f00abc27001d5ac48` / `a5aa2beb016cd3618d80be35522da671ac129fee`
+
+**Machine SHA-256:** `3b59b93e3cc2ed283163333262aa4a47dfee0d514f62661340a22f165bb18a86`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R55 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R55's native-role precedence, hard missing-target failure, 1,228 distinct identities, source-valid selector inventory and signed restart evidence survive. The stronger independent reproductions found three roots:
+
+1. The recursive validator ignores `enum_ref`, minimum and maximum UTF-8 byte constraints, patterns and conditional rules. It accepts noncanonical base64url and rejects every valid non-null nullable value instead of recursively validating its `value_schema`. Eight generated hold fixtures therefore invent values outside authoritative `hold_codes`.
+2. Sixty of 70 linked-identity fixtures prove only the current identity field. Empty companion arrays pass vacuously, and the ordinary held `result_ref`, `result_bytes_sha256` and `result_fingerprint` identities can use different target evidence instead of one complete equality fixture.
+3. A synthetic original-persisted-hold selector records six dimensions as unavailable while its source fixture carries concrete operation, branch, proof-family, branch-class, evidence-kind and target-store values. Reduced projection hides the disagreement.
+
+Defense reproduced all validator failures. Adjudication reproduced the stronger full-declared-equality and selector-dimension failures. The apparent disagreement about whether 70 individual scalar agreements replay does not change the repair: R56 must preserve those passing scalar checks and additionally prove each complete declared equality against one target.
+
+No founder choice is required. R56 repairs only closed validation, complete linked equality evidence and exact selector dimensions while keeping runtime, database, UI and external action closed.
+
+## R56 repair rationale before review
+
+R56 executes every named enum from its authoritative array, enforces the missing string, base64url, nullable and conditional constraints, and adds an explicit committed `use_release` condition fixture. Deterministic fixture values come from authoritative domains.
+
+R56 also groups 70 linked identities into 38 complete equality fixtures. Each shared fixture binds the source reference plus every declared bytes and fingerprint companion to one target before resealing, while selector dimensions are read back from the actual source row and compared wherever the source schema carries them.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R56 changes no visible product behaviour and opens no adapter, database, runtime or external action.
