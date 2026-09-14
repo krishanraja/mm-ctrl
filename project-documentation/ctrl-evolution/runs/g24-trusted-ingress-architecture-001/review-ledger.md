@@ -1939,3 +1939,35 @@ R58 removes every detached conditional context from the proof count. It executes
 R58 also implements true optional-key semantics, Unicode scalar enforcement, recursive discriminator-aware composite validation and declared intervention fingerprint recomputation. It inventories the frozen parent type vocabulary and rejects unsupported schema forms instead of accepting them through a whitelist.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R58 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 58
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `a517b02a295ad399779de92c77ca327c1b9215a5` / `80e01b6e59c12bb32507062106946b532dc4b0e9`
+
+**Human / machine / QA:** `10c7bd0594a72d28299c9a27ae558cb34c2dd026` / `6585f8af2c3a6869a90e8d90139de9f6a89a0e81` / `80114e4428408cc3b9748b14238ebb15afec18ea`
+
+**Checker / materializer / founder checker:** `64e8d3808d45b4880a34e987b1f42c0ead340a41` / `1915c1411de0bd6760c950827d781d0e6358ea2a` / `459e9201e898a1edeec2f4bd28a87bde4614bdae`
+
+**Machine SHA-256:** `263a7ef001beaf70bd2811e7eec31c5db45e3595436ee4553d41099c85761369`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R58 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R58's honest 25-local and 78-unproved rule boundary, optional-field semantics, Unicode and Gregorian checks, intervention fingerprint authorities, 70 linked identities, 38 complete-joint fixtures and inherited controls survive. The combined independent findings found five remaining roots:
+
+1. All 21 `ordered_by` declarations were ignored. Resealed reversed question answer effects and outbox failure codes therefore passed.
+2. The advertised ordered identifier array types had no execution branch, and generic arrays ignored exact members. A scalar could pass as an ordered array and an honest-exit member could be removed.
+3. Intervention inner bytes were parsed but not required to equal their canonical encoding. Pretty-printed or key-altered inner JSON could be resealed.
+4. Exact-trim predicates proved only nonblank text. Padded visible consequences and pending proposals passed.
+5. The checker trusted the conditional exclusion list and did not independently derive its 127 rows. Empty, dropped, duplicated or substituted exclusions were not attacked.
+
+No founder choice is required. R59 repairs only deterministic ordering, array membership, canonical intervention bytes, exact trim and independently derived exclusions while keeping runtime, database, UI and external action closed.
+
+## R59 repair rationale before review
+
+R59 inventories all 21 ordering declarations and executes one of six closed handlers at every site. Named ordered arrays, exact members and companion-aligned ordering are checked directly, with resealed question and outbox attacks proving that order is semantic rather than decorative.
+
+Intervention inner bytes must now equal the exact canonical encoding of the selected question or session schema, and visible consequence or proposal text must equal its trimmed form. The conditional exclusion set is independently reconstructed from identity fixtures and unproved rules, with exact row, count and uniqueness equality.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R59 changes no visible product behaviour and opens no adapter, database, runtime or external action.
