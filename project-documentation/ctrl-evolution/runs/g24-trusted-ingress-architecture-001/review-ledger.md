@@ -1531,3 +1531,34 @@ R44 established one artifact truth per fixture. R45 now proves that truth from t
 The committed path gains an exact final receipt and nonce-consumption receipt, while exhaustive resolution binds each selected reference together with its byte hash and fingerprint. These controls remain hidden machinery for preserving leader-owned truth, correction history and one canonical Brain without adding customer ceremony.
 
 R45 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 45
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `d69d06fb3baa9a75bf4f5fc7bc21cf5d1fbacb15` / `c1ad7edf22f0f44b5a55dff3299469e6d3a9572f`
+
+**Human / machine / QA:** `e236e9316cdf6227d65ad3c60cc3e450c5a6015c` / `8ae6ad9888d6053201deb829b3804d3be5c8bccc` / `ad11eacac621b930d2cabc44b518eaa63f457346`
+
+**Checker / materializer / founder checker:** `0bd2492d70827a97fa1d3bd41aeb66deb030d835` / `8b503171c52392f4126b7cb15c1da06c385ceeff` / `304aaa359ca5c037ea73c44557c8dc252bd5f6ab`
+
+**Machine SHA-256:** `9f682c11241242e6ab0de565f956d0d5fa57c218145317c512974d04c8771998`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R45 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R45's schema-derived artifact fingerprints, distinct target and row identities, materialized receipt and nonce rows, sole role-keyed stores and four restart paths survive. Four executable roots remain:
+
+1. Selected lineage resolution is still constructed through manual `link()` calls. Twenty-six schema-selected references are omitted, including historical response payloads, result-to-hold and result-to-session evidence, hold request and result identities, proof projection, authority read-set and session evidence references.
+2. R45 replaces the full R44 runtime-semantic manifest with a minimal path, version and hash list. Semantic kinds, exact keysets, direct and transitive dependency closure, schema refs and snapshot, resource, reference and dependency pointers are lost.
+3. The target projection permits an expiry equal to commit time and its row-version preimage omits mutable authority fields such as `valid_until`. A changed committed row can therefore retain the same version identity.
+4. The bootstrap nonce subject uses a private R45 signer-ref-only domain instead of the normative R26 bootstrap verifier-set fingerprint over both signer references and key-artifact identities.
+
+No founder choice is required. R46 must close only these exhaustive traversal, full-manifest, target-projection and normative nonce-subject seams, preserve R45 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R46 repair rationale before review
+
+R45 made each selected artifact individually recomputable but did not prove that every closed-schema lineage edge was selected. R46 makes selection exhaustive and independently reproducible, then generates all resolution and correlation evidence from that discovered set.
+
+The full inherited authority graph is restored rather than replaced by a smaller summary. Committed row identity now changes whenever any mutable authority field changes, and proof nonce identity follows the already reviewed verifier-set rule. These controls remain invisible machinery for one canonical Brain and leader-owned truth without adding customer ceremony.
+
+R46 changes no visible product behaviour and opens no adapter, database, runtime or external action.
