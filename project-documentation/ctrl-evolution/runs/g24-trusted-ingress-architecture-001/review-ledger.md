@@ -1783,3 +1783,35 @@ R52 made selected codec and target semantics concrete but still let the candidat
 R53 also evaluates every valid source context before choosing an exact target and expands semantic scanning from a short name list to the full schema-declared field authority. Persistence, identity, equality, reference and manifest evidence are regenerated only after those sources are final.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R53 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 53
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `2d9d17ee8a7097f52bcaedfe90fa54b0a1ef5c6b` / `f46a35c108769641ac3537937c0051d85f604308`
+
+**Human / machine / QA:** `b88932232f93b70d808316a489af024eb9a57936` / `36c7956fad52ca6944a89f414edd1383c3fe181b` / `4c5fe69cf197905cfbfce0ec0a5c9e174fe7c4c3`
+
+**Checker / materializer / founder checker:** `e6b5cc8ad0f96a29d4ecd1706878c86a5b5485f3` / `d055fb2eb9e790578c19eb6aa7ed420d1f016818` / `8aac8727068c0118faefb02cb89536ed41fa3a73`
+
+**Machine SHA-256:** `ea0b9ec59e55ed306a97e79c9a6343859e409419e1e1bef2b274e5022dfa96ed`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R53 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R53's independently declared persistence registry, schema-native identity inventory, source-driven target selectors and complete semantic field registry survive. Five executable roots remain:
+
+1. Generic fixture construction does not execute each persisted identity's actual store and schema-native derivation over linked schema-valid values.
+2. Row-version fixtures use an invented generic self-referential preimage instead of each schema's exact native version authority.
+3. Companion fingerprints duplicate a selected scalar rather than resolving a concrete target and recomputing its native fingerprint.
+4. The 1,229 candidates include substring-shaped false identities without a native formula, so applicability must be adjudicated honestly rather than claimed universally.
+5. Forty-nine selector contexts violate their source schemas: 48 verified-session evidence contexts use the branch-table label rather than the source-schema literal, and the proof-nonce context uses an unavailable family outside its enum.
+
+No founder choice is required. R54 must repair only native identity execution, linked companion proof and source-valid selector context generation while keeping runtime, database, UI and external action closed.
+
+## R54 repair rationale before review
+
+R53 found the right durable universe but still proved some identities through generic stand-ins. R54 executes every applicable identity against schema-valid linked bytes and its exact native authority, excludes seven candidates that have no native identity formula and proves six row versions without self-reference.
+
+R54 also resolves companion fingerprints from actual target fixtures and derives selector contexts from the strict intersection of source-schema literals and the operation tables. All 49 invalid R53 contexts disappear rather than being normalized after selection.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R54 changes no visible product behaviour and opens no adapter, database, runtime or external action.
