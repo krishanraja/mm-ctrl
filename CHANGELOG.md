@@ -2,9 +2,18 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-08
+Last reconciled: 2026-09-14
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
+
+## 2026-09-08 - G17 to G20: Brain adapter primitives, synthetic population lab, and the Claude bridge contract
+
+No production migration, deployment, connector, or customer-facing route resulted from this work. All four are committed to `main` as contracts, local-only primitives, or an unlinked preview route.
+
+- **G17** (PR #385, `0aa7175`) rejects the legacy `memory-crypto.ts` fallback cipher, which pads or truncates text into a key and keeps a published development-key fallback, as unacceptable for new Brain data. The new `brain-crypto.ts` requires an exact 32-byte random key with no fallback and a versioned AES-256-GCM envelope; `brain-ingest-core.ts` makes a retried write idempotent by its canonical payload fingerprint rather than its ciphertext, since AES-GCM output differs on every encryption. Thirteen focused tests pass locally. No runtime path calls either module, and the one isolated Supabase development branch needed to prove the atomic write ($0.01344 per hour) is founder-approved but not created (`project-documentation/ctrl-evolution/g17-service-adapter-contract.md`).
+- **G18** (PR #388, `8ca3393`) built a 48-account synthetic population and 1,672 deterministic input events as test oracles, not demo copy: each account states what a strong diagnostic must notice, must not infer, and the smallest defensible next move, across every G16 source type, audience, and processing outcome, plus prompt injection, multilingual text, and layout stress.
+- **G19** (PRs #389, #391, `569e3aa`, `b435f15`) implemented the unlinked, non-indexable `/operator/lab/synthetic-population/:accountId` route reading that population, and passed 61 deterministic and React checks plus eight browser acceptance checks on a protected Vercel preview. Krish approved it on 2026-09-08 as his internal cross-customer dashboard, subject to a locked scrollbar correction applied the same day; this does not approve it as customer-facing product.
+- **G20** (PR #392, `618bf91`) locks a product contract for two gestures on the existing context-circulation substrate: Add to Brain (private-staging capture with a compact receipt) and Use in Claude (an expiring, purpose-bound, read-only context capsule via a private remote MCP connector, with a copied task starter as the fallback where no supported prompt-prefill interface exists). The founder's own words: "We need to make this really easy for me to work in and in Claude... the ability to prompt stuff out to Claude would be good because the Claude UI is often where I do things." No connector, write path, or UI is authorised yet (`project-documentation/ctrl-evolution/g20-universal-capture-claude-bridge-contract.md`).
 
 ## 2026-09-08 - Fail-closed Living Brain substrate
 

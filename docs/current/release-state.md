@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
+Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below. The main test suite row was reconciled against a local run at `618bf91` on 2026-09-14; the G16 production receipt itself did not change.
 
 ## Production baseline
 
@@ -12,7 +12,7 @@ Last verified: 2026-09-08 against the exact G16 application release at `860dea0`
 | G16 application source | `main` at `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
 | G16 application baseline | `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
 | G16 Vercel deployment | `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from the exact `860dea0` SHA |
-| Main test suite | 945 tests in 60 files; zero new type errors against the 94-error legacy baseline |
+| Main test suite | 1,019 tests in 64 files at `618bf91` (local run, 2026-09-14); zero new type errors against the 94-error legacy baseline |
 | Edge Function source inventory | 115 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
 | Hook files | 51 |
