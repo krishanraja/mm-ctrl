@@ -1907,3 +1907,35 @@ R57 treats conditional semantics honestly. It independently inventories all 103 
 R57 also gives each specialized companion an explicit target-field mapping while preserving the shared complete-joint identity, bytes and fingerprint. The checker dereferences the shared fixture and attacks the three cited identities and a cross-authority splice.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R57 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 57
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `dcd52a4baff22507a3325e27b98d712aab3eb664` / `e8719c08365786f9a4d8695479b4ab748389861a`
+
+**Human / machine / QA:** `e1d545b5a2ca0512087e7be186a5bbaf124e0c14` / `f061af62fb5119523c0b216d3fb18962a3a7a963` / `0fae9d273ee998876d7b57b62d6d7af5580118de`
+
+**Checker / materializer / founder checker:** `6d4e8cf45f5d1aea1b42235b858c50257df2a759` / `47d1cb023a06e8fcf4fdb2de0a9e813c0c5d7c20` / `64355a1dd7debac972c5cc9b26ed86267c7e39c0`
+
+**Machine SHA-256:** `2d54b6e72f922c4ffd72e81f2b910fd18ea5bd278ab8adf6af7c7358d4311f16`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R57 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R57's Gregorian timestamp validation, shared complete-joint evidence, 70 linked identities, 38 equality fixtures, selector closure and inherited security controls survive. The combined independent findings found five remaining roots:
+
+1. Sixty-eight materialized context rows were detached tautologies rather than dereferenced evaluations of governed canonical fixtures and supporting artifacts. Exact examples included terminal creation, actor and issuer equality, bounded-row resolution, successor-prefix continuity and release terminal-consumption identity.
+2. The object validator required actual keys to equal every `exact_keys` member, making optional fields impossible in 42 schemas that combine optional fields and a closed keyset.
+3. The validator ignored `valid_unicode_scalar_only` and accepted lone UTF-16 surrogates.
+4. Eleven composite or control types were whitelisted without recursive or discriminator semantics. Exact probes admitted a number as an identifier-or-unavailable value and empty or arbitrary values for operation-discriminated intent, controlling-watermark and discriminated-value schemas.
+5. Intervention fixtures could reseal inconsistent inner and outer payload content and use forged question or atom fingerprints because the checker did not always recompute the exact declared authority.
+
+No founder choice is required. R58 must repair only the fixture interpreter, honest conditional-proof boundary and intervention binding while keeping runtime, database, UI and external action closed.
+
+## R58 repair rationale before review
+
+R58 removes every detached conditional context from the proof count. It executes 25 closed local predicates and marks 78 semantic or live rules unproved, with 127 affected identity fixtures explicitly excluded from complete conditional-semantic coverage. The terminal creation rule is now proved directly from each canonical terminal fixture rather than a substitute context.
+
+R58 also implements true optional-key semantics, Unicode scalar enforcement, recursive discriminator-aware composite validation and declared intervention fingerprint recomputation. It inventories the frozen parent type vocabulary and rejects unsupported schema forms instead of accepting them through a whitelist.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R58 changes no visible product behaviour and opens no adapter, database, runtime or external action.
