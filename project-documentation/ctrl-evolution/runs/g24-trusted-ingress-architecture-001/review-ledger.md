@@ -1878,3 +1878,32 @@ R56 executes every named enum from its authoritative array, enforces the missing
 R56 also groups 70 linked identities into 38 complete equality fixtures. Each shared fixture binds the source reference plus every declared bytes and fingerprint companion to one target before resealing, while selector dimensions are read back from the actual source row and compared wherever the source schema carries them.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R56 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 56
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `05e492ab4fc0c2e8e40d4fac23ee0b7501ba8fe4` / `0812a9ef236b0d6bd8043d6c94380267430f4c62`
+
+**Human / machine / QA:** `0d4733aff7cb2ed4ca2a32c7580f3a5ccda9233f` / `a9cdb94c5bdfb4e2b4b5d2eadc5ba15f2cfab0aa` / `9cfdada3c9c6fa252d7d63f4a76ce879d72b91e8`
+
+**Checker / materializer / founder checker:** `f52c7e61db9fc68f4a76789860f624b5524bc693` / `474b66f19fea28f12c4dcf19ef7da4e6185ca3d5` / `cbe7d4b07e80c12e68658aef822ae1928c3da8e1`
+
+**Machine SHA-256:** `ac6633cad5329adf2522edf5d0036fb49a5a9e47f27e52ec3d645d227da083fc`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R56 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R56 closed the R55 enum-reference, full-row companion, selector-dimension, hard missing-target, native-role and nonce roots. The combined independent findings found two remaining roots:
+
+1. The schema interpreter is still non-total. Generic `string` is not type enforced, canonical timestamps accept impossible Gregorian dates, and only one of 103 conditional rules executes. Exact reproductions include a question atom with null question evidence and the wrong payload length, plus a bootstrap proof whose two signer references alias.
+2. Specialized linked-identity evidence can overwrite the shared target fingerprint without dereferencing its `complete_joint_fixture_ref`. Exact reproductions `identity_0929`, `identity_0958` and `identity_0973` disagree with their shared complete-joint fixtures, including receipt precommit versus final receipt semantics.
+
+No founder choice is required. R57 must close only schema and conditional execution plus canonical joint-evidence dereference while keeping runtime, database, UI and external action closed.
+
+## R57 repair rationale before review
+
+R57 treats conditional semantics honestly. It independently inventories all 103 rules, executes 27 local predicates and 68 deterministic frozen-context predicates, and excludes exactly eight rules whose truth requires live cryptographic, serializable database, authenticated principal or workload enforcement. No unresolved rule is counted as passed.
+
+R57 also gives each specialized companion an explicit target-field mapping while preserving the shared complete-joint identity, bytes and fingerprint. The checker dereferences the shared fixture and attacks the three cited identities and a cross-authority splice.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R57 changes no visible product behaviour and opens no adapter, database, runtime or external action.
