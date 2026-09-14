@@ -1751,3 +1751,35 @@ R51 made proof signatures exact but left fingerprints claiming a different codec
 R52 also discovers durable stores from both writers and readers, replaces every meta selector with a finite exact target, and scans pinned non-suffix semantic references alongside the tokenized vocabulary. Identity, equality, owner and manifest evidence are regenerated only after those sources are final.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R52 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 52
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `183040da495d67ac1e2df02a4b42cd8d30178810` / `8f34fab81f5b1275fe41b00bcf092d1e138c51bb`
+
+**Human / machine / QA:** `cce56633cc7d191624f687a5472370e909a23fc6` / `77c7d570148061a8ee95c3e482bc7495ea084277` / `cdf0515ed8520d73e3562ede98f3ce824d917c5c`
+
+**Checker / materializer / founder checker:** `fa2f07b0e12ad6da6e4d3b8db281ab0afcd40888` / `3a161a1de53f56ed0923a8b9021e18e6fe4d4728` / `6e081b3b2dec524e9ceff64718245f275f5f6dc8`
+
+**Machine SHA-256:** `7eb9f84f042a023f3e699d2cd0487a759d32ba13da21375b363f12449dbf3840`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R52 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R52's truthful fingerprint codecs, exact proof-signature field encoding, concrete selector targets, stored-wrapper traversal and non-suffix semantic scan survive. Five executable roots remain:
+
+1. Persistence is still inferred from candidate-authored store markers and omits 56 direct durable schemas plus the proof-nonce receipt shape from one independent normative registry.
+2. Persisted identity still relies on suffix-shaped roles and generic fixtures, conflating binding, standing, row-version, content-address and fingerprint authority.
+3. Selectors do not execute every valid source operation, branch, proof-family, store and variant context. Known hold, binding, standing and target-row-bytes mappings can therefore select the wrong native identity.
+4. The non-suffix semantic vocabulary omits `owner_lineage_version_source`, `selected_result_schema_version` and `canonical_encoding`, while `then` and `source` completeness is not independently proved.
+5. Typed equalities do not yet use one native, executable target authority across the complete persisted schema universe.
+
+No founder choice is required. R53 must repair only persistence authority, native identity, source-driven selector totality and complete semantic-field closure while keeping runtime, database, UI and external action closed.
+
+## R53 repair rationale before review
+
+R52 made selected codec and target semantics concrete but still let the candidate describe what counted as durable and infer identity from field names. R53 independently enumerates every persisted schema shape and derives each identity from its schema's actual keys, fingerprint authority and native equality rules.
+
+R53 also evaluates every valid source context before choosing an exact target and expands semantic scanning from a short name list to the full schema-declared field authority. Persistence, identity, equality, reference and manifest evidence are regenerated only after those sources are final.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R53 changes no visible product behaviour and opens no adapter, database, runtime or external action.
