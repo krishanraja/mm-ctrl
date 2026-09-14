@@ -1815,3 +1815,34 @@ R53 found the right durable universe but still proved some identities through ge
 R54 also resolves companion fingerprints from actual target fixtures and derives selector contexts from the strict intersection of source-schema literals and the operation tables. All 49 invalid R53 contexts disappear rather than being normalized after selection.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R54 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 54
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `522a6f04e010bec9eefe35f52f0016ef2f5b7662` / `7f87ecdb2bcc44420ccd9c7cc5dcb6cb2d40c4fb`
+
+**Human / machine / QA:** `c2520342ead9f3803820f43ca79e8a303f43a6d7` / `1565c5c95804fea869bdfd50c27bed8a79a28557` / `c1049bed766c47d2483d99342bd40be0fc4a60c0`
+
+**Checker / materializer / founder checker:** `97aa7576866942ee257cc0bd6d595702b0135560` / `d4b16ccd2c4c2864e7ce9506bc89f8dc363bb59a` / `824c4aa10dba795dcfdd022b133aa3e41b249d34`
+
+**Machine SHA-256:** `cc2ea8aaa1d0be790c65affdb1b6b9af15ed544990a22b25a2cfb62b07dcf301`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R54 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R54's native identity formulas, source-valid selector contexts, persistence authority, truthful codecs, signed proof fixtures and restart evidence survive. Four executable roots remain:
+
+1. Fixture validation does not enforce the complete closed schema. The reproduced gaps cover 148 literal or constant constraints, 12 minimum-array constraints and eight target-schema constraints, including enrichment `source_kind_ids` and the ordinary-hold unavailable sentinel.
+2. Identity roles inherit candidate labels instead of deriving one explicit precedence from all native schema sources. Six hold-result fields are misclassified, while the proof nonce appears as a duplicate identity.
+3. Linked identity evidence does not always form one schema-valid source and target pair under one executable selector context. It can choose an arbitrary first case and does not prove a resealed source after binding target identity and companions.
+4. Missing target identities fall back to target fingerprints. Thirteen target fields are absent, and an authority read-set can resolve to a snapshot fingerprint instead of an actual persisted row or wrapper identity.
+
+No founder choice is required. R55 must repair only recursive schema validation, native role precedence, joint source-target identity proof and hard missing-target failure while keeping runtime, database, UI and external action closed.
+
+## R55 repair rationale before review
+
+R54 proved many native identities but did not prove that every fixture was valid under the full selected schema or that every link joined two real rows. R55 validates every source and target recursively, derives every role from native authorities under one precedence and binds each linked identity through one exact source-valid selector context.
+
+R55 also removes the target-fingerprint fallback, collapses only the duplicate nonce alias and makes the six hold-result fields use their actual result-reference and companion roles. The independent checker found and repaired three producer defects before accepting the focused gate.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R55 changes no visible product behaviour and opens no adapter, database, runtime or external action.
