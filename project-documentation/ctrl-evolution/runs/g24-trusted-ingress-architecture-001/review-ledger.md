@@ -1435,3 +1435,35 @@ R41 established the right ownership boundary but proved some restart facts throu
 Canonical processing now uses captured trusted primitives over a bounded owned snapshot. The independent reference vocabulary scans the complete manifested machine and records 5,236 exact occurrences rather than trusting an inherited map. These controls remain hidden infrastructure for preserving leader-owned truth, correction history and one canonical Brain without adding customer ceremony.
 
 R42 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 42
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `f02ea3776721f9348a35474ec8c5b3a1c0538816` / `3c99090b5bddcd69917464d63a3d3e1d59114d78`
+
+**Human / machine / QA:** `5502e078a368665c664d62c87b7d85c8f06787b1` / `44844b758675fa6a2b73ee05cd066f18353735a0` / `a7401e6e9d134aedb27f79cab3158b8c5ae33184`
+
+**Checker / materializer / founder checker:** `3b73c6c559e42f407a36a9d40fca13cd3722de7d` / `72eff7a0b24770f19118fcc804b4c0a9660810a9` / `7c581a32bd14b2fb91176cf254ddfc41e756a47e`
+
+**Machine SHA-256:** `6cbbb9a31e23e9b04ab527079b0ee1df2eb8f6c284d58c76f136acc9f0f190fe`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R42 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R42's normative registry and hold identities, four restart classes, bounded snapshot direction, broad reference inventory and frozen prior strengths survive. Five executable roots remain:
+
+1. Request, result, proof and nonce evidence is represented by synthetic triples rather than exact selected persisted store rows. Restart therefore cannot resolve the claimed evidence from durable bytes and independently recompute it.
+2. Eight prose correlation groups do not mechanically cover the full equality graph. Verified proof bytes, issuer nonce fingerprints, raw evaluator bytes and coherent operation or hold-branch splices remain insufficiently bound.
+3. Array snapshot construction assigns numeric indexes directly. A numeric setter on `Array.prototype` can intercept output construction despite the broader primordial capture.
+4. UTF-8 limits cover values but not property keys, leaving oversized and cumulatively oversized keys outside the declared resource boundary.
+5. Semantic references are assigned to a top-level owner or source fallback rather than the precise nested target and its own schema version. Runtime identifiers and semantic references are not explicitly separated at every occurrence.
+
+No founder choice is required. R43 must close only these persisted-lineage, complete-correlation, own-property snapshot, key-resource and exact-target seams, preserve R42 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R43 repair rationale before review
+
+R42 proved a coherent restart story but some evidence existed only as self-consistent fixture triples. R43 resolves every lineage reference through a selected content-addressed store row, independently recomputes the bytes and fingerprint, and checks a mechanically generated 201-row correlation graph before any issue or replay result can be accepted.
+
+Snapshot construction is immune to inherited numeric setters, key bytes share the same pre-allocation limits as values, and every semantic reference records its exact nested target or an explicit runtime discriminator. These controls remain invisible machinery for preserving one canonical Brain, leader-owned truth and correction history without customer ceremony.
+
+R43 changes no visible product behaviour and opens no adapter, database, runtime or external action.
