@@ -1562,3 +1562,32 @@ R45 made each selected artifact individually recomputable but did not prove that
 The full inherited authority graph is restored rather than replaced by a smaller summary. Committed row identity now changes whenever any mutable authority field changes, and proof nonce identity follows the already reviewed verifier-set rule. These controls remain invisible machinery for one canonical Brain and leader-owned truth without adding customer ceremony.
 
 R46 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 46
+
+**Date:** 2026-09-14
+
+**Frozen commit/tree:** `91053dd1997095e8eb6c92d2031dc03ec7c6684d` / `485ddeb67b294e067e6e7dcf777a2902ec4902e9`
+
+**Human / machine / QA:** `478207b9c0ace7ea8ed2d8ed5e17b4587b5baf8e` / `2197201345d2c15f6f4e656e08e813f25e8d9066` / `a2442abb0afac03fe9af503123e6a1baf19e7365`
+
+**Checker / materializer / founder checker:** `ccba23667acdeed492d7ff4315cdbd6a0f5370c2` / `e011a65b1ad088b5049133c9c437c43c7c16cb83` / `708c76223eb31e7f55aecfa2ed5f930934a1a272`
+
+**Machine SHA-256:** `3a55d19ddfbfce31feb353620322e645f8d0f42bd287a3a87cefe6f36d0d0082`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R46 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R46's exhaustive selected-reference traversal, 104 exact-one resolutions, 312 correlations, complete target projection, normative bootstrap nonce identity, four restart paths and restored manifest structure survive. Two executable roots remain:
+
+1. The active committed-target and receipt identity authorities still describe R45 domains and preimages while the R46 fixture is issued under different R46 formulas. More than one apparent normative identity rule can therefore claim the same persisted identity kind.
+2. The semantic reference registry and owner graph are generated before all schema-change, manifest-envelope and identity source objects are finalized. The frozen 6,407-row registry is therefore stale relative to the final emitted object, and its dependent hashes do not prove that final state.
+
+No founder choice is required. R47 must close only these sole-identity-authority and final-snapshot generation-order seams, preserve R46 byte-for-byte and keep runtime, database, UI and external action closed.
+
+## R47 repair rationale before review
+
+R46 made lineage selection exhaustive but left two different stories about how committed target and receipt identities were made. R47 replaces the stale rules with one active authority per identity kind and proves exact fixture parity.
+
+R47 also captures one immutable final semantic source snapshot before generating its registry, owner graph and hashes. Manifest targets come from an independently declared set rather than current object existence, so construction order cannot silently add or remove authority.
+
+These controls remain invisible machinery for one canonical Brain and leader-owned truth. R47 changes no visible product behaviour and opens no adapter, database, runtime or external action.
