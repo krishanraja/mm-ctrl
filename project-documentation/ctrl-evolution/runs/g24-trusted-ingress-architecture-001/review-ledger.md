@@ -2178,3 +2178,31 @@ R66 removes the `trusted_ingress` family alias from selection state and defines 
 Twenty closed and fingerprinted selection query/proof records bind operation class, policy lineage and evaluated time. Each independently filters every member in the same complete sealed frozen snapshot, requires exact per-operation export and proof-family compatibility, and binds its unique result to the snapshot content identity, R6 set seal, member content reference, row-version reference and fingerprint. The lifecycle operation's exact selection proof enters its frozen evidence and proof lineage. R65's fail-closed executable boundary remains byte-identical, so compatibility selection cannot authorize execution.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R66 changes no visible product behaviour and opens no evaluator implementation, adapter, database, runtime, UI or external action.
+
+## Review round 66 final adjudication and R67 closure
+
+**Date:** 2026-09-15
+
+**Frozen commit/tree:** `224f66520b93f0bce4a5ef61ddad22a12fd4c462` / `a5517b29e7d33f3b6d38be2d6c02cd96c1fb585a`
+
+**Design / package / README:** `3372b4bebbd060b9317b340073fe25b06e7fdd49` / `081e8aebe22d08f0867caedc2d6ea52c6960297b` / `a13c256dc2791bb4fe3ca32abe5405a5cc6ac27f`
+
+**Human / machine / QA:** `eb5b875222710260ef886ca669c626bb2857bb70` / `3cfdf96182f794b5221663170413315b7630219f` / `da4f476f1e6c7de410a91bff0a032b5d38a3eda3`
+
+**Ledger / founder checker / R66 checker / R66 materializer:** `5e4a0647a1909de09826d6b24ce76d32ee447311` / `73de8dedf78b3c0a4bef2240ae86c1924db630cd` / `6bc7f0bbc16d00676b9e8c97900397567127e034` / `be4fdc2ea288747f242749ee2e0b0b678b0bfec5`
+
+**Machine SHA-256:** `b930cff4b346aad614cc0a576ab7160a7846a5f1e9f5cb27f864d286fd32a920`
+
+**Adjudication:** `accepted_for_metadata-only architecture scope`
+
+The `g24r5_adjudicator` returned `PASS` through an independent reviewer message. The adjudicator verified twenty exact operation queries and proofs, the full three-key binding, each operation's own export and proof compatibility, snapshot/member/set-seal lineage, lifecycle proof binding, the fail-closed executable boundary and the stated outside scope.
+
+The `g24r5_defense` returned `PASS` through an independent reviewer message. The defense verified the exact frozen archive, the same twenty-of-twenty derivation, query and proof fingerprints, coherent lineage, focused checks, founder lock, kernel and clean status.
+
+The verdicts were delivered through independent reviewer messages. They are not cryptographic signatures. No separate frozen verdict artifact identity was created or claimed.
+
+Acceptance is limited to R66's frozen metadata-only evaluator compatibility architecture. Live registry completeness, serializable runtime selection, executable adapter/module authority and behavior, restart/runtime/DB integration, UI/product behavior and deployment/external action remain explicitly unproved and outside the gate.
+
+This acceptance authorizes only moving to a separate executable-adapter implementation gate. It authorizes no runtime, deployment, database, UI or external change.
+
+The next-frontier brief is to locate or define the actual evaluator module contract and founder-locked source or bundle, build an isolated deterministic harness, define and verify the registry/live adapter, and then stage integration behind separate authorization and verification. R67 implements none of that work and changes no contract semantics.
