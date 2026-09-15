@@ -2121,3 +2121,32 @@ R64 binds every operation result export across the result payload schema, operat
 All twenty-one ordering fixtures now derive their source path, containing schema and version, ordered field and selected-spec hash from the current frozen occurrence. The two lifecycle fixtures bind R63 and retain their valid singleton payload and duplicate rejection. The other nineteen payloads and negatives remain byte-identical to the previously verified full-schema fixtures.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R64 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 64
+
+**Date:** 2026-09-15
+
+**Frozen commit/tree:** `62386efe1d0e74e33a94fe46ec865b6da4921cc9` / `01dfe04b56255ea84016fa197c81a43a3e26c946`
+
+**Human / machine / QA:** `a1bce1c94c05559ba549bf5d3f0d8bb25987b037` / `ac82a1a6314e2c55103a8269069f5bf9367a6c60` / `feacf73409b0d5546ebe45b6ec533cd212c26aae`
+
+**Checker / materializer / founder checker:** `5298ddd01e3efaa1f3f6780e5a52bd7620fa031d` / `167d0388068a3ceb9c30bfbda7675515e0491ded` / `1a61f9201656fc3fc26db7e4bd2c6d00cb23b19a`
+
+**Machine SHA-256:** `8cc3b68f38748accc852cd126feeaed614dc2dddca969f8458429939000b27d2`
+
+**Adjudication:** `VETO`
+
+The independent defense reviewer returned `PASS`. The independent correctness adjudicator returned the decisive `VETO`, so R64 was not approved. Both verdicts were delivered through reviewer messages; no separate frozen verdict artifact identity was created, so none is implied here. R64's twenty-of-twenty seven-surface export parity, R63 stale-export closure, exact ordering metadata, dependent lifecycle lineage and inherited controls survive. The adjudicator identified two connected blocking roots:
+
+1. `loaded_evaluator_artifact.canonical_evaluator_bytes_b64url` decoded to a 2,406-byte JSON metadata descriptor containing schema, evaluator, ABI, policy, manifest and export-map identifiers. It carried no executable source, module, binary, entrypoint or code-content reference. Its SHA-256 authenticated metadata, not evaluator behavior, so different executable code could present the same descriptor.
+2. `selected_current_evaluator_registry_members` was an asserted one-element list rather than a selection derived from a complete content-addressed and set-sealed registry snapshot. An overlapping active member omitted from that list could not be represented, and the second-current mutation only appended to the asserted selection.
+
+No founder choice is required. R65 removes the executable-behavior overclaim, fails closed because no real evaluator implementation exists, and repairs frozen registry selection without opening runtime or external action.
+
+## R65 repair rationale before review
+
+Repository discovery found no executable implementation of `evaluate_lifecycle_preconditions`; the only nearby TypeScript adapter is an unrelated Decision Bench fixture adapter. R65 therefore does not fabricate code. It separates the canonical compatibility metadata descriptor from executable authority, removes every claim that descriptor bytes bind behavior, and requires a content-addressed executable, exact bytes and length, module format, entrypoint, export ABI, and founder-locked or separately reviewed authority before kernel dispatch. Because those inputs are absent, execution, evidence writes and result generation deterministically hold. The frozen result fixture remains schema and lineage evidence only.
+
+R65 versions the closed evaluator registry member with domain-separated row-version and fingerprint authorities, content-addresses its canonical bytes, and seals the complete frozen member set using the existing R6 evaluator-registry identity projection and set-seal encoding. The unique current compatible member is derived from every member in that snapshot at the pinned instant. Omission, duplication, overlap, stale and future intervals, wrong exports, row identity, content and set-seal mutations fail. Frozen archive completeness is proved separately from live-registry completeness and serializable selection, which remain explicitly unproved.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R65 changes no visible product behaviour and opens no evaluator implementation, adapter, database, runtime, UI or external action.
