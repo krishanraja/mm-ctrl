@@ -1,6 +1,6 @@
 # G24 lifecycle precondition evaluator R69 QA record
 
-Status: candidate gate, executable loading mechanics only
+Status: independently vetoed and preserved, executable loading mechanics only
 
 Date: 2026-09-15
 
@@ -56,3 +56,16 @@ Until every gate is green and independent reviewers pass the frozen identities, 
 - `package-lock.json`: unchanged.
 
 `npm run standards:check` and the `npm run build` prehook remain red because the global standards checker finds 29 em dashes in four untouched G24 R2 council records. The same counts exist in committed parent `fe4a4ee5780bc3ecf919766e89931987f97f4e30`. R69 does not rewrite historical judge evidence to conceal that baseline failure. The underlying production bundle and prerender steps both pass.
+
+## Independent frozen review
+
+The correctness reviewer returned `VETO` against exact commit `70055728953f8eec4c30a2876b6169378d883682`, tree `a5456866f8c4a83ca7bdd1764739182cbb6a0f67`.
+
+The reviewer reproduced four blocking failures:
+
+1. a literal lone surrogate changed to U+FFFD during UTF-8 conversion and then reached `verified_not_runnable` because the round trip was compared only after mutation;
+2. caller-supplied R69 data, including `source_path`, was dereferenced before the fail-closed try and immutable-authority check, so a missing path threw instead of returning the pinned hold;
+3. exact-content R69 and R66 Proxies executed 56 and 540 traps respectively and could still load;
+4. a rejected caller machine could control the hold envelope's output schema version.
+
+No result, evidence row or write authority leaked. The direct executable's NFC, UTF-8 length and invisible-control repairs were verified as strengths. The next candidate must remove R66/R69 object overrides from the production-shaped API, hard-pin and hash machine bytes before parsing or dereferencing them, reject any primitive string that changes during UTF-8 round trip, and construct every failure envelope from hard-coded trusted constants.

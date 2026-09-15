@@ -2261,3 +2261,20 @@ The reviewers verified that 400-byte identifiers, non-NFC identifiers and forbid
 R69 repairs forward without modifying R66, R67 or the frozen R68 evidence. Its identifier validation uses actual UTF-8 bytes, requires NFC and the trimmed value, rejects malformed surrogate pairs and enforces every inherited invisible-control family. Its language boundary accepts only primitive canonical JSON text, measures its UTF-8 bytes internally, enforces an exact 65,536-byte serialized-input limit and a separate 131,072-byte complete-request limit, and never invokes Proxy traps. The non-test gate hard-pins the R66 contract, R69 machine and exact executable source identity, so an alternate source cannot self-authorize through coherent resealing. Static inspection is retained as lint only and is not represented as the sandbox or execution authority.
 
 R69 retains the same deliberate semantic closure: `verified_not_runnable` or `hold`, always `evaluator_artifact_hold`, with no writes, result or evidence rows. It authorizes no runtime, database, UI, deployment or external action. The predicate-authority decision remains open between structured trusted read-set variants and separately governed signed satisfaction assertions.
+
+### R69 independent post-freeze adjudication
+
+**Frozen commit:** `70055728953f8eec4c30a2876b6169378d883682`
+
+**Frozen tree:** `a5456866f8c4a83ca7bdd1764739182cbb6a0f67`
+
+**Correctness reviewer:** `VETO`
+
+The reviewer confirmed the exact source identity, intended 13-file scope, clean worktree, materializer, focused tests, repaired direct identifier behavior, test-only reachability and continued no-write boundary. The reviewer nevertheless reproduced four contract failures:
+
+1. a literal lone surrogate changed to U+FFFD during UTF-8 conversion and then passed the already-mutated canonical check;
+2. caller-supplied `r69.executable_artifact.source_path` and sample data were dereferenced before the fail-closed boundary and pin check, so a missing path threw;
+3. exact-content caller-owned R69 and R66 Proxies executed 56 and 540 traps respectively and could still load;
+4. a rejected caller machine could control the schema version in the returned hold envelope.
+
+No semantic result, evidence row or write authority leaked. R69 is frozen, vetoed and not authority. The next forward repair is R70. It must accept no caller-owned R66/R70 authority object in the production-shaped gate, hash exact local machine bytes before parsing or dereference, reject any primitive input string that changes under UTF-8 encode/decode, construct every rejection envelope from trusted constants and retain the reproduced cases as permanent regressions.

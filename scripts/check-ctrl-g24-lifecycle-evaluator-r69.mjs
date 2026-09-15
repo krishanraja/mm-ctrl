@@ -45,6 +45,8 @@ const R68_COMMIT = '06b96688bdfc9399bff3852884e5a3e934e37f95'
 const R68_TREE = '4580008f3fabadf1cf3e039d02291dfb2b02e799'
 const BASE_COMMIT = 'c8e9d2f88f187d221ccdb4e142a67db82a14e571'
 const BASE_TREE = 'cee3f1abae715b8ba1a8cc4cb97e383e6538d8ad'
+const R69_COMMIT = '70055728953f8eec4c30a2876b6169378d883682'
+const R69_TREE = 'a5456866f8c4a83ca7bdd1764739182cbb6a0f67'
 const R66_MACHINE_SHA256 = 'b930cff4b346aad614cc0a576ab7160a7846a5f1e9f5cb27f864d286fd32a920'
 const SOURCE_SHA256 = '6d47389ea5cadcfc8e1c3da9dd8d594ed72323ad994e353b5d94e5886316bdb9'
 const SOURCE_GIT_BLOB = 'ac78c1410b89551a1adafcf4fbba97c9ac4dd748'
@@ -68,6 +70,7 @@ check('frozen R67 commit exists', git(['cat-file', '-t', R67_COMMIT]) === 'commi
 check('frozen R67 tree exact', git(['rev-parse', `${R67_COMMIT}^{tree}`]) === R67_TREE)
 check('rejected R68 commit preserved', git(['cat-file', '-t', R68_COMMIT]) === 'commit' && git(['rev-parse', `${R68_COMMIT}^{tree}`]) === R68_TREE)
 check('implementation base exact', git(['cat-file', '-t', BASE_COMMIT]) === 'commit' && git(['rev-parse', `${BASE_COMMIT}^{tree}`]) === BASE_TREE)
+check('frozen R69 commit exact', git(['cat-file', '-t', R69_COMMIT]) === 'commit' && git(['rev-parse', `${R69_COMMIT}^{tree}`]) === R69_TREE && git(['rev-parse', `${R69_COMMIT}^`]) === BASE_COMMIT)
 for (const [path, blob] of Object.entries(R67_FROZEN_BLOBS)) {
   check(`frozen R67 blob exact: ${path}`, git(['rev-parse', `${R67_COMMIT}:${path}`]) === blob)
   if (!['package-lock.json'].includes(path)) check(`frozen predecessor file byte-identical: ${path}`, Buffer.compare(execFileSync('git', ['show', `${R67_COMMIT}:${path}`], { cwd: root, maxBuffer: 256 * 1024 * 1024 }), readBytes(path)) === 0)
@@ -276,8 +279,8 @@ check('ledger records R69 and open decision', ledger.includes('## R69 structural
 const readme = read('project-documentation/ctrl-evolution/README.md')
 const design = read('docs/current/design-state.md')
 check('README routes R69', readme.includes('[R69 structural executable-adapter gate](g24-lifecycle-precondition-evaluator-r69.md)'))
-check('README keeps predicate decision open', readme.includes('**CURRENT_NEXT_ACTION:** Resolve the R69 open founder decision'))
-check('design state keeps runtime closed', design.includes('R69 structural executable loading mechanics') && design.includes('no runtime integration is authorized'))
+check('README preserves R69 veto and routes R70', readme.includes('**CURRENT_NEXT_ACTION:** Repair the independently vetoed R69 structural harness forward in R70'))
+check('design state preserves R69 veto and keeps runtime closed', design.includes('vetoed R68/R69 evidence') && design.includes('repairing the structural evaluator harness forward in R70') && design.includes('no runtime integration is authorized'))
 
 const allowedPaths = new Set([
   'docs/current/design-state.md',
@@ -296,14 +299,8 @@ const allowedPaths = new Set([
 ])
 const statusEntries = execFileSync('git', ['status', '--porcelain=v1', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean)
 const statusPaths = statusEntries.map(entry => entry.slice(3).replaceAll('\\', '/'))
-const head = git(['rev-parse', 'HEAD'])
-let changedPaths
-if (head === BASE_COMMIT) changedPaths = statusPaths
-else {
-  check('R69 commit directly descends from implementation base', git(['rev-parse', 'HEAD^']) === BASE_COMMIT)
-  changedPaths = git(['diff', '--name-only', `${BASE_COMMIT}..HEAD`]).split(/\r?\n/).filter(Boolean)
-  check('post-freeze worktree clean', statusPaths.length === 0)
-}
+const changedPaths = git(['diff', '--name-only', `${BASE_COMMIT}..${R69_COMMIT}`]).split(/\r?\n/).filter(Boolean)
+check('post-freeze worktree clean', statusPaths.length === 0)
 check('R69 changed paths exact', changedPaths.length === allowedPaths.size && changedPaths.every(path => allowedPaths.has(path)) && [...allowedPaths].every(path => changedPaths.includes(path)))
 check('no migration dependency lock UI or live Edge entrypoint changed', changedPaths.every(path => !path.startsWith('supabase/migrations/') && path !== 'package-lock.json' && !path.startsWith('src/') && !path.startsWith('supabase/functions/decision-engine/') && !(path.startsWith('supabase/functions/') && !path.startsWith('supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69'))))
 
