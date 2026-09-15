@@ -46,11 +46,11 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Verify the exact R74-to-[R75 founder-ready decision]'),
+  state.includes('**CURRENT_NEXT_ACTION:** Founder approve or reject the [R75 predicate-authority decision]'),
 )
 check(
   'design state remains inside the trusted-ingress gate',
-  designState.includes('verify the exact R74-to-R75 locked revision') && designState.includes('No machine contract, result-producing evaluation, runtime integration'),
+  designState.includes('founder approve or reject the R75 predicate-authority decision') && designState.includes('No machine contract, result-producing evaluation, runtime integration'),
 )
 check('R68 source bytes founder-locked', sha256(r68.executable_artifact.source_path) === 'fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104')
 check('R68 founder-lock identity exact', r68.executable_artifact.founder_lock.founder_lock_identity === '4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06')
@@ -69,6 +69,7 @@ check('R73 veto preserved', state.includes('[R73 verdict](g24-predicate-authorit
 check('R74 founder decision routed', state.includes('[R74 predicate-authority decision](g24-predicate-authority-founder-decision-r74.md)'))
 check('R74 PASS preserved', state.includes('[R74 PASS](g24-predicate-authority-r74-panel-verdict.md)'))
 check('R75 founder-ready decision routed', state.includes('[R75 founder-ready decision](g24-predicate-authority-founder-decision-r75.md)'))
+check('R76 founder-ready receipt routed', state.includes('[R76 founder-ready receipt](g24-predicate-authority-r75-founder-ready-receipt-r76.md)'))
 check('lock contains no em dash', !lock.includes('—'))
 
 if (failures.length) {

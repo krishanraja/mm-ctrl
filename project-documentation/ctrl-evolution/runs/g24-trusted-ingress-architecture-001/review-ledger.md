@@ -2368,3 +2368,15 @@ The panel confirmed the variant-specific frame standing and external authority l
 R75 carries the R74 decision forward unchanged, corrects that self-reference and makes the panel carry-forward explicit. Its additions require exact external coordination states, strict time boundaries, no immutable lease for revocable human facts, exact token/consequence binding, crash and reconciliation fixtures, no derived authority widening, no serial questioning and proof of real decision effects.
 
 R75 remains a [founder decision surface](../../g24-predicate-authority-founder-decision-r75.md), not implementation authority. The exact R74-to-R75 delta must pass locked-revision review before founder handoff. No machine contract, evaluator semantics, schema, migration, database write, UI, deployment or external action is opened.
+
+### R75 locked-revision adjudication and R76 closure
+
+R75 froze at commit `e6494cda6fba4ce8209f99f1611ba3803de34370`, tree `3e53f7ca69a0f01192f3e255471a17b81f05f313`, parent `37d0b7602265d52306b352cdab2a44d5642c0518`, with decision-document blob `ee48e4b29d787ef3bbb17c9bf2e558cf7c2aebc6` and SHA-256 `83d2bc6fd6c1042e1fff83f29904abcc7d74bc130f388aa36933e19e40293410`.
+
+All seven durable roles passed the exact locked revision: Human Agency, Human Comprehension and Access, Consequential Usefulness, Epistemic Integrity, Living Brain Integrity, Subject/Audience/Lifecycle Safety and Implementation Reality. Reviewers verified that R75 corrects the R74 self-reference and makes its mandatory carry-forward explicit without changing the R74 decision core. The architecture comparison normalized both decision cores to the same 20,988 characters.
+
+The verdicts were delivered through independent reviewer messages. They are not cryptographic signatures and no separate signed verdict artifact is claimed. The exact [R76 founder-ready receipt](../../g24-predicate-authority-r75-founder-ready-receipt-r76.md) records the frozen candidate, seven verdicts and closed authority boundary.
+
+R75 is now `founder_ready_pending_explicit_founder_choice`. An explicit founder approval would authorize only a separate local machine-contract design and verification gate. Until that choice, no machine contract, evaluator implementation, runtime, registry, database or schema change, customer UI, deployment, merge, release or external action is authorized.
+
+During R76 closure, the full `postdocs:check` replay correctly exposed that its R70 step still used the historical pre-freeze candidate checker. That checker deliberately requires HEAD to equal the candidate base, the worktree to be clean and the candidate diff to contain only the R70 paths, so it is not valid after R71 and later receipts exist. The package gate now replays R70 materialization and focused tests, then uses the archive-safe R71 closure checker for exact frozen commit, tree, blob and authority verification. The historical candidate command remains available for archaeology; it is no longer misrepresented as a current-state postdocs gate.
