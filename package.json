@@ -78,7 +78,7 @@
     "brain:g24:ingress-r44-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r44.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r44.mjs",
     "brain:g24:ingress-r45-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r45.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r45.mjs",
     "brain:g24:ingress-r46-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r46.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r46.mjs",
-    "postdocs:check": "npm run brain:g24:ingress-r66-check && npm run brain:g24:evaluator-r69-check",
+    "postdocs:check": "npm run brain:g24:ingress-r66-check && npm run brain:g24:evaluator-r70-check",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node standards/check-standards.mjs",
@@ -118,7 +118,8 @@
     "brain:g24:ingress-r66-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r66.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r66.mjs",
     "brain:g24:ingress-r67-closure-check": "node scripts/check-ctrl-g24-trusted-ingress-r67-closure.mjs",
     "brain:g24:evaluator-r68-check": "node scripts/materialize-ctrl-g24-lifecycle-precondition-evaluator-r68.mjs --check && vitest run supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r68.test.ts && node scripts/check-ctrl-g24-lifecycle-evaluator-r68.mjs",
-    "brain:g24:evaluator-r69-check": "node scripts/materialize-ctrl-g24-lifecycle-evaluator-r69.mjs --check && vitest run supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69.test.ts && node scripts/check-ctrl-g24-lifecycle-evaluator-r69.mjs"
+    "brain:g24:evaluator-r69-check": "node scripts/materialize-ctrl-g24-lifecycle-evaluator-r69.mjs --check && vitest run supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69.test.ts && node scripts/check-ctrl-g24-lifecycle-evaluator-r69.mjs",
+    "brain:g24:evaluator-r70-check": "node scripts/materialize-ctrl-g24-lifecycle-evaluator-r70.mjs --check && vitest run supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r70.test.ts && node scripts/check-ctrl-g24-lifecycle-evaluator-r70.mjs"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",

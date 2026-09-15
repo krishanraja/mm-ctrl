@@ -2278,3 +2278,21 @@ The reviewer confirmed the exact source identity, intended 13-file scope, clean 
 4. a rejected caller machine could control the schema version in the returned hold envelope.
 
 No semantic result, evidence row or write authority leaked. R69 is frozen, vetoed and not authority. The next forward repair is R70. It must accept no caller-owned R66/R70 authority object in the production-shaped gate, hash exact local machine bytes before parsing or dereference, reject any primitive input string that changes under UTF-8 encode/decode, construct every rejection envelope from trusted constants and retain the reproduced cases as permanent regressions.
+
+## R70 closed caller-authority structural gate
+
+**Date:** 2026-09-15
+
+**Accepted architecture parent:** R67 commit `fe4a4ee5780bc3ecf919766e89931987f97f4e30`, tree `94c6bf07a89196deab2bf3913e17dbaad9535968`
+
+**Rejected predecessor preserved:** R69 commit `70055728953f8eec4c30a2876b6169378d883682`, tree `a5456866f8c4a83ca7bdd1764739182cbb6a0f67`
+
+**Implementation base:** `bbe6569749726892060a09338af25cbec9c34830`, tree `9285795d5cb6a670346fa25b8b4a944e033a30f3`
+
+**Status before freeze:** candidate; producer verification passed, exact freeze pending
+
+R70 removes the failed caller-authority shape rather than trying to sanitize it. The production-shaped gate has one optional primitive string argument. R66 and R70 machine bytes are read from hard-coded local paths and SHA-256 checked before parsing. Source bytes are read from a hard-coded path and checked before load. A literal input string that changes during UTF-8 encoding is rejected before parsing. Every failure returns a new hold envelope built from trusted constants.
+
+R70 retains the R69 failures as permanent regressions: lone surrogates, absent paths, mutated machine or source bytes, R66/R70 authority Proxies, caller-controlled output schema, oversize and noncanonical input, forbidden capabilities, timeout and output exhaustion. No semantic success branch exists. No runtime, database, UI, deployment or external action is authorized.
+
+The predicate-authority choice remains open between structured trusted read-set variants and separately governed signed satisfaction assertions. It cannot be resolved or implemented until the frozen R70 structural boundary passes independent review.
