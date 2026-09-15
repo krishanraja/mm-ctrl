@@ -4,6 +4,13 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-15
+
+- reconciled at `618bf91`: sixteen non-steward commits landed on 2026-09-08 with no run since. `NOW.md` head moved from `860dea0` to `618bf91` and gained five "What changed recently" bullets: G17 strict Brain adapter primitives (frozen, unwired, PR #385), G18 synthetic population and edge-case lab (PR #388), G19 synthetic Brain range lab implemented and founder-approved as Krish's internal dashboard (PRs #389, #391), G20 universal capture and Claude bridge contract (PR #392), and three public Answer pages published or rewritten (PRs #380, #381, #384). `docs/current/architecture.md`, `docs/current/features.md`, `docs/current/release-state.md` and `CHANGELOG.md` were already current against this head from the same day's own commits; no drift found against the code they describe. The canon block in `AGENTS.md` was already resynced to v2026.09.08.2 by the harness steward and was not touched.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`). Why: cloud previews use a per-session hostname Vite's DNS-rebinding guard rejected; a wildcard rather than `allowedHosts: true` keeps the guard.
+- rolled from NOW.md: 2026-08-11 Company recognition restored in onboarding (PR #369): a work email or LinkedIn URL resolves to a bounded, source-linked dossier with one-click correction. Shell unified (PR #368). Commercial authority established (PR #367): one human-readable owner for buyer, offer and claims, with drift checks in CI. Blind Spot trusted-advisor instrument (PR #366) released and verified in production.
+- rolled from NOW.md: 2026-08-10 Canonical current documentation (PR #365) separating current truth from history, and Make Your Mind Up unified with CTRL (PR #362): one product, one data spine, no-login delivery.
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.

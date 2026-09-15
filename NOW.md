@@ -1,9 +1,9 @@
 ---
 repo: krishanraja/mm-ctrl
 product: CTRL by Mindmake
-as_of: 2026-09-08
-head: 860dea0
-head_scope: G16 application release receipt
+as_of: 2026-09-15
+head: 618bf91
+head_scope: G20 universal capture and Claude bridge contract, G17-G19 Brain adapter and synthetic lab work, three published Answers
 lifecycle: live
 production_url: https://makeyourmindup.ai
 state_doc: docs/current/release-state.md
@@ -32,20 +32,25 @@ Angles a writer can use without asking Krish, each with its pointer:
 
 Objection it answers: "He talks about AI. Has he shipped anything a customer pays for and kept it honest?" Here is the product, with its failures in the changelog.
 
-## Where it is right now (as of 2026-09-08)
+## Where it is right now (as of 2026-09-15)
 
-- **Live** at `makeyourmindup.ai`. The exact G16 application release is `860dea0`, Vercel `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from that SHA (`docs/current/release-state.md`). Answer-only publishing and documentation receipts may advance `main` and create newer deployment IDs without changing this G16 receipt.
+- **Live** at `makeyourmindup.ai`. The exact G16 application release remains `860dea0`, Vercel `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from that SHA (`docs/current/release-state.md`). `main` has since advanced to `618bf91` through G17-G20 evolution work and three published Answers; none of it is a new application release receipt, and none of it touches a customer-facing route or the containment state.
 - **Edge Functions:** 115 directories in the tree. 114 confirmed deployed and ACTIVE by management API readback on 2026-08-21. `live-headlines` version 48 deployed and verified against cache readback on 2026-09-02 (476 items, 473 classified, 12 `damage` dropped). Two changes have no deployment readback recorded here: `video-radar-export` (PR #371, 2026-08-28) and the rolling-window merge (PR #375, `edd9045`).
 - **Tests:** production `main` passes 945 tests in 60 files, with zero new type errors against the 94-error legacy baseline. CI runs docs, standards, tests, typecheck, build and changed-file lint on every push.
 - **Living Brain substrate:** 11 additive production tables are live, empty and disconnected from customer paths. Forced RLS, non-anonymous workspace membership, exact-audience grants and authenticated read-only ACLs protect them. A service-side write adapter and writable multi-identity behavioural test remain future work (`project-documentation/ctrl-evolution/g16-workspace-audience-canary.md`).
 - **Scheduled work:** twelve pg_cron jobs active at the 2026-08-20 readback, including the nightly `retention-cleanup` added that day (release state, "Scheduled work actually running").
 - **Pricing:** Free, and Edge Pro at $49 monthly. Canonical in `supabase/functions/_shared/edge-pricing.ts`; `public/.well-known/product.json` mirrors it and `npm run docs:check` fails if they disagree.
 - **Compliance:** controls in place are listed at `/trust` and in `project-documentation/compliance/`; no SOC 2 report, no ISO 27001 certificate, HIPAA out of scope.
-- **Documentation:** 64 files uploaded on 2026-09-04 without headers were classed Historical and moved to `docs/history/` today; nine reconciled docs the upload overwrote were restored (`docs/history/LOG.md`, 2026-09-07).
+- **Documentation:** 64 files uploaded on 2026-09-04 without headers were classed Historical and moved to `docs/history/` on 2026-09-07; nine reconciled docs the upload overwrote were restored (`docs/history/LOG.md`, 2026-09-07).
 - **Waiting on evidence, not code:** deployment of `video-radar-export` and of the PR #375 change.
 
 ## What changed recently
 
+- 2026-09-08 **G20: universal capture and Claude bridge contract locked.** Krish: "We need to make this really easy for me to work in and in Claude... the Claude UI is often where I do things." The [contract](../../project-documentation/ctrl-evolution/g20-universal-capture-claude-bridge-contract.md) locks two gestures on the existing context-circulation substrate: `Add to Brain` (paste, speak, drop, upload, share or forward into private staging with a compact receipt) and `Use in Claude` (an explicit, expiring, revocable task capsule holding only the authorised Brain slice). The primary Claude path is a private read-only remote MCP connector; because there is no reliable way to programmatically pre-fill the Claude web UI, the honest fallback is a copied task starter. Whole-Brain dumps, duplicate Claude Project truth, web-prompt injection and direct trusted-memory write-back are explicitly rejected. Contract only: no connector, write path or UI exists yet (PR #392).
+- 2026-09-08 **G19: synthetic Brain range lab founder-approved as Krish's own dashboard.** The 48-account internal lab passed 61 deterministic/React checks and 8 Chromium acceptance tests both locally and against a protected Vercel preview. QA caught a real defect first: the desktop document measured 2,640px against a 900px viewport, so keyboard and wheel navigation could wander into empty page space; fixed by pinning the desktop layout to exactly `100vh`. Krish approved it 8 September 2026 specifically as his internal cross-customer dashboard, not as the customer product, subject to a scrollbar correction (`project-documentation/ctrl-evolution/design/g19-synthetic-population-lab-qa-record.md`; PRs #389, #391).
+- 2026-09-08 **G18: synthetic population and edge-case lab defined.** 48 fictional leaders and exactly 1,672 deterministic input events, built as test oracles rather than demo claims, covering every current Brain source type, audience, processing outcome and UI state plus correction, erasure, identity collision, prompt injection, malformed media and multilingual and layout stress. No auth account, database row or model run created; ready for branch-only seeding once the G16 transactional and RLS gates pass (`project-documentation/ctrl-evolution/g18-synthetic-population-lab.md`; PR #388).
+- 2026-09-08 **G17: strict Brain adapter primitives frozen, nothing wired to runtime.** `brain-crypto.ts` rejects the legacy memory cipher's key-padding fallback: an exact 32-byte random key, AES-256-GCM, no default or passphrase padding, hard failure on a missing key or corrupt ciphertext. A deterministic-retry primitive defines idempotent atomic writes for later. Thirteen focused tests pass. The isolated, data-less Supabase development branch this needs, quoted at $0.01344 an hour, is founder-approved but not created because the session lacks a separately approved GitHub `workflow` scope (`project-documentation/ctrl-evolution/g17-service-adapter-contract.md`; PR #385).
+- 2026-09-08 **Three public Answer pages published or rewritten.** Added "cutting through AI news noise isn't a newsletter problem" and "evaluating AI decision tools: compliance checklist vs judgment fit"; rewrote "AI chief of staff: decision quality vs task automation" to argue the position directly instead of explaining it, and to drop a duplicated opening. Each targets a gap the named competitors (Alfred, Rhythms, Perspective, Tana on task automation; NIST's AI RMF on trust) share: they measure volume moved or governance compliance, never whether the tool retains the leader's own standards or decision history across sessions (`src/content/answers/`; PRs #380, #381, #384).
 - 2026-09-08 **Fail-closed Living Brain substrate.** Three additive migrations created the dormant workspace, audience, encrypted source, versioned item, typed relationship and evidence kernel. Live readback found zero rows and no Brain security-advisor findings. The management SQL connection is read-only, so the committed rollback-only multi-identity behavioural suite remains pending a writable non-customer test connection.
 - 2026-09-08 **G16 merged and production-verified.** PR #374 merged at `860dea0`; Vercel production `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` is READY and PROMOTED from the exact SHA. The canonical host and prerendered public routes passed smoke checks, while the synthetic Decision Bench remained closed and rendered the standard 404.
 - 2026-09-07 **Radar evidence survives the rolling window** (PR #375, `edd9045`). Why: the studio export read one cached day, so a story that ran on several days arrived several times, each copy citing one link. It now reads four days and merges repeated sightings into one candidate carrying every distinct public URL. The code's own words: "The rolling window is evidence coverage, not permission to show the same event several times." No deployment readback yet.
@@ -57,13 +62,14 @@ Objection it answers: "He talks about AI. Has he shipped anything a customer pay
 - 2026-08-20 **Remove what is unused, and make every document say what is true** (`71667d2`). 238 unreachable source files and 28 unused dependencies removed by walking the import graph; typecheck baseline 221 to 94; all 67 documents classed and dated. The shared Supabase project, never mentioned before, written into README, architecture and the compliance pack.
 - 2026-08-20 **The personal frame held structurally** (`962d0e8`, Decisions 82 to 84). Settings had offered 30 and 90 day retention while nothing ever ran the sweep; account deletion now cancels Stripe first; the sheets export writes aggregate counts, never a person.
 - 2026-08-20 **Trust surface and access hardening** (PR #370). An unauthenticated cross-tenant read through four anon-executable definer functions closed; five security headers added; advisors 268 to 258.
-- 2026-08-12 **`.vercel.run` hosts allowed on the dev server** (`081ebe9`). Why: cloud previews use a per-session hostname Vite's DNS-rebinding guard rejected; a wildcard rather than `allowedHosts: true` keeps the guard.
-- 2026-08-11 **Company recognition restored in onboarding** (PR #369): a work email or LinkedIn URL resolves to a bounded, source-linked dossier with one-click correction. **Shell unified** (PR #368). **Commercial authority established** (PR #367): one human-readable owner for buyer, offer and claims, with drift checks in CI. **Blind Spot trusted-advisor instrument** (PR #366) released and verified in production.
-- 2026-08-10 **Canonical current documentation** (PR #365) separating current truth from history, and **Make Your Mind Up unified with CTRL** (PR #362): one product, one data spine, no-login delivery.
+
+Entries older than 30 days roll into [`docs/history/LOG.md`](docs/history/LOG.md).
 
 ## What is next and what is waiting on Krish
 
 - Next engineering gate: one designated synthetic Brain workspace, a server-side encrypted write adapter, the committed multi-identity database suite on a writable non-customer connection, and a read-only projection before any approved Brain UI consumes real substrate data.
+- Waiting on Krish: separately approved GitHub `workflow` scope for the current session, so the founder-approved isolated, data-less Supabase development branch (G17, quoted $0.01344/hour) can actually be created; no branch, key, function, workspace or row exists yet.
+- Waiting on Krish: a rendered founder gate for the first G20 vertical slice (`Add to Brain` staging plus a `Use in Claude` capsule) before any connector, write path or UI is implemented.
 - Waiting on Krish: a deployment readback for `video-radar-export` and the PR #375 change, then a line in `docs/current/release-state.md`.
 - Waiting on Krish: the product name. The fleet calls this "CTRL by Mindmake"; the repo's README title, `product.json` (`legal_entity`, `parent` link) and compliance pack say "Mindmaker". The steward does not change names or commercial claims.
 - Waiting on Krish: whether the corpus and course material archived today (the `doc-*`, syllabus and `DECISIONING CORPUS` files) belongs in another repository, and whether `docs/CTRL-BRAIN-ARCHITECTURE.md` (now in history) should be re-headed as a Reference for the brain migrations that cite it.
