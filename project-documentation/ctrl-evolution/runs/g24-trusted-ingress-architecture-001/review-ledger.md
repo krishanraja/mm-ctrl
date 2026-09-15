@@ -2226,3 +2226,38 @@ The module has no semantic success branch. A valid structural call returns `veri
 The durable founder choice remains open. The recommended design is server-derived structured trusted read-set variants, one closed typed fact variant for each of the thirteen catalogue preconditions. The alternative is separately governed signed satisfaction assertions. Opaque human-text presence or natural-language interpretation is rejected. R68 does not choose or implement either option and cannot emit R63 results or R13 evidence rows.
 
 The exact rollback is a revert of the single R68 commit. No dependency, package lock, migration, persistent row, route, deployment or external system is changed, so R67 remains the accepted metadata-only checkpoint.
+
+### R68 independent post-freeze adjudication
+
+**Frozen commit:** `06b96688bdfc9399bff3852884e5a3e934e37f95`
+
+**Frozen tree:** `4580008f3fabadf1cf3e039d02291dfb2b02e799`
+
+**Correctness reviewer:** `VETO`
+
+**Adversarial reviewer:** `VETO`
+
+Both reviewers confirmed that the no-write boundary held. Neither found a route to a result, evidence row or persistent write. Both nevertheless reproduced contract violations that make R68 unacceptable as authority:
+
+1. the executable counted JavaScript code units rather than UTF-8 bytes and omitted NFC, C1, bidi, isolate, zero-width and BOM exclusions inherited from R66;
+2. the harness subsidized the declared 65,536-byte input limit with executable length, so serialized inputs over the stated limit loaded;
+3. parent-side reflection over caller-owned objects invoked Proxy traps;
+4. static source inspection could be bypassed with constructor-based global access and had been described too broadly as isolation.
+
+The reviewers verified that 400-byte identifiers, non-NFC identifiers and forbidden invisible controls could reach `verified_not_runnable`; serialized inputs above 65,536 bytes loaded; Proxy traps executed; and a coherently resealed alternate source could bypass the static inspector when caller-supplied authority was accepted. These defects were safe only because R68 had no semantic success or write branch. R68 remains immutable rejected evidence and is not runtime or architectural authority.
+
+## R69 structural executable-adapter gate
+
+**Date:** 2026-09-15
+
+**Accepted architecture parent:** R67 commit `fe4a4ee5780bc3ecf919766e89931987f97f4e30`, tree `94c6bf07a89196deab2bf3913e17dbaad9535968`
+
+**Rejected predecessor preserved:** R68 commit `06b96688bdfc9399bff3852884e5a3e934e37f95`, tree `4580008f3fabadf1cf3e039d02291dfb2b02e799`
+
+**Implementation base:** `c8e9d2f88f187d221ccdb4e142a67db82a14e571`, tree `cee3f1abae715b8ba1a8cc4cb97e383e6538d8ad`
+
+**Status before freeze:** candidate; independent review pending
+
+R69 repairs forward without modifying R66, R67 or the frozen R68 evidence. Its identifier validation uses actual UTF-8 bytes, requires NFC and the trimmed value, rejects malformed surrogate pairs and enforces every inherited invisible-control family. Its language boundary accepts only primitive canonical JSON text, measures its UTF-8 bytes internally, enforces an exact 65,536-byte serialized-input limit and a separate 131,072-byte complete-request limit, and never invokes Proxy traps. The non-test gate hard-pins the R66 contract, R69 machine and exact executable source identity, so an alternate source cannot self-authorize through coherent resealing. Static inspection is retained as lint only and is not represented as the sandbox or execution authority.
+
+R69 retains the same deliberate semantic closure: `verified_not_runnable` or `hold`, always `evaluator_artifact_hold`, with no writes, result or evidence rows. It authorizes no runtime, database, UI, deployment or external action. The predicate-authority decision remains open between structured trusted read-set variants and separately governed signed satisfaction assertions.

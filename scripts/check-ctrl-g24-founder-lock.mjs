@@ -34,6 +34,7 @@ const lock = read('project-documentation/ctrl-evolution/g24-founder-architecture
 const state = read('project-documentation/ctrl-evolution/README.md')
 const designState = read('docs/current/design-state.md')
 const r68 = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r68.json'))
+const r69 = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r69.json'))
 check('explicit founder call recorded', lock.includes('**Final call:** "yes to both"'))
 check('exact source revision recorded', lock.includes('9fdca0aaae479a6c3e0b896f712fca8b54b2e23e'))
 check('every locked hash recorded', Object.values(locked).every(hash => lock.includes(hash)))
@@ -44,15 +45,18 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Resolve the R68 open founder decision'),
+  state.includes('**CURRENT_NEXT_ACTION:** Resolve the R69 open founder decision'),
 )
 check(
   'design state remains inside the trusted-ingress gate',
-  designState.includes('R68 structural executable loading mechanics') && designState.includes('no runtime integration is authorized'),
+  designState.includes('R69 structural executable loading mechanics') && designState.includes('no runtime integration is authorized'),
 )
 check('R68 source bytes founder-locked', sha256(r68.executable_artifact.source_path) === 'fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104')
 check('R68 founder-lock identity exact', r68.executable_artifact.founder_lock.founder_lock_identity === '4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06')
 check('R68 semantic success remains closed', r68.semantic_boundary.satisfied_or_success_branch === 'forbidden' && r68.open_founder_decision.status === 'open_not_decided_or_implemented')
+check('R69 source bytes founder-locked', sha256(r69.executable_artifact.source_path) === '6d47389ea5cadcfc8e1c3da9dd8d594ed72323ad994e353b5d94e5886316bdb9')
+check('R69 founder-lock identity exact', r69.executable_artifact.founder_lock.founder_lock_identity === '0461357500373c0956c7db887718256b1f3e014500194be009059a0ce1a66ca1')
+check('R69 preserves R68 veto and semantic closure', r69.rejected_predecessor.review_status === 'vetoed_preserved_not_authority' && r69.semantic_boundary.satisfied_or_success_branch === 'forbidden' && r69.open_founder_decision.status === 'open_not_decided_or_implemented')
 check('lock contains no em dash', !lock.includes('—'))
 
 if (failures.length) {
