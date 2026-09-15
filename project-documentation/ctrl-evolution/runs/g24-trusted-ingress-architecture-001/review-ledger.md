@@ -2206,3 +2206,23 @@ Acceptance is limited to R66's frozen metadata-only evaluator compatibility arch
 This acceptance authorizes only moving to a separate executable-adapter implementation gate. It authorizes no runtime, deployment, database, UI or external change.
 
 The next-frontier brief is to locate or define the actual evaluator module contract and founder-locked source or bundle, build an isolated deterministic harness, define and verify the registry/live adapter, and then stage integration behind separate authorization and verification. R67 implements none of that work and changes no contract semantics.
+
+## R68 structural executable-adapter gate
+
+**Date:** 2026-09-15
+
+**Immutable parent:** R67 commit `fe4a4ee5780bc3ecf919766e89931987f97f4e30`, tree `94c6bf07a89196deab2bf3913e17dbaad9535968`
+
+**Status before freeze:** candidate; no producer verdict
+
+R68 implements the smallest executable-adapter step authorized by the R67 closure. Repository discovery confirmed there was no implementation of `evaluate_lifecycle_preconditions`. The existing G24 headless kernel applies transitions only after evidence references already exist, and the Decision Bench adapter is unrelated. R68 therefore introduces one import-free executable conformance source, an isolated pre-load verifier and deterministic harness, but no semantic evaluator.
+
+The exact source is `supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r68.mjs`: 6,765 bytes, SHA-256 and content reference `fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104`, Git blob `7985b73dd5c41ff7f51d03cc84ffe43083878c7e`, and founder-lock identity `4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06`. Its only export is `dispatchEvaluateLifecyclePreconditionsStructuralR68`.
+
+Before loading those exact bytes, the harness independently verifies the R66 selection query and proof for `evaluate_lifecycle_preconditions`, every one of the three locked selection keys, canonical registry snapshot, R6 set seal, selected member content identity, row version and fingerprint, exact R63 export and separation of the metadata descriptor from code. It then runs the source in bounded child-process data-URL isolation and compares exact outputs across restarts.
+
+The module has no semantic success branch. A valid structural call returns `verified_not_runnable`; every invalid structural input or pre-load failure returns `hold`. Both carry `evaluator_artifact_hold`, no writes, no result and no evidence rows. No runtime, database, UI, deployment or external action is performed. Static reachability forbids imports from live Edge functions, the Decision Engine, `g24HeadlessCrossing` and UI code.
+
+The durable founder choice remains open. The recommended design is server-derived structured trusted read-set variants, one closed typed fact variant for each of the thirteen catalogue preconditions. The alternative is separately governed signed satisfaction assertions. Opaque human-text presence or natural-language interpretation is rejected. R68 does not choose or implement either option and cannot emit R63 results or R13 evidence rows.
+
+The exact rollback is a revert of the single R68 commit. No dependency, package lock, migration, persistent row, route, deployment or external system is changed, so R67 remains the accepted metadata-only checkpoint.

@@ -33,6 +33,7 @@ for (const [path, hash] of Object.entries(locked)) check(`locked hash: ${path}`,
 const lock = read('project-documentation/ctrl-evolution/g24-founder-architecture-lock.md')
 const state = read('project-documentation/ctrl-evolution/README.md')
 const designState = read('docs/current/design-state.md')
+const r68 = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r68.json'))
 check('explicit founder call recorded', lock.includes('**Final call:** "yes to both"'))
 check('exact source revision recorded', lock.includes('9fdca0aaae479a6c3e0b896f712fca8b54b2e23e'))
 check('every locked hash recorded', Object.values(locked).every(hash => lock.includes(hash)))
@@ -43,12 +44,15 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Define and independently attack a separate executable-adapter implementation gate'),
+  state.includes('**CURRENT_NEXT_ACTION:** Resolve the R68 open founder decision'),
 )
 check(
   'design state remains inside the trusted-ingress gate',
-  designState.includes('preserve the accepted R66 metadata-only architecture and define a separately reviewed executable-adapter implementation gate'),
+  designState.includes('R68 structural executable loading mechanics') && designState.includes('no runtime integration is authorized'),
 )
+check('R68 source bytes founder-locked', sha256(r68.executable_artifact.source_path) === 'fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104')
+check('R68 founder-lock identity exact', r68.executable_artifact.founder_lock.founder_lock_identity === '4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06')
+check('R68 semantic success remains closed', r68.semantic_boundary.satisfied_or_success_branch === 'forbidden' && r68.open_founder_decision.status === 'open_not_decided_or_implemented')
 check('lock contains no em dash', !lock.includes('—'))
 
 if (failures.length) {
