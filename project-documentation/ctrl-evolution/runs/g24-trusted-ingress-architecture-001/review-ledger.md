@@ -2033,3 +2033,32 @@ R61 resolves each lifecycle evidence reference through a non-serializable truste
 R61 also materializes one complete positive and negative containing-schema payload for each of the 21 exact ordering sites. Every fixture binds the frozen path, schema version and selected-spec hash. Its positive executes full recursive validation; its negative changes only the ordered field, reseals declared dependents and must fail specifically at ordering.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R61 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 61
+
+**Date:** 2026-09-15
+
+**Frozen commit/tree:** `8c8142ed238fbf285ffc61ee879fb44371e8cc84` / `5bb343956c802dd9f186554b83d8f08bda6d7cae`
+
+**Human / machine / QA:** `8b014c6a702b5018d48614cada46552a32aa85e3` / `63e0fb54624eda1d96fc7511829f1cf9609a7409` / `c6967d5c43c14b6b4ddfea5f243a0893e62cc7eb`
+
+**Checker / materializer / founder checker:** `4869bb13bfb08639d2b976133252a6b06b64bc53` / `d940b9ce3c74246df3f9065df000be7d16d99d87` / `df5d6aacb58c76b7b4d1fa0d512fc6114fe07b2a`
+
+**Machine SHA-256:** `d98de5560955ea156f490d473a1ff165384568d7768ea51e8480f8d7bc4643e4`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R61 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R61's 21 complete containing-schema ordering proofs, recursive exclusion boundary, intervention kind and version binding, question-display semantics, shared equality fixtures and inherited controls survive. The shared blocking root was authority substitution:
+
+1. `matching_evidence_refs` resolved an invented `authority_operation_ordering_evidence_store`, written only by the fixture materializer, whose two toy rows had only `evidence_id` and `evidence_value` and used a new R61 fingerprint domain.
+2. The actual `evaluate_lifecycle_preconditions` operation writes `lifecycle_precondition_evidence` under `ctrl.g24.authoritative-row.lifecycle-precondition-evidence.r13.v1`. That row requires 24 fields, separate semantic and row-envelope fingerprint authorities, exact operation and evaluator lineage, and current-row selection. Neither the operation specification nor its persistence authority referenced the toy store.
+
+No founder choice is required. R62 removes the synthetic store and repairs only the lifecycle-evidence proof against the existing normative persistence authority while keeping runtime, database, UI and external action closed.
+
+## R62 repair rationale before review
+
+R62 materializes two complete R13 lifecycle-precondition evidence rows inside a frozen view of the existing normative persistence-registry store. Each row binds the exact workspace, subject, case, snapshot, transition, predecessor, catalogue precondition, canonical evidence input set and current evaluator member. The resolver validates the closed row schema and the evaluator ABI member, selects the unique current row, checks canonical row bytes and their content address, and recomputes the R13 semantic and row-envelope fingerprints separately.
+
+The full `evaluate_lifecycle_preconditions` result fixture uses the rows' stable semantic evidence identifiers and matching semantic fingerprints. Its trusted context is non-serializable and cannot be supplied in caller bytes. Attacks cover the removed toy store, all 24 required fields, persistence authority, store, schema, version, content address, semantic versus envelope identity, workspace, subject, case, snapshot, transition, predecessor, input-set, evaluator, currentness, ambiguity and coherent resealing. Live transactional current-row enforcement remains explicitly unproved outside the frozen snapshot.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R62 changes no visible product behaviour and opens no adapter, database, runtime or external action.
