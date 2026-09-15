@@ -2344,3 +2344,15 @@ The exact [R72 panel verdict](../../g24-predicate-authority-r72-panel-verdict.md
 R73 repairs forward without changing R72. It separates mechanical facts, bounded normative human attestations and deterministic derived facts; adds source-earned semantic profiles and complete read-set proofs; classifies every field as `server_verify_only` or `human_answerable`; restores the continuation checkpoint and old-grant, absence and complete-obligation rules; binds one atomic transaction coordinator; imports the full G13 correction boundary; and narrows external signed authority to fact kinds canonically owned outside CTRL.
 
 R73 remains a [founder decision surface](../../g24-predicate-authority-founder-decision-r73.md), not implementation authority. It must pass all seven durable judge roles before reaching the founder. No machine contract, evaluator semantics, schema, migration, database write, UI, deployment or external action is opened.
+
+### R73 seven-role adjudication
+
+R73 froze at commit `99acf1795f9b8c0eae1c5535f88607291c34ca05`, tree `a0aa52a78561eb7e18872b5478f25b30471c0c88`, with document blob `6b9db5526f1041e26d945513e4f4fee76bbd3345`. Human Agency, Human Comprehension, Consequential Usefulness and Living Brain Integrity passed. Epistemic Integrity, Subject/Audience/Lifecycle Safety and Implementation Reality vetoed.
+
+R73 closed every original R72 blocker. Two new contradictions remained: its human-answer rule required an accepted decision frame before one could exist, and its local serializable transaction implied it could freeze external canonical state. The exact [R73 panel verdict](../../g24-predicate-authority-r73-panel-verdict.md) preserves the evidence and repair conditions.
+
+### R74 repaired predicate-authority candidate
+
+R74 repairs only those seams. Decision-frame binding is now variant-specific and permits an explicit not-yet-created proof before acceptance. External authority is limited to atomic fact kinds the issuer exclusively owns and requires either an immutable authority lease or online conditional verify-and-consume protocol. The cross-system path now has explicit reservation, single-use nonce, idempotent finalization, rollback and lost-acknowledgement reconciliation states. Without either protocol, the external assertion is evidence only and the dependency is `indeterminate`.
+
+R74 remains a [founder decision surface](../../g24-predicate-authority-founder-decision-r74.md), not implementation authority. It must pass the seven-role panel. No machine contract, evaluator semantics, schema, migration, database write, UI, deployment or external action is opened.
