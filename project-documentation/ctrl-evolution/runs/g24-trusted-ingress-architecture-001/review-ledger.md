@@ -2092,3 +2092,32 @@ R63 removes `precondition_set_seal` from the versioned evaluate result and from 
 The evidence snapshot now contains one current satisfied R13 row for the one exact `open_preparation` catalogue precondition. Its canonical evidence byte length, schema version and closed decoded content are checked directly. Because every frozen transition has exactly one catalogue precondition, the lifecycle result ordering sites preserve valid singleton positives and duplicate rejection without claiming a reversible ordering witness that the catalogue cannot supply.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R63 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 63
+
+**Date:** 2026-09-15
+
+**Frozen commit/tree:** `19a10a49188a98e4db99df76548725ccf003320b` / `343c5190f29f849d7033007a533dbd736d107da0`
+
+**Human / machine / QA:** `ccfa2c417f60a25063f24a84adb83d2d5c7e6104` / `2e206c1bf77976b8f3923e9844870950064ff402` / `513798779c28da3d1add00c163f48eb989f8c77f`
+
+**Checker / materializer / founder checker:** `d0a19d83adb023e4b8ec3d4f087db2b2c0b4724a` / `3986ae190097348c4ff5137b3c42b98eda9f613a` / `3c8e74840140940fd76eabcfae1585900fa71591`
+
+**Machine SHA-256:** `88f537740c86d8db0ad369fe46484ffb50c3f3dfb1703d380dd8ca3456f06a0a`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R63 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R63's separation of the evidence-input seal from the transition-owned proof-set seal, exact evidence byte and schema binding, one-row catalogue cardinality, server reservation and rollback model, acyclic transition derivation and honest singleton boundary survive. The combined independent finding identified one blocking regression with two manifestations:
+
+1. The result payload schema and operation result schema had advanced to `ctrl.g24.result.evaluate-lifecycle-preconditions.r63.v1`, while the evaluator ABI map, closed ABI schema constant and selected current evaluator registry member still exported the R13 result schema. This violated the contract's own export-parity rule and left stale evaluator manifest and artifact lineage.
+2. Ordering fixtures `ordering_02` and `ordering_03` still declared the R13 containing schema version. The R63 checker had stopped enforcing the exact source path, containing schema version, selected-spec hash and ordered-field binding for every ordering site.
+
+No founder choice is required. R64 repairs only the evaluator export lineage and ordering metadata closure while preserving the R63 lifecycle boundary and keeping runtime, database, UI and external action closed.
+
+## R64 repair rationale before review
+
+R64 binds every operation result export across the result payload schema, operation specification, evaluator ABI map, closed ABI constant, one current evaluator registry member, canonical evaluator manifest and loaded evaluator artifact. The manifest carries the canonical bytes and SHA-256 of all twenty exported result schemas and all eight exported proof schemas. The changed evaluator identities flow through the exact evidence row, semantic and envelope fingerprints, wrapper content address, proof member, result and transition-stage set-seal fixture.
+
+All twenty-one ordering fixtures now derive their source path, containing schema and version, ordered field and selected-spec hash from the current frozen occurrence. The two lifecycle fixtures bind R63 and retain their valid singleton payload and duplicate rejection. The other nineteen payloads and negatives remain byte-identical to the previously verified full-schema fixtures.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R64 changes no visible product behaviour and opens no adapter, database, runtime or external action.
