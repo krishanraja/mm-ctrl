@@ -2150,3 +2150,31 @@ Repository discovery found no executable implementation of `evaluate_lifecycle_p
 R65 versions the closed evaluator registry member with domain-separated row-version and fingerprint authorities, content-addresses its canonical bytes, and seals the complete frozen member set using the existing R6 evaluator-registry identity projection and set-seal encoding. The unique current compatible member is derived from every member in that snapshot at the pinned instant. Omission, duplication, overlap, stale and future intervals, wrong exports, row identity, content and set-seal mutations fail. Frozen archive completeness is proved separately from live-registry completeness and serializable selection, which remain explicitly unproved.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R65 changes no visible product behaviour and opens no evaluator implementation, adapter, database, runtime, UI or external action.
+
+## Review round 65
+
+**Date:** 2026-09-15
+
+**Frozen commit/tree:** `4880287a22a7fc101240a22a27a84b6731912aa4` / `0b6d16183cbf0ffe423c726db18ed6dc8b845a56`
+
+**Human / machine / QA:** `b2403886f221640306d55704a544fee137788fd5` / `8704aa493d7dbb372954cd31261d6628a1b2309f` / `833f1725e200231087d187f151874cafdda2cfde`
+
+**Checker / materializer / founder checker:** `0a9bdb76833eef36ddafa75ecc1bde776d9874e8` / `48c0906ec55a289c4dba7a566da7368d13fd0296` / `09dceb97c31e7bba120c48c94d58034d854785be`
+
+**Machine SHA-256:** `fa45a9887f4d2facdb9e087d13fdc242af811ef5d10b3d56a74e10c0082f4143`
+
+**Adjudication:** `VETO`
+
+The independent defense reviewer returned `PASS`. The independent correctness adjudicator returned the decisive `VETO`, so R65 was not approved. Both verdicts were delivered through reviewer messages; no separate frozen verdict artifact identity was created, so none is implied here. R65's descriptor and executable split, fail-closed dispatch, complete content-addressed and set-sealed frozen registry snapshot, twenty-of-twenty metadata export parity, twenty-one ordering bindings and inherited controls survive. The adjudicator identified one blocking selection-authority root:
+
+1. `evaluator_abi.selection_key` was exactly `operation_class`, `policy_lineage_ref`, and `evaluated_at`, but the R65 snapshot and selection record used `trusted_ingress` as the operation class even though that value was not one of the twenty closed operation names. The derivation filtered only policy lineage, time and export maps; it never checked operation class or proved all three locked selection-key components. Deterministic selection was therefore unproved for every operation.
+
+No founder choice is required. R66 keeps the locked key and repairs only exact operation-class vocabulary, per-operation applicability and twenty complete selection proofs while preserving the executable boundary.
+
+## R66 repair rationale before review
+
+R66 removes the `trusted_ingress` family alias from selection state and defines operation class as the exact codepoint-sorted vocabulary of twenty operation names. Registry-member applicability is derived from the existing per-operation result-export map: a member supports an operation only when its map has the exact operation key and the value equals both the operation result schema and evaluator ABI export.
+
+Twenty closed and fingerprinted selection query/proof records bind operation class, policy lineage and evaluated time. Each independently filters every member in the same complete sealed frozen snapshot, requires exact per-operation export and proof-family compatibility, and binds its unique result to the snapshot content identity, R6 set seal, member content reference, row-version reference and fingerprint. The lifecycle operation's exact selection proof enters its frozen evidence and proof lineage. R65's fail-closed executable boundary remains byte-identical, so compatibility selection cannot authorize execution.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R66 changes no visible product behaviour and opens no evaluator implementation, adapter, database, runtime, UI or external action.
