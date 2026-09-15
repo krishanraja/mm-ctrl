@@ -2332,3 +2332,15 @@ The [R72 decision brief](../../g24-predicate-authority-founder-decision-r72.md) 
 The recommendation is one final authority path: server-derived closed structured read-sets. A verified signed assertion may become a provenance-bearing source record but may not assert the final satisfaction boolean or override contradictory current canonical data. Opaque prose presence, model interpretation and confidence scores remain rejected as predicate authority.
 
 This round adds no machine contract, source code, schema, migration, evaluator semantics, database write, product UI, deployment or external action. The next step is explicit founder review. Only an approval may open a separate machine-contract gate.
+
+### R72 seven-role adjudication
+
+R72 froze at commit `a7f78a309f5fd918d00ab36d4dc6136ca6bd29a0`, tree `a7efaf013bd33e6f3a4365d394566423251440b4`, with document blob `ae8046f69418e935b0537649b23f247df0a3bc9e`. Human Agency and Human Comprehension passed with later proof requirements. Consequential Usefulness, Epistemic Integrity, Living Brain Integrity and Subject/Audience/Lifecycle Safety vetoed. Implementation Reality passed only for the honest no-implementation scope.
+
+The exact [R72 panel verdict](../../g24-predicate-authority-r72-panel-verdict.md) records every blocking reason. The decisive failure was not the recommended single-path direction. R72 did not yet prove semantic meaning, complete selection, consequential question value, atomic time/authority binding or G13-complete correction, and it omitted inherited lifecycle details.
+
+### R73 repaired predicate-authority candidate
+
+R73 repairs forward without changing R72. It separates mechanical facts, bounded normative human attestations and deterministic derived facts; adds source-earned semantic profiles and complete read-set proofs; classifies every field as `server_verify_only` or `human_answerable`; restores the continuation checkpoint and old-grant, absence and complete-obligation rules; binds one atomic transaction coordinator; imports the full G13 correction boundary; and narrows external signed authority to fact kinds canonically owned outside CTRL.
+
+R73 remains a [founder decision surface](../../g24-predicate-authority-founder-decision-r73.md), not implementation authority. It must pass all seven durable judge roles before reaching the founder. No machine contract, evaluator semantics, schema, migration, database write, UI, deployment or external action is opened.

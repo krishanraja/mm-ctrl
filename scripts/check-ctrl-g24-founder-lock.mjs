@@ -46,11 +46,11 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Founder review the [R72 predicate-authority decision]'),
+  state.includes('**CURRENT_NEXT_ACTION:** Submit the repaired [R73 predicate-authority decision]'),
 )
 check(
   'design state remains inside the trusted-ingress gate',
-  designState.includes('founder review the R72 predicate-authority decision') && designState.includes('No result-producing evaluation, runtime integration'),
+  designState.includes('independently review the repaired R73 predicate-authority decision') && designState.includes('No machine contract, result-producing evaluation, runtime integration'),
 )
 check('R68 source bytes founder-locked', sha256(r68.executable_artifact.source_path) === 'fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104')
 check('R68 founder-lock identity exact', r68.executable_artifact.founder_lock.founder_lock_identity === '4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06')
@@ -63,6 +63,8 @@ check('R70 founder-lock identity exact', r70.executable_artifact.founder_lock.fo
 check('R70 preserves R69 veto and semantic closure', r70.rejected_predecessor.commit === '70055728953f8eec4c30a2876b6169378d883682' && r70.rejected_predecessor.review_status === 'vetoed_preserved_not_authority' && r70.semantic_boundary.satisfied_or_success_branch === 'forbidden')
 check('R71 acceptance receipt routed', state.includes('[R71 acceptance receipt](g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md)'))
 check('R72 founder decision routed', state.includes('[R72 predicate-authority decision](g24-predicate-authority-founder-decision-r72.md)'))
+check('R72 veto preserved', state.includes('[vetoed evidence](g24-predicate-authority-r72-panel-verdict.md)'))
+check('R73 founder decision routed', state.includes('[R73 predicate-authority decision](g24-predicate-authority-founder-decision-r73.md)'))
 check('lock contains no em dash', !lock.includes('—'))
 
 if (failures.length) {
