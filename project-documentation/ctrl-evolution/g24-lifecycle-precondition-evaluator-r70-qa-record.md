@@ -1,6 +1,6 @@
 # G24 lifecycle precondition evaluator R70 QA record
 
-Status: candidate, independent frozen review pending
+Status: `accepted_for_structural_executable_loading_scope`
 
 Date: 2026-09-15
 
@@ -66,4 +66,12 @@ The full R66 parent replay was compute-heavy but completed successfully. That co
 
 The top-level `npm run build` wrapper remains red because its prehook finds 29 em dashes in four untouched R2 council records. The direct bundle and prerender both pass, and R70 does not rewrite historical judge evidence to conceal the baseline failure.
 
-All producer gates are now complete. Independent review remains after freeze. Until the exact frozen commit and tree pass that review, R70 is not authority.
+## Independent frozen review
+
+Frozen commit `f4c46b1c345ad05f5f997e905b5b0204400ae88f`, tree `fb4809821a9c02955040b6876b1e6b10214c78c5` and parent `bbe6569749726892060a09338af25cbec9c34830` passed both independent reviews.
+
+The specialist architecture judge returned `PASS` after verifying exact identities, hostile inputs, no live import route, continued semantic closure and honest scope. The independent correctness reviewer returned `PASS` after independently replaying Proxy, byte-limit, missing-path, caller-authority and package-gate probes. Both confirmed that no semantic result, evidence row, write, runtime, database, UI, deployment or external route was introduced.
+
+The verdicts were delivered through independent reviewer messages. They are not cryptographic signatures. No separate frozen verdict artifact was created or claimed. The exact archive and acceptance boundary are recorded in the [R71 acceptance receipt](g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md).
+
+Acceptance is structural only. Predicate authority, the thirteen typed fact meanings, dispatch-time freshness, semantic evaluation, live registry completeness, runtime attestation, transaction behavior, database integration, UI and deployment remain unproved and closed.

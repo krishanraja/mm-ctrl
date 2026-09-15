@@ -2296,3 +2296,25 @@ R70 removes the failed caller-authority shape rather than trying to sanitize it.
 R70 retains the R69 failures as permanent regressions: lone surrogates, absent paths, mutated machine or source bytes, R66/R70 authority Proxies, caller-controlled output schema, oversize and noncanonical input, forbidden capabilities, timeout and output exhaustion. No semantic success branch exists. No runtime, database, UI, deployment or external action is authorized.
 
 The predicate-authority choice remains open between structured trusted read-set variants and separately governed signed satisfaction assertions. It cannot be resolved or implemented until the frozen R70 structural boundary passes independent review.
+
+### R70 independent post-freeze adjudication and R71 closure
+
+**Frozen commit:** `f4c46b1c345ad05f5f997e905b5b0204400ae88f`
+
+**Frozen tree:** `fb4809821a9c02955040b6876b1e6b10214c78c5`
+
+**Frozen parent:** `bbe6569749726892060a09338af25cbec9c34830`
+
+**Specialist architecture judge:** `PASS`
+
+**Independent correctness reviewer:** `PASS`
+
+The specialist architecture judge verified the exact archive, hard-pinned local authority, hostile primitive and Proxy behavior, static test-only reachability, semantic closure and honest outside scope. Independent extra probes produced no Proxy traps or authority leak. The judge graded modular inspectability `A-` and carried forward physical separation of test-only helpers as a requirement before any live evaluator entrypoint.
+
+The correctness reviewer independently re-read the same identities and reproduced exact 65,536-byte input and 131,072-byte request boundaries, zero Proxy traps, missing-path holds, caller-schema rejection and the packaged gate. The reviewer confirmed the thirteen-file frozen diff and no result, evidence, write, runtime, database, UI, deployment or external route.
+
+The verdicts were delivered through independent reviewer messages. They are not cryptographic signatures. No separate frozen verdict artifact was created or claimed.
+
+R70 is accepted only for structural executable loading. Semantic evaluation, predicate authority, the thirteen typed fact meanings, live registry completeness, runtime attestation, transaction and database behavior, product/UI behavior, deployment, release and external action remain unproved and closed.
+
+The next gate is a predicate-authority design and founder choice. The recommended lane is a server-derived closed structured read-set with thirteen discriminated fact variants. Separately governed signed assertions may be provenance-bearing imports, but must not silently create a parallel truth system. Human-text presence and LLM interpretation alone cannot satisfy a precondition. The [R71 acceptance receipt](../../g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md) freezes the exact acceptance boundary.
