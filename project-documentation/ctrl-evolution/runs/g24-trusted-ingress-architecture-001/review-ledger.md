@@ -2062,3 +2062,33 @@ R62 materializes two complete R13 lifecycle-precondition evidence rows inside a 
 The full `evaluate_lifecycle_preconditions` result fixture uses the rows' stable semantic evidence identifiers and matching semantic fingerprints. Its trusted context is non-serializable and cannot be supplied in caller bytes. Attacks cover the removed toy store, all 24 required fields, persistence authority, store, schema, version, content address, semantic versus envelope identity, workspace, subject, case, snapshot, transition, predecessor, input-set, evaluator, currentness, ambiguity and coherent resealing. Live transactional current-row enforcement remains explicitly unproved outside the frozen snapshot.
 
 These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R62 changes no visible product behaviour and opens no adapter, database, runtime or external action.
+
+## Review round 62
+
+**Date:** 2026-09-15
+
+**Frozen commit/tree:** `73ebd17abbd5abd8b1ea8ddc78487287c2a641fb` / `938cfb61c07ab0ce29d25091c651e8882f461f75`
+
+**Human / machine / QA:** `b0d09c1f7b7e77b0670c7f3e877ea902a2857a61` / `fcab9032998d78027c7393ae2c6bae848d58da33` / `830ac37878a175bb462e83fe11b2eab8c440c6cf`
+
+**Checker / materializer / founder checker:** `48836b1fbf123bf6851065fabb0ee426190dd0f1` / `e2f5ab4a53eae907a5eaee77e3b1ca0ea0f590ed` / `2546d35741440495c2ecd26dcc619e2d3b332dca`
+
+**Machine SHA-256:** `6ef89029be815e37dd5f2ea5871253dfdd583949c4eb217bf07d479a7bdbc3a8`
+
+**Adjudication:** `VETO`
+
+The defense reviewer and correctness adjudicator independently rejected R62 through reviewer messages. No separate frozen verdict artifact identity was created, so none is implied here. R62's removal of the toy store, actual registered 24-field R13 rows and wrappers, canonical row content addresses, separate semantic and row-envelope fingerprints, currentness, evaluator and catalogue checks, positional result binding, 21 containing-schema ordering fixtures and inherited controls survive. The combined independent findings found three remaining roots:
+
+1. `evidence_input_set_seal` and `precondition_set_seal` were distinct authorities, but R62 hashed raw input evidence and assigned that value to the output proof-set field. The existing R6 set-seal authority requires the set kind, set schema version, owner lineage version, member count and sorted member entries.
+2. `canonical_evidence_byte_length` was never compared directly with the decoded evidence bytes, and the row's evidence schema version was not bound to a closed decoded-evidence schema.
+3. The successful `open_preparation` snapshot contained two satisfied rows for its sole exact catalogue precondition, violating the operation's one-satisfied-row atomic equality. The resulting reversible ordering witness was fabricated from a cardinality-invalid success fixture.
+
+No founder choice is required. R63 repairs only the lifecycle seal stage boundary, evidence bytes and schema binding, and exact catalogue cardinality while keeping runtime, database, UI and external action closed.
+
+## R63 repair rationale before review
+
+R63 removes `precondition_set_seal` from the versioned evaluate result and from the apply intent, so no fake or caller-selected SHA can cross the stage boundary. The transition operation reserves its unique receipt row version inside the serializable transaction after registry replay resolution, recomputes the exact lifecycle proof member, computes the R6 owner-bound set seal, assembles the receipt with the same row version and seal, and commits the receipt, snapshot and consumptions atomically. The frozen contract proves the deterministic derivation and failure rollback; live serializable execution remains unproved.
+
+The evidence snapshot now contains one current satisfied R13 row for the one exact `open_preparation` catalogue precondition. Its canonical evidence byte length, schema version and closed decoded content are checked directly. Because every frozen transition has exactly one catalogue precondition, the lifecycle result ordering sites preserve valid singleton positives and duplicate rejection without claiming a reversible ordering witness that the catalogue cannot supply.
+
+These repairs remain invisible infrastructure for one canonical Brain and human-owned authority. R63 changes no visible product behaviour and opens no adapter, database, runtime or external action.
