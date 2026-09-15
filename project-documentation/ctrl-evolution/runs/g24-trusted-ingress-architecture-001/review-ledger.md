@@ -2356,3 +2356,15 @@ R73 closed every original R72 blocker. Two new contradictions remained: its huma
 R74 repairs only those seams. Decision-frame binding is now variant-specific and permits an explicit not-yet-created proof before acceptance. External authority is limited to atomic fact kinds the issuer exclusively owns and requires either an immutable authority lease or online conditional verify-and-consume protocol. The cross-system path now has explicit reservation, single-use nonce, idempotent finalization, rollback and lost-acknowledgement reconciliation states. Without either protocol, the external assertion is evidence only and the dependency is `indeterminate`.
 
 R74 remains a [founder decision surface](../../g24-predicate-authority-founder-decision-r74.md), not implementation authority. It must pass the seven-role panel. No machine contract, evaluator semantics, schema, migration, database write, UI, deployment or external action is opened.
+
+### R74 seven-role adjudication
+
+R74 froze at commit `37d0b7602265d52306b352cdab2a44d5642c0518`, tree `337b605a5afe5abf41d0e3a43273c08bb02446c8`, with document blob `99b5e698105c6965032677cd1c46e35a9dfcc2ef`. All seven roles passed: Human Agency, Human Comprehension, Consequential Usefulness, Epistemic Integrity, Living Brain Integrity, Subject/Audience/Lifecycle Safety and Implementation Reality.
+
+The panel confirmed the variant-specific frame standing and external authority lease/conditional-consume protocol close the R73 veto without regressing any R72 repair. The exact [R74 panel verdict](../../g24-predicate-authority-r74-panel-verdict.md) records nine mandatory machine-contract carry-forwards and one non-semantic editorial defect: the body incorrectly says “R73 recommends.”
+
+### R75 founder-ready locked revision
+
+R75 carries the R74 decision forward unchanged, corrects that self-reference and makes the panel carry-forward explicit. Its additions require exact external coordination states, strict time boundaries, no immutable lease for revocable human facts, exact token/consequence binding, crash and reconciliation fixtures, no derived authority widening, no serial questioning and proof of real decision effects.
+
+R75 remains a [founder decision surface](../../g24-predicate-authority-founder-decision-r75.md), not implementation authority. The exact R74-to-R75 delta must pass locked-revision review before founder handoff. No machine contract, evaluator semantics, schema, migration, database write, UI, deployment or external action is opened.
