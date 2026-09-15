@@ -13,6 +13,8 @@ const check = (name, condition) => { if (!condition) failures.push(name) }
 const R70_COMMIT = 'f4c46b1c345ad05f5f997e905b5b0204400ae88f'
 const R70_TREE = 'fb4809821a9c02955040b6876b1e6b10214c78c5'
 const R70_PARENT = 'bbe6569749726892060a09338af25cbec9c34830'
+const R71_COMMIT = '702bc226ab36a870a51c3bbb9ef98009b9be128e'
+const R71_TREE = '69f11d66eb7334619b41eebff08a8609fe480ea3'
 const SOURCE_SHA256 = 'e7b70f3816b38fa3744c1a86e627e835b770765745e370e569a350ddb1df05c9'
 const MACHINE_SHA256 = 'bc83f908bc9b4a2fee46917ab9501b6ae730c5fe419b7f3c1e2a55c59314cb80'
 const FOUNDER_LOCK = '8ee0ef4dd286e7f13f54f2d80d26ea341783d2dc89bb858e91b865fa2ce77fbf'
@@ -31,23 +33,30 @@ const R70_BLOBS = {
   'supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r70.mjs': '27a9d8767d6e666bcdd184f7b511951f6bb4026e',
   'supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r70.test.ts': '829d2ad920cba5654f0e014ce8821118c0689bfe',
 }
-const ALLOWED_R71_PATHS = new Set([
-  'docs/current/design-state.md',
-  'package.json',
-  'project-documentation/ctrl-evolution/README.md',
-  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.json',
-  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md',
-  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-qa-record.md',
-  'project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md',
-  'scripts/check-ctrl-g24-founder-lock.mjs',
-  'scripts/check-ctrl-g24-lifecycle-evaluator-r70-acceptance-r71.mjs',
-])
+const R71_BLOBS = {
+  'docs/current/design-state.md': '3d34c51b0f5e5a70e046baf89e95087657cf8f4f',
+  'package.json': 'da386db39446bc57c3f8afe189e3346fe924cebd',
+  'project-documentation/ctrl-evolution/README.md': '484e31baa75400976590e9c2d4f032d622c444d5',
+  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.json': '71f2abeee1ee345c2f2e2cd27a7a5065cfcbe9e6',
+  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md': 'd0c24e6d2007f6d21387aee65d0579680ff72015',
+  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-qa-record.md': '05c0754160158d8f36d17fdd52ceaa2a43649476',
+  'project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md': '74725190c9b0725a5b57c4a4b9150a9522847d00',
+  'scripts/check-ctrl-g24-founder-lock.mjs': 'ab6a656326cf716fe95fb42828b76d29ca0c3350',
+  'scripts/check-ctrl-g24-lifecycle-evaluator-r70-acceptance-r71.mjs': '511a445422acc40c56c60427d6cc453ae1c673a3',
+}
+const frozenText = path => execFileSync('git', ['show', `${R71_COMMIT}:${path}`], { cwd: root, encoding: 'utf8' })
 
 check('frozen R70 commit exists', git(['cat-file', '-t', R70_COMMIT]) === 'commit')
 check('frozen R70 tree exact', git(['rev-parse', `${R70_COMMIT}^{tree}`]) === R70_TREE)
 check('frozen R70 parent exact', git(['rev-parse', `${R70_COMMIT}^`]) === R70_PARENT)
 for (const [path, blob] of Object.entries(R70_BLOBS)) {
   check(`frozen R70 blob exact: ${path}`, git(['rev-parse', `${R70_COMMIT}:${path}`]) === blob)
+}
+check('frozen R71 commit exists', git(['cat-file', '-t', R71_COMMIT]) === 'commit')
+check('frozen R71 tree exact', git(['rev-parse', `${R71_COMMIT}^{tree}`]) === R71_TREE)
+check('frozen R71 directly descends from R70', git(['rev-parse', `${R71_COMMIT}^`]) === R70_COMMIT)
+for (const [path, blob] of Object.entries(R71_BLOBS)) {
+  check(`frozen R71 blob exact: ${path}`, git(['rev-parse', `${R71_COMMIT}:${path}`]) === blob)
 }
 const frozenSource = execFileSync('git', ['show', `${R70_COMMIT}:supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r70.mjs`], { cwd: root })
 const frozenMachine = execFileSync('git', ['show', `${R70_COMMIT}:project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70.json`], { cwd: root })
@@ -57,7 +66,7 @@ for (const path of Object.keys(R70_BLOBS).filter(path => !['docs/current/design-
   check(`R70 executable artifact remains byte-identical: ${path}`, Buffer.compare(execFileSync('git', ['show', `${R70_COMMIT}:${path}`], { cwd: root }), readFileSync(join(root, path))) === 0)
 }
 
-const receipt = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.json'))
+const receipt = JSON.parse(frozenText('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.json'))
 check('closed receipt schema', receipt.schema_version === 'ctrl.g24.lifecycle-precondition-evaluator-r70-acceptance-receipt.r71.v1')
 check('closure only', receipt.receipt_kind === 'adjudication_closure_only' && receipt.round === 'R71' && receipt.recorded_on === '2026-09-15')
 check('accepted identity exact', receipt.accepted_contract?.status === 'accepted_for_structural_executable_loading_scope' && receipt.accepted_contract?.commit === R70_COMMIT && receipt.accepted_contract?.tree === R70_TREE && receipt.accepted_contract?.parent === R70_PARENT)
@@ -73,11 +82,11 @@ check('not authorized exact', JSON.stringify(receipt.not_authorized) === JSON.st
 check('recommended lane exact', receipt.recommended_next_lane === 'server-derived closed structured read-set with thirteen discriminated fact variants')
 check('no semantics or external action', receipt.contract_semantics_change === 'none' && receipt.runtime_registry_database_ui_deployment_or_external_action === 'none')
 
-const human = read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md')
-const ledger = read('project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md')
-const state = read('project-documentation/ctrl-evolution/README.md')
-const design = read('docs/current/design-state.md')
-const qa = read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-qa-record.md')
+const human = frozenText('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md')
+const ledger = frozenText('project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md')
+const state = frozenText('project-documentation/ctrl-evolution/README.md')
+const design = frozenText('docs/current/design-state.md')
+const qa = frozenText('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-qa-record.md')
 for (const text of [human, ledger, qa]) {
   check('records both independent passes', text.includes('specialist architecture judge') && text.includes('correctness reviewer') && text.includes('PASS'))
   check('records conversation delivery', text.includes('independent reviewer messages'))
@@ -88,20 +97,19 @@ check('canonical state routes to R71', state.includes('[R71 acceptance receipt](
 check('one next action is predicate authority', state.includes('**CURRENT_NEXT_ACTION:** Design and founder-lock the predicate-authority contract'))
 check('design state agrees', design.includes('design and founder-lock the predicate-authority contract'))
 
-const statusEntries = execFileSync('git', ['status', '--porcelain=v1', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean)
-const statusPaths = statusEntries.map(entry => entry.slice(3).replaceAll('\\', '/'))
-const head = git(['rev-parse', 'HEAD'])
-let changedPaths
-if (head === R70_COMMIT) {
-  changedPaths = statusPaths
-} else {
-  check('R71 closure directly descends from R70', git(['rev-parse', 'HEAD^']) === R70_COMMIT)
-  changedPaths = git(['diff', '--name-only', `${R70_COMMIT}..HEAD`]).split(/\r?\n/).filter(Boolean)
-  check('post-commit worktree clean', statusPaths.length === 0)
+let r71IsAncestor = true
+try {
+  execFileSync('git', ['merge-base', '--is-ancestor', R71_COMMIT, 'HEAD'], { cwd: root })
+} catch {
+  r71IsAncestor = false
 }
-const changedSet = new Set(changedPaths)
-check('R71 changed-path set exact', changedSet.size === ALLOWED_R71_PATHS.size && [...ALLOWED_R71_PATHS].every(path => changedSet.has(path)))
-check('no runtime, migration or UI path changed', changedPaths.every(path => ALLOWED_R71_PATHS.has(path)))
+check('current branch descends from accepted R71', r71IsAncestor)
+for (const path of [
+  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.json',
+  'project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md',
+]) {
+  check(`current acceptance receipt remains byte-identical: ${path}`, Buffer.compare(execFileSync('git', ['show', `${R71_COMMIT}:${path}`], { cwd: root }), readFileSync(join(root, path))) === 0)
+}
 
 const attacks = [
   ['removed verdict', value => value.independent_verdicts.pop()],
@@ -124,4 +132,4 @@ if (failures.length) {
   process.exit(1)
 }
 
-console.log(`ok: R71 closure; frozen R70 ${R70_COMMIT} / ${R70_TREE}; 13/13 blobs exact; 2/2 independent PASS verdicts; ${attacks.length} closure attacks; no runtime or semantic change`)
+console.log(`ok: frozen R71 ${R71_COMMIT} / ${R71_TREE}; frozen R70 ${R70_COMMIT} / ${R70_TREE}; 13/13 R70 and 9/9 R71 blobs exact; 2/2 independent PASS verdicts; ${attacks.length} closure attacks`)

@@ -2318,3 +2318,17 @@ The verdicts were delivered through independent reviewer messages. They are not 
 R70 is accepted only for structural executable loading. Semantic evaluation, predicate authority, the thirteen typed fact meanings, live registry completeness, runtime attestation, transaction and database behavior, product/UI behavior, deployment, release and external action remain unproved and closed.
 
 The next gate is a predicate-authority design and founder choice. The recommended lane is a server-derived closed structured read-set with thirteen discriminated fact variants. Separately governed signed assertions may be provenance-bearing imports, but must not silently create a parallel truth system. Human-text presence and LLM interpretation alone cannot satisfy a precondition. The [R71 acceptance receipt](../../g24-lifecycle-precondition-evaluator-r70-acceptance-receipt-r71.md) freezes the exact acceptance boundary.
+
+## R72 predicate-authority founder decision surface
+
+**Date:** 2026-09-15
+
+**Immutable baseline:** R71 commit `702bc226ab36a870a51c3bbb9ef98009b9be128e`, tree `69f11d66eb7334619b41eebff08a8609fe480ea3`
+
+**Status:** proposed founder choice; no implementation authority
+
+The [R72 decision brief](../../g24-predicate-authority-founder-decision-r72.md) converts the open abstract choice into thirteen plain-English typed fact variants, one tri-state deterministic outcome model, dispatch-time freshness and correction rules, a bounded role for signed assertions, an invisible customer/operator interaction model and eight narrow conveyor-belt modules.
+
+The recommendation is one final authority path: server-derived closed structured read-sets. A verified signed assertion may become a provenance-bearing source record but may not assert the final satisfaction boolean or override contradictory current canonical data. Opaque prose presence, model interpretation and confidence scores remain rejected as predicate authority.
+
+This round adds no machine contract, source code, schema, migration, evaluator semantics, database write, product UI, deployment or external action. The next step is explicit founder review. Only an approval may open a separate machine-contract gate.
