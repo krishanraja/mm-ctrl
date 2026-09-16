@@ -2690,3 +2690,11 @@ The replacement obligation resolver is now independent from the display projecti
 New probes mutate the signed trigger's owner, route, question, action, signature and time one at a time. Every mutation fails closed and restoring the exact bytes restores the truthful replacement status. Structurally valid but contextually wrong registered-owner and inflated-count projections reject against independent authority snapshots; unknown owners and unsafe arithmetic still reject structurally. All six answer-bearing transitions and twenty-four recovery order classes remain green.
 
 The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R96 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
+
+### R96 seven-role veto
+
+R96 froze at commit `b7a348bd1a5ed91f42edd5c180b15a6bc2b74741`, tree `5c232f4ef932e909d447df41ca868dc829d63165`, parent `5c306889923143bddb4b888e1944068d9ee25baa`. The full historical regression and focused R96 suite passed. Architecture/Integration confirmed that the status path genuinely closes R95's caller-authority defect.
+
+All six human-value and correctness roles vetoed a fresh cross-path escape. Corrupting an open challenge's signed trigger makes `currentStatus` unavailable, but review-event generation still emits two actions and `revalidate` accepts the existing signed review, appends resolution state and reopens work. The verifier exists only on the display path.
+
+The exact [R96 panel verdict](../../g24-predicate-authority-r96-panel-verdict.md) preserves the retained gains, independent reproductions and mandatory R97 repair. One provenance gate must govern status, review generation, review validation and durable reopening. R75 and R77 remain unchanged; no external authority is opened.
