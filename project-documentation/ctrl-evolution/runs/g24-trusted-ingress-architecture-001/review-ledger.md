@@ -2602,3 +2602,17 @@ R92 froze at commit `6e104a7691a2003b0feaa21fd39292d42204e087`, tree `e9594dba20
 Human Agency, Epistemic Integrity and Architecture/Integration passed. Human Comprehension, Consequential Leader Value, Lifecycle/Security/Privacy and Implementation Correctness vetoed on two fresh attacks. Two valid signed withdrawals produced singular guidance that asked for one replacement even though two were required. Replacing once correctly remained blocked, proving safety but also proving the instruction insufficient. Two registrations of the same callback also aliased: calling the first unsubscribe handle twice removed both logical registrations and made the second handle return false.
 
 The exact [R92 panel verdict](../../g24-predicate-authority-r92-panel-verdict.md) preserves the role evidence, retained gains and mandatory R93 repair. R75 and R77 remain unchanged; no external authority is opened.
+
+### R93 exact recovery guidance and subscription ownership candidate
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `a77e914b92aa83c55e5930878d081d4e58b16f5acee3c6d011d369c145ea82c1`
+
+**Manifest bundle fingerprint:** `d20b03e415c00d6146b36c3ac28a9a68c147186ed4eb5d45f1b4aca85347e03e`
+
+R93 retains all verified R92 repairs and closes both fresh vetoes. Replacement status is computed from every non-current open head, exposes the exact minimum remaining actions and canonical responsible humans, and uses truthful singular or plural copy. Two withdrawals in either append order produce two required replacements and zero review requests; one replacement leaves one named action and zero review requests; two replacements make the plural review step available. Exact signed review then resolves to byte-identical durable records.
+
+Each listener registration is now a unique subscription record with a closure-local active flag. Two registrations using the same callback receive two deliveries; one handle removes only its own registration once; the next transition delivers once; and the second handle remains independently removable. The focused checker passes all thirteen paths, 212 vectors and 301 totality probes. R93 remains local same-process evidence only and opens no runtime, database, UI, external action, deployment, merge, release or production authority. The next action is exact Git freeze and seven-role review.

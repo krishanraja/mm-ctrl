@@ -1,0 +1,340 @@
+{
+  "answer_event_required": [
+    "event_id",
+    "named_human_id",
+    "credential_id",
+    "session_id",
+    "method",
+    "issuer_id",
+    "question_id",
+    "question_version",
+    "selected_option",
+    "render_receipt_fingerprint",
+    "answered_at",
+    "issuer_signature_base64"
+  ],
+  "answer_state_revalidation_event_required": [
+    "event_id",
+    "named_human_id",
+    "credential_id",
+    "authentication_event_ref",
+    "session_id",
+    "method",
+    "issuer_id",
+    "accepted_request_identity",
+    "accepted_final_id",
+    "challenge_ids",
+    "challenge_set_seal",
+    "challenge_observation_ids",
+    "challenge_observation_seal",
+    "current_answer_heads",
+    "action",
+    "status_text",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "authorized_at",
+    "issuer_signature_base64"
+  ],
+  "answer_state_revalidation_head_required": [
+    "route_ref",
+    "question_id",
+    "answer_state_id",
+    "state_version",
+    "issuer_sequence",
+    "state_fingerprint",
+    "standing",
+    "transition_event_ref",
+    "authorized_at"
+  ],
+  "answer_state_transition_event_required": [
+    "event_id",
+    "named_human_id",
+    "credential_id",
+    "authentication_event_ref",
+    "session_id",
+    "method",
+    "issuer_id",
+    "route_ref",
+    "question_id",
+    "question_version",
+    "prior_state_id",
+    "prior_state_version",
+    "prior_state_fingerprint",
+    "new_state_id",
+    "new_state_version",
+    "issuer_sequence",
+    "answer_ref",
+    "answer_fingerprint",
+    "action",
+    "standing",
+    "reason_code",
+    "status_text",
+    "authorized_at",
+    "issuer_signature_base64"
+  ],
+  "authentication_event_required": [
+    "event_id",
+    "named_human_id",
+    "credential_id",
+    "session_id",
+    "method",
+    "issuer_id",
+    "issued_at",
+    "valid_until",
+    "issuer_signature_base64"
+  ],
+  "authority_proof_required": [
+    "named_human_id",
+    "authentication_event_ref",
+    "authority_event_ref"
+  ],
+  "binding_context_required": [
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "authority_bundle_fingerprint",
+    "transition_id",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "reconciled_decision_fingerprint",
+    "reserved_transition_receipt_version",
+    "render_receipt_ref",
+    "displayed_consequence_text",
+    "server_commit_time",
+    "final_render_fingerprint"
+  ],
+  "canonicalization": "recursive_utf16_code_unit_sorted_json_utf8_no_whitespace_finite_json_numbers_only",
+  "exact_constants": {
+    "correction_domain_separator": "CTRL_G24_R90_CORRECTION_RECEIPT",
+    "final_domain_separator": "CTRL_G24_R90_FINAL_TRANSITION_AUTHORITY",
+    "final_receipt_type": "final_transition_authority",
+    "normative_domain_separator": "CTRL_G24_R90_NORMATIVE_ATTESTATION",
+    "normative_receipt_type": "normative_attestation"
+  },
+  "final_authority_event_required": [
+    "event_id",
+    "named_human_id",
+    "credential_id",
+    "session_id",
+    "method",
+    "issuer_id",
+    "transition_id",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "reconciled_decision_fingerprint",
+    "authority_bundle_fingerprint",
+    "render_receipt_ref",
+    "visible_consequence_fingerprint",
+    "reserved_transition_receipt_version",
+    "authorized_at",
+    "issuer_signature_base64",
+    "final_render_fingerprint"
+  ],
+  "final_receipt_required": [
+    "receipt_type",
+    "domain_separator",
+    "authority_receipt_id",
+    "authority_proofs",
+    "transition_id",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "reconciled_decision_fingerprint",
+    "authority_bundle_fingerprint",
+    "render_receipt_ref",
+    "displayed_consequence_text",
+    "visible_consequence_fingerprint",
+    "reserved_transition_receipt_version",
+    "server_commit_time",
+    "valid_until",
+    "authority_receipt_fingerprint",
+    "final_render_fingerprint"
+  ],
+  "fingerprint": "sha256_over_canonical_bytes",
+  "free_expression_confirmation_required": [
+    "confirmation_id",
+    "named_human_id",
+    "credential_id",
+    "session_id",
+    "method",
+    "issuer_id",
+    "authentication_event_ref",
+    "question_id",
+    "question_version",
+    "free_expression_fingerprint",
+    "structured_interpretation_fingerprint",
+    "interpretation_render_fingerprint",
+    "decision_value_fingerprint",
+    "visible_consequence_fingerprint",
+    "confirmed_at",
+    "issuer_signature_base64"
+  ],
+  "module_id": "trust_and_context_program",
+  "normative_receipt_required": [
+    "receipt_type",
+    "domain_separator",
+    "attestation_id",
+    "question_id",
+    "question_version",
+    "dependency_id",
+    "named_human_id",
+    "gap_set_seal",
+    "question_route_receipt_ref",
+    "predecessor_version",
+    "transition_id",
+    "authentication_event_ref",
+    "answer_event_ref",
+    "owned_judgement_kind",
+    "answer_status",
+    "selected_option",
+    "free_expression_ref",
+    "free_expression_interpretation_ref",
+    "free_expression_interpretation_render_ref",
+    "free_expression_confirmation_ref",
+    "accepted_decision_before_ref",
+    "accepted_decision_before_fingerprint",
+    "accepted_decision_after_ref",
+    "accepted_decision_after_fingerprint",
+    "accepted_decision_changed_paths",
+    "render_receipt_ref",
+    "displayed_consequence_text",
+    "visible_consequence_fingerprint",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "authority_bundle_fingerprint",
+    "issued_at",
+    "valid_until",
+    "receipt_fingerprint"
+  ],
+  "rules": [
+    "verify_authentication_event_signature_against_registered_issuer_and_credential",
+    "reject_unregistered_issuer_method_credential_or_human_mismatch",
+    "enforce_exact_receipt_type_and_domain_separator",
+    "resolve_question_dependency_owner_judgement_selected_option_and_precommitted_effect",
+    "resolve_render_receipt_and_match_exact_question_version_consequence_and_session",
+    "resolve_current_before_state_and_recompute_exact_after_state_and_material_delta",
+    "compare_every_authority_field_to_injected_authoritative_binding_context",
+    "bind_receipt_to_authority_bundle_fingerprint",
+    "validate_at_authoritative_consumption_or_commit_time_with_strict_expiry",
+    "free_confirmation_must_follow_plain_language_interpretation_render_and_precede_receipt_expiry_and_be_signed_by_same_human",
+    "free_interpretation_decision_value_must_equal_the_patch_applied_to_the_accepted_decision",
+    "recompute_every_receipt_fingerprint",
+    "normative_receipt_binds_transition_predecessor_and_authoritative_route_receipt",
+    "final_authority_binds_one_reconciled_decision_fingerprint",
+    "final_authority_resolves_validated_predicate_evidence_and_exact_human_visible_decision_render",
+    "route_receipt_must_be_authenticated_authoritative_and_bound_once_to_predicate_proof",
+    "answer_state_change_requires_named_human_signature_and_authenticated_session",
+    "withdrawal_or_correction_binds_exact_prior_authoritative_head",
+    "accepted_final_identity_is_derived_from_server_bound_request_identity_not_caller_receipt_id",
+    "accepted_records_are_immutable_and_challenges_blocks_repairs_and_revalidations_are_append_only_records",
+    "failed_answer_state_append_is_atomic_and_emits_no_listener_effect",
+    "challenged_predecessor_blocks_descendant_predicates_until_exact_signed_human_revalidation",
+    "revalidation_binds_exact_open_challenge_set_and_current_answer_heads",
+    "revalidation_requires_every_challenged_head_to_be_current",
+    "withdrawal_revalidation_requires_strictly_post_withdraw_current_head",
+    "revalidation_consumer_rechecks_current_standing_independently",
+    "successful_revalidation_appends_new_watched_dependency_baseline",
+    "accepted_request_identity_uses_canonical_structured_tuple",
+    "revalidation_event_identity_is_server_derived_from_accepted_final_challenge_seal_and_named_human",
+    "revalidation_event_ids_humans_and_fingerprints_are_one_to_one",
+    "unknown_accepted_identity_has_typed_unavailable_status",
+    "signed_revalidation_binds_the_complete_intervening_answer_transition_chain",
+    "revalidation_authority_time_follows_every_challenge_observation_and_current_head_transition",
+    "revalidation_event_identity_binds_observation_head_and_authority_time",
+    "resolution_time_is_the_canonical_maximum_validated_human_authority_time",
+    "each_listener_registration_has_independent_idempotent_unsubscribe_ownership",
+    "replacement_status_exposes_the_exact_minimum_remaining_actions_and_responsible_humans"
+  ],
+  "schema_version": "ctrl.g24.predicate-authority.r93.trust-context.v1",
+  "trusted_authenticator_registry": [
+    {
+      "algorithm": "ed25519",
+      "allowed_credentials": [
+        {
+          "credential_id": "cred-leader-1",
+          "named_human_id": "leader-1"
+        },
+        {
+          "credential_id": "cred-krish",
+          "named_human_id": "krish"
+        }
+      ],
+      "allowed_methods": [
+        "passkey",
+        "webauthn"
+      ],
+      "issuer_id": "mindmake-authenticator-v9",
+      "public_key_spki_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAlmHve2BvNqjSVJm/ZthruDTemyxNyhEySWxTW7xUwmc=\n-----END PUBLIC KEY-----\n"
+    },
+    {
+      "algorithm": "ed25519",
+      "allowed_credentials": [
+        {
+          "credential_id": "cred-r90-leader",
+          "named_human_id": "leader-1"
+        },
+        {
+          "credential_id": "cred-r90-krish",
+          "named_human_id": "krish"
+        }
+      ],
+      "allowed_methods": [
+        "passkey",
+        "webauthn"
+      ],
+      "issuer_id": "mindmake-authenticator-r90",
+      "public_key_spki_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAs8M9pERAktoNcl8kjOeYQxt7Ig8PzPROJqwNndhkb5Y=\n-----END PUBLIC KEY-----\n"
+    },
+    {
+      "algorithm": "ed25519",
+      "allowed_credentials": [
+        {
+          "credential_id": "cred-r90-repair-leader",
+          "named_human_id": "leader-1"
+        },
+        {
+          "credential_id": "cred-r90-repair-krish",
+          "named_human_id": "krish"
+        }
+      ],
+      "allowed_methods": [
+        "passkey",
+        "webauthn"
+      ],
+      "issuer_id": "mindmake-authenticator-r90-repair",
+      "public_key_spki_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAfBVoSRxSBAUOYISkMltcEePWS8XrzGDD6QFZo4URbJg=\n-----END PUBLIC KEY-----\n"
+    },
+    {
+      "issuer_id": "mindmake-authenticator-r93",
+      "algorithm": "ed25519",
+      "public_key_spki_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAaTVE3VKsZORA9X1sbCU5Z7SlB3lRQVuFvC9dbRQKln0=\n-----END PUBLIC KEY-----\n",
+      "allowed_methods": [
+        "passkey",
+        "webauthn"
+      ],
+      "allowed_credentials": [
+        {
+          "credential_id": "cred-r93-leader",
+          "named_human_id": "leader-1"
+        },
+        {
+          "credential_id": "cred-r93-krish",
+          "named_human_id": "krish"
+        }
+      ]
+    }
+  ],
+  "workload_or_model_issuer": "forbidden"
+}
