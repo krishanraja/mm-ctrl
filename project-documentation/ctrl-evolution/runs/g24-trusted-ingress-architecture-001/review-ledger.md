@@ -2410,3 +2410,23 @@ The first draft was sharpened before freeze against the durable panel's recurrin
 Producer verification proves the exact R75 and R77 lineage, all thirteen variants, complete dependency-owner coverage, strict external state and time semantics, fifty-eight required adversarial fixtures, twenty-two rejected semantic mutations and byte-identical manifest materialization under reversed module order. The current pre-freeze bundle fingerprint is `424f6eca0fd5707f15e59ce721834c334d4e910d5e1603a03a039dec7764e72f`.
 
 This round contains no evaluator success path, runtime or registry integration, database change, customer UI, external action, deployment, merge, release or legacy-backend deletion. The next step is exact Git freeze followed by seven-role review of that immutable identity.
+
+### R78 seven-role veto
+
+R78 froze at commit `a645f13e11139b15596cd73f7b26eafb2a28a4a0`, tree `74b6ed7be00ce959690dafa74c25d6393041a01d`, parent `4ab418d7815c914eef155fd017ef362f1983b9a7`, bundle fingerprint `424f6eca0fd5707f15e59ce721834c334d4e910d5e1603a03a039dec7764e72f`.
+
+All seven durable roles vetoed. The exact [R78 panel verdict](../../g24-predicate-authority-r78-panel-verdict.md) records the reasons. The decisive shared failure was evidence inflation: the contract claimed exact lineage, nested closure, deterministic predicates, executable fixtures and real human-value effects, while its checker mostly verified shared constants, top-level keys, prose labels and fixture IDs. Independent probes passed wrong R77 blob identities, nested attacker fields, authority weakening, compound questions, lifecycle-only effects, cross-variant dependency borrowing, private-audience widening, removed CAS and incomplete repair traversal.
+
+The modular decomposition, no-runtime boundary, tri-state model, finalised-only steering, strict expiry inequality, external recovery states and exact G13 terminal statuses remain useful foundations. R78 is preserved as vetoed evidence and cannot authorize implementation.
+
+## R79 executable contract repair
+
+**Date:** 2026-09-16
+
+**Status before freeze:** candidate; independent producer and conformance checks pass; exact freeze and seven-role review pending
+
+R79 repairs the root causes as an eight-module overlay on the frozen R78 catalogue. It independently resolves R75, R77, R4 and R78 identities from Git; refuses to activate any unspecified external issuer; defines eight closed critical schemas; pins the full thirteen-transition graph, dependency sets, audiences and final-authority cardinalities; uses a closed tri-state predicate grammar; makes human judgement dependencies atomic; and executes thirty-nine vectors across receipt provenance, question cardinality, real accepted-decision effects, external consistency, transition mutation and one-to-one repair closure.
+
+The current pre-freeze bundle fingerprint is `e7c8d32cdfd0a7756a805b9301b41f48bfa7f3f6fb50e14b1d68c3c748ea1bfd`. The checker imports nothing from the materializer and recomputes the complete manifest fingerprint, including base lineage, module flow and closed authority.
+
+R79 remains contract and conformance evidence only. It does not implement a lifecycle evaluator, result-producing success path, runtime, live registry, database, UI, external action, deployment, merge, release or backend deletion. The next action is exact Git freeze and seven-role review.

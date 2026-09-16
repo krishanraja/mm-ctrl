@@ -1,0 +1,105 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.transition-catalogue.v1",
+  "module_id": "transition_catalogue",
+  "supersedes_r78_sections": [
+    "transition_assemblers.variants",
+    "fact_kind_registry.human_requirements"
+  ],
+  "inherited_catalogue": {
+    "path": "project-documentation/ctrl-evolution/g24-product-system-contract-r4.json",
+    "blob": "1cb9a82a1368186925590309e6f1139be463588b",
+    "sha256": "58c056ca26bd45a87bb460240637decdd853894c18b1a8173b9cc3297c7a927c"
+  },
+  "transitions": [
+    {
+      "id": "open_preparation", "from": "none", "to": "preparing", "actor": "krish", "authority": "new_bounded_operator_private_preparation_decision", "precondition": "subject_purpose_eligible_source_classes_and_review_date_named", "from_version_match": "none", "invalidation": "none", "receipt": "preparation_opened",
+      "server_dependencies": ["no_active_lifecycle_row", "subject_identity_valid", "eligible_source_class_values_valid", "private_preparation_audience_exact"],
+      "normative_dependencies": ["krish_bounded_purpose", "krish_allowed_source_classes", "krish_review_date"],
+      "final_authority": { "actor_roles": ["krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "named_subject_and_krish_only_no_external_or_customer_grant"
+    },
+    {
+      "id": "accept_intensive_proof", "from": "preparing", "to": "intensive_proof", "actor": "named_leader_and_krish", "authority": "accepted_engagement_purpose_and_current_permissions", "precondition": "accepted_decision_frame_active_grants_and_checkpoint_recorded", "from_version_match": "required", "invalidation": "superseded_preparation_projections", "receipt": "intensive_proof_accepted",
+      "server_dependencies": ["current_preparation_exact", "active_grant_set_complete", "revocation_set_complete", "checkpoint_exists"],
+      "normative_dependencies": ["leader_accepts_exact_purpose_and_frame_version", "krish_accepts_exact_purpose_and_frame_version"],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "close_preparation", "from": "preparing", "to": "closed", "actor": "krish_or_krish_recording_named_leader_decline_or_withdrawal", "authority": "current_preparation_cancellation_decline_or_withdrawal", "precondition": "current_preparation_version_and_reason", "from_version_match": "required", "invalidation": "all_prepared_and_unsent_derivatives", "receipt": "preparation_closed",
+      "server_dependencies": ["current_preparation_exact"],
+      "normative_dependencies": [],
+      "final_authority": { "actor_roles": ["krish", "named_leader_via_krish_record"], "cardinality": "any_one", "receipt_type": "final_transition_authority", "bounded_reason_values": ["cancelled", "declined", "withdrawn"] },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "continue_after_intensive_proof", "from": "intensive_proof", "to": "continuing", "actor": "named_leader_and_krish", "authority": "explicit_continuation_agreement", "precondition": "next_consequential_decision_or_evidenced_value_checkpoint_and_exit_or_revisit_condition", "from_version_match": "required", "invalidation": "superseded_period_projections", "receipt": "continuation_accepted",
+      "server_dependencies": ["current_intensive_proof_period_exact", "checkpoint_integrity_valid"],
+      "normative_dependencies": ["leader_next_consequential_decision_or_evidenced_value", "krish_next_consequential_decision_or_evidenced_value", "leader_continuation_checkpoint", "krish_continuation_checkpoint", "leader_exit_or_revisit_condition", "krish_exit_or_revisit_condition"],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "renew_continuing_period", "from": "continuing", "to": "continuing", "actor": "named_leader_and_krish", "authority": "fresh_checkpoint_agreement", "precondition": "next_consequential_decision_or_evidenced_value_and_exit_or_revisit_condition", "from_version_match": "required", "invalidation": "superseded_period_projections", "receipt": "continuing_period_renewed",
+      "server_dependencies": ["current_continuing_period_exact", "current_checkpoint_exact"],
+      "normative_dependencies": ["leader_next_consequential_decision_or_evidenced_value", "krish_next_consequential_decision_or_evidenced_value", "leader_exit_or_revisit_condition", "krish_exit_or_revisit_condition"],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "pause_intensive_proof", "from": "intensive_proof", "to": "paused", "actor": "named_leader_or_krish", "authority": "pause_decision", "precondition": "current_period", "from_version_match": "required", "invalidation": "all_unsent_interventions", "receipt": "engagement_paused",
+      "server_dependencies": ["current_intensive_proof_period_exact"], "normative_dependencies": [],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "any_one", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "pause_continuing", "from": "continuing", "to": "paused", "actor": "named_leader_or_krish", "authority": "pause_decision", "precondition": "current_period", "from_version_match": "required", "invalidation": "all_unsent_interventions", "receipt": "engagement_paused",
+      "server_dependencies": ["current_continuing_period_exact"], "normative_dependencies": [],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "any_one", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "resume_continuing", "from": "paused", "to": "continuing", "actor": "named_leader_and_krish", "authority": "revalidated_continuation_agreement", "precondition": "purpose_identity_grants_audience_standing_freshness_next_value_and_checkpoint_revalidated", "from_version_match": "required", "invalidation": "all_stale_paused_projections", "receipt": "engagement_resumed",
+      "server_dependencies": ["current_paused_period_exact", "subject_and_case_identities_exact", "active_grant_set_complete", "revocation_set_complete", "audience_set_complete", "all_dependencies_fresh", "old_expired_or_revoked_grants_unusable", "fresh_issuance_exists_where_required"],
+      "normative_dependencies": ["leader_revalidates_purpose", "krish_revalidates_purpose", "leader_revalidates_next_value", "krish_revalidates_next_value", "leader_revalidates_checkpoint", "krish_revalidates_checkpoint"],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "close_intensive_proof", "from": "intensive_proof", "to": "closing", "actor": "named_leader_or_krish", "authority": "close_request", "precondition": "current_period", "from_version_match": "required", "invalidation": "new_decision_shaping_work_and_unsent_interventions", "receipt": "engagement_close_requested",
+      "server_dependencies": ["current_intensive_proof_period_exact"], "normative_dependencies": [],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "any_one", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "close_continuing", "from": "continuing", "to": "closing", "actor": "named_leader_or_krish", "authority": "close_request", "precondition": "current_period", "from_version_match": "required", "invalidation": "new_decision_shaping_work_and_unsent_interventions", "receipt": "engagement_close_requested",
+      "server_dependencies": ["current_continuing_period_exact"], "normative_dependencies": [],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "any_one", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "close_paused", "from": "paused", "to": "closing", "actor": "named_leader_or_krish", "authority": "close_request", "precondition": "current_period", "from_version_match": "required", "invalidation": "new_decision_shaping_work_and_unsent_interventions", "receipt": "engagement_close_requested",
+      "server_dependencies": ["current_paused_period_exact"], "normative_dependencies": [],
+      "final_authority": { "actor_roles": ["named_leader", "krish"], "cardinality": "any_one", "receipt_type": "final_transition_authority" },
+      "audience_policy": "intersection_of_current_grants"
+    },
+    {
+      "id": "complete_close", "from": "closing", "to": "closed", "actor": "krish", "authority": "record_completion_under_named_human_close_request", "precondition": "access_correction_separate_release_and_close_obligations_fulfilled_or_recorded_outstanding", "from_version_match": "required", "invalidation": "all_prepared_and_unsent_derivatives", "receipt": "engagement_closed",
+      "server_dependencies": ["current_close_request_exact", "close_obligation_set_exactly_access_correction_separate_release_close", "every_obligation_fulfilled_or_recorded_outstanding"],
+      "normative_dependencies": [],
+      "conditional_normative_rule": { "for_each_genuine_outstanding_obligation": ["responsible_human_owner", "revisit_date"], "zero_outstanding_obligations_adds": [] },
+      "final_authority": { "actor_roles": ["krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "closed_history_and_durable_obligation_audience_only",
+      "post_close_obligations_survive": true
+    },
+    {
+      "id": "open_new_preparation_after_close", "from": "closed", "to": "preparing", "actor": "krish", "authority": "new_bounded_operator_private_preparation_decision", "precondition": "new_purpose_and_review_date_no_old_grant_revival", "from_version_match": "required", "invalidation": "none", "receipt": "new_preparation_opened",
+      "server_dependencies": ["closed_predecessor_exact", "prior_grant_set_complete", "revocation_set_complete", "no_old_grant_can_revive", "private_preparation_audience_exact"],
+      "normative_dependencies": ["krish_genuinely_new_purpose", "krish_review_date"],
+      "final_authority": { "actor_roles": ["krish"], "cardinality": "all", "receipt_type": "final_transition_authority" },
+      "audience_policy": "named_subject_and_krish_only_no_external_or_customer_grant"
+    }
+  ],
+  "composite_judgement_dependencies_allowed": false,
+  "authority_receipt_may_be_predicate_dependency": false
+}

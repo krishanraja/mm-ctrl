@@ -1,0 +1,50 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.external-finality.v1",
+  "module_id": "external_finality_contract",
+  "supersedes_r78_sections": [
+    "external_authority_coordinator.protocols",
+    "external_authority_coordinator.state_contracts",
+    "transaction_coordinator.external_completion_steps"
+  ],
+  "common_external_bindings": ["assertion_id", "fact_kind", "fact_revision", "subject_id", "case_id", "purpose_id", "permitted_audience", "consequence_class", "transition_id", "precondition_id", "predecessor_version", "source_digest", "source_head", "fact_revocation_epoch", "issuer_identity", "issuer_key_id", "signature_algorithm", "issuer_policy_version", "issuer_key_set_seal", "fact_revocation_set_seal", "contradiction_disposition", "issued_at", "verification_time", "valid_until", "maximum_clock_skew_seconds", "reservation_id", "reserved_receipt_version", "transaction_nonce", "visible_consequence_fingerprint"],
+  "protocols": {
+    "immutable_authority_lease": {
+      "allowed_only_when": "active_founder_locked_fact_policy_guarantees_no_unobservable_withdrawal_through_valid_until",
+      "additional_bindings": [],
+      "external_finality": "verified_current_lease_itself_is_final_through_valid_until",
+      "acknowledgement": "delivery_evidence_only_never_required_for_finality",
+      "second_local_cas_condition": "same_lease_revision_key_fact_epoch_and_strict_validity_boundary_remain_current"
+    },
+    "online_conditional_verify_and_consume": {
+      "allowed_only_when": "active_founder_locked_fact_policy_names_atomic_single_use_consume_endpoint",
+      "additional_bindings": ["single_use_token_id"],
+      "external_finality": "issuer_confirms_same_single_use_token_consumed_for_same_nonce_and_reservation",
+      "acknowledgement": "lost_delivery_is_reconciled_by_querying_same_token_and_nonce",
+      "second_local_cas_condition": "issuer_consume_finality_and_same_local_reserved_receipt_remain_current"
+    }
+  },
+  "strict_validity_expression": "server_transaction_time + maximum_clock_skew_seconds < valid_until",
+  "equality_result": "invalid",
+  "states": ["reserved", "external_confirmed", "local_committed_pending_ack", "finalized", "aborted", "quarantined"],
+  "edges": ["reserved->external_confirmed", "reserved->aborted", "reserved->quarantined", "external_confirmed->local_committed_pending_ack", "external_confirmed->aborted", "external_confirmed->quarantined", "local_committed_pending_ack->finalized", "local_committed_pending_ack->quarantined"],
+  "steering_state": "finalized",
+  "local_transactions": [
+    {
+      "transaction_id": "reserve_and_provisional_commit",
+      "required_compare_and_set": ["transition_receipt_version", "predecessor_version", "source_heads", "set_seals", "revocation_epochs", "human_authority_receipt_version", "external_token_identity"],
+      "write": "provisional_transition_and_joined_receipt_non_steering_or_nothing"
+    },
+    {
+      "transaction_id": "finalize_after_external_finality",
+      "required_compare_and_set": ["same_provisional_transition_version", "same_reserved_receipt_version", "same_external_token_or_lease_identity", "same_idempotency_key", "same_transaction_nonce", "same_visible_consequence_fingerprint", "same_or_stricter_validity_boundary"],
+      "write": "finalized_transition_receipt_and_current_lifecycle_projection_atomically_or_quarantine"
+    }
+  ],
+  "retry": {
+    "same_key_nonce_and_canonical_bytes": "return_same_stored_state",
+    "same_key_or_nonce_with_changed_bytes": "reject_collision",
+    "new_nonce_on_retry": false,
+    "duplicate_token_consumption": "reject"
+  },
+  "every_terminal_state_requires_protocol_specific_receipt": true
+}

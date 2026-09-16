@@ -1,0 +1,37 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.predicate-grammar.v1",
+  "module_id": "predicate_grammar",
+  "supersedes_r78_sections": [
+    "deterministic_predicates.result_rules"
+  ],
+  "grammar": {
+    "root_ops": ["all_present"],
+    "leaf_ops": ["dependency_disposition"],
+    "allowed_dispositions": ["present", "contradicted", "missing", "stale", "unreadable", "ambiguous", "revoked"],
+    "allowed_results": ["satisfied", "unsatisfied", "indeterminate"],
+    "unknown_op": "reject_contract",
+    "unknown_dependency": "indeterminate"
+  },
+  "aggregation": [
+    { "when": "any_required_dependency_is_missing_stale_unreadable_ambiguous_or_revoked", "result": "indeterminate", "precedence": 1 },
+    { "when": "otherwise_any_required_dependency_is_contradicted", "result": "unsatisfied", "precedence": 2 },
+    { "when": "every_required_dependency_is_present", "result": "satisfied", "precedence": 3 }
+  ],
+  "transition_rules": [
+    { "transition_id": "open_preparation", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "accept_intensive_proof", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "close_preparation", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "continue_after_intensive_proof", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "renew_continuing_period", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "pause_intensive_proof", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "pause_continuing", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "resume_continuing", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "close_intensive_proof", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "close_continuing", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "close_paused", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } },
+    { "transition_id": "complete_close", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative_plus_materialized_conditional_normative" } },
+    { "transition_id": "open_new_preparation_after_close", "rule": { "op": "all_present", "dependency_source": "exact_transition_catalogue_server_plus_normative" } }
+  ],
+  "predicate_proof_may_apply_transition": false,
+  "final_authority_is_outside_predicate": true
+}
