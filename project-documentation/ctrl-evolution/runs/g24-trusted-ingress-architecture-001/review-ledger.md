@@ -2640,3 +2640,11 @@ R94 retains every verified R93 gain and closes both fresh vetoes. Current status
 Executable hostile projections cover missing, extra, wrong-type, duplicate-owner, noncanonical-owner, mismatched-total and false-copy attacks. The checker also derives the exact six answer-bearing transitions from the authoritative catalogue and executes twenty-four recovery scenarios: forward and reverse withdrawal crossed with forward and reverse reanswer. Every scenario proves the full initial count, every partial per-owner count, zero premature review requests and review availability only after the final replacement. This includes one owner with two and three missing answers, equal multi-owner states and unequal partial states up to six missing answers.
 
 The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R94 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
+
+### R94 seven-role veto
+
+R94 froze at commit `9f3632c3cbc5355f54109bd1744f08e8ec08fb89`, tree `f67743819de4eab3c6eaf05478a3e561ad288c7e`, parent `d66981dad9f9a6b92b31e0d7f941f498f291bc37`. The full regression passed. Independent human and architecture traces confirmed that repeated-owner, split-owner, partial recovery, review timing and local integration boundaries were genuinely repaired.
+
+Four roles passed. Epistemic Integrity, Lifecycle/Security/Privacy and Implementation Correctness vetoed the exact bytes on a fresh schema-authority escape. Any non-empty owner string validates, so fabricated humans become generic “answer owner” copy. Unsafe JavaScript integers also validate as exact counts. Finally, standalone projection validation proves only internal consistency, not equality with the authoritative missing-head obligation set.
+
+The exact [R94 panel verdict](../../g24-predicate-authority-r94-panel-verdict.md) preserves all role results, retained gains, probes and the mandatory R95 repair. R95 must bind owners to permitted humans, use safe exact arithmetic and require authoritative expected obligations. R75 and R77 remain unchanged; no external authority is opened.
