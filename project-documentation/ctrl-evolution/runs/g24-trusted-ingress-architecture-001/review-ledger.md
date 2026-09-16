@@ -2698,3 +2698,21 @@ R96 froze at commit `b7a348bd1a5ed91f42edd5c180b15a6bc2b74741`, tree `5c232f4ef9
 All six human-value and correctness roles vetoed a fresh cross-path escape. Corrupting an open challenge's signed trigger makes `currentStatus` unavailable, but review-event generation still emits two actions and `revalidate` accepts the existing signed review, appends resolution state and reopens work. The verifier exists only on the display path.
 
 The exact [R96 panel verdict](../../g24-predicate-authority-r96-panel-verdict.md) preserves the retained gains, independent reproductions and mandatory R97 repair. One provenance gate must govern status, review generation, review validation and durable reopening. R75 and R77 remain unchanged; no external authority is opened.
+
+### R97 cross-path provenance gate candidate
+
+**State:** local candidate pending full regression, exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `48d491a6b025d6a33985da6e9c27f22da5237557c93d528a32339bc3bae1035a`
+
+**Manifest bundle fingerprint:** `f65d8afa7c5cd54b740b330a6ae0e7615237a7e231976a5b02bd9237b68f7a3e`
+
+R97 replaces R96's path-local status verifier with one shared challenge-provenance gate used by status, unsigned review generation, signed review validation and the final durable revalidation mutation. It validates the accepted record and exact decision context, challenge and baseline membership, signed trigger bytes and answer edge, responsible human, every observation record and signed observation edge.
+
+Review events and resolution records now carry a canonical `challenge_authority_fingerprints` set and seal. Each member binds challenge fingerprint, trigger reference and fingerprint, responsible human, and prior/resulting answer fingerprints. Event identity also includes the authority seal, so a review signed for one causal chain cannot be silently reused for another challenge chain that happens to keep the same IDs.
+
+The decisive R96 escape is now a first-class regression across six trigger mutation classes. Each mutation must simultaneously produce typed unavailable status, zero unsigned review requests, rejected signed review, no revalidation or baseline mutation, and a continuing descendant block. Three observation-chain mutations enforce the same invariant. After successful review the full historical challenge provenance remains live: corrupting it makes status unavailable and blocks again; restoring exact bytes restores the current state.
+
+The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R97 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
