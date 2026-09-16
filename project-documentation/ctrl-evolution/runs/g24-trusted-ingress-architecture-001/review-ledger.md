@@ -2580,3 +2580,17 @@ R91 froze at commit `eddb4ea1ff870c3f87ccd3ea7f89775f92e0b5eb`, tree `308989549c
 The signed multi-change fixture authorised review at 09:10 for an intervening transition observed at 09:12. Revalidation checked original challenge time but not observation or current-head transition time. Durable `resolved_at` also used the first caller-supplied event, so unequal valid signer times made resolution and baseline bytes order-dependent and could record completion before the final required signer. Event IDs omitted evolving observation state. In a valid mixed withdrawal/correction state, append order decided whether the singular status exposed the mandatory replacement-first step, even though review requests correctly remained unavailable. An exposed throwing listener also made answer advancement throw after state, challenge and block effects had committed.
 
 The exact [R91 panel verdict](../../g24-predicate-authority-r91-panel-verdict.md) preserves the role evidence, strongest counterpoints and mandatory R92 repair. R75 and R77 remain unchanged; no external authority is opened.
+
+### R92 causally ordered review and humane recovery candidate
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`, explicitly reaffirmed by the founder on 16 September 2026
+
+**Authority bundle fingerprint:** `96632df91cb1555cef6e5e00a14bed6b66c6c83b3663e30362799a71893ed955`
+
+**Manifest bundle fingerprint:** `cf46160957721f2ba806511a3466fd1755e4196f5e51cbc498b6713c8f9c5847`
+
+R92 preserves every verified R91 repair while closing all five fresh vetoes. Review authority cannot predate the latest challenged transition, intervening observation or current reviewed head. Event identity binds the complete evolving review state and authority time. Resolution time is the canonical maximum human authority time, so reversed unequal-time events create identical durable resolution and baseline bytes. Mixed withdrawal and correction guidance is order-independent: a missing replacement always yields `replacement_required` and zero normal review requests, while a completed replacement yields one review covering all changes. A throwing exposed listener cannot convert committed state, challenge and block effects into an ambiguous failed call.
+
+The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. New signed fixtures reject review one millisecond before the latest observation, prove forward/reverse replay equality, exercise both mixed-state append orders and verify later reblocking. R92 remains local deterministic same-process evidence only. It opens no runtime, database, UI, external action, deployment, merge, release or production authority. The next action is exact Git freeze followed by seven-role review of that immutable identity.
