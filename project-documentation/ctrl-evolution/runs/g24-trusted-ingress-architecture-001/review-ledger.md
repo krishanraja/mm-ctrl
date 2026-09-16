@@ -2508,3 +2508,25 @@ All seven durable roles vetoed. The exact [R82 panel verdict](../../g24-predicat
 R83 imports only named exact sections from frozen R82 and replaces every other rule. It executes all fifty-four displayed dependency-by-option paths, signs the exact free-expression interpretation and decision-bearing value shown to the person, atomically routes one gap to one question and multiple gaps to one Krish-led session, binds semantic resolution to full tenant and decision context, resolves correction referents through a versioned authority store, and internalizes one shared external replay and consume registry while separating effective and test terminal authority.
 
 One hundred and forty-six pinned positive and adversarial vectors pass. The independent checker also derives 174 required-field totality probes and verifies that malformed arbitrary JSON is rejected without throwing. R83 remains local contract data and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.
+
+### R83 seven-role veto
+
+R83 froze at commit `7ad53b0137a24b58b145f062883745030e198a01`, tree `2abfd1236f994d96671dd219b1e8988026e99db7`, parent `85572b6fc591e7fc3700567ab6903f7a7b7e3e0c`, authority bundle `6cdafd052810ab19dc5f8c9067cf7abd75c8a415b73b1e7a25e6c02b5790a646` and manifest bundle `e4ab7487e0f73f847204cee2a92854fb50208f7fdce5e320aebd44c51521a171`.
+
+All seven durable roles vetoed. The exact [R83 panel verdict](../../g24-predicate-authority-r83-panel-verdict.md) preserves the findings. Strong individual receipts did not form one coherent authority path: opposed proceed and stop answers and conflicting values could jointly satisfy; route receipts were absent from predicate authority; derived facts did not resolve versioned source bytes or execute their registered semantics; generic initial-review evidence could reopen closed work; and malformed companion arguments plus request-replay boundaries remained unsafe.
+
+## R84 reconciled authority contract
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `15b4169be667016c3984f9e215a9bb3370e98b567afe032a5acd654e24a8bb20`
+
+**Manifest bundle fingerprint:** `88d82c090e94c9475dfd267a40df44c0de639190043a20d0c1649bbdb5082bb9`
+
+R84 imports only seven named exact sections from frozen R83 and replaces every other rule. It reconciles every normative effect into one accepted after-state, makes incompatible routes and values contradictory, binds exact route receipts and the reconciled decision through final human authority, gives post-close preparation a distinct purpose and fresh review path, and resolves derived facts from versioned source records before executing the registered derivation.
+
+External replay now binds mode, policy and exact request bytes; test completion cannot satisfy effective mode; protocol evidence is closed at early events. The claim is intentionally limited to one checker process because no runtime or cross-process transactional adapter is authorized. All thirteen transitions have positive predicate and final-authority paths. One hundred and ninety-seven pinned vectors and 282 field-level and hostile whole-tuple totality probes pass.
+
+R84 remains local contract data and deterministic conformance evidence only. It does not implement a semantic evaluator, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write. The next action is exact Git freeze and seven-role review of that immutable identity.
