@@ -2558,3 +2558,17 @@ R90 froze at commit `ecd4e9f634824dd2c0c18d6b8bbb06914165ce66`, tree `9f4503f0a8
 All seven durable roles nevertheless vetoed the candidate on fresh evidence. A partial review rebuilt the current watched baseline from only open-challenge heads, silently dropping unchanged accepted dependencies and allowing a later valid correction to escape review. Revalidation accepted duplicate caller event IDs and used `find` by reference, so two signed human events could collapse into the first event twice and changed retry bytes could be hidden. The singular status projection also returned `This decision is current.` for null, empty and unknown accepted identities. A secondary audit finding showed that multiple pre-review answer changes remain safely blocked but the durable challenge records only the first intermediate resulting head.
 
 The exact [R90 panel verdict](../../g24-predicate-authority-r90-panel-verdict.md) preserves the role verdicts, probes, retained repairs and mandatory R91 rules. R75 and the active R77 founder lock remain unchanged. No runtime, database, UI, deployment, merge, release or external authority is opened.
+
+### R91 complete-baseline and one-to-one review candidate
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `a1db61d5dbd9967966c925429e968eea4eb5602fb9bb0ceef25a70c807a851c3`
+
+**Manifest bundle fingerprint:** `37224973e4557d30b906daced1099c4f82341989d9ff9af9d09d59d034717e2c`
+
+R91 preserves R90's verified withdrawal and repeat-cycle repairs while closing all three fresh vetoes. A reviewed baseline now starts with the full prior dependency set, replaces only exact challenged members and rejects any key-set shrinkage. Revalidation authority is stored as canonical one-to-one human, event-reference and event-fingerprint tuples; caller event IDs are derived and duplicate IDs reject before replay. Idempotence compares the full structured event bundle. Null, empty, unknown and reset-stale accepted identities return typed unavailable status. Multiple answer changes before one review append immutable observations whose exact set is sealed into the final review.
+
+The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. New executable sequences preserve an unchanged second dependency through partial review and prove that its later correction re-blocks; reject two correctly signed humans sharing one event ID and a changed duplicate retry; accept reordered exact replay; preserve and seal a two-change observation chain; and reject false current-state reassurance for nonexistent decisions. R91 remains local contract data and deterministic same-process evidence only. No runtime, database, UI, external action, deployment, merge, release or production authority is opened.
