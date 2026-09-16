@@ -46,11 +46,11 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Freeze the exact [R86 immutable route and visible consequence contract]'),
+  state.includes('**CURRENT_NEXT_ACTION:** Freeze the exact [R87 authoritative answer-state and atomic finality contract]'),
 )
 check(
   'design state remains inside the trusted-ingress gate',
-  designState.includes('freeze the exact R86 immutable route and visible consequence contract') && designState.includes('No semantic evaluator implementation, result-producing success branch, runtime integration'),
+  designState.includes('freeze the exact R87 authoritative answer-state and atomic finality contract') && designState.includes('No semantic evaluator implementation, result-producing success branch, runtime integration'),
 )
 check('R68 source bytes founder-locked', sha256(r68.executable_artifact.source_path) === 'fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104')
 check('R68 founder-lock identity exact', r68.executable_artifact.founder_lock.founder_lock_identity === '4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06')
