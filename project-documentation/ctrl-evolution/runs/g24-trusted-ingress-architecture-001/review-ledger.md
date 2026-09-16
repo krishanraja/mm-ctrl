@@ -2468,3 +2468,23 @@ All seven durable roles vetoed. The exact [R80 panel verdict](../../g24-predicat
 R81 imports only exact named sections from the frozen R80 commit and replaces every other rule. Its independent checker now verifies registered Ed25519 issuance for login, answer, free-expression confirmation and final transition approval; exact question-to-effect causality; authoritative subject, case, purpose, audience, predecessor, proof, bundle, render and reservation bindings; transition-derived complete dependency sets; full semantic and derived-fact closure; canonical case and durable one-question state; sealed correction traversal; and typed external CAS, finality, recovery and replay guards.
 
 Sixty-one adversarial vectors pass. The contract remains local data and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.
+
+### R81 seven-role veto
+
+R81 froze at commit `5cfbbeaaa849c493b1a9158c50b248b31e60b207`, tree `9072f012cb83e29f6b4ce5c1dbc66a780a0abc0d`, authority bundle `1eb364278d9832b11196f170854ad075c79536170317dddd153c076ebca8ffcf` and manifest bundle `e4146fedf8d07abcc0b8c5425bccc46185f2ce7931a8bde01408ec72441c25c2`.
+
+All seven durable roles vetoed. The exact [R81 panel verdict](../../g24-predicate-authority-r81-panel-verdict.md) preserves the findings. R81 proved signed envelopes more strongly than the meaning inside them. One visible answer could be relabelled as another judgement; assertion content, Brain standing, contrary state and derived receipts could self-certify; completed-close obligations were caller-shaped; correction referents were unresolved; external policy and evidence were caller-selectable; replay state was invocation-local; and malformed complete-looking values could throw.
+
+### R82 authority-resolved contract
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `4ec4b91de0b3ac8df8792cc971cfb8e5df47a8af7e467b4d05fa4b8346fb5fd2`
+
+**Manifest bundle fingerprint:** `9fb78d5f05df7b8731e02b93549a8febdd82fa75e285b6544dd59618bf4bf59d`
+
+R82 imports only exact named sections from frozen R81 Git bytes and replaces every other rule. Six visible judgement contracts bind all eighteen atomic human dependencies to the exact question and executable effect the person sees. Semantic assertions, Brain standing, contrary state, derived receipts and completed-close obligations now resolve from sealed contract authority. Correction validates multiple authoritative graphs and exact referents. Effective external authority cannot borrow test policy, protocol evidence or terminal receipts, and replay or consumption uses shared transactional state. Finite JSON and typed malformed-input rejection close canonicalization and crash escapes.
+
+Eighty-three pinned positive and adversarial vectors pass. R82 remains local contract data and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.

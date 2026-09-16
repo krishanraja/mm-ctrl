@@ -1,0 +1,32 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r82.effective-resolution.v1",
+  "module_id": "effective_resolution",
+  "semantic_base": {
+    "commit": "5cfbbeaaa849c493b1a9158c50b248b31e60b207",
+    "tree": "9072f012cb83e29f6b4ce5c1dbc66a780a0abc0d",
+    "standing": "vetoed_source_material_not_effective_authority"
+  },
+  "imported_exact_sections": [
+    { "effective_section": "lineage", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/lineage" },
+    { "effective_section": "semantic_profile_schema", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/semantic_profile_schema" },
+    { "effective_section": "accepted_decision_state_schema", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/accepted_decision_state_schema" },
+    { "effective_section": "external_authority_proof_schema", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/external_authority_proof_schema" },
+    { "effective_section": "transition_catalogue", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/transition_catalogue" },
+    { "effective_section": "atomic_judgement_registry", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/atomic_judgement_registry" },
+    { "effective_section": "owner_registry", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r81/08-effective-contract.json", "json_pointer": "/owner_registry" }
+  ],
+  "r82_replacement_sections": ["trust_and_context_program", "semantic_set_program", "interaction_program", "correction_program", "external_program", "executable_vectors"],
+  "inheritance_rule": "only_named_exact_sections_are_imported_every_other_r81_rule_is_replaced",
+  "unknown_or_conflicting_section": "reject_contract",
+  "authority_still_closed": [
+    "semantic evaluator implementation",
+    "result-producing lifecycle success branch",
+    "runtime integration or live registry wiring",
+    "database schema migration or production data change",
+    "customer-facing UI",
+    "external research model spend email or service mutation",
+    "merge deployment release or production promotion",
+    "legacy backend deletion",
+    "cross-venture Supabase decision-ledger write"
+  ]
+}
