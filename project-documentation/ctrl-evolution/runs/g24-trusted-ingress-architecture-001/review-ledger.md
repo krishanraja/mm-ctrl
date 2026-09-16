@@ -2530,3 +2530,23 @@ R84 imports only seven named exact sections from frozen R83 and replaces every o
 External replay now binds mode, policy and exact request bytes; test completion cannot satisfy effective mode; protocol evidence is closed at early events. The claim is intentionally limited to one checker process because no runtime or cross-process transactional adapter is authorized. All thirteen transitions have positive predicate and final-authority paths. One hundred and ninety-seven pinned vectors and 282 field-level and hostile whole-tuple totality probes pass.
 
 R84 remains local contract data and deterministic conformance evidence only. It does not implement a semantic evaluator, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write. The next action is exact Git freeze and seven-role review of that immutable identity.
+
+### R84 seven-role veto
+
+R84 froze at commit `571e6497c6b75f4a6a742f366b54517f9f1916cc`, tree `ae45d6c45a303d6757d82acdfc8f965a6712afed`, parent `7ad53b0137a24b58b145f062883745030e198a01`, authority bundle `15b4169be667016c3984f9e215a9bb3370e98b567afe032a5acd654e24a8bb20` and manifest bundle `88d82c090e94c9475dfd267a40df44c0de639190043a20d0c1649bbdb5082bb9`.
+
+All seven durable roles vetoed. The exact [R84 panel verdict](../../g24-predicate-authority-r84-panel-verdict.md) preserves the findings. R84 still asked people to authorize an opaque hash; treated free expression as support; accepted caller-mintable route receipts; reconciled unreferenced evidence; trusted incomplete freshness and grant semantics; split closed-predecessor identity across unrelated conventions; burned external authority on failed work; exposed a hostile transition accessor; and validated final authority without resolving predicate evidence.
+
+## R85 resolved human authority contract
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `d172bfb566c56c964da5296a04cd8bbbff5c2d779d8d7c75f22adfd73367e963`
+
+**Manifest bundle fingerprint:** `6859e3c244b7e09662c66e62e3290bf1baafe1856403b33d66c4cdf76462999c`
+
+R85 closes the evidence store before reconciliation; renders and signs the exact decision and complete material delta; executes signed support-or-block meanings for free expression; issues authenticated routes from a private authority store and binds each once to one predicate proof; uses closed derivation dispatch, complete freshness boundaries and current grant status, expiry and revocation; joins reopening through one typed closed-predecessor record; compares grant issuance with an authoritative paused or closed lifecycle boundary; revalidates the predicate, evidence, route and render at final authority; and stages external replay and consume mutation until accepted terminal completion.
+
+All thirteen transitions have positive predicate and final-authority paths. Two hundred and five pinned vectors and 300 generated totality probes pass. R85 remains local contract data and deterministic conformance evidence only. It does not implement a semantic evaluator, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write. The next action is exact Git freeze and seven-role review of that immutable identity.

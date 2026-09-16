@@ -78,7 +78,7 @@
     "brain:g24:ingress-r44-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r44.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r44.mjs",
     "brain:g24:ingress-r45-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r45.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r45.mjs",
     "brain:g24:ingress-r46-check": "node scripts/materialize-ctrl-g24-trusted-ingress-r46.mjs --check && node scripts/check-ctrl-g24-trusted-ingress-r46.mjs",
-    "postdocs:check": "npm run brain:g24:ingress-r66-check && npm run brain:g24:evaluator-r70-archive-check && npm run brain:g24:predicate-r76-closure-check && npm run brain:g24:predicate-r77-lock-check && npm run brain:g24:predicate-r78-check && npm run brain:g24:predicate-r79-check && npm run brain:g24:predicate-r80-check && npm run brain:g24:predicate-r81-check && npm run brain:g24:predicate-r82-check && npm run brain:g24:predicate-r83-check && npm run brain:g24:predicate-r84-check",
+    "postdocs:check": "npm run brain:g24:ingress-r66-check && npm run brain:g24:evaluator-r70-archive-check && npm run brain:g24:predicate-r76-closure-check && npm run brain:g24:predicate-r77-lock-check && npm run brain:g24:predicate-r78-check && npm run brain:g24:predicate-r79-check && npm run brain:g24:predicate-r80-check && npm run brain:g24:predicate-r81-check && npm run brain:g24:predicate-r82-check && npm run brain:g24:predicate-r83-check && npm run brain:g24:predicate-r84-check && npm run brain:g24:predicate-r85-check",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node standards/check-standards.mjs",
@@ -130,7 +130,8 @@
     "brain:g24:predicate-r81-check": "node scripts/materialize-ctrl-g24-predicate-authority-r81.mjs --check && node scripts/check-ctrl-g24-predicate-authority-r81.mjs",
     "brain:g24:predicate-r82-check": "node scripts/materialize-ctrl-g24-predicate-authority-r82.mjs --check && node scripts/check-ctrl-g24-predicate-authority-r82.mjs",
     "brain:g24:predicate-r83-check": "node scripts/materialize-ctrl-g24-predicate-authority-r83.mjs --check && node scripts/check-ctrl-g24-predicate-authority-r83.mjs",
-    "brain:g24:predicate-r84-check": "node scripts/materialize-ctrl-g24-predicate-authority-r84.mjs --check && node scripts/check-ctrl-g24-predicate-authority-r84.mjs"
+    "brain:g24:predicate-r84-check": "node scripts/materialize-ctrl-g24-predicate-authority-r84.mjs --check && node scripts/check-ctrl-g24-predicate-authority-r84.mjs",
+    "brain:g24:predicate-r85-check": "node scripts/materialize-ctrl-g24-predicate-authority-r85.mjs --check && node scripts/check-ctrl-g24-predicate-authority-r85.mjs"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.1",
