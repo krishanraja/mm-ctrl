@@ -2488,3 +2488,23 @@ All seven durable roles vetoed. The exact [R81 panel verdict](../../g24-predicat
 R82 imports only exact named sections from frozen R81 Git bytes and replaces every other rule. Six visible judgement contracts bind all eighteen atomic human dependencies to the exact question and executable effect the person sees. Semantic assertions, Brain standing, contrary state, derived receipts and completed-close obligations now resolve from sealed contract authority. Correction validates multiple authoritative graphs and exact referents. Effective external authority cannot borrow test policy, protocol evidence or terminal receipts, and replay or consumption uses shared transactional state. Finite JSON and typed malformed-input rejection close canonicalization and crash escapes.
 
 Eighty-three pinned positive and adversarial vectors pass. R82 remains local contract data and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.
+
+### R82 seven-role veto
+
+R82 froze at commit `85572b6fc591e7fc3700567ab6903f7a7b7e3e0c`, tree `135d3910ed98e9e2b2648bf9253584cc372cee89`, parent `5cfbbeaaa849c493b1a9158c50b248b31e60b207`, authority bundle `4ec4b91de0b3ac8df8792cc971cfb8e5df47a8af7e467b4d05fa4b8346fb5fd2` and manifest bundle `9fb78d5f05df7b8731e02b93549a8febdd82fa75e285b6544dd59618bf4bf59d`.
+
+All seven durable roles vetoed. The exact [R82 panel verdict](../../g24-predicate-authority-r82-panel-verdict.md) preserves the findings. R82 resolved better objects but not their complete context, cardinality and behavior. Thirty-four normal answer paths lacked signed events; free expression could confirm one meaning and apply another; more than one question could reserve an empty session; semantic evidence could cross subject boundaries; correction references did not resolve authoritative targets; caller-created transaction registries could consume the same token; test terminal authority entered effective validation; and malformed complete-looking inputs still threw.
+
+### R83 complete-path contract
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `6cdafd052810ab19dc5f8c9067cf7abd75c8a415b73b1e7a25e6c02b5790a646`
+
+**Manifest bundle fingerprint:** `e4ab7487e0f73f847204cee2a92854fb50208f7fdce5e320aebd44c51521a171`
+
+R83 imports only named exact sections from frozen R82 and replaces every other rule. It executes all fifty-four displayed dependency-by-option paths, signs the exact free-expression interpretation and decision-bearing value shown to the person, atomically routes one gap to one question and multiple gaps to one Krish-led session, binds semantic resolution to full tenant and decision context, resolves correction referents through a versioned authority store, and internalizes one shared external replay and consume registry while separating effective and test terminal authority.
+
+One hundred and forty-six pinned positive and adversarial vectors pass. The independent checker also derives 174 required-field totality probes and verifies that malformed arbitrary JSON is rejected without throwing. R83 remains local contract data and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.
