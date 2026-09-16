@@ -2664,3 +2664,11 @@ R95 retains R94's verified human recovery machinery and closes all three fresh s
 New attacks cover one unknown owner, two unknown owners, a registered but wrong owner, an unsafe count, individually safe counts whose sum is unsafe, and a projection whose total exceeds authoritative missing heads. The earlier missing, extra, wrong-type, duplicate, unsorted, bad-sum and false-copy attacks remain. All six answer-bearing transitions and twenty-four forward/reverse withdrawal and reanswer order classes still execute every partial stage with zero premature review.
 
 The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R95 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
+
+### R95 seven-role veto
+
+R95 froze at commit `23ce92adfc7a9abdf7551a6d4d9adefd69de41b8`, tree `35135f6e9ceb42d6e0777da42c23e48b4a130b5e`, parent `fee6bfa0d4547e93b1b2b34eada756fb3ccce1c5`. The full regression passed. Human value and architecture review confirmed every intended recovery and copy improvement.
+
+Three correctness roles vetoed the exact bytes. The contextual validator accepted a raw obligation array, and `currentStatus` passed its newly constructed array as both claim and authority. Owner identity was re-read from mutable transition specimens without comparing the bytes to the accepted transition fingerprint or signature. A registered-human substitution could therefore reassign the displayed obligation without new authority.
+
+The exact [R95 panel verdict](../../g24-predicate-authority-r95-panel-verdict.md) preserves the passing roles, retained gains and mandatory R96 repair. R96 must preserve owner and transition provenance in immutable challenge state, re-verify it on read and derive permitted humans from the accepted decision. R75 and R77 remain unchanged; no external authority is opened.
