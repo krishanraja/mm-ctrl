@@ -2648,3 +2648,19 @@ R94 froze at commit `9f3632c3cbc5355f54109bd1744f08e8ec08fb89`, tree `f67743819d
 Four roles passed. Epistemic Integrity, Lifecycle/Security/Privacy and Implementation Correctness vetoed the exact bytes on a fresh schema-authority escape. Any non-empty owner string validates, so fabricated humans become generic “answer owner” copy. Unsafe JavaScript integers also validate as exact counts. Finally, standalone projection validation proves only internal consistency, not equality with the authoritative missing-head obligation set.
 
 The exact [R94 panel verdict](../../g24-predicate-authority-r94-panel-verdict.md) preserves all role results, retained gains, probes and the mandatory R95 repair. R95 must bind owners to permitted humans, use safe exact arithmetic and require authoritative expected obligations. R75 and R77 remain unchanged; no external authority is opened.
+
+### R95 context-bound recovery authority candidate
+
+**State:** local candidate pending full regression, exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `f400a73657f3a58cc5ed20bc77c778a8e01d05dd87ab9344dff4374f9d6a3960`
+
+**Manifest bundle fingerprint:** `62edf1fe477280cd88a1306008dcc639867af53a4fa64593fa3e9f5c8c37e557`
+
+R95 retains R94's verified human recovery machinery and closes all three fresh schema-authority escapes. Permitted replacement owners resolve from the trusted named-human registry and unknown identities reject. Counts and each intermediate sum use positive safe-integer arithmetic. Replacement validation now requires the exact authoritative obligation set derived from missing heads and compares canonical per-owner entries, their total and visible copy; a structurally self-consistent but contextually wrong projection rejects.
+
+New attacks cover one unknown owner, two unknown owners, a registered but wrong owner, an unsafe count, individually safe counts whose sum is unsafe, and a projection whose total exceeds authoritative missing heads. The earlier missing, extra, wrong-type, duplicate, unsorted, bad-sum and false-copy attacks remain. All six answer-bearing transitions and twenty-four forward/reverse withdrawal and reanswer order classes still execute every partial stage with zero premature review.
+
+The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R95 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.

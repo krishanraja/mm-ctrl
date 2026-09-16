@@ -1,0 +1,674 @@
+{
+  "accepted_final_challenge_required": [
+    "challenge_id",
+    "accepted_final_id",
+    "accepted_record_fingerprint",
+    "baseline_ref",
+    "route_ref",
+    "question_id",
+    "trigger_transition_ref",
+    "changed_head_fingerprint",
+    "resulting_head_fingerprint",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "standing",
+    "current_steering_eligibility",
+    "status_text",
+    "challenged_at",
+    "challenge_fingerprint"
+  ],
+  "accepted_final_record_required": [
+    "accepted_final_id",
+    "request_identity",
+    "request_fingerprint",
+    "transition_id",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "answer_state_head_fingerprints",
+    "final_render_fingerprint",
+    "final_authority_receipt_fingerprint",
+    "accepted_at",
+    "standing",
+    "current_steering_eligibility",
+    "history_preserved_ref",
+    "record_fingerprint"
+  ],
+  "accepted_final_registry_required": ["registry_id", "records"],
+  "answer_state_repair_rules": [
+    "resolve_accepted_request_identity_before_mutable_authority_revalidation",
+    "byte_identical_accepted_retry_returns_committed_result",
+    "changed_bytes_under_same_identity_are_rejected_as_collision",
+    "accepted_final_identity_uses_canonical_server_bound_tuple",
+    "accepted_final_record_is_immutable_after_commit",
+    "post_final_answer_change_appends_challenge_block_and_repair_records",
+    "challenged_predecessor_blocks_actual_descendant_predicates",
+    "reopening_requires_exact_signed_human_authority_set",
+    "revalidation_binds_exact_open_challenges_and_full_current_head_records",
+    "withdrawal_requires_strictly_post_withdraw_current_reanswer",
+    "successful_revalidation_appends_new_watched_dependency_baseline",
+    "later_change_to_revalidated_head_creates_fresh_challenge",
+    "revalidation_authority_entries_are_one_to_one_and_canonically_ordered",
+    "replay_compares_the_full_canonical_authority_event_bundle",
+    "new_baseline_replaces_only_challenged_route_question_members_and_preserves_all_others",
+    "baseline_membership_may_change_only_through_separately_authorized_dependency_set_evolution",
+    "multiple_changes_before_review_append_immutable_challenge_observations",
+    "status_projection_resolves_an_accepted_record_before_reporting_current",
+    "mixed_open_status_is_order_independent_and_replacement_required_takes_precedence",
+    "listener_failure_isolated_from_committed_answer_transition_result",
+    "replacement_status_count_and_owners_match_every_non_current_open_head",
+    "each_listener_registration_owns_one_exact_idempotent_unsubscribe_handle",
+    "current_status_uses_one_closed_discriminated_schema_per_status",
+    "replacement_obligations_preserve_the_exact_remaining_count_for_each_named_human",
+    "replacement_copy_is_derived_only_from_typed_canonical_obligations",
+    "replacement_owners_must_belong_to_the_exact_permitted_named_human_set",
+    "replacement_counts_and_every_sum_must_be_positive_safe_integers",
+    "replacement_projection_must_equal_the_authoritative_missing_head_obligations"
+  ],
+  "authoritative_dependency_graph_required": [
+    "graph_head",
+    "graph_epoch",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "root_dependency_ids",
+    "edges",
+    "graph_fingerprint"
+  ],
+  "authoritative_fixture_graphs": [
+    {
+      "graph": {
+        "case_id": "case-1",
+        "edges": [
+          {
+            "edge_kind": "content_dependency",
+            "from_dependency_id": "dep-1",
+            "to_dependency_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111",
+            "to_dependency_id": "dep-1"
+          },
+          {
+            "edge_kind": "permission_dependency",
+            "from_dependency_id": "dep-1",
+            "to_dependency_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222",
+            "to_dependency_id": "dep-2"
+          },
+          {
+            "edge_kind": "scope_dependency",
+            "from_dependency_id": "dep-2",
+            "to_dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333",
+            "to_dependency_id": "dep-3"
+          }
+        ],
+        "graph_epoch": 9,
+        "graph_fingerprint": "7c9dabc908e3890a75e8e17b9073afa2ae23511356e6ece04a50ece725aad7bf",
+        "graph_head": "graph-9",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "root_dependency_ids": ["dep-1"],
+        "subject_id": "leader-1"
+      },
+      "repairs": [
+        {
+          "affected_artifact_ref": "projection-1",
+          "challenged_proof_ref": "proof-1",
+          "dependency_id": "dep-1",
+          "dependency_use_ref": "use-dep-1",
+          "descendant_block_ref": "block-dep-1",
+          "history_preserved_ref": "history-dep-1",
+          "repair_action": "rebuild_projection",
+          "resulting_version_ref": "projection-2",
+          "terminal_status": "rebuilt",
+          "trigger_ref": "correction-1"
+        },
+        {
+          "affected_artifact_ref": "release-1",
+          "challenged_proof_ref": "proof-1",
+          "dependency_id": "dep-2",
+          "dependency_use_ref": "use-dep-2",
+          "descendant_block_ref": "block-dep-2",
+          "history_preserved_ref": "history-dep-2",
+          "repair_action": "require_human_review",
+          "resulting_version_ref": null,
+          "terminal_status": "review_required",
+          "trigger_ref": "correction-1"
+        },
+        {
+          "affected_artifact_ref": "permission-1",
+          "challenged_proof_ref": "proof-1",
+          "dependency_id": "dep-3",
+          "dependency_use_ref": "use-dep-3",
+          "descendant_block_ref": "block-dep-3",
+          "history_preserved_ref": "history-dep-3",
+          "repair_action": "quarantine_artifact",
+          "resulting_version_ref": null,
+          "terminal_status": "quarantined",
+          "trigger_ref": "correction-1"
+        }
+      ]
+    },
+    {
+      "graph": {
+        "case_id": "case-1",
+        "edges": [
+          {
+            "edge_kind": "content_dependency",
+            "from_dependency_id": "dep-10",
+            "to_dependency_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "to_dependency_id": "dep-10"
+          },
+          {
+            "edge_kind": "scope_dependency",
+            "from_dependency_id": "dep-10",
+            "to_dependency_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "to_dependency_id": "dep-11"
+          }
+        ],
+        "graph_epoch": 10,
+        "graph_fingerprint": "a93bce05d86d18d9dbdb8a66d468b96cbcb1323b3f1cc7983e53d13d302d62f0",
+        "graph_head": "graph-10",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "root_dependency_ids": ["dep-10"],
+        "subject_id": "leader-1"
+      },
+      "repairs": [
+        {
+          "affected_artifact_ref": "projection-10",
+          "challenged_proof_ref": "proof-2",
+          "dependency_id": "dep-10",
+          "dependency_use_ref": "use-dep-10",
+          "descendant_block_ref": "block-dep-10",
+          "history_preserved_ref": "history-dep-10",
+          "repair_action": "rebuild_projection",
+          "resulting_version_ref": "projection-11",
+          "terminal_status": "rebuilt",
+          "trigger_ref": "correction-2"
+        },
+        {
+          "affected_artifact_ref": "permission-10",
+          "challenged_proof_ref": "proof-2",
+          "dependency_id": "dep-11",
+          "dependency_use_ref": "use-dep-11",
+          "descendant_block_ref": "block-dep-11",
+          "history_preserved_ref": "history-dep-11",
+          "repair_action": "quarantine_artifact",
+          "resulting_version_ref": null,
+          "terminal_status": "quarantined",
+          "trigger_ref": "correction-2"
+        }
+      ]
+    }
+  ],
+  "authoritative_referent_required": [
+    "ref",
+    "kind",
+    "graph_head",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "current_state",
+    "effect"
+  ],
+  "authoritative_referent_store": {
+    "records": [
+      {
+        "case_id": "case-1",
+        "current_state": "accepted",
+        "effect": "invalidates_challenged_dependencies",
+        "graph_head": "graph-9",
+        "kind": "correction_trigger",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "correction-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "challenged",
+        "effect": "cannot_steer",
+        "graph_head": "graph-9",
+        "kind": "challenged_proof",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "proof-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "superseded",
+        "effect": "cannot_steer",
+        "graph_head": "graph-9",
+        "kind": "dependency_use",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "use-dep-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "affected",
+        "effect": "repair_required",
+        "graph_head": "graph-9",
+        "kind": "affected_artifact",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "projection-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "immutable_preserved",
+        "effect": "preserves_superseded_version",
+        "graph_head": "graph-9",
+        "kind": "history_record",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "history-dep-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "active",
+        "effect": "blocks_descendant_steering",
+        "graph_head": "graph-9",
+        "kind": "descendant_block",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "block-dep-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "current",
+        "effect": "replaces_affected_artifact",
+        "graph_head": "graph-9",
+        "kind": "resulting_version",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "projection-2",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "superseded",
+        "effect": "cannot_steer",
+        "graph_head": "graph-9",
+        "kind": "dependency_use",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "use-dep-2",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "affected",
+        "effect": "repair_required",
+        "graph_head": "graph-9",
+        "kind": "affected_artifact",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "release-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "immutable_preserved",
+        "effect": "preserves_superseded_version",
+        "graph_head": "graph-9",
+        "kind": "history_record",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "history-dep-2",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "active",
+        "effect": "blocks_descendant_steering",
+        "graph_head": "graph-9",
+        "kind": "descendant_block",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "block-dep-2",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "superseded",
+        "effect": "cannot_steer",
+        "graph_head": "graph-9",
+        "kind": "dependency_use",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "use-dep-3",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "affected",
+        "effect": "repair_required",
+        "graph_head": "graph-9",
+        "kind": "affected_artifact",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "permission-1",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "immutable_preserved",
+        "effect": "preserves_superseded_version",
+        "graph_head": "graph-9",
+        "kind": "history_record",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "history-dep-3",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "active",
+        "effect": "blocks_descendant_steering",
+        "graph_head": "graph-9",
+        "kind": "descendant_block",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "block-dep-3",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "accepted",
+        "effect": "invalidates_challenged_dependencies",
+        "graph_head": "graph-10",
+        "kind": "correction_trigger",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "correction-2",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "challenged",
+        "effect": "cannot_steer",
+        "graph_head": "graph-10",
+        "kind": "challenged_proof",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "proof-2",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "superseded",
+        "effect": "cannot_steer",
+        "graph_head": "graph-10",
+        "kind": "dependency_use",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "use-dep-10",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "affected",
+        "effect": "repair_required",
+        "graph_head": "graph-10",
+        "kind": "affected_artifact",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "projection-10",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "immutable_preserved",
+        "effect": "preserves_superseded_version",
+        "graph_head": "graph-10",
+        "kind": "history_record",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "history-dep-10",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "active",
+        "effect": "blocks_descendant_steering",
+        "graph_head": "graph-10",
+        "kind": "descendant_block",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "block-dep-10",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "current",
+        "effect": "replaces_affected_artifact",
+        "graph_head": "graph-10",
+        "kind": "resulting_version",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "projection-11",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "superseded",
+        "effect": "cannot_steer",
+        "graph_head": "graph-10",
+        "kind": "dependency_use",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "use-dep-11",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "affected",
+        "effect": "repair_required",
+        "graph_head": "graph-10",
+        "kind": "affected_artifact",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "permission-10",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "immutable_preserved",
+        "effect": "preserves_superseded_version",
+        "graph_head": "graph-10",
+        "kind": "history_record",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "history-dep-11",
+        "subject_id": "leader-1"
+      },
+      {
+        "case_id": "case-1",
+        "current_state": "active",
+        "effect": "blocks_descendant_steering",
+        "graph_head": "graph-10",
+        "kind": "descendant_block",
+        "permitted_audience": ["leader-1", "krish"],
+        "purpose_id": "purpose-1",
+        "ref": "block-dep-11",
+        "subject_id": "leader-1"
+      }
+    ],
+    "store_id": "r90-correction-referent-store",
+    "store_version": "1"
+  },
+  "dependency_baseline_required": [
+    "baseline_id",
+    "accepted_final_id",
+    "predecessor_baseline_ref",
+    "source_ref",
+    "answer_heads",
+    "standing",
+    "created_at",
+    "record_fingerprint"
+  ],
+  "descendant_block_required": [
+    "block_id",
+    "challenge_id",
+    "accepted_final_id",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "standing",
+    "status_text",
+    "created_at",
+    "block_fingerprint"
+  ],
+  "edge_kind_values": [
+    "content_dependency",
+    "permission_dependency",
+    "scope_dependency"
+  ],
+  "edge_required": [
+    "from_dependency_id",
+    "to_dependency_id",
+    "to_dependency_fingerprint",
+    "edge_kind"
+  ],
+  "member_required": ["dependency_id", "dependency_fingerprint", "edge_kind"],
+  "module_id": "correction_program",
+  "receipt_current_steering_eligibility": false,
+  "repair_action_values": [
+    "rebuild_projection",
+    "quarantine_artifact",
+    "erase_authorized_copy",
+    "mark_unaffected_with_reason",
+    "require_human_review"
+  ],
+  "repair_receipt_required": [
+    "receipt_type",
+    "domain_separator",
+    "repair_id",
+    "graph_head",
+    "graph_epoch",
+    "dependency_set_seal",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "authority_bundle_fingerprint",
+    "trigger_ref",
+    "challenged_proof_ref",
+    "dependency_id",
+    "dependency_fingerprint",
+    "edge_kind",
+    "dependency_use_ref",
+    "affected_artifact_ref",
+    "repair_action",
+    "history_preserved_ref",
+    "descendant_block_ref",
+    "fresh_reopen_authority_ref",
+    "terminal_status",
+    "current_steering_eligibility",
+    "resulting_version_ref",
+    "issued_at",
+    "receipt_fingerprint"
+  ],
+  "revalidation_record_required": [
+    "revalidation_id",
+    "accepted_final_id",
+    "accepted_request_identity",
+    "authority_events",
+    "challenge_ids",
+    "challenge_set_seal",
+    "challenge_observation_refs",
+    "challenge_observation_seal",
+    "block_ids",
+    "current_answer_heads",
+    "standing",
+    "status_text",
+    "resolved_at",
+    "record_fingerprint"
+  ],
+  "schema_version": "ctrl.g24.predicate-authority.r95.correction.v1",
+  "sealed_closure_required": [
+    "graph_head",
+    "graph_epoch",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "root_dependency_ids",
+    "members",
+    "dependency_set_seal"
+  ],
+  "terminal_status_values": [
+    "rebuilt",
+    "quarantined",
+    "review_required",
+    "unaffected_with_reason",
+    "erased"
+  ],
+  "validation_rules": [
+    "recompute_authoritative_graph_fingerprint",
+    "traverse_every_reachable_descendant_from_exact_roots",
+    "reject_omitted_extra_duplicate_or_unreachable_closure_member",
+    "recompute_domain_separated_closure_seal_over_graph_identity_context_and_member_tuples",
+    "recompute_every_domain_separated_repair_receipt_fingerprint",
+    "bind_every_receipt_to_exact_graph_epoch_seal_subject_case_purpose_and_audience",
+    "bind_trigger_challenged_proof_dependency_use_and_affected_artifact_to_authoritative_graph_records",
+    "require_exactly_one_terminal_receipt_per_closure_member",
+    "require_history_preservation_and_descendant_block_evidence",
+    "require_fresh_named_human_authority_before_any_reopen",
+    "prove_no_affected_current_path_retains_superseded_steering_authority"
+  ],
+  "challenge_observation_required": [
+    "observation_id",
+    "challenge_id",
+    "accepted_final_id",
+    "baseline_ref",
+    "route_ref",
+    "question_id",
+    "transition_ref",
+    "prior_head_fingerprint",
+    "resulting_head_fingerprint",
+    "observed_at",
+    "record_fingerprint"
+  ],
+  "revalidation_authority_entry_required": [
+    "named_human_id",
+    "event_ref",
+    "event_fingerprint"
+  ],
+  "current_status_projection_variants": {
+    "replacement_required": [
+      "status",
+      "message",
+      "required_replacements",
+      "responsible_humans",
+      "replacement_obligations"
+    ],
+    "review_required": ["status", "message"],
+    "current": ["status", "message"],
+    "not_found": ["status", "message"]
+  },
+  "replacement_obligation_required": [
+    "named_human_id",
+    "required_replacements"
+  ],
+  "current_status_authority_rules": [
+    "resolve_permitted_named_humans_from_the_exact_accepted_decision_context",
+    "reject_unknown_or_unregistered_replacement_owner",
+    "require_positive_safe_integer_cardinality",
+    "reject_any_unsafe_intermediate_or_final_sum",
+    "require_exact_equality_with_authoritative_missing_head_obligations",
+    "derive_visible_copy_only_after_contextual_authority_validation"
+  ]
+}
