@@ -2380,3 +2380,17 @@ The verdicts were delivered through independent reviewer messages. They are not 
 R75 is now `founder_ready_pending_explicit_founder_choice`. An explicit founder approval would authorize only a separate local machine-contract design and verification gate. Until that choice, no machine contract, evaluator implementation, runtime, registry, database or schema change, customer UI, deployment, merge, release or external action is authorized.
 
 During R76 closure, the full `postdocs:check` replay correctly exposed that its R70 step still used the historical pre-freeze candidate checker. That checker deliberately requires HEAD to equal the candidate base, the worktree to be clean and the candidate diff to contain only the R70 paths, so it is not valid after R71 and later receipts exist. The package gate now replays R70 materialization and focused tests, then uses the archive-safe R71 closure checker for exact frozen commit, tree, blob and authority verification. The historical candidate command remains available for archaeology; it is no longer misrepresented as a current-state postdocs gate.
+
+### R77 founder lock
+
+**Date:** 2026-09-16
+
+**Decision ID:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Exact founder call:** `approve r75`
+
+Krish explicitly approved the exact frozen R75 predicate-authority architecture after the seven-role R76 clearance. The [R77 founder lock](../../g24-predicate-authority-r75-founder-lock-r77.md) preserves the exact R75 commit, tree, document blob and SHA-256, the decision-time rationale, rejected alternatives, strongest counterpoint, observable revisit trigger and authority boundary.
+
+The approval opens only a separate local machine-contract design and verification gate. It authorizes a modular contract bundle, deterministic materialization and checks, adversarial fixtures, seven-role review, local documentation and commits. Semantic evaluator implementation, a result-producing success branch, runtime or registry wiring, database or schema changes, customer UI, external research or service mutation, merge, deployment, release, legacy-backend deletion and cross-venture Supabase decision-ledger writes remain closed.
+
+The cross-venture canonical decision ledger was not written because this approval did not authorize an external mutation. R77 is the authoritative mm-ctrl project decision record. A later external record must preserve the exact call and boundary and requires separate write authority plus readback.

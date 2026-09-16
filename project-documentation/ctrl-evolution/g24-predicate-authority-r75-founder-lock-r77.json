@@ -1,0 +1,134 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority-r75-founder-lock.r77.v1",
+  "record_kind": "founder_lock_and_project_decision_record",
+  "decision_record": {
+    "decision_id": "DEC-20260916-g24-predicate-authority-r75",
+    "title": "G24 predicate authority architecture",
+    "decision": "Approve the exact frozen R75 predicate-authority architecture as the governing basis for a separate local machine-contract design and verification gate.",
+    "status": "active",
+    "decided_at": "2026-09-16T08:40:50+01:00",
+    "recorded_at": "2026-09-16T08:40:50+01:00",
+    "decider": "Krish Raja",
+    "accountable_owner": "Krish Raja",
+    "scope": "system",
+    "affected_entities": [
+      "mm-ctrl G24 predicate authority",
+      "lifecycle precondition evaluator",
+      "Living Brain authority and correction",
+      "customer and operator question routing"
+    ],
+    "rationale": [
+      "mechanical truth, normative human judgement and deterministic derivation need distinct legitimate owners",
+      "an LLM may support evidence work but cannot create truth, satisfy a precondition or grant authority",
+      "complete current evidence, revocation and correction are mandatory for consequential decisions",
+      "technical rigor must preserve a simple one-question human experience"
+    ],
+    "alternatives": [
+      {
+        "route": "generic signed satisfaction assertions",
+        "reason_rejected": "a signed boolean can launder incomplete meaning, stale evidence or the wrong authority"
+      },
+      {
+        "route": "LLM interpretation of prose as predicate authority",
+        "reason_rejected": "fluency and confidence are not authority"
+      },
+      {
+        "route": "one internal database owns every truth species",
+        "reason_rejected": "human judgement and external canonical facts have different legitimate owners"
+      },
+      {
+        "route": "hold the architecture choice open",
+        "reason_rejected": "R75 cleared all seven roles and remaining uncertainty belongs in the machine-contract proof"
+      }
+    ],
+    "dissent": "The chosen route creates substantial cross-system consistency, revocation, repair and fixture complexity compared with a conventional LLM wrapper.",
+    "tradeoffs": [
+      "accept more hidden implementation rigor to avoid false authority",
+      "hold safely when a canonical source cannot prove current authority",
+      "require explicit human judgement where meaning cannot be discovered mechanically"
+    ],
+    "evidence_refs": [
+      {
+        "ref": "git:e6494cda6fba4ce8209f99f1611ba3803de34370:project-documentation/ctrl-evolution/g24-predicate-authority-founder-decision-r75.md",
+        "standing": "fact",
+        "role": "exact approved decision bytes"
+      },
+      {
+        "ref": "git:e79e076c7bdd86b95748672fde6f9b0636e69618:project-documentation/ctrl-evolution/g24-predicate-authority-r75-founder-ready-receipt-r76.md",
+        "standing": "fact",
+        "role": "seven-role review clearance and authority boundary"
+      },
+      {
+        "ref": "codex-thread:01a06e5f-e505-78f2-9c17-73d74cdc7d46:user-message:2026-09-16:approve-r75",
+        "standing": "fact",
+        "role": "explicit founder final call"
+      }
+    ],
+    "assumptions": [
+      {
+        "belief": "The R75 meanings can be represented as a modular executable contract without weakening the one-question human experience.",
+        "confidence": "high",
+        "flip_rule": "A reproducible machine-contract counterexample shows that preserving one invariant necessarily violates another."
+      }
+    ],
+    "revisit": {
+      "review_on": null,
+      "trigger": "A reproducible machine-contract counterexample cannot preserve R75 without contradiction, or a later named proof falsifies an inherited authority, safety or human-value assumption.",
+      "signal_source": "G24 machine-contract fixtures, deterministic checker and seven-role adjudication",
+      "owner": "Krish Raja",
+      "action_when_fired": "Set the decision to review_due and prepare a keep, supersede or reverse brief."
+    },
+    "authority_granted": "Versioned local machine-contract design, deterministic verification, adversarial fixtures, independent review, local documentation and local commits only.",
+    "source_ref": "Codex thread 01a06e5f-e505-78f2-9c17-73d74cdc7d46; exact user final call: approve r75",
+    "supersedes": [],
+    "superseded_by": [],
+    "outcome": "not_yet_observed",
+    "events": [
+      {
+        "type": "created",
+        "at": "2026-09-16T08:40:50+01:00",
+        "actor": "Krish Raja",
+        "source_ref": "codex-thread:01a06e5f-e505-78f2-9c17-73d74cdc7d46:user-message:2026-09-16:approve-r75"
+      }
+    ],
+    "last_verified_at": "2026-09-16T08:40:50+01:00"
+  },
+  "locked_candidate": {
+    "round": "R75",
+    "commit": "e6494cda6fba4ce8209f99f1611ba3803de34370",
+    "tree": "3e53f7ca69a0f01192f3e255471a17b81f05f313",
+    "parent": "37d0b7602265d52306b352cdab2a44d5642c0518",
+    "document_blob": "ee48e4b29d787ef3bbb17c9bf2e558cf7c2aebc6",
+    "document_sha256": "83d2bc6fd6c1042e1fff83f29904abcc7d74bc130f388aa36933e19e40293410",
+    "clearance_receipt_commit": "e79e076c7bdd86b95748672fde6f9b0636e69618"
+  },
+  "exact_final_call": "approve r75",
+  "authority_granted": [
+    "local modular machine-contract design",
+    "deterministic materialization and verification",
+    "adversarial fixtures",
+    "independent seven-role review",
+    "local documentation and commits"
+  ],
+  "not_authorized": [
+    "semantic evaluator implementation",
+    "result-producing success branch",
+    "runtime integration",
+    "live registry wiring",
+    "database or schema change",
+    "customer UI",
+    "external research or model spend",
+    "email or customer contact",
+    "service mutation",
+    "merge",
+    "deployment",
+    "release",
+    "legacy backend deletion",
+    "cross-venture Supabase decision-ledger write"
+  ],
+  "cross_venture_decision_ledger": {
+    "status": "STORE_UNAVAILABLE_EXTERNAL_WRITE_NOT_AUTHORIZED",
+    "project_record_is_authoritative_for": "mm-ctrl project state",
+    "future_write_requirement": "separate external-write authority plus authoritative readback"
+  }
+}

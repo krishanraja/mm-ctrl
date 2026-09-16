@@ -6,7 +6,7 @@ Last verified: 2026-09-13 for state routing; the Blind Spot release evidence bel
 
 This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine, founder-locked G24 R1 through R5 architecture and independently verified local headless Crossing kernel after twenty-six implementation vetoes. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
 
-**The one current evolution action:** founder approve or reject the R75 predicate-authority decision. The R76 founder-ready receipt freezes seven-role clearance, exact archive identity and the unchanged R74 decision core. R72 and R73 remain vetoed evidence. R70 remains accepted only for structural executable loading. No machine contract, result-producing evaluation, runtime integration, database, UI, deployment, merge, release or external action is authorized before explicit founder approval.
+**The one current evolution action:** design, materialize and independently verify the modular R78 predicate-authority machine-contract bundle against the founder-approved R75 architecture and R77 lock. R72 and R73 remain vetoed evidence. R70 remains accepted only for structural executable loading. No semantic evaluator implementation, result-producing success branch, runtime integration, registry wiring, database, UI, deployment, merge, release or external action is authorized.
 
 ## Current phase
 
