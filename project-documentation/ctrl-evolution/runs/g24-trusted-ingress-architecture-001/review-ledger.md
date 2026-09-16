@@ -2394,3 +2394,19 @@ Krish explicitly approved the exact frozen R75 predicate-authority architecture 
 The approval opens only a separate local machine-contract design and verification gate. It authorizes a modular contract bundle, deterministic materialization and checks, adversarial fixtures, seven-role review, local documentation and commits. Semantic evaluator implementation, a result-producing success branch, runtime or registry wiring, database or schema changes, customer UI, external research or service mutation, merge, deployment, release, legacy-backend deletion and cross-venture Supabase decision-ledger writes remain closed.
 
 The cross-venture canonical decision ledger was not written because this approval did not authorize an external mutation. R77 is the authoritative mm-ctrl project decision record. A later external record must preserve the exact call and boundary and requires separate write authority plus readback.
+
+## R78 modular machine-contract candidate
+
+**Date:** 2026-09-16
+
+**Governing decision:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Status before freeze:** candidate; deterministic producer verification passed; seven-role review pending
+
+R78 translates the founder-approved R75 architecture into fifteen closed semantic modules and one generated manifest. The modules separately own source authority, complete-set proof, semantic authority, thirteen transition bundles, deterministic predicate algebra, human receipts, one-question routing, external consistency, correction, the sole transaction boundary, a total fact-kind registry, adversarial fixtures and contract closure.
+
+The first draft was sharpened before freeze against the durable panel's recurring findings. It now makes private preparation audience limits explicit, keeps human judgement and final authority as distinct receipts, routes multiple human gaps to a safe hold or one Krish-led agenda, preserves free expression as non-authoritative until explicit human confirmation, prevents completed close from erasing outstanding obligations, separates issuer fact proof from CTRL use binding, uses a closed ordinal priority policy, blocks non-final external states from steering and restores the exact G13 repair outcomes.
+
+Producer verification proves the exact R75 and R77 lineage, all thirteen variants, complete dependency-owner coverage, strict external state and time semantics, fifty-eight required adversarial fixtures, twenty-two rejected semantic mutations and byte-identical manifest materialization under reversed module order. The current pre-freeze bundle fingerprint is `424f6eca0fd5707f15e59ce721834c334d4e910d5e1603a03a039dec7764e72f`.
+
+This round contains no evaluator success path, runtime or registry integration, database change, customer UI, external action, deployment, merge, release or legacy-backend deletion. The next step is exact Git freeze followed by seven-role review of that immutable identity.

@@ -1,0 +1,54 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "gap_explainer",
+  "responsibility": "Render one approved question atom in direct human language without inventing meaning, evidence or route effects.",
+  "forbidden": [
+    "invent_missing_meaning",
+    "invent_answer_option",
+    "invent_route_effect",
+    "show_internal_contract_vocabulary_by_default",
+    "claim_system_intelligence",
+    "render_multiple_primary_questions",
+    "hide_unknown_route",
+    "hide_free_expression_route"
+  ],
+  "input": "one_question_candidate_with_exact_effect_map",
+  "question_atom_required_fields": [
+    "question_id",
+    "named_answer_owner",
+    "plain_language_question",
+    "requested_value_kind",
+    "bounded_answer_grammar",
+    "unknown_option",
+    "free_expression_option",
+    "answer_effect_map",
+    "visible_consequence",
+    "optional_depth_ref",
+    "source_reason_ref",
+    "question_fingerprint"
+  ],
+  "customer_surface": {
+    "primary_question_count": 1,
+    "technical_provenance_default_depth": "one_layer_deeper",
+    "system_terms_hidden_by_default": true,
+    "administrative_explanation_hidden_by_default": true,
+    "answer_control_and_optional_note_remain_with_question": true
+  },
+  "language_constraints": {
+    "direct_and_concrete": true,
+    "plain_language": true,
+    "generic_business_advice": false,
+    "self_awarding_copy": false,
+    "horoscope_claims": false,
+    "compound_asks": false,
+    "forbidden_default_vocabulary": [
+      "predicate",
+      "precondition",
+      "bundle",
+      "fact kind",
+      "revocation epoch",
+      "authority policy"
+    ]
+  },
+  "output": "non_authoritative_question_atom"
+}

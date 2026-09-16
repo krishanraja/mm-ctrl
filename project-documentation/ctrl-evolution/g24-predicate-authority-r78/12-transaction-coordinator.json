@@ -1,0 +1,81 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "transaction_coordinator",
+  "responsibility": "Join factual proof, fresh human authority and exact visible consequence at the only lifecycle write boundary.",
+  "forbidden": [
+    "specialist_module_write",
+    "external_system_lock_claim",
+    "commit_unsatisfied",
+    "commit_indeterminate",
+    "reuse_authority_for_different_bytes",
+    "reuse_authority_for_hidden_consequence",
+    "widen_specialist_output",
+    "steer_from_provisional_commit"
+  ],
+  "eligible_predicate_overall_results": [
+    "satisfied"
+  ],
+  "specialist_modules_may_write": false,
+  "required_inputs": [
+    "exact_transition_id",
+    "reserved_transition_receipt_version",
+    "idempotency_key",
+    "transaction_nonce",
+    "predecessor_state_and_version",
+    "dispatch_snapshot_epoch",
+    "complete_source_set_heads_and_seals",
+    "predicate_proof_with_satisfied_result",
+    "fresh_human_authority_receipt",
+    "visible_consequence_fingerprint",
+    "external_authority_token_or_not_applicable",
+    "authoritative_server_transaction_time"
+  ],
+  "local_serializable_transaction_steps": [
+    "reserve_exact_transition_receipt_row_version",
+    "validate_authoritative_source_heads_set_epochs_and_complete_seals",
+    "obtain_authoritative_server_transaction_time",
+    "enforce_strict_validity_boundary",
+    "verify_predicate_proof_hash_and_all_dependency_dispositions",
+    "verify_exact_named_human_authority_for_transition",
+    "bind_proof_authority_subject_case_purpose_audience_transition_predecessor_snapshot_and_reserved_version",
+    "compare_and_set_all_ctrl_owned_versions_heads_seals_and_revocation_epochs",
+    "verify_external_lease_or_consumed_token_identity_current",
+    "reject_any_new_removed_changed_expired_revoked_or_contradictory_member",
+    "write_provisional_transition_and_joined_receipt_atomically_or_write_nothing"
+  ],
+  "external_completion_steps": [
+    "reserve_local_transition_receipt_and_idempotency_key",
+    "obtain_bound_lease_or_conditional_single_use_token",
+    "revalidate_local_facts_and_human_authority",
+    "commit_local_provisional_transition_with_external_token_identity",
+    "finalize_external_token_idempotently_when_protocol_requires",
+    "reconcile_lost_ack_by_same_nonce_and_token_identity",
+    "release_or_allow_expiry_if_external_step_succeeds_but_local_transaction_rolls_back",
+    "mark_finalized_only_after_protocol_specific_external_finality",
+    "quarantine_and_block_descendants_if_reconciliation_fails"
+  ],
+  "steering_rule": "only_finalized_coordination_state_may_steer",
+  "projection_rule": "reserved_external_confirmed_and_local_committed_pending_ack_must_not_project_as_current_lifecycle_state",
+  "receipt_required_fields": [
+    "transition_receipt_id",
+    "transition_id",
+    "predecessor_version",
+    "resulting_version",
+    "bundle_fingerprint",
+    "predicate_proof_fingerprint",
+    "authority_receipt_fingerprint",
+    "visible_consequence_fingerprint",
+    "external_protocol",
+    "external_token_identity",
+    "coordination_state",
+    "idempotency_key",
+    "transaction_nonce",
+    "server_transaction_time",
+    "receipt_fingerprint"
+  ],
+  "terminal_paths": [
+    "finalized",
+    "aborted",
+    "quarantined"
+  ]
+}

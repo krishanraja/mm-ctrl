@@ -45,8 +45,8 @@ const design = read('docs/current/design-state.md')
 const ledger = read('project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md')
 check('human record exact call and boundary', human.includes('Exact final call: `approve r75`') && human.includes('semantic evaluator implementation') && human.includes('cross-venture Supabase decision ledger'))
 check('canonical state routes R77', state.includes('[R77 founder lock](g24-predicate-authority-r75-founder-lock-r77.md)'))
-check('canonical next action is R78 contract gate', state.includes('**CURRENT_NEXT_ACTION:** Design, materialize and independently verify the modular R78 predicate-authority machine-contract bundle'))
-check('design route agrees', design.includes('modular R78 predicate-authority machine-contract bundle') && design.includes('No semantic evaluator implementation'))
+check('canonical next action remains inside R78 contract gate', state.includes('**CURRENT_NEXT_ACTION:** Freeze the exact [R78 modular predicate-authority machine-contract candidate]') && state.includes('No semantic evaluator implementation'))
+check('design route agrees', design.includes('freeze the exact R78 modular predicate-authority machine-contract candidate') && design.includes('No semantic evaluator implementation'))
 check('ledger preserves exact approval', ledger.includes('**Exact founder call:** `approve r75`') && ledger.includes('**Decision ID:** `DEC-20260916-g24-predicate-authority-r75`'))
 
 const attacks = [

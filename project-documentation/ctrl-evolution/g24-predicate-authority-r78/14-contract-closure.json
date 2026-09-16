@@ -1,0 +1,47 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "contract_closure",
+  "standing": "closed_schema_no_additional_properties",
+  "closed_module_ids": [
+    "common_envelope",
+    "source_adapters",
+    "set_completeness_verifier",
+    "semantic_authority_verifier",
+    "transition_assemblers",
+    "deterministic_predicates",
+    "human_authority_verifier",
+    "gap_prioritizer",
+    "gap_explainer",
+    "external_authority_coordinator",
+    "correction_invalidator",
+    "transaction_coordinator",
+    "adversarial_fixtures",
+    "fact_kind_registry",
+    "contract_closure"
+  ],
+  "top_level_key_sets": {
+    "common_envelope": ["audience_rule", "authority_species", "brain_standing_values", "caller_forbidden_fields", "canonicalization", "common_required_fields", "epistemic_basis_values", "global_forbidden_effects", "governing_decision", "module_id", "private_preparation_audience_rule", "schema_version", "semantic_profile_required_fields", "standing"],
+    "source_adapters": ["canonical_owner_rule", "external_atomic_fact_limits", "fact_authority_rules", "failure_output", "forbidden", "inputs", "module_id", "output", "responsibility", "schema_version"],
+    "set_completeness_verifier": ["forbidden", "module_id", "output", "proof_forms", "required_proof_fields", "responsibility", "schema_version", "special_sets", "validation"],
+    "semantic_authority_verifier": ["brain_boundary", "derived_fact_rule", "external_two_layer_seal", "failure_dispositions", "forbidden", "module_id", "responsibility", "schema_version", "self_certifying_labels_forbidden"],
+    "transition_assemblers": ["bundle_output", "forbidden", "module_id", "responsibility", "schema_version", "variant_count", "variant_selection", "variants"],
+    "deterministic_predicates": ["dependency_dispositions", "dependency_result_required_fields", "forbidden", "may_apply_transition", "module_id", "overall_results", "precedence", "proof_output_required_fields", "resolution_owner_values", "responsibility", "result_rules", "satisfied_capability", "schema_version"],
+    "human_authority_verifier": ["accepted_decision_fields", "answer_effect_kinds", "authority_is_separate_from_predicate_result", "final_transition_authority_domain_separator", "final_transition_authority_required_fields", "forbidden", "free_expression_rule", "freshness_rule", "lifecycle_fields_do_not_prove_material_effect", "model_and_workload_rule", "module_id", "normative_attestation_domain_separator", "normative_attestation_required_fields", "normative_judgement_kinds", "normative_judgement_resolution_owner", "responsibility", "schema_version", "single_gesture_rule", "unknown_rule"],
+    "gap_prioritizer": ["cardinality_routing", "closed_priority_policy", "eligible_gap_rules", "forbidden", "input", "interaction_limits", "model_generated_priority_score_allowed", "module_id", "outputs", "priority_order", "priority_scope", "responsibility", "schema_version", "tie_rule"],
+    "gap_explainer": ["customer_surface", "forbidden", "input", "language_constraints", "module_id", "output", "question_atom_required_fields", "responsibility", "schema_version"],
+    "external_authority_coordinator": ["allowed_edges", "coordination_state_set_is_exhaustive", "coordination_states", "fact_kind_policy", "finalization_vs_acknowledgement", "forbidden", "module_id", "proof_replay_rule", "protocols", "responsibility", "retry_rules", "schema_version", "state_contracts", "validity_rule"],
+    "correction_invalidator": ["completion_proof", "correction_triggers", "dependency_edge_kinds", "dependency_graph_seal_covers_all_edge_kinds", "forbidden", "module_id", "repair_receipt_required_fields", "required_actions", "responsibility", "schema_version", "terminal_status_values"],
+    "transaction_coordinator": ["eligible_predicate_overall_results", "external_completion_steps", "forbidden", "local_serializable_transaction_steps", "module_id", "projection_rule", "receipt_required_fields", "required_inputs", "responsibility", "schema_version", "specialist_modules_may_write", "steering_rule", "terminal_paths"],
+    "adversarial_fixtures": ["adversarial_fixtures", "module_id", "mutation_rule", "positive_fixtures", "schema_version", "semantic_negative_rule", "standing"],
+    "fact_kind_registry": ["external_fact_kinds", "human_requirements", "module_id", "registry_rules", "schema_version", "server_dependencies", "standing"],
+    "contract_closure": ["closed_module_ids", "module_id", "nested_object_rules", "schema_version", "standing", "top_level_key_sets"]
+  },
+  "nested_object_rules": {
+    "additional_properties": false,
+    "unknown_enum_value": "reject",
+    "unknown_transition_id": "reject",
+    "unknown_dependency_id": "indeterminate",
+    "duplicate_identifier": "reject",
+    "unresolved_cross_reference": "reject"
+  }
+}

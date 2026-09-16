@@ -1,0 +1,160 @@
+{
+  "allowed_module_flow": [
+    "source_adapters->set_completeness_verifier",
+    "source_adapters->semantic_authority_verifier",
+    "set_completeness_verifier->transition_assemblers",
+    "semantic_authority_verifier->transition_assemblers",
+    "transition_assemblers->deterministic_predicates",
+    "deterministic_predicates->transaction_coordinator",
+    "deterministic_predicates->gap_prioritizer",
+    "human_authority_verifier->transaction_coordinator",
+    "gap_prioritizer->gap_explainer",
+    "external_authority_coordinator->source_adapters",
+    "external_authority_coordinator->transaction_coordinator",
+    "transaction_coordinator->correction_invalidator"
+  ],
+  "authority_still_closed": [
+    "semantic evaluator implementation",
+    "result-producing success branch",
+    "runtime integration or registry wiring",
+    "database schema migration or production data change",
+    "customer-facing UI",
+    "external research model spend email or service mutation",
+    "merge deployment release or production promotion",
+    "legacy backend deletion",
+    "cross-venture Supabase decision-ledger write"
+  ],
+  "bundle_fingerprint": "424f6eca0fd5707f15e59ce721834c334d4e910d5e1603a03a039dec7764e72f",
+  "governing_decision": {
+    "decision_id": "DEC-20260916-g24-predicate-authority-r75",
+    "r75": {
+      "commit": "e6494cda6fba4ce8209f99f1611ba3803de34370",
+      "document_blob": "ee48e4b29d787ef3bbb17c9bf2e558cf7c2aebc6",
+      "document_sha256": "83d2bc6fd6c1042e1fff83f29904abcc7d74bc130f388aa36933e19e40293410",
+      "parent": "37d0b7602265d52306b352cdab2a44d5642c0518",
+      "tree": "3e53f7ca69a0f01192f3e255471a17b81f05f313"
+    },
+    "r77": {
+      "commit": "4ab418d7815c914eef155fd017ef362f1983b9a7",
+      "json_blob": "00a485fe6de9cb70e05ddf6a08096726bbd30b82",
+      "markdown_blob": "102c6f9496e87c9559a259773b00505f8f6dc492",
+      "parent": "e79e076c7bdd86b95748672fde6f9b0636e69618",
+      "tree": "06733dcc7292583cad3463030e076a03a7a1bfb1"
+    }
+  },
+  "inherited_structural_boundaries": [
+    "r66_hardened_worker_boundary",
+    "r70_closed_caller_authority_loader",
+    "r71_archive_safe_acceptance"
+  ],
+  "inherited_transition_catalogue": "g24_product_system_r4_exact_thirteen",
+  "modules": [
+    {
+      "bytes": 2743,
+      "module_id": "common_envelope",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/01-common-envelope.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "bc4e0f2dc6fee8247a9fffe78d60c42856dc7c7533ae7820aa921d1d01e77f95"
+    },
+    {
+      "bytes": 1932,
+      "module_id": "source_adapters",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/02-source-adapters.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "265819fee1c527883dd9a569dd2a5a0f31830e894a38bfa0f2960a14c7af5ff4"
+    },
+    {
+      "bytes": 1925,
+      "module_id": "set_completeness_verifier",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/03-set-completeness-verifier.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "66323758c6d7f4ec8271335fe91fca258d4fa9d01768f468a7ee4a3f86f2d090"
+    },
+    {
+      "bytes": 1845,
+      "module_id": "semantic_authority_verifier",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/04-semantic-authority-verifier.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "bf51d434e12056f342c2afb94b42ff59089fb2eb631d6772e97e9cc125172112"
+    },
+    {
+      "bytes": 9385,
+      "module_id": "transition_assemblers",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/05-transition-assemblers.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "13b111751184e3e5ebe639a561b829f02f3e0d9929b874eb389b7c34fa331247"
+    },
+    {
+      "bytes": 1719,
+      "module_id": "deterministic_predicates",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/06-deterministic-predicates.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "3ff7e4d8f10acb4cf35f2dd148c7746e7c147461a6f34551a4d2c50262e8d6ad"
+    },
+    {
+      "bytes": 3058,
+      "module_id": "human_authority_verifier",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/07-human-authority-verifier.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "eb2b94458cf95af00a9f2082e72416f985c15a4e90c35a8beefc612b7b9bc4cf"
+    },
+    {
+      "bytes": 2368,
+      "module_id": "gap_prioritizer",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/08-gap-prioritizer.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "90b883a3748584dfc098c76b9cc944f7facc81bef6dbcfdc4081128c9524ff77"
+    },
+    {
+      "bytes": 1680,
+      "module_id": "gap_explainer",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/09-gap-explainer.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "7c532814799aefd5152cdbd1412bf5466d5c85d441f9a79b48a02dbf9314986a"
+    },
+    {
+      "bytes": 6206,
+      "module_id": "external_authority_coordinator",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/10-external-authority-coordinator.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "72f6c440fd9e09c8b45c9438a7b1473fec89fec3447df6878d658b6eb0576bd1"
+    },
+    {
+      "bytes": 2148,
+      "module_id": "correction_invalidator",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/11-correction-invalidator.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "9f8c422b0716b9a7c7cf11cc95f896423dc3ea5ebd52009dde376db4499a7b4f"
+    },
+    {
+      "bytes": 3282,
+      "module_id": "transaction_coordinator",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/12-transaction-coordinator.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "237a3ce34610616bf88bab2e84297f2f7eeea844ea4795c09e4b40f3c98e771e"
+    },
+    {
+      "bytes": 19048,
+      "module_id": "adversarial_fixtures",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/13-adversarial-fixtures.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.fixtures.v1",
+      "sha256": "f6fee9f8fc5773aaf59012d34554cf9dd85fa7c80710cb14d77c3e85b2c0e4aa"
+    },
+    {
+      "bytes": 11098,
+      "module_id": "fact_kind_registry",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/13-fact-kind-registry.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "f371d31e3627ce2b6218ce83e107ec0aaec5ba04ac56c873361a3c6a57c6666a"
+    },
+    {
+      "bytes": 4817,
+      "module_id": "contract_closure",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r78/14-contract-closure.json",
+      "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+      "sha256": "dc3073c16ea1c03c1b6d77fffdc989b388964425170df9f48fd74a411e4345e5"
+    }
+  ],
+  "schema_version": "ctrl.g24.predicate-authority.r78.manifest.v1",
+  "standing": "frozen_contract_candidate_no_runtime_authority"
+}
