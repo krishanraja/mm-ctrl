@@ -2672,3 +2672,21 @@ R95 froze at commit `23ce92adfc7a9abdf7551a6d4d9adefd69de41b8`, tree `35135f6e9c
 Three correctness roles vetoed the exact bytes. The contextual validator accepted a raw obligation array, and `currentStatus` passed its newly constructed array as both claim and authority. Owner identity was re-read from mutable transition specimens without comparing the bytes to the accepted transition fingerprint or signature. A registered-human substitution could therefore reassign the displayed obligation without new authority.
 
 The exact [R95 panel verdict](../../g24-predicate-authority-r95-panel-verdict.md) preserves the passing roles, retained gains and mandatory R96 repair. R96 must preserve owner and transition provenance in immutable challenge state, re-verify it on read and derive permitted humans from the accepted decision. R75 and R77 remain unchanged; no external authority is opened.
+
+### R96 signed-provenance recovery candidate
+
+**State:** local candidate pending full regression, exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `095909e0c27ccac553c457895917b978e2847c90c2015d6b48ce4b63f00de6e0`
+
+**Manifest bundle fingerprint:** `df30b59877a2d8a0e7c427ac19c289dec7690719659de5541893400a4e393b45`
+
+R96 carries the exact trigger-transition fingerprint and responsible named human into each immutable challenge. On every status read it re-verifies the accepted record fingerprint, challenge fingerprint and context, the trigger event's current bytes and signature, its exact prior and resulting answer-state edge, the owner permitted by the accepted decision, and every subsequent observation edge. Any mismatch returns one closed typed unavailable status rather than guessing an owner or instruction.
+
+The replacement obligation resolver is now independent from the display projection. It derives current missing heads from the validated answer-state store, joins each to its immutable challenge, counts the preserved responsible humans, and seals the accepted-final identity, accepted-record fingerprint, missing-head fingerprints and exact obligations. Display validation compares against that separate sealed snapshot; no caller-supplied obligation array can become its own authority.
+
+New probes mutate the signed trigger's owner, route, question, action, signature and time one at a time. Every mutation fails closed and restoring the exact bytes restores the truthful replacement status. Structurally valid but contextually wrong registered-owner and inflated-count projections reject against independent authority snapshots; unknown owners and unsafe arithmetic still reject structurally. All six answer-bearing transitions and twenty-four recovery order classes remain green.
+
+The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R96 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
