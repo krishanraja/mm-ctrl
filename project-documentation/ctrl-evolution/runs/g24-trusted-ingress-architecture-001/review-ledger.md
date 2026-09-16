@@ -2430,3 +2430,21 @@ R79 repairs the root causes as an eight-module overlay on the frozen R78 catalog
 The current pre-freeze bundle fingerprint is `e7c8d32cdfd0a7756a805b9301b41f48bfa7f3f6fb50e14b1d68c3c748ea1bfd`. The checker imports nothing from the materializer and recomputes the complete manifest fingerprint, including base lineage, module flow and closed authority.
 
 R79 remains contract and conformance evidence only. It does not implement a lifecycle evaluator, result-producing success path, runtime, live registry, database, UI, external action, deployment, merge, release or backend deletion. The next action is exact Git freeze and seven-role review.
+
+### R79 seven-role veto
+
+R79 froze at commit `ad64b1eb1b29b2b1a71c9917ae33b19da3c68417`, tree `22f57555d04cb73e3287397f0bc738e701663ebb`, parent `a645f13e11139b15596cd73f7b26eafb2a28a4a0`, bundle fingerprint `e7c8d32cdfd0a7756a805b9301b41f48bfa7f3f6fb50e14b1d68c3c748ea1bfd`.
+
+All seven durable roles vetoed. The exact [R79 panel verdict](../../g24-predicate-authority-r79-panel-verdict.md) preserves the role-by-role findings. The recurrent root cause was a gap between declared meaning and executed proof: final actors and expiry were not fully authenticated, decision changes and comprehension limits were claimed rather than derived from actual bytes, routing did not consume the registries it cited, internal owners remained substitutable, correction seals did not bind complete tuples, predicate evaluation duplicated rather than executed its grammar, and overlay precedence admitted contradiction.
+
+## R80 coherent effective contract
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Bundle fingerprint:** `d5c05d1bd757ac957154d3463e339fc689c412b12a2e176b677bd8413deccc88`
+
+R80 replaces overlay inheritance with one materialized effective contract. It imports only six named sections from the exact frozen R79 commit and rejects every unknown or conflicting inherited section. Exact registries and programs now drive the independent checker for internal owners, authenticated human and final authority, actual decision deltas, case-specific one-question routing, data-driven predicate meaning, sealed correction tuples and the full external reservation-to-finality machine. Forty executable vectors pass.
+
+R80 remains local contract and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.

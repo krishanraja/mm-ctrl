@@ -1,0 +1,31 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.correction-program.v1",
+  "module_id": "correction_program",
+  "graph_schema": {
+    "required": ["graph_head", "graph_epoch", "members", "dependency_set_seal"],
+    "member_required": ["dependency_id", "dependency_fingerprint", "edge_kind"],
+    "edge_kind_values": ["content_dependency", "permission_dependency", "scope_dependency"]
+  },
+  "seal_program": {
+    "domain_separator": "CTRL_G24_R80_DEPENDENCY_SET",
+    "member_order": "canonical_byte_order_by_dependency_id_then_fingerprint_then_edge_kind",
+    "input": "domain_separator_graph_head_graph_epoch_and_canonical_member_tuples",
+    "hash": "sha256"
+  },
+  "receipt_schema": {
+    "required": ["repair_id", "trigger_ref", "challenged_proof_ref", "dependency_id", "dependency_fingerprint", "edge_kind", "dependency_use_ref", "affected_artifact_ref", "repair_action", "terminal_status", "current_steering_eligibility", "resulting_version_ref", "receipt_fingerprint"],
+    "terminal_status_values": ["rebuilt", "quarantined", "review_required", "unaffected_with_reason", "erased"],
+    "current_steering_eligibility": false
+  },
+  "validation_program": [
+    "validate_closed_graph_and_member_shapes",
+    "require_all_three_edge_kinds_in_complete_graph",
+    "reject_duplicate_dependency_tuple",
+    "recompute_and_match_dependency_set_seal",
+    "validate_closed_receipt_shape_and_terminal_status",
+    "join_each_receipt_to_exact_dependency_id_fingerprint_and_edge_kind",
+    "require_exactly_one_receipt_per_graph_member",
+    "reject_missing_duplicate_or_extra_receipt",
+    "require_no_terminal_receipt_currently_steers"
+  ]
+}
