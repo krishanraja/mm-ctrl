@@ -2624,3 +2624,19 @@ R93 froze at commit `804c69f1a1c282f3ba17daf529f6ce0e55a3a007`, tree `170af78c17
 Lifecycle/Security/Privacy passed. The other six durable roles vetoed. A valid three-head `open_preparation` decision can have all three Krish-owned answers withdrawn, but the current-status message says “Krish must each choose one,” concealing two required actions. Other admitted states repeat obligations for one or both humans. The runtime replacement status also contains four fields while the contract declares an exact two-field projection, making valid output incompatible with an exact downstream consumer.
 
 The exact [R93 panel verdict](../../g24-predicate-authority-r93-panel-verdict.md) preserves the role evidence, counterexamples, retained gains and mandatory R94 repair. R94 must close the status schema by variant, preserve per-owner cardinality and execute every admitted answer-bearing transition through zero, partial and complete replacement order classes. R75 and R77 remain unchanged; no external authority is opened.
+
+### R94 closed recovery projection candidate
+
+**State:** local candidate pending exact freeze, full regression and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `e1d52b2fd6844526d8f57d00a0246aeb3bbddf2cfcc23184d29374c1cbe45cc5`
+
+**Manifest bundle fingerprint:** `6c0ac49a864c875456820fa75376b77939898dceee612c921f39f96ba373a34c`
+
+R94 retains every verified R93 gain and closes both fresh vetoes. Current status is a closed discriminated contract. Replacement state requires exactly five fields and each other state exactly two. The replacement projection groups every non-current head by its named human, preserves each exact count, proves the global count equals their sum and derives the visible instruction only from that typed canonical structure.
+
+Executable hostile projections cover missing, extra, wrong-type, duplicate-owner, noncanonical-owner, mismatched-total and false-copy attacks. The checker also derives the exact six answer-bearing transitions from the authoritative catalogue and executes twenty-four recovery scenarios: forward and reverse withdrawal crossed with forward and reverse reanswer. Every scenario proves the full initial count, every partial per-owner count, zero premature review requests and review availability only after the final replacement. This includes one owner with two and three missing answers, equal multi-owner states and unequal partial states up to six missing answers.
+
+The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R94 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
