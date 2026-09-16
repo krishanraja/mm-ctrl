@@ -2448,3 +2448,23 @@ All seven durable roles vetoed. The exact [R79 panel verdict](../../g24-predicat
 R80 replaces overlay inheritance with one materialized effective contract. It imports only six named sections from the exact frozen R79 commit and rejects every unknown or conflicting inherited section. Exact registries and programs now drive the independent checker for internal owners, authenticated human and final authority, actual decision deltas, case-specific one-question routing, data-driven predicate meaning, sealed correction tuples and the full external reservation-to-finality machine. Forty executable vectors pass.
 
 R80 remains local contract and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.
+
+### R80 seven-role veto
+
+R80 froze at commit `dff8efbe44c4b74a94746d1cf8a21257c382af17`, tree `1f2a08f1ee5da05e22117bcaefba1ec6d216732f`, bundle fingerprint `d5c05d1bd757ac957154d3463e339fc689c412b12a2e176b677bd8413deccc88`.
+
+All seven durable roles vetoed. The exact [R80 panel verdict](../../g24-predicate-authority-r80-panel-verdict.md) preserves the role findings. R80 closed important object-level escape routes but did not prove authoritative relationships end to end. Signed issuance, exact answer causality, authoritative binding context, complete dependency sets, semantic and derived-fact closure, canonical case and session state, immutable correction traversal and executable external finality remained incomplete.
+
+### R81 end-to-end bound contract
+
+**State:** local candidate pending exact freeze and seven-role review
+
+**Decision authority:** `DEC-20260916-g24-predicate-authority-r75`
+
+**Authority bundle fingerprint:** `1eb364278d9832b11196f170854ad075c79536170317dddd153c076ebca8ffcf`
+
+**Manifest bundle fingerprint:** `e4146fedf8d07abcc0b8c5425bccc46185f2ce7931a8bde01408ec72441c25c2`
+
+R81 imports only exact named sections from the frozen R80 commit and replaces every other rule. Its independent checker now verifies registered Ed25519 issuance for login, answer, free-expression confirmation and final transition approval; exact question-to-effect causality; authoritative subject, case, purpose, audience, predecessor, proof, bundle, render and reservation bindings; transition-derived complete dependency sets; full semantic and derived-fact closure; canonical case and durable one-question state; sealed correction traversal; and typed external CAS, finality, recovery and replay guards.
+
+Sixty-one adversarial vectors pass. The contract remains local data and conformance evidence only. No semantic evaluator implementation, result-producing success branch, runtime, registry, database, UI, external action, deployment, merge, release, backend deletion or cross-venture ledger write is authorized. The next action is exact Git freeze and seven-role review.

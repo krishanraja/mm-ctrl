@@ -1,0 +1,26 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r81.correction.v1",
+  "module_id": "correction_program",
+  "authoritative_dependency_graph_required": ["graph_head", "graph_epoch", "subject_id", "case_id", "purpose_id", "permitted_audience", "root_dependency_ids", "edges", "graph_fingerprint"],
+  "edge_required": ["from_dependency_id", "to_dependency_id", "to_dependency_fingerprint", "edge_kind"],
+  "edge_kind_values": ["content_dependency", "permission_dependency", "scope_dependency"],
+  "sealed_closure_required": ["graph_head", "graph_epoch", "subject_id", "case_id", "purpose_id", "permitted_audience", "root_dependency_ids", "members", "dependency_set_seal"],
+  "member_required": ["dependency_id", "dependency_fingerprint", "edge_kind"],
+  "repair_receipt_required": ["receipt_type", "domain_separator", "repair_id", "graph_head", "graph_epoch", "dependency_set_seal", "subject_id", "case_id", "purpose_id", "permitted_audience", "trigger_ref", "challenged_proof_ref", "dependency_id", "dependency_fingerprint", "edge_kind", "dependency_use_ref", "affected_artifact_ref", "repair_action", "history_preserved_ref", "descendant_block_ref", "fresh_reopen_authority_ref", "terminal_status", "current_steering_eligibility", "resulting_version_ref", "issued_at", "receipt_fingerprint"],
+  "repair_action_values": ["rebuild_projection", "quarantine_artifact", "erase_authorized_copy", "mark_unaffected_with_reason", "require_human_review"],
+  "terminal_status_values": ["rebuilt", "quarantined", "review_required", "unaffected_with_reason", "erased"],
+  "validation_rules": [
+    "recompute_authoritative_graph_fingerprint",
+    "traverse_every_reachable_descendant_from_exact_roots",
+    "reject_omitted_extra_duplicate_or_unreachable_closure_member",
+    "recompute_domain_separated_closure_seal_over_graph_identity_context_and_member_tuples",
+    "recompute_every_domain_separated_repair_receipt_fingerprint",
+    "bind_every_receipt_to_exact_graph_epoch_seal_subject_case_purpose_and_audience",
+    "bind_trigger_challenged_proof_dependency_use_and_affected_artifact_to_authoritative_graph_records",
+    "require_exactly_one_terminal_receipt_per_closure_member",
+    "require_history_preservation_and_descendant_block_evidence",
+    "require_fresh_named_human_authority_before_any_reopen",
+    "prove_no_affected_current_path_retains_superseded_steering_authority"
+  ],
+  "receipt_current_steering_eligibility": false
+}
