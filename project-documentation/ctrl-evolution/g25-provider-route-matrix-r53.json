@@ -1,0 +1,35 @@
+{
+  "schema_version": "ctrl.g25.provider-route-matrix.r53.v1",
+  "record_id": "G25-PROVIDER-ROUTE-MATRIX-R53",
+  "status": "dormant_provider_route_matrix_verified",
+  "depends_on": [
+    "G25-PROVIDER-EXCHANGE-RETRY-IDENTITY-R51",
+    "G25-PUBLIC-SOURCE-ADMISSION-R52"
+  ],
+  "proved": [
+    "provider identity must match processor kind",
+    "processor kind must match purpose family",
+    "fixed public providers require fixed-public-fetch control and no customer-shaped query-minimisation digest",
+    "ordinary research providers require a query-minimisation digest and a research-relevant retention control",
+    "billing retention cannot masquerade as research control",
+    "delivery cannot be recorded under a decision-support purpose"
+  ],
+  "observed": {
+    "local_database": "PostgreSQL 18.3 PGlite",
+    "checks": 6,
+    "failures": 0
+  },
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_provider_route_matrix_r53.sql",
+    "candidate_sha256": "b66c7baeedd2864a04d9086fb522b9607c32d176b8e0b7603a468b1d484ce0a4",
+    "runner": "scripts/run-ctrl-g25-provider-route-matrix-r53.mjs",
+    "runner_sha256": "b2888d881151ab06cdfe622c0b6639f1a485a24cd641b9a99f32d02576901f9a",
+    "checker": "scripts/check-ctrl-g25-provider-route-matrix-r53.mjs"
+  },
+  "next_gate": "Compose R52 admission, R50 preparation and the R51 plus R53 receipt command in one dormant operation contract.",
+  "not_authorized": [
+    "migration creation or execution",
+    "editing live provider routes",
+    "provider calls, deployment, merge or release"
+  ]
+}
