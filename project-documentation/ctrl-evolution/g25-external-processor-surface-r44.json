@@ -1,0 +1,64 @@
+{
+  "schema_version": "ctrl.g25.external-processor-surface.r44.v1",
+  "record_id": "G25-EXTERNAL-PROCESSOR-SURFACE-R44",
+  "status": "external_processor_receipt_gap_confirmed",
+  "depends_on": [
+    "G25-WHOLE-BRAIN-DELETION-COVERAGE-R14",
+    "G25-STORAGE-ERASURE-SURFACE-R43"
+  ],
+  "repository_signature_inventory": {
+    "providers": 15,
+    "openai": 27,
+    "anthropic": 3,
+    "google_ai": 5,
+    "xai": 1,
+    "perplexity": 2,
+    "elevenlabs": 1,
+    "resend": 5,
+    "stripe": 6,
+    "exa": 3,
+    "brave": 5,
+    "tavily": 2,
+    "newsapi": 3,
+    "builtwith": 1,
+    "people_data_labs": 1,
+    "configured_downstream": 3
+  },
+  "interpretation": "Counts are source files containing provider API, SDK or credential signatures. They identify potential transmission surfaces, not confirmed personal-data events or unique network calls.",
+  "current_deletion": {
+    "stripe_subscription_cancel": true,
+    "stripe_customer_delete": false,
+    "other_provider_orchestration": false,
+    "unified_provider_request_identity": false,
+    "unified_provider_deletion_receipt": false
+  },
+  "critical_distinctions": [
+    "cancelling a paid subscription is not deleting a provider customer record",
+    "deleting CTRL rows is not evidence that a processor deleted or expired its copy",
+    "a local model-usage log is not a provider request receipt unless it stores provider request identity and retention standing",
+    "some search calls may contain only public queries while other calls may contain private leader context; the repository does not classify this per callsite",
+    "provider deletion may be unnecessary where a binding zero-retention mode applies, but that status must be evidenced rather than assumed",
+    "email inboxes and user-controlled exports cannot be recalled by CTRL"
+  ],
+  "required_registry_fields": [
+    "provider",
+    "callsite and purpose",
+    "data classes sent",
+    "subject and workspace correlation digest",
+    "provider request or message identity when available",
+    "contract and retention mode in force",
+    "deletion capability",
+    "deletion or expiry evidence kind",
+    "customer-controlled-copy boundary"
+  ],
+  "artifact": "scripts/check-ctrl-g25-external-processor-surface-r44.mjs",
+  "next_gate": "Classify each provider callsite by data sent and verify current official retention and deletion controls before designing provider receipts.",
+  "not_authorized": [
+    "calling any provider",
+    "requesting external deletion",
+    "editing the live delete-account function",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}
