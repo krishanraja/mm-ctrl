@@ -1,0 +1,40 @@
+{
+  "schema_version": "ctrl.g25.public-source-admission.r52.v1",
+  "record_id": "G25-PUBLIC-SOURCE-ADMISSION-R52",
+  "status": "dormant_public_source_admission_verified",
+  "depends_on": [
+    "G25-PUBLIC-RESEARCH-QUERY-BOUNDARY-R50",
+    "G25-PROVIDER-EXCHANGE-RETRY-IDENTITY-R51"
+  ],
+  "proved": [
+    "fixed fetches bind to a route-configuration digest and never invoke the public fetch dependency",
+    "company names, domains and topic terms must appear in fresh bounded public evidence before R50 prepares them",
+    "source and redirect URLs must be credential-free HTTPS without query strings, fragments, local names or address literals",
+    "the fetch dependency must attest that DNS and network routing stayed public",
+    "responses are limited to successful textual content, four sources, 128 KiB per source and five minutes of freshness",
+    "transport errors become a bounded failure rather than leaking internal detail",
+    "the result retains source-locator, final-locator and content digests instead of response bodies or raw source URLs",
+    "R50 still rejects private fields nested inside an otherwise valid admission"
+  ],
+  "observed": {
+    "r52_targeted_tests": 15,
+    "r50_and_r52_combined_tests": 28,
+    "targeted_failures": 0,
+    "new_type_errors": 0
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/public-source-admission.r52.ts",
+    "module_sha256": "2e0b5b2b12b83ec2d8c4cce4fd3f3bc42a8d1476154a1d677c8063939e3999e9",
+    "test": "supabase/functions/_shared/public-source-admission.r52.test.ts",
+    "test_sha256": "a78d10afcb24734e7eb35cdb5dafec53a7e93e078c73cb0d0d5a164ee2a879b8",
+    "checker": "scripts/check-ctrl-g25-public-source-admission-r52.mjs"
+  },
+  "residual": "The pure module relies on a future hardened fetch adapter for verified_public_route. Tests use a fake dependency and make no live network claim.",
+  "next_gate": "Compose R52 admission, R50 preparation and R51 receipt commands in one dormant operation contract without calling a provider.",
+  "not_authorized": [
+    "live web fetching or research-provider calls",
+    "editing live routes",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}
