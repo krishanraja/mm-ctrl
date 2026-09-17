@@ -8,6 +8,8 @@ const relativeFounderLock = "project-documentation/ctrl-evolution/g24-predicate-
 const founderLockPath = path.join(root, relativeFounderLock);
 const relativeFounderRecord = "project-documentation/ctrl-evolution/g24-predicate-authority-r97-founder-lock-r99.json";
 const founderRecordPath = path.join(root, relativeFounderRecord);
+const relativeImprovementRecord = "project-documentation/ctrl-evolution/g25-preservation-improvement-founder-clarification-r7.json";
+const improvementRecordPath = path.join(root, relativeImprovementRecord);
 
 function fail(message) {
   console.error(`[g25-preservation] FAIL: ${message}`);
@@ -29,6 +31,11 @@ if (!fs.existsSync(founderRecordPath)) {
   process.exit();
 }
 
+if (!fs.existsSync(improvementRecordPath)) {
+  fail(`missing ${relativeImprovementRecord}`);
+  process.exit();
+}
+
 const founderRecord = JSON.parse(fs.readFileSync(founderRecordPath, "utf8"));
 const decision = founderRecord.decision_record;
 if (founderRecord.schema_version !== "ctrl.g24.predicate-authority-r97-founder-lock.r99.v1") fail("unexpected R99 project-record schema");
@@ -38,6 +45,12 @@ for (const field of ["title", "decision", "decided_at", "recorded_at", "accounta
   if (!Object.hasOwn(decision || {}, field)) fail(`R99 decision record missing ${field}`);
 }
 if (founderRecord.cross_venture_decision_ledger?.status !== "STORE_UNAVAILABLE_EXTERNAL_WRITE_NOT_AUTHORIZED") fail("R99 invents an unauthorised external ledger write");
+
+const improvementRecord = JSON.parse(fs.readFileSync(improvementRecordPath, "utf8"));
+if (improvementRecord.schema_version !== "ctrl.g25.preservation-improvement-founder-clarification.r7.v1") fail("unexpected R7 improvement-record schema");
+if (improvementRecord.exact_founder_call !== "dont presume those legacy systems cannot be improved, they most likely can. continue onwards") fail("R7 exact founder clarification drifted");
+if (improvementRecord.decision_record?.decision_id !== "DEC-20260917-g25-preservation-improvement") fail("R7 improvement decision identity drifted");
+if (improvementRecord.decision_record?.status !== "active") fail("R7 improvement decision must remain active");
 
 const founderLock = fs.readFileSync(founderLockPath, "utf8");
 for (const exact of [
@@ -66,12 +79,15 @@ if (register.register_id !== "G25-LEGACY-CAPABILITY-PRESERVATION-R1") fail("unex
 if (register.status !== "binding_preimplementation_gate") fail("unexpected status");
 if (register.source_baseline !== "8174677125bc2799929e3196282e75cba215b443") fail("source baseline drifted");
 
-const requiredPolicy = ["preserve", "may_change", "briefing_position", "retirement_gate", "default_on_uncertainty"];
+const requiredPolicy = ["preserve", "may_change", "improvement_mandate", "no_legacy_reverence", "replacement_route", "briefing_position", "retirement_gate", "default_on_uncertainty"];
 for (const key of requiredPolicy) {
   if (typeof register.policy?.[key] !== "string" || register.policy[key].trim().length < 20) {
     fail(`policy.${key} is missing or too weak`);
   }
 }
+
+if (!register.policy.improvement_mandate.includes("presumed improvable")) fail("improvement mandate must presume legacy systems are improvable");
+if (!register.policy.replacement_route.includes("prove improvement")) fail("replacement route must require positive improvement proof");
 
 const capabilities = Array.isArray(register.capabilities) ? register.capabilities : [];
 if (capabilities.length < 20) fail(`expected at least 20 protected capabilities, found ${capabilities.length}`);

@@ -9,6 +9,9 @@
   "policy": {
     "preserve": "Product capability, user value, control meaning, data boundary and proven failure behavior.",
     "may_change": "Screen, route, label, schema, provider, component and implementation may change behind an explicit adapter and proof.",
+    "improvement_mandate": "Every legacy system is presumed improvable. Preserve its earned value and safety boundary while actively seeking a simpler, more intelligent, more useful or more trustworthy replacement.",
+    "no_legacy_reverence": "Age, current use, prior spend, complexity and visual polish do not make a legacy implementation authoritative or optimal.",
+    "replacement_route": "Characterize the earned value, benchmark the current behavior, build or recompose the stronger route, prove improvement without losing required controls, then retire the superseded organ only through the exact retirement gate.",
     "briefing_position": "News and audio are downstream prepared-intelligence modes selected by the Brain, not the product hero or a competing memory system.",
     "retirement_gate": "No protected component may be disabled, deleted or made unreachable until its replacement passes characterization, data-boundary, failure, rollback and zero-live-caller proof, followed by exact founder approval for the retirement action.",
     "default_on_uncertainty": "Quarantine or retain behind an adapter. Never infer retirement from a new interface working."

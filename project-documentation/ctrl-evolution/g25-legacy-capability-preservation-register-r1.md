@@ -14,6 +14,8 @@ Verification: [G25 R1 QA record](g25-legacy-capability-preservation-r1-qa-record
 
 The new CTRL may replace old screens, routes, labels, schemas, providers and implementations. It may not accidentally lose a useful capability, control meaning, data boundary or proven failure behavior.
 
+Preservation is a floor, not a design endorsement. Every legacy system is presumed improvable. Age, current use, prior spend, complexity and polish confer no authority. The job is to preserve what has earned its place while making the machinery simpler, more intelligent, more useful and more trustworthy wherever the evidence supports it.
+
 This register changes the migration question from "did we remember the old product?" to five checkable questions for every protected capability:
 
 1. What exact value must survive?
@@ -29,7 +31,13 @@ The selected route is a machine-readable component register plus a deterministic
 - **Narrative reassurance only:** rejected because a paragraph saying "keep the good bits" cannot block a later deletion or expose an unmapped cron, cache or feedback writer.
 - **Freeze the old backend wholesale:** rejected because preserving historical schemas and product hierarchy would force the new product to inherit the assumptions we are replacing.
 
-The governing principle is: **preserve the organ's value and control contract, not its old location in the body.**
+The governing principle is: **preserve the organ's value and control contract, not its old location or old form in the body. Improve or replace the organ when the new one proves it can do the job better.**
+
+The improvement sequence is:
+
+`characterize earned value -> benchmark current behavior -> build or recompose -> prove improvement and non-regression -> retire the superseded implementation through the exact gate`
+
+Improvement is judged across decision usefulness, user burden, speed, cost, provenance, correctness, human agency, accessibility and resilience. A replacement may intentionally remove behavior that proves redundant, confusing, theatrical, generic or contrary to the new product. It may not call accidental loss an improvement.
 
 ## The product hierarchy is still flipped
 
