@@ -96,6 +96,12 @@ function assertPositive(result) {
   if (!dependencies || dependencies.minimum_depth !== 2) {
     throw new Error("R17 did not discover a transitive auth-owned relation");
   }
+  const sources = result.discovered.find((row) => row.relation_name === "brain_sources");
+  const subjectPath = sources?.reference_paths.find((path) => path.constraint === "brain_sources_subject_id_fkey");
+  if (JSON.stringify(subjectPath?.from_columns) !== JSON.stringify(["subject_id"]) ||
+      JSON.stringify(subjectPath?.to_columns) !== JSON.stringify(["id"])) {
+    throw new Error("R17 did not preserve constraint-column evidence");
+  }
 }
 
 async function expectNegative(candidateSql, expectedMessage, label) {

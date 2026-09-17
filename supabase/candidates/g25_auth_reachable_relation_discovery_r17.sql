@@ -19,6 +19,22 @@ as $function$
       con.oid as constraint_oid,
       con.conname as constraint_name,
       con.conrelid as relation_oid,
+      array(
+        select child_attribute.attname::text
+        from unnest(con.conkey) with ordinality as key(attnum, position)
+        join pg_catalog.pg_attribute child_attribute
+          on child_attribute.attrelid = con.conrelid
+         and child_attribute.attnum = key.attnum
+        order by key.position
+      ) as child_columns,
+      array(
+        select parent_attribute.attname::text
+        from unnest(con.confkey) with ordinality as key(attnum, position)
+        join pg_catalog.pg_attribute parent_attribute
+          on parent_attribute.attrelid = con.confrelid
+         and parent_attribute.attnum = key.attnum
+        order by key.position
+      ) as parent_columns,
       1 as depth,
       array[con.confrelid, con.conrelid]::oid[] as path_oids,
       array[
@@ -42,6 +58,22 @@ as $function$
       con.oid,
       con.conname,
       con.conrelid,
+      array(
+        select child_attribute.attname::text
+        from unnest(con.conkey) with ordinality as key(attnum, position)
+        join pg_catalog.pg_attribute child_attribute
+          on child_attribute.attrelid = con.conrelid
+         and child_attribute.attnum = key.attnum
+        order by key.position
+      ),
+      array(
+        select parent_attribute.attname::text
+        from unnest(con.confkey) with ordinality as key(attnum, position)
+        join pg_catalog.pg_attribute parent_attribute
+          on parent_attribute.attrelid = con.confrelid
+         and parent_attribute.attnum = key.attnum
+        order by key.position
+      ),
       walk.depth + 1,
       walk.path_oids || con.conrelid,
       walk.path_names || format('%I.%I', child_ns.nspname, child.relname),
@@ -60,6 +92,8 @@ as $function$
     select
       relation_oid,
       constraint_name,
+      child_columns,
+      parent_columns,
       depth,
       path_names,
       case delete_action_code
@@ -76,6 +110,8 @@ as $function$
     select distinct
       relation_oid,
       constraint_name,
+      child_columns,
+      parent_columns,
       depth,
       path_names,
       delete_action
@@ -88,6 +124,8 @@ as $function$
     jsonb_agg(
       jsonb_build_object(
         'constraint', path_rows.constraint_name,
+        'from_columns', to_jsonb(path_rows.child_columns),
+        'to_columns', to_jsonb(path_rows.parent_columns),
         'depth', path_rows.depth,
         'relations', to_jsonb(path_rows.path_names),
         'on_delete', path_rows.delete_action

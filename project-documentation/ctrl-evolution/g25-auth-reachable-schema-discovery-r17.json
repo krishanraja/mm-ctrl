@@ -14,6 +14,7 @@
     "catalog_can_establish": [
       "a foreign-key path from a public relation to auth.users",
       "the path depth and constraints traversed",
+      "the exact child and parent columns for every traversed constraint",
       "the declared ON DELETE action for each path",
       "whether a previously visible relation disappeared or a new one appeared"
     ],

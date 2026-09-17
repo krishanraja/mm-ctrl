@@ -6,7 +6,7 @@ Machine record: [g25-auth-reachable-schema-discovery-r17.json](g25-auth-reachabl
 
 ## What it proves
 
-R17 walks PostgreSQL's foreign-key catalog from `auth.users` through every reachable public relation. It returns each relation, its shortest depth, every discovered reference path and the declared delete action. The canary finds direct rows such as workspaces and sources, plus transitive rows such as item versions and prepared-receipt dependencies.
+R17 walks PostgreSQL's foreign-key catalog from `auth.users` through every reachable public relation. It returns each relation, its shortest depth, every discovered reference path, the exact constrained columns and the declared delete action. The canary finds direct rows such as workspaces and sources, plus transitive rows such as item versions and prepared-receipt dependencies.
 
 The function is read-only, stable, security invoker and has an empty search path. `anon` and `authenticated` cannot execute it. Three negative controls prove that removing recursion, public-schema containment or privilege closure breaks the gate.
 

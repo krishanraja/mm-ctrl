@@ -17,6 +17,8 @@ assert(sql.toLowerCase().includes("with recursive fk_walk"), "recursive catalog 
 assert(sql.includes("con.confrelid = 'auth.users'::pg_catalog.regclass"), "auth.users root missing");
 assert(sql.includes("and child_ns.nspname = 'public'"), "public-schema containment missing");
 assert(sql.includes("and not child.oid = any(walk.path_oids)"), "cycle guard missing");
+assert(sql.includes("'from_columns', to_jsonb(path_rows.child_columns)"), "child-column evidence missing");
+assert(sql.includes("'to_columns', to_jsonb(path_rows.parent_columns)"), "parent-column evidence missing");
 assert(sql.toLowerCase().includes("security invoker"), "security invoker missing");
 assert(sql.includes("set search_path = ''"), "empty search path missing");
 assert(sql.includes("from public, anon, authenticated"), "public execution closure missing");
