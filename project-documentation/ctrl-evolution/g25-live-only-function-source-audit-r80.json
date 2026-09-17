@@ -1,0 +1,121 @@
+{
+  "schema_version": "ctrl.g25.live-only-function-source-audit.r80.v1",
+  "contract_id": "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80",
+  "status": "source_metadata_audit_complete_disposition_open",
+  "observed_at": "2026-09-17",
+  "depends_on": [
+    "G25-RECOVERY-NON-SCHEMA-MANIFEST-R79"
+  ],
+  "source_audit": {
+    "functions_retrieved": 68,
+    "retrieval_errors_after_bounded_retry": 0,
+    "combined_source_bytes": 2593805,
+    "functions_with_platform_deploy_sha": 29,
+    "distinct_environment_variable_symbols": 32,
+    "distinct_table_references": 44,
+    "functions_referencing_service_role_symbol": 39,
+    "functions_with_explicit_get_user_marker": 2,
+    "high_confidence_hardcoded_secret_pattern_matches": 0
+  },
+  "gateway_review": {
+    "verify_jwt_false_count": 31,
+    "verify_jwt_false_with_service_role_symbol": 22,
+    "verify_jwt_false_with_explicit_get_user_marker": 0,
+    "verify_jwt_false_slugs": [
+      "aa-price-snapshot",
+      "ai-recommendations",
+      "chat-with-krish",
+      "compute-risk-signals",
+      "compute-tensions",
+      "create-consultation-hold",
+      "derive-org-scenarios",
+      "generate-activity-qr",
+      "generate-executive-insights",
+      "generate-personalized-insights",
+      "generate-post-session-qr",
+      "generate-prework-qr",
+      "generate-prompt-library",
+      "generate-shared-prework-qr",
+      "get-ai-news",
+      "google-sheets-sync",
+      "import-audience-csv",
+      "mindmake-personal-read",
+      "nervous-decision-machine",
+      "notify-guest-application",
+      "personalize-intake",
+      "send-contact-email",
+      "send-follow-ups",
+      "send-lead-email",
+      "send-leadership-insights-email",
+      "send-results-email",
+      "send-welcome-email",
+      "speech-to-text",
+      "submit-intake",
+      "submit-mindmake-brief",
+      "submit-testimonial"
+    ]
+  },
+  "largest_source_bundles": [
+    {
+      "slug": "submit-mindmake-brief",
+      "bytes": 159967,
+      "files": 16,
+      "verify_jwt": false
+    },
+    {
+      "slug": "mindmake-personal-read",
+      "bytes": 156154,
+      "files": 16,
+      "verify_jwt": false
+    },
+    {
+      "slug": "send-leadership-insights-email",
+      "bytes": 143631,
+      "files": 22,
+      "verify_jwt": false
+    },
+    {
+      "slug": "send-lead-email",
+      "bytes": 140670,
+      "files": 22,
+      "verify_jwt": false
+    },
+    {
+      "slug": "send-contact-email",
+      "bytes": 138470,
+      "files": 22,
+      "verify_jwt": false
+    }
+  ],
+  "current_repo_runtime_references": {
+    "enrich-company": [
+      "src/lib/api.ts"
+    ],
+    "google-sheets-sync": [
+      "supabase/functions/decision-watch/index.ts"
+    ],
+    "transcribe": [
+      "src/lib/api.ts",
+      "src/components/ui/voice-input.tsx",
+      "src/hooks/useVoice.ts",
+      "src/components/operator/decision/DecisionCapture.tsx",
+      "supabase/functions/operator-decision-advisor/index.ts"
+    ]
+  },
+  "caller_boundary": "No current-repository runtime reference was found for the other 65 live-only functions. This is not retirement evidence because deployed older clients, schedules, webhooks and external callers are outside the repository scan.",
+  "security_boundary": "verify_jwt=false, an authorization-related token or an environment-variable name is not proof of correct authentication. Every listed function needs route-specific adversarial review before preservation or redeployment.",
+  "source_boundary": "Raw live source was inspected transiently and was not copied into Git. Source export requires per-function review because it may be obsolete, licensed, generated or contain unrecognised sensitive literals.",
+  "authority": {
+    "permits": [
+      "read-only live source retrieval",
+      "metadata, dependency and risk analysis",
+      "local audit record and commit"
+    ],
+    "forbids": [
+      "function source publication",
+      "secret retrieval or logging",
+      "function deployment, deletion or permission change",
+      "production mutation or cutover"
+    ]
+  }
+}
