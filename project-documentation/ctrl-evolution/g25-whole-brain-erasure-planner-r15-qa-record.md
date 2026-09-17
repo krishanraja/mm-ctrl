@@ -30,3 +30,9 @@ Date: 17 September 2026
 - customer-facing interaction and copy;
 - linked Supabase, PostgREST and concurrency parity;
 - deployment, merge or production use.
+
+## Current policy evidence
+
+- ICO storage-limitation guidance: no universal duration; retention must be purpose-based, justified, documented and reviewed.
+- ICO right-to-erasure guidance: requests and decisions need a defined recording process; deletion boundaries can differ for live systems and backups.
+- Pseudonymisation does not by itself make data anonymous. The retained receipt therefore remains inside the retention policy.

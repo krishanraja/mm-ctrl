@@ -22,6 +22,8 @@ Three policy choices are consequential enough that code must not invent them:
 
 The recommended third choice is resumable pending: revoke access immediately, retry safely, show exactly what remains and never return success early. The current best-effort pattern, success plus an error list, is rejected.
 
+Current ICO guidance does not prescribe a universal retention duration. It requires the controller to justify and document the period from the purpose. A keyed pseudonym is still personal data, so a content-free deletion receipt cannot be kept indefinitely merely because it omits the original content. The exact period therefore remains a founder and legal-policy gate, not an engineering guess.
+
 ## Boundary
 
 This is local, pure planning logic with unit tests. It performs no deletion and does not modify the current account-deletion function. It proves no live database, provider, backup or customer-facing behavior.

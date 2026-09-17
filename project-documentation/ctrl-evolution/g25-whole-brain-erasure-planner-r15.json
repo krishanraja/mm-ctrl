@@ -23,7 +23,12 @@
     "retained_audit": {
       "status": "unbound",
       "recommendation": "Retain only a content-free, keyed-pseudonymous completion receipt for an explicitly approved period. Never retain email, source text, generated content or reversible identifiers in the receipt.",
-      "founder_or_legal_choice": "Approve no retention or approve the exact retention period and basis."
+      "founder_or_legal_choice": "Approve no retention or approve the exact retention period and basis.",
+      "regulatory_note": "Current ICO guidance sets no universal duration. The controller must justify the period from its purpose, document it and review it. Keyed pseudonymous data remains personal data, so it cannot be retained indefinitely merely because the receipt is content-free.",
+      "official_evidence": [
+        "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/storage-limitation/",
+        "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/"
+      ]
     },
     "customer_controlled_copies": {
       "status": "unbound",
