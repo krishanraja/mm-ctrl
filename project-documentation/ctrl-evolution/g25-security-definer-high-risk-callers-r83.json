@@ -1,0 +1,130 @@
+{
+  "schema_version": "ctrl.g25.security-definer-high-risk-callers.r83.v1",
+  "contract_id": "G25-SECURITY-DEFINER-HIGH-RISK-CALLERS-R83",
+  "status": "caller_evidence_complete_candidate_generated_isolated_test_open",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-EXPOSURE-R82",
+    "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80",
+    "G25-RECOVERY-FIRST-BLANK-REPLAY-R81"
+  ],
+  "caller_evidence": {
+    "current_repository_runtime": {
+      "source_surfaces_scanned": [
+        "src",
+        "supabase/functions",
+        "scripts"
+      ],
+      "target_references_found": 0
+    },
+    "deployed_edge_functions": {
+      "active_functions_scanned": 183,
+      "retrieval_errors_after_bounded_retry": 0,
+      "raw_source_committed": false,
+      "target_references_found": 0
+    },
+    "database_definition_callers": {
+      "sync_lead_to_sheets(uuid,uuid,text)": [
+        "public.trigger_analytics_sheets_sync()",
+        "public.trigger_anonymous_booking_sync()",
+        "public.trigger_anonymous_lead_sync()",
+        "public.trigger_booking_http_sync()",
+        "public.trigger_booking_requests_sync()",
+        "public.trigger_booking_sheets_sync()",
+        "public.trigger_booking_sync()",
+        "public.trigger_business_context_sync()",
+        "public.trigger_contact_collection_sync()",
+        "public.trigger_google_sheets_edge_function()",
+        "public.trigger_lead_score_sheets_sync()"
+      ]
+    },
+    "active_cron": {
+      "snapshot_north_star()": {
+        "jobname": "north-star-daily-snapshot",
+        "schedule": "0 6 * * *",
+        "username": "postgres"
+      },
+      "sp_aggregate_briefing_feedback(integer,integer)": {
+        "jobname": "briefing-aggregate-feedback-nightly",
+        "schedule": "7 3 * * *",
+        "username": "postgres"
+      }
+    },
+    "observed_top_level_statements": {
+      "window_started_at": "2026-09-08T12:45:15.508604Z",
+      "track_mode": "top",
+      "counts": {
+        "get_or_create_profile(text,text,text,text,text)": 0,
+        "increment_automator_usage(uuid,text)": 0,
+        "process_pending_sync_logs()": 0,
+        "schedule_sync_processing()": 0,
+        "snapshot_north_star()": 9,
+        "sp_aggregate_briefing_feedback(integer,integer)": 9,
+        "sync_lead_to_sheets(uuid,uuid,text)": 0,
+        "track_referral_conversion(text,uuid,text,text)": 0,
+        "trigger_google_sheets_sync(text)": 0
+      },
+      "boundary": "Top-level statement counts do not include nested function calls and are evidence of observed use, not proof that a zero-count route has no external caller."
+    },
+    "external_boundary": "Historical clients, undiscovered third-party integrations and calls outside the statistics window remain unproved. No route is retired from absence evidence."
+  },
+  "route_dispositions": {
+    "preserve_internal_service_only": [
+      "process_pending_sync_logs()",
+      "schedule_sync_processing()",
+      "snapshot_north_star()",
+      "sp_aggregate_briefing_feedback(integer,integer)",
+      "sync_lead_to_sheets(uuid,uuid,text)",
+      "trigger_google_sheets_sync(text)"
+    ],
+    "legacy_unobserved_service_only_pending_retirement_proof": [
+      "get_or_create_profile(text,text,text,text,text)",
+      "increment_automator_usage(uuid,text)"
+    ],
+    "public_workflow_unobserved_requires_guarded_replacement_or_explicit_case": [
+      "track_referral_conversion(text,uuid,text,text)"
+    ]
+  },
+  "current_acl": {
+    "all_nine_anon_executable": true,
+    "all_nine_authenticated_executable": true,
+    "all_nine_service_role_executable": true,
+    "seven_inherit_public_execute": true,
+    "all_nine_owned_by_postgres": true
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_security_definer_high_risk_acl_r83.sql",
+    "sha256": "910c0cb36d512a7f4580d748f3c748b9247ba16da57641254c7b6707cd5daf8b",
+    "verification_path": "supabase/candidates/g25_security_definer_high_risk_acl_verification_r83.sql",
+    "verification_sha256": "78ef9be9e6d84470c69ffeac1dd3cab74442c3d2576dd1f3d3cd22c284e90663",
+    "scope": "Revoke PUBLIC, anon and authenticated execution on exactly nine functions; retain service_role execution; do not change function definitions.",
+    "production_applied": false,
+    "isolated_recovery_applied": false,
+    "target_functions_invoked_by_test": false
+  },
+  "acceptance_gate": {
+    "all_deployed_edge_function_sources_scanned": true,
+    "database_and_cron_callers_resolved": true,
+    "all_possible_historical_external_callers_proved": false,
+    "least_privilege_candidate_generated": true,
+    "isolated_acl_verification_passed": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "production_queries": "read_only_catalog_source_marker_and_aggregate_usage_queries",
+    "production_writes": 0,
+    "permits": [
+      "read-only production caller evidence",
+      "transient deployed Edge Function source inspection",
+      "local candidate, verification and audit files",
+      "isolated blank recovery test after candidate verification"
+    ],
+    "forbids": [
+      "production ACL or function mutation",
+      "raw deployed source publication",
+      "target function invocation in production",
+      "function retirement or deletion",
+      "merge, cutover or release"
+    ]
+  }
+}
