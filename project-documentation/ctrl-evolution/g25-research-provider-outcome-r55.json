@@ -1,0 +1,39 @@
+{
+  "schema_version": "ctrl.g25.research-provider-outcome.r55.v1",
+  "record_id": "G25-RESEARCH-PROVIDER-OUTCOME-R55",
+  "status": "dormant_research_outcome_classifier_verified",
+  "depends_on": [
+    "G25-PREPARED-RESEARCH-OPERATION-R54",
+    "G25-PROVIDER-EXCHANGE-RETRY-IDENTITY-R51"
+  ],
+  "proved": [
+    "accepted, rejected and outcome-unknown provider results map to the three permitted initial R51 lifecycle events",
+    "the event is bound to the prepared receipt, provider and request digest",
+    "a transient provider request ID is converted to a provider-scoped HMAC and never appears in the event command",
+    "a provider that returned no request identity remains explicitly null rather than receiving an invented identifier",
+    "request-verified ZDR requires response-control evidence before an event can be composed",
+    "event time must fall between receipt occurrence and the current server time",
+    "raw response fields and malformed provider identities fail closed",
+    "tampered prepared provider and receipt state fails closed"
+  ],
+  "observed": {
+    "r55_targeted_tests": 10,
+    "r54_and_r55_combined_tests": 19,
+    "targeted_failures": 0,
+    "new_type_errors": 0
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/research-provider-outcome.r55.ts",
+    "module_sha256": "85255bc3f07d35333b9e232910f09fb7addd981b40ccf3f19208f0e12a77b18c",
+    "test": "supabase/functions/_shared/research-provider-outcome.r55.test.ts",
+    "test_sha256": "b74312a518a248d979e6134fc32194af7e78c15dbbb0a2a6fefa613d7c4b4c7f",
+    "checker": "scripts/check-ctrl-g25-research-provider-outcome-r55.mjs"
+  },
+  "next_gate": "Prove the prepared receipt and initial outcome command are accepted together by the R49 plus R51 plus R53 PostgreSQL registry, while keeping dispatch synthetic.",
+  "not_authorized": [
+    "provider dispatch or response handling in a live route",
+    "receipt persistence to a linked database",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}
