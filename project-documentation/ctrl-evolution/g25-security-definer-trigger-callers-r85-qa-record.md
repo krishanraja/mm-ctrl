@@ -7,7 +7,9 @@
 - Retrieval errors after bounded retry: 0.
 - Deployed source references: 0.
 - Raw deployed source committed: no.
-- Enabled database trigger attachments: 23.
+- Enabled production trigger attachments: 23.
+- Enabled recovery preflight attachments: 22.
+- Missing recovery attachment: `auth.users:on_auth_user_created`.
 - Functions with attachments: 11 of 15.
 - Additional internal function callers: 1.
 - Unattached and unreferenced retirement candidates: 3.
@@ -24,6 +26,7 @@
 
 ## Open proof
 
+- The missing Auth signup hook must be restored and runtime-tested first.
 - Isolated ACL verification has not yet run.
 - Trigger runtime smoke has not yet run.
 - Historical external dependency absence is not proved.

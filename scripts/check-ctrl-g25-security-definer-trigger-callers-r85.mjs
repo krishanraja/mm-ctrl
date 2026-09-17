@@ -25,8 +25,11 @@ check(contract.caller_evidence.current_repository_runtime_references === 0, "rep
 check(contract.caller_evidence.deployed_edge_functions_scanned === 183, "deployed scan coverage drifted");
 check(contract.caller_evidence.deployed_edge_function_references === 0, "deployed caller proof drifted");
 check(contract.caller_evidence.deployed_edge_function_retrieval_errors_after_bounded_retry === 0, "deployed retrieval errors reopened");
-check(contract.caller_evidence.active_trigger_attachments === 23, "trigger attachment count drifted");
-check(contract.caller_evidence.enabled_trigger_attachments === 23, "enabled trigger count drifted");
+check(contract.caller_evidence.production_active_trigger_attachments === 23, "production trigger attachment count drifted");
+check(contract.caller_evidence.production_enabled_trigger_attachments === 23, "production enabled trigger count drifted");
+check(contract.caller_evidence.recovery_preflight_trigger_attachments === 22, "recovery trigger attachment count drifted");
+check(contract.caller_evidence.recovery_preflight_enabled_trigger_attachments === 22, "recovery enabled trigger count drifted");
+check(contract.caller_evidence.recovery_missing_attachment.includes("auth.users:on_auth_user_created"), "missing Auth hook evidence drifted");
 check(contract.caller_evidence.functions_with_trigger_attachments === 11, "attached function count drifted");
 check(contract.caller_evidence.unattached_and_unreferenced_candidates.length === 3, "retirement-candidate count drifted");
 check(Object.keys(contract.definition_digests).length === 15, "definition digest coverage drifted");
@@ -45,6 +48,7 @@ check(!/^\s*(INSERT|UPDATE|DELETE|TRUNCATE|ALTER|CREATE|DROP|GRANT|REVOKE)\b/gim
 check(contract.candidate.isolated_recovery_applied === false, "isolated application was fabricated");
 check(contract.candidate.production_applied === false, "production application was fabricated");
 check(contract.candidate.target_functions_invoked === false, "target invocation was fabricated");
+check(contract.acceptance_gate.missing_auth_user_hook_recovered === false, "Auth hook recovery was fabricated");
 check(contract.acceptance_gate.isolated_acl_verification_passed === false, "isolated pass was fabricated");
 check(contract.acceptance_gate.trigger_runtime_smoke_passed === false, "runtime smoke was fabricated");
 check(contract.acceptance_gate.production_mutation_ready === false, "production gate opened");

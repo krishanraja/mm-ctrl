@@ -22,8 +22,11 @@
     "deployed_edge_function_references": 0,
     "deployed_edge_function_retrieval_errors_after_bounded_retry": 0,
     "raw_deployed_source_committed": false,
-    "active_trigger_attachments": 23,
-    "enabled_trigger_attachments": 23,
+    "production_active_trigger_attachments": 23,
+    "production_enabled_trigger_attachments": 23,
+    "recovery_preflight_trigger_attachments": 22,
+    "recovery_preflight_enabled_trigger_attachments": 22,
+    "recovery_missing_attachment": "auth.users:on_auth_user_created -> public.handle_new_user_profile()",
     "functions_with_trigger_attachments": 11,
     "internal_function_callers": {
       "handle_new_user()": [
@@ -66,6 +69,7 @@
   },
   "acceptance_gate": {
     "all_current_deployed_callers_scanned": true,
+    "missing_auth_user_hook_recovered": false,
     "trigger_attachments_preserved_in_candidate": true,
     "isolated_acl_verification_passed": false,
     "trigger_runtime_smoke_passed": false,
