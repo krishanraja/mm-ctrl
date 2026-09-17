@@ -1,0 +1,268 @@
+{
+  "schema_version": "ctrl.g24.experience-proof-council.r1.v1",
+  "contract_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "status": "active_required_for_every_material_surface",
+  "purpose": "Prevent autonomous product work from confusing attractive output, architecture quality or passing tests with a world-class rendered experience.",
+  "governing_product_gate": "G24.D",
+  "existing_truth_council": [
+    "human_agency",
+    "epistemic_integrity",
+    "subject_audience_lifecycle_safety",
+    "consequential_usefulness",
+    "living_brain_integrity",
+    "human_comprehension_and_access",
+    "behavioural_and_implementation_reality"
+  ],
+  "experience_specialists": [
+    {
+      "id": "immediate_comprehension_and_cognitive_load",
+      "owned_truth": "A busy first-time user can say what matters, why it matters and what to do next without decoding product language.",
+      "veto_examples": [
+        "more than one competing primary action",
+        "the Brain makes the user perform the interpretation",
+        "explanatory furniture is required to understand the question",
+        "desktop or mobile hierarchy hides the consequential decision"
+      ]
+    },
+    {
+      "id": "interaction_choreography_and_affordance",
+      "owned_truth": "The sequence, controls, feedback and recovery make the valuable action feel obvious, low-effort and impossible to lose.",
+      "veto_examples": [
+        "a control does not look or behave interactive",
+        "the verdict is separated from the action that produced it",
+        "input can disappear or cannot be resumed",
+        "progressive disclosure becomes hidden required work"
+      ]
+    },
+    {
+      "id": "visual_taste_brand_and_distinctiveness",
+      "owned_truth": "The surface is recognisably Mindmake, aesthetically exceptional and meaningfully distinct from prevailing AI-product defaults.",
+      "veto_examples": [
+        "visual novelty has no informational meaning",
+        "generic AI gradients, glass cards, mascot theatre or sparkle grammar",
+        "pompous display copy consumes useful space",
+        "the experience is polished but interchangeable"
+      ]
+    },
+    {
+      "id": "empathy_voice_and_human_dignity",
+      "owned_truth": "The product feels thoughtful, calm, encouraging and accountable without arrogance, manipulation, fake intimacy or verbal excess.",
+      "veto_examples": [
+        "AI-written swagger or bossy fragment stacks",
+        "reassurance repeated instead of value delivered",
+        "a hard question feels accusatory or incomprehensible",
+        "anthropomorphism obscures agency or accountability"
+      ]
+    },
+    {
+      "id": "cross_device_input_and_environment_resilience",
+      "owned_truth": "The same task and status survive the intended device, viewport, orientation, pointer, keyboard, voice, zoom and browser conditions.",
+      "veto_examples": [
+        "mobile is a squeezed desktop",
+        "touch, safe areas, virtual keyboards or dynamic browser chrome break the task",
+        "meaning depends on hover",
+        "device handoff loses state or changes authority"
+      ]
+    },
+    {
+      "id": "accessibility_and_inclusive_semantics",
+      "owned_truth": "Keyboard, assistive technology, focus, semantics, contrast, reflow and reduced-motion behavior preserve the complete task and consequence.",
+      "veto_examples": [
+        "keyboard or screen-reader users cannot complete the primary task",
+        "focus is lost or trapped incorrectly",
+        "color, motion or spatial position carries unique meaning",
+        "zoom or text reflow hides controls or content"
+      ]
+    },
+    {
+      "id": "performance_motion_and_perceived_quality",
+      "owned_truth": "Loading, model latency, animation and transitions feel intentional, responsive and alive without hiding delay or degrading control.",
+      "veto_examples": [
+        "two loading experiences occur back to back",
+        "animation is decorative, janky or incompatible with reduced motion",
+        "slow AI work has no honest progress, cancellation, fallback or retry",
+        "layout shift or input delay damages trust"
+      ]
+    },
+    {
+      "id": "state_range_recovery_and_ai_truth",
+      "owned_truth": "Representative, sparse, empty, long, stale, loading, failed and adversarial states remain useful and honest, and AI output never outruns evidence.",
+      "veto_examples": [
+        "synthetic or sparse data produces a business horoscope",
+        "failure destroys work or encourages duplicate action",
+        "generated imagery or visualisation implies unsupported meaning",
+        "the happy path is polished while real edge cases collapse"
+      ]
+    }
+  ],
+  "proof_layers": {
+    "contract": "Machine checks prove exact files, schemas, state transitions and declared invariants only.",
+    "rendered": "Browser evidence proves observable behavior for named tasks, revisions, states and viewports only.",
+    "reality": "Fresh people, physical devices and assistive technology prove comprehension and use; emulation and AI judges cannot substitute for this layer.",
+    "outcome": "Longitudinal customer evidence proves decision value, habit, trust and improvement; no UI review can infer it."
+  },
+  "blind_first_pass": {
+    "required_pack": [
+      "frozen artifact and source hashes",
+      "matching deployment revision",
+      "sanitized user, job and product promise",
+      "non-negotiable product, data, safety and brand constraints",
+      "named tasks, states, viewports and evidence",
+      "current-source standards packet where the requirement may have changed"
+    ],
+    "excluded_from_pack": [
+      "builder rationale",
+      "conversation history",
+      "prior judge verdicts",
+      "founder predicted reaction",
+      "change log or preferred candidate",
+      "other specialists' outputs"
+    ],
+    "minimum_independent_contexts": 2,
+    "same_context_self_review_counts_as_blind": false,
+    "first_pass_verdicts_sealed_before_history": true,
+    "candidate_order_randomized_for_concept_comparison": true,
+    "material_disagreement_requires_fresh_tiebreak_or_missing_evidence": true,
+    "role_diversity_is_not_cognitive_independence": true
+  },
+  "historical_second_pass": {
+    "allowed_after_seal": true,
+    "inputs": [
+      "durable judge history",
+      "founder feedback chronology",
+      "prior failure and repair evidence"
+    ],
+    "purpose": "Calibrate against recurring failure without anchoring the independent first pass.",
+    "cross_examination": "Standards prosecution and veto defense attack each sealed verdict before adjudication."
+  },
+  "scope_router": {
+    "backend_or_schema_only": {
+      "experience_council": "not_applicable_with_written_reason",
+      "required": [
+        "relevant truth judges",
+        "machine and provider proof",
+        "explicit statement that no rendered-experience approval was inferred"
+      ]
+    },
+    "routine_visual_repair_inside_locked_surface": {
+      "experience_specialists_minimum": 2,
+      "required": [
+        "original reproduction",
+        "affected and adjacent viewports",
+        "state and accessibility regression checks",
+        "rendered readback"
+      ]
+    },
+    "material_customer_or_operator_surface": {
+      "experience_specialists": "all",
+      "truth_judges_required": [
+        "human_agency",
+        "consequential_usefulness",
+        "human_comprehension_and_access",
+        "behavioural_and_implementation_reality"
+      ],
+      "founder_surface_approval_required": true
+    },
+    "release_candidate": {
+      "experience_specialists": "all",
+      "truth_judges": "all",
+      "reality_labs": "all_applicable",
+      "physical_device_evidence": "actual iOS Safari and Android Chrome for release-critical mobile flows",
+      "fresh_human_evidence": true,
+      "founder_release_authority_required": true
+    },
+    "fresh_material_concept_divergence": {
+      "minimum_distinct_spines": 3,
+      "independent_primary_judges": 2,
+      "candidate_order_randomized": true,
+      "fresh_tiebreaker_on_material_disagreement": true
+    }
+  },
+  "reality_labs": {
+    "tasks": "three to seven highest-value tasks unless the scope is deliberately narrower",
+    "browser_floor": [
+      "Chromium",
+      "WebKit",
+      "Firefox where browser risk is material"
+    ],
+    "responsive_floor": [
+      "representative wide desktop",
+      "representative narrow phone",
+      "intermediate or tablet width when the layout changes materially",
+      "zoom and text reflow",
+      "portrait and landscape where the task may occur"
+    ],
+    "input_floor": [
+      "touch",
+      "keyboard",
+      "coarse and fine pointer",
+      "voice plus a non-voice alternative where voice is offered"
+    ],
+    "state_floor": [
+      "representative",
+      "sparse",
+      "empty",
+      "long content",
+      "loading and slow AI",
+      "stale and partial",
+      "permission denied",
+      "offline or provider failure",
+      "rate limited",
+      "save failure and retry",
+      "adversarial or malformed input",
+      "quiet state"
+    ],
+    "persistence_floor": [
+      "refresh",
+      "navigation and back",
+      "return or relogin",
+      "device handoff when promised",
+      "duplicate-action prevention"
+    ],
+    "accessibility_floor": [
+      "keyboard completion and visible focus",
+      "semantic labels and announcements",
+      "focus trap and restoration",
+      "contrast and non-color meaning",
+      "zoom and reflow",
+      "reduced motion",
+      "screen-reader path for release-critical flows"
+    ],
+    "performance_rule": "Use current authoritative thresholds at test time and record the source, retrieval date, environment and observed distribution."
+  },
+  "futuristic_quality_definition": [
+    "The system feels prepared before the user asks.",
+    "Complex intelligence appears as one calm, meaningful next move.",
+    "Visualisation carries truth and consequence rather than decorative theatre.",
+    "The product is recognisable and memorable without borrowing current AI fashion.",
+    "Motion and responsiveness make the Brain feel alive without impersonating a person.",
+    "A leader becomes more capable, not more dependent or busier."
+  ],
+  "required_run_receipt": [
+    "run_id",
+    "surface_and_materiality",
+    "repository_revision",
+    "deployment_revision_and_identity_match",
+    "artifact_hashes",
+    "tasks_states_devices_browsers_and_inputs",
+    "first_pass_pack_hash_and_exclusions",
+    "sealed_independent_verdicts",
+    "historical_calibration_and_cross_examination",
+    "reality_lab_results_and_evidence",
+    "unverified_or_blocked_proof",
+    "adjudication_and_dissent",
+    "founder_approval_scope",
+    "external_action_and_release_status"
+  ],
+  "enforcement": {
+    "material_ui_change_requires_same_change_run_receipt": true,
+    "not_run_means": "not_approved",
+    "architecture_pass_means_rendered_pass": false,
+    "automated_test_pass_means_usability_pass": false,
+    "ai_judge_pass_means_human_or_device_pass": false,
+    "one_viewport_pass_means_cross_device_pass": false,
+    "unresolved_p0_or_p1_blocks_release": true,
+    "material_veto_requires_repair_or_explicit_founder_override": true,
+    "dissent_is_preserved": true
+  }
+}
