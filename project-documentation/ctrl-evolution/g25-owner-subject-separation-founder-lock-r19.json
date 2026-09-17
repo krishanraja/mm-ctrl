@@ -1,0 +1,137 @@
+{
+  "schema_version": "ctrl.g25.owner-subject-separation-founder-lock.r19.v1",
+  "record_kind": "founder_lock_and_project_decision_record",
+  "exact_final_call": "agreed completely!",
+  "accepted_prompt": "Deleting an operator must never automatically delete the customer's Brain. If the Brain's subject asks to be deleted, erase that subject's Brain. If a Mindmake operator is removed, remove their access and require an explicit transfer or closure decision without deleting the subject's Brain.",
+  "locked_policy": {
+    "subject_erasure": {
+      "standing": "approved",
+      "rule": "A subject-erasure request may destroy only Brain data whose subject_id is the erased person."
+    },
+    "operator_removal": {
+      "standing": "approved",
+      "rule": "Removing an owner or operator revokes that person's access but must never use ownership alone as authority to delete another subject's Brain."
+    },
+    "owned_customer_brain": {
+      "standing": "approved",
+      "rule": "If the removed operator owns a workspace for a different subject, destructive account deletion stays held until an authorised successor accepts transfer or the customer explicitly authorises closure."
+    },
+    "dual_role": {
+      "standing": "approved",
+      "rule": "When the same person is both a Brain subject and an operator for other subjects, their own Brain may follow subject erasure while every other subject's Brain remains protected behind transfer or explicit closure."
+    }
+  },
+  "decision_record": {
+    "decision_id": "DEC-20260917-g25-owner-subject-separation-r19",
+    "title": "Brain subject and operator deletion separation",
+    "decision": "CTRL will erase a Brain only from verified subject authority, while removing an owner or operator will revoke access and require explicit transfer or customer-authorised closure without automatically deleting another subject's Brain.",
+    "status": "active",
+    "decided_at": "2026-09-17T12:46:45+01:00",
+    "recorded_at": "2026-09-17T12:46:45+01:00",
+    "decider": "Krish Raja",
+    "accountable_owner": "Krish Raja",
+    "scope": "system",
+    "affected_entities": [
+      "CTRL whole-Brain erasure",
+      "Brain workspace ownership",
+      "Mindmake operator access",
+      "customer Brain custody",
+      "auth-user deletion planning"
+    ],
+    "rationale": [
+      "The person a Brain describes and the person operating it can be different people.",
+      "An operator account lifecycle must not become accidental authority to destroy a customer's personal Brain.",
+      "Immediate access revocation contains access risk while explicit transfer or closure preserves customer control.",
+      "The same person can be a subject in one workspace and an operator in another, so deletion must be scoped by relationship rather than user identity alone."
+    ],
+    "alternatives": [
+      {
+        "route": "Cascade-delete every workspace owned by a removed user",
+        "why_rejected": "Ownership may represent Mindmake operations rather than the customer subject, so the cascade could destroy another person's Brain."
+      },
+      {
+        "route": "Keep operator access until ownership transfer finishes",
+        "why_rejected": "It leaves unnecessary access open after removal and conflicts with the approved access-first containment rule."
+      },
+      {
+        "route": "Automatically assign a successor",
+        "why_rejected": "The system must not invent authority over private customer Brain data."
+      }
+    ],
+    "dissent": "Transfer or closure can delay deletion of the operator's authentication identity and requires a safe custody state. This operational burden is accepted to prevent cross-subject destruction.",
+    "tradeoffs": "Operator removal may remain resumable pending until every differently-subjected workspace has an authorised transfer or explicit customer closure decision. CTRL accepts slower completion rather than silently deleting or reassigning a customer's Brain.",
+    "evidence_refs": [
+      {
+        "ref": "project-documentation/ctrl-evolution/g25-erasure-target-registry-r18.json",
+        "kind": "fact",
+        "scope": "four discovered owner foreign-key paths whose cascade semantics could delete differently-subjected data"
+      },
+      {
+        "ref": "supabase/migrations/20260908111121_brain_workspace_audience_canary.sql",
+        "kind": "fact",
+        "scope": "workspace schema permits company and project workspaces where owner and subject differ"
+      },
+      {
+        "ref": "conversation:2026-09-17 founder approval immediately following the plain-language operator-deletion rule",
+        "kind": "fact",
+        "scope": "human finality"
+      }
+    ],
+    "assumptions": [
+      {
+        "assumption": "Every Brain workspace can identify its actual subject independently from its current owner or operator.",
+        "flip_rule": "Reopen the planner boundary if a live workspace cannot establish one authoritative subject_id."
+      },
+      {
+        "assumption": "A transfer or customer-authorised closure can be represented without restoring removed operator access.",
+        "flip_rule": "Reopen the custody mechanism if verified implementation evidence shows transfer requires restoring access to the removed operator."
+      }
+    ],
+    "revisit": {
+      "review_on": null,
+      "trigger": "A live workspace cannot establish its subject independently from its operator, transfer requires restoring removed access, or legal review requires a different custody or closure mechanism.",
+      "signal_source": "Schema readback, multi-identity deletion canary, transfer recovery test or documented legal review",
+      "owner": "Krish Raja",
+      "action_when_fired": "Set this decision to review_due and prepare a bounded keep, supersede or reverse decision while preserving the no-cross-subject-deletion invariant."
+    },
+    "authority_granted": [
+      "local policy binding and deterministic checks",
+      "local principal-removal planner and fixtures",
+      "local registry classification repair",
+      "local documentation and commits"
+    ],
+    "source_ref": "conversation:2026-09-17 exact founder response: agreed completely!",
+    "supersedes": [],
+    "superseded_by": [],
+    "outcome": "not_yet_observed",
+    "events": [
+      {
+        "type": "created",
+        "at": "2026-09-17T12:46:45+01:00",
+        "actor": "Krish Raja",
+        "source_ref": "conversation:2026-09-17 exact founder response"
+      }
+    ],
+    "last_verified_at": "2026-09-17T12:46:45+01:00"
+  },
+  "not_authorized": [
+    "automatic successor selection",
+    "customer Brain closure without explicit authority",
+    "auth-user deletion",
+    "migration file or migration execution",
+    "linked or production database use",
+    "customer-facing deletion claim or final copy",
+    "deployment, merge or release",
+    "cross-venture Supabase decision-ledger write"
+  ],
+  "cross_venture_decision_ledger": {
+    "status": "STORE_UNAVAILABLE",
+    "unmet_gates": [
+      "verified configured generic decision-ledger live_status",
+      "applied generic record and event migration with grants and policies",
+      "authenticated server-side ledger adapter or RPC",
+      "authoritative write and event-head readback"
+    ],
+    "project_record_authority": "project-documentation/ctrl-evolution/g25-owner-subject-separation-founder-lock-r19.json"
+  }
+}

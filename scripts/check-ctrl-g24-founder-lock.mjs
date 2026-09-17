@@ -33,6 +33,7 @@ for (const [path, hash] of Object.entries(locked)) check(`locked hash: ${path}`,
 const lock = read('project-documentation/ctrl-evolution/g24-founder-architecture-lock.md')
 const state = read('project-documentation/ctrl-evolution/README.md')
 const designState = read('docs/current/design-state.md')
+const currentNextAction = state.match(/\*\*CURRENT_NEXT_ACTION:\*\*([^\n]+)/)?.[1] ?? ''
 const r68 = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r68.json'))
 const r69 = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r69.json'))
 const r70 = JSON.parse(read('project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70.json'))
@@ -46,7 +47,9 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the preservation gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Complete and verify the [G25 legacy capability preservation register R1]') && state.includes('No result-producing runtime, registry, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.'),
+  currentNextAction.includes('No linked or production database') &&
+    currentNextAction.includes('customer-facing UI') &&
+    currentNextAction.includes('deployment, merge, release, external action or legacy retirement is authorized.'),
 )
 check(
   'design state remains inside the preservation gate',
