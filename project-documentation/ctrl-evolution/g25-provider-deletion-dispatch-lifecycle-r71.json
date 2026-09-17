@@ -1,0 +1,54 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-dispatch-lifecycle.r71.v1",
+  "contract_id": "G25-PROVIDER-DELETION-DISPATCH-LIFECYCLE-R71",
+  "status": "append_only_dispatch_lifecycle_locally_proved_persistence_unproved",
+  "depends_on": ["G25-PROVIDER-DELETION-JOB-ENVELOPE-R70"],
+  "implementation": {
+    "compiler": "supabase/functions/_shared/provider-deletion-dispatch-lifecycle.r71.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-dispatch-lifecycle.r71.test.ts",
+    "config": "vitest.g25-provider-deletion-dispatch-lifecycle.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-dispatch-lifecycle-r71.mjs"
+  },
+  "event_kinds": [
+    "dispatched",
+    "accepted",
+    "completed",
+    "failed_retryable",
+    "failed_terminal",
+    "retry_requested",
+    "dead_lettered",
+    "operator_recovery_requested",
+    "operator_recovery_linked"
+  ],
+  "proved_locally": [
+    "events form an exact predecessor chain with unique identities and monotonic time",
+    "worker acceptance and completion require the R70 target cell as actor",
+    "completion persists only a content-free result receipt digest",
+    "failure persists a bounded code and evidence digest rather than prose",
+    "retryable failure can request a linked retry only before attempt five",
+    "the fifth retryable failure must dead-letter",
+    "terminal failure can dead-letter immediately",
+    "dead-letter recovery is an explicit operator request followed by a linked replacement dispatch",
+    "closed state, automatic terminal state and operator attention are separate facts",
+    "unexpected fields such as a raw provider handle are rejected"
+  ],
+  "unproved": [
+    "append-only database persistence",
+    "atomic event insertion and aggregate projection",
+    "concurrent writers and exact replay",
+    "queue acknowledgement integration",
+    "dead-letter alert delivery",
+    "operator recovery interface"
+  ],
+  "artifact_sha256": {
+    "compiler": "358cb6925d2abb83f242c4fa2f8366995e418c42dc8191df5c7ba8e04890371a",
+    "tests": "ebeb43e443b8e1ab76fb609dc9833c97f79abad8f561d2c0b98d6364d1a29476",
+    "config": "3a4ba36a7aa3f869406b5f32ed4ee417bef89b06f22be212af8125962410a374"
+  },
+  "bounded_claim": "R71 proves the pure lifecycle reducer and recovery semantics. It persists, sends, alerts and recovers nothing.",
+  "next_gate": "Persist R70 dispatches and R71 events append-only in local PostgreSQL with exact replay, transition locking and content-free projections.",
+  "authority": {
+    "permits": ["local lifecycle tests", "local documentation and commit"],
+    "forbids": ["queue creation", "message send", "database migration", "deployment", "linked database access", "provider request", "merge", "release"]
+  }
+}
