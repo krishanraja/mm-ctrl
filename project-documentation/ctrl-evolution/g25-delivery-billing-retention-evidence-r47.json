@@ -1,0 +1,49 @@
+{
+  "schema_version": "ctrl.g25.delivery-billing-retention-evidence.r47.v1",
+  "record_id": "G25-DELIVERY-BILLING-RETENTION-EVIDENCE-R47",
+  "status": "delivery_and_billing_residual_retention_bounded",
+  "retrieved_at": "2026-09-17",
+  "depends_on": [
+    "G25-PROVIDER-EGRESS-CLASSIFICATION-R45",
+    "G25-CORE-MODEL-RETENTION-EVIDENCE-R46"
+  ],
+  "providers": {
+    "resend": {
+      "official_sources": [
+        "https://resend.com/security/gdpr",
+        "https://resend.com/legal/dpa"
+      ],
+      "official_standing": "Resend says active Free, Pro and Scale email and log data is retained for 30 days, backups persist for 7 days and remaining customer data is deleted within 90 days after account termination. The DPA identifies email address, message content, metadata and optional tracking data as transferred personal data.",
+      "repository_standing": "Four direct send implementations exist. The shared helper returns a Resend message ID, but no Edge Function writes email_analytics and the three other direct sends do not durably bind a message ID. Account deletion does not orchestrate Resend deletion or expiry evidence.",
+      "boundary": "A delivered email creates recipient and receiving-provider copies that Mindmaker cannot recall. The product may delete its local receipt but must preserve the fact and standing of delivery."
+    },
+    "stripe": {
+      "official_sources": [
+        "https://docs.stripe.com/api/customers/delete",
+        "https://stripe.com/privacy-center/legal"
+      ],
+      "official_standing": "Stripe customer deletion removes payment details and prevents further operations, but the deleted customer shell remains retrievable. Stripe says it generally retains Business User personal data for five or more years after the relationship or last transaction in most jurisdictions, subject to legal, fraud and financial obligations.",
+      "repository_standing": "Account deletion cancels subscriptions but does not call customer deletion, retain the cancellation result as a provider receipt or distinguish operational closure from legally retained payment records.",
+      "boundary": "Billing closure is not whole-Brain erasure. The receipt must state what was cancelled, what provider object was operationally deleted and what regulated record may remain."
+    }
+  },
+  "receipt_rules": [
+    "email send success requires the provider message ID when returned",
+    "delivery receipts are preserved after local content erasure but contain no message body",
+    "email retention expiry is a provider policy standing, not a claimed immediate deletion",
+    "subscription cancellation and customer deletion are separate Stripe operations",
+    "Stripe regulatory retention is recorded as an explicit residual boundary",
+    "recipient inboxes and receiving mail providers are customer-controlled or third-party copies"
+  ],
+  "artifact": "scripts/check-ctrl-g25-delivery-billing-retention-evidence-r47.mjs",
+  "next_gate": "Map research and enrichment providers, then design a provider-receipt registry with distinct delivery, operational deletion, policy expiry and residual-retention states.",
+  "not_authorized": [
+    "sending email",
+    "changing email tracking",
+    "cancelling subscriptions",
+    "deleting Stripe customers",
+    "editing live deletion",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}
