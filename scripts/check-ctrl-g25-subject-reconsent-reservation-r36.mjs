@@ -30,6 +30,8 @@ assert(candidate.includes("reconsent_previous_scope_not_erased"),
   "old-scope erasure gate missing");
 assert(candidate.includes("reconsent_subject_auth_link_invalid"),
   "subject login-history gate missing");
+assert(candidate.includes("unique (previous_workspace_id, subject_id, request_sha256)"),
+  "authenticated-request retry identity missing");
 assert(candidate.includes("reserved_workspace_id <> previous_workspace_id"),
   "new-scope identity invariant missing");
 assert(candidate.includes("force row level security"), "forced RLS missing");
@@ -38,6 +40,7 @@ assert(candidate.includes("from public, anon, authenticated, service_role"),
 assert(!candidate.match(/grant (insert|update|delete).*brain_prepared_reconsent_reservations to service_role/),
   "service role gained raw reservation mutation");
 assert(runner.includes("equivalent_consent_converged"), "semantic convergence proof missing");
+assert(runner.includes("r36-retry-generated-scope"), "fresh transport identity retry missing");
 assert(runner.includes("subject_auth_link_requirement_removed"), "subject-link mutation missing");
 assert(runner.includes("raw_service_insert_reopened"), "raw-write mutation missing");
 assert(note.includes("does not prove the person performed the consent action"),

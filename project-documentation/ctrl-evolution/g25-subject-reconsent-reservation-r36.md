@@ -12,7 +12,7 @@ That receipt has the explicit standing `reserved_not_created`. R36 does not crea
 
 ## Fail-closed behavior
 
-The proof rejects a non-erased previous scope, an unrelated consenting login, an existing workspace identity, reuse of the erased workspace, a conflicting replay, browser execution and raw service insertion. Exact retries are idempotent. Semantically equivalent alternate receipt IDs converge on the first accepted reservation so retry behavior cannot fork the person's intent.
+The proof rejects a non-erased previous scope, an unrelated consenting login, an existing workspace identity, reuse of the erased workspace, a conflicting replay, browser execution and raw service insertion. Exact retries are idempotent. A retry with a new receipt ID, new reserved IDs and a later transport timestamp still converges on the first reservation because identity is anchored to the authenticated request fingerprint. Transport-generated details cannot fork the person's intent.
 
 Four deliberately weakened candidates are also executed. Removing the old-erasure check, removing the subject-link check, reopening authenticated execution or reopening raw service insertion makes the proof fail.
 

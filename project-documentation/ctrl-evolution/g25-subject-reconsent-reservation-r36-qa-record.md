@@ -8,7 +8,7 @@ Status: local candidate verified on PostgreSQL-compatible PGlite 18.3. No authen
 - The prior erasure tombstone remained present.
 - Neither the reserved workspace nor its custody principal was created.
 - Exact replay returned idempotent standing.
-- An equivalent alternate receipt converged on the first reservation.
+- A transport retry with new receipt and scope IDs and a later timestamp converged on the first reservation.
 - Conflicting replay, non-erased scope, wrong subject link, existing identity collision and old-scope reuse failed closed.
 - Anonymous and authenticated execution remained closed.
 - The service role could execute the definer but could not insert a raw reservation row.

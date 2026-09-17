@@ -27,8 +27,8 @@ create table public.brain_prepared_reconsent_reservations (
   request_sha256 text not null check (request_sha256 ~ '^[0-9a-f]{64}$'),
   occurred_at timestamptz not null,
   recorded_at timestamptz not null default now(),
-  constraint brain_prepared_reconsent_scope_fingerprint_key
-    unique (previous_workspace_id, subject_id, consent_fingerprint),
+  constraint brain_prepared_reconsent_request_key
+    unique (previous_workspace_id, subject_id, request_sha256),
   check (reserved_workspace_id <> previous_workspace_id)
 );
 
@@ -210,7 +210,7 @@ begin
     reserved_custody_principal_id, reserved_tenant_key, statement_version,
     purpose, consent_fingerprint, request_sha256, occurred_at
   )
-  on conflict on constraint brain_prepared_reconsent_scope_fingerprint_key do nothing
+  on conflict on constraint brain_prepared_reconsent_request_key do nothing
   returning * into existing;
 
   if not found then
@@ -218,7 +218,7 @@ begin
     from public.brain_prepared_reconsent_reservations consent_row
     where consent_row.previous_workspace_id = previous_workspace_id
       and consent_row.subject_id = subject_id
-      and consent_row.consent_fingerprint = consent_fingerprint;
+      and consent_row.request_sha256 = request_sha256;
     return jsonb_build_object(
       'status', 'converged',
       'consent_id', existing.id,

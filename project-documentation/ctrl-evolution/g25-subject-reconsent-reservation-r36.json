@@ -14,7 +14,7 @@
     "the consenting login must have been actively linked to the stable subject when the receipt occurred",
     "the operator principal must have been active and linked to an active login when the receipt occurred",
     "the reserved workspace, custody and tenant identities must be unused and distinct from the erased scope",
-    "an exact replay is idempotent and an equivalent alternate receipt converges on the first accepted reservation",
+    "an exact replay is idempotent and a transport retry with new generated IDs and time converges by authenticated request fingerprint",
     "a conflicting replay, non-erased scope, wrong subject link, existing-scope collision and old-scope reuse fail closed",
     "the reservation leaves the old tombstone unchanged and creates neither the new workspace nor its custody principal",
     "browser roles cannot execute the function and the service role cannot insert raw reservation rows",
@@ -36,9 +36,9 @@
   },
   "artifacts": {
     "candidate": "supabase/candidates/g25_prepared_subject_reconsent_reservation_r36.sql",
-    "candidate_sha256": "827b0d82d9a3f1e3d884fa8db87c29545d50741f0849e56792d24cbee2b6324d",
+    "candidate_sha256": "8e646095eab33f25c2dafa5e87949d4a04eb9154d1b2a9013a2f608ce83b1380",
     "runner": "scripts/run-ctrl-g25-subject-reconsent-reservation-r36.mjs",
-    "runner_sha256": "e8407c9042766c6c48c2fc6efb3253b05733c26ea04a13c48c184677cd017898",
+    "runner_sha256": "07f070d96e7a553013d3f50df7a1f7c6e04ed878e60287976cd28bb7d4a82807",
     "checker": "scripts/check-ctrl-g25-subject-reconsent-reservation-r36.mjs"
   },
   "next_gate": "Specify and prove the authenticated consent endpoint and atomic new-scope creation without inventing consent, reusing the erased owner identity or weakening the old tombstone.",

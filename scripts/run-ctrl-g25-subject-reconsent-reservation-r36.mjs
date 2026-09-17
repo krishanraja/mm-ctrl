@@ -214,7 +214,10 @@ async function runPositive(candidateSql = candidate) {
     const converged = await reserve(db, {
       ...consent,
       consent_id: reservationIds.convergedConsent,
-      request_sha256: "d".repeat(64),
+      reserved_workspace_id: "24600000-0000-4000-8000-000000000098",
+      reserved_custody_principal_id: "8b600000-0000-4000-8000-000000000098",
+      reserved_tenant_key: "r36-retry-generated-scope",
+      occurred_at: new Date().toISOString(),
     });
     assert(converged.status === "converged" && converged.consent_id === reservationIds.consent,
       "equivalent consent did not converge on first receipt");
