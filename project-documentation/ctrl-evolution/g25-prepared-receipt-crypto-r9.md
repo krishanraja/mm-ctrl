@@ -42,4 +42,4 @@ Existing valid Brain contexts produce the exact same associated-data bytes as be
 
 R9 proves pure local cryptographic behavior. It does not create a database table, touch a key or environment, execute RLS, encrypt production content or connect runtime callers.
 
-Database-backed use remains blocked until the R8 exact-purpose canary passes against a disposable local PostgreSQL runtime.
+R8 now passes against a disposable PostgreSQL 18.3 WASM runtime. A non-migration schema and service-transaction candidate may be specified locally, but migration and runtime use remain blocked until Supabase-local image and PostgREST parity pass.

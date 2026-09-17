@@ -36,7 +36,7 @@
     "combined_crypto_and_authority_tests": 26,
     "typecheck_new_errors": 0
   },
-  "remaining_blocker": "R8 exact-purpose RLS must execute successfully against a disposable local database before this context is used by a database-backed prepared-receipt path.",
+  "remaining_blocker": "R8 has passed PostgreSQL 18.3 WASM, but full Supabase-local image and PostgREST parity remain required before migration or runtime use.",
   "bounded_claim": "R9 proves local cryptographic context semantics and backward compatibility. It does not create or encrypt a database row, manage live keys, execute RLS, connect runtime callers or prove production custody.",
   "authority": {
     "permits": [

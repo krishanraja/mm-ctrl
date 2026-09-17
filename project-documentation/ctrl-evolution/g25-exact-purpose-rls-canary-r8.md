@@ -1,6 +1,6 @@
 # G25 exact-purpose RLS canary, R8
 
-Status: `candidate_static_pass_execution_blocked`
+Status: `postgresql_wasm_pass_supabase_local_parity_pending`
 
 Machine record: [g25-exact-purpose-rls-canary-r8.json](g25-exact-purpose-rls-canary-r8.json)
 
@@ -22,10 +22,18 @@ Two users receive the same workspace and audience but different purposes. Each m
 
 The complete test is wrapped in `begin` and `rollback`. It is deliberately stored under database tests, not migrations.
 
-## Current verification boundary
+## Runtime proof
 
-The contract and SQL structure pass static checks. PostgreSQL execution is not claimed. The local Supabase CLI cannot inspect or start its database because neither Docker nor Podman is available on this machine's path.
+The exact SQL now passes on PostgreSQL 18.3 through pinned `@electric-sql/pglite@0.5.8` under a non-owner `authenticated` role. The readback proves:
 
-No linked or production database was used as a substitute. That would turn a local proof into an external schema risk.
+- each same-workspace, same-audience user sees only the row matching their granted purpose;
+- grant without membership reads zero rows;
+- anonymous-auth reads zero rows;
+- authenticated writes fail;
+- the test table and fixture users leave zero residue after rollback.
 
-R7 has accepted enough of the receipt shape to test the encryption context independently in pure local code. Any database use of that extension remains closed until this canary executes successfully against a disposable local database.
+The durable harness also removes only the purpose predicate and reruns the same canary. That weakened policy fails at the expected cross-purpose assertion. This proves the test detects the boundary rather than merely completing.
+
+No linked or production database was used. Full Supabase-local image and PostgREST parity remain pending because Docker and Podman are unavailable. R7 and R9 may proceed into a non-migration schema and transaction candidate; migration or runtime integration remains closed until that parity test passes.
+
+Primary references: [Supabase row level security](https://supabase.com/docs/guides/database/postgres/row-level-security), [Supabase Data API security](https://supabase.com/docs/guides/api/securing-your-api), [PGlite](https://pglite.dev/docs/) and [PGlite API](https://pglite.dev/docs/api).

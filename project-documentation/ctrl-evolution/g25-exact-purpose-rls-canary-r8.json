@@ -1,7 +1,7 @@
 {
   "schema_version": "ctrl.g25.exact-purpose-rls-canary.r8.v1",
   "contract_id": "G25-EXACT-PURPOSE-RLS-CANARY-R8",
-  "status": "candidate_static_pass_execution_blocked",
+  "status": "postgresql_wasm_pass_supabase_local_parity_pending",
   "prepared_at": "2026-09-17T10:02:00+01:00",
   "depends_on": "project-documentation/ctrl-evolution/g25-authority-envelope-r7.json",
   "candidate_sql": "supabase/tests/database/g25_prepared_receipt_purpose_canary.test.sql",
@@ -28,15 +28,26 @@
   },
   "verification": {
     "static_contract": "passed",
-    "database_execution": "blocked",
-    "blocker": "No Docker or Podman executable is available to the local Supabase CLI, so PostgreSQL RLS behavior has not been executed.",
-    "failed_command": "npx supabase status -o env",
-    "required_command_when_available": "npx supabase test db supabase/tests/database/g25_prepared_receipt_purpose_canary.test.sql --local"
+    "database_execution": "passed_on_postgresql_wasm",
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "runtime_harness": "scripts/run-ctrl-g25-purpose-rls-r8.mjs",
+    "positive_control": "passed_with_exact_purpose_isolation_and_zero_rollback_residue",
+    "negative_control": "removing_only_the_purpose_predicate_failed_at_the_expected_boundary",
+    "supabase_local_parity": "pending_no_docker_or_podman",
+    "required_parity_command_when_available": "npx supabase test db supabase/tests/database/g25_prepared_receipt_purpose_canary.test.sql --local"
   },
-  "bounded_claim": "R8 specifies an exact-purpose, rollback-only local RLS canary and statically proves its required clauses are present. It does not yet prove PostgreSQL policy behavior because no local database runtime is available.",
+  "primary_references": [
+    "https://supabase.com/docs/guides/database/postgres/row-level-security",
+    "https://supabase.com/docs/guides/api/securing-your-api",
+    "https://pglite.dev/docs/",
+    "https://pglite.dev/docs/api"
+  ],
+  "bounded_claim": "R8 proves the exact-purpose policy in PostgreSQL 18.3 WASM under a non-owner authenticated role, including a failing negative control and zero rollback residue. It does not yet prove full Supabase-local image parity, PostgREST behavior or a deployable migration.",
   "authority": {
     "permits": [
       "local rollback-only database test",
+      "pinned test-only PostgreSQL WASM harness",
       "static contract checker",
       "local documentation and commit"
     ],
