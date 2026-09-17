@@ -1,0 +1,52 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-operator-custody.r75.v1",
+  "contract_id": "G25-PROVIDER-DELETION-OPERATOR-CUSTODY-R75",
+  "status": "stable_custody_recovery_authority_locally_proved_independent_sessions_unproved",
+  "depends_on": [
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-PROVIDER-DELETION-OPERATOR-SESSION-R74"
+  ],
+  "implementation": {
+    "candidate": "supabase/candidates/g25_provider_deletion_operator_custody_r75.sql",
+    "tests": "supabase/functions/_shared/provider-deletion-operator-custody-postgres.r75.test.ts",
+    "config": "vitest.g25-provider-deletion-operator-custody.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-operator-custody-r75.mjs"
+  },
+  "required_authority_chain": [
+    "non-anonymous authenticated user",
+    "active operator role on the exact workspace",
+    "active auth link to a non-retired stable operator principal",
+    "single current custody assignment for that operator and workspace",
+    "open customer custody principal"
+  ],
+  "proved_locally": [
+    "the signed-in operator holding current customer custody can request recovery",
+    "a workspace operator without current custody cannot request recovery",
+    "a revoked stable-operator auth link removes recovery authority",
+    "customer-authorised custody transfer removes authority from the former operator",
+    "customer-authorised custody transfer gives authority to the replacement after explicit workspace access",
+    "the customer Brain and dispatch remain unchanged by the authority transfer"
+  ],
+  "artifact_sha256": {
+    "candidate": "4e8e7273c44cb7ee94bab2af45a786a1443b61c773f8f732fe56e641634f0e05",
+    "tests": "302f8b1d0359e8de23972810a1c272491dd4cae414857fb9022a0810dd9a7eed",
+    "config": "9811d302afb43e3b69501fd7411592bc718df00a1733ba6a09b9e5e8d18f9881"
+  },
+  "bounded_claim": "R75 proves the exact R23 stable-custody join in one local PGlite process. It does not prove hosted Supabase sessions, separate connections, PostgREST, production RLS, migration compatibility or deployment.",
+  "next_gate": "Execute R68 through R75 through genuinely independent connections in an empty disposable Supabase environment and attest exact roles, grants, Vault verification, session claims and transition locking.",
+  "authority": {
+    "permits": [
+      "local PGlite execution",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "linked or production database access",
+      "credential provisioning",
+      "provider request",
+      "deployment",
+      "merge",
+      "release"
+    ]
+  }
+}
