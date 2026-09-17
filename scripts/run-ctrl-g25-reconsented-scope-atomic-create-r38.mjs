@@ -268,10 +268,23 @@ async function runPositive(candidateSql = candidate) {
     assert(replay.status === "idempotent" && replay.workspace_id === primary.newWorkspace,
       "exact creation replay was not idempotent");
     checks.push("exact_replay_idempotent");
+    const transportRetry = await createScope(db, {
+      ...command,
+      creation_id: "a3800000-0000-4000-8000-000000000001",
+      occurred_at: new Date().toISOString(),
+    });
+    assert(transportRetry.status === "idempotent"
+      && transportRetry.creation_id === primary.creation,
+    "fresh transport identity did not converge on the first creation");
+    checks.push("fresh_transport_identity_converged");
     checks.push(await expectFailure(
-      () => createScope(db, { ...command, creation_id: "a3800000-0000-4000-8000-000000000001" }),
+      () => createScope(db, {
+        ...command,
+        creation_id: "a3800000-0000-4000-8000-000000000002",
+        request_sha256: "d".repeat(64),
+      }),
       "scope_creation_consent_already_consumed",
-      "alternate_creation_for_consumed_consent",
+      "conflicting_creation_for_consumed_consent",
     ));
 
     const missingErasure = contexts["missing-erasure"];

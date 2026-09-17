@@ -15,7 +15,7 @@
     "the authenticated subject receives current owner access and a private prepared-intelligence audience grant",
     "every active login for the accepted operator principal receives operator access",
     "the reserved custody principal is created and assigned with the consent fingerprint as subject-reconsent authority",
-    "exact replay is idempotent and an alternate creation for the consumed consent fails closed",
+    "exact replay and a fresh transport identity with the same request are idempotent while a conflicting request fails closed",
     "missing old erasure, inactive subject access, inactive operator and reserved-identity collision fail closed",
     "browser execution and raw service insertion remain closed",
     "four deliberate security mutations are detected"
@@ -38,9 +38,9 @@
   },
   "artifacts": {
     "candidate": "supabase/candidates/g25_reconsented_scope_atomic_create_r38.sql",
-    "candidate_sha256": "6dc4f4ff147af7678eeb051b645e061dbf90d425ae08da4f04711f46f9fb645e",
+    "candidate_sha256": "8e49e8f1c672ff9782cb82c87d0f689647fee0b0fa5688d3b9af0e885c1da210",
     "runner": "scripts/run-ctrl-g25-reconsented-scope-atomic-create-r38.mjs",
-    "runner_sha256": "4ce27b9739c0904192dc11331837007bf7b40c7341683e62da8d44d739a7c821",
+    "runner_sha256": "2ec34edbbc8f3d5328929eb62c2c015e0c9eb800a2a4edef20bb39e86123d237",
     "checker": "scripts/check-ctrl-g25-reconsented-scope-atomic-create-r38.mjs"
   },
   "next_gate": "Design the single dormant server adapter that composes R37 authentication, R36 reservation and R38 creation while keeping all database functions private and preserving retry semantics.",

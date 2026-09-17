@@ -102,7 +102,7 @@ begin
   from public.brain_prepared_reconsent_scope_creations creation_row
   where creation_row.consent_id = consent_id;
   if found then
-    if existing.id = creation_id and existing.request_sha256 = request_sha256 then
+    if existing.request_sha256 = request_sha256 then
       return jsonb_build_object(
         'status', 'idempotent',
         'creation_id', existing.id,

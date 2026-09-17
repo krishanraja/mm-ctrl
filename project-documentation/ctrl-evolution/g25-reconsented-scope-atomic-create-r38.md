@@ -19,7 +19,7 @@ The new historical principal uses the reserved workspace ID and the `workspace_s
 
 The creator locks the accepted reservation, rechecks the old erasure, current subject access, active operator and every reserved identity, then creates the workspace, roles, private audience grant, custody principal, consent-backed custody assignment and creation receipt in one transaction.
 
-The reservation can be consumed once. An exact retry returns the same scope. A different creation identity for the same consent is rejected. Missing erasure, revoked subject access, retired operator or any reserved-identity collision causes the whole transaction to fail.
+The reservation can be consumed once. An exact retry returns the same scope. A retry with a new transport event ID and later timestamp also returns the first creation when its request fingerprint is unchanged. A different request fingerprint for the consumed consent is rejected. Missing erasure, revoked subject access, retired operator or any reserved-identity collision causes the whole transaction to fail.
 
 ## Boundary
 

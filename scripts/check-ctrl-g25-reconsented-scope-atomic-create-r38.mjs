@@ -35,6 +35,8 @@ assert(candidate.includes("for update"), "reservation serialization lock missing
 assert(!candidate.match(/delete from .*erasure_tombstones/i), "creator can clear old erasure");
 assert(runner.includes("stable_subject_and_fresh_historical_owner_separated"),
   "identity-separation proof missing");
+assert(runner.includes("fresh_transport_identity_converged"),
+  "fresh transport creation retry proof missing");
 assert(runner.includes("old_erasure_recheck_removed"), "old-erasure mutation missing");
 assert(note.includes("does not make the old Brain recoverable"), "anti-revival claim missing");
 assert(qa.includes("No multi-connection, migration, Supabase-local or production claim"),

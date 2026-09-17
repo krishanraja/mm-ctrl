@@ -8,7 +8,7 @@ Status: local transactional candidate verified on PostgreSQL-compatible PGlite 1
 - The stable subject remained the same and the historical owner became a fresh workspace-scoped principal.
 - The old erasure tombstone remained present.
 - Subject owner access, operator access, private audience grant, custody principal and consent-backed custody assignment were created.
-- Exact retry was idempotent and alternate consumption of the same consent failed.
+- Exact retry and a retry with a fresh transport ID were idempotent; a conflicting request for the same consent failed.
 - Missing erasure, inactive subject access, retired operator and reserved-identity collision failed closed.
 - Authenticated execution and raw service insertion failed.
 - Forced RLS, service-only execution and four mutation controls passed.

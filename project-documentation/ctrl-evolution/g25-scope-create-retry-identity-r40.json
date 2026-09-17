@@ -1,0 +1,30 @@
+{
+  "schema_version": "ctrl.g25.scope-create-retry-identity.r40.v1",
+  "record_id": "G25-SCOPE-CREATE-RETRY-IDENTITY-R40",
+  "status": "creation_retry_identity_defect_corrected",
+  "depends_on": [
+    "G25-RECONSENT-RETRY-IDENTITY-R39",
+    "G25-RECONSENTED-SCOPE-ATOMIC-CREATE-R38"
+  ],
+  "defect": "R38 originally treated a fresh server-generated creation event ID as a conflicting second instruction after a lost response.",
+  "correction": "An existing consent creation is idempotent when the server request fingerprint matches, regardless of a new transport event ID or later attempt time.",
+  "observed": {
+    "exact_replay": "idempotent",
+    "fresh_transport_identity_replay": "idempotent",
+    "conflicting_request_replay": "closed",
+    "creation_count": 1
+  },
+  "artifacts": {
+    "r38_candidate": "supabase/candidates/g25_reconsented_scope_atomic_create_r38.sql",
+    "r38_candidate_sha256": "8e49e8f1c672ff9782cb82c87d0f689647fee0b0fa5688d3b9af0e885c1da210",
+    "r38_runner": "scripts/run-ctrl-g25-reconsented-scope-atomic-create-r38.mjs",
+    "r38_runner_sha256": "2ec34edbbc8f3d5328929eb62c2c015e0c9eb800a2a4edef20bb39e86123d237"
+  },
+  "next_gate": "Compose R37, corrected R36 and corrected R38 in one dormant server adapter with an explicit recoverable middle state.",
+  "not_authorized": [
+    "claiming multi-connection safety",
+    "creating an application caller or migration",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}
