@@ -1,0 +1,69 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-handle-db-authority.r68.v1",
+  "contract_id": "G25-PROVIDER-DELETION-HANDLE-DB-AUTHORITY-R68",
+  "status": "compact_authority_locally_proved_supabase_verifier_static_only",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-HANDLE-AUTHORITY-R66",
+    "G25-PROVIDER-DELETION-HANDLE-AUTHORITY-SPEND-R67"
+  ],
+  "implementation": {
+    "authority": "supabase/functions/_shared/provider-deletion-handle-db-authority.r68.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-handle-db-authority.r68.test.ts",
+    "config": "vitest.g25-provider-handle-db-authority.config.ts",
+    "candidate": "supabase/candidates/g25_provider_deletion_handle_db_authority_r68.sql",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-handle-db-authority-r68.mjs"
+  },
+  "local_proof": {
+    "tests": 12,
+    "failures": 0,
+    "proves": [
+      "compact HS256 token issuance and verification preserves R66 semantics",
+      "token carries neither ciphertext nor raw provider handle",
+      "all three token segments are tamper-evident and non-canonical base64url encodings are rejected",
+      "key rotation works without accepting key relabeling",
+      "field-delimited envelope fingerprint is independent of JSON member order",
+      "ciphertext-field changes alter the fingerprint",
+      "unexpected envelope members are rejected"
+    ]
+  },
+  "supabase_candidate": {
+    "verification_secret": "base64url-unpadded 32-byte key in Vault under ctrl_provider_handle_authority_<kid>",
+    "required_extension": "pgcrypto in extensions schema",
+    "design": [
+      "decode and verify the compact token inside a SECURITY DEFINER function",
+      "read the verification key only inside that function",
+      "recalculate the R68 envelope fingerprint inside PostgreSQL",
+      "remove direct access to R67 wrappers",
+      "grant only verified registration to crypto writer",
+      "grant only verified lease and destruction to deletion worker"
+    ],
+    "execution_status": "not_executed"
+  },
+  "runtime_identity_lock": [
+    "use separate custom Postgres login users for writer and worker",
+    "connect through the shared transaction pooler for edge or serverless runtime",
+    "give each login membership in only its own R67 NOLOGIN role",
+    "keep the issuer signing secret out of writer and worker runtimes",
+    "prove writer and worker secret domains are isolated before deployment",
+    "do not grant either role to service_role or postgres"
+  ],
+  "official_sources": [
+    "https://supabase.com/docs/guides/database/postgres/roles",
+    "https://supabase.com/docs/guides/database/connecting-to-postgres",
+    "https://supabase.com/docs/guides/functions/connect-to-postgres",
+    "https://supabase.com/docs/guides/database/vault",
+    "https://supabase.com/features/postgres-extensions"
+  ],
+  "artifact_sha256": {
+    "authority": "613b53f8f7d7cb76c874a5e9075fe305b89749fa02f3a7bff1b53cd29861aeff",
+    "tests": "110edd5b8f5d63578145d7400a9edcb91ce184b9448aafbb322a74b41a4e818b",
+    "config": "4229f4862ab58ed35b8334069ca61560c52b49c997a707dfa116653bbec52d25",
+    "candidate": "c8aa3ebbf5246c8177d67c36c3238adb2a183f164980459cff6f31f9b30c99ff"
+  },
+  "bounded_claim": "R68 proves the compact token and envelope fingerprint locally. Its pgcrypto and Vault verifier is a pinned, unexecuted Supabase candidate. No database signature verification, Vault access, login-role mapping or multi-connection exclusion has been observed.",
+  "next_gate": "Verify pgcrypto and Vault catalog shape in a disposable Supabase environment, provision isolated login roles without committing secrets, then run signature, spend and lease races over independent pooler connections.",
+  "authority": {
+    "permits": ["local cryptographic tests", "static Supabase candidate", "local documentation and commit"],
+    "forbids": ["Vault write", "role provisioning", "migration execution", "linked database access", "provider request", "deployment", "merge", "release"]
+  }
+}
