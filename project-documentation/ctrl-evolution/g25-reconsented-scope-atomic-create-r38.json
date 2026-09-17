@@ -1,0 +1,54 @@
+{
+  "schema_version": "ctrl.g25.reconsented-scope-atomic-create.r38.v1",
+  "record_id": "G25-RECONSENTED-SCOPE-ATOMIC-CREATE-R38",
+  "status": "local_atomic_new_scope_verified",
+  "depends_on": [
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-BOTH-GENERATION-SUBJECT-ERASURE-R30",
+    "G25-SUBJECT-RECONSENT-RESERVATION-R36",
+    "G25-SUBJECT-RECONSENT-ENDPOINT-R37"
+  ],
+  "proved": [
+    "one accepted reservation creates exactly one distinct active personal Brain scope in one database transaction",
+    "the previous erasure tombstone is rechecked under lock and remains unchanged",
+    "the stable subject continues while a fresh workspace-scoped historical principal replaces login-shaped ownership",
+    "the authenticated subject receives current owner access and a private prepared-intelligence audience grant",
+    "every active login for the accepted operator principal receives operator access",
+    "the reserved custody principal is created and assigned with the consent fingerprint as subject-reconsent authority",
+    "exact replay is idempotent and an alternate creation for the consumed consent fails closed",
+    "missing old erasure, inactive subject access, inactive operator and reserved-identity collision fail closed",
+    "browser execution and raw service insertion remain closed",
+    "four deliberate security mutations are detected"
+  ],
+  "observed": {
+    "creation_status": "created",
+    "scope_status": "active_new_scope",
+    "old_tombstone_preserved": true,
+    "workspace_kind": "personal",
+    "stable_subject_preserved": true,
+    "fresh_historical_owner": true,
+    "operator_role_count": 1,
+    "creation_count": 1,
+    "negative_controls": 4
+  },
+  "ownership_resolution": {
+    "removed_legacy_rule": "personal workspace subject_id equals owner_id",
+    "reason": "R23 changed owner_id into immutable historical identity, so UUID equality would reuse login-shaped history as current ownership",
+    "new_rule": "subject_id is the stable person; owner_id is a fresh workspace-scoped historical principal; current access is workspace roles; current operational authority is custody assignment"
+  },
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_reconsented_scope_atomic_create_r38.sql",
+    "candidate_sha256": "6dc4f4ff147af7678eeb051b645e061dbf90d425ae08da4f04711f46f9fb645e",
+    "runner": "scripts/run-ctrl-g25-reconsented-scope-atomic-create-r38.mjs",
+    "runner_sha256": "4ce27b9739c0904192dc11331837007bf7b40c7341683e62da8d44d739a7c821",
+    "checker": "scripts/check-ctrl-g25-reconsented-scope-atomic-create-r38.mjs"
+  },
+  "next_gate": "Design the single dormant server adapter that composes R37 authentication, R36 reservation and R38 creation while keeping all database functions private and preserving retry semantics.",
+  "not_authorized": [
+    "creating an application or Edge Function caller",
+    "migration creation or execution",
+    "linked or production database use",
+    "claiming multi-connection safety or Supabase parity",
+    "deployment, merge or release"
+  ]
+}
