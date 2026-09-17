@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { PGlite } from "@electric-sql/pglite";
+import { createG25PostgresHarness } from "./lib/g25-postgres-harness.mjs";
 
 const root = process.cwd();
 const candidatePath = path.join(root, "supabase/tests/database/g25_prepared_receipt_purpose_canary.test.sql");
@@ -9,60 +9,8 @@ const purposePredicate = "and grant_row.purpose = g25_prepared_receipt_purpose_c
 
 if (!candidate.includes(purposePredicate)) throw new Error("R8 purpose predicate is missing");
 
-const bootstrap = `
-create schema auth;
-create role authenticated nologin;
-create role anon nologin;
-
-create table auth.users (
-  id uuid primary key,
-  email text not null unique
-);
-
-create function auth.uid() returns uuid
-language sql stable
-as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
-
-create function auth.jwt() returns jsonb
-language sql stable
-as $$ select coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb, '{}'::jsonb) $$;
-
-create table public.brain_workspaces (
-  id uuid primary key,
-  subject_id uuid not null references auth.users(id) on delete cascade,
-  owner_id uuid not null references auth.users(id) on delete cascade,
-  tenant_key text not null unique
-);
-
-create table public.brain_workspace_roles (
-  workspace_id uuid not null references public.brain_workspaces(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  role text not null,
-  granted_by uuid references auth.users(id) on delete set null,
-  revoked_at timestamptz
-);
-
-create table public.brain_audience_grants (
-  id uuid primary key,
-  workspace_id uuid not null references public.brain_workspaces(id) on delete cascade,
-  grantee_user_id uuid not null references auth.users(id) on delete cascade,
-  audience text not null,
-  purpose text not null,
-  granted_by uuid references auth.users(id) on delete set null,
-  granted_at timestamptz not null default now(),
-  expires_at timestamptz,
-  revoked_at timestamptz
-);
-
-grant usage on schema public, auth to authenticated;
-grant execute on function auth.uid(), auth.jwt() to authenticated;
-grant select on public.brain_workspace_roles, public.brain_audience_grants to authenticated;
-`;
-
 async function createHarnessDatabase() {
-  const db = await PGlite.create({ dataDir: "memory://" });
-  await db.exec(bootstrap);
-  return db;
+  return createG25PostgresHarness();
 }
 
 async function runPositiveControl() {

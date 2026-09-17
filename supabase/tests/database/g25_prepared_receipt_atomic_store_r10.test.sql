@@ -8,6 +8,7 @@ create table public.g25_current_authority_fixture (
   authority_record_id uuid not null,
   authority_version text not null,
   authority_sha256 text not null,
+  recorded_at timestamptz not null,
   workspace_id uuid not null,
   owner_id uuid not null,
   subject_id uuid not null,
@@ -22,6 +23,7 @@ create or replace function private.brain_prepared_authority_current(
   p_authority_record_id uuid,
   p_authority_version text,
   p_authority_sha256 text,
+  p_observed_at timestamptz,
   p_workspace_id uuid,
   p_owner_id uuid,
   p_subject_id uuid,
@@ -40,6 +42,7 @@ as $$
       and authority_row.authority_record_id = p_authority_record_id
       and authority_row.authority_version = p_authority_version
       and authority_row.authority_sha256 = p_authority_sha256
+      and authority_row.recorded_at <= p_observed_at
       and authority_row.workspace_id = p_workspace_id
       and authority_row.owner_id = p_owner_id
       and authority_row.subject_id = p_subject_id
@@ -113,7 +116,7 @@ values
   ('b3000000-0000-4000-8000-000000000002', 'b2000000-0000-4000-8000-000000000001', 'b1000000-0000-4000-8000-000000000002', 'person_private', 'decision_support', 'b1000000-0000-4000-8000-000000000001');
 
 insert into public.g25_current_authority_fixture (
-  authority_kind, authority_record_id, authority_version, authority_sha256,
+  authority_kind, authority_record_id, authority_version, authority_sha256, recorded_at,
   workspace_id, owner_id, subject_id, audience, purpose
 )
 values (
@@ -121,6 +124,7 @@ values (
   'b4000000-0000-4000-8000-000000000001',
   '3',
   repeat('a', 64),
+  '2026-09-17T08:58:00Z',
   'b2000000-0000-4000-8000-000000000001',
   'b1000000-0000-4000-8000-000000000001',
   'b1000000-0000-4000-8000-000000000001',

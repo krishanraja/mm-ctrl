@@ -228,6 +228,7 @@ create or replace function private.brain_prepared_authority_current(
   p_authority_record_id uuid,
   p_authority_version text,
   p_authority_sha256 text,
+  p_observed_at timestamptz,
   p_workspace_id uuid,
   p_owner_id uuid,
   p_subject_id uuid,
@@ -379,6 +380,7 @@ begin
       (dependency ->> 'authority_record_id')::uuid,
       dependency ->> 'authority_version',
       dependency ->> 'authority_sha256',
+      (dependency ->> 'observed_at')::timestamptz,
       workspace_id,
       owner_id,
       subject_id,
@@ -457,10 +459,10 @@ grant select, insert on table public.brain_prepared_receipt_events to service_ro
 
 revoke all on function private.brain_canonical_jsonb(jsonb) from public, anon, authenticated;
 revoke all on function private.brain_prepared_authority_fingerprint(uuid, uuid, uuid, uuid, text, text, jsonb) from public, anon, authenticated;
-revoke all on function private.brain_prepared_authority_current(text, uuid, text, text, uuid, uuid, uuid, text, text) from public, anon, authenticated;
+revoke all on function private.brain_prepared_authority_current(text, uuid, text, text, timestamptz, uuid, uuid, uuid, text, text) from public, anon, authenticated;
 revoke all on function private.brain_store_prepared_receipt(jsonb, jsonb) from public, anon, authenticated;
 grant usage on schema private to service_role;
 grant execute on function private.brain_canonical_jsonb(jsonb) to service_role;
 grant execute on function private.brain_prepared_authority_fingerprint(uuid, uuid, uuid, uuid, text, text, jsonb) to service_role;
-grant execute on function private.brain_prepared_authority_current(text, uuid, text, text, uuid, uuid, uuid, text, text) to service_role;
+grant execute on function private.brain_prepared_authority_current(text, uuid, text, text, timestamptz, uuid, uuid, uuid, text, text) to service_role;
 grant execute on function private.brain_store_prepared_receipt(jsonb, jsonb) to service_role;
