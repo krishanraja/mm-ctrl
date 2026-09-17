@@ -2716,3 +2716,11 @@ Review events and resolution records now carry a canonical `challenge_authority_
 The decisive R96 escape is now a first-class regression across six trigger mutation classes. Each mutation must simultaneously produce typed unavailable status, zero unsigned review requests, rejected signed review, no revalidation or baseline mutation, and a continuing descendant block. Three observation-chain mutations enforce the same invariant. After successful review the full historical challenge provenance remains live: corrupting it makes status unavailable and blocks again; restoring exact bytes restores the current state.
 
 The focused checker passes all thirteen predicate and final-authority paths, 212 executable vectors and 301 generated totality probes. R97 remains local deterministic same-process evidence only. It opens no runtime, registry, database, UI, external action, deployment, merge, release or production authority. The next action is full regression, exact Git freeze and independent seven-role review.
+
+### R97 seven-role pass and R98 founder-ready receipt
+
+R97 froze at commit `2ec11845b5dde7c19009119dd41213d3e54326e2`, tree `2f9f15849d1c577eee2dab9d4cb3aa62654664f7`, parent `b5a1310805df423025da14da7658a86343b7f55b`. The full historical regression passed. All seven durable roles passed the exact frozen candidate.
+
+The correctness and human-value panels independently replayed R96's trigger-signature escape. R97 returned unavailable status, emitted zero review actions, rejected the signed review, made no durable change and kept descendants blocked. Exact restoration returned the previous truthful state. The architecture panel separately corrupted a resolved observation transition and confirmed status, review, successor predicate and final transition all remained closed.
+
+The exact [R97 panel verdict](../../g24-predicate-authority-r97-panel-verdict.md) records the evidence, role results and mandatory persistence/UI carry-forwards. The [R98 founder-ready receipt](../../g24-predicate-authority-r97-founder-ready-receipt-r98.md) narrows the remaining choice to acceptance or rejection of R97 as the completed local machine-contract gate. Runtime, database, UI, deployment, merge, release and external action remain unauthorized.
