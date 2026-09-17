@@ -242,6 +242,18 @@ security invoker
 set search_path = ''
 as $$ select false $$;
 
+-- Closed lifecycle seam. R13 may replace this with a durable erasure tombstone check.
+create or replace function private.brain_prepared_subject_erased(
+  p_workspace_id uuid,
+  p_subject_id uuid
+)
+returns boolean
+language sql
+stable
+security invoker
+set search_path = ''
+as $$ select false $$;
+
 create or replace function private.brain_store_prepared_receipt(
   p_receipt jsonb,
   p_dependencies jsonb
@@ -311,6 +323,10 @@ begin
       and workspace_row.owner_id = owner_id
       and workspace_row.subject_id = subject_id
   ) then raise exception 'receipt_workspace_scope_invalid'; end if;
+
+  if private.brain_prepared_subject_erased(workspace_id, subject_id) then
+    raise exception 'prepared_subject_erased';
+  end if;
 
   if (
     select count(*) <> count(distinct ((member.value ->> 'authority_kind') || ':' || (member.value ->> 'authority_record_id')))
@@ -460,9 +476,11 @@ grant select, insert on table public.brain_prepared_receipt_events to service_ro
 revoke all on function private.brain_canonical_jsonb(jsonb) from public, anon, authenticated;
 revoke all on function private.brain_prepared_authority_fingerprint(uuid, uuid, uuid, uuid, text, text, jsonb) from public, anon, authenticated;
 revoke all on function private.brain_prepared_authority_current(text, uuid, text, text, timestamptz, uuid, uuid, uuid, text, text) from public, anon, authenticated;
+revoke all on function private.brain_prepared_subject_erased(uuid, uuid) from public, anon, authenticated;
 revoke all on function private.brain_store_prepared_receipt(jsonb, jsonb) from public, anon, authenticated;
 grant usage on schema private to service_role;
 grant execute on function private.brain_canonical_jsonb(jsonb) to service_role;
 grant execute on function private.brain_prepared_authority_fingerprint(uuid, uuid, uuid, uuid, text, text, jsonb) to service_role;
 grant execute on function private.brain_prepared_authority_current(text, uuid, text, text, timestamptz, uuid, uuid, uuid, text, text) to service_role;
+grant execute on function private.brain_prepared_subject_erased(uuid, uuid) to service_role;
 grant execute on function private.brain_store_prepared_receipt(jsonb, jsonb) to service_role;

@@ -1,0 +1,87 @@
+{
+  "schema_version": "ctrl.g25.prepared-subject-erasure.r13.v1",
+  "contract_id": "G25-PREPARED-SUBJECT-ERASURE-R13",
+  "status": "postgresql_wasm_cryptographic_erasure_pass_reconsent_closed",
+  "prepared_at": "2026-09-17T14:45:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-prepared-receipt-atomic-store-r10.json",
+    "project-documentation/ctrl-evolution/g25-prepared-authority-adapter-r11.json",
+    "project-documentation/ctrl-evolution/g25-prepared-correction-invalidation-r12.json"
+  ],
+  "candidate_sql": "supabase/candidates/g25_prepared_subject_erasure_r13.sql",
+  "database_test": "supabase/tests/database/g25_prepared_subject_erasure_r13.test.sql",
+  "runtime_harness": "scripts/run-ctrl-g25-subject-erasure-r13.mjs",
+  "not_a_migration": true,
+  "erasure_shape": {
+    "destroyed": [
+      "prepared payload ciphertext",
+      "encryption version",
+      "original ingest identity",
+      "original request, authority and content fingerprints",
+      "prepared authority dependency rows",
+      "prior prepared-receipt lifecycle event hashes"
+    ],
+    "retained": [
+      "receipt identity and exact workspace ownership",
+      "non-content production, expiry and erasure times",
+      "one receipt-specific tombstone digest",
+      "one payload-free erased event",
+      "one workspace-subject erasure tombstone and affected count"
+    ],
+    "revival_boundary": "The R10 store checks the durable tombstone before any replay or insert. No re-consent or tombstone-clear operation exists in R13.",
+    "privilege_boundary": "The destructive function is SECURITY DEFINER in the private schema with an empty search path. Service role receives execute only, not direct payload update or dependency delete rights."
+  },
+  "verification": {
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "ciphertext_destroyed": true,
+    "encryption_version_destroyed": true,
+    "identifying_hashes_replaced": true,
+    "authority_dependencies_destroyed": true,
+    "prior_events_destroyed": true,
+    "payload_free_erasure_event_retained": true,
+    "subject_tombstone_blocks_revival": true,
+    "cross_workspace_isolation": true,
+    "exact_replay_idempotent": true,
+    "conflicting_replay_closed": true,
+    "forced_event_failure_rolled_back": true,
+    "authenticated_erasure_closed": true,
+    "forced_rls_and_definer_privileges_verified": true,
+    "rollback_residue": 0,
+    "negative_controls": [
+      "removing the workspace predicate makes the canary fail",
+      "removing ciphertext destruction violates the database erasure-state constraint",
+      "removing the store tombstone guard makes the silent-revival canary fail"
+    ]
+  },
+  "deliberate_exclusions": {
+    "tombstone_clearance": "Closed. Re-consent requires a separately designed and proven human-authority ceremony.",
+    "whole_brain_erasure": "R13 erases prepared-intelligence derivatives only. Canonical Brain source and item erasure requires its own complete retention graph.",
+    "backup_physical_deletion": "Database backup retention and provider-level deletion are outside this local SQL proof."
+  },
+  "remaining_gates": [
+    "Design explicit human-authorised re-consent before any tombstone clearance can exist.",
+    "Map and prove canonical Brain source, item, export, log, backup and third-party deletion coverage separately.",
+    "Prove store-versus-erasure races on a multi-connection PostgreSQL runtime.",
+    "Run candidates and tests through Supabase local plus PostgREST when Docker or Podman is available.",
+    "Review any migration and runtime caller separately before application."
+  ],
+  "bounded_claim": "R13 proves atomic cryptographic and metadata-minimising erasure of prepared-intelligence derivatives for one exact workspace-subject scope on disposable PostgreSQL 18.3. It does not prove whole-Brain erasure, provider backup deletion, re-consent, concurrent races, Supabase parity, migration or production readiness.",
+  "authority": {
+    "permits": [
+      "local non-migration SQL candidate",
+      "disposable PostgreSQL WASM execution",
+      "rollback-only fixtures and negative controls",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration file or migration execution",
+      "linked or production database use",
+      "runtime caller or producer connection",
+      "tombstone clearance or re-consent implementation",
+      "customer data or customer-facing change",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}
