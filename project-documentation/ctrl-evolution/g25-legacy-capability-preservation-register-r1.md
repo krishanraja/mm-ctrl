@@ -51,7 +51,7 @@ The old feed-first relationship is not protected. The following are protected:
 
 ## Protected systems
 
-R1 records twenty protected capability systems:
+R1 records twenty-two protected capability systems:
 
 | Group | Protected capability |
 |---|---|
