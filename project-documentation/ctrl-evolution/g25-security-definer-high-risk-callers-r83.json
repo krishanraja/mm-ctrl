@@ -96,7 +96,7 @@
     "path": "supabase/candidates/g25_security_definer_high_risk_acl_r83.sql",
     "sha256": "910c0cb36d512a7f4580d748f3c748b9247ba16da57641254c7b6707cd5daf8b",
     "verification_path": "supabase/candidates/g25_security_definer_high_risk_acl_verification_r83.sql",
-    "verification_sha256": "78ef9be9e6d84470c69ffeac1dd3cab74442c3d2576dd1f3d3cd22c284e90663",
+    "verification_sha256": "744a7c09e64c28d366863112ecd321dc18778f4306a724c3c486a0f72f9ffd70",
     "scope": "Revoke PUBLIC, anon and authenticated execution on exactly nine functions; retain service_role execution; do not change function definitions.",
     "production_applied": false,
     "isolated_recovery_applied": false,

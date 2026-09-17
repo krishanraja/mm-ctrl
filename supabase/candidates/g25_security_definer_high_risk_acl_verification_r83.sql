@@ -33,6 +33,7 @@ WITH expected(signature, definition_digest) AS (
   FROM pg_proc p
   JOIN pg_namespace n ON n.oid = p.pronamespace
   WHERE n.nspname = 'public'
+    AND p.prokind = 'f'
     AND p.proname <> 'sync_lead_to_sheets'
     AND position('sync_lead_to_sheets' in pg_get_functiondef(p.oid)) > 0
 )

@@ -1,0 +1,95 @@
+{
+  "schema_version": "ctrl.g25.security-definer-isolated-acl-proof.r84.v1",
+  "contract_id": "G25-SECURITY-DEFINER-ISOLATED-ACL-PROOF-R84",
+  "status": "isolated_acl_proof_passed_production_unchanged",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-HIGH-RISK-CALLERS-R83"
+  ],
+  "target": {
+    "project_ref": "jnablbnztutbmnjvtioy",
+    "purpose": "approved_blank_recovery_proof",
+    "customer_rows": 0
+  },
+  "preflight": {
+    "ordinary_role_executable_security_definer_count": 45,
+    "exposure_digest": "e2917473e664296685ec4975f658ca3b",
+    "matched_production_r82": true
+  },
+  "migration": {
+    "name": "g25_security_definer_high_risk_acl_r83",
+    "path": "supabase/candidates/g25_security_definer_high_risk_acl_r83.sql",
+    "applied_to_isolated_target": true,
+    "applied_to_production": false,
+    "function_definitions_changed": false,
+    "target_functions_invoked": false
+  },
+  "verification_history": [
+    {
+      "attempt": 1,
+      "result": "verifier_query_failed_before_result",
+      "cause": "The internal-caller catalog scan did not restrict pg_proc to ordinary functions and pg_get_functiondef rejected the sum aggregate.",
+      "database_effect": "none"
+    },
+    {
+      "attempt": 2,
+      "result": "pass",
+      "correction": "Added p.prokind = 'f' to the read-only internal-caller scan."
+    }
+  ],
+  "verification": {
+    "path": "supabase/candidates/g25_security_definer_high_risk_acl_verification_r83.sql",
+    "sha256": "744a7c09e64c28d366863112ecd321dc18778f4306a724c3c486a0f72f9ffd70",
+    "target_count": 9,
+    "resolved_count": 9,
+    "anon_denied_count": 9,
+    "authenticated_denied_count": 9,
+    "service_allowed_count": 9,
+    "owner_allowed_count": 9,
+    "definition_unchanged_count": 9,
+    "sync_lead_internal_caller_count": 11,
+    "acl_verification_digest": "ffb416d4290ee946209916d0e11629b1"
+  },
+  "advisor_delta": {
+    "anonymous_security_definer_executable": {
+      "before": 41,
+      "after": 32,
+      "delta": -9
+    },
+    "authenticated_security_definer_executable": {
+      "before": 45,
+      "after": 36,
+      "delta": -9
+    },
+    "other_security_advisors_unchanged": {
+      "rls_enabled_no_policy": 24,
+      "extension_in_public": 2
+    }
+  },
+  "production_postcheck": {
+    "target_count": 9,
+    "anon_allowed_count": 9,
+    "authenticated_allowed_count": 9,
+    "service_allowed_count": 9,
+    "definition_unchanged_count": 9,
+    "writes": 0
+  },
+  "bounded_claim": "The ACL candidate has the intended permission effect in the isolated recovery project and does not alter routine definitions. This does not prove historical external callers are absent, execute a mutating function path or authorize production rollout.",
+  "acceptance_gate": {
+    "isolated_acl_verification_passed": true,
+    "advisor_delta_matches_scope": true,
+    "production_unchanged_after_test": true,
+    "all_45_routes_dispositioned": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "isolated_target_writes": "one_narrow_acl_migration",
+    "production_writes": 0,
+    "forbids": [
+      "production ACL application",
+      "target function invocation against production",
+      "function retirement or deletion",
+      "merge, cutover or release"
+    ]
+  }
+}
