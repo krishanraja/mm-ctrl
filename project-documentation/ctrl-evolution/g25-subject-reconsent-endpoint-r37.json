@@ -1,0 +1,54 @@
+{
+  "schema_version": "ctrl.g25.subject-reconsent-endpoint.r37.v1",
+  "record_id": "G25-SUBJECT-RECONSENT-ENDPOINT-R37",
+  "status": "dormant_authenticated_endpoint_logic_verified",
+  "depends_on": [
+    "G25-SUBJECT-RECONSENT-RESERVATION-R36",
+    "G25-RUNTIME-CALLER-INVENTORY-R34"
+  ],
+  "statement": {
+    "decision": "start_new_brain",
+    "version": "brain-restart-consent.v1",
+    "text": "Start a new Brain. My old Brain stays erased. Only information I add or approve from now on can enter the new one.",
+    "sha256": "fd5855180ba007f89e8e03457c46c7fa710367d88cb697f822651247e29bf2ed"
+  },
+  "proved": [
+    "one versioned plain-language statement has a pinned content fingerprint",
+    "a missing or invalid authenticated user fails before any scope resolution or reservation",
+    "the browser request has an exact five-field shape and cannot submit subject, custody, operator, consent or new-scope identities",
+    "subject consent attribution is derived only from the authenticated user",
+    "stable subject, previous custody and operator identities are derived through the server resolver",
+    "consent, new workspace and new custody identities are generated server-side",
+    "the request fingerprint binds authenticated user, old workspace, decision, statement version and statement content",
+    "an unavailable scope returns one bounded response without revealing whether the old workspace exists",
+    "reservation failure does not expose database detail",
+    "a downstream response that claims scope creation is rejected",
+    "the successful response exposes only receipt identity and reserved-not-created standing"
+  ],
+  "observed": {
+    "targeted_tests": 10,
+    "targeted_test_files": 1,
+    "targeted_failures": 0
+  },
+  "claim_boundary": {
+    "human_action": "A future Edge Function must authenticate the bearer token and invoke this logic from an explicit subject action. This dormant module proves the binding logic, not that a person has acted.",
+    "scope": "The logic calls only the R36 reservation contract and rejects any result that claims the new scope already exists.",
+    "runtime": "No Edge Function entrypoint imports this module. No endpoint, migration, database object or deployment is created."
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/prepared-subject-reconsent.r37.ts",
+    "module_sha256": "111b06cdf03f46226b2c9ce033a2abfe8b03d52b0dab399367184d191d0b41c4",
+    "test": "supabase/functions/_shared/prepared-subject-reconsent.r37.test.ts",
+    "test_sha256": "1f22c61c56b1e120ddc929c838637ab2316731e43aebfc255bcc6a50678b297c",
+    "checker": "scripts/check-ctrl-g25-subject-reconsent-endpoint-r37.mjs"
+  },
+  "next_gate": "Specify and prove the atomic new-scope creator against an accepted R36 reservation, including personal-workspace owner semantics and exactly-once replay.",
+  "not_authorized": [
+    "claiming cognitive understanding from an authenticated action",
+    "creating an Edge Function entrypoint or application caller",
+    "creating or activating a new Brain scope",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}
