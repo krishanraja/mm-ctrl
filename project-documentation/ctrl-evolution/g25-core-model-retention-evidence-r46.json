@@ -1,0 +1,74 @@
+{
+  "schema_version": "ctrl.g25.core-model-retention-evidence.r46.v1",
+  "record_id": "G25-CORE-MODEL-RETENTION-EVIDENCE-R46",
+  "status": "core_provider_controls_unverified_or_absent",
+  "retrieved_at": "2026-09-17",
+  "depends_on": [
+    "G25-PROVIDER-EGRESS-CLASSIFICATION-R45"
+  ],
+  "providers": {
+    "openai": {
+      "repository_endpoints": [
+        "/v1/chat/completions",
+        "/v1/embeddings"
+      ],
+      "official_source": "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
+      "official_standing": "API data is not used for training by default. Chat Completions and embeddings have up to 30-day abuse-monitoring retention by default and are eligible for approved Zero Data Retention controls. Eligibility is not proof that this project has ZDR enabled.",
+      "repository_verification": "No durable project-level retention attestation or response receipt is present.",
+      "route_standing": "blocked_for_private_brain_context"
+    },
+    "anthropic": {
+      "repository_endpoints": [
+        "/v1/messages"
+      ],
+      "official_source": "https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data",
+      "official_standing": "Anthropic states that API inputs and outputs are automatically deleted within 30 days by default, subject to stated exceptions, or under a separately agreed zero-retention arrangement.",
+      "repository_verification": "No durable workspace retention-mode attestation is present.",
+      "route_standing": "blocked_for_private_brain_context"
+    },
+    "google_ai": {
+      "repository_endpoints": [
+        "Gemini Developer API generateContent"
+      ],
+      "official_source": "https://ai.google.dev/gemini-api/docs/zdr",
+      "additional_official_source": "https://ai.google.dev/gemini-api/terms",
+      "official_standing": "Google states that Paid Services prompts and responses are not used to improve its products, but abuse-monitoring logs and some features retain data. Guaranteed enterprise ZDR requires a different verified service posture. UK API clients may use only Paid Services under the current terms.",
+      "repository_verification": "The code uses Gemini Developer API keys but does not prove that the project is paid, which retention mode applies or that an enterprise ZDR route is in force.",
+      "route_standing": "blocked_for_private_brain_context"
+    },
+    "xai": {
+      "repository_endpoints": [
+        "/v1/chat/completions"
+      ],
+      "official_source": "https://docs.x.ai/developers/faq/security",
+      "official_standing": "xAI states that API inputs and outputs are not used for training without permission, are stored for 30 days by default and can use team-level ZDR. API responses expose x-zero-data-retention so a caller can verify the active mode.",
+      "repository_verification": "The current caller does not inspect or retain x-zero-data-retention.",
+      "route_standing": "blocked_for_private_brain_context"
+    },
+    "elevenlabs": {
+      "repository_endpoints": [
+        "/v1/text-to-speech/{voice_id}"
+      ],
+      "official_source": "https://elevenlabs.io/docs/eleven-api/resources/zero-retention-mode",
+      "official_standing": "ElevenLabs documents default request retention and an eligible Enterprise Zero Retention Mode for text to speech, enabled per API request with enable_logging=false. Non-ZRM generations can be deleted, but debugging and moderation logs may remain and backups can persist for up to 30 days.",
+      "repository_verification": "The current TTS request does not send enable_logging=false and stores no retention-mode receipt.",
+      "route_standing": "blocked_for_personalised_briefing_text"
+    }
+  },
+  "required_before_runtime": [
+    "contract or console evidence for every account-level retention mode",
+    "request-level controls where the provider supports them",
+    "response-level verification where the provider exposes it",
+    "provider request identity and data-class receipt",
+    "a fail-closed route when the promised privacy mode cannot be proved"
+  ],
+  "artifact": "scripts/check-ctrl-g25-core-model-retention-evidence-r46.mjs",
+  "next_gate": "Map delivery, billing and research-provider controls, then design one provider-receipt registry that can encode default, contractual and request-verified modes without overstating deletion.",
+  "not_authorized": [
+    "changing model or TTS routing",
+    "calling providers",
+    "enabling or claiming ZDR",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}
