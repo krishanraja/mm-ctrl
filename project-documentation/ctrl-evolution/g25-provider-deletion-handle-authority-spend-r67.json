@@ -1,0 +1,59 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-handle-authority-spend.r67.v1",
+  "contract_id": "G25-PROVIDER-DELETION-HANDLE-AUTHORITY-SPEND-R67",
+  "status": "atomic_authority_spend_and_database_role_separation_locally_proved_runtime_identity_mapping_closed",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-HANDLE-AUTHORITY-R66",
+    "G25-PROVIDER-DELETION-HANDLE-POSTGRES-R65"
+  ],
+  "implementation": {
+    "candidate": "supabase/candidates/g25_provider_deletion_handle_authority_spend_r67.sql",
+    "tests": "supabase/functions/_shared/provider-deletion-handle-authority-postgres.r67.test.ts",
+    "config": "vitest.g25-provider-handle-authority-postgres.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-handle-authority-spend-r67.mjs"
+  },
+  "observed_environment": {
+    "engine": "PGlite PostgreSQL 18.3",
+    "connections": 1,
+    "tests": 9,
+    "failures": 0
+  },
+  "proved_locally": [
+    "the broad service_role loses direct table reads and all raw R65 function entry points",
+    "a NOLOGIN crypto-writer role can call only authorised registration",
+    "a NOLOGIN deletion-worker role can call only authorised lease and destruction",
+    "authority spend and underlying R65 operation share one transaction",
+    "an underlying failure rolls back the spend so a corrected exact retry can proceed",
+    "an exact successful replay converges while changed token or binding conflicts",
+    "workspace, receipt, handle, provider and operation fields are checked against database state",
+    "authority-spend rows contain no provider handle, ciphertext or envelope",
+    "provider-specific destruction reason and fact bindings are enforced"
+  ],
+  "trust_boundary": {
+    "database_proves": [
+      "role-to-operation grant separation",
+      "exact authority shape and five-minute validity",
+      "atomic spend with operation rollback",
+      "exact replay identity",
+      "database-record binding",
+      "content-free spend persistence"
+    ],
+    "database_does_not_prove": [
+      "R66 HMAC signature validity",
+      "the declared envelope SHA-256 was calculated from the supplied envelope",
+      "a production runtime can assume either NOLOGIN role safely",
+      "independent-connection exclusion"
+    ]
+  },
+  "artifact_sha256": {
+    "candidate": "c569ffeb8239fecf8bd3d0259b89c7138dda1e1aca73d5ef3156c70802453d47",
+    "tests": "fc17dd9a22eb097e3cd717a178c4dcf424674a486c7a22ac3132d4c824a0c655",
+    "config": "8855869dd7baa60c396e63e556cbd812c467c258a01e579bf4222fe507ce93d0"
+  },
+  "bounded_claim": "R67 proves atomic, content-free authority spend and database grant separation in one local PostgreSQL process. It does not prove signature verification in PostgreSQL, production role assumption, multi-connection exclusion or provider behavior.",
+  "next_gate": "Define and prove a production-safe runtime identity mapping for the two NOLOGIN roles, then run the lease and spend race through independent PostgreSQL connections.",
+  "authority": {
+    "permits": ["local PostgreSQL tests", "local documentation and commit"],
+    "forbids": ["migration execution", "linked database access", "provider request", "deployment", "merge", "release"]
+  }
+}
