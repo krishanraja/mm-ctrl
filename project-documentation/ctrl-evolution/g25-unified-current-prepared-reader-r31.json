@@ -1,0 +1,52 @@
+{
+  "schema_version": "ctrl.g25.unified-current-prepared-reader.r31.v1",
+  "record_id": "G25-UNIFIED-CURRENT-PREPARED-READER-R31",
+  "status": "local_unified_current_reader_verified",
+  "depends_on": [
+    "G25-PREPARED-RECEIPT-ATOMIC-STORE-R10",
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25",
+    "G25-BOTH-GENERATION-CORRECTION-R29",
+    "G25-BOTH-GENERATION-SUBJECT-ERASURE-R30"
+  ],
+  "operation": "read one stable-custody scope through one deterministic current-material contract across both prepared generations",
+  "invariants": [
+    "the read scope contains stable custody and subject identity but no legacy owner identity",
+    "only server-current, unexpired, non-invalidated and non-erased receipts can be returned",
+    "every returned receipt has at least one dependency and every dependency is still exact current authority",
+    "a subject erasure tombstone returns explicit erased standing with no protected material",
+    "reversing generation branch order cannot change the answer",
+    "same-content current receipts remain visible when they are separate receipt identities",
+    "inactive custody, cross-workspace custody and extra scope identity fail closed",
+    "authenticated clients cannot bypass the reader through raw prepared tables"
+  ],
+  "verified": [
+    "PostgreSQL 18.3 unified current read",
+    "exact current legacy and custody material remains visible",
+    "invalidated legacy and custody material is absent",
+    "expired and future-produced material is absent",
+    "authority-superseded legacy and custody material is absent",
+    "dependencyless material is absent",
+    "erased scope returns no material",
+    "generation-order metamorphic equality",
+    "service-role positive execution",
+    "ordinary authenticated function and raw-table denial",
+    "seven mutation controls"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_unified_current_prepared_reader_r31.sql",
+    "candidate_sha256": "55494d4e1a63d72479ae4db72b5fbc9e553a6150c077bc9dc7d7b4a2855d00a6",
+    "runner": "scripts/run-ctrl-g25-unified-current-reader-r31.mjs",
+    "runner_sha256": "25b7991132413f8483b512afe54e2ad0f29d2a6fb3374f43977059a7124ac770"
+  },
+  "policy_boundary": "The reader honors the conservative anti-revival tombstone from R30. It does not settle that tombstone's lawful duration, expiry or re-consent behavior.",
+  "next_gate": "Close legacy-only result-producing writer competition, then prove multi-connection race behavior and Supabase-local parity before migration planning.",
+  "not_authorized": [
+    "runtime integration or customer delivery",
+    "final tombstone retention, expiry or re-consent policy",
+    "legacy writer retirement",
+    "linked or production database use",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}
