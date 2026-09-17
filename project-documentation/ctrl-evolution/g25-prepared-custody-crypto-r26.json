@@ -1,0 +1,49 @@
+{
+  "schema_version": "ctrl.g25.prepared-custody-crypto.r26.v1",
+  "record_id": "G25-PREPARED-CUSTODY-CRYPTO-R26",
+  "status": "pure_custody_native_crypto_verified",
+  "depends_on": [
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-STABLE-CUSTODY-ENVELOPE-R24",
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25"
+  ],
+  "authenticated_context": [
+    "workspace_id",
+    "custody_principal_id",
+    "subject_id",
+    "prepared_custody_receipt record kind",
+    "receipt record_id",
+    "payload field",
+    "audience",
+    "prepared_intelligence purpose",
+    "authority_fingerprint"
+  ],
+  "excluded_identity": [
+    "legacy owner_id",
+    "operator_principal_id",
+    "auth user_id"
+  ],
+  "verification": {
+    "r26_tests": 13,
+    "unchanged_legacy_crypto_tests": 12,
+    "unchanged_r24_envelope_tests": 9,
+    "cipher_version": 2,
+    "algorithm": "A256GCM",
+    "fresh_iv_bytes": 12,
+    "legacy_v1_rejected": true
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/prepared-custody-crypto.r26.ts",
+    "module_sha256": "eda440b27ed270cc72e7365e331f76cebd0eaf635842b02d63cd62fc21d3c3a3",
+    "tests": "supabase/functions/_shared/prepared-custody-crypto.r26.test.ts",
+    "tests_sha256": "1744c07be38bcdb82a4af59b8502a6e79c1ea3c648400ebcbc1be906bb2a4fb9"
+  },
+  "next_gate": "Bind R26 envelope production and validation to the R25 atomic writer, then cover principal removal and both-generation correction, erasure and unified reading.",
+  "not_authorized": [
+    "key or KMS access",
+    "linked or production database use",
+    "migration creation or execution",
+    "runtime producer or caller integration",
+    "deployment, merge or release"
+  ]
+}
