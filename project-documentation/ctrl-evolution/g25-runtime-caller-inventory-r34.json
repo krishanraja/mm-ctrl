@@ -1,0 +1,52 @@
+{
+  "schema_version": "ctrl.g25.runtime-caller-inventory.r34.v1",
+  "record_id": "G25-RUNTIME-CALLER-INVENTORY-R34",
+  "status": "dormant_no_application_callers",
+  "depends_on": [
+    "G25-POST-CUTOVER-LIFECYCLE-R33"
+  ],
+  "active_database_functions": [
+    "brain_store_prepared_custody_receipt",
+    "brain_invalidate_both_prepared_generations_for_correction",
+    "brain_erase_both_prepared_generations",
+    "brain_read_current_prepared_intelligence"
+  ],
+  "retired_runtime_functions": [
+    "brain_store_prepared_receipt",
+    "brain_invalidate_prepared_receipts_for_correction",
+    "brain_erase_prepared_subject"
+  ],
+  "dormant_module_sha256": {
+    "supabase/functions/_shared/prepared-intelligence.r1.ts": "ccd846e6c0b6afe1501192f7ad3adc56b51a77c4eef56866145ab286d1095fd5",
+    "supabase/functions/_shared/prepared-intelligence-producer-adapters.r3.ts": "0836f22af349948d1eb345e57852bc1262c97df0196cdf5598910c14364fdf33",
+    "supabase/functions/_shared/prepared-intelligence-receipts.r4.ts": "42cd59b18472a41b201459be57c423b4ba43348fe31b0e7b062b192fdfc0a81d",
+    "supabase/functions/_shared/prepared-intelligence-receipt-store.r5.ts": "e7d16f9a008afca55acbdfc71694d7b3afcb748d2242a3fec5e99d863f58a5d6",
+    "supabase/functions/_shared/prepared-intelligence-authority-envelope.r7.ts": "a5ba97e73680900720abcf625d95c23bb4c2928cf29d833650aa2eecf54ac8f9",
+    "supabase/functions/_shared/prepared-intelligence-custody-envelope.r24.ts": "d9dd9f01e7e2ab5f01b1dcd26f09a0545de35cdeff6ca7b0fd49b14ff410ebe8",
+    "supabase/functions/_shared/prepared-custody-crypto.r26.ts": "eda440b27ed270cc72e7365e331f76cebd0eaf635842b02d63cd62fc21d3c3a3"
+  },
+  "observed": {
+    "application_function_references": 0,
+    "application_module_imports": 0,
+    "migration_references": 0,
+    "dormant_modules": 7
+  },
+  "artifacts": {
+    "checker": "scripts/check-ctrl-g25-runtime-caller-inventory-r34.mjs",
+    "checker_sha256": "ab1158818181ebf5e5c39a85fae89bc8c00d1b005342cf2f6898eb7b4bebe7f8"
+  },
+  "invariants": [
+    "no browser source or Edge Function entrypoint calls any prepared-intelligence database function",
+    "no browser source or Edge Function entrypoint imports the seven dormant prepared-intelligence modules",
+    "no migration contains the candidate generation tables or lifecycle functions",
+    "all prepared-intelligence application integration remains explicit future work",
+    "the eventual adapter must call only the four R32 active database functions and cannot expose them directly to a browser"
+  ],
+  "next_gate": "Prove real multi-connection lifecycle races when a real PostgreSQL connection pool is available, while resolving anti-revival tombstone retention and re-consent locally.",
+  "not_authorized": [
+    "creating an application caller or runtime adapter",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}
