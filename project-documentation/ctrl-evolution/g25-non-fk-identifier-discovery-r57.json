@@ -1,0 +1,74 @@
+{
+  "schema_version": "ctrl.g25.non-fk-identifier-discovery.r57.v1",
+  "record_id": "G25-NON-FK-IDENTIFIER-DISCOVERY-R57",
+  "status": "non_fk_identifier_surface_discovered_execution_closed",
+  "sources": {
+    "generated_schema": "src/integrations/supabase/types.ts",
+    "migration_history": "supabase/migrations",
+    "live_delete_account": "supabase/functions/delete-account/index.ts"
+  },
+  "observed": {
+    "generated_schema_tables": 76,
+    "generated_schema_row_columns": 932,
+    "non_fk_candidates": 183,
+    "direct_candidates": 67,
+    "opaque_json_candidates": 116,
+    "high_risk_anchors": 36,
+    "delete_account_mentioned_tables": 68,
+    "migration_only_candidates": 77
+  },
+  "generated_schema_high_risk_unmentioned_by_delete": [
+    "assessment_referrals.referee_email",
+    "assessment_referrals.referrer_email",
+    "backup_workshop_sessions.facilitator_email",
+    "consent_audit.user_id",
+    "exec_intakes.organizer_email",
+    "exec_pulses.participant_email",
+    "index_publication_rules.created_by",
+    "leads.email",
+    "post_session_reviews.participant_email",
+    "pre_workshop_inputs.participant_email",
+    "users.auth_user_id",
+    "users.email",
+    "workshop_sessions.facilitator_email"
+  ],
+  "migration_only_high_risk_unmentioned_by_delete": [
+    "ai_usage_audit.user_id",
+    "brain_item_versions.subject_id",
+    "brain_relationship_versions.subject_id",
+    "cannes_responses.email",
+    "cannes_responses.user_agent",
+    "compliance_events.ip_address",
+    "compliance_events.user_agent",
+    "email_analytics.email_id",
+    "email_analytics.recipient_email",
+    "kit_nudges.email",
+    "kit_redemptions.delivery_email",
+    "kit_waitlist.email",
+    "kit_waitlist.user_id",
+    "leader_notification_prefs.email",
+    "leader_patterns.user_id",
+    "leader_prompt_history.user_id",
+    "leader_reflections.user_id",
+    "memory_edges.user_id"
+  ],
+  "interpretation": [
+    "generated schema candidates are current type-surface evidence, not deletion authority",
+    "a table mention in delete-account does not prove every nullable, email-linked or opaque identifier in that table is erased",
+    "migration-only candidates expose schema drift or historical residue and must be reconciled against a real catalog before classification",
+    "opaque JSON is a container risk: static column names cannot prove which identifiers appear in each row",
+    "names, network metadata and company hashes are discovery leads whose deletion or retention rule requires purpose-specific review"
+  ],
+  "artifacts": {
+    "discovery": "scripts/discover-ctrl-g25-non-fk-identifiers-r57.mjs",
+    "discovery_sha256": "10808404f8a984721560cef88443b50a2e6cc8c2b736d38268c5402592b9a104",
+    "checker": "scripts/check-ctrl-g25-non-fk-identifier-discovery-r57.mjs"
+  },
+  "next_gate": "Build a reviewed non-FK target registry for current generated-schema anchors, and separately reconcile the 77 migration-only candidates against an authoritative catalog before adding any erasure action.",
+  "not_authorized": [
+    "generic deletion by matching name or email",
+    "treating migration archaeology as proof a table is live",
+    "editing the live delete-account path",
+    "linked database access, migration execution, deployment, merge or release"
+  ]
+}
