@@ -1,0 +1,82 @@
+{
+  "schema_version": "ctrl.g25.prepared-receipt-atomic-store.r10.v1",
+  "contract_id": "G25-PREPARED-RECEIPT-ATOMIC-STORE-R10",
+  "status": "postgresql_wasm_atomic_store_pass_live_authority_adapters_pending",
+  "prepared_at": "2026-09-17T11:20:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-authority-envelope-r7.json",
+    "project-documentation/ctrl-evolution/g25-exact-purpose-rls-canary-r8.json",
+    "project-documentation/ctrl-evolution/g25-prepared-receipt-crypto-r9.json"
+  ],
+  "candidate_sql": "supabase/candidates/g25_prepared_receipt_atomic_store_r10.sql",
+  "database_test": "supabase/tests/database/g25_prepared_receipt_atomic_store_r10.test.sql",
+  "runtime_harness": "scripts/run-ctrl-g25-atomic-store-r10.mjs",
+  "not_a_migration": true,
+  "durable_shape": {
+    "receipt": "Encrypted prepared-intelligence envelope bound to workspace, owner, subject, canonical audience, exact purpose, request identity, authority fingerprint, content fingerprint and expiry.",
+    "dependencies": "Typed and versioned authority references sharing the exact parent scope.",
+    "events": "Payload-free accepted and future lifecycle receipts. R10 implements accepted only.",
+    "write_boundary": "One security-invoker transaction granted to service_role and closed to public, anon and authenticated.",
+    "read_boundary": "Non-anonymous membership plus exact audience and purpose grant, with expired, invalidated and erased receipts hidden."
+  },
+  "verification": {
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "created_bundle_rows": 3,
+    "exact_replay_idempotent": true,
+    "conflicting_replay_closed": true,
+    "cross_language_authority_fingerprint": true,
+    "authority_fingerprint_recomputed_by_database": true,
+    "stale_authority_closed": true,
+    "future_authority_observation_closed": true,
+    "cross_purpose_dependency_closed": true,
+    "unmapped_authority_closed": true,
+    "forced_final_write_rolled_back": true,
+    "authenticated_write_closed": true,
+    "exact_scope_read_required": true,
+    "forced_rls_and_least_privilege_verified": true,
+    "required_indexes_verified": true,
+    "rollback_residue": 0,
+    "negative_controls": [
+      "removing the authority-fingerprint comparison makes the canary fail",
+      "removing the current-authority check makes the canary fail"
+    ]
+  },
+  "authority_adapter_boundary": {
+    "default": "deny_all",
+    "candidate_kinds": [
+      "brain_item_version",
+      "external_source_receipt"
+    ],
+    "closed_kinds": [
+      "decision_case_snapshot",
+      "decision_claim_snapshot"
+    ],
+    "reason": "Legacy decision rows have no canonical Brain workspace binding or immutable snapshot fingerprint. Guessing from user_id would weaken R7 scope authority."
+  },
+  "remaining_gates": [
+    "Implement and independently prove real current-authority adapters against the canonical Brain tables.",
+    "Define workspace-bound immutable authority for decision cases and claims before enabling those kinds.",
+    "Prove the candidate upsert's concurrent replay convergence on a multi-connection PostgreSQL runtime.",
+    "Run the candidate and test through Supabase local plus PostgREST when Docker or Podman is available.",
+    "Add correction invalidation and erasure transactions before customer data or delivery uses this store.",
+    "Review a migration proposal separately before any database application."
+  ],
+  "bounded_claim": "R10 proves the proposed receipt, dependency and event shape plus one atomic write boundary on PostgreSQL 18.3 WASM. It does not provide a live authority adapter, migration, runtime caller, concurrent multi-connection proof, correction or erasure path, Supabase-local parity or production readiness.",
+  "authority": {
+    "permits": [
+      "local non-migration SQL candidate",
+      "disposable PostgreSQL WASM execution",
+      "rollback-only fixtures and negative controls",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration file or migration execution",
+      "linked or production database use",
+      "runtime caller or producer connection",
+      "customer data or customer-facing change",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}
