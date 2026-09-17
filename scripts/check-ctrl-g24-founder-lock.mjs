@@ -45,12 +45,12 @@ check('external actions remain closed', lock.includes('deployment, feature enabl
 check('revisit trigger is observable', lock.includes('credible conforming case') && lock.includes('later named proof gate falsifies'))
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
-  'canonical next action remains inside the trusted-ingress gate',
-  state.includes('**CURRENT_NEXT_ACTION:** Freeze the exact [R88 human-owned answer history and self-healing finality contract]'),
+  'canonical next action remains inside the preservation gate',
+  state.includes('**CURRENT_NEXT_ACTION:** Complete and verify the [G25 legacy capability preservation register R1]') && state.includes('No result-producing runtime, registry, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.'),
 )
 check(
-  'design state remains inside the trusted-ingress gate',
-  designState.includes('freeze the exact R88 human-owned answer history and self-healing finality contract') && designState.includes('No semantic evaluator implementation, result-producing success branch, runtime integration'),
+  'design state remains inside the preservation gate',
+  designState.includes('complete and verify the G25 legacy capability preservation register') && designState.includes('No result-producing runtime integration, registry wiring, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.'),
 )
 check('R68 source bytes founder-locked', sha256(r68.executable_artifact.source_path) === 'fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104')
 check('R68 founder-lock identity exact', r68.executable_artifact.founder_lock.founder_lock_identity === '4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06')

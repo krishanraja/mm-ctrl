@@ -1,0 +1,482 @@
+{
+  "schema_version": "1.0.0",
+  "register_id": "G25-LEGACY-CAPABILITY-PRESERVATION-R1",
+  "status": "binding_preimplementation_gate",
+  "prepared_at": "2026-09-17T08:31:10+01:00",
+  "source_baseline": "8174677125bc2799929e3196282e75cba215b443",
+  "audited_head": "aabd1d229f0bc6340b619125bae27a525d388740",
+  "founder_lock": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-founder-lock-r99.md",
+  "policy": {
+    "preserve": "Product capability, user value, control meaning, data boundary and proven failure behavior.",
+    "may_change": "Screen, route, label, schema, provider, component and implementation may change behind an explicit adapter and proof.",
+    "briefing_position": "News and audio are downstream prepared-intelligence modes selected by the Brain, not the product hero or a competing memory system.",
+    "retirement_gate": "No protected component may be disabled, deleted or made unreachable until its replacement passes characterization, data-boundary, failure, rollback and zero-live-caller proof, followed by exact founder approval for the retirement action.",
+    "default_on_uncertainty": "Quarantine or retain behind an adapter. Never infer retirement from a new interface working."
+  },
+  "mandatory_capability_ids": [
+    "CAP-NEWS-CURATION",
+    "CAP-BRIEFING-AUDIO-CONVERSATION",
+    "CAP-BRIEFING-CONTROL-LOOP",
+    "CAP-DECISION-EVIDENCE",
+    "CAP-DECISION-WATCH-CROSSWIRE",
+    "CAP-MEMORY-GOVERNANCE",
+    "CAP-CORRECTION-SELF-HEALING",
+    "CAP-BRAIN-PROJECTION",
+    "CAP-PORTABILITY-CLAUDE-MCP",
+    "CAP-HARNESS-SKILL-COMPILER",
+    "CAP-HUMAN-AGENCY-CONTROLS",
+    "CAP-TRUST-RETENTION-ERASURE"
+  ],
+  "capabilities": [
+    {
+      "id": "CAP-IDENTITY-OWNERSHIP",
+      "name": "Authentication, tenancy and owner-bound access",
+      "product_value": "A private Brain remains attributable to the correct person and audience without making the user administer security.",
+      "current_owners": [
+        "src/router.tsx",
+        "supabase/functions/_shared/service-auth.ts",
+        "supabase/migrations/20260908111121_brain_workspace_audience_canary.sql"
+      ],
+      "callers_or_triggers": ["Authenticated routes", "Edge Functions", "RLS policies"],
+      "data_contracts": ["auth.users", "brain_workspaces", "brain_workspace_members", "brain_item_audiences"],
+      "existing_evidence": ["project-documentation/ctrl-evolution/g16-workspace-audience-canary.md", "docs/current/architecture.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "Every new Brain read and write proves subject, owner, workspace, audience, purpose and authority before content access.",
+      "characterization_proof": ["Cross-user reads fail closed", "Anonymous access cannot discover protected records", "Audience changes invalidate derived access"],
+      "retirement_conditions": ["Replacement passes multi-identity behavioral tests", "All protected callers use the replacement", "Rollback restores prior owner boundary"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-NEWS-CURATION",
+      "name": "Cross-verified AI-native news curation",
+      "product_value": "The leader receives a small, corroborated view of the AI shifts that can change a live decision, category view or preparation need.",
+      "current_owners": [
+        "supabase/functions/live-headlines/index.ts",
+        "supabase/functions/_shared/news-sources.ts",
+        "supabase/functions/_shared/news-ai-native.ts",
+        "supabase/functions/_shared/news-cluster.ts",
+        "supabase/functions/_shared/news-synthesis.ts",
+        "supabase/functions/_shared/personalization-core.ts",
+        "docs/CURATION-SYSTEM-SPEC.md"
+      ],
+      "callers_or_triggers": ["live-headlines-prewarm", "useCockpit", "generate-briefing", "video-radar-export"],
+      "data_contracts": ["live_headlines_cache", "personal_pool_cache", "news_preferences", "briefing_interests"],
+      "existing_evidence": [
+        "supabase/functions/_shared/news-cluster.test.ts",
+        "supabase/functions/_shared/news-sources.test.ts",
+        "supabase/functions/_shared/news-synthesis.test.ts",
+        "src/__tests__/newsPriority.test.ts"
+      ],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "A prepared-intelligence service queried by live decisions, objectives, category questions and briefing compilation rather than a default feed hero.",
+      "characterization_proof": ["Independent-source corroboration survives", "AI-native filtering and exact category semantics survive", "Freshness and source standing remain visible", "Shared pool and leader-specific ranking do not diverge", "Thin supply stays honest"],
+      "retirement_conditions": ["Replacement matches or improves held-out curation quality", "Briefing and prepared objects share the same qualified pool", "All cache and cron callers are mapped and cut over", "Old pool can be restored without data loss"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-BRIEFING-AUDIO-CONVERSATION",
+      "name": "Personalised read, listen and talk-back briefing",
+      "product_value": "A busy leader can absorb prepared intelligence by reading or listening and ask a grounded follow-up without opening a technical workspace.",
+      "current_owners": [
+        "supabase/functions/generate-briefing/index.ts",
+        "supabase/functions/briefing-conversation/index.ts",
+        "src/components/briefing/GlobalBriefingPlayer.tsx",
+        "src/components/briefing/BriefingPlay.tsx",
+        "src/components/briefing/BriefingConversation.tsx",
+        "src/pages/BriefingPage.tsx"
+      ],
+      "callers_or_triggers": ["User playback", "Global briefing control", "send-daily-briefing", "Briefing follow-up"],
+      "data_contracts": ["briefings.script_text", "briefings.audio_url", "briefing_feedback", "Signed audio storage URLs"],
+      "existing_evidence": ["src/__tests__/briefingConversation.test.ts", "src/__tests__/briefingConversationCore.test.ts", "src/__tests__/e2e/briefing-journey.spec.ts", "docs/BRIEFING_GENERATION_HISTORY.md"],
+      "target_treatment": "recompose",
+      "target_role": "Audio is a presentation and conversation mode of one prepared object. It never owns a separate truth or curation pipeline.",
+      "characterization_proof": ["Read and audio express the same prepared object", "Audio ownership and rate limits survive", "Follow-up answers are grounded in the current briefing and carry citations", "Failure recovers to readable content", "Reduced-motion and mobile controls remain usable"],
+      "retirement_conditions": ["New prepared-object renderer passes read, listen, pause, resume, retry and talk-back journeys", "Audio reuse and signed URL behavior are preserved", "Old player can be restored independently"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-BRIEFING-CONTROL-LOOP",
+      "name": "Briefing tuning, watchlist, voice steering and negative feedback",
+      "product_value": "The user can shape what reaches them, reject irrelevant patterns and steer future briefings without becoming a feed administrator.",
+      "current_owners": [
+        "src/components/cockpit/NewsPreferencesPanel.tsx",
+        "src/hooks/useNewsPreferences.ts",
+        "src/hooks/useBriefingInterests.ts",
+        "src/components/briefing/VoiceSteerBar.tsx",
+        "supabase/functions/nudge-briefing/index.ts",
+        "supabase/functions/briefing-aggregate-feedback/index.ts",
+        "supabase/functions/briefing-kill-lens-item/index.ts"
+      ],
+      "callers_or_triggers": ["Tune control", "Watchlist and exclude edits", "Voice nudge", "Not useful feedback", "Operator kill control"],
+      "data_contracts": ["news_preferences", "briefing_interests", "user_briefing_directives", "briefing_feedback", "briefing_lens_feedback"],
+      "existing_evidence": ["docs/CURATION-SYSTEM-SPEC.md", "docs/history/2026-09-07-app-settings.md"],
+      "target_treatment": "recompose",
+      "target_role": "One calm control plane bends prepared intelligence across read, audio and delivery, with provenance-tagged rules and reversible feedback.",
+      "characterization_proof": ["A change affects every briefing mode", "Negative feedback suppresses recurrence without erasing history", "Voice and manual edits cannot silently clobber one another", "Exclusions fail closed", "The user can inspect and reverse material steering"],
+      "retirement_conditions": ["One replacement control owns every current writer", "Legacy duplicate writers have zero callers", "Feedback history remains interpretable and reversible"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-DECISION-EVIDENCE",
+      "name": "Decision decomposition, retrieval, verification and counter-case",
+      "product_value": "A consequential decision is challenged by evidence and a strong counter-case while the final call remains human.",
+      "current_owners": [
+        "supabase/functions/decision-engine/index.ts",
+        "supabase/functions/decision-engine/pipeline.ts",
+        "supabase/functions/decision-engine/retrievers.ts",
+        "supabase/functions/decision-engine/verify.ts",
+        "supabase/functions/decision-research/index.ts",
+        "supabase/functions/decision-eval/index.ts"
+      ],
+      "callers_or_triggers": ["Decision submission", "Operator advisor", "Decision re-evaluation"],
+      "data_contracts": ["decision_cases", "decision_claims", "decision_evidence", "decision_reactions"],
+      "existing_evidence": ["src/hooks/useDecisionEngine.ts", "docs/history/2026-09-07-CTRL-DECISIONING-FRAMEWORK.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "A modular evidence and challenger service called only after the human prior, decision boundary and evidence need are understood.",
+      "characterization_proof": ["Typed claims and exact source links survive", "Corroboration is based on independent evidence rather than model agreement", "Counter-evidence cannot be collapsed into a confident average", "Partial provider failure is visible", "The human call remains distinct from the recommendation"],
+      "retirement_conditions": ["New service passes the old evidence fixtures and new million-dollar-decision cases", "No active case depends on old writes", "Historical cases remain inspectable"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-DECISION-WATCH-CROSSWIRE",
+      "name": "Decision watch and briefing cross-engine return loop",
+      "product_value": "A past call can return when the evidence beneath it changes, turning the Brain into continuing help rather than a static answer archive.",
+      "current_owners": [
+        "supabase/functions/decision-watch/index.ts",
+        "supabase/functions/_shared/decision-alerts.ts",
+        "supabase/functions/generate-briefing/index.ts",
+        "supabase/migrations/20260602000000_decision_engine.sql"
+      ],
+      "callers_or_triggers": ["Decision watch schedule or bounded return-ask", "Briefing compilation", "Open alert resolution"],
+      "data_contracts": ["decision_alerts", "decision_cases", "decision_claims", "briefings"],
+      "existing_evidence": ["docs/history/2026-09-07-app-backend-depth.md", "docs/history/2026-09-07-CTRL-DECISIONING-FRAMEWORK.md"],
+      "target_treatment": "promote",
+      "target_role": "A permissioned return-ask service that reopens a decision only when a named load-bearing assumption or external condition moves.",
+      "characterization_proof": ["Alerts are idempotent", "Only load-bearing changes trigger return", "The reason for return links to the original call and fresh evidence", "Dismissal or correction prevents recurrence", "The alert can enter briefing without becoming generic news"],
+      "retirement_conditions": ["Replacement proves the full decision to monitor to prepared return loop", "Duplicate and stale alerts are impossible", "Old scheduled caller is disabled only after new readback"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-MEMORY-GOVERNANCE",
+      "name": "Encrypted, owner-scoped and correctable memory lifecycle",
+      "product_value": "Useful context persists without becoming an uncorrectable model memory or exposing the user to silent cross-boundary reuse.",
+      "current_owners": [
+        "supabase/functions/memory-crud/index.ts",
+        "supabase/functions/extract-user-context/index.ts",
+        "supabase/functions/_shared/memory-crypto.ts",
+        "supabase/functions/_shared/fact-guardrails.ts",
+        "supabase/functions/memory-lifecycle/index.ts",
+        "supabase/functions/memory-sweep/index.ts"
+      ],
+      "callers_or_triggers": ["Explicit add or edit", "Qualified extraction", "Lifecycle sweep", "Retention cleanup"],
+      "data_contracts": ["user_memory", "user_memory_settings", "memory_events", "valid_until", "retention_expires_at"],
+      "existing_evidence": ["src/hooks/useUserMemory.ts", "src/hooks/useMemoryQueries.ts", "docs/history/2026-09-07-CTRL-BRAIN-ARCHITECTURE.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "Legacy fact memory becomes an input adapter to the versioned Brain and cannot silently become accepted judgement.",
+      "characterization_proof": ["Encryption remains row-bound", "Owner checks precede decrypt and write", "Verification, expiry and supersession remain distinct", "Third-party identity guardrails survive", "Ambiguous legacy facts enter as proposals or quarantine"],
+      "retirement_conditions": ["Every trusted row has subject, owner, source, meaning and applicability", "Correction replay covers all derived consumers", "Legacy read and write callers are zero", "Export and erasure parity pass"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-CORRECTION-SELF-HEALING",
+      "name": "Correction propagation, contradiction handling and self-healing receipts",
+      "product_value": "One natural-language correction repairs what the Brain believes, what it shows and what it exports without rewriting history.",
+      "current_owners": [
+        "supabase/functions/_shared/correction-guard.ts",
+        "supabase/functions/_shared/correction-guard.test.ts",
+        "supabase/functions/memory-edges-derive/index.ts",
+        "supabase/functions/memory-synthesize/index.ts",
+        "supabase/functions/compute-drift/index.ts",
+        "supabase/functions/batch-compute-drift/index.ts"
+      ],
+      "callers_or_triggers": ["Memory correction", "Contradiction detection", "Derived edge rebuild", "Drift evaluation"],
+      "data_contracts": ["Append-only correction event", "Supersession link", "Dependency and reliance edges", "Rebuilt current projection"],
+      "existing_evidence": ["project-documentation/ctrl-evolution/g24-product-system-blueprint.md", "project-documentation/ctrl-evolution/g24-product-system-contract.json"],
+      "target_treatment": "promote",
+      "target_role": "A first-class repair service over append-only events and replaceable projections.",
+      "characterization_proof": ["Original evidence remains intact", "Every affected projection is invalidated or rebuilt", "Cached and exported copies are marked stale", "Correction cannot cross subject or audience boundaries", "A visible receipt names what changed"],
+      "retirement_conditions": ["Seeded correction repairs every registered dependent artifact", "Rollback can reconstruct the prior projection without deleting history", "No hidden legacy cache remains authoritative"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-BRAIN-PROJECTION",
+      "name": "Living Brain projection, relationships and explainable context selection",
+      "product_value": "The user can see what the Brain knows, how ideas connect, what is uncertain and why a piece of context affected a decision.",
+      "current_owners": [
+        "supabase/functions/_shared/brain-profile.ts",
+        "supabase/functions/_shared/context-builder.ts",
+        "supabase/functions/_shared/memory-context-builder.ts",
+        "supabase/functions/memory-edges-derive/index.ts",
+        "src/components/memory-web/MemoryWebVisualization.tsx"
+      ],
+      "callers_or_triggers": ["Feed and briefing ranking", "Decision context", "Memory inspection", "Export"],
+      "data_contracts": ["Brain profile", "Context plan", "memory_edges", "Matched fact and relevance reason"],
+      "existing_evidence": ["src/hooks/useMemoryWeb.ts", "src/hooks/useMemoryEdges.ts", "project-documentation/ctrl-evolution/design/g23-product-spine-synthesis.md"],
+      "target_treatment": "recompose",
+      "target_role": "One canonical current projection derived from Brain events, with the Living Map as an honest inspectable and marketable view rather than the storage model.",
+      "characterization_proof": ["Every displayed relationship is evidence-backed and typed", "Context selection records why each item was chosen", "Uncertainty and stale state remain visible", "Graph absence does not block core value", "Projection never outranks event history"],
+      "retirement_conditions": ["New projection serves every active consumer", "Living Map passes sparse, dense, contradictory and corrected fixtures", "Old profile adapters have zero direct consumers"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-BLIND-SPOT-CANDIDATE",
+      "name": "Evidence-anchored candidate, rejection suppression and small experiment",
+      "product_value": "The system can challenge a leader tentatively without diagnosing them, and learns only after they confirm or reject the read.",
+      "current_owners": [
+        "supabase/functions/blind-spot/index.ts",
+        "supabase/functions/_shared/blind-spot-core.ts",
+        "src/components/blind-spot/BlindSpotInstrument.tsx"
+      ],
+      "callers_or_triggers": ["Qualified candidate request", "Confirm", "Not quite", "Burn", "Experiment return"],
+      "data_contracts": ["Signed candidate", "Evidence fingerprint", "Confirmed pattern", "Suppressed rejection", "Small experiment"],
+      "existing_evidence": ["src/__tests__/blindSpotCore.test.ts", "src/__tests__/BlindSpotInstrument.test.tsx", "project-documentation/DECISIONS_LOG.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "The candidate-before-commit pattern becomes a general durable-learning proposal primitive across judgement, taste and standards.",
+      "characterization_proof": ["Thin evidence stays a tension rather than diagnosis", "Rejection suppresses an unchanged candidate", "Confirmation revalidates every source", "Burn removes the sensitive artifact while retaining a content-free suppression anchor", "No learning occurs from a rejected proposal"],
+      "retirement_conditions": ["General proposal service passes all Blind Spot qualification and rejection cases", "Sensitive historical objects retain their burn path", "Old candidate writers have zero callers"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-HUMAN-AGENCY-CONTROLS",
+      "name": "Human prior, final authority, off-record mode and inspectable approvals",
+      "product_value": "The leader supplies the first and last judgement gates and can withhold, correct, reject or keep material off record.",
+      "current_owners": [
+        "src/contexts/OffTheRecordContext.tsx",
+        "src/hooks/useDecisionCall.ts",
+        "src/hooks/useResolveDecision.ts",
+        "supabase/functions/submit-decision-capture/index.ts",
+        "supabase/functions/decision-reactions/index.ts"
+      ],
+      "callers_or_triggers": ["Decision capture", "User call", "Resolve decision", "Off-record session", "Reaction and correction"],
+      "data_contracts": ["Human prior", "Human-owned call", "Consent receipt", "No durable write", "Accepted, resisted, corrected and unresolved states"],
+      "existing_evidence": ["project-documentation/ctrl-evolution/g24-founder-architecture-lock.md", "project-documentation/ctrl-evolution/g24-predicate-authority-r97-panel-verdict.md"],
+      "target_treatment": "promote",
+      "target_role": "Human agency is a system invariant across every consequential workflow, not reassuring copy at the end.",
+      "characterization_proof": ["No model output becomes a human call", "Off-record paths write no durable content", "Approval is specific to exact meaning and effect", "A user can abstain without penalty", "Another model may audit but cannot assume accountability"],
+      "retirement_conditions": ["Replacement proves first and last human gates across all consequential paths", "No direct write bypass remains", "Off-record behavior is tested against every capture adapter"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-VOICE-CAPTURE",
+      "name": "Low-friction voice capture and transcription",
+      "product_value": "A busy user can contribute rich context or correct meaning without typing or learning a workflow.",
+      "current_owners": [
+        "src/hooks/useVoice.ts",
+        "supabase/functions/voice-transcribe/index.ts",
+        "supabase/functions/extract-voice-profile/index.ts",
+        "supabase/functions/synthesize-interview-audio/index.ts"
+      ],
+      "callers_or_triggers": ["Microphone capture", "Interview response", "Briefing steer", "Operator question"],
+      "data_contracts": ["Audio consent", "Transcript", "Speaker and purpose", "Retention boundary", "Derived proposal"],
+      "existing_evidence": ["docs/VOICE_PROFILE.md", "src/components/briefing/VoiceSteerBar.tsx"],
+      "target_treatment": "recompose",
+      "target_role": "Voice is a one-tap input and response mode whose transcript remains inspectable and whose durable residue is separately proposed.",
+      "characterization_proof": ["Permission denial has a usable text fallback", "Recording state is obvious", "Transcript can be corrected before learning", "Raw audio retention follows consent", "Voice input never broadens purpose"],
+      "retirement_conditions": ["Every approved capture route has voice and text parity where promised", "Raw audio and transcript lifecycle is proven", "Old capture path has zero callers"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-PORTABILITY-CLAUDE-MCP",
+      "name": "Context export, Claude handoff and read-only MCP",
+      "product_value": "The user owns a useful Brain outside CTRL and can bring the right context into the AI surface where they already work.",
+      "current_owners": [
+        "supabase/functions/memory-export/index.ts",
+        "supabase/functions/generate-custom-export/index.ts",
+        "supabase/functions/mcp-context/index.ts",
+        "src/pages/ContextExportSimple.tsx",
+        "src/components/settings/McpTokensPanel.tsx"
+      ],
+      "callers_or_triggers": ["Copy for Claude", "Download", "MCP token pull", "Customer-owned release"],
+      "data_contracts": ["Versioned export", "Allowlisted context", "MCP scopes", "Token mint and revoke", "Pull log", "Provenance manifest"],
+      "existing_evidence": ["src/hooks/useMemoryExport.ts", "src/hooks/useMcpTokens.ts", "src/hooks/useMcpPulls.ts", "supabase/migrations/20260805170000_mcp_pull_log.sql"],
+      "target_treatment": "promote",
+      "target_role": "A deterministic Brain release compiler creates human-readable and machine-readable packages for Claude, GitHub, ZIP and read-only agent access.",
+      "characterization_proof": ["Export contains enough context to answer without phantom references", "Every included item has source and audience authority", "Revocation stops future MCP access", "Re-import proposes changes rather than overwriting live truth", "Two agent environments can use the package"],
+      "retirement_conditions": ["New compiler achieves byte-stable export from identical approved state", "Claude and a second materially different agent pass held-out tasks", "Old token and export callers are migrated", "Rollback restores prior export format"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-HARNESS-SKILL-COMPILER",
+      "name": "Reusable judgement and skill compiler",
+      "product_value": "Repeated quality, taste and process judgement can become inspectable reusable machinery instead of one giant prompt or repeated explanation.",
+      "current_owners": [
+        "supabase/functions/generate-skill-export/index.ts",
+        "supabase/functions/generate-skill-export/quality-gate.ts",
+        "supabase/functions/generate-skill-export/zip.ts",
+        "supabase/functions/_shared/skill-package.ts",
+        "supabase/functions/_shared/skill-release.ts",
+        "supabase/functions/compile-standard/index.ts",
+        "supabase/functions/ingest-evidence/index.ts"
+      ],
+      "callers_or_triggers": ["Accepted criteria and examples", "Skill export", "MCP skill pull", "Quarterly maintenance"],
+      "data_contracts": ["Constructs", "Criteria", "Gold and negative examples", "Provenance", "Tests", "Versioned release"],
+      "existing_evidence": ["supabase/functions/_shared/skill-package.test.ts", "supabase/functions/_shared/skill-release.test.ts", "docs/HARNESS-CHAIN-STATE.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "Specialist modules compile bounded aspects of the Brain into testable packages. The old Kit surface stays retired while its machinery survives.",
+      "characterization_proof": ["Every rule links to evidence and owner acceptance", "Packages contain tests and negative examples", "Staleness is detectable after source change", "No single generated file claims to be the entire Brain", "A failed quality gate cannot release"],
+      "retirement_conditions": ["Replacement compiler passes package and release tests", "Existing packages remain retrievable", "Every legacy writer is mapped", "Old Kit UI is not required for the capability"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-EXTERNAL-ENRICHMENT",
+      "name": "Company, category and model-market enrichment",
+      "product_value": "The Brain can know the leader's actual company, category and changing external environment without asking them to restate public facts.",
+      "current_owners": [
+        "supabase/functions/enrich-company-context/index.ts",
+        "supabase/functions/enrich-profile/index.ts",
+        "supabase/functions/aa-assessment-enrich/index.ts",
+        "supabase/functions/aa-model-recommend/index.ts",
+        "supabase/functions/_shared/aa-cache.ts"
+      ],
+      "callers_or_triggers": ["Onboarding recognition", "Decision evidence need", "Category monitoring", "Model claim validation"],
+      "data_contracts": ["Source-linked dossier", "Company match confidence", "Fresh public evidence", "Artificial Analysis model index"],
+      "existing_evidence": ["docs/ENRICHMENT-CONVERGENCE.md", "project-documentation/DECISIONS_LOG.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "Research is commissioned by a specific evidence gap and returns source-backed proposals, never accepted personal truth.",
+      "characterization_proof": ["Mismatch fails closed", "Every external fact has source and retrieval time", "Research cannot overwrite internal truth", "Unsupported public scarcity remains explicit", "Provider failure degrades honestly"],
+      "retirement_conditions": ["Replacement matches company recognition and decision enrichment fixtures", "Cache and provider fallbacks are mapped", "No stale enrichment is treated as current"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-MODEL-GOVERNANCE",
+      "name": "Model routing, cache, rate limits and factual guardrails",
+      "product_value": "Complex AI work stays reproducible, bounded and honest even when a provider is slow, expensive, unavailable or confidently wrong.",
+      "current_owners": [
+        "supabase/functions/_shared/model-router.ts",
+        "supabase/functions/_shared/ai-cache.ts",
+        "supabase/functions/_shared/rate-limit.ts",
+        "supabase/functions/_shared/fact-guardrails.ts",
+        "supabase/functions/_shared/llm-quality-guardrails.ts"
+      ],
+      "callers_or_triggers": ["Every model-backed task", "Provider fallback", "Repeated request", "Fact-bearing generation"],
+      "data_contracts": ["Task contract", "Model policy", "Budget", "Trace", "Cache key", "Rate-limit identity", "Guardrail verdict"],
+      "existing_evidence": ["docs/current/architecture.md", "docs/current/release-state.md"],
+      "target_treatment": "promote",
+      "target_role": "One policy layer selects models by bounded task contract and preserves traces without logging unrestricted personal content.",
+      "characterization_proof": ["Fallback does not widen authority or purpose", "Caches invalidate on Brain or policy change", "Rate limits are owner and task scoped", "Numbers, quotations and dates are checked outside generation where possible", "Degraded states cannot masquerade as success"],
+      "retirement_conditions": ["All consequential model callers use the central task registry", "Provider-specific logic has zero hidden callers", "Cost and latency bounds pass", "Rollback can restore the prior policy"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-DELIVERY-EMAIL-NOLOGIN",
+      "name": "Email, no-login delivery and quiet notification controls",
+      "product_value": "Prepared value reaches a busy leader in channels they already use, at a cadence controlled by the operator and user.",
+      "current_owners": [
+        "supabase/functions/send-daily-briefing/index.ts",
+        "supabase/functions/subscribe-briefing/index.ts",
+        "supabase/functions/unsubscribe-briefing/index.ts",
+        "supabase/functions/upsert-notification-prefs/index.ts",
+        "supabase/functions/_shared/email-shell.ts"
+      ],
+      "callers_or_triggers": ["Daily delivery schedule", "Opt in", "Opt out", "Operator-controlled nudge", "Artifact delivery"],
+      "data_contracts": ["leader_notification_prefs", "Briefing subscription", "Atomic delivery claim", "Email receipt", "Unsubscribe state"],
+      "existing_evidence": ["supabase/migrations/20260810220000_vault_backed_briefing_cron.sql", "docs/current/features.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "A governed delivery service sends only an approved prepared object through Mindmake-controlled channels and respects timing, quiet state and withdrawal.",
+      "characterization_proof": ["Retry cannot duplicate a send", "Unsubscribe and pause win over schedule", "Email and app show the same object", "No-login delivery does not weaken access", "Operator timing is auditable"],
+      "retirement_conditions": ["Replacement passes retry, overlap, pause and unsubscribe tests", "All scheduled and webhook callers are mapped", "Old delivery can be restored without duplicate sends"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-SCHEDULE-IDEMPOTENCY",
+      "name": "Scheduled learning, curation, delivery and cleanup",
+      "product_value": "The Brain stays fresh and useful without the user remembering to maintain it, while retries remain safe.",
+      "current_owners": [
+        "supabase/migrations/20260612000100_memory_sweep_cron.sql",
+        "supabase/migrations/20260622120000_live_headlines_cron.sql",
+        "supabase/migrations/20260810220000_vault_backed_briefing_cron.sql",
+        "supabase/migrations/20260820120000_retention_cleanup_cron.sql",
+        "supabase/functions/memory-sweep/index.ts"
+      ],
+      "callers_or_triggers": ["pg_cron", "Vault-backed cron authentication", "Idempotent claim RPCs"],
+      "data_contracts": ["Cron job identity", "Service authentication", "Run receipt", "Idempotency key", "Last successful projection"],
+      "existing_evidence": ["docs/current/release-state.md", "project-documentation/REPLICATION_GUIDE.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "A registry of bounded background jobs whose purpose, owner, schedule, authentication, idempotency and failure state are inspectable.",
+      "characterization_proof": ["Every job has one owner and one schedule", "Overlapping runs converge", "Authentication fails closed", "Failure leaves the last valid state visible", "Disabling a job does not silently disable its product promise"],
+      "retirement_conditions": ["Replacement job is active and read back", "Old job is unscheduled only after overlap proof", "Rollback schedule and credentials are ready", "Dependent promises remain true"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-TRUST-RETENTION-ERASURE",
+      "name": "Retention, erasure, account deletion and billing convergence",
+      "product_value": "A user can control how long data remains, remove sensitive learning and leave without being charged or leaving inaccessible residue.",
+      "current_owners": [
+        "supabase/functions/cleanup-expired-data/index.ts",
+        "supabase/functions/delete-account/index.ts",
+        "supabase/functions/memory-settings/index.ts",
+        "supabase/functions/backfill-pseudonymise/index.ts",
+        "supabase/migrations/20260820130000_blind_spot_burn.sql",
+        "supabase/migrations/20260820150000_revoke_anon_memory_maintenance.sql"
+      ],
+      "callers_or_triggers": ["Retention preference", "Blind Spot burn", "Account deletion", "Daily cleanup", "Pseudonymisation repair"],
+      "data_contracts": ["retention_expires_at", "Deletion inventory", "Stripe cancellation", "Content-free suppression fingerprint", "Audit receipt"],
+      "existing_evidence": ["docs/current/release-state.md", "project-documentation/compliance/README.md", "project-documentation/DECISIONS_LOG.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "Retention and withdrawal are domain invariants applied to raw sources, Brain events, projections, caches, exports and billing.",
+      "characterization_proof": ["Retention choices alter eligible data only", "Deletion cancels billing before erasure", "Derived copies and exports are covered", "Anonymous callers cannot force global maintenance", "Burn and correction remain distinct"],
+      "retirement_conditions": ["Replacement erasure map covers every new domain and old store", "Readback proves no inaccessible residue", "Billing and delivery state converge", "Recovery evidence exists before destructive cutover"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-RESILIENT-INTERACTION",
+      "name": "Responsive, accessible, recoverable interaction primitives",
+      "product_value": "The non-technical user experiences calm continuity across mobile, desktop, loading, sparse data and provider failure.",
+      "current_owners": [
+        "src/components/system/GlobeLoader.tsx",
+        "src/components/system/loadingLines.ts",
+        "src/components/briefing/BriefingSheet.tsx",
+        "src/components/memory/MemoryErrorBoundary.tsx",
+        "src/components/ui/sheet.tsx"
+      ],
+      "callers_or_triggers": ["Loading", "Drawer and sheet interactions", "Provider failure", "Mobile navigation", "Keyboard and touch"],
+      "data_contracts": ["Loading state", "Empty state", "Stale state", "Recoverable error", "Reduced motion", "Focus and touch target"],
+      "existing_evidence": ["docs/AGENTIC_UI_TESTING.md", "docs/UX-PRINCIPLES.md", "src/__tests__/e2e/briefing-journey.spec.ts"],
+      "target_treatment": "retain_selectively",
+      "target_role": "Reuse proven interaction primitives inside the new radically simple surfaces without preserving old navigation or verbal clutter.",
+      "characterization_proof": ["Primary action remains obvious on 320px and desktop", "Keyboard and screen-reader paths work", "Loading communicates useful progress without invented success", "Sparse state is intentional", "Recovery never duplicates writes"],
+      "retirement_conditions": ["Replacement component passes the same state and viewport matrix", "No active surface imports the old primitive", "Visual change receives its own material approval when required"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-MEASUREMENT-EVALUATION",
+      "name": "Progress, calibration and held-out evaluation machinery",
+      "product_value": "The product can prove whether the Brain is becoming more useful without turning the leader into a tacky scoreboard or mistaking engagement for progress.",
+      "current_owners": [
+        "supabase/functions/generate-progress-snapshot/index.ts",
+        "supabase/functions/generate-quarterly-index/index.ts",
+        "supabase/functions/decision-eval/index.ts",
+        "supabase/functions/compute-drift/index.ts",
+        "project-documentation/NORTH_STAR.md"
+      ],
+      "callers_or_triggers": ["Evaluation run", "Quarterly snapshot", "Decision resolution", "Brain change", "Operator review"],
+      "data_contracts": ["Held-out case", "Brain version", "Baseline output", "Treatment output", "Human or independent grade", "Outcome and abstention"],
+      "existing_evidence": ["scripts/check-ctrl-phase2-evals.mjs", "project-documentation/ctrl-evolution/g24-product-system-blueprint.md"],
+      "target_treatment": "recompose",
+      "target_role": "An internal evaluation service measures judgement coverage, answerability, calibration, distinctiveness and outcome learning. Customer expression stays meaningful and non-competitive.",
+      "characterization_proof": ["Progress cannot increase from file count alone", "Baseline and Brain treatment are frozen and comparable", "Abstention and correction burden count", "Business outcome and personal capability remain distinct", "No unsupported score becomes a marketing claim"],
+      "retirement_conditions": ["New evaluation suite reproduces historical useful signals", "Metric definitions and data availability are explicit", "Any customer-facing construct receives separate founder approval"],
+      "status": "protected_pending_characterization"
+    },
+    {
+      "id": "CAP-BILLING-ENTITLEMENT",
+      "name": "Billing, entitlement and webhook recovery",
+      "product_value": "Paid capability can be granted and withdrawn reliably without contaminating Brain truth or blocking data ownership.",
+      "current_owners": [
+        "supabase/functions/create-edge-subscription/index.ts",
+        "supabase/functions/verify-edge-subscription/index.ts",
+        "supabase/functions/create-billing-portal-session/index.ts",
+        "supabase/functions/stripe-webhook/index.ts",
+        "supabase/functions/resend-webhook/index.ts"
+      ],
+      "callers_or_triggers": ["Checkout", "Portal", "Stripe webhook", "Entitlement check", "Account deletion"],
+      "data_contracts": ["Subscription status", "Plan entitlement", "Webhook idempotency", "Billing customer reference", "Cancellation receipt"],
+      "existing_evidence": ["supabase/functions/_shared/edge-pricing.ts", "docs/current/commercial.md", "docs/current/release-state.md"],
+      "target_treatment": "retain_behind_adapter",
+      "target_role": "Commercial packaging can change after value proof while billing integrity and data portability remain independent of plan state.",
+      "characterization_proof": ["Webhook replay is idempotent", "Entitlement does not become evidence authority", "Downgrade preserves owned exports", "Deletion cancels active billing", "Pricing truth has one owner"],
+      "retirement_conditions": ["New offer and entitlement contract is approved", "Webhook and cancellation paths pass", "Old price and plan callers are zero", "Rollback is ready"],
+      "status": "protected_pending_characterization"
+    }
+  ]
+}

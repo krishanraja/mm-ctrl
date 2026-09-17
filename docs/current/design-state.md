@@ -2,11 +2,11 @@
 
 Status: Current production release record; superseded as the material evolution state route
 Owner: Mindmaker
-Last verified: 2026-09-13 for state routing; the Blind Spot release evidence below remains unchanged
+Last verified: 2026-09-17 for state routing; the Blind Spot release evidence below remains unchanged
 
-This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine, founder-locked G24 R1 through R5 architecture and independently verified local headless Crossing kernel after twenty-six implementation vetoes. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
+This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine, founder-locked G24 R1 through R5 architecture, accepted R97 predicate-authority machine contract and the G25 legacy-capability preservation gate. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
 
-**The one current evolution action:** freeze the exact R90 current-head recovery and repeatable self-healing contract and submit that immutable identity to all seven durable judge roles. R78 through R89 are vetoed design evidence, not authority. R90 is still contract data plus deterministic conformance checks only. R70 remains accepted only for structural executable loading. No semantic evaluator implementation, result-producing success branch, runtime integration, registry wiring, database, UI, deployment, merge, release or external action is authorized.
+**The one current evolution action:** complete and verify the G25 legacy capability preservation register, then characterize the smallest prepared-intelligence seam behind an adapter: qualified news and decision signals become one governed prepared object with read and audio projections. R97 remains local machine-contract evidence only. No result-producing runtime integration, registry wiring, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.
 
 ## Current phase
 

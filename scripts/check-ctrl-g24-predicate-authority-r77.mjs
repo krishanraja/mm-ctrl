@@ -45,8 +45,8 @@ const design = read('docs/current/design-state.md')
 const ledger = read('project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md')
 check('human record exact call and boundary', human.includes('Exact final call: `approve r75`') && human.includes('semantic evaluator implementation') && human.includes('cross-venture Supabase decision ledger'))
 check('canonical state routes R77', state.includes('[R77 founder lock](g24-predicate-authority-r75-founder-lock-r77.md)'))
-check('canonical next action remains inside approved local contract gate', state.includes('**CURRENT_NEXT_ACTION:** Freeze the exact [R90 current-head recovery and repeatable self-healing contract]') && state.includes('No semantic evaluator implementation'))
-check('design route agrees', design.includes('freeze the exact R90 current-head recovery and repeatable self-healing contract') && design.includes('No semantic evaluator implementation'))
+check('canonical next action remains inside approved local contract gate', state.includes('**CURRENT_NEXT_ACTION:** Complete and verify the [G25 legacy capability preservation register R1]') && state.includes('No result-producing runtime, registry, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.'))
+check('design route agrees', design.includes('complete and verify the G25 legacy capability preservation register') && design.includes('No result-producing runtime integration, registry wiring, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.'))
 check('ledger preserves exact approval', ledger.includes('**Exact founder call:** `approve r75`') && ledger.includes('**Decision ID:** `DEC-20260916-g24-predicate-authority-r75`'))
 
 const attacks = [

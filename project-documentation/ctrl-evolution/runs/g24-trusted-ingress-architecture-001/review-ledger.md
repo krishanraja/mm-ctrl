@@ -2724,3 +2724,13 @@ R97 froze at commit `2ec11845b5dde7c19009119dd41213d3e54326e2`, tree `2f9f15849d
 The correctness and human-value panels independently replayed R96's trigger-signature escape. R97 returned unavailable status, emitted zero review actions, rejected the signed review, made no durable change and kept descendants blocked. Exact restoration returned the previous truthful state. The architecture panel separately corrupted a resolved observation transition and confirmed status, review, successor predicate and final transition all remained closed.
 
 The exact [R97 panel verdict](../../g24-predicate-authority-r97-panel-verdict.md) records the evidence, role results and mandatory persistence/UI carry-forwards. The [R98 founder-ready receipt](../../g24-predicate-authority-r97-founder-ready-receipt-r98.md) narrows the remaining choice to acceptance or rejection of R97 as the completed local machine-contract gate. Runtime, database, UI, deployment, merge, release and external action remain unauthorized.
+
+### R99 founder acceptance and G25 preservation boundary
+
+On 17 September 2026 Krish explicitly accepted the exact frozen R97 candidate with: `great stuff, approved r97 lets move forward`.
+
+The [R99 founder lock](../../g24-predicate-authority-r97-founder-lock-r99.md) closes the local machine-contract gate without widening R75. It authorises the next separately bounded local implementation gate only. Runtime, Supabase, database, UI, deployment, merge, release, external action and legacy deletion remain closed.
+
+Krish's same message added the explicit carry-forward: `dont forget about the news curation and audio briefing, as well as any other brain control mechanics that were useful!`
+
+The [G25 preservation register](../../g25-legacy-capability-preservation-register-r1.md) and machine-readable contract now bind that direction to twenty-two protected capability systems. News curation, personalised audio, talk-back, tuning, negative feedback, decision-watch return, memory governance, correction propagation, Living Brain projection, off-record and final human authority, export, MCP, the skill compiler, model controls, delivery, schedules, erasure and evaluation cannot disappear by omission. Their old screens and schemas may change behind adapters. Retirement requires replacement characterization, complete caller mapping, authoritative readback, rollback and a later exact founder action.

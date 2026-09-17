@@ -1,0 +1,114 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority-r97-founder-lock.r99.v1",
+  "record_kind": "founder_lock_and_project_decision_record",
+  "exact_final_call": "great stuff, approved r97 lets move forward",
+  "linked_preservation_call": "dont forget about the news curation and audio briefing, as well as any other brain control mechanics that were useful!",
+  "locked_candidate": {
+    "commit": "2ec11845b5dde7c19009119dd41213d3e54326e2",
+    "tree": "2f9f15849d1c577eee2dab9d4cb3aa62654664f7",
+    "authority_bundle": "48d491a6b025d6a33985da6e9c27f22da5237557c93d528a32339bc3bae1035a",
+    "manifest_bundle": "f65d8afa7c5cd54b740b330a6ae0e7615237a7e231976a5b02bd9237b68f7a3e",
+    "panel_verdict": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-panel-verdict.md",
+    "founder_ready_receipt": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-founder-ready-receipt-r98.md"
+  },
+  "decision_record": {
+    "decision_id": "DEC-20260917-g24-predicate-authority-r97",
+    "title": "Accept R97 local predicate-authority machine contract",
+    "decision": "Accept the exact frozen R97 predicate-authority machine contract as the completed local gate governed by R75 and proceed only into a separately bounded local implementation gate that preserves the useful legacy capabilities named by the founder.",
+    "status": "active",
+    "decided_at": "2026-09-17T08:31:10+01:00",
+    "recorded_at": "2026-09-17T08:31:10+01:00",
+    "decider": "Krish Raja",
+    "accountable_owner": "Krish Raja",
+    "scope": "system",
+    "affected_entities": [
+      "CTRL product evolution",
+      "G24 predicate-authority architecture",
+      "G25 legacy capability preservation gate"
+    ],
+    "rationale": [
+      "R97 closed the cross-path provenance escape and passed every durable judge role on exact frozen bytes.",
+      "The shared provenance gate fails closed across status, review generation, review validation and durable reopening.",
+      "Useful legacy machinery must not disappear while the product hierarchy and data architecture are rebuilt."
+    ],
+    "alternatives": [
+      {
+        "route": "Keep R97 pending",
+        "why_rejected": "The exact candidate already had deterministic proof and seven-role clearance; the remaining work belongs in the next implementation gate."
+      },
+      {
+        "route": "Begin runtime migration without a preservation register",
+        "why_rejected": "A new screen cannot prove that hidden controls, crons, feedback paths and cross-engine behavior survived."
+      }
+    ],
+    "dissent": "R97 remains same-process local evidence and does not prove restart durability, concurrency, runtime integration, model intelligence, customer comprehension or value.",
+    "tradeoffs": "The next gate must carry a detailed preservation inventory and characterization burden before visible runtime progress. This cost is accepted to prevent accidental capability loss and false authority.",
+    "evidence_refs": [
+      {
+        "ref": "git:2ec11845b5dde7c19009119dd41213d3e54326e2",
+        "kind": "fact",
+        "scope": "exact frozen R97 candidate"
+      },
+      {
+        "ref": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-panel-verdict.md",
+        "kind": "fact",
+        "scope": "seven-role pass"
+      },
+      {
+        "ref": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-founder-ready-receipt-r98.md",
+        "kind": "fact",
+        "scope": "founder choice and authority boundary"
+      },
+      {
+        "ref": "conversation:2026-09-17 exact final call",
+        "kind": "fact",
+        "scope": "human finality and preservation direction"
+      }
+    ],
+    "assumptions": [
+      "The local R97 contract can be integrated behind trusted persistence and transaction boundaries without changing its meaning.",
+      "Legacy capabilities can be separated from their old screens and schemas through adapters and characterization tests."
+    ],
+    "revisit": {
+      "review_on": null,
+      "trigger": "A reproducible implementation proof shows that the frozen R97 contract cannot preserve R75 without contradiction, or a named security, authority or human-value assumption is falsified.",
+      "signal_source": "Versioned implementation proof, adversarial fixture or independent review linked to the exact candidate",
+      "owner": "Krish Raja",
+      "action_when_fired": "Set the project decision to review_due and prepare a bounded keep, supersede or reverse brief without mutating the frozen R97 evidence."
+    },
+    "authority_granted": [
+      "local implementation planning and characterization",
+      "machine-readable preservation register and checker",
+      "local adapters, fixtures, tests and documentation with no production call",
+      "local commits preserving the gate and evidence"
+    ],
+    "source_ref": "conversation:2026-09-17 exact final call: great stuff, approved r97 lets move forward",
+    "supersedes": [],
+    "superseded_by": [],
+    "outcome": "not_yet_observed",
+    "events": [
+      {
+        "type": "created",
+        "at": "2026-09-17T08:31:10+01:00",
+        "actor": "Krish Raja",
+        "source_ref": "conversation:2026-09-17 exact final call"
+      }
+    ],
+    "last_verified_at": "2026-09-17T09:05:00+01:00"
+  },
+  "not_authorized": [
+    "Supabase or database mutation",
+    "schema or production-data change",
+    "customer-facing UI",
+    "Vercel deployment or preview promotion",
+    "merge, release or feature enablement",
+    "external research or model spend",
+    "email or customer contact",
+    "legacy route, function, table, cron, provider or backend deletion",
+    "cross-venture Supabase decision-ledger write"
+  ],
+  "cross_venture_decision_ledger": {
+    "status": "STORE_UNAVAILABLE_EXTERNAL_WRITE_NOT_AUTHORIZED",
+    "project_record_authority": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-founder-lock-r99.json"
+  }
+}
