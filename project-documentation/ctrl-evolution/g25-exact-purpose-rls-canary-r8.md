@@ -28,4 +28,4 @@ The contract and SQL structure pass static checks. PostgreSQL execution is not c
 
 No linked or production database was used as a substitute. That would turn a local proof into an external schema risk.
 
-The encryption-context extension remains closed until this canary executes successfully against a disposable local database.
+R7 has accepted enough of the receipt shape to test the encryption context independently in pure local code. Any database use of that extension remains closed until this canary executes successfully against a disposable local database.

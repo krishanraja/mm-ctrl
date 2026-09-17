@@ -1,0 +1,56 @@
+{
+  "schema_version": "ctrl.g25.prepared-receipt-crypto.r9.v1",
+  "contract_id": "G25-PREPARED-RECEIPT-CRYPTO-R9",
+  "status": "local_crypto_extension_passed_database_use_blocked",
+  "prepared_at": "2026-09-17T10:06:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-authority-envelope-r7.json",
+    "project-documentation/ctrl-evolution/g25-exact-purpose-rls-canary-r8.json"
+  ],
+  "implementation": "supabase/functions/_shared/brain-crypto.ts",
+  "tests": "supabase/functions/_shared/brain-crypto.test.ts",
+  "improvements": [
+    "Adds the semantically exact prepared_receipt record and payload field instead of reusing source/content.",
+    "Authenticates canonical audience, exact prepared_intelligence purpose and the R7 authority fingerprint in AES-GCM associated data.",
+    "Rejects record and field pairings that are individually known but semantically wrong.",
+    "Preserves the exact legacy associated-data bytes for existing valid Brain ciphertext."
+  ],
+  "prepared_receipt_context": {
+    "workspace_id": "required_uuid",
+    "subject_id": "required_uuid",
+    "record_kind": "prepared_receipt",
+    "record_id": "required_uuid",
+    "field": "payload",
+    "audience": ["person_private", "delivery_team_private"],
+    "purpose": "prepared_intelligence",
+    "authority_fingerprint": "required_lowercase_sha256"
+  },
+  "compatibility": {
+    "cipher_version": 1,
+    "algorithm": "A256GCM",
+    "legacy_context_bytes_changed": false,
+    "legacy_key_rotation_behavior_changed": false
+  },
+  "verification": {
+    "brain_crypto_tests": 12,
+    "combined_crypto_and_authority_tests": 26,
+    "typecheck_new_errors": 0
+  },
+  "remaining_blocker": "R8 exact-purpose RLS must execute successfully against a disposable local database before this context is used by a database-backed prepared-receipt path.",
+  "bounded_claim": "R9 proves local cryptographic context semantics and backward compatibility. It does not create or encrypt a database row, manage live keys, execute RLS, connect runtime callers or prove production custody.",
+  "authority": {
+    "permits": [
+      "pure local cryptographic context extension",
+      "local compatibility and tamper tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "database-backed prepared-receipt use",
+      "key or environment change",
+      "migration or database mutation",
+      "runtime integration",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}

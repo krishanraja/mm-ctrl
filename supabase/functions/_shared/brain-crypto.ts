@@ -18,18 +18,39 @@ export const BRAIN_CIPHER_ALGORITHM = "A256GCM" as const;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const KEY_ID = /^[a-z0-9][a-z0-9._-]{2,63}$/;
 const BASE64 = /^[A-Za-z0-9+/_-]+={0,2}$/;
-const RECORD_KINDS = new Set<BrainRecordKind>(["source", "assertion", "item_version", "relationship_version"]);
-const FIELDS = new Set<BrainCipherContext["field"]>(["content", "statement", "meaning", "explanation"]);
+const RECORD_KINDS = new Set<BrainRecordKind>(["source", "assertion", "item_version", "relationship_version", "prepared_receipt"]);
+const FIELDS = new Set<BrainCipherField>(["content", "statement", "meaning", "explanation", "payload"]);
+const RECORD_FIELDS: Readonly<Record<BrainRecordKind, BrainCipherField>> = {
+  source: "content",
+  assertion: "statement",
+  item_version: "meaning",
+  relationship_version: "explanation",
+  prepared_receipt: "payload",
+};
 
-export type BrainRecordKind = "source" | "assertion" | "item_version" | "relationship_version";
+export type BrainRecordKind = "source" | "assertion" | "item_version" | "relationship_version" | "prepared_receipt";
+export type BrainCipherField = "content" | "statement" | "meaning" | "explanation" | "payload";
+export type PreparedReceiptAudience = "person_private" | "delivery_team_private";
 
-export interface BrainCipherContext {
+interface BrainCipherContextBase {
   workspaceId: string;
   subjectId: string;
-  recordKind: BrainRecordKind;
   recordId: string;
-  field: "content" | "statement" | "meaning" | "explanation";
 }
+
+export type BrainCipherContext = BrainCipherContextBase & (
+  | { recordKind: "source"; field: "content" }
+  | { recordKind: "assertion"; field: "statement" }
+  | { recordKind: "item_version"; field: "meaning" }
+  | { recordKind: "relationship_version"; field: "explanation" }
+  | {
+      recordKind: "prepared_receipt";
+      field: "payload";
+      audience: PreparedReceiptAudience;
+      purpose: "prepared_intelligence";
+      authorityFingerprint: string;
+    }
+);
 
 export interface BrainCipherEnvelopeV1 {
   v: typeof BRAIN_CIPHER_VERSION;
@@ -92,17 +113,38 @@ function assertContext(context: BrainCipherContext): void {
     throw new BrainCryptoConfigurationError("Brain record kind is invalid.");
   }
   if (!FIELDS.has(context.field)) throw new BrainCryptoConfigurationError("Brain encrypted field is invalid.");
+  if (RECORD_FIELDS[context.recordKind] !== context.field) {
+    throw new BrainCryptoConfigurationError("Brain record kind and encrypted field do not match.");
+  }
+  if (context.recordKind === "prepared_receipt") {
+    if (!new Set<PreparedReceiptAudience>(["person_private", "delivery_team_private"]).has(context.audience)) {
+      throw new BrainCryptoConfigurationError("Prepared receipt audience is invalid.");
+    }
+    if (context.purpose !== "prepared_intelligence") {
+      throw new BrainCryptoConfigurationError("Prepared receipt purpose is invalid.");
+    }
+    if (!/^[0-9a-f]{64}$/.test(context.authorityFingerprint)) {
+      throw new BrainCryptoConfigurationError("Prepared receipt authority fingerprint is invalid.");
+    }
+  }
 }
 
 export function canonicalBrainCipherContext(context: BrainCipherContext): string {
   assertContext(context);
-  return JSON.stringify({
+  const base = {
     v: BRAIN_CIPHER_VERSION,
     workspace_id: context.workspaceId.toLowerCase(),
     subject_id: context.subjectId.toLowerCase(),
     record_kind: context.recordKind,
     record_id: context.recordId.toLowerCase(),
     field: context.field,
+  };
+  if (context.recordKind !== "prepared_receipt") return JSON.stringify(base);
+  return JSON.stringify({
+    ...base,
+    audience: context.audience,
+    purpose: context.purpose,
+    authority_fingerprint: context.authorityFingerprint,
   });
 }
 
