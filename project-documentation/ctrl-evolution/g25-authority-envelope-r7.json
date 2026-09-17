@@ -1,0 +1,69 @@
+{
+  "schema_version": "ctrl.g25.authority-envelope.r7.v1",
+  "contract_id": "G25-AUTHORITY-ENVELOPE-R7",
+  "status": "local_contract_repair_passed",
+  "prepared_at": "2026-09-17T09:56:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-persistence-mapping-r6.json",
+    "project-documentation/ctrl-evolution/g25-preservation-improvement-founder-clarification-r7.json"
+  ],
+  "implementation": "supabase/functions/_shared/prepared-intelligence-authority-envelope.r7.ts",
+  "tests": "supabase/functions/_shared/prepared-intelligence-authority-envelope.r7.test.ts",
+  "repairs": [
+    {
+      "finding": "R6-BLOCK-WORKSPACE-SCOPE",
+      "state": "repaired_at_persistence_envelope_boundary",
+      "proof": "Receipt scope and every typed dependency bind exact workspace, owner and subject; cross-workspace, cross-owner and cross-subject references fail closed."
+    },
+    {
+      "finding": "R6-BLOCK-AUDIENCE-VOCABULARY",
+      "state": "repaired_at_persistence_envelope_boundary",
+      "proof": "Friendly customer_private and operator_private labels map once to person_private and delivery_team_private; only canonical audiences enter the authority envelope."
+    },
+    {
+      "finding": "R6-BLOCK-TYPED-DEPENDENCIES",
+      "state": "repaired_at_persistence_envelope_boundary",
+      "proof": "Every dependency names an allowed authority kind, UUID record, version, SHA-256 fingerprint, observation time and complete canonical scope; exact current authority readback is required."
+    }
+  ],
+  "allowed_authority_kinds": [
+    "brain_item_version",
+    "decision_case_snapshot",
+    "decision_claim_snapshot",
+    "external_source_receipt"
+  ],
+  "fail_closed_cases": [
+    "missing workspace, owner, subject or receipt identity",
+    "unknown presentation or canonical audience",
+    "purpose other than prepared_intelligence",
+    "cross-workspace, cross-owner, cross-subject, cross-audience or cross-purpose dependency",
+    "opaque, malformed or duplicate dependency",
+    "missing authoritative target",
+    "version or fingerprint no longer current"
+  ],
+  "determinism": {
+    "dependency_order": "authority kind and record UUID",
+    "fingerprint": "SHA-256 over canonical normalized envelope bytes",
+    "current_authority_order": "does not affect accepted output"
+  },
+  "remaining_blockers": [
+    "R6-BLOCK-PURPOSE-ENFORCEMENT",
+    "R6-BLOCK-CIPHERTEXT-CONTEXT"
+  ],
+  "bounded_claim": "R7 proves a local authority envelope and runtime-independent validation contract. It does not alter R5, query a live authority table, prove database currentness, change RLS, encrypt receipt content or connect a producer or caller.",
+  "authority": {
+    "permits": [
+      "local pure-code contract",
+      "local fixtures and deterministic tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration file",
+      "database or Supabase mutation",
+      "runtime or producer connection",
+      "customer-facing UI",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}
