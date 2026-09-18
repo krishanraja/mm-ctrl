@@ -1,0 +1,86 @@
+{
+  "schema_version": "ctrl.g25.critical-application-smoke.r95.v1",
+  "contract_id": "G25-CRITICAL-APPLICATION-SMOKE-R95",
+  "status": "bounded_critical_layers_pass_non_schema_end_to_end_blocked",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-HTTP-RPC-TRANSPORT-PROOF-R93",
+    "G25-EXTENSION-RUNTIME-COMPATIBILITY-R94"
+  ],
+  "isolated_database_smoke": {
+    "path": "supabase/tests/database/g25_critical_application_smoke_r95.test.sql",
+    "sha256": "fe7a1f19c2ee3d37012a449266e927cc7e90dd9c839e5613079fe29a4c9c8421",
+    "result": "pass",
+    "paths": [
+      "current-only Brain export",
+      "qualified Brain context retrieval",
+      "authenticated decision pin and track-record read",
+      "negative briefing feedback promoted into one governed steering rule"
+    ],
+    "remaining_fixture_rows": 0
+  },
+  "local_characterization": {
+    "test_files": 17,
+    "tests": 205,
+    "result": "pass",
+    "organs": [
+      "AI-native news admission, sources, clustering, synthesis, trends and priority",
+      "grounded briefing conversation",
+      "decision reliability, evidence, running model, memo, parts and resolution",
+      "deterministic skill and export packaging"
+    ]
+  },
+  "production_bundle": {
+    "vite_modules_transformed": 2812,
+    "direct_vite_build": "pass",
+    "warnings": [
+      "Supabase client is both statically and dynamically imported",
+      "the main generated chunk exceeds 500 kB"
+    ],
+    "formal_npm_build": {
+      "result": "blocked_before_vite",
+      "cause": "nine inherited no-em-dash standards violations in unchanged historical records",
+      "product_code_failure": false
+    }
+  },
+  "hosted_non_schema_gap": {
+    "production": {
+      "edge_functions": 183,
+      "storage_buckets": 5,
+      "cron_jobs": 15,
+      "vault_secret_names": 2,
+      "publications": 2,
+      "publication_tables": 10
+    },
+    "isolated_recovery": {
+      "edge_functions": 0,
+      "storage_buckets": 0,
+      "cron_jobs": 0,
+      "vault_secret_names": 0,
+      "publications": 1,
+      "publication_tables": 0
+    },
+    "consequence": "A complete hosted briefing, audio, news prewarm, email, Storage, export-download or scheduled-return smoke would be false until the non-schema plane is restored under its own gate."
+  },
+  "bounded_claim": "The restored application schema, Auth and RPC boundary, extension primitives, Brain export and retrieval, decision ownership, briefing-learning database path, local news and briefing logic, decision logic, export packaging and production bundle all execute successfully. Full hosted critical-path recovery remains blocked by deliberately absent non-schema machinery.",
+  "acceptance_gate": {
+    "isolated_database_critical_smoke_passed": true,
+    "local_critical_characterization_passed": true,
+    "direct_production_bundle_passed": true,
+    "full_hosted_critical_application_smoke_passed": false,
+    "non_schema_restoration_passed": false,
+    "second_clean_blank_replay_passed": false,
+    "production_recovery_choice_ready": false
+  },
+  "authority": {
+    "isolated_writes": "self-cleaning synthetic rows only",
+    "customer_data_used": false,
+    "external_model_or_email_spend": false,
+    "edge_functions_deployed": 0,
+    "production_writes": 0,
+    "forbids": [
+      "claiming a full end-to-end hosted pass",
+      "function deployment, secret read, merge, cutover, release or legacy retirement"
+    ]
+  }
+}
