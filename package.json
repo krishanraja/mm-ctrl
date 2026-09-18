@@ -177,6 +177,7 @@
     "brain:g25:extension-runtime-r94-check": "node scripts/check-ctrl-g25-extension-runtime-compatibility-r94.mjs",
     "brain:g25:critical-smoke-r95-check": "node scripts/check-ctrl-g25-critical-application-smoke-r95.mjs",
     "brain:g25:non-schema-gate-r96-check": "node scripts/check-ctrl-g25-non-schema-restoration-gate-r96.mjs",
+    "brain:g25:second-replay-packet-r97-check": "node scripts/check-ctrl-g25-second-blank-replay-packet-r97.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",
