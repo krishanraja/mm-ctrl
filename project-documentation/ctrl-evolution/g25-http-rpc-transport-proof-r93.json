@@ -1,0 +1,118 @@
+{
+  "schema_version": "ctrl.g25.http-rpc-transport-proof.r93.v1",
+  "contract_id": "G25-HTTP-RPC-TRANSPORT-PROOF-R93",
+  "status": "isolated_http_transport_proved_production_execution_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-PRODUCTION-NULL-IDENTITY-HOTFIX-R92"
+  ],
+  "target": {
+    "kind": "isolated_recovery_project",
+    "project_ref": "jnablbnztutbmnjvtioy",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "anonymous_transport": {
+    "public_routes": [
+      { "name": "get_share_card", "status": 200, "result_shape": "array:0" },
+      { "name": "get_intake_for_registration", "status": 200, "result_shape": "array:0" }
+    ],
+    "denied_routes": [
+      { "name": "get_pending_verifications", "status": 401, "code": "42501" },
+      { "name": "verify_memory_fact", "status": 401, "code": "42501" },
+      { "name": "pin_decision", "status": 401, "code": "42501" }
+    ],
+    "role_helper": {
+      "name": "has_role",
+      "status": 300,
+      "code": "PGRST203",
+      "finding": "The app_role and text overloads are intentionally usable by database policies but make the helper ambiguous as a direct PostgREST RPC. It is not a public HTTP API."
+    }
+  },
+  "authenticated_transport": {
+    "fixture_attempts": [
+      {
+        "attempt": 1,
+        "result": "auth_rejected",
+        "status": 500,
+        "code": "unexpected_failure",
+        "reason": "The first direct SQL Auth fixture omitted empty token sentinel fields expected by GoTrue."
+      },
+      {
+        "attempt": 2,
+        "result": "transport_pass",
+        "correction": "The fixture supplied the standard empty token fields and sign-in timestamps."
+      },
+      {
+        "attempt": 3,
+        "result": "full_owner_and_cross_subject_pass",
+        "correction": "Owned and cross-subject fact and decision fixtures exercised successful and denied mutation paths."
+      }
+    ],
+    "authentication": [
+      { "subject": "A", "status": 200 },
+      { "subject": "B", "status": 200 }
+    ],
+    "owner_paths": [
+      { "name": "get_pending_verifications", "status": 200, "result_shape": "array:1" },
+      { "name": "get_track_record", "status": 200, "result_shape": "array:1" },
+      { "name": "list_mcp_tokens", "status": 200, "result_shape": "array:0" },
+      { "name": "verify_memory_fact", "status": 200, "result": true },
+      { "name": "pin_decision", "status": 204 }
+    ],
+    "cross_subject_paths": [
+      { "name": "get_pending_verifications", "status": 403, "code": "42501" },
+      { "name": "get_track_record", "status": 400, "code": "P0001" },
+      { "name": "verify_memory_fact", "status": 200, "result": false },
+      { "name": "pin_decision", "status": 403, "code": "42501" }
+    ],
+    "absent_target_paths": [
+      { "name": "verify_memory_fact", "status": 200, "result": false },
+      { "name": "pin_decision", "status": 403, "code": "42501" }
+    ],
+    "post_state": {
+      "owned_fact": "verified",
+      "cross_subject_fact": "inferred",
+      "owned_decision_pinned": true,
+      "cross_subject_decision_pinned": false
+    }
+  },
+  "cleanup": {
+    "auth_users": 0,
+    "auth_identities": 0,
+    "profiles": 0,
+    "roles": 0,
+    "memory_facts": 0,
+    "memory_events": 0,
+    "decision_cases": 0,
+    "secrets_persisted": false
+  },
+  "artifacts": {
+    "anonymous_probe_path": "scripts/probe-ctrl-g25-anon-rpc-transport-r93.mjs",
+    "anonymous_probe_sha256": "4e17e2e3cac2332a60ebeeeaf2851abf9953c36d9532c2b5bc9c8809fba1b9a3",
+    "authenticated_probe_path": "scripts/probe-ctrl-g25-authenticated-rpc-transport-r93.mjs",
+    "authenticated_probe_sha256": "104fef91aaee59ee7b2f3871dc91dfce2b19845ac6a33f4c1577ae48984e9c3d"
+  },
+  "bounded_claim": "The exact anonymous, owner, cross-subject and absent-target RPC behavior required by R92 has been exercised through Supabase Auth and PostgREST in the isolated recovery project. The fixtures are gone and production remains unchanged.",
+  "acceptance_gate": {
+    "anonymous_http_transport_smoke_passed": true,
+    "authenticated_http_transport_smoke_passed": true,
+    "cross_subject_transport_denial_passed": true,
+    "owned_mutation_transport_passed": true,
+    "fixture_cleanup_passed": true,
+    "extension_compatibility_passed": false,
+    "critical_path_smoke_passed": false,
+    "explicit_production_execution_authority": false,
+    "production_applied": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "isolated_writes": "temporary self-cleaning Auth, Brain and decision fixtures only",
+    "production_queries": "none_in_r93",
+    "production_writes": 0,
+    "forbids": [
+      "production hotfix application without explicit authority",
+      "merge, cutover, release or legacy retirement"
+    ]
+  }
+}
