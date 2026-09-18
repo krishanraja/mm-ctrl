@@ -19,7 +19,9 @@ check(contract.status === "caller_evidence_complete_candidate_generated_isolated
 check(contract.caller_evidence.current_repository_runtime.target_references_found === 0, "repository caller evidence drifted");
 check(contract.caller_evidence.deployed_edge_functions.active_functions_scanned === 183, "deployed function coverage drifted");
 check(contract.caller_evidence.deployed_edge_functions.retrieval_errors_after_bounded_retry === 0, "deployed retrieval errors reopened");
-check(contract.caller_evidence.deployed_edge_functions.target_references_found === 0, "deployed caller claim drifted");
+check(contract.caller_evidence.deployed_edge_functions.target_references_found === 1, "deployed caller claim drifted");
+check(contract.caller_evidence.deployed_edge_functions.target_callers["sync_lead_to_sheets(uuid,uuid,text)"].includes("send-results-email"), "deployed sync caller disappeared");
+check(contract.caller_evidence.deployed_edge_functions.caller_uses_service_role_symbol === true, "deployed trusted-caller evidence drifted");
 check(contract.caller_evidence.deployed_edge_functions.raw_source_committed === false, "raw deployed source was marked committed");
 
 const databaseCallers = contract.caller_evidence.database_definition_callers["sync_lead_to_sheets(uuid,uuid,text)"];

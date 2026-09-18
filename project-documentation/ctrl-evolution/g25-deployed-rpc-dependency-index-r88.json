@@ -1,0 +1,99 @@
+{
+  "schema_version": "ctrl.g25.deployed_rpc_dependency_index.r88.v1",
+  "contract_id": "G25-DEPLOYED-RPC-DEPENDENCY-INDEX-R88",
+  "status": "durable_literal_dependency_index_complete",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80",
+    "G25-SECURITY-DEFINER-HIGH-RISK-CALLERS-R83"
+  ],
+  "active_functions_scanned": 183,
+  "retrieval_errors": [],
+  "functions_with_dependencies": 22,
+  "rpc_callers": {
+    "burn_blind_spot_pattern": [
+      "blind-spot"
+    ],
+    "check_rate_limit": [
+      "blind-spot",
+      "briefing-conversation",
+      "card-for-you",
+      "free-skill-export",
+      "generate-briefing",
+      "synthesize-briefing"
+    ],
+    "cleanup_expired_memories": [
+      "cleanup-expired-data"
+    ],
+    "confirm_blind_spot_candidate_v2": [
+      "blind-spot"
+    ],
+    "get_memory_sweep_batch": [
+      "memory-sweep"
+    ],
+    "get_or_create_memory_settings": [
+      "memory-settings",
+      "smart-endpoint"
+    ],
+    "get_pending_verifications": [
+      "extract-user-context"
+    ],
+    "match_user_memory": [
+      "backfill-embeddings"
+    ],
+    "mindmake_consume_personal_read_rate": [
+      "mindmake-personal-read"
+    ],
+    "mindmake_purge_follow_ups": [
+      "send-follow-ups"
+    ],
+    "record_blind_spot_experiment_outcome": [
+      "blind-spot"
+    ],
+    "sync_lead_to_sheets": [
+      "send-results-email"
+    ],
+    "touch_memory_facts": [
+      "decision-engine",
+      "edge-generate",
+      "generate-briefing",
+      "generate-custom-export",
+      "generate-skill-export",
+      "generate-team-instructions",
+      "memory-export",
+      "synthesize-edge-profile"
+    ]
+  },
+  "edge_function_callers": {
+    "synthesize-briefing": [
+      "generate-briefing"
+    ]
+  },
+  "anonymous_reader_target_callers": {
+    "calculate_bootstrap_ci": [],
+    "calculate_conversion_metrics": [],
+    "get_intake_for_registration": [],
+    "get_pending_verifications": [
+      "extract-user-context"
+    ],
+    "get_share_card": [],
+    "has_role": [],
+    "hash_company_identifier": []
+  },
+  "corrected_prior_claims": [
+    {
+      "contract": "G25-SECURITY-DEFINER-HIGH-RISK-CALLERS-R83",
+      "old_claim": "zero deployed target references",
+      "corrected_claim": "send-results-email calls sync_lead_to_sheets through a service-role client",
+      "decision_effect": "No ACL reversal. R83 retained service_role execution, so the deployed trusted route remains valid."
+    }
+  ],
+  "source_boundary": "Only literal RPC and Edge Function dependency names are retained. Raw deployed source and dynamic call arguments are not stored.",
+  "coverage_boundary": "Dynamic RPC names assembled at runtime cannot be extracted by this index. Absence from the index is bounded caller evidence, not retirement proof.",
+  "authority": {
+    "production_source_access": "read_only_transient",
+    "production_writes": 0,
+    "raw_source_committed": false,
+    "secret_values_committed": false
+  }
+}

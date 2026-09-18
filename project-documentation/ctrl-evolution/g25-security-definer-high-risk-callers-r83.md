@@ -10,7 +10,7 @@ The nine highest-risk functions are not one homogeneous pile of dead code.
 - `sync_lead_to_sheets(uuid,uuid,text)` is called by eleven database functions that support trigger-driven lead capture. It is an internal dependency even though current application code does not call it directly.
 - Six functions had no top-level calls in the available statement window. That is useful evidence, but not permission to delete them.
 
-The live caller scan now covers all 183 active deployed Edge Functions, not only the 68 live-only bundles checked in R80. None references any of the nine target functions. No raw deployed source was committed.
+The original live caller scan incorrectly reported zero target references. The durable R88 literal-RPC index found one: deployed `send-results-email` calls `sync_lead_to_sheets` through a client built with the service-role symbol. The R83 ACL remains correctly shaped because it retained explicit `service_role` execution, but the earlier caller claim was wrong. No raw deployed source was committed.
 
 ## The narrow hardening move
 
@@ -23,6 +23,7 @@ That keeps the known trusted paths intact:
 - cron continues as the `postgres` owner;
 - owner-executed database functions can continue calling `sync_lead_to_sheets` internally;
 - trusted workers retain an explicit `service_role` route.
+- deployed `send-results-email` retains its service-role RPC route to `sync_lead_to_sheets`.
 
 It closes the accidental PostgREST RPC surface in the isolated target so we can prove the effect before considering production.
 

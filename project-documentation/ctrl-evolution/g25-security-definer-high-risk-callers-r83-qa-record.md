@@ -4,7 +4,8 @@
 
 - All 183 active deployed Edge Function bundles were retrieved and scanned transiently.
 - Zero bundle retrieval errors remained after bounded retry.
-- No deployed bundle referenced any of the nine target function names.
+- The first marker scan reported zero deployed references. R88 later corrected this to one literal RPC caller: `send-results-email` calls `sync_lead_to_sheets` with a service-role client.
+- The ACL candidate retained `service_role`, so the corrected caller evidence does not invalidate the isolated permission result.
 - No raw deployed source was written to Git.
 - Database definition inspection found eleven internal callers of `sync_lead_to_sheets`.
 - Cron inspection found two active owner-run jobs: the north-star snapshot at 06:00 daily and briefing feedback aggregation at 03:07 daily.
