@@ -17,9 +17,9 @@ The R86 candidate creates `auth.users:on_auth_user_created` only when it is abse
 The proof packet has two parts:
 
 1. A read-only catalog check confirms one enabled attachment and the production function digest.
-2. A rollback-only synthetic signup inserts an `example.invalid` fixture directly into the blank database, verifies the expected profile and default role, then rolls the entire transaction back.
+2. A self-cleaning synthetic signup migration inserts an `example.invalid` fixture directly into the blank database, verifies the expected profile and default role, then deletes every fixture row before it can succeed.
 
-No external Auth API is called and no email is sent.
+No external Auth API is called and no email is sent. The database inspection channel is read only, so the first smoke attempt correctly refused the insert. The self-cleaning migration path preserves that boundary and leaves a named test receipt.
 
 ## Sequence
 

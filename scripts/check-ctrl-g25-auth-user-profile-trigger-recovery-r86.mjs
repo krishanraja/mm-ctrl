@@ -33,13 +33,14 @@ check(candidate.includes("EXECUTE FUNCTION public.handle_new_user_profile()"), "
 check(!/^\s*(DROP|ALTER|TRUNCATE|DELETE|UPDATE)\b/gimu.test(candidate), "candidate gained a destructive operation");
 check(!/^\s*(INSERT|UPDATE|DELETE|TRUNCATE|ALTER|CREATE|DROP|GRANT|REVOKE)\b/gimu.test(verification), "verification gained a mutation");
 check(smoke.trimStart().startsWith("-- G25 Auth user profile trigger runtime smoke R86"), "runtime smoke identity drifted");
-check(smoke.includes("BEGIN;") && smoke.includes("ROLLBACK;"), "runtime smoke lost rollback boundary");
+check(smoke.includes("DELETE FROM public.user_roles") && smoke.includes("DELETE FROM public.profiles") && smoke.includes("DELETE FROM auth.users"), "runtime smoke lost fixture cleanup");
+check(smoke.includes("signup smoke fixture cleanup failed"), "runtime smoke lost post-cleanup assertion");
 check(smoke.includes("example.invalid"), "runtime smoke lost synthetic email boundary");
 check(smoke.includes("FROM public.profiles") && smoke.includes("FROM public.user_roles"), "runtime smoke lost outcome assertions");
 
 check(contract.acceptance_gate.isolated_trigger_created === false, "trigger creation was fabricated");
 check(contract.acceptance_gate.read_only_verification_passed === false, "verification pass was fabricated");
-check(contract.acceptance_gate.rollback_only_runtime_smoke_passed === false, "runtime pass was fabricated");
+check(contract.acceptance_gate.self_cleaning_runtime_smoke_passed === false, "runtime pass was fabricated");
 check(contract.acceptance_gate.production_unchanged === true, "production boundary drifted");
 check(contract.acceptance_gate.production_mutation_ready === false, "production gate opened");
 check(contract.authority.production_writes === 0, "production write boundary drifted");

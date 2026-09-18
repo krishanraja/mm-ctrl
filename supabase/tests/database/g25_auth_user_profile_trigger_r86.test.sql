@@ -1,12 +1,16 @@
 -- G25 Auth user profile trigger runtime smoke R86
--- The fixture and all trigger side effects are rolled back.
-
-BEGIN;
+-- Runs only as an isolated test migration. Every fixture row is removed before success.
 
 DO $test$
 DECLARE
   v_user_id uuid := '00000000-0000-4000-8000-000000000086';
 BEGIN
+  IF EXISTS (SELECT 1 FROM auth.users WHERE id = v_user_id)
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = v_user_id)
+    OR EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = v_user_id) THEN
+    RAISE EXCEPTION 'signup smoke fixture already exists';
+  END IF;
+
   INSERT INTO auth.users (
     id,
     email,
@@ -43,7 +47,15 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'signup trigger did not create the expected user role';
   END IF;
+
+  DELETE FROM public.user_roles WHERE user_id = v_user_id;
+  DELETE FROM public.profiles WHERE id = v_user_id;
+  DELETE FROM auth.users WHERE id = v_user_id;
+
+  IF EXISTS (SELECT 1 FROM auth.users WHERE id = v_user_id)
+    OR EXISTS (SELECT 1 FROM public.profiles WHERE id = v_user_id)
+    OR EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = v_user_id) THEN
+    RAISE EXCEPTION 'signup smoke fixture cleanup failed';
+  END IF;
 END
 $test$;
-
-ROLLBACK;

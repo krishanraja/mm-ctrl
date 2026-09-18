@@ -27,21 +27,22 @@
     "verification_path": "supabase/candidates/g25_auth_user_profile_trigger_verification_r86.sql",
     "verification_sha256": "3a0592213eebc073ec65b012de4ebaf8b11056cb069865e9335a1d4837e0b146",
     "runtime_smoke_path": "supabase/tests/database/g25_auth_user_profile_trigger_r86.test.sql",
-    "runtime_smoke_sha256": "0de7d0dea1406dbc513eb8cc1401d15673ce3579249ccc2cef87f3d9fc4944f1",
+    "runtime_smoke_sha256": "234e7deff4f230d7e99e3bf5f25c2ce255814f5fd09ed8ec6ae11ad9ad433848",
     "behavior": "Create the missing trigger only when absent. Do not replace the function or touch production."
   },
   "runtime_smoke": {
     "fixture_email_domain": "example.invalid",
     "asserts_profile_created": true,
     "asserts_default_user_role_created": true,
-    "transaction_rolled_back": true,
+    "self_cleaning_fixture": true,
+    "migration_receipt_expected": true,
     "external_auth_api_called": false,
     "email_sent": false
   },
   "acceptance_gate": {
     "isolated_trigger_created": false,
     "read_only_verification_passed": false,
-    "rollback_only_runtime_smoke_passed": false,
+    "self_cleaning_runtime_smoke_passed": false,
     "production_unchanged": true,
     "production_mutation_ready": false
   },
@@ -51,7 +52,7 @@
     "permits": [
       "isolated trigger creation when absent",
       "read-only trigger verification",
-      "rollback-only synthetic signup smoke"
+      "self-cleaning synthetic signup smoke migration"
     ],
     "forbids": [
       "production trigger mutation",

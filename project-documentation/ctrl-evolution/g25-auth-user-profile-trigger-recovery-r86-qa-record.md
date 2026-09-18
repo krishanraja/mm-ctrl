@@ -24,7 +24,8 @@
 - Uses an `example.invalid` email.
 - Inserts directly into the isolated `auth.users` table.
 - Requires the expected public profile and default role.
-- Rolls back the fixture and all trigger side effects.
+- Deletes the fixture and all trigger side effects before success.
+- Leaves only the named migration receipt.
 - Calls no external Auth or email API.
 
 ## Verdict
