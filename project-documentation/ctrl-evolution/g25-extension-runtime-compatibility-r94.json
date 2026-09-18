@@ -1,0 +1,91 @@
+{
+  "schema_version": "ctrl.g25.extension-runtime-compatibility.r94.v1",
+  "contract_id": "G25-EXTENSION-RUNTIME-COMPATIBILITY-R94",
+  "status": "tested_application_surface_compatible",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-RECOVERY-FIRST-BLANK-REPLAY-R81",
+    "G25-HTTP-RPC-TRANSPORT-PROOF-R93"
+  ],
+  "versions": {
+    "production": {
+      "postgres": "17.4.1.064",
+      "pg_cron": "1.6",
+      "pg_net": "0.14.0",
+      "vector": "0.8.0"
+    },
+    "isolated_recovery": {
+      "postgres": "17.6.1.166",
+      "pg_cron": "1.6.4",
+      "pg_net": "0.20.4",
+      "vector": "0.8.2"
+    }
+  },
+  "interface_comparison": {
+    "used_signatures_compared": 6,
+    "exact_matches": 6,
+    "signatures": [
+      "cron.schedule(job_name text,schedule text,command text)",
+      "cron.schedule(schedule text,command text)",
+      "cron.unschedule(job_id bigint)",
+      "cron.unschedule(job_name text)",
+      "net.http_post(url text,body jsonb,params jsonb,headers jsonb,timeout_milliseconds integer)",
+      "public.match_user_memory(query_embedding vector,match_count integer,user_uuid uuid,min_similarity double precision)"
+    ]
+  },
+  "runtime_proof": {
+    "pg_cron": {
+      "named_schedule_created": true,
+      "named_schedule_read_back": true,
+      "named_unschedule_passed": true,
+      "id_unschedule_passed": true,
+      "remaining_fixture_jobs": 0
+    },
+    "pg_net": {
+      "request_id_returned": true,
+      "queue_shape_matched": true,
+      "worker_consumed_request": true,
+      "worker_recorded_result": true,
+      "expected_local_connection_error_recorded": true,
+      "probe_table_removed": true,
+      "request_fixture_removed": true,
+      "credentials_used": false
+    },
+    "vector": {
+      "dimensions": 1536,
+      "restored_function_exercised": "public.match_user_memory",
+      "returned_rows": 2,
+      "exact_vector_similarity": 1,
+      "orthogonal_vector_similarity": 0,
+      "ranking_correct": true,
+      "remaining_fixture_rows": 0
+    }
+  },
+  "bounded_claim": "The newer default pg_cron, pg_net and vector versions are behaviorally compatible with the exact interfaces and application behaviors used by the restored backend. This is not a claim of general extension equivalence outside the tested surface.",
+  "acceptance_gate": {
+    "used_interface_parity_passed": true,
+    "cron_runtime_passed": true,
+    "pg_net_enqueue_and_worker_passed": true,
+    "vector_application_query_passed": true,
+    "fixture_cleanup_passed": true,
+    "extension_compatibility_passed": true,
+    "critical_application_smoke_passed": false,
+    "second_clean_blank_replay_passed": false,
+    "production_recovery_choice_ready": false
+  },
+  "authority": {
+    "isolated_writes": [
+      "two temporary cron jobs",
+      "one credential-free loopback HTTP request",
+      "one transient probe table",
+      "one temporary Auth user and two vector facts"
+    ],
+    "production_queries": "read_only_interface_introspection",
+    "production_writes": 0,
+    "remaining_isolated_fixtures": 0,
+    "forbids": [
+      "production extension upgrade",
+      "function deployment, merge, cutover, release or legacy retirement"
+    ]
+  }
+}
