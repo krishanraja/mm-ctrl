@@ -4,6 +4,14 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-18
+
+- reconciled at `618bf91`: `NOW.md` updated for 16 commits since the last reconciliation at `860dea0`. Added the G17 strict Brain-adapter cipher and atomic-write primitives (13 tests, no runtime caller yet, isolated Supabase branch blocked on GitHub `workflow` scope), the G18 synthetic population of 48 leaders and 1,672 deterministic events, the G19 internal range lab Krish approved on 2026-09-08 as his own operator dashboard, the G20 universal-capture-and-Claude-bridge contract, and three published or rewritten `/answers` pages. `head` moved to `618bf91` and `as_of` to 2026-09-18.
+- reconciled at `618bf91`: `docs/current/architecture.md`, `docs/current/features.md` and `docs/current/release-state.md` were checked against the G17 to G20 commits; the human reconciliation already in the range (features.md's Synthetic Brain lab route, the release-state and architecture stamp updates for the G16 receipt) was found accurate and was not duplicated. No drift found; stamps left as the range's own commits set them, because G17, G18 and G20 remain provisional contracts with no live route or deployment to add. `npm run docs:check` and the strict validator were both run; no other document needed a change.
+- rolled from NOW.md: 2026-08-10 canonical current documentation (PR #365) separated current truth from history, and Make Your Mind Up unified with CTRL (PR #362): one product, one data spine, no-login delivery.
+- rolled from NOW.md: 2026-08-11 company recognition restored in onboarding (PR #369): a work email or LinkedIn URL resolves to a bounded, source-linked dossier with one-click correction. Shell unified (PR #368). Commercial authority established (PR #367): one human-readable owner for buyer, offer and claims, with drift checks in CI. Blind Spot trusted-advisor instrument (PR #366) released and verified in production.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`). Why: cloud previews use a per-session hostname Vite's DNS-rebinding guard rejected; a wildcard rather than `allowedHosts: true` keeps the guard.
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.
