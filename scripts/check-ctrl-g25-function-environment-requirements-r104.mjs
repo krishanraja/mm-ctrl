@@ -72,7 +72,7 @@ check(contract.inspector.environment_values_retrieved === false, "environment-va
 
 check(manifest.function_count === contract.coverage.repository_function_count, "function count drifted");
 check(manifest.function_count === contract.coverage.entrypoint_count, "entrypoint count drifted");
-check(manifest.function_count === 117, "repository function baseline no longer includes the two portability routes");
+check(manifest.function_count === 118, "repository function baseline no longer includes portability and measurement routes");
 check(manifest.functions_with_missing_relative_imports.length === contract.coverage.functions_with_missing_relative_imports, "missing relative import count drifted");
 check(manifest.functions_with_missing_relative_imports.length === 0, "a transitive relative import is missing");
 check(manifest.unique_environment_symbol_count === contract.coverage.unique_environment_symbol_count, "environment symbol count drifted");

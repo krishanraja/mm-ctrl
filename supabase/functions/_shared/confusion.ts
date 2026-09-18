@@ -332,12 +332,18 @@ function fmt(n: number): string {
 export function releaseVerdict(input: ReleaseInput): ReleaseOutcome {
   const metrics = input.metrics ?? NO_MEASUREMENT;
   const heldOutGraded = Number.isFinite(input.heldOutGraded) ? Math.max(0, Math.floor(input.heldOutGraded)) : 0;
+  // A provider failure or an honest insufficient-evidence verdict does not
+  // become a quiet pass. Verified needs ten pieces that actually landed in the
+  // matrix, not merely ten pieces that were available to try. Otherwise one
+  // scored item and nine exclusions could earn the same label as ten scored
+  // items, which is denominator laundering.
+  const scoredHeldOut = Math.min(heldOutGraded, Math.max(0, Math.floor(metrics.n)));
   const agreement: SelfAgreementResult = input.selfAgreement ?? { matched: 0, total: 0 };
 
   const triage = triageFromSelfAgreement(agreement);
   const ceiling = labelCeilingForTriage(triage.triage);
   const measured = baselineLabel({
-    heldOutGraded,
+    heldOutGraded: scoredHeldOut,
     precision: metrics.precision,
     recall: metrics.recall,
   });
@@ -376,12 +382,15 @@ export function releaseVerdict(input: ReleaseInput): ReleaseOutcome {
     `, over ${metrics.n} scored pieces.`;
 
   // 3. The floor on the size of the hold-out.
-  if (heldOutGraded < VERIFIED_MIN_HELD_OUT) {
-    const pieces = `${heldOutGraded} ${heldOutGraded === 1 ? "piece" : "pieces"}`;
+  if (scoredHeldOut < VERIFIED_MIN_HELD_OUT) {
+    const pieces = `${scoredHeldOut} ${scoredHeldOut === 1 ? "piece" : "pieces"}`;
+    const attempted = heldOutGraded > scoredHeldOut
+      ? ` ${heldOutGraded} were graded, but ${heldOutGraded - scoredHeldOut} could not be scored by the check.`
+      : "";
     return {
       label,
       reason:
-        `${three} That rests on ${pieces} of graded held-out work, below the floor of ` +
+        `${three}${attempted} That rests on ${pieces} of scored held-out work, below the floor of ` +
         `${VERIFIED_MIN_HELD_OUT}. A number about ${pieces} is a number about ${pieces}, so Verified ` +
         "is not available here whatever the arithmetic says.",
     };

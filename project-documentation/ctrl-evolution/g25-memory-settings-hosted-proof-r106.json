@@ -88,7 +88,7 @@
     "settings": 0
   },
   "configuration": {
-    "config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f",
+    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
     "containment_manifest_sha256": "03707e6f6fa475671c199b4facbfbc572d14e303489c5dfd4ac456d5d6c66901",
     "containment_contract_count": 52,
     "repository_routes_with_secret_dependency_after_repair": 72,

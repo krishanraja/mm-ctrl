@@ -123,7 +123,7 @@
     "import_receipts": 0
   },
   "configuration": {
-    "config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f",
+    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
     "containment_manifest_sha256": "684ce32b07156729d5a8fc8ecf03b2f786f19f86622afe58dd2371da975de231",
     "containment_contract_count": 51
   },

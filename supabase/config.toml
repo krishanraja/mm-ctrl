@@ -288,6 +288,9 @@ verify_jwt = true
 [functions.critique-artefact]
 verify_jwt = true
 
+[functions.measure-standard]
+verify_jwt = true
+
 [functions.decision-engine]
 verify_jwt = true
 

@@ -10,11 +10,11 @@ R104 walks every relative static and dynamic import reachable from each entrypoi
 
 The result is complete at the repository boundary:
 
-- 117 entrypoints inspected;
+- 118 entrypoints inspected;
 - zero missing relative imports;
-- 56 unique environment symbols;
+- 57 unique environment symbols;
 - zero unclassified symbols;
-- 72 routes with at least one secret dependency;
+- 73 routes with at least one secret dependency;
 - 45 routes without a secret dependency;
 - 35 routes with no environment dependency at all; and
 - 17 routes whose only declared dependencies are platform-injected values.

@@ -8,7 +8,7 @@
 ## Focused deterministic checks
 
 - 163 package, provenance, demotion, release, project-binding and request-boundary tests passed.
-- 58 trust-containment contracts passed after the critique route boundary was added.
+- 59 trust-containment contracts passed after the measurement route boundary was added.
 - Typecheck stayed at the accepted baseline: current 94, baseline 94, new 0.
 
 ## Hosted proof

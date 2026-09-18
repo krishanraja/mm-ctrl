@@ -2,16 +2,16 @@
 
 ## Source identity
 
-- Local function directories: 117.
-- Present `index.ts` entrypoints: 117.
-- Per-function source digests: 117.
-- Shared files bound into every route: 183.
+- Local function directories: 118.
+- Present `index.ts` entrypoints: 118.
+- Per-function source digests: 118.
+- Shared files bound into every route: 185.
 - Configured routes without local source: zero.
-- Derived manifest SHA-256: `2451ec8a4ea0cda1bbbd3d7901bf7aa2bf15c6fa7f248c78d344fae098c3af85`.
+- Derived manifest SHA-256: `65935798a7f859489383215dc720e2113b736404a0a68b768c0c75dfc8aa5ebc`.
 
 ## Gateway posture
 
-- Explicit `verify_jwt=true`: 83.
+- Explicit `verify_jwt=true`: 84.
 - Explicit `verify_jwt=false`: 34.
 - Unspecified local gateway posture: zero.
 - Shared production routes compared: 115.
@@ -20,9 +20,9 @@
 
 ## Dependency inventory
 
-- Unique environment-variable symbols: 45.
+- Unique environment-variable symbols: 46.
 - Functions with a service-role marker: 54.
-- Functions with an explicit `getUser` marker: 58.
+- Functions with an explicit `getUser` marker: 59.
 - Environment values retrieved: no.
 
 ## Open gate

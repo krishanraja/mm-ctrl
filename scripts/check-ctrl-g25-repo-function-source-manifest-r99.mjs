@@ -28,8 +28,8 @@ check(contract.inspector.raw_source_emitted_by_default === false, "inspector raw
 
 check(manifest.summary.local_function_count === contract.source.local_function_count, "local function count drifted");
 check(manifest.summary.entrypoint_count === contract.source.entrypoint_count, "entrypoint count drifted");
-check(manifest.summary.local_function_count === 117, "local function inventory no longer includes the two forward portability routes");
-check(manifest.summary.entrypoint_count === 117, "a local function entrypoint is missing");
+check(manifest.summary.local_function_count === 118, "local function inventory no longer includes portability and measurement routes");
+check(manifest.summary.entrypoint_count === 118, "a local function entrypoint is missing");
 check(manifest.generated_from.shared_file_count === contract.source.shared_file_count, "shared file count drifted");
 check(manifest.generated_from.shared_source_bytes === contract.source.shared_source_bytes, "shared source byte count drifted");
 check(manifest.generated_from.shared_source_sha256 === contract.source.shared_source_sha256, "shared source digest drifted");
@@ -41,7 +41,7 @@ check(manifest.generated_from.config_sha256 === contract.gateway_posture.config_
 check(manifest.summary.explicit_verify_jwt_true === contract.gateway_posture.explicit_verify_jwt_true, "JWT-true count drifted");
 check(manifest.summary.explicit_verify_jwt_false === contract.gateway_posture.explicit_verify_jwt_false, "JWT-false count drifted");
 check(manifest.summary.verify_jwt_unspecified === contract.gateway_posture.verify_jwt_unspecified, "unspecified JWT count drifted");
-check(manifest.summary.explicit_verify_jwt_true === 83, "expected eighty-three explicit JWT routes");
+check(manifest.summary.explicit_verify_jwt_true === 84, "expected eighty-four explicit JWT routes");
 check(manifest.summary.explicit_verify_jwt_false === 34, "expected thirty-four explicit non-JWT routes");
 check(manifest.summary.verify_jwt_unspecified === 0, "implicit gateway posture remains");
 check(contract.gateway_posture.shared_production_functions_compared === 115, "production comparison coverage drifted");
@@ -56,7 +56,7 @@ check(contract.gateway_posture.boundary.includes("not evidence"), "gateway prese
 check(contract.production_metadata.live_active === r79.edge_functions.live_active, "live function inventory drifted from R79");
 check(contract.production_metadata.shared_live_and_local === r79.edge_functions.shared_live_and_local, "shared function inventory drifted from R79");
 check(contract.production_metadata.live_only === r79.edge_functions.live_only, "live-only inventory drifted from R79");
-check(contract.production_metadata.repo_only === 2, "forward repo-only function count drifted");
+check(contract.production_metadata.repo_only === 3, "forward repo-only function count drifted");
 check(contract.production_metadata.metadata_digest_fields.join("|") === "slug|verify_jwt|version|entrypoint_path|import_map", "production metadata digest fields drifted");
 check(/^[0-9a-f]{64}$/.test(contract.production_metadata.metadata_sha256), "production metadata digest is invalid");
 
@@ -67,7 +67,7 @@ check(JSON.stringify(manifest.unique_environment_symbols) === JSON.stringify(con
 check(contract.static_markers.environment_symbol_values_retrieved === false, "environment values were claimed as retrieved");
 check(contract.static_markers.boundary.includes("dependency evidence only"), "static markers became runtime proof");
 
-check(contract.open_work.repo_backed_route_authentication_proofs_required === 117, "route-proof queue drifted");
+check(contract.open_work.repo_backed_route_authentication_proofs_required === 118, "route-proof queue drifted");
 check(contract.open_work.jwt_disabled_repo_routes_requiring_route_specific_review === 34, "JWT-disabled review queue drifted");
 check(contract.open_work.live_only_functions_without_repo_source === 68, "live-only preservation queue drifted");
 check(contract.open_work.live_only_disposition.startsWith("preserve_until_"), "live-only preserve boundary disappeared");

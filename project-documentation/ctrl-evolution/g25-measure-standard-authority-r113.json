@@ -1,0 +1,121 @@
+{
+  "schema_version": "ctrl.g25.measure-standard-authority.r113.v1",
+  "contract_id": "G25-MEASURE-STANDARD-AUTHORITY-R113",
+  "status": "isolated_hosted_hidden_label_measurement_proved_production_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-GRADE-SORT-AUTHORITY-R109",
+    "G25-COMPILE-STANDARD-AUTHORITY-R110",
+    "G25-CRITIQUE-ARTEFACT-AUTHORITY-R112"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "route": "supabase/functions/measure-standard/index.ts",
+    "route_sha256": "06f3526a4cbfb9377256ccf80abee9de9fc3e716edeffcd0c7ffebe070b0fa2b",
+    "migration": "supabase/migrations/20260918183000_measure_standard_owner_authority.sql",
+    "migration_sha256": "7cb7bdac0a82862058512aeff561bd7610c43dd17b65b849006f6445964af60c",
+    "gate": "supabase/functions/_shared/measurement-gate.ts",
+    "gate_sha256": "b221238dbcbdb3f1f062d001c6fa155af29045d0164544192bd2da5648141100",
+    "confusion_sha256": "4c44a388d94159b93b4fa318a11710c4d29e620c038a85a4c9d7ed7a7aeb8e2f",
+    "operator_wrapper": "scripts/eval-skill.mjs",
+    "operator_wrapper_sha256": "51cd52fd5877b21281162a2f3b99707688edcd80ff0b0bddc1d48c0b2978dbed",
+    "standard_reader": "src/hooks/useStandard.ts",
+    "standard_reader_sha256": "0cea53660cd7b234992b297895c22ccc7c83d9d2d0b451ad6d1ee06b7b334f02",
+    "probe": "scripts/probe-ctrl-g25-measure-standard-authority-r113.mjs",
+    "probe_sha256": "dccfb92cd3af6543eebc8d8794b487bce859a955ce074c381288bd8140bf72bf",
+    "containment_manifest_sha256": "caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea",
+    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
+    "environment_inspector_sha256": "825452ecc8a345647aad776e0233d84f764348391c4d23a11ea48b04a673eea4"
+  },
+  "deployment": {
+    "slug": "measure-standard",
+    "version": 1,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "hosted_bundle_sha256": "469c3cf3ebd872a66752ba7a7d5231e347abfe086bbc70798d83bb5333aa7983",
+    "migration_version": "20260918183000",
+    "migration_name": "measure_standard_owner_authority",
+    "matching_edge_and_vault_capability_installed": true,
+    "secret_value_printed_or_persisted": false
+  },
+  "authority": {
+    "owner_jwt_and_rls": true,
+    "private_edge_to_database_capability": true,
+    "exact_project_binding": true,
+    "exact_request_replay": true,
+    "changed_request_conflict": true,
+    "hard_daily_run_limit": 2,
+    "hard_recorded_spend_limit_usd": 10,
+    "maximum_target_items": 20,
+    "mandatory_usage_receipt_per_paid_item": true,
+    "source_snapshot_pinned": true,
+    "atomic_terminal_measurement": true,
+    "direct_user_measurement_writes": false
+  },
+  "blindness": {
+    "human_grade_returned_to_edge_before_prediction": false,
+    "target_ids_bodies_positions_and_surfaces_returned": true,
+    "compiled_criteria_returned": true,
+    "training_only_exemplars_returned": true,
+    "held_out_or_repeat_exemplar_allowed": false,
+    "database_joins_predictions_to_hidden_grades": true,
+    "provider_failure_becomes": "insufficient",
+    "insufficient_becomes_quiet_hold": false,
+    "verified_requires_scored_held_out_floor": 10
+  },
+  "hosted_proof": {
+    "anonymous_status": 401,
+    "wrong_method_status": 405,
+    "wrong_media_status": 415,
+    "oversized_status": 413,
+    "extra_field_status": 400,
+    "direct_rpc_status": 403,
+    "first_status": 202,
+    "primary_status": "done",
+    "primary_stage": "ready",
+    "held_out_graded": 10,
+    "scored_held_out": 10,
+    "usage_receipts": 10,
+    "confusion": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 5,
+      "skipped": 0,
+      "insufficient": 0
+    },
+    "metrics": {
+      "precision": 1,
+      "recall": 1,
+      "tnr": 1
+    },
+    "label": "verified",
+    "retry_idempotent": true,
+    "request_conflict_status": 409,
+    "cross_tenant_rows": 0,
+    "run_limit_status": 429,
+    "spend_limit_status": 429,
+    "stale_source_status": "failed",
+    "stale_source_error": "source_changed_retry",
+    "stale_source_measurements": 0,
+    "cleanup": {
+      "auth_users": 0,
+      "runs": 0,
+      "measurements": 0,
+      "usage": 0
+    }
+  },
+  "boundary": {
+    "real_leader_validity_proved": false,
+    "universal_judgement_quality_proved": false,
+    "customer_experience_proved": false,
+    "production_deployed": false,
+    "merge_or_cutover_authorized": false,
+    "legacy_retirement_authorized": false
+  }
+}

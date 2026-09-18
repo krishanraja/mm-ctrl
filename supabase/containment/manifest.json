@@ -416,6 +416,13 @@
       "verify_jwt": true,
       "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap(", "recordAiUsage("],
       "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "CRITIQUE_ARTEFACT_RPC_SECRET", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "reserve_critique_artefact_run", "record_critique_artefact_usage", "finalize_critique_artefact_run"]
+    },
+    {
+      "name": "measure-standard",
+      "action": "authenticated_owner_hidden-label_snapshot_pinned_metered_atomic_measurement",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap(", "recordAiUsage("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "MEASURE_STANDARD_RPC_SECRET", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "reserve_measure_standard_run", "record_measure_standard_usage", "finish_measure_standard_run"]
     }
   ]
 }

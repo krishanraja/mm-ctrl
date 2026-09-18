@@ -29,8 +29,8 @@
     "probe_sha256": "4bc5f72573655bf7a6e3d39ccf38c4f223cce20dca33354218127773e992c989",
     "target_neutral_database_runner": "scripts/db-query.mjs",
     "target_neutral_database_runner_sha256": "fce2450afa90970550006d7f870629bf5b8dc3b9a8e2eb31c6952bec0bb33588",
-    "containment_manifest_sha256": "7a49b0443961d4ad4fc222fedc697dd0800ebd851ae7a9c5653017f5d77e8dab",
-    "function_config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f"
+    "containment_manifest_sha256": "caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea",
+    "function_config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce"
   },
   "hosted_function": {
     "slug": "ingest-brain",

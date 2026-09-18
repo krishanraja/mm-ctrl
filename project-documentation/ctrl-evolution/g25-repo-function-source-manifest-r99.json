@@ -12,23 +12,23 @@
     "path": "scripts/inspect-ctrl-g25-repo-function-manifest-r99.mjs",
     "sha256": "fc1e9f7e3d74d94f8885d6955744c949d1e56a6795e68772acca7f2c3585d504",
     "raw_source_emitted_by_default": false,
-    "manifest_sha256": "2451ec8a4ea0cda1bbbd3d7901bf7aa2bf15c6fa7f248c78d344fae098c3af85"
+    "manifest_sha256": "65935798a7f859489383215dc720e2113b736404a0a68b768c0c75dfc8aa5ebc"
   },
   "source": {
     "functions_root": "supabase/functions",
-    "local_function_count": 117,
-    "entrypoint_count": 117,
-    "shared_file_count": 183,
-    "shared_source_bytes": 1609105,
-    "shared_source_sha256": "7b82383e6ccb55932af6a306a03991014f8a41b6fc96c1d5ba3d1d3af113c5ad",
-    "per_function_source_digest_count": 117,
+    "local_function_count": 118,
+    "entrypoint_count": 118,
+    "shared_file_count": 185,
+    "shared_source_bytes": 1612346,
+    "shared_source_sha256": "e8ab3db2763bc98f910ec9e3eaf16df1d58143b71804dc82b571b83e6fd9fb69",
+    "per_function_source_digest_count": 118,
     "configured_without_local_source_count": 0,
     "shared_tree_bound_into_every_function": true
   },
   "gateway_posture": {
     "config_path": "supabase/config.toml",
-    "config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f",
-    "explicit_verify_jwt_true": 83,
+    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
+    "explicit_verify_jwt_true": 84,
     "explicit_verify_jwt_false": 34,
     "verify_jwt_unspecified": 0,
     "shared_production_functions_compared": 115,
@@ -48,7 +48,7 @@
     "live_verify_jwt_true": 117,
     "live_verify_jwt_false": 66,
     "shared_live_and_local": 115,
-    "repo_only": 2,
+    "repo_only": 3,
     "live_only": 68,
     "metadata_digest_fields": [
       "slug",
@@ -61,8 +61,8 @@
   },
   "static_markers": {
     "functions_with_service_role_marker": 54,
-    "functions_with_explicit_get_user_marker": 58,
-    "unique_environment_symbol_count": 45,
+    "functions_with_explicit_get_user_marker": 59,
+    "unique_environment_symbol_count": 46,
     "environment_symbol_values_retrieved": false,
     "environment_symbols": [
       "ANTHROPIC_API_KEY",
@@ -92,6 +92,7 @@
       "GOOGLE_AI_API_KEY",
       "HOME_PERSONALIZATION_ENABLED",
       "HOME_PROFILE_GATE_ENABLED",
+      "MEASURE_STANDARD_RPC_SECRET",
       "MEMORY_SWEEP_SECRET",
       "NEWSAPI_API_KEY",
       "NEWSAPI_KEY",
@@ -114,7 +115,7 @@
     "boundary": "Static symbol names and markers are dependency evidence only. They do not prove value availability, correct authorization or safe route behavior."
   },
   "open_work": {
-    "repo_backed_route_authentication_proofs_required": 117,
+    "repo_backed_route_authentication_proofs_required": 118,
     "jwt_disabled_repo_routes_requiring_route_specific_review": 34,
     "live_only_functions_without_repo_source": 68,
     "live_only_disposition": "preserve_until_source_caller_authentication_and_replacement_or_retirement_evidence_is_complete",

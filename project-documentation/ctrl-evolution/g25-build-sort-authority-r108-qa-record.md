@@ -12,8 +12,8 @@
 - Composition tests SHA-256: `3c086ac3d3182b687d8ee398aec795ad64d2e8ab4b56eda7fd02a7250e20d4d0`
 - Authority migration SHA-256: `a877e0974b725c2e03f6c09c22a96b97cde15dcdf390e50b636c69e23fb4d660`
 - Hosted probe SHA-256: `0717fdd44c8d8cc6643e254e4c0e80377d8e6d177b750ff250586c1bd4416d13`
-- Containment manifest SHA-256: `7a49b0443961d4ad4fc222fedc697dd0800ebd851ae7a9c5653017f5d77e8dab`
-- Function config SHA-256: `0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f`
+- Containment manifest SHA-256: `caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea`
+- Function config SHA-256: `d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce`
 - Hosted bundle SHA-256: `2ccc36fc00e67fe46162ba31b417a782cfd8edb9b4657331105524872c1a3e5d`
 - Hosted version: 2, active, JWT verification enabled
 

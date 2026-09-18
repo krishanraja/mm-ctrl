@@ -2,20 +2,20 @@
 
 ## Deterministic inspection
 
-- Repository function entrypoints: 117
-- Entrypoints inspected: 117
+- Repository function entrypoints: 118
+- Entrypoints inspected: 118
 - Missing relative imports: zero
-- Unique environment symbols: 56
+- Unique environment symbols: 57
 - Unclassified symbols: zero
 - Stale policy entries: zero
-- Inspector SHA-256: `d1da16bd86e48cfd48f3f0c52b100b9409e1f47fcb1287c3035a0d6838f357f0`
-- Derived manifest SHA-256: `53d37c3770736e21a76522eed0bf589b6d2d2053516b89ca5b512e6f366434ee`
-- Value-free policy SHA-256: `114d3d7db103fa4e72ec7c93b0e7a9941fd74075f48df37cb4963349b12fc8a0`
-- Per-route requirements SHA-256: `d832c38ba1471025d97149bc38a589045207f39f2dfd150748e58206c0dbc766`
+- Inspector SHA-256: `825452ecc8a345647aad776e0233d84f764348391c4d23a11ea48b04a673eea4`
+- Derived manifest SHA-256: `b8f7baf27604edd987280976027052cad23760ef7b7f1b053292654481fe0092`
+- Value-free policy SHA-256: `f2f93f89531dabb6bcfbb6dc2a68b43b4532d11cf61b8499e9f301ff0eecbdfe`
+- Per-route requirements SHA-256: `6a04d04b7c344de122387a9cdbd4e411bbaeeed8c9a4adac04c0d0764b368381`
 
 ## Risk coverage
 
-The transitive closures expose 40 routes with model-spend configuration, 23 with external-research configuration, nine with outbound-delivery configuration, seven with scheduled-execution configuration, six with billing configuration, five with personal-data enrichment configuration, three with encrypted-data custody, three with external writes, eight with explicit project binding and one with cross-project privileged access. Seventy-eight routes use platform access configuration and 54 currently use privileged database access. The R106 settings repair, R107 ingestion repair, R109 grading repair, R110 compiler repair, R111 portable-skill repair and R112 critique repair removed unnecessary service-role dependencies.
+The transitive closures expose 41 routes with model-spend configuration, 24 with external-research configuration, nine with outbound-delivery configuration, seven with scheduled-execution configuration, six with billing configuration, five with personal-data enrichment configuration, three with encrypted-data custody, three with external writes, nine with explicit project binding and one with cross-project privileged access. Seventy-nine routes use platform access configuration and 54 currently use privileged database access. The R106 settings repair, R107 ingestion repair, R109 grading repair, R110 compiler repair, R111 portable-skill repair, R112 critique repair and R113 measurement repair removed unnecessary service-role dependencies.
 
 Counts overlap because one route can consume several capability classes. They are used to require additional proof, never to imply the presence or correctness of a value.
 

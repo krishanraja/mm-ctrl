@@ -33,6 +33,7 @@ const environmentPolicy = {
   COMPILE_STANDARD_RPC_SECRET: ["machine_authentication_secret", true, "platform_access"],
   GENERATE_SKILL_EXPORT_RPC_SECRET: ["machine_authentication_secret", true, "platform_access"],
   CRITIQUE_ARTEFACT_RPC_SECRET: ["machine_authentication_secret", true, "platform_access"],
+  MEASURE_STANDARD_RPC_SECRET: ["machine_authentication_secret", true, "platform_access"],
   CTRL_CRON_SECRET: ["machine_authentication_secret", true, "scheduled_execution"],
   DECISION_WATCH_SECRET: ["machine_authentication_secret", true, "scheduled_execution"],
   DENO_DEPLOYMENT_ID: ["platform_injected_runtime", false, "platform_identity"],
