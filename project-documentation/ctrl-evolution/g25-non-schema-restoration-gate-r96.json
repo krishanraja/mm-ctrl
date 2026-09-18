@@ -1,0 +1,128 @@
+{
+  "schema_version": "ctrl.g25.non-schema-restoration-gate.r96.v1",
+  "contract_id": "G25-NON-SCHEMA-RESTORATION-GATE-R96",
+  "status": "safe_plane_candidate_proved_execution_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-RECOVERY-NON-SCHEMA-MANIFEST-R79",
+    "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80",
+    "G25-DEPLOYED-RPC-DEPENDENCY-INDEX-R88",
+    "G25-CRITICAL-APPLICATION-SMOKE-R95"
+  ],
+  "safe_plane_candidate": {
+    "restore_path": "supabase/candidates/g25_non_schema_safe_plane_restore_r96.sql",
+    "restore_sha256": "fc2eb0958ada92bd922e0b5f88836294b1cbca2e7030602c8d2d589c054321e7",
+    "preflight_path": "supabase/candidates/g25_non_schema_safe_plane_preflight_r96.sql",
+    "preflight_sha256": "cb73cd34506861a4646bb7b04a7ca986ac711f2198f8147292bd76f0299660f2",
+    "verification_path": "supabase/candidates/g25_non_schema_safe_plane_verification_r96.sql",
+    "verification_sha256": "95cc833178bf7af7bb27279b8e790b1b982a2b5d5b3dc502b4a7c44afdf3adb4",
+    "transactional_dry_run": "pass",
+    "dry_run_terminal_action": "rollback",
+    "isolated_post_dry_run": {
+      "storage_buckets": 0,
+      "storage_policies": 0,
+      "application_realtime_tables": 0
+    }
+  },
+  "storage": {
+    "production_bucket_count": 5,
+    "production_bucket_digest": "6ce21d238eb0f97d533b2a5f3edcea0d",
+    "production_policy_count": 12,
+    "production_policy_digest": "6a12467a080dd4ca168b82e9b0133c59",
+    "buckets": [
+      { "id": "ctrl-briefings", "public": false, "file_size_limit": 10485760, "allowed_mime_types": null },
+      { "id": "documents", "public": false, "file_size_limit": 52428800, "allowed_mime_types": ["application/pdf"] },
+      { "id": "post-session-qr", "public": true, "file_size_limit": null, "allowed_mime_types": null },
+      { "id": "pre-workshop-qr", "public": true, "file_size_limit": 1048576, "allowed_mime_types": ["image/png"] },
+      { "id": "skill-packages", "public": false, "file_size_limit": 20971520, "allowed_mime_types": ["application/zip"] }
+    ],
+    "candidate_complete": true,
+    "applied": false
+  },
+  "realtime": {
+    "application_publication": "supabase_realtime",
+    "application_table_count": 3,
+    "application_table_digest": "0eff919f64729539dee064d450f4f235",
+    "application_tables": [
+      "public.bottleneck_submissions",
+      "public.effortless_map_items",
+      "public.voting_results"
+    ],
+    "platform_managed_publication": "supabase_realtime_messages_publication",
+    "platform_managed_partition_members_copied": false,
+    "candidate_complete": true,
+    "applied": false
+  },
+  "cron": {
+    "production_job_count": 15,
+    "commands_retrieved": false,
+    "repo_executable_evidence_count": 9,
+    "missing_repo_executable_definition_count": 6,
+    "jobs": [
+      { "name": "brain-adapt-nightly", "schedule": "30 3 * * *", "repo_executable_evidence": true },
+      { "name": "briefing-aggregate-feedback-nightly", "schedule": "7 3 * * *", "repo_executable_evidence": false },
+      { "name": "capture-week", "schedule": "0 20 * * 0", "repo_executable_evidence": true },
+      { "name": "daily-briefing-email", "schedule": "0 12 * * *", "repo_executable_evidence": true },
+      { "name": "decision-watch-hourly", "schedule": "17 * * * *", "repo_executable_evidence": false },
+      { "name": "detect-trends-weekly", "schedule": "0 11 * * 1", "repo_executable_evidence": true },
+      { "name": "google-sheets-sync-processor", "schedule": "*/5 * * * *", "repo_executable_evidence": false },
+      { "name": "live-headlines-prewarm", "schedule": "30 10 * * *", "repo_executable_evidence": true },
+      { "name": "memory-sweep-nightly", "schedule": "0 3 * * *", "repo_executable_evidence": true },
+      { "name": "mindmake-aa-price-snapshot-daily", "schedule": "0 11 * * *", "repo_executable_evidence": false },
+      { "name": "mindmake-brief-retention-daily", "schedule": "17 2 * * *", "repo_executable_evidence": false },
+      { "name": "mindmake-follow-up-daily", "schedule": "20 9 * * *", "repo_executable_evidence": false },
+      { "name": "north-star-daily-snapshot", "schedule": "0 6 * * *", "repo_executable_evidence": true },
+      { "name": "reactivation-nudge", "schedule": "0 13 * * *", "repo_executable_evidence": true },
+      { "name": "retention-cleanup", "schedule": "15 3 * * *", "repo_executable_evidence": true }
+    ],
+    "candidate_complete": false,
+    "applied": false
+  },
+  "edge_functions": {
+    "production_active": 183,
+    "repo_function_directories": 115,
+    "live_only": 68,
+    "live_only_source_retrieved_transiently": 68,
+    "live_only_verify_jwt_false": 31,
+    "live_only_verify_jwt_false_with_explicit_get_user": 0,
+    "isolated_deployed": 0,
+    "candidate_complete": false,
+    "applied": false,
+    "gate": "Every route needs a frozen source digest, deployment configuration, caller disposition and route-specific authentication proof before isolated deployment."
+  },
+  "vault": {
+    "production_secret_name_count": 2,
+    "secret_names_retrieved": false,
+    "secret_values_retrieved": false,
+    "repository_known_required_name": "ctrl_cron_secret",
+    "unresolved_name_count": 1,
+    "candidate_complete": false,
+    "applied": false,
+    "gate": "Inject values from an approved secure source at release time and prove name parity without printing or persisting values."
+  },
+  "bounded_claim": "Secret-free Storage and application Realtime restoration is source-controlled and dry-run proved. Cron, Edge Function and Vault restoration is deliberately incomplete where live-only source, authentication or secure-value authority is missing.",
+  "acceptance_gate": {
+    "safe_plane_candidate_dry_run_passed": true,
+    "safe_plane_applied": false,
+    "cron_restoration_ready": false,
+    "edge_function_restoration_ready": false,
+    "vault_restoration_ready": false,
+    "non_schema_restoration_passed": false,
+    "full_hosted_critical_application_smoke_passed": false,
+    "production_recovery_choice_ready": false
+  },
+  "authority": {
+    "raw_function_source_published": false,
+    "cron_commands_retrieved": false,
+    "secret_names_or_values_retrieved": false,
+    "isolated_safe_plane_writes_persisted": 0,
+    "isolated_edge_functions_deployed": 0,
+    "production_writes": 0,
+    "forbids": [
+      "guessing missing schedule commands",
+      "copying live-only source before review",
+      "retrieving or persisting secret values",
+      "deployment, merge, cutover, release or legacy retirement"
+    ]
+  }
+}
