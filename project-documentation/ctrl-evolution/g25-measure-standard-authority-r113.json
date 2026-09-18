@@ -28,7 +28,7 @@
     "standard_reader_sha256": "0cea53660cd7b234992b297895c22ccc7c83d9d2d0b451ad6d1ee06b7b334f02",
     "probe": "scripts/probe-ctrl-g25-measure-standard-authority-r113.mjs",
     "probe_sha256": "dccfb92cd3af6543eebc8d8794b487bce859a955ce074c381288bd8140bf72bf",
-    "containment_manifest_sha256": "caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea",
+    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
     "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
     "environment_inspector_sha256": "825452ecc8a345647aad776e0233d84f764348391c4d23a11ea48b04a673eea4"
   },

@@ -36,8 +36,8 @@
       "name": "capture-week",
       "action": "exact_service_credential",
       "verify_jwt": false,
-      "forbidden_source_markers": ["roleFromJwt("],
-      "required_source_markers": ["hasExactServiceCredential("]
+      "forbidden_source_markers": ["roleFromJwt(", "[captureSecret, svcKey]"],
+      "required_source_markers": ["hasExactServiceCredential(", "matchesExpectedSupabaseProject(", "publish_capture_run"]
     },
     {
       "name": "decision-watch",

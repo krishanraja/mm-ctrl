@@ -1,0 +1,142 @@
+{
+  "schema_version": "ctrl.g25.capture-learning-authority.r114.v1",
+  "contract_id": "G25-CAPTURE-LEARNING-AUTHORITY-R114",
+  "status": "isolated_hosted_owner_governed_capture_proved_production_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+    "G25-FUNCTION-ENVIRONMENT-REQUIREMENTS-R104",
+    "G25-MEASURE-STANDARD-AUTHORITY-R113"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "route": "supabase/functions/capture-week/index.ts",
+    "route_sha256": "68c7cd2fe87e9bf6c37962a8748c928b0888530a2b4021979e5c47ec9a476096",
+    "core": "supabase/functions/_shared/capture-core.ts",
+    "core_sha256": "67ca74b15347d6d95f5d8b05f11dab6a32a7537a56125149fb7d5fd3338b272d",
+    "core_test": "supabase/functions/_shared/capture-core.test.ts",
+    "core_test_sha256": "78e7c5aeb73f7e7fcd9bfa069a0a21a100129e872fd254339a5a6817e42f491c",
+    "migration": "supabase/migrations/20260918190000_capture_week_owner_authority.sql",
+    "migration_sha256": "c578d1fa0ec06bc7ac6a1db241dff3a501e271d95653c1679d898ef2c78e7ffa",
+    "review_client": "src/hooks/useReview.ts",
+    "review_client_sha256": "8c10263674425c17524a76ff9e91cb65a1e1ea189bbb6e607d950a6232947bfc",
+    "proposal_client": "src/hooks/useProposals.ts",
+    "proposal_client_sha256": "1a8ffa5ec8964ad87c5c0d5ae95c01e829898b61a2e4477ee01f27ba31de5ddd",
+    "probe": "scripts/probe-ctrl-g25-capture-learning-authority-r114.mjs",
+    "probe_sha256": "439035b0425fd415ea4c5b1345ae740d9a729e2bed62395593bcf8a8f798dfca",
+    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
+    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
+    "repository_function_manifest_sha256": "c44ba7ae89d8a63854513a6f8d798bae6e2fde010842c1e5b7555583968e8eaa",
+    "environment_manifest_sha256": "fbd182c62f5c98d51c3c246f4d2d9132562bcb97b010e2fd447f375b11a941d0"
+  },
+  "deployment": {
+    "slug": "capture-week",
+    "version": 7,
+    "status": "ACTIVE",
+    "verify_jwt": false,
+    "hosted_bundle_sha256": "8c4d77626d7cab3c62f48d57ab511d5d84769457261049bb142aba66a7fd4a98",
+    "migration_version": "20260918190000",
+    "migration_name": "capture_week_owner_authority",
+    "isolated_functions_active": 13,
+    "scheduled_execution_created": false,
+    "secret_value_printed_or_persisted": false
+  },
+  "owner_authority": {
+    "policy_privileges": [
+      "DELETE",
+      "INSERT",
+      "SELECT",
+      "UPDATE"
+    ],
+    "policy_truncate_reference_trigger_privileges": false,
+    "cadence_enforced": true,
+    "window_and_recurrence_threshold_configured_by_owner": true,
+    "unique_evidence_identity_required": true,
+    "applicable_opportunity_denominator_required_for_drift": true,
+    "same_review_retry_can_manufacture_recurrence": false,
+    "accepted_proposal_applies_change": false,
+    "decision_event_append_only": true,
+    "exact_proposal_hash_required": true,
+    "drift_requires_explicit_freshness_decision": true
+  },
+  "learning_boundary": {
+    "proposal_types": [
+      "drift",
+      "false_positive",
+      "uncovered"
+    ],
+    "raw_quote_copied_to_durable_proposal": false,
+    "source_snapshot_pinned": true,
+    "current_standard_pinned": true,
+    "forced_unrelated_deletion": false,
+    "severity_override_used_without_structured_evidence": false,
+    "reused_holdout_claimed_as_fresh_measurement": false,
+    "accepted_next_step": "versioned_change_request",
+    "criteria_changed_by_capture": 0,
+    "standards_changed_by_capture": 0,
+    "releases_changed_by_capture": 0
+  },
+  "hosted_proof": {
+    "anonymous_status": 403,
+    "wrong_method_status": 405,
+    "wrong_media_status": 415,
+    "oversized_status": 413,
+    "extra_field_status": 400,
+    "first_status": 200,
+    "first_published": 2,
+    "proposal_types": [
+      "drift",
+      "false_positive"
+    ],
+    "proposal_packets_complete": true,
+    "durable_quotes_copied": false,
+    "capture_runs": 1,
+    "retry_status": 200,
+    "retry_idempotent": true,
+    "cross_tenant_rows": 0,
+    "direct_update_denied": true,
+    "cross_owner_decision_denied": true,
+    "owner_decision_change_applied": false,
+    "criteria_unchanged_after_acceptance": true,
+    "owner_policy_update_count": 1,
+    "cross_owner_policy_update_count": 0,
+    "cadence_hold_status": "not_due",
+    "cadence_hold_reason": "cadence_pending",
+    "same_evidence_reproposal_count": 0,
+    "stale_source_publication_denied": true,
+    "cleanup": {
+      "auth_users": 0,
+      "capture_runs": 0,
+      "proposals": 0
+    }
+  },
+  "focused_verification": {
+    "capture_core_tests": 40,
+    "containment_contracts": 59,
+    "typecheck_current_errors": 94,
+    "typecheck_baseline_errors": 94,
+    "new_type_errors": 0
+  },
+  "rollback": {
+    "previous_version": 6,
+    "previous_hosted_bundle_sha256": "55596807bd2934d5bb707de606ab02cd5fa1a5112e73828c231ab7ab9b961934",
+    "previous_source_preserved_outside_repository": true,
+    "policy_privilege_rollback": "revoke insert update delete and retain select",
+    "production_rollback_required": false
+  },
+  "boundary": {
+    "real_leader_learning_validity_proved": false,
+    "customer_proposal_experience_proved": false,
+    "scheduled_operation_proved": false,
+    "production_deployed": false,
+    "merge_or_cutover_authorized": false,
+    "legacy_retirement_authorized": false,
+    "old_development_project_deletion_authorized": false
+  },
+  "next_safe_action": "Turn an accepted proposal into a versioned Compile, Build and fresh Check request without allowing acceptance itself to edit the standard."
+}

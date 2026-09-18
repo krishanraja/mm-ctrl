@@ -10,7 +10,7 @@
 - Authority migration SHA-256: `adb123b263e81ed4b0606b8cf3fda89adc2e2e009cae2c4052b275805ca85c59`
 - Client hook SHA-256: `4e646a95b06ec07c24791efd9c11e450587d125938e84fb167adce0b35ec44db`
 - Hosted probe SHA-256: `e7c9e0839e82dc7a50a76fd87b3e6558d9e0c9fe9e407d79bcb824c246b93143`
-- Containment manifest SHA-256: `caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea`
+- Containment manifest SHA-256: `34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82`
 - Function config SHA-256: `d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce`
 - Hosted bundle SHA-256: `3e89d71061882780b907d5db18c36f54cb23849cc44cbac1307476749fe6a4b8`
 - Hosted version: 1, active, JWT verification enabled

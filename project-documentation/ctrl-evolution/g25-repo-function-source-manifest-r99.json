@@ -12,15 +12,15 @@
     "path": "scripts/inspect-ctrl-g25-repo-function-manifest-r99.mjs",
     "sha256": "fc1e9f7e3d74d94f8885d6955744c949d1e56a6795e68772acca7f2c3585d504",
     "raw_source_emitted_by_default": false,
-    "manifest_sha256": "65935798a7f859489383215dc720e2113b736404a0a68b768c0c75dfc8aa5ebc"
+    "manifest_sha256": "c44ba7ae89d8a63854513a6f8d798bae6e2fde010842c1e5b7555583968e8eaa"
   },
   "source": {
     "functions_root": "supabase/functions",
     "local_function_count": 118,
     "entrypoint_count": 118,
     "shared_file_count": 185,
-    "shared_source_bytes": 1612346,
-    "shared_source_sha256": "e8ab3db2763bc98f910ec9e3eaf16df1d58143b71804dc82b571b83e6fd9fb69",
+    "shared_source_bytes": 1619317,
+    "shared_source_sha256": "b081f732a2b6232af1f932c4ffe9848f9866190db8d7048a61e549eb0f581db4",
     "per_function_source_digest_count": 118,
     "configured_without_local_source_count": 0,
     "shared_tree_bound_into_every_function": true

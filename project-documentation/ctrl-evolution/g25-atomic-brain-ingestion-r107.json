@@ -29,7 +29,7 @@
     "probe_sha256": "4bc5f72573655bf7a6e3d39ccf38c4f223cce20dca33354218127773e992c989",
     "target_neutral_database_runner": "scripts/db-query.mjs",
     "target_neutral_database_runner_sha256": "fce2450afa90970550006d7f870629bf5b8dc3b9a8e2eb31c6952bec0bb33588",
-    "containment_manifest_sha256": "caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea",
+    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
     "function_config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce"
   },
   "hosted_function": {

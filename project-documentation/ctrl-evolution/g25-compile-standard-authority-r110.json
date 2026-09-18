@@ -26,7 +26,7 @@
     "client_hook_sha256": "4e646a95b06ec07c24791efd9c11e450587d125938e84fb167adce0b35ec44db",
     "probe": "scripts/probe-ctrl-g25-compile-standard-authority-r110.mjs",
     "probe_sha256": "300e327ad50b6910ed11f8dc62bb16e267c750525121b123a6165d8b04986bba",
-    "containment_manifest_sha256": "caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea",
+    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
     "function_config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce"
   },
   "hosted_function": {

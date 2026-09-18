@@ -19,8 +19,8 @@
     "probe_path": "scripts/probe-ctrl-g25-critique-artefact-authority-r112.mjs",
     "probe_sha256": "00509da64c061e1125a3c38402972c7ca0a15ff569bbbc66deb6fca3898cc174",
     "client_path": "src/hooks/useReview.ts",
-    "client_sha256": "8e1e4971ac350e1cf90fcc388888a2f24371230841470e3627fcce1a45b8f9da",
-    "containment_manifest_sha256": "caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea",
+    "client_sha256": "8c10263674425c17524a76ff9e91cb65a1e1ea189bbb6e607d950a6232947bfc",
+    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
     "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
     "environment_inspector_sha256": "825452ecc8a345647aad776e0233d84f764348391c4d23a11ea48b04a673eea4"
   },

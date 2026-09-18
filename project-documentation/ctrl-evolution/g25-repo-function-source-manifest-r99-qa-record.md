@@ -7,7 +7,7 @@
 - Per-function source digests: 118.
 - Shared files bound into every route: 185.
 - Configured routes without local source: zero.
-- Derived manifest SHA-256: `65935798a7f859489383215dc720e2113b736404a0a68b768c0c75dfc8aa5ebc`.
+- Derived manifest SHA-256: `c44ba7ae89d8a63854513a6f8d798bae6e2fde010842c1e5b7555583968e8eaa`.
 
 ## Gateway posture
 
@@ -30,7 +30,7 @@
 - Route-specific authentication proofs complete: no.
 - Live-only source recovered into repository: no.
 - Edge Function restoration ready: no.
-- Isolated functions deployed by R99: zero. Later receipts deploy four bounded routes.
+- Isolated functions deployed by R99: zero. Later receipts deploy thirteen bounded routes.
 - Production writes: zero.
 
 ## Verdict

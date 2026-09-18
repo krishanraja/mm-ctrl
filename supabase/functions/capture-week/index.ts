@@ -1,568 +1,386 @@
 /**
- * capture-week - stage 9 of the harness chain, LEARN. The weekly pass that
- * turns review history into proposed changes to a person's standard.
+ * capture-week: governed runtime learning.
  *
- * POST (cron only) -> 200 { week, users, proposed, ... }
- *
- * This is the last stage in the chain and the only one that changes a standard,
- * and it never changes one itself. It writes rows to `proposals` with status
- * 'awaiting'. A named human accepts or rejects each one at /proposals. There is
- * no code path in this file that writes `criteria`: `criteria` is read, twice,
- * and never inserted, updated or deleted. A standard that changes without a
- * decision is a standard nobody owns.
- *
- * `skills/ctrl-capture` is the managed reference implementation of exactly this
- * stage and this function follows it: two strikes, the three types in order,
- * one message of decisions rather than a report, a size delta on every
- * proposal, an `if_wrong` on every proposal, and silence when there is nothing.
- *
- * ---------------------------------------------------------------------------
- * DEPLOY WITH verify_jwt = false
- * ---------------------------------------------------------------------------
- *
- * pg_cron calls this over net.http_post with a bearer secret, not a user JWT,
- * so the platform's JWT verification has to be off and the gate below IS the
- * auth. Same shape as memory-sweep and decision-watch: a dedicated shared
- * secret or the exact service-role key. Unverified JWT payload claims are never
- * trusted. Anything else is 403 before a single row is read.
- *
- *   supabase functions deploy capture-week --no-verify-jwt
- *
- * ---------------------------------------------------------------------------
- * No model chooses anything here (spec 4.9, section 9)
- * ---------------------------------------------------------------------------
- *
- * Two strikes and the three types are arithmetic over ledger rows, and all of
- * it lives in ../_shared/capture-core.ts where vitest can pin it. There is no
- * LLM call in this function at all. A model asked to read a week of ledger and
- * find "what keeps coming up" finds something every week, which is precisely
- * the failure two strikes exists to prevent. If wording ever needs drafting, a
- * model may draft the headline and delta of candidates ALREADY selected here;
- * it may never select one.
- *
- * ---------------------------------------------------------------------------
- * The quarterly pass, and how "every thirteenth run" is decided
- * ---------------------------------------------------------------------------
- *
- * Every thirteenth run does the weekly pass and the quarterly one. There is no
- * run-counter table, and adding one would be a second source of truth about a
- * schedule the cron already owns, so the thirteenth run is derived from the ISO
- * week itself: `weekIndex(week) % 13 === 0`. Deterministic, stateless, and
- * identical whether the cron fired it or an operator re-ran it. `?quarterly=1`
- * forces it for ops.
- *
- * The quarterly re-score reuses ../_shared/confusion.ts for every number and
- * recomputes none of them, and it MUTATES NOTHING. It reads the held-out set,
- * applies the current rubric's deterministic probes (../_shared/discrimination.ts,
- * the same probe machinery the compile stage scores with), builds the matrix,
- * and puts the report in this run's output. Retirements are listed and asked
- * about; nothing is retired here.
- *
- * The honest limit on that number, stated because it will be read: the probe is
- * a deterministic check, not the three-lens gate the review surface runs. It is
- * the strongest re-score available to a cron with no user JWT and no model
- * budget, it is exactly reproducible, and it is not the same instrument as
- * scripts/eval-skill.mjs. A criterion with no checkable observable contributes
- * nothing rather than a guess, and when no criterion on the surface has one the
- * item is 'insufficient', never a quiet 'holds'.
+ * This route may publish owner proposals against an exact source snapshot. It
+ * cannot edit criteria, standards, skills or releases. A later owner decision
+ * authorises a versioned change request; it still does not apply the change.
  */
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
-import { withTimeout } from "../_shared/with-timeout.ts";
 import { hasExactServiceCredential } from "../_shared/service-auth.ts";
 import { isCronRequest } from "../_shared/service-request.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 import {
   buildProposal,
+  captureCadenceDue,
   isoWeekOf,
-  STRIKE_WINDOW_WEEKS,
   weeklyPass,
-  weekIndex,
-  windowWeeks,
+  type Candidate,
   type CriterionRow,
   type LedgerRow,
   type ProposalRow,
 } from "../_shared/capture-core.ts";
-import {
-  confusionMatrix,
-  metricsFrom,
-  type GateVerdict,
-  type MeasuredPair,
-  type Metrics,
-} from "../_shared/confusion.ts";
-import { tryApplyProbe } from "../_shared/discrimination.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-ctrl-cron-secret",
 };
+const MAX_REQUEST_BYTES = 4_096;
+const MAX_POLICY_OWNERS = 100;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const WEEK = /^\d{4}-W\d{2}$/;
+const REQUEST_KEYS = new Set(["capture_week", "dry_run", "user_id"]);
 
-/** Every thirteenth run does the quarterly pass alongside the weekly one. */
-const QUARTERLY_EVERY = 13;
-
-/**
- * Proposals sent to one person in one run.
- *
- * "Not a report and not a summary of the week. Just the decisions they need to
- * make." A first run over a busy ledger can find a dozen things, and a dozen
- * yes-or-no decisions in one message is a message that gets closed. The rest
- * are not lost: nothing was proposed for them, so they are still two-struck
- * next week and arrive then.
- */
-const PROPOSALS_PER_USER = 5;
-
-/** Ledger rows read per run. A cap that is hit is reported, never silent. */
-const LEDGER_ROW_CAP = 5000;
-
-/** Held-out items re-scored per user in the quarterly pass. */
-const QUARTERLY_ITEM_CAP = 40;
-
-/** Wall-clock budget for one database round trip. */
-const DB_TIMEOUT_MS = 15_000;
-
-interface QuarterlyReport {
+interface CapturePolicy {
   user_id: string;
-  sort_run_id: string | null;
-  /** Held-out items carrying a real grade. Not the number scored. */
-  held_out_graded: number;
-  criteria_scored: number;
-  criteria_without_a_check: number;
-  precision: number | null;
-  recall: number | null;
-  tnr: number | null;
-  counts: { tp: number; fp: number; fn: number; tn: number };
-  excluded: { skipped: number; insufficient: number };
-  previous_tnr: number | null;
-  tnr_decayed: boolean;
-  decay_note: string | null;
-  retirements: Array<{ criterion: string; surface: string; last_seen_week: string | null }>;
-  note: string | null;
+  enabled: boolean;
+  cadence_days: number;
+  window_weeks: number;
+  min_unique_evidence: number;
+  max_proposals: number;
+  severity_override: boolean;
+  privacy_boundary: string;
+  retention_days: number | null;
 }
 
-serve(async (req) => {
+interface CaptureSource {
+  schema: string;
+  owner_id: string;
+  capture_week: string;
+  window: { from: string; through: string };
+  policy: CapturePolicy;
+  standard: { id?: string; body_sha256?: string; metadata?: Record<string, unknown>; created_at?: string };
+  criteria: Array<CriterionRow & { version?: number; observable?: string | null }>;
+  ledger: LedgerRow[];
+  opportunities: Array<{ run_id: string; surface: string | null; created_at: string; source_snapshot: string | null }>;
+  proposal_history: Array<{ id: string; key: string; version: number; hash: string; status: string; source_ids: string[] }>;
+  latest_measurement: {
+    id?: string;
+    label?: string;
+    created_at?: string;
+    standard_artifact_id?: string;
+    metrics?: Record<string, unknown>;
+    confusion?: Record<string, unknown>;
+    held_out_graded?: number;
+  };
+}
+
+interface SourcePacket { source: CaptureSource; snapshot: string }
+type PublishedProposal = Omit<ProposalRow, "user_id" | "status"> & {
+  proposal_key: string;
+  governance: Record<string, unknown>;
+};
+
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const log = createLogger("capture-week");
-  const json = (b: unknown, s = 200) =>
-    new Response(JSON.stringify(b), {
-      status: s,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-
-  // -------------------------------------------------------------------------
-  // The gate. Cron-only, exactly as memory-sweep.
-  // -------------------------------------------------------------------------
-  const captureSecret = Deno.env.get("CAPTURE_WEEK_SECRET") ?? "";
-  const svcKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  const okCaller = hasExactServiceCredential(
-    req.headers.get("Authorization"),
-    [captureSecret, svcKey],
-  ) || isCronRequest(
-    req.headers.get("X-CTRL-Cron-Secret"),
-    Deno.env.get("CTRL_CRON_SECRET") ?? "",
-  );
-  if (!okCaller) return json({ error: "Forbidden" }, 403);
-
-  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-  const admin = createClient(supabaseUrl, svcKey, { auth: { persistSession: false } }) as SupabaseClient;
-
-  const url = new URL(req.url);
-  const weekParam = url.searchParams.get("week");
-  const nowWeek = weekParam && weekIndex(weekParam) !== null ? weekParam : isoWeekOf(new Date());
-  const window = windowWeeks(nowWeek, STRIKE_WINDOW_WEEKS);
-  const index = weekIndex(nowWeek) ?? 0;
-  const quarterly = url.searchParams.get("quarterly") === "1" || index % QUARTERLY_EVERY === 0;
-  const dryRun = url.searchParams.get("dry_run") === "1";
-
-  const started = Date.now();
+  const json = (payload: unknown, status = 200) => new Response(JSON.stringify(payload), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 
   try {
-    // -----------------------------------------------------------------------
-    // This week's ledger plus the previous four.
-    // -----------------------------------------------------------------------
-    const { data: ledgerData, error: ledgerError } = await withTimeout(
-      admin
-        .from("ledger")
-        .select("id, user_id, week, surface, signal, class, criterion_id, criterion_name, verdict, quote, disposition, created_at")
-        .in("week", window)
-        .order("created_at", { ascending: true })
-        .limit(LEDGER_ROW_CAP),
-      DB_TIMEOUT_MS,
-      "ledger window",
-    );
-    if (ledgerError) {
-      log.error("ledger read failed", { error: ledgerError });
-      return json({ error: ledgerError.message }, 500);
+    if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+    if (!isJsonRequest(req.headers)) return json({ error: "content_type_must_be_json" }, 415);
+    let payload: Record<string, unknown>;
+    try {
+      const raw = await readJsonWithLimit(req, MAX_REQUEST_BYTES);
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("invalid_shape");
+      payload = raw as Record<string, unknown>;
+    } catch (error) {
+      if (error instanceof Error && error.message === "request_too_large") return json({ error: "request_too_large" }, 413);
+      return json({ error: "invalid_json" }, 400);
     }
+    if (Object.keys(payload).some((key) => !REQUEST_KEYS.has(key))) return json({ error: "unexpected_field" }, 400);
 
-    const rows = (ledgerData ?? []) as LedgerRow[];
-    if (rows.length === 0) {
-      // A weekly pass that always finds something is a weekly pass inventing
-      // things to justify itself. Nothing to read is one line and a stop.
-      const summary = {
-        week: nowWeek,
-        window,
-        quarterly,
-        users: 0,
-        rows_read: 0,
-        proposed: 0,
-        note: "No reviews were recorded in the last five weeks, so there is nothing to learn from yet.",
-      };
-      log.info("nothing to read", summary);
-      return json(summary);
-    }
+    const captureSecret = Deno.env.get("CAPTURE_WEEK_SECRET") ?? "";
+    const cronSecret = Deno.env.get("CTRL_CRON_SECRET") ?? "";
+    const authorised = hasExactServiceCredential(req.headers.get("Authorization"), [captureSecret]) ||
+      isCronRequest(req.headers.get("X-CTRL-Cron-Secret"), cronSecret);
+    if (!authorised || (captureSecret.length < 32 && cronSecret.length < 32)) return json({ error: "Forbidden" }, 403);
 
-    const byUser = new Map<string, LedgerRow[]>();
-    for (const row of rows) {
-      const bucket = byUser.get(row.user_id);
-      if (bucket) bucket.push(row);
-      else byUser.set(row.user_id, [row]);
-    }
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const expectedRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedRef)) return json({ error: "database_configuration_error" }, 503);
+    if (!serviceKey) return json({ error: "capture_configuration_error" }, 503);
 
-    let proposed = 0;
-    let alreadyOnFile = 0;
+    const captureWeek = typeof payload.capture_week === "string" ? payload.capture_week.trim() : isoWeekOf(new Date());
+    if (!WEEK.test(captureWeek)) return json({ error: "invalid_capture_week" }, 400);
+    const dryRun = payload.dry_run === true;
+    const onlyUser = typeof payload.user_id === "string" ? payload.user_id.trim() : "";
+    if (onlyUser && !UUID.test(onlyUser)) return json({ error: "invalid_user_id" }, 400);
+
+    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } }) as SupabaseClient;
+    let policyQuery = admin
+      .from("capture_policies")
+      .select("user_id, enabled, cadence_days, window_weeks, min_unique_evidence, max_proposals, severity_override, privacy_boundary, retention_days")
+      .eq("enabled", true)
+      .order("user_id")
+      .limit(MAX_POLICY_OWNERS);
+    if (onlyUser) policyQuery = policyQuery.eq("user_id", onlyUser);
+    const { data: policyRows, error: policyError } = await policyQuery;
+    if (policyError) throw new Error(`capture_policy_read_failed:${policyError.code ?? "unknown"}`);
+
+    const outcomes: Array<Record<string, unknown>> = [];
+    let published = 0;
     let errors = 0;
-    const perUser: Array<Record<string, unknown>> = [];
-    const quarterlyReports: QuarterlyReport[] = [];
-
-    for (const [userId, userRows] of byUser) {
+    for (const policy of (policyRows ?? []) as CapturePolicy[]) {
       try {
-        // ---------------------------------------------------------------
-        // Their current rubric. READ ONLY, here and everywhere in this file.
-        // ---------------------------------------------------------------
-        const { data: criteriaData } = await withTimeout(
-          admin
-            .from("criteria")
-            .select("id, user_id, surface, name, weight, disposition, observable")
-            .eq("user_id", userId)
-            .eq("is_current", true),
-          DB_TIMEOUT_MS,
-          "criteria",
-        );
-        const criteriaRows = (criteriaData ?? []) as Array<CriterionRow & { observable: string | null }>;
-        const criteria = criteriaRows.filter((c) => c.disposition !== "retired");
-
-        // Everything already decided on, or waiting to be. Re-proposing a
-        // rejection is arguing, and the reference is explicit that we do not.
-        const { data: existing } = await withTimeout(
-          admin
-            .from("proposals")
-            .select("id, status, evidence")
-            .eq("user_id", userId)
-            .in("status", ["awaiting", "rejected"]),
-          DB_TIMEOUT_MS,
-          "existing proposals",
-        );
-        const alreadyProposed = new Set<string>();
-        for (const p of (existing ?? []) as Array<{ evidence: { key?: unknown } | null }>) {
-          const key = p.evidence?.key;
-          if (typeof key === "string" && key) alreadyProposed.add(key);
-        }
-
-        // ---------------------------------------------------------------
-        // The pass itself. All arithmetic, all in capture-core.
-        // ---------------------------------------------------------------
-        const pass = weeklyPass({
-          rows: userRows,
-          criteria,
-          nowWeek,
-          alreadyProposed,
-        });
-
-        // How many rules this surface already carries, for the size delta.
-        const countBySurface = new Map<string, number>();
-        for (const c of criteria) {
-          countBySurface.set(c.surface, (countBySurface.get(c.surface) ?? 0) + 1);
-        }
-
-        const send = pass.candidates.slice(0, PROPOSALS_PER_USER);
-        const held = pass.candidates.length - send.length;
-        const proposals: ProposalRow[] = send.map((candidate) =>
-          buildProposal(candidate, countBySurface.get(candidate.surface) ?? 0),
-        );
-
-        if (proposals.length > 0 && !dryRun) {
-          const { error: insertError } = await withTimeout(
-            admin.from("proposals").insert(proposals),
-            DB_TIMEOUT_MS,
-            "insert proposals",
-          );
-          if (insertError) {
-            // Logged loudly rather than swallowed: a proposal that silently did
-            // not land is a loop that looks like it is running and is not.
-            errors += 1;
-            log.error("proposal insert failed", { userId, error: insertError, count: proposals.length });
-          } else {
-            proposed += proposals.length;
-          }
-        } else if (proposals.length > 0) {
-          proposed += proposals.length;
-        }
-
-        alreadyOnFile += alreadyProposed.size;
-
-        perUser.push({
-          user_id: userId,
-          rows_read: pass.rowsRead,
-          candidates: pass.candidates.length,
-          proposed: proposals.length,
-          held_for_next_week: held,
-          types: proposals.map((p) => p.type),
-          // Named, not proposed: proposals.type admits three values and a
-          // method correction amends a skill rather than a criterion.
-          method_strikes: pass.methodStrikes.length,
-          trigger_strikes: pass.triggerStrikes.length,
-        });
-
-        if (quarterly) {
-          const report = await runQuarterly(admin, userId, criteriaRows, userRows, nowWeek);
-          if (report) quarterlyReports.push(report);
-        }
-      } catch (e) {
+        const outcome = await captureOwner(admin, policy, captureWeek, dryRun);
+        outcomes.push(outcome);
+        published += Number(outcome.published ?? 0);
+      } catch (error) {
         errors += 1;
-        log.warn("user pass failed", { userId, error: e });
+        const reason = safeError(error);
+        outcomes.push({ owner_id: policy.user_id, status: "failed", error: reason });
+        log.warn("owner capture failed", { owner_id: policy.user_id, error: reason });
       }
     }
 
-    const summary = {
-      week: nowWeek,
-      window,
-      quarterly,
+    return json({
+      capture_week: captureWeek,
       dry_run: dryRun,
-      users: byUser.size,
-      rows_read: rows.length,
-      rows_capped: rows.length >= LEDGER_ROW_CAP,
-      proposed,
-      already_on_file: alreadyOnFile,
+      owners_configured: (policyRows ?? []).length,
+      owners_capped: (policyRows ?? []).length >= MAX_POLICY_OWNERS,
+      published,
       errors,
-      duration_ms: Date.now() - started,
-      per_user: perUser,
-      ...(quarterly ? { quarterly_report: quarterlyReports } : {}),
-    };
-    log.info("weekly pass complete", summary);
-    return json(summary);
-  } catch (e) {
-    log.error("capture failed", { error: e });
-    return json({ error: e instanceof Error ? e.message : "capture failed" }, 500);
+      outcomes,
+      criteria_changed: 0,
+      standards_changed: 0,
+      releases_changed: 0,
+    });
+  } catch (error) {
+    log.error("capture failed", { error: safeError(error) });
+    return json({ error: "capture_week_failed" }, 500);
   }
 });
 
-// ---------------------------------------------------------------------------
-// The quarterly pass
-// ---------------------------------------------------------------------------
-
-/**
- * Re-score the held-out set, report the three numbers, check for decay, list
- * what looks retirable. Mutates nothing.
- *
- * "Report all three separately. Never a single agreement number." Raw agreement
- * is misleading whenever the classes are unbalanced and they always are, and a
- * gate that says holds to everything scores well on agreement and is worthless.
- *
- * The number to watch is the false positive count, because it is the one that
- * predicts whether people keep using the gate. And TRUE NEGATIVE RATE FALLS AS
- * THE GENERATOR IMPROVES, which is the finding that most threatens this whole
- * architecture, so it is compared against the previous quarter every time
- * rather than when somebody complains. If you wait for a complaint, the gate
- * has already lost the room.
- */
-async function runQuarterly(
+async function captureOwner(
   admin: SupabaseClient,
-  userId: string,
-  criteria: Array<CriterionRow & { observable: string | null }>,
-  ledgerRows: readonly LedgerRow[],
-  nowWeek: string,
-): Promise<QuarterlyReport | null> {
-  const retirements = retirementCandidates(criteria, ledgerRows, nowWeek);
+  policy: CapturePolicy,
+  captureWeek: string,
+  dryRun: boolean,
+): Promise<Record<string, unknown>> {
+  const { data: recentRuns, error: recentRunError } = await admin
+    .from("capture_runs")
+    .select("capture_week, created_at")
+    .eq("user_id", policy.user_id)
+    .order("created_at", { ascending: false })
+    .limit(1);
+  if (recentRunError) throw new Error(`capture_cadence_read_failed:${recentRunError.code ?? "unknown"}`);
+  const latest = recentRuns?.[0] as { capture_week?: string; created_at?: string } | undefined;
+  const cadence = captureCadenceDue(
+    latest?.capture_week && latest.created_at
+      ? { captureWeek: latest.capture_week, createdAt: latest.created_at }
+      : null,
+    captureWeek,
+    policy.cadence_days,
+    new Date(),
+  );
+  if (!cadence.due) {
+    return {
+      owner_id: policy.user_id,
+      status: "not_due",
+      reason: cadence.reason,
+      next_due_at: cadence.nextDueAt,
+      published: 0,
+    };
+  }
 
-  const empty = (note: string, runId: string | null = null): QuarterlyReport => ({
-    user_id: userId,
-    sort_run_id: runId,
-    held_out_graded: 0,
-    criteria_scored: 0,
-    criteria_without_a_check: criteria.filter((c) => !c.observable).length,
-    precision: null,
-    recall: null,
-    tnr: null,
-    counts: { tp: 0, fp: 0, fn: 0, tn: 0 },
-    excluded: { skipped: 0, insufficient: 0 },
-    previous_tnr: null,
-    tnr_decayed: false,
-    decay_note: null,
-    retirements,
-    note,
+  const { data, error } = await admin.rpc("current_capture_source_packet", {
+    p_user_id: policy.user_id,
+    p_capture_week: captureWeek,
+    p_window_weeks: policy.window_weeks,
+  });
+  if (error || !data) throw new Error(`capture_source_failed:${error?.code ?? "unknown"}`);
+  const packet = data as SourcePacket;
+  if (!packet.source || !/^[0-9a-f]{64}$/.test(packet.snapshot)) throw new Error("capture_source_packet_invalid");
+  const source = packet.source;
+  if (!source.standard?.id || !source.standard.body_sha256 || source.criteria.length === 0) {
+    return {
+      owner_id: policy.user_id,
+      status: "governance_gap",
+      reason: "An active compiled standard is required before runtime evidence can propose changing it.",
+      published: 0,
+    };
+  }
+
+  const opportunityBySurface = new Map<string, number>();
+  const seenOpportunities = new Set<string>();
+  for (const opportunity of source.opportunities ?? []) {
+    if (!opportunity.surface || seenOpportunities.has(opportunity.run_id)) continue;
+    seenOpportunities.add(opportunity.run_id);
+    opportunityBySurface.set(opportunity.surface, (opportunityBySurface.get(opportunity.surface) ?? 0) + 1);
+  }
+  const awaiting = new Set(
+    (source.proposal_history ?? []).filter((proposal) => proposal.status === "awaiting").map((proposal) => proposal.key),
+  );
+  const pass = weeklyPass({
+    rows: source.ledger ?? [],
+    criteria: source.criteria ?? [],
+    nowWeek: captureWeek,
+    policy: { windowWeeks: policy.window_weeks, minUniqueEvidence: policy.min_unique_evidence },
+    opportunityBySurface,
+    alreadyProposed: awaiting,
   });
 
-  const { data: runData } = await withTimeout(
-    admin
-      .from("harness_runs")
-      .select("id, surface, created_at")
-      .eq("user_id", userId)
-      .eq("kind", "sort")
-      .eq("status", "done")
-      .order("created_at", { ascending: false })
-      .limit(1),
-    DB_TIMEOUT_MS,
-    "sort run",
-  );
-  const run = ((runData ?? []) as Array<{ id: string; surface: string | null }>)[0];
-  if (!run) return empty("No completed sort, so there is no held-out set to re-score.");
+  const countBySurface = new Map<string, number>();
+  for (const criterion of source.criteria) {
+    if (criterion.disposition === "retired") continue;
+    countBySurface.set(criterion.surface, (countBySurface.get(criterion.surface) ?? 0) + 1);
+  }
+  const chosen = pass.candidates.slice(0, policy.max_proposals);
+  const proposals = chosen.map((candidate) => governedProposal(
+    candidate,
+    buildProposal(candidate, countBySurface.get(candidate.surface) ?? 0),
+    source,
+    policy,
+    packet.snapshot,
+  ));
 
-  const { data: itemData } = await withTimeout(
-    admin
-      .from("sort_items")
-      .select("id, surface, body, held_out, repeat_of, sort_grades(verdict)")
-      .eq("session_id", run.id)
-      .eq("held_out", true)
-      .is("repeat_of", null)
-      .limit(QUARTERLY_ITEM_CAP),
-    DB_TIMEOUT_MS,
-    "held-out items",
-  );
-
-  type Item = {
-    id: string;
-    surface: string;
-    body: string;
-    sort_grades: Array<{ verdict: string }> | { verdict: string } | null;
+  const measurement = source.latest_measurement ?? {};
+  const measurementCurrent = measurement.standard_artifact_id === source.standard.id;
+  const summary = {
+    schema: "ctrl.capture.result.v1",
+    snapshot: packet.snapshot,
+    owner_id: policy.user_id,
+    policy: {
+      cadence_days: policy.cadence_days,
+      window_weeks: policy.window_weeks,
+      min_unique_evidence: policy.min_unique_evidence,
+      max_proposals: policy.max_proposals,
+      cadence_reason: cadence.reason,
+      severity_override_used: false,
+    },
+    counts: {
+      ledger_rows: pass.rowsRead,
+      stable_unique_evidence: pass.uniqueEvidenceRead,
+      applicable_review_opportunities: seenOpportunities.size,
+      candidates: pass.candidates.length,
+      selected: proposals.length,
+      held_for_later: Math.max(0, pass.candidates.length - proposals.length),
+      method_candidates: pass.methodStrikes.length,
+      routing_candidates: pass.triggerStrikes.length,
+    },
+    non_candidates: {
+      freshness_unknown_surfaces: pass.freshnessUnknown,
+      reason: pass.freshnessUnknown.length > 0
+        ? "No freshness inference was made where applicable review exposure was below policy."
+        : null,
+    },
+    measurement: {
+      current: measurementCurrent,
+      label: measurementCurrent ? measurement.label ?? null : null,
+      measured_at: measurementCurrent ? measurement.created_at ?? null : null,
+      next: measurementCurrent ? "monitor_comparable_exposure" : "new_untouched_holdout_required",
+      reused_holdout_claimed_fresh: false,
+    },
+    writes: dryRun ? "none_dry_run" : "proposal_packets_only",
   };
-  const items = (itemData ?? []) as Item[];
 
-  const graded = items
-    .map((item) => {
-      const g = Array.isArray(item.sort_grades) ? item.sort_grades[0] : item.sort_grades;
-      return { item, verdict: g?.verdict ?? null };
-    })
-    .filter((row) => row.verdict === "send" || row.verdict === "would_not_send" || row.verdict === "skip");
-
-  const scoreable = graded.filter((row) => row.verdict !== "skip");
-  if (scoreable.length === 0) {
-    return empty("The held-out set carries no grades, so there is nothing to score against.", run.id);
+  if (dryRun) {
+    return { owner_id: policy.user_id, status: "dry_run", candidates: proposals.length, published: 0, summary };
   }
-
-  // The probes that can actually be checked. A criterion with no observable
-  // contributes nothing rather than a guess.
-  const surface = run.surface ?? scoreable[0].item.surface;
-  const probes = criteria.filter((c) => c.surface === surface && !!c.observable);
-
-  const pairs: MeasuredPair[] = [];
-  for (const { item, verdict } of graded) {
-    if (verdict === "skip") {
-      pairs.push({ human: "skip", gate: "insufficient", itemId: item.id });
-      continue;
-    }
-    pairs.push({
-      human: verdict as "send" | "would_not_send",
-      gate: gateVerdictFor(probes, item.body),
-      itemId: item.id,
-    });
+  const { data: published, error: publishError } = await admin.rpc("publish_capture_run", {
+    p_user_id: policy.user_id,
+    p_capture_week: captureWeek,
+    p_source_snapshot: packet.snapshot,
+    p_summary: summary,
+    p_proposals: proposals,
+  });
+  if (publishError || !published) {
+    if (publishError?.message?.includes("source_changed_retry")) throw new Error("source_changed_retry");
+    throw new Error(`capture_publish_failed:${publishError?.code ?? "unknown"}`);
   }
-
-  const matrix = confusionMatrix(pairs);
-  const metrics: Metrics = metricsFrom(matrix);
-
-  // The previous quarter's TNR, from the standard the measurement stage wrote.
-  // Read, never written: this function does not relabel anything.
-  const { data: standardData } = await withTimeout(
-    admin
-      .from("generated_artifacts")
-      .select("metadata, created_at")
-      .eq("user_id", userId)
-      .eq("kind", "standard")
-      .order("created_at", { ascending: false })
-      .limit(1),
-    DB_TIMEOUT_MS,
-    "previous standard",
-  );
-  const meta = ((standardData ?? []) as Array<{ metadata: Record<string, unknown> | null }>)[0]?.metadata ?? null;
-  const storedTnr = meta && typeof meta.tnr === "number" ? meta.tnr : null;
-  const previousTnr = storedTnr !== null && Number.isFinite(storedTnr) ? storedTnr : null;
-  const decayed = metrics.tnr !== null && previousTnr !== null && metrics.tnr < previousTnr;
-
   return {
-    user_id: userId,
-    sort_run_id: run.id,
-    held_out_graded: scoreable.length,
-    criteria_scored: probes.length,
-    criteria_without_a_check: criteria.filter((c) => c.surface === surface && !c.observable).length,
-    precision: metrics.precision,
-    recall: metrics.recall,
-    tnr: metrics.tnr,
-    counts: { tp: matrix.tp, fp: matrix.fp, fn: matrix.fn, tn: matrix.tn },
-    excluded: { skipped: matrix.excluded.skipped, insufficient: matrix.excluded.insufficient },
-    previous_tnr: previousTnr,
-    tnr_decayed: decayed,
-    decay_note: decayed
-      ? "True negative rate is below the last measurement. It falls as the work being produced gets " +
-        "better, so this is the expected direction and the reason recalibration is scheduled rather " +
-        "than waited for."
-      : null,
-    retirements,
-    note: probes.length === 0
-      ? "No rule on this surface has anything checkable attached, so every piece came back " +
-        "unscoreable rather than passing quietly."
-      : null,
+    owner_id: policy.user_id,
+    status: "ready",
+    run_id: published.run_id,
+    idempotent: published.idempotent === true,
+    published: Number(published.inserted ?? 0),
+    deduplicated: Number(published.skipped ?? 0),
+    summary,
   };
 }
 
-/**
- * One item through the current rubric, deterministically.
- *
- *   breaks       -> at least one checkable rule does not hold on this piece
- *   holds        -> at least one rule could be checked and none of them broke
- *   insufficient -> nothing on this surface could be checked at all
- *
- * The third is never silently a 'holds'. A check that could not run has not
- * agreed with anybody, and counting it as agreement is how a gate ends up
- * claiming a true negative rate it never earned.
- */
-function gateVerdictFor(
-  probes: Array<{ observable: string | null }>,
-  body: string,
-): GateVerdict {
-  let applied = 0;
-  let broke = false;
-  for (const probe of probes) {
-    const holds = tryApplyProbe(probe.observable, body ?? "");
-    if (holds === null) continue;
-    applied += 1;
-    if (!holds) broke = true;
-  }
-  if (applied === 0) return "insufficient";
-  return broke ? "breaks" : "holds";
+function governedProposal(
+  candidate: Candidate,
+  proposal: ProposalRow,
+  source: CaptureSource,
+  policy: CapturePolicy,
+  snapshot: string,
+): PublishedProposal {
+  const evidence = proposal.evidence as Record<string, unknown>;
+  const explanations = candidate.type === "false_positive"
+    ? ["criterion_scope", "criterion_wording", "reviewer_implementation", "stale_release", "unusual_artifact"]
+    : candidate.type === "uncovered"
+    ? ["genuinely_missing_standard", "one_surface_exception", "reviewer_omission", "insufficient_grading"]
+    : ["preventative_rule_working", "work_mix_changed", "rule_not_applied", "problem_resolved", "insufficient_exposure"];
+  return {
+    type: proposal.type,
+    surface: proposal.surface,
+    headline: proposal.headline,
+    delta_text: proposal.delta_text,
+    if_wrong: proposal.if_wrong,
+    size_delta: proposal.size_delta,
+    evidence,
+    proposal_key: candidate.key,
+    governance: {
+      snapshot: { schema: source.schema, sha256: snapshot, evidence_ids: evidence.source_ids ?? [] },
+      owner: { id: source.owner_id, decision_rights: "named_standard_owner" },
+      policy: {
+        cadence_days: policy.cadence_days,
+        window_weeks: policy.window_weeks,
+        minimum_unique_evidence: policy.min_unique_evidence,
+        severity_override: policy.severity_override,
+      },
+      standard: {
+        artifact_id: source.standard.id,
+        sha256: source.standard.body_sha256,
+        criteria_version: source.standard.metadata?.criteria_version ?? null,
+      },
+      current_source: candidate.type === "uncovered"
+        ? { exact_clause: null, status: "not_present" }
+        : { criterion_id: candidate.criterionId, criterion_name: candidate.criterionName },
+      alternative_explanations: explanations,
+      expected_effect: candidate.type === "false_positive"
+        ? "Comparable owner-rejected flags decline without new false negatives."
+        : candidate.type === "uncovered"
+        ? "The repeated need becomes testable without broadening beyond the evidenced surface."
+        : "The owner distinguishes preventative value, implementation failure and genuine retirement.",
+      validation: {
+        focused_cases: evidence.source_ids ?? [],
+        full_regression_required: true,
+        fresh_independent_check_required: true,
+        release_parity_required: true,
+      },
+      size_context: evidence.size ?? {},
+      privacy: {
+        boundary: policy.privacy_boundary,
+        retention_days: policy.retention_days,
+        durable_quotes_copied: false,
+      },
+      dependencies: ["ctrl-compile", "ctrl-build", "fresh-ctrl-check", "harness-maintainer"],
+      rollback: {
+        prior_known_good: source.standard.id,
+        prior_sha256: source.standard.body_sha256,
+        automatic: false,
+      },
+      measurement_plan: {
+        compare_under_equivalent_exposure: true,
+        track: ["false_positives", "false_negatives", "recurrence", "routing_misses"],
+        fresh_holdout_for_new_unbiased_claim: true,
+        reused_holdout_is_regression_only: true,
+      },
+    },
+  };
 }
 
-/**
- * Criteria that have not come up in the window, with the last week they did.
- *
- * Listed and asked about. NOTHING IS RETIRED HERE. A criterion that stopped
- * firing might be the one thing preventing a failure nobody has seen recently,
- * which is what success looks like, and the owner is the only one who can tell
- * those two apart.
- */
-function retirementCandidates(
-  criteria: readonly CriterionRow[],
-  rows: readonly LedgerRow[],
-  nowWeek: string,
-): Array<{ criterion: string; surface: string; last_seen_week: string | null }> {
-  const window = new Set(windowWeeks(nowWeek, STRIKE_WINDOW_WEEKS));
-  const seenInWindow = new Set<string>();
-  const lastSeen = new Map<string, string>();
-
-  for (const row of rows) {
-    if (row.signal !== "output") continue;
-    const key = `${row.surface}:${row.criterion_name}`;
-    const prior = lastSeen.get(key);
-    if (!prior || (weekIndex(row.week) ?? 0) > (weekIndex(prior) ?? 0)) lastSeen.set(key, row.week);
-    if (window.has(row.week)) seenInWindow.add(key);
-  }
-
-  return criteria
-    .filter((c) => c.disposition !== "retired" && !seenInWindow.has(`${c.surface}:${c.name}`))
-    .map((c) => ({
-      criterion: c.name,
-      surface: c.surface,
-      last_seen_week: lastSeen.get(`${c.surface}:${c.name}`) ?? null,
-    }));
+function safeError(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error ?? "capture_failed");
+  return message.replace(/[\r\n\t]+/g, " ").slice(0, 180);
 }

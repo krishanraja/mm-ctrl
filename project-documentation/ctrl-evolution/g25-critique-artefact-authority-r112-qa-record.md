@@ -7,7 +7,7 @@
 - Migration SHA-256: `74f32d0fa37ff836bc6573df1e02b846edee7097dd1a6a0a6973ea4b242fb987`
 - Hosted probe SHA-256: `00509da64c061e1125a3c38402972c7ca0a15ff569bbbc66deb6fca3898cc174`
 - Review client SHA-256: `8e1e4971ac350e1cf90fcc388888a2f24371230841470e3627fcce1a45b8f9da`
-- Containment manifest SHA-256: `caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea`
+- Containment manifest SHA-256: `34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82`
 - Hosted bundle SHA-256: `7bb20ed9ae445d2f122b252a1988dc6e81f7a548394b36ddc0ddcb3f43c3e4dd`
 
 ## Deterministic verification

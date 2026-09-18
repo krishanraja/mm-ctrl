@@ -13,7 +13,7 @@
 - Retired semantics migration SHA-256: `ba101107e3d05755a60145e6618887811e68839e7f1c239dfd385a938fb34783`
 - Hosted probe SHA-256: `4bc5f72573655bf7a6e3d39ccf38c4f223cce20dca33354218127773e992c989`
 - Target-neutral database runner SHA-256: `fce2450afa90970550006d7f870629bf5b8dc3b9a8e2eb31c6952bec0bb33588`
-- Containment manifest SHA-256: `caf2c5634e37e3321a8d9ea4661ede331ad53479aa4c5abf00ee5d05f9dc0bea`
+- Containment manifest SHA-256: `34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82`
 - Function config SHA-256: `d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce`
 - Hosted bundle SHA-256: `5c011c419296dd1125a97de470724148e5cb8ef83bd8465748496da56a9f0e44`
 - Hosted version: 1, active, JWT verification enabled
