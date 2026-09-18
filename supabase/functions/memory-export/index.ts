@@ -1,18 +1,45 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildMemoryContext } from "../_shared/memory-context-builder.ts";
+import { getResponseHeaders } from "../_shared/security-headers.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const formats = new Set(["markdown", "chatgpt", "claude", "gemini", "cursor", "claude-code"]);
+const useCases = new Set([
+  "general", "meeting", "decision", "code", "email", "strategy", "delegation", "board", "edge",
+  "writing_persona", "strength_framework", "delegation_playbook", "strategic_advisor", "decision_journal",
+]);
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: getResponseHeaders(),
+    });
+  }
+  if (!isJsonRequest(req.headers)) {
+    return new Response(JSON.stringify({ error: "JSON required" }), {
+      status: 415,
+      headers: getResponseHeaders(),
+    });
+  }
+
   try {
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: getResponseHeaders(),
+      });
+    }
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
@@ -27,23 +54,44 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body = await req.json().catch(() => ({}));
+    const body = await readJsonWithLimit(req, 8_192).catch((error) => {
+      if ((error as Error).message === "request_too_large") throw error;
+      return {};
+    }) as Record<string, unknown>;
     const { format = "markdown", useCase = "general", maxTokens = 4000 } = body;
+    if (typeof format !== "string" || !formats.has(format)) {
+      return new Response(JSON.stringify({ error: "Unsupported export format" }), {
+        status: 400,
+        headers: getResponseHeaders(),
+      });
+    }
+    if (typeof useCase !== "string" || !useCases.has(useCase)) {
+      return new Response(JSON.stringify({ error: "Unsupported use case" }), {
+        status: 400,
+        headers: getResponseHeaders(),
+      });
+    }
+    if (!Number.isInteger(maxTokens) || Number(maxTokens) < 500 || Number(maxTokens) > 12_000) {
+      return new Response(JSON.stringify({ error: "maxTokens must be between 500 and 12000" }), {
+        status: 400,
+        headers: getResponseHeaders(),
+      });
+    }
 
     const result = await buildMemoryContext(supabase, user.id, {
       includeWarm: true,
-      format,
-      useCase,
-      maxTokens,
+      format: format as "markdown" | "chatgpt" | "claude" | "gemini" | "cursor" | "claude-code",
+      useCase: useCase as "general" | "meeting" | "decision" | "code" | "email" | "strategy" | "delegation" | "board" | "edge" | "writing_persona" | "strength_framework" | "delegation_playbook" | "strategic_advisor" | "decision_journal",
+      maxTokens: Number(maxTokens),
     });
 
-    // Fire-and-forget reliance signal on the facts that shipped into the
-    // context. Never awaited; user-JWT client is fenced by auth.uid().
+    // Reliance is part of the export receipt, so wait for it rather than
+    // hoping a fire-and-forget request survives function shutdown.
     {
       const touchIds = result.touchedFactIds ?? [];
       if (touchIds.length) {
-        void supabase.rpc("touch_memory_facts", { p_fact_ids: touchIds })
-          .then(({ error }) => { if (error) console.warn("touch failed:", error.message); });
+        const { error } = await supabase.rpc("touch_memory_facts", { p_fact_ids: touchIds });
+        if (error) console.warn("touch failed:", error.message);
       }
     }
 
@@ -58,15 +106,21 @@ Deno.serve(async (req) => {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: getResponseHeaders(),
       },
     );
   } catch (err) {
+    if ((err as Error).message === "request_too_large") {
+      return new Response(JSON.stringify({ error: "Request is too large" }), {
+        status: 413,
+        headers: getResponseHeaders(),
+      });
+    }
     return new Response(
       JSON.stringify({ error: (err as Error).message }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: getResponseHeaders(),
       },
     );
   }

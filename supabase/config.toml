@@ -5,7 +5,7 @@ project_id = "bkyuxvschuwngtcdhsyg"
 verify_jwt = false
 
 [functions.prompt-coach]
-verify_jwt = false
+verify_jwt = true
 
 # === AUTHENTICATED FUNCTIONS (require JWT) ===
 # Payment functions - MUST require authentication
@@ -39,6 +39,12 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.populate-index-participant]
+verify_jwt = true
+
+[functions.brain-portable-export]
+verify_jwt = true
+
+[functions.brain-portable-import]
 verify_jwt = true
 
 # === PUBLIC FUNCTIONS (webhooks, cron, email confirmations) ===
@@ -239,4 +245,153 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.infer-briefing-interests]
+verify_jwt = true
+
+# === RECOVERY POSTURE LOCK (R99) ===
+# These routes existed locally and in production but previously relied on an
+# implicit gateway default. The values below preserve the observed production
+# posture for deterministic recovery. They are not a security approval. Every
+# route still requires its own handler and adversarial authentication proof.
+[functions.aa-assessment-enrich]
+verify_jwt = true
+
+[functions.aa-model-recommend]
+verify_jwt = true
+
+[functions.briefing-aggregate-feedback]
+verify_jwt = true
+
+[functions.briefing-diagnose]
+verify_jwt = true
+
+[functions.briefing-kill-lens-item]
+verify_jwt = true
+
+[functions.build-sort]
+verify_jwt = true
+
+[functions.compile-standard]
+verify_jwt = true
+
+[functions.compute-drift]
+verify_jwt = true
+
+[functions.create-billing-portal-session]
+verify_jwt = true
+
+[functions.create-edge-subscription]
+verify_jwt = true
+
+[functions.create-stripe-prices]
+verify_jwt = true
+
+[functions.critique-artefact]
+verify_jwt = true
+
+[functions.decision-engine]
+verify_jwt = true
+
+[functions.deliver-edge-artifact]
+verify_jwt = true
+
+[functions.detect-patterns]
+verify_jwt = true
+
+[functions.edge-generate]
+verify_jwt = true
+
+[functions.extract-user-context]
+verify_jwt = true
+
+[functions.extract-voice-profile]
+verify_jwt = true
+
+[functions.free-skill-export]
+verify_jwt = true
+
+[functions.generate-custom-export]
+verify_jwt = true
+
+[functions.generate-skill-export]
+verify_jwt = true
+
+[functions.generate-team-instructions]
+verify_jwt = true
+
+[functions.generate-weekly-prescription]
+verify_jwt = true
+
+[functions.get-daily-prompt]
+verify_jwt = true
+
+[functions.get-industry-seeds]
+verify_jwt = true
+
+[functions.get-or-generate-weekly-action]
+verify_jwt = true
+
+[functions.get-peer-snippets]
+verify_jwt = true
+
+[functions.grade-sort]
+verify_jwt = true
+
+[functions.ingest-brain]
+verify_jwt = true
+
+[functions.ingest-evidence]
+verify_jwt = true
+
+[functions.ingest-training-material]
+verify_jwt = true
+
+[functions.mcp-context]
+verify_jwt = true
+
+[functions.memory-crud]
+verify_jwt = true
+
+[functions.memory-export]
+verify_jwt = true
+
+[functions.memory-settings]
+verify_jwt = true
+
+[functions.nudge-briefing]
+verify_jwt = false
+
+[functions.onboarding-interview]
+verify_jwt = true
+
+[functions.operator-decision-advisor]
+verify_jwt = true
+
+[functions.resolve-handoff]
+verify_jwt = true
+
+[functions.send-edge-test-email]
+verify_jwt = true
+
+[functions.send-weekly-checkin-reminder]
+verify_jwt = true
+
+[functions.submit-decision-capture]
+verify_jwt = true
+
+[functions.submit-reflection]
+verify_jwt = true
+
+[functions.submit-weekly-checkin]
+verify_jwt = true
+
+[functions.synthesize-edge-profile]
+verify_jwt = true
+
+[functions.upsert-notification-prefs]
+verify_jwt = true
+
+[functions.upsert-sharing-consent]
+verify_jwt = true
+
+[functions.verify-edge-subscription]
 verify_jwt = true

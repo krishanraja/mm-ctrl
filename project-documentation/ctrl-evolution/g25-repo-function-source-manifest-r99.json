@@ -1,0 +1,150 @@
+{
+  "schema_version": "ctrl.g25.repo-function-source-manifest.r99.v1",
+  "contract_id": "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+  "status": "repo_function_source_and_gateway_posture_complete_route_proof_open",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-RECOVERY-NON-SCHEMA-MANIFEST-R79",
+    "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80",
+    "G25-SECOND-CLEAN-REPLAY-R98"
+  ],
+  "inspector": {
+    "path": "scripts/inspect-ctrl-g25-repo-function-manifest-r99.mjs",
+    "sha256": "fc1e9f7e3d74d94f8885d6955744c949d1e56a6795e68772acca7f2c3585d504",
+    "raw_source_emitted_by_default": false,
+    "manifest_sha256": "2451ec8a4ea0cda1bbbd3d7901bf7aa2bf15c6fa7f248c78d344fae098c3af85"
+  },
+  "source": {
+    "functions_root": "supabase/functions",
+    "local_function_count": 117,
+    "entrypoint_count": 117,
+    "shared_file_count": 183,
+    "shared_source_bytes": 1609105,
+    "shared_source_sha256": "7b82383e6ccb55932af6a306a03991014f8a41b6fc96c1d5ba3d1d3af113c5ad",
+    "per_function_source_digest_count": 117,
+    "configured_without_local_source_count": 0,
+    "shared_tree_bound_into_every_function": true
+  },
+  "gateway_posture": {
+    "config_path": "supabase/config.toml",
+    "config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f",
+    "explicit_verify_jwt_true": 83,
+    "explicit_verify_jwt_false": 34,
+    "verify_jwt_unspecified": 0,
+    "shared_production_functions_compared": 115,
+    "explicit_posture_mismatches": 1,
+    "intentional_security_overrides": [
+      "prompt-coach:false_to_true"
+    ],
+    "previously_implicit_postures_frozen": 48,
+    "previously_implicit_true": 47,
+    "previously_implicit_false": 1,
+    "previously_implicit_false_slug": "nudge-briefing",
+    "boundary": "The configuration preserves observed production gateway posture except for the fail-closed prompt-coach hardening. This is not evidence that any route is safely authenticated."
+  },
+  "production_metadata": {
+    "query_mode": "read_only_function_metadata",
+    "live_active": 183,
+    "live_verify_jwt_true": 117,
+    "live_verify_jwt_false": 66,
+    "shared_live_and_local": 115,
+    "repo_only": 2,
+    "live_only": 68,
+    "metadata_digest_fields": [
+      "slug",
+      "verify_jwt",
+      "version",
+      "entrypoint_path",
+      "import_map"
+    ],
+    "metadata_sha256": "430d9cac2b410f9ab22ef15c169e09bac207d9fad896dc52193420a2d87b1ba9"
+  },
+  "static_markers": {
+    "functions_with_service_role_marker": 54,
+    "functions_with_explicit_get_user_marker": 58,
+    "unique_environment_symbol_count": 45,
+    "environment_symbol_values_retrieved": false,
+    "environment_symbols": [
+      "ANTHROPIC_API_KEY",
+      "ARTIFICIALANALYSIS_API_KEY",
+      "BRAVE_SEARCH_API",
+      "BRIEFING_INCLUDE_DECISION_ALERTS",
+      "BRIEFING_PROFILE_GATE_ENABLED",
+      "BRIEFING_SOURCE_SHARED_POOL",
+      "BRIEFING_USE_BRAIN_PROFILE",
+      "BRIEFING_V2_ENABLED_DEFAULT",
+      "BUILTWITH_API_KEY",
+      "CAPTURE_WEBHOOK_URL",
+      "CAPTURE_WEEK_SECRET",
+      "COMPILE_STANDARD_RPC_SECRET",
+      "CONTROL_CENTER_PUBLISHABLE_KEY",
+      "CONTROL_CENTER_SERVICE_ROLE_KEY",
+      "CONTROL_CENTER_URL",
+      "CRITIQUE_ARTEFACT_RPC_SECRET",
+      "CTRL_CRON_SECRET",
+      "DECISION_WATCH_SECRET",
+      "DENO_DEPLOYMENT_ID",
+      "DIAGNOSTIC_EMAIL_TOKEN",
+      "EXA_API_KEY",
+      "EXPECTED_SUPABASE_PROJECT_REF",
+      "GEMINI_API_KEY",
+      "GENERATE_SKILL_EXPORT_RPC_SECRET",
+      "GOOGLE_AI_API_KEY",
+      "HOME_PERSONALIZATION_ENABLED",
+      "HOME_PROFILE_GATE_ENABLED",
+      "MEMORY_SWEEP_SECRET",
+      "NEWSAPI_API_KEY",
+      "NEWSAPI_KEY",
+      "OPENAI_API_KEY",
+      "PDL_API_KEY",
+      "PERPLEXITY_API_KEY",
+      "PUBLIC_SITE_URL",
+      "RESEND_API_KEY",
+      "SEND_CONFIRMATION_EMAIL_HOOK_SECRET",
+      "STRIPE_EDGE_PRO_PRICE_ID",
+      "STRIPE_SECRET_KEY",
+      "STRIPE_WEBHOOK_SECRET",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "SUPABASE_URL",
+      "TAVILY_API_KEY",
+      "VIDEO_STUDIO_EXPORT_TOKEN",
+      "XAI_API_KEY"
+    ],
+    "boundary": "Static symbol names and markers are dependency evidence only. They do not prove value availability, correct authorization or safe route behavior."
+  },
+  "open_work": {
+    "repo_backed_route_authentication_proofs_required": 117,
+    "jwt_disabled_repo_routes_requiring_route_specific_review": 34,
+    "live_only_functions_without_repo_source": 68,
+    "live_only_disposition": "preserve_until_source_caller_authentication_and_replacement_or_retirement_evidence_is_complete",
+    "isolated_deployment_ready": false,
+    "reason": "Gateway posture and source identity are now reproducible, but route-specific authentication, environment-value authority, callers and live-only source disposition remain unproved."
+  },
+  "acceptance_gate": {
+    "all_repo_function_sources_fingerprinted": true,
+    "all_repo_function_entrypoints_present": true,
+    "all_repo_gateway_postures_explicit": true,
+    "shared_production_gateway_postures_match": false,
+    "shared_production_gateway_postures_accounted_for": true,
+    "environment_symbol_names_inventoried": true,
+    "environment_values_ready": false,
+    "route_authentication_proved": false,
+    "live_only_source_recovered": false,
+    "edge_function_restoration_ready": false
+  },
+  "authority": {
+    "production_queries": "read_only_function_metadata",
+    "production_writes": 0,
+    "raw_live_source_retrieved": false,
+    "secret_values_retrieved": false,
+    "isolated_functions_deployed": 0,
+    "production_functions_deployed": 0,
+    "forbids": [
+      "treating static markers as authentication proof",
+      "copying live-only source without review",
+      "retrieving or persisting secret values",
+      "function deployment, production mutation, merge, cutover, release or retirement"
+    ]
+  }
+}

@@ -14,13 +14,13 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { forwardToWarehouse, attrFromStripeMetadata } from "../_shared/attribution-emit.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import { readTextWithLimit } from "../_shared/public-request-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
-
-const EXPECTED_PROJECT_ID = 'bkyuxvschuwngtcdhsyg';
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -52,7 +52,7 @@ serve(async (req) => {
     });
 
     // Get the raw body for signature verification
-    const body = await req.text();
+    const body = await readTextWithLimit(req, 262_144);
     const signature = req.headers.get("stripe-signature");
 
     if (!signature) {
@@ -84,9 +84,10 @@ serve(async (req) => {
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
 
-    if (!supabaseUrl || !supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      throw new Error(`Database validation failed: SUPABASE_URL does not match expected project ID (${EXPECTED_PROJECT_ID})`);
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+      throw new Error("Database validation failed: SUPABASE_URL does not match the configured project reference");
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -105,9 +106,13 @@ serve(async (req) => {
       .maybeSingle();
 
     if (idempotencyError && idempotencyError.code !== "23505") {
-      // Non-conflict error: log but don't block processing - failing closed
-      // here would mean Stripe retries indefinitely on a transient DB blip.
-      console.warn(`⚠️ Idempotency log insert failed (non-conflict): ${idempotencyError.message}`);
+      // Do not grant access unless the durable replay guard was written.
+      // A 503 lets Stripe retry after a transient database failure.
+      console.error(`Idempotency log insert failed: ${idempotencyError.message}`);
+      return new Response(
+        JSON.stringify({ error: "idempotency_authority_unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     } else if (!insertedEvent) {
       // Conflict (duplicate event.id): already processed.
       console.log(`↩️ Stripe event ${event.id} already processed; returning 200 no-op.`);
@@ -379,7 +384,6 @@ async function handleEdgeSubscriptionDeleted(supabase: SupabaseClient, subscript
 
   console.log(`✅ Edge subscription canceled for user: ${userId}`);
 }
-
 
 
 

@@ -1,225 +1,112 @@
-/**
- * Memory Settings Edge Function
- * 
- * Handles user privacy and retention settings for memory.
- * Routes:
- * - GET / - Get user's memory settings
- * - PUT / - Update memory settings
- * - POST /clear-cache - Clear client-side cache instruction
- */
-
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getResponseHeaders } from "../_shared/security-headers.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface MemorySettings {
-  id: string;
-  user_id: string;
-  store_memory_enabled: boolean;
-  store_voice_transcripts: boolean;
-  auto_summarize_enabled: boolean;
-  retention_days: number | null;
-  created_at: string;
-  updated_at: string;
+const defaultSettings = Object.freeze({
+  store_memory_enabled: true,
+  store_voice_transcripts: true,
+  auto_summarize_enabled: true,
+  retention_days: null,
+});
+const settingKeys = new Set(Object.keys(defaultSettings));
+const cacheKeys = Object.freeze([
+  "mindmaker-memory-draft",
+  "mindmaker-memory-cache",
+  "mindmaker-offline-memories",
+]);
+
+function response(payload: unknown, status = 200): Response {
+  return new Response(JSON.stringify(payload), { status, headers: getResponseHeaders() });
 }
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+function publicSettings(row: Record<string, unknown> | null): Record<string, unknown> {
+  if (!row) return { ...defaultSettings, persisted: false };
+  return {
+    store_memory_enabled: row.store_memory_enabled,
+    store_voice_transcripts: row.store_voice_transcripts,
+    auto_summarize_enabled: row.auto_summarize_enabled,
+    retention_days: row.retention_days,
+    updated_at: row.updated_at,
+    persisted: true,
+  };
+}
+
+function validateSettings(value: unknown): Record<string, boolean | number | null> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("settings_invalid");
+  const body = value as Record<string, unknown>;
+  const keys = Object.keys(body);
+  if (!keys.length || keys.some((key) => !settingKeys.has(key))) throw new Error("settings_keys_invalid");
+
+  const updates: Record<string, boolean | number | null> = {};
+  for (const key of ["store_memory_enabled", "store_voice_transcripts", "auto_summarize_enabled"]) {
+    if (key in body) {
+      if (typeof body[key] !== "boolean") throw new Error(`${key}_invalid`);
+      updates[key] = body[key] as boolean;
+    }
   }
+  if ("retention_days" in body) {
+    if (body.retention_days !== null && body.retention_days !== 30 && body.retention_days !== 90) {
+      throw new Error("retention_days_invalid");
+    }
+    updates.retention_days = body.retention_days as number | null;
+  }
+  return updates;
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
+  if (!["GET", "PUT", "POST"].includes(req.method)) return response({ error: "Method not allowed" }, 405);
 
   try {
-    const url = new URL(req.url);
-    const action = url.pathname.split('/').filter(Boolean)[0] || '';
-
-    // Initialize Supabase clients
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-
-    // Auth client to get user
-    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: { Authorization: req.headers.get('Authorization') ?? '' },
-      },
-      auth: { persistSession: false },
-    });
-
-    const { data: userData, error: authError } = await supabaseAuth.auth.getUser();
-    
-    if (authError || !userData?.user) {
-      return new Response(
-        JSON.stringify({ error: 'Authentication required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const userId = userData.user.id;
-
-    // Service role client for database operations
-    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { persistSession: false },
-    });
-
-    // Handle clear-cache action
-    if (action === 'clear-cache') {
-      if (req.method !== 'POST') {
-        return new Response(
-          JSON.stringify({ error: 'Method not allowed' }),
-          { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      // Return instruction for client to clear local storage
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          action: 'clear_local_storage',
-          keys_to_clear: [
-            'mindmaker-memory-draft',
-            'mindmaker-memory-cache',
-            'mindmaker-offline-memories',
-          ],
-          message: 'Clear the specified localStorage keys to remove cached memory data'
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // GET - Retrieve settings
-    if (req.method === 'GET') {
-      // Get or create settings
-      const { data: settings, error: getError } = await supabase
-        .rpc('get_or_create_memory_settings', { p_user_id: userId });
-
-      if (getError) {
-        console.error('Get settings error:', getError);
-        
-        // Fallback: try direct query
-        const { data: directSettings, error: directError } = await supabase
-          .from('user_memory_settings')
-          .select('*')
-          .eq('user_id', userId)
-          .single();
-
-        if (directError && directError.code !== 'PGRST116') {
-          return new Response(
-            JSON.stringify({ error: 'Failed to get settings' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        // Create default settings if not found
-        if (!directSettings) {
-          const { data: newSettings, error: createError } = await supabase
-            .from('user_memory_settings')
-            .insert({ user_id: userId })
-            .select()
-            .single();
-
-          if (createError) {
-            return new Response(
-              JSON.stringify({ error: 'Failed to create settings' }),
-              { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-          }
-
-          return new Response(
-            JSON.stringify({ success: true, settings: newSettings }),
-            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        return new Response(
-          JSON.stringify({ success: true, settings: directSettings }),
-          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, settings }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // PUT - Update settings
-    if (req.method === 'PUT') {
-      const body = await req.json();
-      const { 
-        store_memory_enabled, 
-        store_voice_transcripts, 
-        auto_summarize_enabled, 
-        retention_days 
-      } = body;
-
-      // Validate retention_days
-      if (retention_days !== undefined && retention_days !== null && ![30, 90].includes(retention_days)) {
-        return new Response(
-          JSON.stringify({ error: 'retention_days must be null, 30, or 90' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const updates: Partial<MemorySettings> = {};
-      if (store_memory_enabled !== undefined) updates.store_memory_enabled = store_memory_enabled;
-      if (store_voice_transcripts !== undefined) updates.store_voice_transcripts = store_voice_transcripts;
-      if (auto_summarize_enabled !== undefined) updates.auto_summarize_enabled = auto_summarize_enabled;
-      if (retention_days !== undefined) updates.retention_days = retention_days;
-
-      // Upsert settings
-      const { data: existing } = await supabase
-        .from('user_memory_settings')
-        .select('id')
-        .eq('user_id', userId)
-        .single();
-
-      let result;
-      if (existing) {
-        result = await supabase
-          .from('user_memory_settings')
-          .update(updates)
-          .eq('user_id', userId)
-          .select()
-          .single();
-      } else {
-        result = await supabase
-          .from('user_memory_settings')
-          .insert({ user_id: userId, ...updates })
-          .select()
-          .single();
-      }
-
-      if (result.error) {
-        console.error('Update settings error:', result.error);
-        return new Response(
-          JSON.stringify({ error: 'Failed to update settings' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      // Log settings change (not sensitive data)
-      console.log(`Memory settings updated for user ${userId}: retention_days=${retention_days}`);
-
-      return new Response(
-        JSON.stringify({ success: true, settings: result.data }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) return response({ error: "Authentication required" }, 401);
+    const client = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } },
     );
+    const { data: { user }, error: authError } = await client.auth.getUser();
+    if (authError || !user) return response({ error: "Authentication required" }, 401);
 
+    if (req.method === "GET") {
+      const { data, error } = await client
+        .from("user_memory_settings")
+        .select("store_memory_enabled, store_voice_transcripts, auto_summarize_enabled, retention_days, updated_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (error) throw new Error(`memory_settings_read_failed:${error.code ?? "unknown"}`);
+      return response({ settings: publicSettings(data) });
+    }
+
+    if (!isJsonRequest(req.headers)) return response({ error: "JSON required" }, 415);
+    const body = await readJsonWithLimit(req, 4_096);
+
+    if (req.method === "POST") {
+      if (!body || typeof body !== "object" || Array.isArray(body) ||
+          JSON.stringify(Object.keys(body).sort()) !== JSON.stringify(["action"]) ||
+          (body as { action?: unknown }).action !== "clear_local_cache") {
+        return response({ error: "Unsupported action" }, 400);
+      }
+      return response({ action: "clear_local_storage", keys_to_clear: cacheKeys });
+    }
+
+    const updates = validateSettings(body);
+    const { data, error } = await client
+      .from("user_memory_settings")
+      .upsert({ user_id: user.id, ...updates }, { onConflict: "user_id" })
+      .select("store_memory_enabled, store_voice_transcripts, auto_summarize_enabled, retention_days, updated_at")
+      .single();
+    if (error || !data) throw new Error(`memory_settings_write_failed:${error?.code ?? "unknown"}`);
+    return response({ settings: publicSettings(data) });
   } catch (error) {
-    console.error('Unexpected error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    const message = error instanceof Error ? error.message : "Memory settings failed";
+    if (message === "request_too_large") return response({ error: "Request is too large" }, 413);
+    if (message.endsWith("_invalid")) return response({ error: message }, 400);
+    return response({ error: "Memory settings unavailable" }, 500);
   }
 });

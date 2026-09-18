@@ -1,0 +1,259 @@
+{
+  "schema_version": "ctrl.g25.second-clean-replay.r98.v1",
+  "contract_id": "G25-SECOND-CLEAN-REPLAY-R98",
+  "status": "second_clean_replay_passed_full_non_schema_incomplete",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECOND-BLANK-REPLAY-PACKET-R97",
+    "G25-HTTP-RPC-TRANSPORT-PROOF-R93",
+    "G25-EXTENSION-RUNTIME-COMPATIBILITY-R94",
+    "G25-CRITICAL-APPLICATION-SMOKE-R95",
+    "G25-NON-SCHEMA-RESTORATION-GATE-R96"
+  ],
+  "target": {
+    "project_id": "cgkcplcamsijghalintq",
+    "project_name_before_reuse": "legibility",
+    "project_url": "https://cgkcplcamsijghalintq.supabase.co",
+    "production_project_id": "bkyuxvschuwngtcdhsyg",
+    "first_rehearsal_project_id": "jnablbnztutbmnjvtioy",
+    "separate_from_production": true,
+    "founder_authorized_destructive_reuse": true,
+    "new_paid_project_created": false,
+    "additional_project_monthly_cost": 0
+  },
+  "retired_project_cleanup": {
+    "path": "supabase/candidates/g25_legibility_project_cleanup_r98.sql",
+    "sha256": "9cb3bdfd4118ce031570ffc3b9f447b83fa4d6e1284e47f6d599ba6a0a15df19",
+    "before": {
+      "public_application_tables": 20,
+      "public_views": 2,
+      "public_sequences": 2,
+      "public_routines": 11,
+      "auth_users": 4,
+      "cron_jobs": 2,
+      "migration_records": 12,
+      "storage_buckets": 0,
+      "storage_objects": 0,
+      "edge_functions": 0,
+      "vault_secrets": 0,
+      "realtime_application_members": 0
+    },
+    "blank_state_verified": {
+      "public_application_objects": 0,
+      "auth_users": 0,
+      "auth_identities": 0,
+      "auth_sessions": 0,
+      "auth_refresh_tokens": 0,
+      "cron_jobs": 0,
+      "cron_job_run_rows": 0,
+      "storage_buckets": 0,
+      "storage_objects": 0,
+      "vault_secrets": 0,
+      "realtime_application_members": 0
+    },
+    "recoverability": "The removed retired-project state is not recoverable through this repository. Any recovery depends on provider backups that existed before cleanup."
+  },
+  "replay": {
+    "required_clean_replays": 2,
+    "completed_clean_replays": 2,
+    "second_replay_executed": true,
+    "second_replay_passed": true,
+    "r97_order_preserved": true,
+    "additional_stage": {
+      "id": "platform_acl_normalization",
+      "position": "after_application_schema_baseline_before_security_hardening",
+      "path": "supabase/candidates/g25_second_replay_platform_acl_normalization_r98.sql",
+      "sha256": "38e252712cb92c28a50b018dc1df152fb04bbda53df982935d1ae18d5d8b7d29",
+      "effect": "Restored the standard PUBLIC USAGE grant on schema public while preserving application-owned routine privileges and leaving extension-owned routine ACLs to the platform."
+    },
+    "final_verification": {
+      "path": "supabase/candidates/g25_second_replay_final_verification_r97.sql",
+      "sha256": "4c6cdbf768c3705768414c485582df5765eecbb87ba5f7a8bd9d8e948d2f8b63",
+      "extensions": "8_of_8",
+      "hardened_functions": "7_of_7",
+      "storage_buckets": 5,
+      "storage_policies": 12,
+      "application_realtime_tables": 3,
+      "auth_users": 0,
+      "profiles": 0
+    }
+  },
+  "canonical_application_fingerprint": {
+    "path": "supabase/candidates/g25_application_owned_schema_fingerprint_r98.sql",
+    "sha256": "135aff2a38fa80cca1103ed2d2d3983fc165e05b46a0d7c0ba3aff26f1067fb6",
+    "search_path_canonicalized": true,
+    "extension_owned_routines_excluded": true,
+    "comparison_targets": [
+      "jnablbnztutbmnjvtioy",
+      "cgkcplcamsijghalintq"
+    ],
+    "differences": 0,
+    "domains": {
+      "columns": {
+        "object_count": 2133,
+        "digest": "f68c992ae809c2eaeaf3502a892b28d4"
+      },
+      "constraints": {
+        "object_count": 774,
+        "digest": "a677be5a80180bf27840f77900d9acf9"
+      },
+      "indexes": {
+        "object_count": 591,
+        "digest": "37b7cfb959f20f388fa8e983bdf01891"
+      },
+      "policies": {
+        "object_count": 304,
+        "digest": "883b242b83f5d2a57d1368cae4e130fe"
+      },
+      "rls": {
+        "object_count": 176,
+        "digest": "c1962d417e21fc41cacf8174d46a9bc1"
+      },
+      "routine_grants": {
+        "object_count": 259,
+        "digest": "3896eb727989f4ab6421b7de8e7fa92e"
+      },
+      "routines": {
+        "object_count": 100,
+        "digest": "7778479c75e3c5e5696e73c298645bf6"
+      },
+      "schema_grants": {
+        "object_count": 12,
+        "digest": "f08632af471eac39debe086bfe584f03"
+      },
+      "table_grants": {
+        "object_count": 5071,
+        "digest": "93b4759a3f418824bd775c83834f4815"
+      },
+      "triggers": {
+        "object_count": 53,
+        "digest": "462bda631de05499f3a3432da713ad36"
+      },
+      "views": {
+        "object_count": 9,
+        "digest": "bdfe07a67648686a49eb0443f0f7a442"
+      }
+    }
+  },
+  "platform_compatibility": {
+    "postgres": "17.6",
+    "extensions": [
+      {
+        "name": "pg_cron",
+        "schema": "pg_catalog",
+        "version": "1.6.4"
+      },
+      {
+        "name": "pg_net",
+        "schema": "public",
+        "version": "0.20.0"
+      },
+      {
+        "name": "pg_stat_statements",
+        "schema": "extensions",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "schema": "extensions",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "schema": "pg_catalog",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "schema": "vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "uuid-ossp",
+        "schema": "extensions",
+        "version": "1.1"
+      },
+      {
+        "name": "vector",
+        "schema": "public",
+        "version": "0.8.0"
+      }
+    ],
+    "extension_owned_public_routines": 118,
+    "boundary": "Extension-owned implementation and ACL defaults are platform state. Exact application behavior is governed by runtime proofs rather than copied historical ACLs."
+  },
+  "runtime_proofs": {
+    "http_transport": {
+      "anonymous_probe_path": "scripts/probe-ctrl-g25-anon-rpc-transport-r93.mjs",
+      "anonymous_probe_sha256": "4e17e2e3cac2332a60ebeeeaf2851abf9953c36d9532c2b5bc9c8809fba1b9a3",
+      "authenticated_probe_path": "scripts/probe-ctrl-g25-authenticated-rpc-transport-r93.mjs",
+      "authenticated_probe_sha256": "104fef91aaee59ee7b2f3871dc91dfce2b19845ac6a33f4c1577ae48984e9c3d",
+      "public_reads": "pass",
+      "anonymous_mutations_denied": "pass",
+      "owned_paths": "pass",
+      "cross_subject_paths_denied_or_safe": "pass",
+      "owned_fact_verified": true,
+      "other_fact_unchanged": true,
+      "owned_decision_pinned": true,
+      "other_decision_unchanged": true,
+      "remaining_fixtures": 0
+    },
+    "extension_runtime": {
+      "synchronous_path": "supabase/tests/database/g25_second_replay_extension_runtime_r98.test.sql",
+      "synchronous_sha256": "441d9aaa17c60cab7f5d6ff2b6b85d56380744d002162c4a99bc86f4ab19d879",
+      "pg_net_enqueue_path": "supabase/tests/database/g25_second_replay_pg_net_enqueue_r98.test.sql",
+      "pg_net_enqueue_sha256": "b29eaf8435aeeb0c2d2efb116f5fbfd11431af5d22caf9720770c5f4284f5df1",
+      "pg_net_verify_cleanup_path": "supabase/tests/database/g25_second_replay_pg_net_verify_cleanup_r98.test.sql",
+      "pg_net_verify_cleanup_sha256": "c89f64368ba5481c148974122cd8b446d5fef914fd6722f8e56ae91b44df0355",
+      "cron_schedule_and_unschedule": "pass",
+      "pg_net_enqueue_worker_and_error_receipt": "pass",
+      "vector_1536_ranking": "pass",
+      "remaining_fixtures": 0
+    },
+    "critical_application": {
+      "path": "supabase/tests/database/g25_critical_application_smoke_r95.test.sql",
+      "sha256": "fe7a1f19c2ee3d37012a449266e927cc7e90dd9c839e5613079fe29a4c9c8421",
+      "brain_export_and_context": "pass",
+      "decision_ownership": "pass",
+      "briefing_feedback_learning": "pass",
+      "remaining_fixtures": 0
+    },
+    "safe_non_schema_plane": {
+      "verification_path": "supabase/candidates/g25_non_schema_safe_plane_verification_r96.sql",
+      "verification_sha256": "95cc833178bf7af7bb27279b8e790b1b982a2b5d5b3dc502b4a7c44afdf3adb4",
+      "storage_buckets": "5_of_5",
+      "storage_policies": "12_of_12",
+      "application_realtime_tables": "3_of_3"
+    }
+  },
+  "closed_lanes": {
+    "cron": "closed_until_all_15_commands_have_reviewed_executable_definitions",
+    "edge_functions": "closed_until_all_183_functions_have_frozen_source_configuration_and_route_authentication_proof",
+    "vault": "closed_until_two_required_names_and_values_are_injected_from_an_approved_secure_source_without_disclosure",
+    "production_cutover": "closed",
+    "legacy_retirement": "closed"
+  },
+  "acceptance_gate": {
+    "second_clean_blank_replay_passed": true,
+    "application_schema_reproducible": true,
+    "http_transport_passed": true,
+    "tested_extension_surface_passed": true,
+    "critical_database_smoke_passed": true,
+    "secret_free_non_schema_safe_plane_passed": true,
+    "full_non_schema_restoration_passed": false,
+    "production_recovery_choice_ready": false
+  },
+  "authority": {
+    "production_writes": 0,
+    "customer_data_used": false,
+    "secret_values_persisted_to_repo": false,
+    "edge_functions_deployed": 0,
+    "production_deployments": 0,
+    "forbids": [
+      "claiming full hosted recovery",
+      "secret retrieval or disclosure",
+      "raw live Edge Function source retrieval",
+      "production mutation, merge, cutover, release or legacy retirement"
+    ]
+  }
+}

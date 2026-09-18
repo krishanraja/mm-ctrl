@@ -5,6 +5,10 @@
 //
 // GET /share-card?t=<headline>&s=<stat>&l=<sub>   (all url-encoded; text is sanitized)
 import { initWasm, Resvg } from "https://esm.sh/@resvg/resvg-wasm@2.6.2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
+import { consumeRequestRateLimit } from "../_shared/service-request.ts";
+import { publicClientIdentity } from "../_shared/public-request-guard.ts";
+import { securityHeaders } from "../_shared/security-headers.ts";
 
 const cors = { "Access-Control-Allow-Origin": "*" };
 const W = 1200, H = 630;
@@ -63,18 +67,48 @@ function svg(t: string, s: string, l: string): string {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
+  if (req.method !== "GET") return new Response("Method not allowed", { status: 405, headers: cors });
   try {
+    if (req.url.length > 2_048) return new Response("Request is too large", { status: 413, headers: cors });
+    const identity = publicClientIdentity(req.headers);
+    const retryAfter = consumeRequestRateLimit(`share-card:${identity}`, Date.now(), 120, 60_000);
+    if (retryAfter > 0) {
+      return new Response("Too many requests", {
+        status: 429,
+        headers: { ...cors, ...securityHeaders, "Retry-After": String(retryAfter) },
+      });
+    }
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    if (!supabaseUrl || !serviceRoleKey) {
+      return new Response("Service temporarily unavailable", { status: 503, headers: { ...cors, ...securityHeaders } });
+    }
+    const admin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: limitData, error: limitError } = await admin.rpc("check_rate_limit", {
+      p_rate_limit_key: `share-card:ip:${identity}`,
+      p_max_requests: 600,
+      p_window_seconds: 3_600,
+    });
+    const distributedLimit = Array.isArray(limitData) ? limitData[0] : limitData;
+    if (limitError || typeof distributedLimit?.allowed !== "boolean") {
+      return new Response("Service temporarily unavailable", { status: 503, headers: { ...cors, ...securityHeaders } });
+    }
+    if (!distributedLimit.allowed) {
+      return new Response("Too many requests", { status: 429, headers: { ...cors, ...securityHeaders } });
+    }
     const u = new URL(req.url);
-    const t = u.searchParams.get("t") ?? "";
-    const s = u.searchParams.get("s") ?? "";
-    const l = u.searchParams.get("l") ?? "";
+    const t = (u.searchParams.get("t") ?? "").slice(0, 180);
+    const s = (u.searchParams.get("s") ?? "").slice(0, 32);
+    const l = (u.searchParams.get("l") ?? "").slice(0, 180);
     await ready();
     const resvg = new Resvg(svg(t, s, l), {
       font: { fontBuffers: [fontBuf!], defaultFontFamily: "Inter", loadSystemFonts: false },
     });
     const png = resvg.render().asPng();
     return new Response(png, {
-      headers: { ...cors, "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" },
+      headers: { ...cors, ...securityHeaders, "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" },
     });
   } catch (e) {
     return new Response(`share-card error: ${e instanceof Error ? e.message : e}`, { status: 500, headers: cors });

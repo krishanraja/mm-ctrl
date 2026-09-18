@@ -1,0 +1,154 @@
+{
+  "schema_version": "ctrl.g25.portable-brain-roundtrip.r105.v1",
+  "contract_id": "G25-PORTABLE-BRAIN-ROUNDTRIP-R105",
+  "status": "current_brain_portable_roundtrip_complete_full_archive_open",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-MEMORY-EXPORT-HOSTED-PROOF-R103",
+    "G25-FUNCTION-ENVIRONMENT-REQUIREMENTS-R104"
+  ],
+  "package_contract": {
+    "schema_version": "ctrl.portable-brain.v1",
+    "scope": "current_brain",
+    "shared_module": "supabase/functions/_shared/portable-brain-package.ts",
+    "shared_module_sha256": "8e148f1b84a91116a1578cf6b7c201bb64c6ff4a7c17ef6f0c3b2cd005171bb6",
+    "maximum_request_bytes": 1048576,
+    "maximum_facts": 500,
+    "maximum_patterns": 250,
+    "maximum_decisions": 250,
+    "source_user_identifier_in_package": false,
+    "stable_key_order": true,
+    "per_record_sha256": true,
+    "whole_package_content_sha256": true,
+    "hidden_fields_rejected": true
+  },
+  "database_authority": {
+    "migration": "supabase/migrations/20260918150000_portable_brain_import_authority.sql",
+    "migration_sha256": "1927a1766197252c2dcbd120303085180331d2d994a2056cba16172096abce0f",
+    "migration_history_status": "applied_on_isolated_target",
+    "receipt_table": "public.portable_brain_imports",
+    "import_function": "public.import_portable_brain_package(jsonb)",
+    "rls_enabled": true,
+    "authenticated_direct_insert": false,
+    "authenticated_owner_select": true,
+    "authenticated_function_execute": true,
+    "anonymous_function_execute": false,
+    "security_definer": true,
+    "atomic_transaction": true,
+    "idempotency_key": "authenticated_user_plus_database_records_fingerprint",
+    "stored_package_content": false,
+    "standing_on_import": {
+      "facts": "inferred",
+      "patterns": "emerging_with_confidence_capped_at_0_5_and_evidence_count_1",
+      "decisions": "active_manual_with_import_receipt"
+    }
+  },
+  "hosted_functions": [
+    {
+      "slug": "brain-portable-export",
+      "source_sha256": "783bb4800f3f0337a7120cb1ff0dffacd6ed87faba78b26980288fe9373962c8",
+      "hosted_bundle_sha256": "b8f1d725b5db9b3613caa6006076058e062505ab667d4765102270c30b4c9286",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    },
+    {
+      "slug": "brain-portable-import",
+      "source_sha256": "4968b3289e00a51ed4f2dc21513a8c664eae3e27dacce3292dcdee9f9214168c",
+      "hosted_bundle_sha256": "cb5bb40e27a87d8d9905f975f7b2716bf8c341c9affaae10f93391fb8313eebf",
+      "version": 1,
+      "status": "ACTIVE",
+      "verify_jwt": true
+    }
+  ],
+  "probe": {
+    "path": "scripts/probe-ctrl-g25-portable-brain-roundtrip-r105.mjs",
+    "sha256": "d5d879d5315482a2b970487c9238409f493a05a4c2ebe6c126f0429b506125c0",
+    "synthetic_users": 2,
+    "anonymous_export_status": 401,
+    "owner_export_status": 200,
+    "repeat_export_status": 200,
+    "stable_package_fingerprint": true,
+    "stable_package_bytes": true,
+    "exported_counts": {
+      "facts": 1,
+      "patterns": 1,
+      "decisions": 1,
+      "total": 3
+    },
+    "package_contains_source_user_id": false,
+    "tampered_import_status": 400,
+    "wrong_media_status": 415,
+    "wrong_method_status": 405,
+    "first_import_status": 200,
+    "first_import_already_imported": false,
+    "first_import_counts": {
+      "facts": 1,
+      "patterns": 1,
+      "decisions": 1,
+      "total": 3
+    },
+    "repeat_import_status": 200,
+    "repeat_import_already_imported": true,
+    "repeat_import_counts": {
+      "facts": 0,
+      "patterns": 0,
+      "decisions": 0,
+      "total": 0
+    },
+    "destination_guard_fact_preserved": true,
+    "imported_fact_present": true,
+    "imported_fact_standing": "inferred",
+    "imported_fact_source": "manual",
+    "imported_pattern_present": true,
+    "imported_pattern_standing": "emerging",
+    "imported_pattern_confidence": 0.5,
+    "imported_pattern_evidence_count": 1,
+    "imported_decision_present": true,
+    "imported_decision_source": "manual",
+    "imported_decision_receipt_present": true,
+    "source_fact_count_after_import": 1,
+    "source_fact_standing_unchanged": true,
+    "source_reliance_count_after_two_exports": 2,
+    "destination_receipt_count": 1,
+    "source_receipt_count": 0
+  },
+  "cleanup": {
+    "auth_users": 0,
+    "auth_identities": 0,
+    "profiles": 0,
+    "facts": 0,
+    "patterns": 0,
+    "decisions": 0,
+    "import_receipts": 0
+  },
+  "configuration": {
+    "config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f",
+    "containment_manifest_sha256": "684ce32b07156729d5a8fc8ecf03b2f786f19f86622afe58dd2371da975de231",
+    "containment_contract_count": 51
+  },
+  "scope_boundary": {
+    "includes_current_unarchived_facts": true,
+    "includes_emerging_and_confirmed_patterns": true,
+    "includes_active_decisions": true,
+    "includes_superseded_or_archived_history": false,
+    "includes_raw_source_bytes": false,
+    "includes_embeddings": false,
+    "includes_encrypted_legacy_rows": false,
+    "cryptographic_source_authenticity": false,
+    "complete_account_archive": false,
+    "github_delivery": false
+  },
+  "authority": {
+    "isolated_target_only": true,
+    "production_writes": 0,
+    "production_functions_deployed": 0,
+    "raw_secret_values_emitted_or_persisted": false,
+    "raw_live_only_source_retrieved": false,
+    "email_routes_open": false,
+    "payment_routes_open": false,
+    "model_spend_routes_open": false,
+    "legacy_retirement_open": false
+  },
+  "next_safe_action": "Prove the first model-free core Brain route set with exact owner, RLS, idempotency, correction and cleanup behavior, while separately specifying what a complete historical archive must preserve beyond the current-Brain package."
+}

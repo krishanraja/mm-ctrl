@@ -1,0 +1,73 @@
+{
+  "schema_version": "ctrl.g25.isolated-share-card-hosted-proof.r102.v1",
+  "contract_id": "G25-ISOLATED-SHARE-CARD-HOSTED-PROOF-R102",
+  "status": "single_non_email_function_hosted_pass_broader_restoration_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECOND-CLEAN-REPLAY-R98",
+    "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+    "G25-JWT-DISABLED-ROUTE-SECURITY-R100"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "purpose": "isolated reusable mm-ctrl development target",
+    "production": false
+  },
+  "rate_limit_authority": {
+    "migration_path": "supabase/migrations/20260918144500_edge_rate_limit_authority.sql",
+    "migration_sha256": "f2a1a91b690a91f85378b68341f510cff2965e87240de9664b2379af849f926f",
+    "migration_version": "20260918144500",
+    "table": "public.edge_rate_limits",
+    "rls_enabled": true,
+    "service_role_execute_grants": 1,
+    "public_anon_authenticated_execute_grants": 0,
+    "fails_closed_on_rpc_error": true,
+    "test_rows_after_cleanup": 0
+  },
+  "deployment": {
+    "function": "share-card",
+    "version": 1,
+    "status": "ACTIVE",
+    "verify_jwt": false,
+    "local_route_source_sha256": "dc4246db730ce0188ab7d4130016e67ac7246de4f62105c82e44e732dd9bec36",
+    "local_shared_source_sha256": "f8a4448ee089b427d595ad6f601d345b17661ca2e8ac53c2361cd5577a9c754b",
+    "hosted_bundle_sha256": "4d2938bd08ca28d08642121ada338b43576788437afac3b8e9be7fbc76d1a9f5",
+    "other_functions_deployed_in_target": 0
+  },
+  "hosted_probe": {
+    "valid_get": {
+      "status": 200,
+      "content_type": "image/png",
+      "cache_control": "public, max-age=86400",
+      "nosniff": true,
+      "bytes": 35959,
+      "png_signature": [137, 80, 78, 71, 13, 10, 26, 10],
+      "sha256": "cd83a72d7138c0f0f9d171e666a78d11ebecdb78fb4e3d0d195993d05d88aeb4"
+    },
+    "post": { "status": 405, "body": "Method not allowed" },
+    "oversized_url": { "status": 413, "body": "Request is too large" },
+    "distributed_counter_created": true,
+    "distributed_counter_removed_after_probe": true
+  },
+  "failure_recovery": {
+    "first_valid_get_status": 503,
+    "cause": "required distributed rate-limit routine was absent from the production-derived application baseline",
+    "response": "add a hardened service-role-only authority rather than weakening or removing the guard",
+    "second_valid_get_status": 200
+  },
+  "authority": {
+    "secret_values_retrieved": false,
+    "customer_rows_read": 0,
+    "customer_rows_written": 0,
+    "isolated_schema_migrations_added": 1,
+    "isolated_functions_deployed": 1,
+    "production_functions_deployed": 0,
+    "production_writes": 0,
+    "forbids": [
+      "generalising one render-function pass to all Edge Functions",
+      "deploying email, payment, model-spend or mutating routes without their own hosted proof",
+      "retrieving or persisting secret values",
+      "production mutation, merge, cutover, release or legacy retirement"
+    ]
+  }
+}

@@ -315,6 +315,63 @@ function sortRunIdFrom(rows: CriterionRow[]): string | null {
   return ids.size === 1 ? [...ids][0] : null;
 }
 
+export interface PreparedCitedSpans {
+  source: { id: string; kind: "transcript"; label: string; body: string } | null;
+  evidence: Array<{
+    id: string;
+    body: string;
+    quote: string;
+    quote_start: number;
+    quote_end: number;
+    source_label: string;
+    situated: true;
+    situation: string;
+  }>;
+}
+
+/**
+ * Prepare only the transcript spans the final package cites.
+ *
+ * Unlike persistCitedSpans, this makes no database write. The export authority
+ * RPC receives these rows alongside the skill and commits the complete package
+ * in one transaction. The target maps are updated immediately so the quality
+ * gate resolves exactly the ids that transaction will own.
+ */
+export function prepareCitedSpans(
+  transcript: string,
+  skillName: string,
+  targets: PointerTargets,
+  citedShortIds: Set<string>,
+  newUuid: () => string = () => crypto.randomUUID(),
+  existingSourceId?: string,
+): PreparedCitedSpans {
+  const wanted = Array.from(targets.pendingSpans.values()).filter((pending) =>
+    citedShortIds.has(pending.shortId)
+  );
+  if (wanted.length === 0) return { source: null, evidence: [] };
+
+  const sourceId = existingSourceId ?? newUuid();
+  const label = `Skill build: ${skillName}`;
+  for (const pending of wanted) {
+    targets.evidenceUuidByShort.set(pending.shortId, pending.uuid);
+    targets.pendingSpans.delete(pending.shortId);
+  }
+
+  return {
+    source: { id: sourceId, kind: "transcript", label, body: transcript },
+    evidence: wanted.map((pending) => ({
+      id: pending.uuid,
+      body: pending.span.text,
+      quote: pending.span.text,
+      quote_start: pending.span.start,
+      quote_end: pending.span.end,
+      source_label: label,
+      situated: true,
+      situation: "said while describing this workflow",
+    })),
+  };
+}
+
 /**
  * Write the transcript spans the generated package actually cited, and only
  * those.

@@ -175,10 +175,22 @@ export function useReview() {
     setResponses({});
 
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke('critique-artefact', {
-        body: { body: text, ...(surface ? { surface } : {}) },
-      });
-      if (invokeError) throw invokeError;
+      const requestId = crypto.randomUUID();
+      let data: Record<string, unknown> | null = null;
+      let lastError: unknown = null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const result = await supabase.functions.invoke('critique-artefact', {
+          body: { request_id: requestId, body: text, ...(surface ? { surface } : {}) },
+        });
+        if (!result.error) {
+          data = (result.data ?? null) as Record<string, unknown> | null;
+          lastError = null;
+          break;
+        }
+        lastError = result.error;
+        if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      if (lastError) throw lastError;
       const newRunId = typeof data?.run_id === 'string' ? data.run_id : null;
       if (!newRunId) throw new Error('The review did not start.');
       setRunId(newRunId);

@@ -1,0 +1,117 @@
+{
+  "schema_version": "ctrl.g25.memory-settings-hosted-proof.r106.v1",
+  "contract_id": "G25-MEMORY-SETTINGS-HOSTED-PROOF-R106",
+  "status": "owner_settings_control_complete_lifecycle_routes_open",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-FUNCTION-ENVIRONMENT-REQUIREMENTS-R104",
+    "G25-PORTABLE-BRAIN-ROUNDTRIP-R105"
+  ],
+  "repair": {
+    "route": "memory-settings",
+    "source_path": "supabase/functions/memory-settings/index.ts",
+    "source_sha256": "c6b7ec515bca788880dd9ab223233cfa5c2c9e937e4dc7578bcbd4950d47ef34",
+    "contract_test_path": "supabase/functions/_shared/memory-settings-contract.test.ts",
+    "contract_test_sha256": "b80536c802bd28b73ecb58b785698f78b1ca9c79b07ccd5aeaa445e6e1202748",
+    "service_role_dependency_removed": true,
+    "owner_client_uses_rls": true,
+    "target_user_argument": false,
+    "empty_get_writes_default_row": false,
+    "mutating_body_limit_bytes": 4096,
+    "closed_setting_keys": [
+      "auto_summarize_enabled",
+      "retention_days",
+      "store_memory_enabled",
+      "store_voice_transcripts"
+    ],
+    "retention_values": [
+      null,
+      30,
+      90
+    ],
+    "clear_cache_is_client_instruction_only": true,
+    "user_identifier_logged": false
+  },
+  "hosted": {
+    "slug": "memory-settings",
+    "hosted_bundle_sha256": "ee58e9e153692850434d430aca82e8e3acb480995ed49e66ff5df948a05844ec",
+    "version": 1,
+    "status": "ACTIVE",
+    "verify_jwt": true
+  },
+  "probe": {
+    "path": "scripts/probe-ctrl-g25-memory-settings-r106.mjs",
+    "sha256": "b5ab51a182072856f0dac40c84972c4d6716bd43872e14f160774d804ec2edbf",
+    "synthetic_users": 2,
+    "anonymous_status": 401,
+    "empty_owner_a_status": 200,
+    "empty_owner_a_persisted": false,
+    "empty_owner_b_status": 200,
+    "empty_owner_b_persisted": false,
+    "rows_before_first_write": 0,
+    "owner_a_write_status": 200,
+    "owner_a_retry_status": 200,
+    "owner_b_write_status": 200,
+    "owner_a_read_status": 200,
+    "owner_b_read_status": 200,
+    "owner_a_settings": {
+      "store_memory_enabled": false,
+      "store_voice_transcripts": false,
+      "auto_summarize_enabled": false,
+      "retention_days": 30,
+      "persisted": true
+    },
+    "owner_b_settings": {
+      "store_memory_enabled": true,
+      "store_voice_transcripts": true,
+      "auto_summarize_enabled": true,
+      "retention_days": 90,
+      "persisted": true
+    },
+    "owner_a_visible_rows": 1,
+    "owner_b_visible_rows": 1,
+    "owner_a_cross_subject_rows": 0,
+    "invalid_boolean_status": 400,
+    "invalid_extra_key_status": 400,
+    "invalid_retention_status": 400,
+    "wrong_media_status": 415,
+    "wrong_method_status": 405,
+    "cache_instruction_status": 200,
+    "cache_instruction": "clear_local_storage",
+    "cache_key_count": 3,
+    "oversized_status": 413
+  },
+  "cleanup": {
+    "auth_users": 0,
+    "auth_identities": 0,
+    "profiles": 0,
+    "settings": 0
+  },
+  "configuration": {
+    "config_sha256": "0fe35a3db600aabd8733ec590c6faf8c10d89c934cd677a233dac60cae89891f",
+    "containment_manifest_sha256": "03707e6f6fa475671c199b4facbfbc572d14e303489c5dfd4ac456d5d6c66901",
+    "containment_contract_count": 52,
+    "repository_routes_with_secret_dependency_after_repair": 72,
+    "repository_routes_with_privileged_database_access_after_repair": 58
+  },
+  "scope_boundary": {
+    "proves_owner_privacy_controls": true,
+    "proves_browser_cache_erasure": false,
+    "proves_raw_source_deletion": false,
+    "proves_retention_job_execution": false,
+    "proves_memory_lifecycle_policy": false,
+    "proves_complete_account_erasure": false
+  },
+  "authority": {
+    "isolated_target_only": true,
+    "database_migration_applied": false,
+    "production_writes": 0,
+    "production_functions_deployed": 0,
+    "raw_secret_values_emitted_or_persisted": false,
+    "email_routes_open": false,
+    "payment_routes_open": false,
+    "model_spend_routes_open": false,
+    "legacy_retirement_open": false
+  },
+  "next_safe_action": "Repair and prove model-free Brain ingestion as an atomic, project-bound and idempotent owner operation before enabling lifecycle automation."
+}

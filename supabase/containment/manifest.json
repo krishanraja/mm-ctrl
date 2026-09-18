@@ -319,6 +319,103 @@
       "template": "templates/forbidden-403.ts",
       "verify_jwt": false,
       "expected_status": 403
+    },
+    {
+      "name": "capture-lead",
+      "action": "public_rate_limited_capture",
+      "verify_jwt": false,
+      "forbidden_source_markers": ["req.json("],
+      "required_source_markers": ["consumeRequestRateLimit(", "check_rate_limit", "sha256Identifier(", "readJsonWithLimit("]
+    },
+    {
+      "name": "prompt-coach",
+      "action": "authenticated_user_paid_inference",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["req.json("],
+      "required_source_markers": ["auth.getUser(", "check_rate_limit", "readJsonWithLimit("]
+    },
+    {
+      "name": "send-diagnostic-email",
+      "action": "exact_service_credential_email",
+      "verify_jwt": false,
+      "forbidden_source_markers": ["req.json("],
+      "required_source_markers": ["hasExactServiceCredential(", "readJsonWithLimit("]
+    },
+    {
+      "name": "share-card",
+      "action": "public_cached_bounded_render",
+      "verify_jwt": false,
+      "required_source_markers": ["consumeRequestRateLimit(", "check_rate_limit", "req.url.length > 2_048", ".slice(0, 180)"]
+    },
+    {
+      "name": "memory-export",
+      "action": "authenticated_owner_portable_export",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["req.json(", "target_user_id"],
+      "required_source_markers": ["auth.getUser(", "readJsonWithLimit(", "buildMemoryContext(supabase, user.id", "await supabase.rpc(\"touch_memory_facts\""]
+    },
+    {
+      "name": "brain-portable-export",
+      "action": "authenticated_owner_structured_export",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["target_user_id", "SUPABASE_SERVICE_ROLE_KEY"],
+      "required_source_markers": ["auth.getUser(", ".eq(\"user_id\", user.id)", "createPortableBrainPackage(", "await client.rpc(\"touch_memory_facts\""]
+    },
+    {
+      "name": "brain-portable-import",
+      "action": "authenticated_owner_atomic_import",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["target_user_id", "SUPABASE_SERVICE_ROLE_KEY"],
+      "required_source_markers": ["auth.getUser(", "validatePortableBrainPackage(", "client.rpc(\"import_portable_brain_package\""]
+    },
+    {
+      "name": "memory-settings",
+      "action": "authenticated_owner_rls_settings",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["target_user_id", "SUPABASE_SERVICE_ROLE_KEY", "req.json("],
+      "required_source_markers": ["auth.getUser(", ".eq(\"user_id\", user.id)", "user_id: user.id", "readJsonWithLimit(req, 4_096)"]
+    },
+    {
+      "name": "ingest-brain",
+      "action": "authenticated_owner_atomic_brain_ingestion",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "userClient.rpc(\"ingest_brain_atomic\""]
+    },
+    {
+      "name": "build-sort",
+      "action": "authenticated_owner_metered_atomic_model_build",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "userClient.rpc(\"reserve_build_sort_run\"", "client.rpc(\"record_build_sort_usage\"", "client.rpc(\"finalize_build_sort_run\""]
+    },
+    {
+      "name": "grade-sort",
+      "action": "authenticated_owner_idempotent_atomic_interaction_write",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "client.rpc(\"submit_sort_grade_atomic\""]
+    },
+    {
+      "name": "compile-standard",
+      "action": "authenticated_owner_snapshot_pinned_metered_atomic_standard_compile",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap(", "recordAiUsage("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "COMPILE_STANDARD_RPC_SECRET", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "userClient.rpc(\"reserve_compile_standard_run\"", "client.rpc(\"record_compile_standard_usage\"", "client.rpc(\"finalize_compile_standard_run\""]
+    },
+    {
+      "name": "generate-skill-export",
+      "action": "authenticated_owner_snapshot_pinned_metered_atomic_portable_skill_export",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap(", "recordAiUsage("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "GENERATE_SKILL_EXPORT_RPC_SECRET", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "reserve_generate_skill_export_run", "record_generate_skill_export_usage", "finalize_generate_skill_export_run"]
+    },
+    {
+      "name": "critique-artefact",
+      "action": "authenticated_owner_snapshot_pinned_metered_atomic_independent_critique",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap(", "recordAiUsage("],
+      "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "CRITIQUE_ARTEFACT_RPC_SECRET", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "reserve_critique_artefact_run", "record_critique_artefact_usage", "finalize_critique_artefact_run"]
     }
   ]
 }

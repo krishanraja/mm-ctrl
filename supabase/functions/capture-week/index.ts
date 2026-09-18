@@ -73,6 +73,7 @@ import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
 import { withTimeout } from "../_shared/with-timeout.ts";
 import { hasExactServiceCredential } from "../_shared/service-auth.ts";
+import { isCronRequest } from "../_shared/service-request.ts";
 import {
   buildProposal,
   isoWeekOf,
@@ -157,6 +158,9 @@ serve(async (req) => {
   const okCaller = hasExactServiceCredential(
     req.headers.get("Authorization"),
     [captureSecret, svcKey],
+  ) || isCronRequest(
+    req.headers.get("X-CTRL-Cron-Secret"),
+    Deno.env.get("CTRL_CRON_SECRET") ?? "",
   );
   if (!okCaller) return json({ error: "Forbidden" }, 403);
 
