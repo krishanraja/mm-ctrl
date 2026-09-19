@@ -12,7 +12,7 @@ The generated schema contains 76 tables and 932 row columns. Conservative name a
 
 Thirteen high-risk anchors belong to tables the live account-deletion function never mentions. They include referral email pairs, executive-intake and pulse participants, workshop participants, leads, legacy `users` identity and an unlinked publication creator.
 
-Migration history adds 77 candidates absent from the generated schema. Eighteen high-risk examples in unmentioned tables include email analytics, Edge delivery, kit delivery and memory-related identities. This is evidence of schema drift or historical residue, not proof that every table is live. The real PostgreSQL catalog must resolve that ambiguity.
+Migration history adds 94 candidates absent from the generated schema. Seventeen of the newly visible candidates are JSON-bearing columns in the R115 candidate-standard machinery; they are included because a new migration must expand the erasure inventory even while that machinery remains isolated. Eighteen high-risk examples in unmentioned tables include email analytics, Edge delivery, kit delivery and memory-related identities. This is evidence of schema drift or historical residue, not proof that every table is live. The real PostgreSQL catalog must resolve that ambiguity.
 
 ## Why this does not become a generic delete loop
 

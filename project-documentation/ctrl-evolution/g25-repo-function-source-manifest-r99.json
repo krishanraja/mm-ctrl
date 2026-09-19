@@ -12,23 +12,23 @@
     "path": "scripts/inspect-ctrl-g25-repo-function-manifest-r99.mjs",
     "sha256": "fc1e9f7e3d74d94f8885d6955744c949d1e56a6795e68772acca7f2c3585d504",
     "raw_source_emitted_by_default": false,
-    "manifest_sha256": "c44ba7ae89d8a63854513a6f8d798bae6e2fde010842c1e5b7555583968e8eaa"
+    "manifest_sha256": "33e4fba784882e523bbb87d6001ea3dae21ed6b40353d031d5c4569779700519"
   },
   "source": {
     "functions_root": "supabase/functions",
-    "local_function_count": 118,
-    "entrypoint_count": 118,
-    "shared_file_count": 185,
-    "shared_source_bytes": 1619317,
-    "shared_source_sha256": "b081f732a2b6232af1f932c4ffe9848f9866190db8d7048a61e549eb0f581db4",
-    "per_function_source_digest_count": 118,
+    "local_function_count": 121,
+    "entrypoint_count": 121,
+    "shared_file_count": 187,
+    "shared_source_bytes": 1653418,
+    "shared_source_sha256": "7b3ae949d17b0d0bdeeb16176cddd397f48a98019658aab48d7b11bc51535743",
+    "per_function_source_digest_count": 121,
     "configured_without_local_source_count": 0,
     "shared_tree_bound_into_every_function": true
   },
   "gateway_posture": {
     "config_path": "supabase/config.toml",
-    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
-    "explicit_verify_jwt_true": 84,
+    "config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
+    "explicit_verify_jwt_true": 87,
     "explicit_verify_jwt_false": 34,
     "verify_jwt_unspecified": 0,
     "shared_production_functions_compared": 115,
@@ -48,7 +48,7 @@
     "live_verify_jwt_true": 117,
     "live_verify_jwt_false": 66,
     "shared_live_and_local": 115,
-    "repo_only": 3,
+    "repo_only": 6,
     "live_only": 68,
     "metadata_digest_fields": [
       "slug",
@@ -62,7 +62,7 @@
   "static_markers": {
     "functions_with_service_role_marker": 54,
     "functions_with_explicit_get_user_marker": 59,
-    "unique_environment_symbol_count": 46,
+    "unique_environment_symbol_count": 47,
     "environment_symbol_values_retrieved": false,
     "environment_symbols": [
       "ANTHROPIC_API_KEY",
@@ -102,6 +102,7 @@
       "PUBLIC_SITE_URL",
       "RESEND_API_KEY",
       "SEND_CONFIRMATION_EMAIL_HOOK_SECRET",
+      "STANDARD_CHANGE_PIPELINE_RPC_SECRET",
       "STRIPE_EDGE_PRO_PRICE_ID",
       "STRIPE_SECRET_KEY",
       "STRIPE_WEBHOOK_SECRET",
@@ -115,7 +116,7 @@
     "boundary": "Static symbol names and markers are dependency evidence only. They do not prove value availability, correct authorization or safe route behavior."
   },
   "open_work": {
-    "repo_backed_route_authentication_proofs_required": 118,
+    "repo_backed_route_authentication_proofs_required": 121,
     "jwt_disabled_repo_routes_requiring_route_specific_review": 34,
     "live_only_functions_without_repo_source": 68,
     "live_only_disposition": "preserve_until_source_caller_authentication_and_replacement_or_retirement_evidence_is_complete",

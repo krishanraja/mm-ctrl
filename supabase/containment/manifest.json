@@ -423,6 +423,27 @@
       "verify_jwt": true,
       "forbidden_source_markers": ["EXPECTED_PROJECT_ID", "SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json(", "checkDailySoftCap(", "recordAiUsage("],
       "required_source_markers": ["auth.getUser(", "EXPECTED_SUPABASE_PROJECT_REF", "MEASURE_STANDARD_RPC_SECRET", "matchesExpectedSupabaseProject(", "readJsonWithLimit(req, MAX_REQUEST_BYTES)", "reserve_measure_standard_run", "record_measure_standard_usage", "finish_measure_standard_run"]
+    },
+    {
+      "name": "compile-standard-change",
+      "action": "authenticated_owner_candidate_only_standard_change_compile",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json("],
+      "required_source_markers": ["withSupabase({ auth: \"user\" }", "STANDARD_CHANGE_PIPELINE_RPC_SECRET", "readJsonWithLimit(request, MAX_BYTES)", "reserve_standard_change_compile", "finalize_standard_change_compile"]
+    },
+    {
+      "name": "build-standard-change",
+      "action": "authenticated_owner_deterministic_candidate_only_standard_change_build",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json("],
+      "required_source_markers": ["withSupabase({ auth: \"user\" }", "STANDARD_CHANGE_PIPELINE_RPC_SECRET", "readJsonWithLimit(request, MAX_BYTES)", "reserve_standard_change_build", "finalize_standard_change_build", "repeat_build_mismatch"]
+    },
+    {
+      "name": "check-standard-change",
+      "action": "authenticated_owner_fresh_candidate_only_standard_change_check",
+      "verify_jwt": true,
+      "forbidden_source_markers": ["SUPABASE_SERVICE_ROLE_KEY", "target_user_id", "req.json("],
+      "required_source_markers": ["withSupabase({ auth: \"user\" }", "STANDARD_CHANGE_PIPELINE_RPC_SECRET", "readJsonWithLimit(request, MAX_BYTES)", "reserve_standard_change_check", "finalize_standard_change_check", "checkStandardChangeCandidate"]
     }
   ]
 }

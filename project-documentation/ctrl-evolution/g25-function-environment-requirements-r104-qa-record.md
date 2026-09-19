@@ -2,15 +2,15 @@
 
 ## Deterministic inspection
 
-- Repository function entrypoints: 118
-- Entrypoints inspected: 118
+- Repository function entrypoints: 121
+- Entrypoints inspected: 121
 - Missing relative imports: zero
-- Unique environment symbols: 57
+- Unique environment symbols: 58
 - Unclassified symbols: zero
 - Stale policy entries: zero
-- Inspector SHA-256: `825452ecc8a345647aad776e0233d84f764348391c4d23a11ea48b04a673eea4`
-- Derived manifest SHA-256: `fbd182c62f5c98d51c3c246f4d2d9132562bcb97b010e2fd447f375b11a941d0`
-- Value-free policy SHA-256: `f2f93f89531dabb6bcfbb6dc2a68b43b4532d11cf61b8499e9f301ff0eecbdfe`
+- Inspector SHA-256: `0cea2030f508c74c6fdaf8e969c4bd0ccfcc5e6636ebc644d8424e606c4c9e70`
+- Derived manifest SHA-256: `6cdc679af95834358ee2473bfbbe388b8c34bbe0718a740b7b98e988297a7511`
+- Value-free policy SHA-256: `6537ae11cfdd4dff2e3af0031543a6aabd3f5fb913f3ffe69b62a4e8f32b426f`
 - Per-route requirements SHA-256: `80a92f1ed337c56d8e7dcaecf0f1460cb3724a37583eaf96d405688de56f5acd`
 
 ## Risk coverage

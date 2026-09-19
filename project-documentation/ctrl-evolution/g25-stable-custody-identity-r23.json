@@ -31,7 +31,7 @@
     "candidate_sql": "supabase/candidates/g25_stable_custody_identity_r23.sql",
     "candidate_sql_sha256": "69571f447c70ea9e95bc986b9cc7ebab4fbef3bee8cfb831ad85f75bfeb11484",
     "runner": "scripts/run-ctrl-g25-stable-custody-identity-r23.mjs",
-    "runner_sha256": "c2df27dba6bc67549191eb3a09370a61f7571be2fc5b8176f046df5a9637586c",
+    "runner_sha256": "585967d4780208f9fcfe58a0e8b2bd0a658be75f7381e652c777b6f49ed40fd3",
     "crypto_test": "supabase/functions/_shared/stable-custody-identity.r23.test.ts",
     "crypto_test_sha256": "7a22a90bb39557971a8a72ddd46a79f025287d3b70d97c7bb2761d0d6210553d",
     "runtime": "@electric-sql/pglite@0.5.8"

@@ -1,10 +1,10 @@
 # G25 repository function source manifest R99
 
-**Status:** All 115 repository-backed Edge Functions now have deterministic source identities, present entrypoints and explicit gateway posture. This removes configuration ambiguity without pretending that static configuration is security proof.
+**Status:** All 121 repository-backed Edge Functions now have deterministic source identities, present entrypoints and explicit gateway posture. This removes configuration ambiguity without pretending that static configuration is security proof.
 
 ## The gap R99 closes
 
-The recovery baseline contained source for 115 of the 183 active production functions, but 48 of those local routes had no explicit `verify_jwt` setting in `supabase/config.toml`. A recovery deployment could therefore depend on tool defaults rather than an inspectable decision. R105 added two forward portability routes and R113 added the owner-bound measurement route, so the current repository inventory is 118 while the production comparison set remains 115.
+The recovery baseline contained source for 115 of the 183 active production functions, but 48 of those local routes had no explicit `verify_jwt` setting in `supabase/config.toml`. A recovery deployment could therefore depend on tool defaults rather than an inspectable decision. R105 added two forward portability routes, R113 added the owner-bound measurement route, and R115 added three candidate standard-change routes. The current repository inventory is 121 while the production comparison set remains 115.
 
 Read-only production metadata showed that 47 of the 48 currently verify JWT and `nudge-briefing` does not. R99 records those observed values locally, then records one deliberate fail-closed change: `prompt-coach` now requires gateway JWT verification as well as handler-level user verification. The two R105 portability routes also require JWT. Eighty-three local routes now verify JWT and thirty-four do not. The one production mismatch within the shared production set is intentional.
 
@@ -24,7 +24,7 @@ The compact form is:
 
 ## Environment dependencies
 
-Forty-six distinct environment-variable symbols are referenced directly across the local functions and shared tree. Their names are recorded so deployment can fail closed on missing configuration. No value was retrieved, printed or persisted. R104 supersedes this coarse view with exact per-route transitive closures and 57 classified symbols. Several symbols are feature flags or public configuration rather than secrets.
+Forty-seven distinct environment-variable symbols are referenced directly across the local functions and shared tree. Their names are recorded so deployment can fail closed on missing configuration. No value was retrieved, printed or persisted. R104 supersedes this coarse view with exact per-route transitive closures and 58 classified symbols. Several symbols are feature flags or public configuration rather than secrets.
 
 ## What remains open
 

@@ -44,4 +44,4 @@ assert(payload.sql.includes("pg_catalog.pg_get_constraintdef"), "constraint obse
 assert(note.includes("does not inspect a single application row"), "row-read boundary disappeared");
 assert(qa.includes("No database returned these metadata rows yet"), "execution boundary disappeared");
 
-console.log("[g25-catalog-reconciliation-probe-r60] PASS: 193 metadata targets compiled into a pinned read-only query; execution deferred");
+console.log("[g25-catalog-reconciliation-probe-r60] PASS: 210 metadata targets compiled into a pinned read-only query; execution deferred");

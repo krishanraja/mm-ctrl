@@ -2,7 +2,7 @@
 
 ## Coverage
 
-- Repository functions: 115.
+- Repository functions: 121.
 - Current explicit JWT-enabled routes: 81.
 - Current explicit JWT-disabled routes: 34.
 - JWT-disabled routes covered by containment contracts: 24.

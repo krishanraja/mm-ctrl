@@ -20,6 +20,9 @@ assert(contract.probe.write_operations === 0, "write boundary widened");
 assert(contract.probe.secret_values_returned === 0, "secret boundary widened");
 assert(contract.edge_functions.live_active === 183, "live function count drifted");
 assert(contract.edge_functions.shared_live_and_local === 115, "shared function count drifted");
+assert(contract.edge_functions.local_function_directories_excluding_shared === 121, "current local function count drifted");
+assert(contract.edge_functions.local_only_since_observation === 6, "local-only function count drifted");
+assert(contract.edge_functions.local_only_since_observation_slugs.length === 6, "local-only function manifest is incomplete");
 assert(contract.edge_functions.live_only === 68, "live-only function count drifted");
 assert(contract.edge_functions.live_only_slugs.length === 68, "live-only function manifest is incomplete");
 assert(new Set(contract.edge_functions.live_only_slugs).size === 68, "live-only function manifest contains duplicates");
@@ -27,7 +30,8 @@ assert(new Set(contract.edge_functions.live_only_slugs).size === 68, "live-only 
 const localFunctions = readdirSync(resolve(root, "supabase/functions"), { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && entry.name !== "_shared")
   .map((entry) => entry.name);
-assert(localFunctions.length === 115, "local function count changed without refreshing the live comparison");
+assert(localFunctions.length === 121, "local function count changed without refreshing the live comparison");
+assert(contract.edge_functions.local_only_since_observation_slugs.every((slug) => localFunctions.includes(slug)), "recorded local-only source disappeared");
 assert(contract.edge_functions.live_only_slugs.every((slug) => !localFunctions.includes(slug)), "a formerly live-only function now has local source; refresh its disposition");
 
 const executable = sql.replace(/^\s*--.*$/gm, "");

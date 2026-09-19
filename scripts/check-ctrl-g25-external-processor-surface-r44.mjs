@@ -55,9 +55,14 @@ for (const provider of [
     `provider deletion path unexpectedly appeared: ${provider}`);
 }
 
-const allSource = [...sources.values()].join("\n");
+// Later dormant prepared-intelligence modules deliberately introduced a
+// receipt vocabulary after R44. This historical gate concerns executable
+// provider callsites, not every theory/helper module that now exists in the
+// repository. Keep the gap assertion bound to those detected callsites.
+const providerCallsiteFiles = new Set(Object.values(inventory).flatMap((entry) => entry.callsites));
+const liveProviderSource = [...providerCallsiteFiles].map((file) => sources.get(file) ?? "").join("\n");
 const receiptTerms = ["provider_request_id", "external_request_id", "provider_deletion_receipt"];
-const presentReceiptTerms = receiptTerms.filter((term) => allSource.includes(term));
+const presentReceiptTerms = receiptTerms.filter((term) => liveProviderSource.includes(term));
 assert(presentReceiptTerms.length === 0,
   `unified provider receipt vocabulary changed: ${presentReceiptTerms.join(",")}`);
 

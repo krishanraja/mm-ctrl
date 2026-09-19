@@ -5,7 +5,7 @@ Status: compiler and exact SQL frozen. Execution deferred.
 ## Positive evidence
 
 - The compiler executes the R57 discovery script rather than maintaining a second hand-written target list.
-- The resulting query contains 193 unique targets: 77 migration-only candidates and 116 generated-schema opaque JSON columns.
+- The resulting query contains 210 unique targets: 94 migration-only candidates and 116 generated-schema opaque JSON columns.
 - Every table and column name passes a restrictive identifier grammar before interpolation.
 - String literals are escaped even though the discovery grammar excludes quotes.
 - The query reads only four `pg_catalog` relations and its own common-table expressions.

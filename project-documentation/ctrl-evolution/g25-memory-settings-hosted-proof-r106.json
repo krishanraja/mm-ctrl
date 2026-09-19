@@ -88,8 +88,8 @@
     "settings": 0
   },
   "configuration": {
-    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
-    "containment_manifest_sha256": "03707e6f6fa475671c199b4facbfbc572d14e303489c5dfd4ac456d5d6c66901",
+    "config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
+    "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
     "containment_contract_count": 52,
     "repository_routes_with_secret_dependency_after_repair": 72,
     "repository_routes_with_privileged_database_access_after_repair": 58

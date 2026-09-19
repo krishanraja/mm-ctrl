@@ -12,9 +12,9 @@
     "checker": "scripts/check-ctrl-g25-catalog-reconciliation-probe-r60.mjs"
   },
   "compiled_probe": {
-    "sql_sha256": "e6037e1afa89bcbf9f024005273bb5c7fbb71bc0b43ed2715cade9ec6a873127",
-    "target_count": 193,
-    "migration_only_target_count": 77,
+    "sql_sha256": "345cb578488bcb0df5f1b1fa101f69958cb1aea374bd41f180b98194356bbbeb",
+    "target_count": 210,
+    "migration_only_target_count": 94,
     "opaque_json_target_count": 116,
     "schema": "public",
     "reads": [
@@ -34,13 +34,13 @@
   },
   "proved_locally": [
     "the probe target set is derived from executable R57 discovery",
-    "all 77 migration-only candidates and 116 opaque JSON containers are represented exactly once",
+    "all 94 migration-only candidates and 116 opaque JSON containers are represented exactly once",
     "identifiers are restricted to lowercase PostgreSQL-safe names before SQL composition",
     "the SQL reads PostgreSQL schema metadata and no application row",
     "the SQL contains no data or schema mutation statement",
     "the exact compiler and compiled SQL hashes are pinned"
   ],
-  "bounded_claim": "R60 prepares a deterministic, metadata-only catalog query. It has not connected to or read any local, linked or production database and therefore resolves none of the 193 targets yet.",
+  "bounded_claim": "R60 prepares a deterministic, metadata-only catalog query. It has not connected to or read any local, linked or production database and therefore resolves none of the 210 targets yet.",
   "authority": {
     "permits": [
       "local deterministic SQL compilation",

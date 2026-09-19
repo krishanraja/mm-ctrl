@@ -23,9 +23,9 @@
     "authority_migration_sha256": "08b5cf478d174ab73ab76d25ac2ab96e7eeb140184fff2c4cf0a6d9304aca137",
     "probe": "scripts/probe-ctrl-g25-generate-skill-export-authority-r111.mjs",
     "probe_sha256": "33d315ac38197652e28cd825e66befdd18c29ca0942e994bd8bda3b840619815",
-    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
-    "function_config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
-    "environment_inspector_sha256": "825452ecc8a345647aad776e0233d84f764348391c4d23a11ea48b04a673eea4"
+    "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
+    "function_config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
+    "environment_inspector_sha256": "0cea2030f508c74c6fdaf8e969c4bd0ccfcc5e6636ebc644d8424e606c4c9e70"
   },
   "hosted_function": {
     "slug": "generate-skill-export",

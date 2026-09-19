@@ -19,6 +19,6 @@ Status: semantic registry complete. Execution blocked.
 - A companion list shows known adjacent fields but does not prove that opaque JSON contains no further identity.
 - Email normalization, participant identity proof, aggregate invalidation and legal retention policy remain unimplemented.
 - Live database constraints, triggers, cascades, generated columns and row-level policy behavior remain untested.
-- The 77 migration-only candidates and 116 generated-schema JSON containers require separate reconciliation.
+- The 94 migration-only candidates and 116 generated-schema JSON containers require separate reconciliation.
 
 No linked database, live deletion edit, migration, external send, deployment, merge or release is authorised.

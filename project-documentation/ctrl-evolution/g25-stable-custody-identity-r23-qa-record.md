@@ -2,6 +2,8 @@
 
 Status: local stable-identity and cryptographic compatibility pass. No migration or runtime claim.
 
+The proof fixture pins legacy-backfill acceptance to one hour before its fixed transfer timestamps, so the archived test remains valid independently of the machine's wall clock. Production SQL still uses `now()` for real backfills.
+
 ## Evidence
 
 - Eight direct workspace and prepared-data constraints read back against private stable subject or historical principal tables with `RESTRICT` behavior.

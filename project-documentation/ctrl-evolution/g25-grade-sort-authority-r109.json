@@ -24,8 +24,8 @@
     "client_hook_sha256": "4e646a95b06ec07c24791efd9c11e450587d125938e84fb167adce0b35ec44db",
     "probe": "scripts/probe-ctrl-g25-grade-sort-authority-r109.mjs",
     "probe_sha256": "e7c9e0839e82dc7a50a76fd87b3e6558d9e0c9fe9e407d79bcb824c246b93143",
-    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
-    "function_config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce"
+    "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
+    "function_config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd"
   },
   "hosted_function": {
     "slug": "grade-sort",

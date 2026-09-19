@@ -78,6 +78,15 @@ async function createDatabase() {
   `);
   for (const sql of overlays) await db.exec(sql);
   await db.exec(candidate);
+  // The archived proof revokes fixture grants at a fixed 2026 timestamp.
+  // Pin their fixture creation just before that point so the proof remains
+  // chronological instead of depending on the machine's wall clock.
+  await db.exec(`
+    update private.brain_operator_auth_links
+    set linked_at = '2026-09-17T15:30:00Z'::timestamptz;
+    update public.brain_audience_grants
+    set granted_at = '2026-09-17T15:30:00Z'::timestamptz;
+  `);
   return db;
 }
 

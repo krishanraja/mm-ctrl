@@ -60,6 +60,7 @@ const environmentPolicy = {
   STRIPE_EDGE_PRO_PRICE_ID: ["non_secret_commercial_configuration", false, "billing"],
   STRIPE_SECRET_KEY: ["billing_credential", true, "billing"],
   STRIPE_WEBHOOK_SECRET: ["machine_authentication_secret", true, "billing"],
+  STANDARD_CHANGE_PIPELINE_RPC_SECRET: ["machine_authentication_secret", true, "platform_access"],
   SUPABASE_ANON_KEY: ["platform_injected_runtime", false, "platform_access"],
   SUPABASE_SERVICE_ROLE_KEY: ["platform_injected_privileged_runtime", true, "privileged_database_access"],
   SUPABASE_URL: ["platform_injected_runtime", false, "platform_access"],

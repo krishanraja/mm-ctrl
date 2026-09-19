@@ -29,10 +29,10 @@
     "proposal_client_sha256": "1a8ffa5ec8964ad87c5c0d5ae95c01e829898b61a2e4477ee01f27ba31de5ddd",
     "probe": "scripts/probe-ctrl-g25-capture-learning-authority-r114.mjs",
     "probe_sha256": "439035b0425fd415ea4c5b1345ae740d9a729e2bed62395593bcf8a8f798dfca",
-    "containment_manifest_sha256": "34922f1cbbadf2cb114175615f68fdc61ce8b24506937767f15a78cc38923f82",
-    "config_sha256": "d694cdc16d1f7814adf2b7169d2ae4604997b82dad1b24c80c2e981094a0ecce",
-    "repository_function_manifest_sha256": "c44ba7ae89d8a63854513a6f8d798bae6e2fde010842c1e5b7555583968e8eaa",
-    "environment_manifest_sha256": "fbd182c62f5c98d51c3c246f4d2d9132562bcb97b010e2fd447f375b11a941d0"
+    "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
+    "config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
+    "repository_function_manifest_sha256": "28db4635936abc7c14446497070e1500e5fbe10d6cd3a876385ecd2a5d0e3141",
+    "environment_manifest_sha256": "6cdc679af95834358ee2473bfbbe388b8c34bbe0718a740b7b98e988297a7511"
   },
   "deployment": {
     "slug": "capture-week",

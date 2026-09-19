@@ -2,6 +2,8 @@
 
 Status: local PostgreSQL and pure-planner pass. No deletion, transfer, migration or runtime claim.
 
+Fixed fixture grants are now created before their fixed revocation timestamp, keeping this archived proof independent of the machine's wall clock without changing production SQL.
+
 ## Evidence
 
 - PostgreSQL 18.3 PGlite relationship canary passes.

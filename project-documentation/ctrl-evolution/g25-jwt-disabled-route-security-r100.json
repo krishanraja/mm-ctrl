@@ -8,7 +8,7 @@
     "trust-containment-2026-09-05"
   ],
   "scope": {
-    "current_repo_routes": 115,
+    "current_repo_routes": 121,
     "current_verify_jwt_false": 34,
     "contained_verify_jwt_false": 24,
     "remaining_reviewed_verify_jwt_false": 10,

@@ -29,7 +29,7 @@
     "candidate": "supabase/candidates/g25_stable_principal_removal_context_r28.sql",
     "candidate_sha256": "7999543dccf78e5642f3dee3795aa3826d5efb9a5eef6bd3073897a8c80e6b97",
     "runner": "scripts/run-ctrl-g25-stable-principal-removal-r28.mjs",
-    "runner_sha256": "f0252f0e48838e6c3cdd73e84ca7efd9c1af4a998b6ab6c8fa6a2561048b63e4",
+    "runner_sha256": "b81f48e99174ccf3884277052920e1e20a8ccc5f203d814a3fd95d36caf1bcee",
     "planner": "supabase/functions/_shared/stable-principal-removal-plan.r28.ts",
     "planner_sha256": "f1c63213dca27861e309c7210f70ad7ef403164acaeb4f43066ad79d04fdf969",
     "planner_test": "supabase/functions/_shared/stable-principal-removal-plan.r28.test.ts",

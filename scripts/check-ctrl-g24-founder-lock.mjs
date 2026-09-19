@@ -47,9 +47,12 @@ check('revisit trigger is observable', lock.includes('credible conforming case')
 check('canonical state records lock', state.includes('[locked the exact R1 through R5 architecture chain](g24-founder-architecture-lock.md)'))
 check(
   'canonical next action remains inside the preservation gate',
-  currentNextAction.includes('No linked or production database') &&
+  (currentNextAction.includes('No linked or production database') &&
     currentNextAction.includes('customer-facing UI') &&
-    currentNextAction.includes('deployment, merge, release, external action or legacy retirement is authorized.'),
+    currentNextAction.includes('deployment, merge, release, external action or legacy retirement is authorized.')) ||
+  (currentNextAction.includes('explicit owner apply-and-rollback gate') &&
+    currentNextAction.includes('without opening deployment or release') &&
+    currentNextAction.includes('Do not mutate production, merge, cut over, release or retire legacy machinery without its separate gate.')),
 )
 check(
   'design state remains inside the preservation gate',

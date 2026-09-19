@@ -106,6 +106,15 @@ async function createDatabase(candidateSql = candidate) {
   await seedLegacyState(db);
   await db.exec(r22);
   await db.exec(candidateSql);
+  // The candidate backfill correctly uses now() in production. The archived
+  // proof transfers at a fixed 2026 timestamp, so pin fixture acceptance just
+  // before that transfer instead of letting the wall clock make the test
+  // invalid after 17 September 2026.
+  await db.exec(`
+    update private.brain_custody_assignments
+    set accepted_at = '2026-09-17T17:00:00Z'::timestamptz
+    where authorization_kind = 'legacy_backfill'
+  `);
   return db;
 }
 
