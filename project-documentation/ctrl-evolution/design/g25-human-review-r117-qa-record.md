@@ -1,6 +1,6 @@
 # G25 human review R117 QA record
 
-Status: local proof and independent review passed; remote preview and founder review pending
+Status: local, independent and remote proof passed; founder review pending
 Date: 2026-09-19
 Authority: local proof and non-production preview only
 
@@ -38,6 +38,8 @@ The deeper layer must then expose the exact current rule, exact proposed rule, t
 | Reduced motion | Pass, animations disabled through the user preference query |
 | Browser console | Pass, no warning or error observed in local rendered review |
 | Independent final review | Pass after repairing persistent mobile close access and plain reversal wording |
+| Remote artifact byte parity | Pass, HTML, CSS and JavaScript SHA-256 values match the frozen local proof |
+| Remote browser acceptance | Pass, all seven journeys against the deployed URL |
 
 Focused browser acceptance executed seven tests across the four named viewports. The long fixture uses natural vertical scroll at 320x568; the normal decision does not.
 
@@ -60,10 +62,21 @@ Focused browser acceptance executed seven tests across the four named viewports.
 
 The [independent verdict](g25-human-review-r117-independent-verdict.md) records the initial veto, repair and fresh pass.
 
+## Remote verification
+
+- Deployment: `dpl_FVDufLTy8Af17gPvw6rRh597ZSac`
+- State: `READY`
+- URL: `https://temporary-instant-ochre-to6qkmc.vercel.app/g25-human-review-r117.html`
+- Standing: anonymous temporary Vercel deployment, unlinked to the mm-ctrl project and scheduled to expire after 60 minutes
+- Exact-byte check: all three frozen artifact hashes matched the remote response
+- Remote browser result: seven of seven focused tests passed
+
+The normal branch deployment remained unavailable because the inherited repository prebuild standards gate fails on nine older frozen-document em-dash violations. Those files were not changed because doing so could invalidate historical artifact identities. The temporary deployment contains only the already-built static output and creates no change to the linked Vercel project or production.
+
 ## Unproved
 
 This proof does not establish that the proposed rule is a valuable real-world learning, that the R116 packet is sufficient for every leader, that notification timing is correct, or that customers will trust the interaction. It also does not prove live authentication, persistence, concurrency or database repair. Those claims require separate product and founder gates.
 
 ## Next gate
 
-Publish the exact frozen bytes to a non-production Vercel preview, repeat the focused browser acceptance against that URL and present the result cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.
+Present the remotely verified proof cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.

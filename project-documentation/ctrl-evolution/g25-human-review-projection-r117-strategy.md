@@ -1,6 +1,6 @@
 # G25 human review projection R117 strategy
 
-Status: internally passed; remote founder gate pending
+Status: internal and remote proof passed; founder judgement pending
 Date: 2026-09-19
 Depends on: G25 standard-change owner gate R116
 Data mode: synthetic projection over the exact R116 packet shape
@@ -59,4 +59,4 @@ Routine milestones do not interrupt the founder. Continue autonomously through c
 
 ## Exactly one next action
 
-Publish the exact internally passed proof to a non-production preview, verify that remote artifact and present it cold for the founder's first reaction.
+Present the exact remotely verified proof cold for the founder's first reaction.

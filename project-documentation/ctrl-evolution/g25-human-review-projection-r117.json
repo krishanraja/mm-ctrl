@@ -1,6 +1,6 @@
 {
   "contract": "g25-human-review-projection-r117",
-  "status": "FOUNDER_REVIEW_PENDING",
+  "status": "REMOTE_VERIFIED_FOUNDER_REVIEW_PENDING",
   "authority": {
     "allowed": [
       "local static proof",
@@ -56,6 +56,15 @@
     "1280x720",
     "1440x900"
   ],
+  "remote_verification": {
+    "kind": "anonymous temporary Vercel deployment unlinked to the mm-ctrl project",
+    "deployment_id": "dpl_FVDufLTy8Af17gPvw6rRh597ZSac",
+    "url": "https://temporary-instant-ochre-to6qkmc.vercel.app/g25-human-review-r117.html",
+    "ready_state": "READY",
+    "duration": "60 minutes",
+    "artifact_hashes_match": true,
+    "browser_tests_passed": 7
+  },
   "independent_verdict": "PASS",
   "next_gate": "Krish's cold first reaction to the exact non-production preview"
 }
