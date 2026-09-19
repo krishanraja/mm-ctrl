@@ -1,0 +1,67 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.closed-schemas.v1",
+  "module_id": "closed_schemas",
+  "schema_dsl": {
+    "additional_fields_default": false,
+    "unknown_type": "reject",
+    "unknown_enum_value": "reject",
+    "missing_required_field": "reject"
+  },
+  "schemas": {
+    "semantic_profile": {
+      "required": ["fact_kind", "authority_species", "tenant_id", "leader_id", "subject_id", "case_id", "engagement_id", "purpose_id", "permitted_audience", "consequence_class", "allowed_uses", "source_type", "source_identity", "schema_version", "row_version", "content_fingerprint", "atomic_assertion_or_span_ref", "speaker_or_issuer", "epistemic_basis", "issuer_fact_kind_rule", "authority_policy_version", "applicable_from", "valid_until", "contrary_assertion_refs", "contrary_disposition", "brain_item_ref", "brain_item_version", "brain_standing", "derivation_function_id", "derivation_version"],
+      "fields": {
+        "fact_kind": "nonempty_string", "authority_species": { "enum": ["mechanical_fact", "normative_human_attestation", "derived_fact"] }, "tenant_id": "nonempty_string", "leader_id": "nonempty_string", "subject_id": "nonempty_string", "case_id": "nonempty_string", "engagement_id": "nonempty_string", "purpose_id": "nonempty_string", "permitted_audience": "string_array", "consequence_class": "nonempty_string", "allowed_uses": "string_array_nonempty", "source_type": "nonempty_string", "source_identity": "nonempty_string", "schema_version": "nonempty_string", "row_version": "nonempty_string", "content_fingerprint": "sha256", "atomic_assertion_or_span_ref": "nonempty_string", "speaker_or_issuer": "nonempty_string", "epistemic_basis": { "enum": ["observed", "human_stated", "externally_attested", "deterministically_derived"] }, "issuer_fact_kind_rule": "nonempty_string", "authority_policy_version": "nonempty_string", "applicable_from": "timestamp", "valid_until": "timestamp", "contrary_assertion_refs": "string_array", "contrary_disposition": "nonempty_string", "brain_item_ref": "nullable_string", "brain_item_version": "nullable_string", "brain_standing": { "enum": ["accepted", "proposal_only", "not_applicable"] }, "derivation_function_id": "nullable_string", "derivation_version": "nullable_string"
+      },
+      "cross_field_rules": ["derived_requires_derivation_function_and_version", "non_derived_forbids_derivation_function_and_version", "accepted_brain_requires_item_ref_and_version"]
+    },
+    "normative_attestation_receipt": {
+      "required": ["receipt_type", "domain_separator", "attestation_id", "named_human_id", "actor_authentication_event_ref", "actor_authentication_event_fingerprint", "owned_judgement_kind", "decision_frame_ref", "decision_frame_version", "decision_frame_standing", "structured_answer_value", "free_expression_ref", "free_expression_confirmation_ref", "answer_effect_kind", "accepted_decision_before_fingerprint", "accepted_decision_after_fingerprint", "accepted_decision_changed_paths", "visible_consequence_fingerprint", "bundle_fingerprint", "issued_at", "valid_until", "receipt_fingerprint"],
+      "fields": {
+        "receipt_type": { "const": "normative_attestation" }, "domain_separator": { "const": "CTRL_G24_R79_NORMATIVE_ATTESTATION" }, "attestation_id": "nonempty_string", "named_human_id": "nonempty_string", "actor_authentication_event_ref": "nonempty_string", "actor_authentication_event_fingerprint": "sha256", "owned_judgement_kind": { "enum": ["purpose", "decision_frame", "meaningful_value", "boundary", "stop_condition", "revisit_condition"] }, "decision_frame_ref": "nonempty_string", "decision_frame_version": "nonempty_string", "decision_frame_standing": { "enum": ["accepted", "not_yet_created"] }, "structured_answer_value": "nullable_string", "free_expression_ref": "nullable_string", "free_expression_confirmation_ref": "nullable_string", "answer_effect_kind": { "enum": ["select", "stop", "bound", "materially_reshape"] }, "accepted_decision_before_fingerprint": "sha256", "accepted_decision_after_fingerprint": "sha256", "accepted_decision_changed_paths": "string_array_nonempty", "visible_consequence_fingerprint": "sha256", "bundle_fingerprint": "sha256", "issued_at": "timestamp", "valid_until": "timestamp", "receipt_fingerprint": "sha256"
+      },
+      "cross_field_rules": ["authentication_event_names_same_human", "free_expression_requires_explicit_confirmation", "unknown_forbids_receipt", "decision_delta_must_be_material"]
+    },
+    "final_transition_authority_receipt": {
+      "required": ["receipt_type", "domain_separator", "authority_receipt_id", "named_authority_ids", "actor_authentication_event_refs", "transition_id", "predecessor_version", "predicate_proof_fingerprint", "bundle_fingerprint", "visible_consequence_fingerprint", "reserved_transition_receipt_version", "issued_at", "valid_until", "authority_receipt_fingerprint"],
+      "fields": {
+        "receipt_type": { "const": "final_transition_authority" }, "domain_separator": { "const": "CTRL_G24_R79_FINAL_TRANSITION_AUTHORITY" }, "authority_receipt_id": "nonempty_string", "named_authority_ids": "string_array_nonempty", "actor_authentication_event_refs": "string_array_nonempty", "transition_id": "nonempty_string", "predecessor_version": "nullable_string", "predicate_proof_fingerprint": "sha256", "bundle_fingerprint": "sha256", "visible_consequence_fingerprint": "sha256", "reserved_transition_receipt_version": "nonempty_string", "issued_at": "timestamp", "valid_until": "timestamp", "authority_receipt_fingerprint": "sha256"
+      },
+      "cross_field_rules": ["authority_actor_set_matches_transition_catalogue", "authentication_event_count_matches_actor_count", "all_bindings_match_reserved_transition"]
+    },
+    "external_authority_proof": {
+      "required": ["proof_type", "assertion_id", "fact_kind", "fact_revision", "subject_id", "case_id", "purpose_id", "permitted_audience", "consequence_class", "transition_id", "precondition_id", "predecessor_version", "source_digest", "source_head", "fact_revocation_epoch", "issuer_identity", "issuer_key_id", "signature_algorithm", "issuer_policy_version", "issuer_key_set_seal", "fact_revocation_set_seal", "contradiction_disposition", "issued_at", "verification_time", "valid_until", "maximum_clock_skew_seconds", "reservation_id", "reserved_receipt_version", "transaction_nonce", "visible_consequence_fingerprint", "single_use_token_id"],
+      "fields": {
+        "proof_type": { "enum": ["immutable_authority_lease", "online_conditional_verify_and_consume"] }, "assertion_id": "nonempty_string", "fact_kind": "nonempty_string", "fact_revision": "nonempty_string", "subject_id": "nonempty_string", "case_id": "nonempty_string", "purpose_id": "nonempty_string", "permitted_audience": "string_array", "consequence_class": "nonempty_string", "transition_id": "nonempty_string", "precondition_id": "nonempty_string", "predecessor_version": "nullable_string", "source_digest": "sha256", "source_head": "nonempty_string", "fact_revocation_epoch": "integer_nonnegative", "issuer_identity": "nonempty_string", "issuer_key_id": "nonempty_string", "signature_algorithm": "nonempty_string", "issuer_policy_version": "nonempty_string", "issuer_key_set_seal": "sha256", "fact_revocation_set_seal": "sha256", "contradiction_disposition": "nonempty_string", "issued_at": "timestamp", "verification_time": "timestamp", "valid_until": "timestamp", "maximum_clock_skew_seconds": "integer_nonnegative", "reservation_id": "nonempty_string", "reserved_receipt_version": "nonempty_string", "transaction_nonce": "nonempty_string", "visible_consequence_fingerprint": "sha256", "single_use_token_id": "nullable_string"
+      },
+      "cross_field_rules": ["fact_kind_has_active_founder_locked_external_policy", "proof_protocol_matches_fact_kind_policy", "conditional_consume_requires_single_use_token", "lease_forbids_single_use_token", "all_ctrl_use_bindings_match_transition"]
+    },
+    "accepted_decision_state": {
+      "required": ["decision_id", "case_id", "consequential_target", "route", "bounds", "stop_condition", "evidence_requirement", "checkpoint", "revisit_condition", "lifecycle_status"],
+      "fields": {
+        "decision_id": "nonempty_string", "case_id": "nonempty_string", "consequential_target": "nonempty_string", "route": "nonempty_string", "bounds": "string_array", "stop_condition": "nonempty_string", "evidence_requirement": "nonempty_string", "checkpoint": "nonempty_string", "revisit_condition": "nonempty_string", "lifecycle_status": "nonempty_string"
+      },
+      "material_paths": ["consequential_target", "route", "bounds", "stop_condition", "evidence_requirement", "checkpoint", "revisit_condition"]
+    },
+    "question_atom": {
+      "required": ["question_id", "case_id", "named_answer_owner", "requested_value_kind", "plain_language_question", "answer_options", "unknown_option", "free_expression_option", "answer_effects", "visible_consequence", "optional_depth_ref", "source_reason_ref"],
+      "fields": {
+        "question_id": "nonempty_string", "case_id": "nonempty_string", "named_answer_owner": "nonempty_string", "requested_value_kind": { "enum": ["purpose", "decision_frame", "meaningful_value", "boundary", "stop_condition", "revisit_condition"] }, "plain_language_question": "nonempty_string", "answer_options": "string_array_nonempty", "unknown_option": "nonempty_string", "free_expression_option": "nonempty_string", "answer_effects": "answer_effect_map", "visible_consequence": "nonempty_string", "optional_depth_ref": "nullable_string", "source_reason_ref": "nonempty_string"
+      },
+      "cross_field_rules": ["exactly_one_requested_value_kind", "every_answer_has_material_case_bound_delta", "unknown_never_satisfies", "free_expression_never_auto_parses", "default_surface_one_heading_one_question_one_control_group"]
+    },
+    "repair_graph_proof": {
+      "required": ["graph_head", "graph_epoch", "sorted_dependency_ids", "sorted_dependency_fingerprints", "dependency_set_seal", "edge_kinds"],
+      "fields": {
+        "graph_head": "nonempty_string", "graph_epoch": "integer_nonnegative", "sorted_dependency_ids": "sorted_unique_string_array", "sorted_dependency_fingerprints": "sorted_unique_sha256_array", "dependency_set_seal": "sha256", "edge_kinds": "sorted_unique_string_array"
+      },
+      "cross_field_rules": ["dependency_identity_and_fingerprint_counts_match", "edge_kinds_exact_content_permission_scope"]
+    },
+    "repair_receipt": {
+      "required": ["repair_id", "dependency_id", "dependency_fingerprint", "affected_artifact_ref", "terminal_status", "current_steering_eligibility", "resulting_version_ref", "receipt_fingerprint"],
+      "fields": {
+        "repair_id": "nonempty_string", "dependency_id": "nonempty_string", "dependency_fingerprint": "sha256", "affected_artifact_ref": "nonempty_string", "terminal_status": { "enum": ["rebuilt", "quarantined", "review_required", "unaffected_with_reason", "erased"] }, "current_steering_eligibility": { "const": false }, "resulting_version_ref": "nullable_string", "receipt_fingerprint": "sha256"
+      }
+    }
+  }
+}

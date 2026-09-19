@@ -35,13 +35,13 @@ flowchart LR
 | Scheduled work | Prewarm, delivery, memory, watch, and lifecycle jobs | migrations using Vault, pg_cron, and pg_net |
 | Vercel | Static assets, SPA routing, canonical and redirect hosts | `vercel.json` and project configuration |
 
-The repository contains 115 Edge Function directories excluding `_shared`, 51 hook files, and 170 SQL migrations. These are measured source-tree inventory counts, not design targets.
+The repository contains 122 Edge Function directories excluding `_shared`, 51 hook files, and 196 SQL migrations. These are measured source-tree inventory counts, not design targets.
 
 ## The Supabase project is shared
 
 Read this before changing anything server-side.
 
-CTRL does not have a Supabase project to itself. Project `bkyuxvschuwngtcdhsyg`, named "Mindmaker AI", hosts CTRL alongside other Mindmaker surfaces. Production readback on 2026-09-05 found 183 live Edge Functions. This repository contains 115 function directories; ownership must be established by name and source, not inferred from either count.
+CTRL does not have a Supabase project to itself. Project `bkyuxvschuwngtcdhsyg`, named "Mindmaker AI", hosts CTRL alongside other Mindmaker surfaces. Production readback on 2026-09-05 found 183 live Edge Functions. This repository contains 122 function directories; ownership must be established by name and source, not inferred from either count.
 
 The last complete ownership mapping, on 2026-08-21, identified 114 of the then 178 deployed functions as CTRL. The shared deployment has since grown to 183, so that earlier mapping cannot establish ownership for the additional functions. `video-radar-export` and its 2026-09-07 rolling-window change still have no deployment readback recorded in this repository.
 

@@ -1,0 +1,40 @@
+{
+  "rulingId": "RULING-G21-EPISTEMIC-INTEGRITY-002",
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "judge": "epistemic_integrity",
+  "phase": "sealed_review",
+  "artifactHash": "sha256:86E254AE88F56E7DA05A43FB6CC251FA38B2B36CD9423269B849F65F48924D52",
+  "theoryPackHash": "sha256:D15098661BCC2AF1A5768BF515DF1B85DBBF5E2553FBD3500235E5D54377242F",
+  "criterionVersion": "epistemic-integrity:g21-v1",
+  "verdict": "pass",
+  "veto": null,
+  "claims": [
+    "The output visibly separates public facts, public statements, bounded inferences and evidence gaps, while the cold and sparse profiles abstain at the level their evidence earns.",
+    "Every evidenced notice resolves to source identifiers present in the frozen input, and each bounded inference relies on at least two frozen sources.",
+    "The WPP frame preserves the live countercase between profitable customer growth and cost reduction, and its repaired question requests the missing attribution evidence without claiming an outcome.",
+    "The Microsoft frame preserves the tension among demand, limited AI computing capacity, durable customer value, profit and safety, while its repaired question and conditional answer do not assert an allocation policy or causal result.",
+    "The six plain-language repairs leave all typed notices, evidence identifiers, unknowns and human boundaries unchanged and introduce no unsupported factual, causal, personal or outcome claim."
+  ],
+  "evidenceLocators": [
+    "input.json#/0/evidence",
+    "input.json#/1/evidence",
+    "input.json#/2/evidence",
+    "input.json#/3/evidence",
+    "repair-brief.md#protected-strengths",
+    "repair-brief.md#exact-repair-scope",
+    "output.json#/results/0",
+    "output.json#/results/1",
+    "output.json#/results/2/decisionFrame",
+    "output.json#/results/2/notices",
+    "output.json#/results/2/unresolved",
+    "output.json#/results/2/routeChangingQuestion",
+    "output.json#/results/2/answerWouldChange",
+    "output.json#/results/3/decisionFrame",
+    "output.json#/results/3/notices",
+    "output.json#/results/3/unresolved",
+    "output.json#/results/3/routeChangingQuestion",
+    "output.json#/results/3/answerWouldChange"
+  ],
+  "rationale": "No criterion break is identified. Facts and management statements are not promoted into observed outcomes, the only inferences are bounded and multi-source, gaps remain explicit, and the strongest material countercases remain visible. The repaired language changes accessibility, not evidence standing, and does not trigger either hard veto rule.",
+  "recordedAt": "2026-09-10T16:15:59.8662537+01:00"
+}

@@ -1,0 +1,367 @@
+{
+  "schema_version": "ctrl.product-system.g24.r2-extension.v1",
+  "status": "proposed_founder_lock",
+  "date": "2026-09-12",
+  "state_route": "project-documentation/ctrl-evolution/README.md",
+  "extends": {
+    "commit": "5e485aa458675df10cdb12d063404f1ebeb34e53",
+    "blueprint": {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-blueprint.md",
+      "sha256": "2d006b3275be4f727c5e507abbc1c355bf3bab6f5565ca4d7e9be48750c24e0a"
+    },
+    "contract": {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-contract.json",
+      "sha256": "16b25ea7448997896cab2b5a6e024c78c97118c5593a87eb67d079f15a8064ba"
+    },
+    "qa": {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-qa-record.md",
+      "sha256": "e926095bd52560c2a70463ed6441f9f4f2a24dc31ba4fae9e61d743b59919731"
+    }
+  },
+  "supporting_evidence": {
+    "artifact": "compass_artifact_wf-7e315215-b996-5d15-8f27-1882bcc96ee3_text_markdown.md",
+    "sha256": "26011bd2a93ee09de1c3b080f1f8062a9ed30436ada73a1bdee250437861c17a",
+    "standing": "supporting_synthesis_not_normative_authority",
+    "note": "project-documentation/ctrl-evolution/research/question-and-enrichment-evidence-2026-09-12.md"
+  },
+  "authority": {
+    "allowed": [
+      "local_architecture_revision",
+      "machine_overlay",
+      "deterministic_checker",
+      "state_route_update"
+    ],
+    "closed": [
+      "production_write",
+      "customer_data",
+      "account_creation",
+      "external_research_run",
+      "model_spend",
+      "email_send",
+      "connector_creation",
+      "database_branch_creation",
+      "deployment",
+      "merge",
+      "feature_enablement",
+      "release",
+      "legacy_backend_deletion"
+    ]
+  },
+  "preserved_r1_invariants": [
+    "g23_product_spine",
+    "brain_krish_leader_authority",
+    "supabase_live_brain_target",
+    "encrypted_raw_source_store",
+    "rebuildable_retrieval",
+    "portable_github_or_zip_release",
+    "human_owned_consequential_work",
+    "learning_correction_and_repair",
+    "audience_boundaries",
+    "operator_and_leader_projection_split",
+    "living_brain",
+    "claude_and_email_membranes",
+    "qualified_judgement_transfer_hypothesis",
+    "two_decision_crossing"
+  ],
+  "engagement_lifecycle": {
+    "current_commercial_intensive_window_days": 30,
+    "hard_product_limit": false,
+    "ends_at_optional": true,
+    "states": [
+      "preparing",
+      "intensive_proof",
+      "continuing",
+      "paused",
+      "closing",
+      "released"
+    ],
+    "continuing_has_assumed_end": false,
+    "review_is_not_shutdown": true,
+    "permissions_expire_independently": true,
+    "customer_countdown_forbidden": true
+  },
+  "experience_intelligence": {
+    "magic_components": [
+      "preparedness",
+      "recognition",
+      "restraint",
+      "answerability",
+      "consequence",
+      "continuity",
+      "control"
+    ],
+    "leader_first_frame": {
+      "focal_objects": 1,
+      "primary_actions": 1,
+      "visible_questions_maximum": 1,
+      "depth_default": "progressive_disclosure",
+      "mobile": "one_column_one_handed_tap_first_voice_for_nuance_typing_optional",
+      "quiet_state_valid": true
+    },
+    "choreography": [
+      "recognise_moment",
+      "offer_one_useful_move",
+      "accept_natural_response",
+      "persist_without_loss",
+      "show_consequence",
+      "offer_depth_on_demand"
+    ],
+    "failure_contract": {
+      "input_survives_failed_save": true,
+      "last_useful_state_remains_visible": true,
+      "back_to_back_loading_ceremonies_forbidden": true,
+      "haptics_or_motion_never_only_signal": true
+    },
+    "forbidden": [
+      "announcement_copy_as_value",
+      "repeated_custody_language",
+      "profile_administration",
+      "technical_taxonomy_on_primary_surface",
+      "manufactured_insight",
+      "mandatory_progress_score",
+      "optional_note_carrying_required_value"
+    ]
+  },
+  "decision_evidence_map": {
+    "purpose": "name_only_variables_that_can_materially_change_the_decision",
+    "requirement_fields": [
+      "decision_id",
+      "variable",
+      "load_bearing_reason",
+      "possible_change",
+      "standing",
+      "freshness",
+      "best_source_class",
+      "capable_knower",
+      "sensitivity",
+      "audience_ceiling",
+      "future_decision_scope",
+      "acquisition_path",
+      "stop_rule"
+    ],
+    "separations": [
+      "company_fact_vs_public_claim",
+      "public_statement_vs_private_judgement",
+      "stated_preference_vs_revealed_behaviour",
+      "recent_behaviour_vs_general_memory",
+      "intent_vs_commitment",
+      "importance_vs_tradeoff",
+      "missing_fact_vs_unknowable_future",
+      "useful_gap_vs_curiosity"
+    ]
+  },
+  "enrichment_planner": {
+    "objective": "fill_highest_value_decision_gap_with_least_interruption_and_strongest_available_evidence",
+    "acquisition_order": [
+      "current_accepted_compatible_brain_item",
+      "authorised_engagement_material",
+      "authorised_revealed_behaviour",
+      "primary_public_source",
+      "reliable_secondary_source",
+      "krish_observation",
+      "leader_micro_interaction",
+      "prepared_live_session"
+    ],
+    "public_source_classes": [
+      "official_company_material",
+      "filing_or_regulator_record",
+      "newsroom_or_investor_material",
+      "job_posting_or_public_organisation_signal",
+      "attributable_public_leader_statement",
+      "customer_competitor_or_category_move",
+      "credible_market_policy_or_technology_evidence",
+      "current_assumption_breaking_news"
+    ],
+    "triggers": [
+      "before_first_session",
+      "before_booked_session",
+      "material_decision_opened",
+      "watched_assumption_changed",
+      "before_cross_decision_transfer"
+    ],
+    "efficiency_rules": [
+      "resolve_identity_before_research",
+      "research_named_gap_not_open_ended_profile",
+      "reuse_public_claim_by_reference_only",
+      "refresh_by_hash_version_freshness_or_event",
+      "stop_when_supported_contradicted_private_or_unknowable",
+      "do_not_ask_for_externally_obtainable_fact"
+    ],
+    "public_specificity_never_authorises_private_personhood": true
+  },
+  "question_intelligence": {
+    "eligibility_effects": [
+      "decision_frame",
+      "viable_route",
+      "evidence_requirement",
+      "success_threshold_or_kill_condition",
+      "human_ai_boundary",
+      "prior_judgement_applicability",
+      "session_need",
+      "learning_scope_or_standing",
+      "named_future_decision_preparation"
+    ],
+    "contract_fields": [
+      "question_id",
+      "decision_id",
+      "missing_variable",
+      "why_now",
+      "source_alternatives_checked",
+      "respondent",
+      "answer_grammar",
+      "complete_options_or_unit",
+      "per_answer_effect",
+      "sensitivity",
+      "audience",
+      "retention",
+      "channel",
+      "expiry",
+      "follow_up_condition",
+      "defer_unknown_refusal_behaviour",
+      "stop_rule",
+      "proposal_provenance"
+    ],
+    "priority_positive_factors": [
+      "decision_consequence",
+      "reducible_uncertainty",
+      "exclusive_respondent_knowledge",
+      "future_decision_usefulness",
+      "freshness",
+      "answerability"
+    ],
+    "priority_costs": [
+      "cognitive_burden",
+      "sensitivity",
+      "priming_risk",
+      "interruption_cost"
+    ],
+    "priority_decimal_precision_forbidden": true,
+    "answer_grammars": [
+      "confirm_or_correct",
+      "single_select",
+      "true_inventory_multi_select",
+      "numeric_with_unit",
+      "bounded_recent_recall",
+      "five_or_seven_fully_labelled_scale",
+      "forced_tradeoff",
+      "repeated_best_and_worst",
+      "short_ranking_maximum_five",
+      "recent_critical_incident_voice_first",
+      "one_focused_open_reason"
+    ],
+    "visible_questions_maximum": 1,
+    "prepared_questions_recomputed_after_each_answer": true,
+    "leader_prior_before_system_preference": true,
+    "optional_depth_never_required": true,
+    "forbidden": [
+      "profile_completion_only_question",
+      "agree_disagree_attitude_default",
+      "unlabelled_slider",
+      "long_mobile_ranking",
+      "mobile_grid",
+      "future_intention_when_behaviour_available",
+      "required_value_in_optional_note",
+      "abstract_internal_framework_language"
+    ]
+  },
+  "session_opportunity": {
+    "purpose": "use_live_krish_time_only_when_prepared_conversation_beats_research_or_async_input",
+    "triggers": [
+      "high_consequence_with_interdependent_gaps",
+      "credible_public_internal_conflict",
+      "tacit_judgement_requiring_comparison",
+      "sensitive_incentive_identity_or_politics",
+      "one_answer_changes_multiple_commitments",
+      "repeated_async_ambiguity",
+      "artifact_or_rehearsal_reveals_more",
+      "krish_judgement_is_highest_value_input"
+    ],
+    "not_for": [
+      "public_fact",
+      "one_closed_question",
+      "generic_rapport",
+      "routine_progress",
+      "machine_preparable_work"
+    ],
+    "brief_fields": [
+      "decision",
+      "why_session_now",
+      "current_brain_view",
+      "two_or_three_material_gaps",
+      "concrete_then_tradeoff_then_pressure_question_ladder",
+      "artifact_or_options",
+      "desired_end_state",
+      "capture_and_privacy_plan",
+      "editable_suggested_duration"
+    ],
+    "krish_controls": [
+      "schedule",
+      "edit",
+      "snooze",
+      "dismiss",
+      "mark_unnecessary"
+    ],
+    "initial_os_route": "pull_only_ranked_operator_portfolio",
+    "unsolicited_push_authorised": false,
+    "os_source_verified": "2026-09-12"
+  },
+  "first_crossing_extension": {
+    "headless_first": true,
+    "cases": [
+      "high_external_low_internal",
+      "low_external_high_internal",
+      "high_external_high_internal",
+      "low_external_low_internal"
+    ],
+    "required_choices": [
+      "research_instead_of_question",
+      "supplied_or_observed_evidence_instead_of_public_research",
+      "correctly_typed_async_question_changes_route",
+      "prepared_live_session_instead_of_thin_async_question",
+      "abstention_when_no_route_is_earned"
+    ],
+    "required_dynamics": [
+      "answer_obsoletes_next_question",
+      "optional_voice_incident_proposes_permissioned_learning",
+      "correction_changes_coverage_and_repairs_both_decisions",
+      "later_different_decision_tests_transfer"
+    ],
+    "real_public_identity_rule": "public_claims_only_no_fabricated_private_material_or_consent",
+    "controlled_internal_depth_rule": "matched_fictional_profiles",
+    "consented_real_material_gate": "later_founder_or_pilot_gate"
+  },
+  "evaluation": {
+    "question_yield": {
+      "standing": "internal_unproven_diagnostic",
+      "customer_scoreboard": false,
+      "qualifying_effects": [
+        "gap_closed",
+        "route_changed",
+        "evidence_requirement_changed",
+        "boundary_changed",
+        "stop_condition_changed",
+        "session_need_changed",
+        "learning_proposal_changed"
+      ]
+    },
+    "guardrails": [
+      "unnecessary_question_rate",
+      "clarification_rate",
+      "answer_control_mismatch",
+      "sensitive_overreach",
+      "priming_failure",
+      "false_certainty",
+      "interruption_yield",
+      "correction_survival"
+    ],
+    "observed_experience_evidence_required": [
+      "cognitive_interview",
+      "actual_mobile_device",
+      "fresh_participant_comprehension",
+      "failed_save_recovery",
+      "consequence_comprehension"
+    ]
+  },
+  "next_action": "after_founder_lock_implement_headless_evidence_map_enrichment_plan_intervention_selection_and_route_change_inside_crossing_fixtures"
+}
+

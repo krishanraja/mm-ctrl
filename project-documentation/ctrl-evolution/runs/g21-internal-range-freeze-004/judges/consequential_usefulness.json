@@ -1,0 +1,29 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "consequential_usefulness",
+  "criterionVersion": "consequential-usefulness:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "pass",
+  "claims": [
+    "The four matched families centre distinct material AI-transition choices: care-network scheduling scale, research-product capacity migration, manufacturing system and role redesign, and a GBP 18 million fan-intelligence allocation.",
+    "Within every family, work evidence and longitudinal corrections materially sharpen the decision gate rather than merely adding volume: safety becomes continuity without executive rescue, client preference becomes transferable challenge and renewal economics, apparent planner resistance becomes operating conditions and accountable work allocation, and fan attention becomes audience-specific purchase proof.",
+    "Every declared answer branch across the twelve profiles selects, stops, bounds or reshapes the named consequential route, with direct financial, customer, workforce or accountability consequences preserved in the route change.",
+    "Every unknown branch stops or holds the same consequential route and requests decision-relevant evidence without silently selecting an alternative.",
+    "The runtime task and validators preserve consequential framing, freeze the route contracts, require answer-to-route mappings, reject generic questions, and keep the final action outside the diagnostic authority."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/g21InternalRangeCanary.ts:560-708; src/features/operator-brain/g21InternalRangeCanary.ts:938-1109; src/features/operator-brain/g21InternalRangeCanary.ts:1341-1520; src/features/operator-brain/g21InternalRangeCanary.ts:1759-1979",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:783-935; src/features/operator-brain/g21InternalRangeCanary.ts:1180-1337; src/features/operator-brain/g21InternalRangeCanary.ts:1591-1756; src/features/operator-brain/g21InternalRangeCanary.ts:2064-2238",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2243-2555; project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/question-pack.json#/questions",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2249-2263; src/features/operator-brain/g21InternalRangeCanary.ts:2270-2284; src/features/operator-brain/g21InternalRangeCanary.ts:2291-2305; src/features/operator-brain/g21InternalRangeCanary.ts:2312-2336; src/features/operator-brain/g21InternalRangeCanary.ts:2343-2362; src/features/operator-brain/g21InternalRangeCanary.ts:2369-2383; src/features/operator-brain/g21InternalRangeCanary.ts:2390-2409; src/features/operator-brain/g21InternalRangeCanary.ts:2416-2435; src/features/operator-brain/g21InternalRangeCanary.ts:2442-2466; src/features/operator-brain/g21InternalRangeCanary.ts:2473-2502; src/features/operator-brain/g21InternalRangeCanary.ts:2509-2533; src/features/operator-brain/g21InternalRangeCanary.ts:2540-2554",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2808-2817; src/features/operator-brain/g21InternalRangeCanary.ts:3448-3535; src/features/operator-brain/g21InternalRangeCanary.ts:3690-3751; src/features/operator-brain/g21InternalRangeCanary.test.ts:116-148; src/features/operator-brain/g21InternalRangeCanary.test.ts:902-945; scripts/check-g21-internal-range.mjs:89-95; scripts/check-g21-internal-range.mjs:928-966"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-10T23:04:18.037Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}

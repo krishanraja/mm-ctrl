@@ -1,0 +1,70 @@
+{
+  "contract": "g25-human-review-projection-r117",
+  "status": "REMOTE_VERIFIED_FOUNDER_REVIEW_PENDING",
+  "authority": {
+    "allowed": [
+      "local static proof",
+      "non-production Vercel preview",
+      "synthetic browser-only state"
+    ],
+    "closed": [
+      "production mutation",
+      "database write",
+      "customer data",
+      "product implementation",
+      "merge",
+      "release",
+      "legacy retirement"
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "public/g25-human-review-r117.html",
+      "sha256": "c640cac5c6cca598e4b27a9366895e055c3dd8e540b83658566f2475aca4ea98"
+    },
+    {
+      "path": "public/g25-human-review-r117.css",
+      "sha256": "4fd84d9b7d438c810ffbfb433e1cc43d8039f9f9e43951a8b6c9dfd9f889986f"
+    },
+    {
+      "path": "public/g25-human-review-r117.js",
+      "sha256": "273ddccb049a031567f98bd59bbfc9fd77dce7720e8f6a3718ea5f29b9ada1c8"
+    }
+  ],
+  "first_view": {
+    "question_count": 1,
+    "primary_action_count": 1,
+    "secondary_action_count": 1,
+    "evidence_disclosures": 1,
+    "synthetic_disclaimers": 1
+  },
+  "states": [
+    "ready",
+    "saving",
+    "approved",
+    "rejected",
+    "stale",
+    "error",
+    "loading",
+    "reverse-confirm",
+    "reversed",
+    "long"
+  ],
+  "verified_viewports": [
+    "320x568",
+    "390x844",
+    "1280x720",
+    "1440x900"
+  ],
+  "remote_verification": {
+    "kind": "anonymous temporary Vercel deployment unlinked to the mm-ctrl project",
+    "deployment_id": "dpl_FVDufLTy8Af17gPvw6rRh597ZSac",
+    "url": "https://temporary-instant-ochre-to6qkmc.vercel.app/g25-human-review-r117.html",
+    "ready_state": "READY",
+    "duration": "60 minutes",
+    "artifact_hashes_match": true,
+    "browser_tests_passed": 7
+  },
+  "independent_verdict": "PASS",
+  "next_gate": "Krish's cold first reaction to the exact non-production preview"
+}

@@ -1,0 +1,31 @@
+{
+  "rulingId": "RULING-G21-EPISTEMIC-INTEGRITY-001",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "judge": "epistemic_integrity",
+  "phase": "sealed_review",
+  "verdict": "pass",
+  "criterionVersion": "epistemic-integrity:g21-v1",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "theoryPackHash": "sha256:D15098661BCC2AF1A5768BF515DF1B85DBBF5E2553FBD3500235E5D54377242F",
+  "claims": [
+    "Facts, public statements, bounded inferences and evidence gaps are explicitly typed and supported at their stated standing.",
+    "Every evidenced notice cites a source present in the frozen input, and each bounded inference cites at least two sources.",
+    "Cold and sparse profiles abstain, while richer profiles use provisional frames without converting strategy claims into observed outcomes.",
+    "Material countercases about attribution, workload economics and independent security assurance remain explicit."
+  ],
+  "evidenceLocators": [
+    "input.json#/0/evidence",
+    "output.json#/results/0/recommendationState",
+    "output.json#/results/0/notices/0",
+    "input.json#/1/evidence",
+    "output.json#/results/1/recommendationState",
+    "output.json#/results/1/notices",
+    "input.json#/2/evidence",
+    "output.json#/results/2/notices/2",
+    "output.json#/results/2/unresolved",
+    "input.json#/3/evidence",
+    "output.json#/results/3/notices/2",
+    "output.json#/results/3/unresolved"
+  ],
+  "recordedAt": "2026-09-10T15:47:55.6755737+01:00"
+}

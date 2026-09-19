@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { hasExactServiceCredential } from "../_shared/service-auth.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 
 // Co-locate SCALE UPS mapping for email generation
 interface ScaleUpsDimension {
@@ -456,8 +458,30 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  if (!hasExactServiceCredential(req.headers.get("Authorization"), [
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    Deno.env.get("DIAGNOSTIC_EMAIL_TOKEN") ?? "",
+  ])) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  if (!isJsonRequest(req.headers)) {
+    return new Response(JSON.stringify({ error: "JSON required" }), {
+      status: 415,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+
   try {
-    const { data, scores, contactType, sessionId }: DiagnosticEmailRequest = await req.json();
+    const { data, scores, contactType, sessionId } = await readJsonWithLimit(req, 65_536) as DiagnosticEmailRequest;
 
     console.log("Generating comprehensive AI Leadership Growth Benchmark email for:", data.email);
 

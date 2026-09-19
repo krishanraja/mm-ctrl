@@ -1,0 +1,80 @@
+{
+  "schema_version": "ctrl.g25.cron-recovery-manifest.r101.v1",
+  "contract_id": "G25-CRON-RECOVERY-MANIFEST-R101",
+  "status": "target_neutral_packet_ready_execution_blocked",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-RECOVERY-NON-SCHEMA-MANIFEST-R79",
+    "G25-SECOND-CLEAN-REPLAY-R98",
+    "G25-JWT-DISABLED-ROUTE-SECURITY-R100"
+  ],
+  "inventory": {
+    "production_jobs_fingerprinted": 15,
+    "unique_repo_migration_job_names": 10,
+    "repo_source_backed_job_definitions": 9,
+    "migration_only_missing_function_source": 1,
+    "fingerprint_only_unresolved_jobs": 5,
+    "total_unresolved_jobs": 6,
+    "approved_packet_jobs": 8,
+    "held_source_backed_jobs": 1
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_recovery_cron_jobs_r101.sql",
+    "sha256": "476de2dc3bba64e8f67e0cdc849c92cb3376890d78bf72e83ce6a8193c5a7981",
+    "hardcoded_project_urls": 0,
+    "service_role_credentials_in_commands": 0,
+    "secret_values_in_source": 0,
+    "transactional": true,
+    "preflight_fails_closed": true
+  },
+  "approved_packet": [
+    { "job": "memory-sweep-nightly", "schedule": "0 3 * * *", "target": "edge:memory-sweep", "credential": "vault:ctrl_cron_secret" },
+    { "job": "brain-adapt-nightly", "schedule": "30 3 * * *", "target": "db:public.run_brain_adapt()", "credential": "database_owner" },
+    { "job": "retention-cleanup", "schedule": "0 4 * * *", "target": "edge:cleanup-expired-data", "credential": "vault:ctrl_cron_secret" },
+    { "job": "north-star-daily-snapshot", "schedule": "0 6 * * *", "target": "db:public.snapshot_north_star()", "credential": "database_owner" },
+    { "job": "live-headlines-prewarm", "schedule": "30 10 * * *", "target": "edge:live-headlines?force=1", "credential": "vault:ctrl_cron_secret" },
+    { "job": "daily-briefing-email", "schedule": "0 12 * * *", "target": "edge:send-daily-briefing", "credential": "vault:ctrl_cron_secret" },
+    { "job": "reactivation-nudge", "schedule": "0 13 * * *", "target": "edge:send-reactivation-nudge", "credential": "vault:ctrl_cron_secret" },
+    { "job": "capture-week", "schedule": "0 20 * * 0", "target": "edge:capture-week", "credential": "vault:ctrl_cron_secret" }
+  ],
+  "held_jobs": [
+    {
+      "job": "detect-trends-weekly",
+      "reason": "detect-trends is deliberately contained as a read-only empty route and gateway JWT would reject the legacy cron caller",
+      "preservation": "retain source and historical schedule without activation"
+    },
+    {
+      "job": "kit-nudges-email",
+      "reason": "the migration exists but send-kit-nudges source is absent and the Kit journey is retired",
+      "preservation": "do not schedule unless source, caller and current product purpose are recovered"
+    }
+  ],
+  "improvements_over_legacy": [
+    "all HTTP jobs use one dedicated cron credential instead of a service-role key",
+    "the Edge Function base URL is target-neutral and Vault-backed",
+    "memory-sweep, capture-week and reactivation-nudge accept the same exact cron header as the other approved jobs",
+    "retention-cleanup moves from 03:15 to 04:00 UTC to avoid overlapping the memory and Brain adaptation sequence",
+    "contained or source-missing jobs are preserved but not activated"
+  ],
+  "required_before_execution": [
+    "deploy and verify the six referenced Edge Functions on the isolated target",
+    "provision exactly one ctrl_edge_base_url Vault value without exposing it",
+    "provision exactly one ctrl_cron_secret Vault value and the matching Edge Function secret without exposing it",
+    "run one dry or no-recipient transport probe for every email-capable job",
+    "prove database jobs against reversible isolated fixtures",
+    "confirm all eight cron rows and no extras after the transaction"
+  ],
+  "authority": {
+    "candidate_applied": false,
+    "vault_values_provisioned": false,
+    "isolated_jobs_created": 0,
+    "production_jobs_changed": 0,
+    "production_writes": 0,
+    "forbids": [
+      "applying the packet before function and value-free secret parity gates",
+      "restoring detect-trends-weekly or kit-nudges-email by name alone",
+      "retrieving or persisting secret values",
+      "production mutation, merge, cutover, release or legacy retirement"
+    ]
+  }
+}

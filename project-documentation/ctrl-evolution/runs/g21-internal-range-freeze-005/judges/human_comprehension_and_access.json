@@ -1,0 +1,56 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "human_comprehension_and_access",
+  "criterionVersion": "human-comprehension-and-access:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "fail",
+  "claims": [
+    "RANGE-INTERNAL-CARE-I1 holds at the text-contract level: it asks for one stopping failure, accepts an open short description, binds that answer to the pilot stop rule, sends Unknown to a concrete evidence request, and keeps notes optional.",
+    "RANGE-INTERNAL-CARE-I2 holds: unsafe journeys are the unit, 1,000 scheduled journeys is the denominator, the maximum tolerated before stopping is the comparator, and both a threshold and Unknown have explicit non-selecting route effects.",
+    "RANGE-INTERNAL-CARE-I3 holds: vulnerable clients keeping the same carer are the unit, 100 vulnerable clients is the denominator, the minimum before expansion is the comparator, and the question asks for one threshold without requiring an explanation.",
+    "RANGE-INTERNAL-RESEARCH-I1 breaks the criterion: the fixed choices omit a known unlisted reason, a mixed answer and a tie, while Unknown means the evidence is not known rather than that the known answer is outside the list. The visible contract also does not define the specialist sense of live challenge.",
+    "RANGE-INTERNAL-RESEARCH-I2 breaks the criterion: the yes-or-no shape and route effects are visible, but its challenge is undefined and can mean product difficulty rather than a useful challenge to a client's thinking, so the ask relies on hidden business meaning.",
+    "RANGE-INTERNAL-RESEARCH-I3 holds: it requests one count of clients who pay again, states the minimum-before-capacity-move comparator, makes the consequence explicit, and gives Unknown a feasible economics check without selecting a route.",
+    "RANGE-INTERNAL-FORGE-I1 breaks the criterion: the target is never named in the question, decision context or answer contract, and fair targets is not defined, so a meaningful Yes or No requires a reference outside the visible contract.",
+    "RANGE-INTERNAL-FORGE-I2 holds: the question asks one Yes or No gate, names one plant, all six plants, at least 91 percent on-time delivery and the same planners, and gives each answer and Unknown a distinct visible consequence.",
+    "RANGE-INTERNAL-FORGE-I3 breaks the criterion: The human named by the escalation rule is not itself a role, overlaps the two named roles and depends on an unseen rule. It does not answer the question Which role should make the final call.",
+    "RANGE-INTERNAL-STORY-I1 holds: it asks for one ticket-buyer group, includes an explicit write-in group, maps every choice to the GBP 18 million route, and lets Unknown pause selection while evidence defines the group.",
+    "RANGE-INTERNAL-STORY-I2 holds: it asks one Yes or No question about a ticket-sales funding gate, states the new-viewer and core-fan consequence, maps both choices, and gives Unknown a feasible comparison that leaves the allocation unchanged.",
+    "RANGE-INTERNAL-STORY-I3 holds: extra ticket buyers are the unit, 100 franchise-new viewers is the denominator, today's campaign under similar release conditions is the comparator, core-fan sales are an explicit constraint, and Unknown keeps the allocation unchanged pending measurement.",
+    "This is a cold semantic review of the sealed text and visible answer contracts. No child testing occurred, no adult proxy output was used, and this ruling does not claim observed comprehension by children."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md#human-comprehension-and-access",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/0",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/1",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/2",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/3",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/4",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/5",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/6",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/7",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/8",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/9",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/10",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/11",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:755",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2267",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3631",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:117",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:986",
+    "scripts/check-g21-internal-range.mjs:1092",
+    "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#visible-answer-contract"
+  ],
+  "veto": {
+    "ruleId": "COMPREHENSION-RANGE-01",
+    "failure": "RANGE-INTERNAL-RESEARCH-I1 has non-exhaustive choices and undefined live challenge wording; RANGE-INTERNAL-RESEARCH-I2 relies on the same undefined challenge meaning; RANGE-INTERNAL-FORGE-I1 leaves the target unnamed; and RANGE-INTERNAL-FORGE-I3 offers a circular non-role choice that depends on an unseen escalation rule. These main questions are cryptic, mismatched to their choices or missing a reference required for a meaningful answer.",
+    "resolvingTest": "Freeze revised visible contracts that add an explicit other or mixed answer for RANGE-INTERNAL-RESEARCH-I1, define the plain meaning of challenge for both research questions, name the target in RANGE-INTERNAL-FORGE-I1, and make every RANGE-INTERNAL-FORGE-I3 option an actual human role or an explicit write-in role; then rerun all 12 questions in a fresh history-blind review and require every question to pass the owned criterion."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Freeze revised visible contracts that add an explicit other or mixed answer for RANGE-INTERNAL-RESEARCH-I1, define the plain meaning of challenge for both research questions, name the target in RANGE-INTERNAL-FORGE-I1, and make every RANGE-INTERNAL-FORGE-I3 option an actual human role or an explicit write-in role; then rerun all 12 questions in a fresh history-blind review and require every question to pass the owned criterion.",
+  "recordedAt": "2026-09-11T01:02:48.589Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}

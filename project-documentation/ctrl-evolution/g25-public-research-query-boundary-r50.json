@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g25.public-research-query-boundary.r50.v1",
+  "record_id": "G25-PUBLIC-RESEARCH-QUERY-BOUNDARY-R50",
+  "status": "dormant_typed_public_query_boundary_verified",
+  "depends_on": [
+    "G25-RESEARCH-EGRESS-BOUNDARY-R48",
+    "G25-PROVIDER-EXCHANGE-RECEIPT-REGISTRY-R49"
+  ],
+  "design_call": "Construct research queries from admitted public atoms. Do not accept arbitrary private prose and do not represent regex redaction as semantic privacy.",
+  "admitted_shapes": {
+    "fixed_public_fetch": ["artificial_analysis", "fixed_rss_publishers"],
+    "public_company_name": ["people_data_labs"],
+    "public_domain": ["builtwith", "tranco"],
+    "public_topic_terms": [
+      "perplexity", "exa", "brave", "tavily", "newsapi", "gdelt", "hacker_news_algolia"
+    ]
+  },
+  "proved": [
+    "fixed fetches have no customer-derived outbound query",
+    "company enrichment accepts one bounded company name on its company endpoint",
+    "domain lookups accept a bare normalised domain rather than an email or URL",
+    "search routes accept two to ten atomic public topic terms rather than sentences, quotations or interview prose",
+    "every non-fixed input carries a digest of the public source admission",
+    "unknown fields fail closed, so a caller cannot attach an interview answer and have it silently ignored",
+    "provider and query-kind mismatches fail closed",
+    "prepared requests expose query-minimisation and exact-request digests for the R49 receipt"
+  ],
+  "observed": {
+    "targeted_tests": 13,
+    "targeted_failures": 0,
+    "new_type_errors": 0
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/public-research-query.r50.ts",
+    "module_sha256": "6e091d2a0fd69fab0aac5c0d731aec5dda3eafceb3a750479ca64cc0c019e2d6",
+    "test": "supabase/functions/_shared/public-research-query.r50.test.ts",
+    "test_sha256": "d6e3f67dd5b9f4e49164d35ec122b949f2d2cbc5c60f343a33c81e61038ed25a",
+    "checker": "scripts/check-ctrl-g25-public-research-query-boundary-r50.mjs"
+  },
+  "residual": "A digest proves stable admission evidence exists, not that its source was truly public. Runtime admission still needs a separately authorised public-source resolver and auditable provenance.",
+  "next_gate": "Specify and prove the public-source admission resolver, then connect R50 output to R49 receipts in a dormant composed adapter.",
+  "not_authorized": [
+    "editing or calling live research routes",
+    "treating arbitrary private text as safely redacted",
+    "migration creation or execution",
+    "external calls, deployment, merge or release"
+  ]
+}

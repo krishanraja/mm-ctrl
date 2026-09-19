@@ -1,0 +1,53 @@
+{
+  "schema_version": "ctrl.g25.stable-custody-envelope.r24.v1",
+  "record_id": "G25-STABLE-CUSTODY-ENVELOPE-R24",
+  "status": "pure_stable_custody_scope_verified",
+  "depends_on": [
+    "G25-AUTHORITY-ENVELOPE-R7",
+    "G25-STABLE-CUSTODY-IDENTITY-R23"
+  ],
+  "write_identity": {
+    "included": [
+      "workspace_id",
+      "custody_principal_id",
+      "subject_id",
+      "audience",
+      "purpose",
+      "typed current authority"
+    ],
+    "excluded": [
+      "legacy owner_id",
+      "operator_principal_id",
+      "auth user_id"
+    ],
+    "rule": "A new prepared object belongs to stable workspace custody. Operator assignment and login access may change without changing the object's authority identity."
+  },
+  "holds": [
+    "custody transfer_required",
+    "custody closed",
+    "custody status invalid",
+    "custody workspace or principal mismatch",
+    "unknown scope or dependency fields",
+    "cross-custody dependency",
+    "stale, missing, duplicate or malformed authority"
+  ],
+  "artifacts": {
+    "module": "supabase/functions/_shared/prepared-intelligence-custody-envelope.r24.ts",
+    "module_sha256": "d9dd9f01e7e2ab5f01b1dcd26f09a0545de35cdeff6ca7b0fd49b14ff410ebe8",
+    "tests": "supabase/functions/_shared/prepared-intelligence-custody-envelope.r24.test.ts",
+    "tests_sha256": "4d42b5972609536e0f27c010a8be6923c26cbbc9314d84ce1822c2e6ee5b27ca"
+  },
+  "verification": {
+    "r24_tests": 9,
+    "unchanged_r7_tests": 14,
+    "unchanged_r23_tests": 2
+  },
+  "next_gate": "Extend the atomic database store with a versioned R24 path for new writes while preserving R7 and R10 rows and fingerprints exactly, then bind the removal planner to R23 custody state.",
+  "not_authorized": [
+    "database migration or execution",
+    "linked or production database use",
+    "runtime producer or caller integration",
+    "legacy receipt rewrite",
+    "deployment, merge or release"
+  ]
+}

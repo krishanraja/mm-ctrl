@@ -1,0 +1,761 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "role": {
+    "name": "founder_calibration_and_what_would_krish_do",
+    "votingStatus": "non_voting",
+    "clearanceAuthority": false,
+    "sealedVotesChanged": false,
+    "adjudicationChanged": false,
+    "purpose": "Calibrate the valid blocked Run 005 record against exact user-authority decisions and observed founder gates, cross-examine prosecution and defense without re-voting, distinguish product requirements from canary defects, and return the terminal-route choice to Krish.",
+    "boundary": "This record predicts what Krish would most likely choose and recommends a route. It cannot turn prediction into approval, set aside a sealed veto, authorize a new run, authorize the 36-input diagnostic, or approve a product surface.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#permanent-council",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json#/result",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json#/protocolStanding",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#/role"
+    ]
+  },
+  "reviewedArtifact": {
+    "artifactCommit": "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317",
+    "artifactCommitObjectType": "commit",
+    "adjudicationCommit": "16d7742ac19f746d8cb3e2c27d57955f5661bbb4",
+    "currentHeadInspected": "b035e9e0b150ce8fc3404d411eaa568fec98ce21",
+    "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "compileClosureCompositeSha256": "9e6bb2b8b33e7a987ea2b5b67b1b6cfde001ab80065541c3a25c3f1384084fc6",
+    "rulingsCompositeSha256": "4c00498d638b439578af82c9b68677e9e15c6b5de282ba725611d46deeb66b45",
+    "questionPackSha256": "49a67c424238be1fe48dcaadc3bac785fba7b0a7dc9dd4d84d4d6beccaf46dd6",
+    "declaredArtifactFileCount": 16,
+    "semanticReviewFileCount": 9,
+    "compileClosureFileCount": 3,
+    "recordChronology": {
+      "adjudicationRecordedAt": "2026-09-11T01:08:34.348Z",
+      "standardsProsecutionRecordedAt": "2026-09-11T01:21:49.323Z",
+      "vetoDefenseRecordedAt": "2026-09-11T01:30:34.261Z",
+      "interpretation": "The artifact commit fixes the candidate bytes. The later adjudication commit fixes the reader, ruling, and adjudication record. Prosecution and defense are downstream non-voting cross-examination. This founder calibration is later still and changes none of them."
+    },
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/freeze-anchor.json#/artifactCommit",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/artifactCompositeSha256",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/reviewBoundary/semanticReviewCompositeSha256",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/compileClosure/compositeSha256",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/rulings-manifest.json#/rulingsCompositeSha256",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/questionPackSha256"
+    ]
+  },
+  "exactStatus": {
+    "protocolStanding": "valid_history_free_independent_review",
+    "adjudicatedStatus": "blocked",
+    "sealedPassCount": 2,
+    "sealedVetoCount": 5,
+    "sealedPasses": [
+      "human_agency",
+      "behavioural_and_implementation_reality"
+    ],
+    "sealedVetoes": [
+      "EPISTEMIC-RANGE-01",
+      "SAFETY-RANGE-01",
+      "USEFULNESS-RANGE-01",
+      "BRAIN-RANGE-01",
+      "COMPREHENSION-RANGE-01"
+    ],
+    "allSevenClearConditionMet": false,
+    "diagnosticStatus": "not_authorized",
+    "g21ProductStatus": "not_authorized",
+    "run006Status": "not_authorized",
+    "terminalStatus": "planned_terminal_synthetic_clearance_failed_to_clear",
+    "interpretation": "Run 005 is a valid and useful blocked record. Its integrity checks passing means the block is reproducible, not that the candidate cleared. Defense narrows the rationale but cannot alter the five sealed vetoes or satisfy the all-seven-clear condition.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json#/rulings",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json#/result/status",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json#/protocolStanding",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/overallConclusion",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/overallDefenseConclusion"
+    ]
+  },
+  "reviewScope": {
+    "run005DirectoryReadInFullBeforeCalibration": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/freeze-anchor.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/reader-brief.md",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_a.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_b.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/rulings-manifest.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json"
+    ],
+    "priorRunRecordsRead": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json"
+    ],
+    "durableJudgeHistoriesReadInFull": [
+      "project-documentation/ctrl-evolution/judge-history/human-agency.md",
+      "project-documentation/ctrl-evolution/judge-history/epistemic-integrity.md",
+      "project-documentation/ctrl-evolution/judge-history/subject-audience-lifecycle-safety.md",
+      "project-documentation/ctrl-evolution/judge-history/consequential-usefulness.md",
+      "project-documentation/ctrl-evolution/judge-history/living-brain-integrity.md",
+      "project-documentation/ctrl-evolution/judge-history/human-comprehension-and-access.md",
+      "project-documentation/ctrl-evolution/judge-history/behavioural-and-implementation-reality.md"
+    ],
+    "currentProjectSourcesRead": [
+      "project-documentation/ctrl-evolution/README.md",
+      "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
+      "project-documentation/ctrl-evolution/session-method-learning-log.md",
+      "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+      "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+      "project-documentation/ctrl-evolution/g21-v4-contract-separation.md",
+      "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md",
+      "project-documentation/ctrl-evolution/g21-public-row-canary.md",
+      "project-documentation/ctrl-evolution/g21-public-row-canary-research-brief.md",
+      "project-documentation/ctrl-evolution/g21-diagnostic-council-run.md",
+      "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-qa-record.md",
+      "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md"
+    ],
+    "methodLimitation": "This is intentionally a downstream calibration rather than a fresh independent criterion review. It reads prosecution, defense, prior calibration, and founder history because its job is to interpret the route after voting. Those sources are prohibited from changing the sealed record."
+  },
+  "sourceRecords": {
+    "authorityOrder": [
+      "Final records with authority=user in ledger.snapshot.jsonl through D-055",
+      "Direct verbatim or explicitly recorded founder gates",
+      "README records D-056 through D-062, qualified by the README statement that canonical Supabase append and readback confirmed user authority",
+      "The task-supplied terminal Run 005 boundary and immutable Run 005 record",
+      "Agent-authored prior calibration, prosecution, defense, and method synthesis as advisory interpretation only"
+    ],
+    "ledgerQualification": "The local deterministic snapshot is stale at D-055. It was read in full and contains 282 rows, including the exact user-authority decision and evidence records cited here. D-056 through D-062 are not falsely represented as local snapshot rows; the current README reports their later canonical Supabase readback.",
+    "exactUserAuthorityRecords": [
+      {
+        "recordKeys": [
+          "D-006",
+          "D-008",
+          "D-009",
+          "D-010",
+          "D-015",
+          "D-017",
+          "D-019",
+          "D-027",
+          "D-033",
+          "D-034"
+        ],
+        "reading": "The product must materially sharpen one real consequential decision, earn five useful minutes, help the leader own the call, show its view only after the leader's provisional view, abstain when evidence is weak, do the interpretive work, ask the smallest route-changing question, and repair downstream state after correction.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L47",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L49-L51",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L56-L60",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L68",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L74-L75"
+        ]
+      },
+      {
+        "recordKeys": [
+          "D-038",
+          "D-040",
+          "D-043",
+          "D-044",
+          "D-049",
+          "D-051",
+          "D-052",
+          "D-054",
+          "D-055"
+        ],
+        "reading": "Deep calibrated judgement, independent review, provenance, correction, and human accountability are durable machinery. The visible product must rise to consequential strategic altitude, preserve voice, discard machinery that does not serve the target, exceed current polish through devastating simplicity, and prove one human-first loop rather than expose a technical checklist.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L79-L85",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L90-L96",
+          "project-documentation/ctrl-evolution/README.md#L121-L141"
+        ]
+      },
+      {
+        "recordKeys": [
+          "E-058",
+          "E-059",
+          "E-060"
+        ],
+        "reading": "Krish rejected lovely technical theatre with little insight, wanted purposeful rather than decorative magic, and explicitly moved beyond a product direction once it was good enough while carrying only concrete alignment and zero-guff corrections.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L154-L156",
+          "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#exact-founder-reaction",
+          "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md#founder-judgement"
+        ]
+      },
+      {
+        "recordKeys": [
+          "D-056",
+          "D-057",
+          "D-058",
+          "D-059",
+          "D-060",
+          "D-061",
+          "D-062"
+        ],
+        "reading": "The current Brain and operator roles, evidence-range requirement, highest-risk human-responsibility rule, seven permanent truth owners, veto protection, history routing limit, and naming boundary are current. D-060 means a valid veto cannot be waived by preference or averaged against a pass.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/README.md#L33",
+          "project-documentation/ctrl-evolution/README.md#L273-L279",
+          "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#permanent-council"
+        ]
+      }
+    ],
+    "observedFounderGatePattern": [
+      {
+        "event": "G20 Context Exchange R1",
+        "observedReaction": "Visual polish and visible trust mechanics were rejected because they carried little personal insight, consequence, or useful external result.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#exact-founder-reaction",
+          "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#durable-correction"
+        ]
+      },
+      {
+        "event": "G20 Decision Table R2",
+        "observedReaction": "The simple decision table was preserved, but Krish required harder questions and better evidence behind it without adding clutter.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md#unanchored-reaction",
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md#founder-ruling-carried-into-r3"
+        ]
+      },
+      {
+        "event": "G20 Decision Table R3 and R4",
+        "observedReaction": "An abstract question was rejected even though the direction was better. R4 was then bounded as the final same-spine correction, making the Brain carry interpretation and the person answer with one plain tap plus optional depth.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md#founder-reaction",
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md#design-task-contract",
+          "project-documentation/ctrl-evolution/README.md#L29"
+        ]
+      }
+    ],
+    "currentProductRoute": "The current README still names a cold review of the already verified but unapproved G20 Decision Table R4 as the next visible product gate. That route is separate from G21 and may not carry a G21 diagnostic output, clearance claim, or implementation authority.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/README.md#L29",
+      "project-documentation/ctrl-evolution/README.md#L111",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-qa-record.md#verdict"
+    ]
+  },
+  "userAuthorityBasis": {
+    "method": "Use exact user-authority records and direct founder gates in chronological order. Use agent-authored synthesis only to connect them, never to manufacture a preference or approval.",
+    "governingTension": "Krish has explicitly authorized sophisticated truth machinery and a veto-first council, while repeatedly rejecting any visible experience that makes machinery, jargon, or polish substitute for consequential intelligence. The faithful synthesis is not less rigor. It is rigor underneath one simple, useful interaction.",
+    "governingInference": "Krish is most likely to honor the council block, refuse the diagnostic, honor the terminal stop, and move the next visible founder interaction back to the already prepared G20 R4 cold gate rather than commission another open-ended synthetic cycle. He is also likely to preserve the reproduced Safety boundary and the small visible answer-contract defects as real implementation requirements.",
+    "confidence": "medium_high",
+    "uncertainty": "Krish has not reacted directly to Run 005. D-060 may lead him to prefer an explicit bounded reopening because the Safety failure is real within the declared unknown-object API and the visible fixes are small. Only Krish can decide whether that warrants overriding the terminal rule.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/README.md#L268-L279",
+      "project-documentation/ctrl-evolution/session-method-learning-log.md#L20-L60",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#/whatWouldKrishDo",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#/exitCondition"
+    ]
+  },
+  "historicalTheoryRoutes": {
+    "routesUsed": [],
+    "optionalCardCount": 0,
+    "reason": "No direct docs/history theory was needed. The frozen Run 005 evidence, current contracts, permanent judge histories, exact user-authority records, direct founder gates, prosecution, and defense already resolve every calibration question. Loading more theory would add advisory vocabulary without changing the route.",
+    "prosecutorTheoryTreatment": "The prosecutor reports three directly routed history sources. This calibration read that downstream report but did not independently open or adopt those docs/history source files. Their historical status claims do not control current truth.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/README.md#L47-L50",
+      "project-documentation/ctrl-evolution/README.md#L278",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/theoryRouting"
+    ]
+  },
+  "predictedReaction": {
+    "nonVerbatimSynthesis": "The council did its job and the block is real. Keep the useful safety and question-contract lessons, but do not show me another version of the harness. Do not run the diagnostic without clearance. Put the simple consequential product experience back in front of me, and ask before reopening this terminal gate.",
+    "whatHeWouldValue": [
+      "The seven permanent truth owners remained independent and valid vetoes were not averaged away.",
+      "The Run 004 dependency-closure defect is genuinely resolved through a separate three-file repo-owned compile closure.",
+      "The v5 receipt binding, immutable evidence, claim-level correction, hard fictional namespace, safe novel control, and exact canonical separation are substantial substrate improvements.",
+      "The Safety reproduction found a real mismatch inside the API that claims to accept unknown input.",
+      "The remaining usefulness and comprehension cores are concrete visible contract errors rather than demands for more interface explanation.",
+      "Human ownership and consequential decision altitude survived the repair cycle."
+    ],
+    "whatHeWouldChallenge": [
+      "Why should a self-derived static canary decide which of three independently valid snapshots is currently authoritative?",
+      "Why should a changed pre-load module count as the same frozen Run 005 when its source and semantic hashes change?",
+      "Why is an in-process JavaScript object exploit being discussed as product safety when no product call path uses this validator?",
+      "Which remaining defect would a real leader experience, and which exists only because the synthetic harness overstates its boundary?",
+      "Why has a terminal synthetic gate become a request for another synthetic gate instead of returning to the simple consequential product experience?"
+    ],
+    "whatHeWouldRefuseToSeeNext": [
+      "A Run 006 presented as automatic or already authorized.",
+      "The 36-input diagnostic or a G21 product surface presented despite five sealed vetoes.",
+      "A council dashboard, hash display, mutation counter, receipt registry, lifecycle grid, or ontology as the main product experience.",
+      "The toJSON exploit described as a proved production privacy breach or customer harm.",
+      "The corrected-to-initial reproduction described as a proved canary bug without first naming an external current-state authority.",
+      "A causal verb blacklist that merely teaches the harness a list of synthetic phrases.",
+      "An answer that requires a hidden optional note to supply a required value.",
+      "A circular role option such as the human named by an unseen escalation rule.",
+      "Adult proxy evidence described as child comprehension, usability, or specialist clearance.",
+      "More explanatory furniture added around a confusing question instead of rewriting the question.",
+      "Any claim that passing finite synthetic checks proves diagnostic intelligence, customer value, learning, or production safety."
+    ],
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#exact-founder-reaction",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md#unanchored-reaction",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md#founder-reaction",
+      "project-documentation/ctrl-evolution/session-method-learning-log.md#L20-L60",
+      "project-documentation/ctrl-evolution/README.md#L137-L141"
+    ]
+  },
+  "crossExamination": {
+    "method": "For each sealed ruling, let the strongest prosecution and defense argument win as far as the evidence permits, then separate official standing, substantive product implication, and canary scope. No calibrated disposition changes a vote.",
+    "prosecutionVersusDefenseOverall": "Prosecution is right on official status, the reproduced Safety defect, the frozen causal overclaim, the missing STORY-I1 value, and the presence of visible comprehension defects. Defense is more persuasive that the BRAIN reproduction is not a failure of the declared per-snapshot validator, that the pre-load epistemic theory does not retain Run 005 identity, and that the resolving tests for usefulness and comprehension must stay inside the visible contract. Both sides correctly narrow the Behavioural Reality pass.",
+    "calibratedDispositions": [
+      {
+        "judge": "human_agency",
+        "sealedVerdict": "pass",
+        "vetoRuleId": null,
+        "prosecutorDisposition": "pass_protected_and_strictly_bounded",
+        "defenseDisposition": "upheld_with_one_supporting_claim_qualified",
+        "calibratedDisposition": "protect_narrow_pass",
+        "finding": "R1 permits framing and one question, forbids consequential recommendation, action, durable-truth promotion, and named-employee evaluation, and keeps the final call human. A corrupt frame can weaken practical agency, but none of the reproduced attacks grants AI the prohibited capability.",
+        "loadBearingProductRequirement": "Keep purpose, standards, material exceptions, unknown stops, and the final consequential call with an accountable human. Later evidence-backed recommendation remains possible only inside the already staged human contract.",
+        "notProved": "The pass does not prove epistemic truth, safety, usefulness, comprehension, diagnostic quality, or product value.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json#/claims",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/0",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/0"
+        ]
+      },
+      {
+        "judge": "epistemic_integrity",
+        "sealedVerdict": "fail",
+        "vetoRuleId": "EPISTEMIC-RANGE-01",
+        "prosecutorDisposition": "veto_stands_narrowed",
+        "defenseDisposition": "narrowed",
+        "calibratedDisposition": "sealed_veto_stands_with_small_product_core",
+        "finding": "The frozen INT-STORY-007 and NOTICE-STORY-I3-01 use lifted and improved causal language while held-out purchase proof remains unresolved. That is a genuine epistemic defect in the frozen content. The defense wins on the broader self-authority claim: every pre-load wording variant changes the source hash and semantic composite, so it does not retain Run 005 identity, and the v5 registry is explicitly a canary stand-in rather than production authentication.",
+        "loadBearingProductRequirement": "Observational evidence must be phrased as association unless a controlled, held-out, or otherwise causally adequate design earns stronger language. Standing cannot be granted merely by attaching an observation label.",
+        "canaryOrTestBoundaryDefect": "The causal check is context-insensitive and incomplete, but a longer forbidden-verb list or production-grade receipt authority would overfit or exceed this canary. If reopened, repair the exact frozen wording and add binding-valid context-aware causal regressions while preserving valid controlled claims.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/1",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/1",
+          "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L1964-L1973",
+          "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2171-L2203"
+        ]
+      },
+      {
+        "judge": "subject_audience_lifecycle_safety",
+        "sealedVerdict": "fail",
+        "vetoRuleId": "SAFETY-RANGE-01",
+        "prosecutorDisposition": "veto_stands_narrowed_to_declared_in_process_unknown_boundary",
+        "defenseDisposition": "upheld",
+        "calibratedDisposition": "strongest_independent_blocker",
+        "finding": "Both validators accept a currentClaims array whose live values are fabricated, real_person, and public while an array-level toJSON presents a benign derived view. The defense cannot defeat the issue because the public API says it accepts unknown input and the test suite already claims coverage of getters, proxies, cycles, sparse arrays, and malformed values.",
+        "loadBearingProductRequirement": "Name the real ingress contract. If an in-process boundary accepts arbitrary objects, convert to inert plain data before comparison and validate every resolved-claim enum and array property independently. If production accepts parsed JSON only, narrow the public contract and validate after parsing. Never validate one view and consume another.",
+        "canaryOrTestBoundaryDefect": "The exact exploit requires a function-bearing JavaScript object, ordinary JSON transport removes it, no production caller or disclosure was shown, and repository search found validator use only in the canary module, its tests, freeze scripts, and docs. It is not evidence of a production breach.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/reproductions",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/2",
+          "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3100-L3124",
+          "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4183-L4228"
+        ]
+      },
+      {
+        "judge": "consequential_usefulness",
+        "sealedVerdict": "fail",
+        "vetoRuleId": "USEFULNESS-RANGE-01",
+        "prosecutorDisposition": "veto_stands",
+        "defenseDisposition": "narrowed",
+        "calibratedDisposition": "sealed_veto_stands_on_visible_contract_only",
+        "finding": "STORY-I1 accepts the complete answer Another named group, keeps notes optional, and has no required custom value, yet its route effect assumes a leader-named ticket-buyer group. Adult readers can infer a write-in, but inference cannot create a required value in the frozen contract.",
+        "loadBearingProductRequirement": "A visible option that promises to select or reshape a consequential route must supply every value that route needs. Remove the placeholder or make the write-in explicit and required when selected.",
+        "canaryOrTestBoundaryDefect": "The current artifact freezes a visible answer contract, not an executable answer-ingestion pipeline. The defense correctly rejects a demand to build parser and propagation machinery merely to dispose of this veto.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/3",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/3",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/9"
+        ]
+      },
+      {
+        "judge": "living_brain_integrity",
+        "sealedVerdict": "fail",
+        "vetoRuleId": "BRAIN-RANGE-01",
+        "prosecutorDisposition": "veto_stands_at_case_admission_boundary",
+        "defenseDisposition": "challenged_and_set_aside_substantively",
+        "calibratedDisposition": "sealed_veto_remains_but_defense_wins_current_canary_scope",
+        "finding": "The coherent corrected-to-initial reproduction is accepted, but its serialized output is byte-identical to the separately emitted valid initial case. The frozen contract defines initial, contradicted, and corrected as independently valid cases and does not promise to prove which is externally current. The prosecutor identifies a real future admission risk, but the missing expected-current-state pointer is a new caller or store authority, not a demonstrated failure of per-snapshot validation.",
+        "loadBearingProductRequirement": "A live Brain must prevent stale or replayed snapshots from replacing a newer current projection. The trusted store, event sequence, or diagnostic admission boundary must bind current version and case identity when product architecture reaches that boundary.",
+        "canaryOrTestBoundaryDefect": "Do not retrofit currentness or anti-replay authority into this static three-state canary without an explicit product decision. Within the selected state, immutable receipts, claim-level correction, unaffected-claim retention, and deterministic current views remain strong.",
+        "officialStandingQualification": "Founder calibration cannot erase BRAIN-RANGE-01. It still counts against the all-seven-clear condition. The substantive defense only means it should not silently define the scope of a future repair.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/4",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/4",
+          "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#fixture-truth-and-oracle-isolation"
+        ]
+      },
+      {
+        "judge": "human_comprehension_and_access",
+        "sealedVerdict": "fail",
+        "vetoRuleId": "COMPREHENSION-RANGE-01",
+        "prosecutorDisposition": "veto_stands_narrowed",
+        "defenseDisposition": "narrowed_further",
+        "calibratedDisposition": "sealed_veto_stands_on_two_concrete_contract_defects",
+        "finding": "FORGE-I3 includes a circular non-role that depends on an unseen escalation rule. RESEARCH-I1 forces speed, access, or live challenge even though another reason, a mixed answer, or a tie is possible. Those are concrete control defects. The adult evidence strongly rebuts obvious adult unanswerability for RESEARCH-I2 and FORGE-I1, and their disputed wording is not needed to sustain the sealed veto.",
+        "loadBearingProductRequirement": "The Brain performs the analysis, then offers exhaustive enough choices or a clear write-in, with every role visible and every optional note genuinely optional. Unknown remains safe.",
+        "canaryOrTestBoundaryDefect": "Do not treat challenge wording in RESEARCH-I2 or the unnamed target in FORGE-I1 as established product blockers. Retain them as wording watchpoints. Do not add explanatory panels or claim child comprehension.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/5",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/5",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/3",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/8"
+        ]
+      },
+      {
+        "judge": "behavioural_and_implementation_reality",
+        "sealedVerdict": "pass",
+        "vetoRuleId": null,
+        "prosecutorDisposition": "sealed_pass_preserved_but_materially_narrowed",
+        "defenseDisposition": "challenged",
+        "calibratedDisposition": "preserve_only_directly_reproduced_subclaims",
+        "finding": "The exact hashes, three-file compile closure, four actual matched families, 36 baseline inputs, 128 malformed JSON samples, 249 declared mutations, and nine safe-novel controls are real. The toJSON attack defeats the unqualified arbitrary-input claim. Coherent substitution to another valid state does not prove an undeclared anti-replay guarantee. One-to-one route-effect strings do not cure STORY-I1.",
+        "loadBearingProductRequirement": "Keep the finite adversarial suite, safe-novel separation, exact fixture identity, dependency closure, and realistic matched range. State future assurance as enumerated evidence, never universal proof.",
+        "canaryOrTestBoundaryDefect": "input-manifest.json declares matchedFamilies as 1 because the freeze generator reads profile.manifest.familyId instead of profile.familyId. Execution proves 4. This is a protocol metadata and verifier gap, not a product failure and not grounds to rewrite Run 005.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json#/claims",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/protocolAudit/frozenCountMetadataDefect",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/6",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/6"
+        ]
+      }
+    ],
+    "adultScreenInterpretation": {
+      "adultProxyA": "11 pass, 1 fail",
+      "adultProxyB": "12 pass, 0 fail",
+      "sharedFailures": [],
+      "onlySplit": "RANGE-INTERNAL-FORGE-I3, specifically The human named by the escalation rule",
+      "properUse": "The results support literal adult paraphrase and answerability for eleven items and make FORGE-I3 a visible wording watchpoint aligned with the council veto.",
+      "hardBoundary": "The adults are proxies only. They cannot establish comprehension by a bright twelve-year-old, child usability, accessibility, factual truth, specialist clearance, diagnostic efficacy, or customer value.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/reviews",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/sharedFailures",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/boundary"
+      ]
+    }
+  },
+  "semanticDependencyClosureQualification": {
+    "status": "qualified_pass",
+    "run004OmissionResolved": true,
+    "protocolVersion": "repo-local-typescript-import-closure:v1",
+    "entryPoint": "src/features/operator-brain/g21InternalRangeCanary.ts",
+    "files": [
+      {
+        "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+        "sha256": "47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d"
+      },
+      {
+        "path": "src/features/operator-brain/g21PublicRowCanary.ts",
+        "sha256": "3891a861ff81d1f35587a32e3a9f11bb3034366b99207a53040ca73467f5c82c"
+      },
+      {
+        "path": "src/features/operator-brain/rangeCouncilContract.ts",
+        "sha256": "1b03b58b19d9375fdce303e8161cd8c2cd43c65c5c6e9f94be4c69ebdb29ccc0"
+      }
+    ],
+    "compositeSha256": "9e6bb2b8b33e7a987ea2b5b67b1b6cfde001ab80065541c3a25c3f1384084fc6",
+    "toolchain": {
+      "node": "v24.13.0",
+      "typescript": "5.9.3"
+    },
+    "assessment": "The separate compile-closure identity exactly covers the bounded repo-owned local TypeScript import closure and all three files are inside the clean nine-file semantic allowlist. This is the right separation: judges read current semantic material, while the machine identity covers local compiled dependencies without importing node_modules or history into the review pack.",
+    "qualification": "This passes the Run 004 dependency-closure requirement. It does not prove the candidate semantically correct, does not cure any veto, and does not cure the unrelated matchedFamilies metadata error.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/compileClosure",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/semanticReviewFiles",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/protocolAudit/compileClosure"
+    ]
+  },
+  "whatWouldKrishDo": {
+    "prediction": "Close G21 at its planned terminal boundary without clearance, keep the valid block and the small load-bearing lessons, do not run the 36-input diagnostic, do not default to Run 006, and return the next visible interaction to the already verified but unapproved G20 R4 cold founder gate with no G21 output or claims attached.",
+    "predictedRouteId": "close_terminal_and_return_to_existing_cold_gate",
+    "confidence": "medium_high",
+    "evidence": [
+      "D-060 protects the permanent council and makes waiver by preference illegitimate.",
+      "Run 004 founder calibration explicitly authorized Run 005 as the single terminal synthetic clearance and required all seven passes before diagnostic entry.",
+      "D-051 and D-052 require devastating simplicity and one human-first five-minute loop over visible technical machinery.",
+      "D-054 and E-060 record that Krish moves on once a material direction is good enough, carrying only concrete implementation corrections.",
+      "The G20 founder gates repeatedly reject technical theatre, abstract questions, repeated trust copy, and complexity that reaches the person before its use.",
+      "The current README independently retains G20 R4 cold review as the next visible product action, while R4 remains unapproved and non-production.",
+      "The defense shows that BRAIN would require a new current-state authority outside the declared static canary, which is exactly the kind of scope expansion the terminal rule was meant to stop from becoming automatic."
+    ],
+    "uncertainty": "Krish may instead explicitly reopen a bounded cycle because Safety is independently reproduced within the declared unknown-object boundary and the visible epistemic, usefulness, and comprehension cores are small. He may also decide that current-state authenticity is indispensable before any future Brain admission. There is no direct Run 005 founder reaction, so this remains a prediction rather than authority.",
+    "whyAdvisory": "What Would Krish Do is an inference from past user-authority records and observed reactions. It is neither a user statement about Run 005 nor a council vote. Only Krish can close G21, override the terminal rule, authorize a new run, change the diagnostic gate, or approve the cold product direction.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/README.md#L268-L279",
+      "project-documentation/ctrl-evolution/README.md#L111",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#/whatWouldKrishDo",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#/exitCondition",
+      "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#verdict",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md#root-cause"
+    ]
+  },
+  "protectedStrengths": [
+    {
+      "strength": "Permanent veto-first council",
+      "mustNotRegress": "Keep seven owned truths, history-free first passes, raw veto preservation, deterministic adjudication, and no vote averaging. Preserve Run 005 as blocked even where defense narrows or challenges its rationale.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/README.md#L277-L278",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json"
+      ]
+    },
+    {
+      "strength": "Human authority boundary",
+      "mustNotRegress": "Keep R1 to framing and one useful ask, reserve final consequential authority to a human, reject named-employee evaluation, and keep unknown as a safe stop.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json#/claims",
+        "project-documentation/ctrl-evolution/README.md#L253-L259"
+      ]
+    },
+    {
+      "strength": "Three distinct contracts",
+      "mustNotRegress": "Keep arbitrary-input safety, canonical fixture equality, and human semantic judgement separate. A green fixture must not become global safety, and a safe shape must not become evidence of usefulness.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#outcome",
+        "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#purpose"
+      ]
+    },
+    {
+      "strength": "Hard namespace and evidence authority",
+      "mustNotRegress": "Keep real-public, consented-private, consented-anonymised, and wholly fictional material separate. Keep complete evidence and audience authority bound, but do not misrepresent the canary registry as production authentication.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#four-hard-namespaces",
+        "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#trusted-semantic-receipt"
+      ]
+    },
+    {
+      "strength": "Claim-level correction and preserved history",
+      "mustNotRegress": "Keep source receipts immutable, challenge and supersede exact claims, retain unaffected claims, and derive the current projection deterministically within each admitted state.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-internal-range-canary.md#evidence-contracts",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/dispositionByJudge/4/protectedStrengths"
+      ]
+    },
+    {
+      "strength": "Consequential matched-family range",
+      "mustNotRegress": "Keep four fictional families, fixed identity and external context, cumulative internal depth, three lifecycle snapshots, large decision stakes, and known plus unknown route effects. Do not reduce the range to generic advice or one hero profile.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-internal-range-canary.md#matched-families",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/protocolAudit/directInternalGate"
+      ]
+    },
+    {
+      "strength": "Safe novel evidence versus canonical truth",
+      "mustNotRegress": "Keep trusted safe-novel controls accepted by runtime validation while canonical equality rejects their different bytes. Do not collapse runtime safety into exact fixture matching.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#safe-novel-evidence-control",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json#/claims"
+      ]
+    },
+    {
+      "strength": "Simple visible question with optional depth",
+      "mustNotRegress": "Keep the Brain's analysis beneath one concrete, tap-first, route-changing question. Notes stay optional, unknown stays safe, and visible controls supply the answer they promise.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md#design-task-contract",
+        "project-documentation/ctrl-evolution/session-method-learning-log.md#L7-L15"
+      ]
+    },
+    {
+      "strength": "Dependency-complete freeze identity",
+      "mustNotRegress": "Keep the separate three-file repo-owned closure and clean semantic allowlist. Do not widen the human review pack to history or toolchain internals.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/compileClosure",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/reviewBoundary"
+      ]
+    }
+  ],
+  "repairBoundary": {
+    "loadBearingProductRequirements": [
+      {
+        "requirement": "An actual ingress boundary validates and later consumes the same inert representation, with complete enum, subject, audience, authority, and lifecycle checks appropriate to that boundary.",
+        "origin": "SAFETY-RANGE-01",
+        "whenItBecomesBinding": "Before any in-process unknown object or parsed network payload can reach a diagnostic or Brain write path."
+      },
+      {
+        "requirement": "Causal language is earned by causal evidence. Observational change is expressed as association with its limits and countercase.",
+        "origin": "EPISTEMIC-RANGE-01",
+        "whenItBecomesBinding": "In every model-ready evidence compiler and visible diagnostic notice."
+      },
+      {
+        "requirement": "Every accepted visible answer supplies the concrete value its consequential route needs, including custom audience or role values.",
+        "origin": "USEFULNESS-RANGE-01 and COMPREHENSION-RANGE-01",
+        "whenItBecomesBinding": "Before a generated or authored answer contract reaches a person."
+      },
+      {
+        "requirement": "A live Brain has one independent authority for which version or lifecycle snapshot is current and rejects stale replay at admission.",
+        "origin": "Future product implication exposed by BRAIN-RANGE-01",
+        "whenItBecomesBinding": "When an actual store, event sequence, or diagnostic service admits a snapshot as current. It is not silently imposed on this static canary."
+      },
+      {
+        "requirement": "Human purpose, standards, material exceptions, and final consequential authority remain explicit while the Brain does the interpretive work.",
+        "origin": "Human Agency pass and D-009, D-010, D-040, D-059",
+        "whenItBecomesBinding": "Across every future interaction and action boundary."
+      }
+    ],
+    "canaryAndTestBoundaryDefects": [
+      "The frozen matchedFamilies count says 1 although the executable fixture has 4. Correct only in a later authorized immutable record and make the verifier compare declared counts with execution.",
+      "The exact Safety exploit is function-bearing JavaScript object behavior. It warrants an honest boundary decision and regression, not an unsupported claim of a network or production breach.",
+      "Pre-load causal variants self-validate inside their modified module but fail Run 005 source and semantic identity. Do not build production cryptographic issuance merely to defeat a mutation that is no longer the frozen run.",
+      "Do not expand the visible STORY-I1 fix into an answer parser or propagation subsystem that the canary does not declare.",
+      "Do not treat RESEARCH-I2 and FORGE-I1 as established product failures when both adults passed them and the defense shows the requested extra definitions are contestable.",
+      "Do not treat a complete substitution to a separately valid initial case as proof of broken per-snapshot validation. Currentness needs an external contract decision.",
+      "Do not add a growing blacklist of causal verbs. Use evidence standing and context-aware tests.",
+      "Do not add copy, panels, or ontology labels to explain a bad control. Make the control self-evident."
+    ],
+    "ifKrishExplicitlyReopens": {
+      "scope": [
+        "Choose and document the actual plain-data ingress boundary, then reject the exact toJSON view split and validate resolved-claim enums.",
+        "Rewrite the frozen unsupported causal statements as bounded associations and add binding-valid context-aware regressions while preserving valid controlled evidence.",
+        "Remove STORY-I1's bare placeholder or require an explicit group value in the visible contract.",
+        "Add another, mixed, or tie handling to RESEARCH-I1 and replace FORGE-I3's circular option with a visible role or explicit required write-in.",
+        "Make an explicit product decision on whether this canary validates independent snapshots only or also admits the externally current snapshot. Add current-state authority only if the latter is chosen.",
+        "Correct the family-count generator and verifier only in the new immutable record."
+      ],
+      "excluded": [
+        "No new ontology, dashboard, connector, database event family, UI feature, model prompt programme, or production authentication system unless separately justified by the chosen product boundary.",
+        "No new run name, artifact edit, or repair begins from this calibration alone.",
+        "No diagnostic executes until a separately authorized immutable review returns all seven passes with no veto."
+      ]
+    },
+    "scopeRule": "A future repair is justified only when it closes a surviving product requirement at the actual boundary or corrects a known protocol defect. Teaching the synthetic harness another phrase or state without a named product consumer is out of scope.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/repairOrder",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/overallDefenseConclusion",
+      "project-documentation/ctrl-evolution/session-method-learning-log.md#L53-L60"
+    ]
+  },
+  "terminalBoundaryInterpretation": {
+    "priorRule": "Run 005 was the single terminal synthetic clearance. Only seven fresh passes with no valid veto could end contract work and open the fixed 36-input diagnostic.",
+    "actualResult": "Two passes and five valid sealed vetoes. The all-seven-clear condition failed.",
+    "meaning": "The process reached its planned stop without earning clearance. This does not make the run worthless and does not mean the council failed. The council exposed one independent hostile-object defect, several small visible contract defects, a genuine causal-standing issue, and a contested boundary about currentness. Terminal means neither waive the block nor automatically repeat the exercise. It returns the route decision to Krish.",
+    "defaultState": "Preserve Run 005 as immutable blocked history and stop G21 synthetic work.",
+    "notPermittedByDefault": [
+      "Run 006 or another synthetic freeze",
+      "The 36-input oracle-free diagnostic",
+      "A G21 customer or operator surface",
+      "A model, deployment, database, account, or production change",
+      "A claim that defense set aside a sealed veto",
+      "A rewrite of Run 005, its rulings, histories, README, or other records"
+    ],
+    "separateExistingProductGate": "The already verified G20 R4 cold review remains an existing, separate product gate in the current README. Returning to it would not mean G21 cleared, would not use a G21 diagnostic output, and would not approve implementation or production. This calibration recommends that route, but Krish still owns the decision to take it now.",
+    "exitFromCurrentImpasse": "Only an explicit founder choice can either close G21 without clearance and return to the separate cold product gate, or override the terminal rule for a tightly bounded new council-clearance attempt. Silence, prediction, a defense report, or green mechanical verification cannot make that choice.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#/exitCondition",
+      "project-documentation/ctrl-evolution/g21-internal-range-canary.md#next-action",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/terminalBoundaryRecommendation",
+      "project-documentation/ctrl-evolution/README.md#L111"
+    ]
+  },
+  "routeOptions": [
+    {
+      "rank": 1,
+      "routeId": "close_terminal_and_return_to_existing_cold_gate",
+      "recommended": true,
+      "choice": "Close G21 as a valid failed terminal clearance, preserve its requirements, and return to the already verified G20 R4 cold founder review without any G21 diagnostic output or claim.",
+      "why": "This honors both sides of Krish's authority: D-060 keeps the veto block real, while D-051, D-052, D-054, and the observed G20 gates stop synthetic governance from becoming the product. It also respects the explicit terminal promise and the defense's showing that BRAIN would otherwise expand the canary into a new current-state authority system.",
+      "consequence": "G21 remains uncleared and the 36-input diagnostic remains closed. The cold R4 review tests only the existing synthetic product interaction and founder taste. Any later real implementation must carry the Safety, causal-standing, visible-answer, and live-currentness requirements at their actual boundaries.",
+      "presentationQualification": "The R4 QA record says its temporary share access expired on 9 September 2026. If Krish chooses this route, re-establish and verify direct preview access under the existing remote-preview rule without changing the approved artifact bytes before presenting it cold.",
+      "risk": "Formal G21 diagnostic clearance is abandoned unless Krish later creates a new explicit gate. The cold R4 artifact still cannot prove diagnostic intelligence or customer value, and its direct remote access must be reverified before presentation.",
+      "authorityNeeded": "Krish explicitly chooses to close G21 and take the separate cold R4 gate now.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/README.md#L111",
+        "project-documentation/ctrl-evolution/design/g20-decision-table-r4-qa-record.md#exact-artifacts",
+        "project-documentation/ctrl-evolution/design/g20-decision-table-r4-qa-record.md#verdict",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/terminalBoundaryRecommendation"
+      ]
+    },
+    {
+      "rank": 2,
+      "routeId": "explicit_bounded_terminal_exception",
+      "recommended": false,
+      "choice": "Explicitly override the terminal rule for one narrowly scoped new immutable repair and full seven-judge review before any diagnostic.",
+      "whySomeoneMightChooseIt": "The Safety defect is independently reproduced inside the declared unknown-object contract, the causal and visible-control cores are bounded, and D-060 may make formal all-seven clearance worth one deliberate exception.",
+      "requiredFounderDecisions": [
+        "State explicitly that the terminal boundary is being overridden rather than treating a new run as automatic.",
+        "Choose whether G21 validates three independent snapshots or also owns external current-state admission. If currentness is included, name the trusted caller or store authority. If excluded, state the boundary plainly for the next review.",
+        "Approve only the narrow repair classes in repairBoundary.ifKrishExplicitlyReopens and require another immutable all-seven review before diagnostic entry."
+      ],
+      "consequence": "This likely creates a new immutable run, but this record does not name or authorize Run 006. The diagnostic stays closed unless that new review returns seven passes and no valid veto.",
+      "risk": "The route breaks the prior terminal commitment and can restart an open-ended synthetic cycle, especially if anti-replay and production receipt authority are added without a real product caller.",
+      "authorityNeeded": "Direct, explicit Krish approval with the scope decision above.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/repairOrder",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/veto-defense.json#/rulingDispositions/4",
+        "project-documentation/ctrl-evolution/README.md#L277"
+      ]
+    }
+  ],
+  "questionForKrish": {
+    "question": "Should I close G21 as a blocked terminal proof and return to the already verified G20 R4 cold founder review, or do you explicitly want to reopen one narrowly scoped council-clearance attempt before any diagnostic?",
+    "choices": [
+      {
+        "routeId": "close_terminal_and_return_to_existing_cold_gate",
+        "label": "Close G21 and show R4 cold",
+        "effect": "No Run 006 and no 36-input diagnostic. Preserve the findings and test only the existing unapproved product interaction."
+      },
+      {
+        "routeId": "explicit_bounded_terminal_exception",
+        "label": "Reopen one bounded clearance attempt",
+        "effect": "Override the terminal rule explicitly, decide whether current-state admission belongs in scope, repair only the named classes, and require seven fresh passes before any diagnostic."
+      }
+    ],
+    "recommendedRouteId": "close_terminal_and_return_to_existing_cold_gate",
+    "whyThisIsTheSmallestConsequentialChoice": "Every lower-level fact is already known well enough to act: the record is valid and blocked, Safety is reproduced, three other cores are narrow, BRAIN is a scope decision, and the dependency closure is complete. Only Krish can decide whether the terminal promise stands or is overridden."
+  },
+  "autonomousWorkAllowedBeforeChoice": {
+    "safeAndUseful": [
+      "Preserve and mechanically verify the existing Run 005 artifacts, hashes, rulings, blocked adjudication, and this calibration.",
+      "Perform read-only call-site inspection to locate the real future ingress boundary. At calibration time, repository search found the two validators referenced only by the canary source, tests, freeze scripts, and documentation, not by a product runtime caller.",
+      "Explain the two route choices and their consequences without drafting approval language on Krish's behalf."
+    ],
+    "alreadyCompletedInThisCalibration": [
+      "Cross-calibrated all seven rulings against prosecution and defense.",
+      "Separated load-bearing product requirements from canary and test-boundary defects.",
+      "Confirmed that the Run 004 repo-owned dependency-closure qualification is resolved.",
+      "Preserved the adult-only limitation and the exact terminal boundary."
+    ],
+    "notAllowedBeforeChoice": [
+      "Edit source, tests, frozen run material, rulings, histories, README, or current docs.",
+      "Create or imply a Run 006, new freeze, repair branch, model run, or diagnostic output.",
+      "Present a G21 product surface or attach G21 clearance language to G20 R4.",
+      "Deploy, write data, create accounts, alter production, or make customer claims.",
+      "Treat the likely WWKD route as Krish's decision."
+    ],
+    "stateAfterValidation": "No further material autonomous work advances the route safely. Await Krish's two-way choice.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/authority",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/standards-prosecutor.json#/terminalBoundaryRecommendation",
+      "src/features/operator-brain/g21InternalRangeCanary.ts#L4306-L4352",
+      "scripts/check-g21-internal-range.mjs"
+    ]
+  },
+  "nonClaims": [
+    "This calibration does not change either sealed pass, any of the five sealed vetoes, the blocked adjudication, or the valid history-free protocol standing.",
+    "The defense's substantive challenge to BRAIN-RANGE-01 does not set aside that veto in the official record and does not satisfy the all-seven-clear condition.",
+    "No Run 006, successor freeze, repair, 36-input diagnostic, G21 product surface, G20 R4 approval, implementation, deployment, or production action is authorized.",
+    "The toJSON reproduction does not prove a network exploit, production privacy breach, real-person processing, audience disclosure, customer harm, or product reachability.",
+    "The corrected-to-initial reproduction does not prove that the live Brain can safely accept stale state. It proves only that the current canary has no independent current-state authority and that the transformed object is a valid initial snapshot under its declared contract.",
+    "Receipt equality does not prove evidence true, causal, or production-authenticated. The current registry is a deterministic canary stand-in.",
+    "The adult proxy screens do not establish child comprehension, child usability, accessibility conformance, specialist clearance, factual truth, diagnostic efficacy, or customer value.",
+    "The two passes do not establish overall implementation reality, epistemic integrity, safety, usefulness, comprehension, diagnostic quality, or product value.",
+    "The compile-closure pass does not cure substantive vetoes, and the matchedFamilies metadata defect does not invalidate the observed four-family execution or change a vote.",
+    "No claim is made that CTRL improves decisions, understands a leader, learns longitudinally, is production-safe, or has earned a moat from this synthetic contract work.",
+    "No docs/history theory card was independently used in this founder calibration.",
+    "No existing source, test, frozen record, ruling, history, README, or documentation file was edited.",
+    "No secret, credential, token, key, or environment value was read or recorded."
+  ],
+  "recordedAt": "2026-09-11T02:46:31.2895500+01:00"
+}

@@ -1,0 +1,31 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "judge": "subject_audience_lifecycle_safety",
+  "criterionVersion": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v2",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "verdict": "fail",
+  "claims": [
+    "The frozen baseline uses the runtime subjectScope and audience allowlists, gives every private record one evidence-specific audience authority, filters authorities with lifecycle evidence, and derives claim state without deleting source records.",
+    "The identity and consent boundary has a false-pass path. Validation inspects realNamedPerson and consentRecordId only on the manifest, does not reject unknown fields on the emitted identity or evidence records, and accepts any disclosure containing the substring fictional, including an explicit negation.",
+    "A candidate can add identity.realNamedPerson=true, identity.consentRecordId=CONSENT-FICTIONAL-01, or an equivalent consent field to a private record while leaving the manifest unchanged. validateG21InternalRangeProfile reports no corresponding error, and buildG21InternalBlindInputs copies the altered identity and record into the blind input with structuredClone.",
+    "Because authored fixture data can validate and be emitted while asserting real personhood or simulated consent, the implementation violates SAFETY-RANGE-01 even though the frozen baseline values themselves are fictional."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/rangeCouncilContract.ts#validateProfileManifest",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:76-126",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2125-2150",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2209-2243",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2289-2313",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2357-2391",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2653-2702",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts#rejects-real-person-costumes-realistic-web-domains-and-fake-consent"
+  ],
+  "veto": {
+    "ruleId": "SAFETY-RANGE-01",
+    "failure": "Runtime validation does not seal the subject and private-evidence shapes or require an unambiguous positive fictional disclosure. Real-person or consent assertions outside the inspected manifest fields can pass validation and be copied into blind input as authored evidence.",
+    "resolvingTest": "Add exact runtime schemas for the manifest, identity, private evidence and emitted blind input, bind the emitted subject to the validated synthetic-fixture identity, require the exact positive fictional disclosures, and reject unknown real-person or consent fields. Add adversarial mutations for identity.realNamedPerson=true, identity.consentRecordId=CONSENT-FICTIONAL-01, a consent field on a private record, and a disclosure that says the subject is not fictional; require validation to reject each mutation and the blind-input builder to refuse emission, then rerun this frozen criterion."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add exact runtime schemas for the manifest, identity, private evidence and emitted blind input, bind the emitted subject to the validated synthetic-fixture identity, require the exact positive fictional disclosures, and reject unknown real-person or consent fields. Add adversarial mutations for identity.realNamedPerson=true, identity.consentRecordId=CONSENT-FICTIONAL-01, a consent field on a private record, and a disclosure that says the subject is not fictional; require validation to reject each mutation and the blind-input builder to refuse emission, then rerun this frozen criterion.",
+  "recordedAt": "2026-09-10T19:07:43.982Z"
+}

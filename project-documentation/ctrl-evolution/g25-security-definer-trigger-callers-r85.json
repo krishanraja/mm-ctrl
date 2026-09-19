@@ -1,0 +1,93 @@
+{
+  "schema_version": "ctrl.g25.security-definer-trigger-callers.r85.v1",
+  "contract_id": "G25-SECURITY-DEFINER-TRIGGER-CALLERS-R85",
+  "status": "trigger_callers_resolved_candidate_ready_for_isolated_test",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-ISOLATED-ACL-PROOF-R84"
+  ],
+  "surface": {
+    "target_functions": 15,
+    "all_return_trigger": true,
+    "all_security_definer": true,
+    "all_anon_executable": true,
+    "all_authenticated_executable": true,
+    "all_service_role_executable": true,
+    "all_inherit_public_execute": true,
+    "all_owned_by_postgres": true
+  },
+  "caller_evidence": {
+    "current_repository_runtime_references": 0,
+    "deployed_edge_functions_scanned": 183,
+    "deployed_edge_function_references": 0,
+    "deployed_edge_function_retrieval_errors_after_bounded_retry": 0,
+    "raw_deployed_source_committed": false,
+    "production_active_trigger_attachments": 23,
+    "production_enabled_trigger_attachments": 23,
+    "recovery_preflight_trigger_attachments": 22,
+    "recovery_preflight_enabled_trigger_attachments": 22,
+    "recovery_missing_attachment": "auth.users:on_auth_user_created -> public.handle_new_user_profile()",
+    "functions_with_trigger_attachments": 11,
+    "internal_function_callers": {
+      "handle_new_user()": [
+        "public.handle_new_user_profile()"
+      ]
+    },
+    "unattached_and_unreferenced_candidates": [
+      "trigger_booking_sheets_sync()",
+      "trigger_contact_collection_sync()",
+      "trigger_google_sheets_edge_function()"
+    ],
+    "boundary": "Unattached and unreferenced means retirement candidate only. Historical external dependencies and deployment history remain outside this proof."
+  },
+  "definition_digests": {
+    "handle_new_user()": "872c29bcbd7f5f3c80592d8bacf18512",
+    "handle_new_user_profile()": "6b81e9f2af22853784a8849434c2fc85",
+    "log_booking_request()": "0efe6654718e4f3cf222444bf4ab979a",
+    "log_consent_change()": "3c0cc5bdaad4fa200d4d978ac4d23a7a",
+    "trigger_analytics_sheets_sync()": "fce07e2ebee74a3e6d9605080cda421d",
+    "trigger_booking_http_sync()": "6d29d1788b9a1bb618488bee869d03b2",
+    "trigger_booking_requests_sync()": "9e9375385f4c41e82edce9599f0a6f4e",
+    "trigger_booking_sheets_sync()": "14fd08a0e39b9a3ce9f1732aca953879",
+    "trigger_booking_sync()": "350015fcd979bd1da2142b0682e9891f",
+    "trigger_business_context_sync()": "d14779a9d0294ac6da8eeb92bf2b48b3",
+    "trigger_contact_collection_sync()": "88001823c33c13d4147f36d63a4eea80",
+    "trigger_google_sheets_edge_function()": "f2a0484f33948e2154631ae2344c5d18",
+    "trigger_lead_score_sheets_sync()": "319757431db5c0d7ceb4087f8f4f0893",
+    "update_profile_from_insights()": "1c20f9519d0dba89e426cd749ee5b010",
+    "update_updated_at_column()": "7be3d094bf7781418fbcac3630a25c24"
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_security_definer_trigger_acl_r85.sql",
+    "sha256": "eb9b91f7340ca70dba7a835dc3e24b5c1e359058ff25ba91c563a4dc64cf7b1c",
+    "verification_path": "supabase/candidates/g25_security_definer_trigger_acl_verification_r85.sql",
+    "verification_sha256": "31d75e9276e7176f714a16b3179ef0c3f57e0dc1788127dac2c229fc96062bd6",
+    "scope": "Revoke PUBLIC, anon and authenticated direct execution on exactly 15 trigger-returning functions; retain service_role execution; do not alter function definitions or trigger objects.",
+    "isolated_recovery_applied": false,
+    "production_applied": false,
+    "target_functions_invoked": false
+  },
+  "acceptance_gate": {
+    "all_current_deployed_callers_scanned": true,
+    "missing_auth_user_hook_recovered": false,
+    "trigger_attachments_preserved_in_candidate": true,
+    "isolated_acl_verification_passed": false,
+    "trigger_runtime_smoke_passed": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "production_queries": "read_only_catalog_and_transient_deployed_source_marker_queries",
+    "production_writes": 0,
+    "permits": [
+      "local candidate and verification",
+      "isolated blank recovery ACL test",
+      "non-destructive trigger runtime smoke where a safe fixture exists"
+    ],
+    "forbids": [
+      "production ACL application",
+      "function or trigger deletion",
+      "raw deployed source publication",
+      "merge, cutover or release"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "consequential_usefulness",
+  "criterionVersion": "consequential-usefulness:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "pass",
+  "claims": [
+    "All five frozen artifact SHA-256 values and the prescribed LF-joined path:sha256 composite were independently recomputed from the artifact bytes and match the manifest.",
+    "The range is a genuine matched-depth probe: each of four families keeps identity and external evidence fixed while internal evidence nests from intake through work evidence to longitudinal correction, producing 12 profiles and 36 lifecycle inputs.",
+    "The care family advances a GBP 1.8 million six-district scheduling choice from a stop-rule question, through a data-versus-scheduling fault question, to a transferability test based on vulnerable-client continuity.",
+    "The research family advances a product shift that puts about GBP 900,000 of annual revenue at risk from identifying what clients uniquely pay for, through testing whether value survives without a senior researcher live, to an explicit renewal threshold for moving half the team.",
+    "The manufacturing family advances a GBP 4.2 million programme and redesign of 38 roles from a people-versus-system counterfactual, through a same-team plant test, to defining the customer-risk exceptions that must remain human-owned.",
+    "The entertainment family advances a GBP 18 million campaign allocation from naming the audience whose behaviour must change, through selecting an exposure-sequence test, to a fair-comparison ticket-intent threshold for releasing the investment.",
+    "The 36 lifecycle cases preserve consequential usefulness: profile-specific conflicts and corrections enter oracle-free inputs, while the task asks for one plain question only when its answer could change the route and the tests reject placeholder lifecycle notices."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json:$.files,$.artifactCompositeSha256,$.frozenCounts",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:487-517",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:562-592",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:638-668",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:860-890",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:935-965",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1011-1041",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1255-1285",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1330-1360",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1406-1436",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1672-1702",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1747-1777",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1823-1853",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1901-1904",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2186-2259",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2285-2342",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:33-51",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:104-165"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-10T18:05:41.004Z"
+}

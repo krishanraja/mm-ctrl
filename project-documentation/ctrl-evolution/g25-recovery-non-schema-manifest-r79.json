@@ -1,0 +1,164 @@
+{
+  "schema_version": "ctrl.g25.recovery-non-schema-manifest.r79.v1",
+  "contract_id": "G25-RECOVERY-NON-SCHEMA-MANIFEST-R79",
+  "status": "production_non_schema_inventory_captured_read_only",
+  "observed_at": "2026-09-17",
+  "depends_on": [
+    "G25-MIGRATION-LINEAGE-RECOVERY-R77",
+    "G25-RECOVERY-SCHEMA-FINGERPRINT-R78"
+  ],
+  "probe": {
+    "path": "supabase/candidates/g25_recovery_non_schema_fingerprint_r79.sql",
+    "sha256": "8de4b94240e8dc2e8783ebf378bf773d2121c57f3555840669d3748817e7d905",
+    "write_operations": 0,
+    "commands_returned": 0,
+    "secret_names_returned": 0,
+    "secret_values_returned": 0
+  },
+  "database_operational_fingerprint": {
+    "cron_jobs": {
+      "count": 15,
+      "digest": "ce3f13a66a88e87e879447d4708d2a9f"
+    },
+    "extensions": {
+      "count": 8,
+      "digest": "7cea54d975acea8a3d4f029ccbf1708b"
+    },
+    "publication_tables": {
+      "count": 10,
+      "digest": "f78153ffcfb1a090d1b6accaf5f8cb08"
+    },
+    "publications": {
+      "count": 2,
+      "digest": "844a0e628810ef1383d6670f810bb9d1"
+    },
+    "role_memberships": {
+      "count": 19,
+      "digest": "9c0d1fac783446f6ad6750000a3bb3fd"
+    },
+    "roles": {
+      "count": 31,
+      "digest": "e24f3c5c1f7acdcd8b25ede04a177c26"
+    },
+    "storage_buckets": {
+      "count": 5,
+      "digest": "6ce21d238eb0f97d533b2a5f3edcea0d"
+    },
+    "vault_secret_names": {
+      "count": 2,
+      "digest": "4c33de656f7832a2f292ad4772850c44"
+    }
+  },
+  "installed_extensions": [
+    "pg_cron@1.6",
+    "pg_net@0.14.0",
+    "pg_stat_statements@1.11",
+    "pgcrypto@1.3",
+    "plpgsql@1.0",
+    "supabase_vault@0.3.1",
+    "uuid-ossp@1.1",
+    "vector@0.8.0"
+  ],
+  "edge_functions": {
+    "live_active": 183,
+    "live_verify_jwt_true": 117,
+    "live_verify_jwt_false": 66,
+    "local_function_directories_excluding_shared": 122,
+    "shared_live_and_local": 115,
+    "local_only_since_observation": 7,
+    "local_only_since_observation_slugs": [
+      "brain-portable-export",
+      "brain-portable-import",
+      "build-standard-change",
+      "check-standard-change",
+      "compile-standard-change",
+      "measure-standard",
+      "review-standard-change"
+    ],
+    "live_only": 68,
+    "live_only_slugs": [
+      "aa-price-snapshot",
+      "ai-conversation",
+      "ai-recommendations",
+      "analyze-business-website",
+      "analyze-prework-myths",
+      "backfill-embeddings",
+      "chat-with-krish",
+      "cluster-bottleneck-inputs",
+      "company-search",
+      "compute-risk-signals",
+      "compute-tensions",
+      "create-consultation-hold",
+      "derive-org-scenarios",
+      "enrich-company",
+      "generate-activity-qr",
+      "generate-ai-insights",
+      "generate-business-insights",
+      "generate-decision-framework",
+      "generate-executive-insights",
+      "generate-executive-pdf",
+      "generate-final-report",
+      "generate-guardrails",
+      "generate-huddle-synthesis",
+      "generate-personalized-insights",
+      "generate-post-session-qr",
+      "generate-prework-qr",
+      "generate-prompt-library",
+      "generate-proposal",
+      "generate-provocation-report",
+      "generate-shared-prework-qr",
+      "generate-strategy-insights",
+      "generate-task-breakdown",
+      "generate-workshop-insights",
+      "get-ai-news",
+      "get-model-data",
+      "get-profile-context",
+      "google-sheets-sync",
+      "import-audience-csv",
+      "mindmake-personal-read",
+      "mindy-chat",
+      "nervous-decision-machine",
+      "notify-ctrl-waitlist",
+      "notify-guest-application",
+      "notify-scoping-request",
+      "personalize-intake",
+      "resend-email",
+      "send-assessment-notification",
+      "send-canvas-email",
+      "send-contact-email",
+      "send-email",
+      "send-exec-pulse-emails",
+      "send-exec-summary-email",
+      "send-follow-ups",
+      "send-lead-email",
+      "send-leadership-insights-email",
+      "send-prework-emails",
+      "send-results-email",
+      "send-welcome-email",
+      "session-digest",
+      "simulation-ai-experiment",
+      "smart-endpoint",
+      "smart-responder",
+      "speech-to-text",
+      "submit-intake",
+      "submit-mindmake-brief",
+      "submit-testimonial",
+      "transcribe",
+      "write-segment-summary"
+    ]
+  },
+  "preservation_rule": "No live-only function is copied, deleted or retired by name alone. Capture its source and callers, classify it as preserve, improve, replace or retire, and prove the replacement or retirement evidence before cutover.",
+  "bounded_claim": "R79 prevents non-schema machinery from disappearing during a clean baseline. It does not establish that every live function, job, bucket, role, publication or secret reference is still useful or safe.",
+  "authority": {
+    "permits": [
+      "read-only operational inventory",
+      "local preservation manifest and commit"
+    ],
+    "forbids": [
+      "function deployment or deletion",
+      "cron, Storage, Vault, role or publication mutation",
+      "secret retrieval",
+      "production migration or cutover"
+    ]
+  }
+}

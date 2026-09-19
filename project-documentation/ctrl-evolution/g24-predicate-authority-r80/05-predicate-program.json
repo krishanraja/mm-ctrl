@@ -1,0 +1,23 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.predicate-program.v1",
+  "module_id": "predicate_program",
+  "disposition_classes": {
+    "present": "present",
+    "contradicted": "contradicted",
+    "missing": "indeterminate",
+    "stale": "indeterminate",
+    "unreadable": "indeterminate",
+    "ambiguous": "indeterminate",
+    "revoked": "indeterminate"
+  },
+  "precedence": ["indeterminate", "contradicted", "present"],
+  "class_to_result": {
+    "indeterminate": "indeterminate",
+    "contradicted": "unsatisfied",
+    "present": "satisfied"
+  },
+  "program": "map_each_required_dependency_disposition_to_class_then_return_the_highest_precedence_class_result",
+  "unknown_disposition": "indeterminate",
+  "empty_required_dependency_set": "reject_contract",
+  "proof_may_apply_transition": false
+}

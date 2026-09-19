@@ -1,0 +1,57 @@
+{
+  "schema_version": "ctrl.g25.post-cutover-lifecycle.r33.v1",
+  "record_id": "G25-POST-CUTOVER-LIFECYCLE-R33",
+  "status": "local_post_cutover_lifecycle_verified",
+  "depends_on": [
+    "G25-PREPARED-RECEIPT-ATOMIC-STORE-R10",
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25",
+    "G25-BOTH-GENERATION-CORRECTION-R29",
+    "G25-BOTH-GENERATION-SUBJECT-ERASURE-R30",
+    "G25-UNIFIED-CURRENT-PREPARED-READER-R31",
+    "G25-PREPARED-RUNTIME-CUTOVER-R32"
+  ],
+  "operation": "prove one valid create, read, correction, replacement and erasure lifecycle through the exact final service boundary",
+  "invariants": [
+    "one retained legacy receipt and one custody-native receipt remain visible through the unified reader after cutover",
+    "one valid correction invalidates exact affected material in both generations atomically",
+    "corrected-out material cannot reappear in the current reader",
+    "new custody material can be created against replacement authority and becomes the only current item",
+    "one valid stable erasure destroys payload and dependency material in both generations while preserving receipt identity",
+    "the current reader reports erased with zero items after erasure",
+    "valid correction and erasure replays are idempotent",
+    "legacy-only functions, raw writes and ordinary-user active-function execution remain denied before and after the lifecycle"
+  ],
+  "verified": [
+    "PostgreSQL 18.3 valid post-cutover service lifecycle",
+    "two-generation current read",
+    "one legacy and one custody correction invalidation",
+    "replacement-authority create and read",
+    "one legacy and two custody erasures",
+    "three final content-free erased events",
+    "twelve positive and adversarial lifecycle checks",
+    "six mutation controls"
+  ],
+  "artifacts": {
+    "runtime_cutover": "supabase/candidates/g25_prepared_runtime_cutover_r32.sql",
+    "runtime_cutover_sha256": "fe0d54b58151781146dc109e0e5976034081628784a74ab191bce1583c6e03b1",
+    "runner": "scripts/run-ctrl-g25-post-cutover-lifecycle-r33.mjs",
+    "runner_sha256": "59fc411d4d17a2215028f532097e2dff4b61e79b2417586ee2102ca6bed8ded1"
+  },
+  "observed": {
+    "before_correction_items": 2,
+    "after_correction_items": 0,
+    "replacement_items": 1,
+    "erased_legacy_receipts": 1,
+    "erased_custody_receipts": 2,
+    "final_reader_status": "erased",
+    "final_item_count": 0,
+    "final_erased_events": 3
+  },
+  "next_gate": "Prove create, correction, read and erasure convergence under real multi-connection races, then inventory and switch application callers.",
+  "not_authorized": [
+    "runtime integration or customer delivery",
+    "linked or production database use",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}

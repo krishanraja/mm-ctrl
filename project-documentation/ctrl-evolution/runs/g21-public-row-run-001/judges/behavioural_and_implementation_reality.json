@@ -1,0 +1,37 @@
+{
+  "rulingId": "RULING-G21-BEHAVIOURAL-REALITY-001",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "judge": "behavioural_and_implementation_reality",
+  "phase": "sealed_review",
+  "verdict": "pass",
+  "criterionVersion": "behavioural-and-implementation-reality:g21-v1",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "theoryPackHash": "sha256:74EF14BF79694222F2BA97B6E46AAD875F6EE5BF3A0F5C55512EFA7E168A2BEB",
+  "claims": [
+    "Each route-changing question asks for information the accountable leader could state, obtain from internal records, or test through operating measurement.",
+    "Each answer effect names a consequential route fork, including continued intake, offer focus or validation, integration attribution, and workload portfolio allocation.",
+    "The cold and sparse states remain useful through explicit abstention, bounded evidence requests, and human decision boundaries without fabricated diagnosis.",
+    "The fixed JSON object and array structure is directly validatable and renderable without model-authored presentation layout.",
+    "No output presents an impossible or untestable next step, so hard-veto rule REALITY-G21-01 is not met."
+  ],
+  "evidenceLocators": [
+    "judge-packs/behavioural_and_implementation_reality.json#/criterion/passConditions",
+    "judge-packs/behavioural_and_implementation_reality.json#/criterion/hardVetoRules/0",
+    "output.json#/results/0/decisionFrame",
+    "output.json#/results/0/routeChangingQuestion",
+    "output.json#/results/0/answerWouldChange",
+    "output.json#/results/0/humanDecisionBoundary",
+    "output.json#/results/1/decisionFrame",
+    "output.json#/results/1/routeChangingQuestion",
+    "output.json#/results/1/answerWouldChange",
+    "output.json#/results/1/humanDecisionBoundary",
+    "output.json#/results/2/routeChangingQuestion",
+    "output.json#/results/2/answerWouldChange",
+    "output.json#/results/2/humanDecisionBoundary",
+    "output.json#/results/3/routeChangingQuestion",
+    "output.json#/results/3/answerWouldChange",
+    "output.json#/results/3/humanDecisionBoundary",
+    "output.json#/results"
+  ],
+  "recordedAt": "2026-09-10T14:55:27.404Z"
+}

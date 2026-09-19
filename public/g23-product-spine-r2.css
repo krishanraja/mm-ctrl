@@ -1,0 +1,143 @@
+@import url('/g23-product-spine-r1.css');
+
+.eyebrow {
+  margin: 0 0 13px;
+  color: var(--mint);
+  font: 600 9px/1.25 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.opening { padding-bottom: 64px; }
+.opening-copy h1 { max-width: 780px; font-size: clamp(42px, 4.6vw, 66px); }
+.opening .company-value { max-width: 720px; }
+
+.month {
+  padding: 58px clamp(24px, 6vw, 84px) 62px;
+  border-bottom: 1px solid var(--line);
+}
+
+.month-heading { margin-bottom: 30px; }
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.month-grid article {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 18px;
+  min-height: 154px;
+  padding: 26px;
+  background: var(--ink-raised);
+}
+
+.month-grid article:nth-child(2),
+.month-grid article:nth-child(3) { background: #0d1b14; }
+
+.month-grid svg {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: var(--mint);
+  stroke-width: 1.5;
+}
+
+.month-grid article:nth-child(2) svg { stroke: var(--blue); }
+.month-grid article:nth-child(3) svg { stroke: var(--amber); }
+.month-grid article:nth-child(4) svg { stroke: var(--violet); }
+.month-grid strong { display: block; margin-bottom: 9px; font-size: 15px; }
+.month-grid span { display: block; max-width: 490px; color: #aab5ae; font: 400 15px/1.48 var(--body); }
+
+.mechanism {
+  display: grid;
+  grid-template-columns: 94px 1fr;
+  gap: 26px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 22px 26px;
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(90deg, rgba(127, 232, 188, 0.08), transparent 68%);
+}
+
+.mechanism-mark { display: flex; align-items: center; gap: 0; }
+.mechanism-mark span { width: 17px; height: 17px; border: 1px solid var(--mint); border-radius: 50%; }
+.mechanism-mark span + span { margin-left: 12px; }
+.mechanism-mark span + span::before { content: ''; display: block; width: 13px; margin: 7px 0 0 -13px; border-top: 1px solid var(--mint); }
+.mechanism-mark span:nth-child(2) { background: var(--mint-soft); }
+.mechanism-mark span:nth-child(3) { background: var(--mint); box-shadow: 0 0 16px rgba(127, 232, 188, 0.3); }
+.mechanism p { max-width: 1000px; margin: 0; color: #bec8c1; font: 400 16px/1.5 var(--body); }
+.mechanism strong { color: var(--paper); font-family: var(--sans); }
+
+.proof { padding: 58px clamp(24px, 6vw, 84px) 66px; }
+.proof-line {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) 180px minmax(360px, 1.15fr);
+  border: 1px solid var(--line-strong);
+  background: var(--ink-raised);
+}
+.proof-source, .proof-target { padding: 28px; }
+.proof-source { background: linear-gradient(145deg, rgba(127, 232, 188, 0.08), transparent 70%); }
+.proof-target { background: linear-gradient(220deg, rgba(230, 171, 55, 0.06), transparent 48%); }
+.proof-source > span, .proof-target > span {
+  color: #83a293;
+  font: 500 9px/1.35 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.proof-source blockquote { margin: 22px 0 0; font-size: clamp(23px, 2vw, 32px); }
+.proof-target h3 { margin: 20px 0; font: 500 clamp(26px, 2.6vw, 38px)/1.06 var(--serif); letter-spacing: -0.03em; }
+.proof-question { margin: 0; padding: 16px 0 0 17px; color: #dfe1d8; border-left: 2px solid var(--amber); font: 600 15px/1.45 var(--sans); }
+.proof-crossing { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; border-right: 1px solid var(--line); border-left: 1px solid var(--line); }
+.proof-crossing svg { width: 100%; fill: none; stroke: var(--amber); stroke-width: 1.5; }
+.proof-crossing circle { fill: var(--amber); }
+.proof-crossing span { color: #a68546; font: 500 8px/1.45 var(--mono); letter-spacing: 0.08em; text-align: center; text-transform: uppercase; }
+
+.leader-change { border-top: 0; }
+.leader-change h2 { max-width: 780px; font-size: clamp(30px, 3.3vw, 45px); }
+
+.organ-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.organ-grid article { padding: 20px; background: var(--ink-raised); }
+.organ-grid strong { display: block; margin-bottom: 8px; font-size: 13px; }
+.organ-grid span { display: block; color: #9ca9a1; font: 400 14px/1.45 var(--body); }
+
+.approval { align-items: start; }
+.approval-scope { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.approval-scope p { max-width: none; padding: 18px; background: var(--ink); }
+.approval-scope span { display: block; margin-bottom: 7px; color: var(--mint); font: 600 9px/1.2 var(--mono); letter-spacing: 0.09em; text-transform: uppercase; }
+.approval-scope p:last-child span { color: var(--amber); }
+
+@media (max-width: 980px) {
+  .proof-line { grid-template-columns: 1fr; }
+  .proof-crossing { min-height: 96px; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .proof-crossing svg { width: 150px; height: 66px; transform: rotate(90deg); }
+  .proof-crossing span { margin-top: -9px; }
+  .organ-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 620px) {
+  .opening-copy .eyebrow { margin-bottom: 10px; }
+  .opening-copy h1 { font-size: 32px; }
+  .month { padding: 38px 18px 42px; }
+  .month-grid { grid-template-columns: 1fr; }
+  .month-grid article { grid-template-columns: 42px 1fr; min-height: 0; padding: 18px; }
+  .month-grid svg { width: 32px; height: 32px; }
+  .month-grid strong { font-size: 13px; }
+  .month-grid span { font-size: 13px; }
+  .mechanism { grid-template-columns: 58px 1fr; gap: 14px; padding: 18px; }
+  .mechanism-mark span { width: 12px; height: 12px; }
+  .mechanism-mark span + span { margin-left: 7px; }
+  .mechanism-mark span + span::before { width: 8px; margin: 5px 0 0 -8px; }
+  .mechanism p { font-size: 14px; }
+  .proof { padding: 38px 14px 44px; }
+  .proof-source, .proof-target { padding: 21px; }
+  .proof-source blockquote { font-size: 25px; }
+  .proof-target h3 { font-size: 27px; }
+  .proof-question { font-size: 14px; }
+  .organ-grid { grid-template-columns: 1fr; }
+  .approval-scope p { padding: 16px; font-size: 14px; }
+}

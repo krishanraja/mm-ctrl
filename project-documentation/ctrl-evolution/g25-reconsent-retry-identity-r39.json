@@ -1,0 +1,42 @@
+{
+  "schema_version": "ctrl.g25.reconsent-retry-identity.r39.v1",
+  "record_id": "G25-RECONSENT-RETRY-IDENTITY-R39",
+  "status": "retry_identity_defect_corrected",
+  "depends_on": [
+    "G25-SUBJECT-RECONSENT-RESERVATION-R36",
+    "G25-SUBJECT-RECONSENT-ENDPOINT-R37",
+    "G25-RECONSENTED-SCOPE-ATOMIC-CREATE-R38"
+  ],
+  "defect": "R36 originally used a consent fingerprint containing server-generated reservation IDs and occurred_at as the convergence key. R37 generates those values anew on every HTTP attempt, so one authenticated action could fork into multiple reservations after a network retry.",
+  "correction": "Reservation uniqueness and convergence now use previous workspace, stable subject and the R37 authenticated request fingerprint. New transport IDs and time converge on the first accepted reservation.",
+  "preserved": [
+    "the full consent fingerprint remains stored for receipt integrity",
+    "exact consent-ID replay still requires the same request fingerprint",
+    "the old erased scope remains unchanged",
+    "R38 still consumes one consent once"
+  ],
+  "observed": {
+    "fresh_consent_id_on_retry": true,
+    "fresh_reserved_workspace_id_on_retry": true,
+    "fresh_reserved_custody_id_on_retry": true,
+    "later_occurred_at_on_retry": true,
+    "reservation_count": 1,
+    "retry_result": "converged"
+  },
+  "artifacts": {
+    "r36_candidate": "supabase/candidates/g25_prepared_subject_reconsent_reservation_r36.sql",
+    "r36_candidate_sha256": "8e646095eab33f25c2dafa5e87949d4a04eb9154d1b2a9013a2f608ce83b1380",
+    "r36_runner": "scripts/run-ctrl-g25-subject-reconsent-reservation-r36.mjs",
+    "r36_runner_sha256": "07f070d96e7a553013d3f50df7a1f7c6e04ed878e60287976cd28bb7d4a82807",
+    "r37_module": "supabase/functions/_shared/prepared-subject-reconsent.r37.ts",
+    "checker": "scripts/check-ctrl-g25-reconsent-retry-identity-r39.mjs"
+  },
+  "next_gate": "Design the dormant server adapter with an explicit reserve-then-create recovery state so a timeout between R36 and R38 resumes the first reservation rather than issuing new authority.",
+  "not_authorized": [
+    "creating an application caller or Edge Function entrypoint",
+    "claiming multi-connection safety",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}

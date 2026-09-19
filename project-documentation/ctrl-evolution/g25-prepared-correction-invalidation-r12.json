@@ -1,0 +1,71 @@
+{
+  "schema_version": "ctrl.g25.prepared-correction-invalidation.r12.v1",
+  "contract_id": "G25-PREPARED-CORRECTION-INVALIDATION-R12",
+  "status": "postgresql_wasm_atomic_correction_invalidation_pass_erasure_pending",
+  "prepared_at": "2026-09-17T14:05:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-prepared-receipt-atomic-store-r10.json",
+    "project-documentation/ctrl-evolution/g25-prepared-authority-adapter-r11.json"
+  ],
+  "candidate_sql": "supabase/candidates/g25_prepared_correction_invalidation_r12.sql",
+  "database_test": "supabase/tests/database/g25_prepared_correction_invalidation_r12.test.sql",
+  "runtime_harness": "scripts/run-ctrl-g25-correction-invalidation-r12.mjs",
+  "not_a_migration": true,
+  "lifecycle_shape": {
+    "correction_receipt": "Payload-free, exact-scope command receipt binding one affected authority record to one verified current replacement.",
+    "selection": "Only active prepared receipts in the exact workspace, owner, subject, audience and purpose that depend on the affected authority record are eligible.",
+    "mutation": "Eligible receipts gain invalidated_at and one payload-free invalidated event in the same transaction.",
+    "replacement": "The replacement may be a different row ID, which is required for append-only Brain item versioning.",
+    "replay": "Exact correction replay is idempotent; semantically identical concurrent identities converge; conflicting reuse of a correction ID fails closed."
+  },
+  "verification": {
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "replacement_authority_required": true,
+    "superseded_replacement_closed": true,
+    "different_version_row_supported": true,
+    "exact_scope_invalidation": true,
+    "unrelated_receipt_preserved": true,
+    "payload_free_event_written": true,
+    "exact_replay_idempotent": true,
+    "conflicting_replay_closed": true,
+    "forced_event_failure_rolled_back": true,
+    "authenticated_invalidation_closed": true,
+    "forced_rls_and_column_privileges_verified": true,
+    "rollback_residue": 0,
+    "negative_controls": [
+      "removing the affected-record predicate makes the canary fail",
+      "removing the replacement-currentness guard makes the canary fail",
+      "changing the invalidation event type makes the canary fail"
+    ]
+  },
+  "deliberate_exclusions": {
+    "withdrawal_without_replacement": "Closed because R12 has no independently verified withdrawal authority. A service command alone must not manufacture that fact.",
+    "automatic_regeneration": "Invalidation prevents stale use. Creating a new prepared receipt remains a separate authority-checked operation.",
+    "erasure": "Invalidation hides stale output but retains encrypted payload and audit metadata. Cryptographic erasure is the next separate gate."
+  },
+  "remaining_gates": [
+    "Add cryptographic erasure that removes ciphertext and encryption version while retaining content-free audit metadata.",
+    "Add a subject tombstone that prevents silent recreation after erasure without explicit new authority.",
+    "Prove correction and store races on a multi-connection PostgreSQL runtime.",
+    "Run candidates and tests through Supabase local plus PostgREST when Docker or Podman is available.",
+    "Review any migration and runtime caller separately before application."
+  ],
+  "bounded_claim": "R12 proves one exact-scope, replacement-backed correction transaction on disposable PostgreSQL 18.3. It does not prove withdrawal, automatic regeneration, erasure, concurrent store-correction races, Supabase parity, migration or production readiness.",
+  "authority": {
+    "permits": [
+      "local non-migration SQL candidate",
+      "disposable PostgreSQL WASM execution",
+      "rollback-only fixtures and negative controls",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration file or migration execution",
+      "linked or production database use",
+      "runtime caller or producer connection",
+      "customer data or customer-facing change",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}

@@ -108,12 +108,13 @@ export function readStandardMeta(artifact: GeneratedArtifact | null): StandardMe
   const recall = num(meta.recall);
   const tnr = num(meta.tnr);
   const heldOutGraded = num(meta.held_out_graded);
+  const scoredHeldOut = num(meta.scored_held_out);
   const matrix = readMatrix(meta.confusion);
   const measurement = matrix
     ? metricsFrom(matrix)
     : precision === null && recall === null && tnr === null
       ? null
-      : storedMetrics({ precision, recall, tnr, n: heldOutGraded ?? 0 });
+      : storedMetrics({ precision, recall, tnr, n: scoredHeldOut ?? heldOutGraded ?? 0 });
 
   const agreement = (meta.self_agreement ?? null) as { matched?: unknown; total?: unknown } | null;
   const derived = releaseVerdict({
@@ -135,7 +136,7 @@ export function readStandardMeta(artifact: GeneratedArtifact | null): StandardMe
     tnr,
     heldOutGraded,
     measurement,
-    releaseReason: typeof meta.release_reason === 'string' && meta.release_reason
+    releaseReason: !meta.measurement_id && typeof meta.release_reason === 'string' && meta.release_reason
       ? meta.release_reason
       : derived.reason,
     compiledAt: artifact.created_at,

@@ -1,0 +1,35 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "behavioural_and_implementation_reality",
+  "criterionVersion": "behavioural-and-implementation-reality:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "fail",
+  "claims": [
+    "All five frozen artifact SHA-256 values match the manifest, and the SHA-256 of their manifest-order path:sha256 lines joined with LF and no trailing LF is 95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156.",
+    "The matched-family construction genuinely isolates internal depth within each family: identity and external evidence stay fixed, while basic evidence nests byte-for-byte inside work evidence and work evidence nests inside longitudinal evidence.",
+    "The four families use conditions that could occur in real work, including filtered safety data, buyer versus click attribution, incomplete operational measures, mixed audience comparisons and model leakage. Their twelve route-changing questions ask for a leader-owned threshold, an observable comparison or a testable cause.",
+    "The frozen fixture implements initial, contradicted and corrected inputs, but its deterministic validation does not bind each runtime state to the correct lifecycle record. The validator accepts any lifecycle record identifier in any state, the Vitest check verifies only plus-one and plus-two counts and the final correction type, and the direct gate verifies only aggregate state counts.",
+    "A profile whose contradicted evidenceIdsAdded contains the correction identifier instead of the conflict identifier can therefore pass the current checks while the contradicted runtime input skips the contradiction. This is an ordered-looking lifecycle story without correct lifecycle behaviour and triggers REALITY-RANGE-01."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json#artifactCompositeSha256",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json#files[0..4]",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:288-360",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:378-483,751-856,1146-1251,1563-1668",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:512-515,587-590,663-666,885-888,960-963,1036-1039,1280-1283,1355-1358,1431-1434,1697-1700,1772-1775,1848-1851",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:333-350",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2173-2180",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2302-2342",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:136-165",
+    "scripts/check-g21-internal-range.mjs:49-70",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:83-103"
+  ],
+  "veto": {
+    "ruleId": "REALITY-RANGE-01",
+    "failure": "The validator at src/features/operator-brain/g21InternalRangeCanary.ts:2173-2180 checks only that evidenceIdsAdded refers to a lifecycle identifier. The tests at src/features/operator-brain/g21InternalRangeCanary.test.ts:136-165 and scripts/check-g21-internal-range.mjs:49-70 do not require the contradicted state to contain the conflict and exclude the correction. Swapping the contradicted identifier to the correction therefore leaves an invalid lifecycle able to pass.",
+    "resolvingTest": "Add an adversarial mutation that sets lifecycleOracle.contradicted.evidenceIdsAdded to the correction identifier. Require validation to reject it. Also assert for every profile that initial identifiers are exactly empty, contradicted identifiers are exactly the conflict identifier, and corrected identifiers are exactly conflict then correction, with the correction typed direct_correction and superseding that conflict. The veto resolves only when both the direct deterministic gate and the Vitest suite reject the mutation and confirm all 36 generated inputs follow that exact sequence."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add an adversarial mutation that sets lifecycleOracle.contradicted.evidenceIdsAdded to the correction identifier. Require validation to reject it. Also assert for every profile that initial identifiers are exactly empty, contradicted identifiers are exactly the conflict identifier, and corrected identifiers are exactly conflict then correction, with the correction typed direct_correction and superseding that conflict. The veto resolves only when both the direct deterministic gate and the Vitest suite reject the mutation and confirm all 36 generated inputs follow that exact sequence.",
+  "recordedAt": "2026-09-10T18:11:26.917Z"
+}

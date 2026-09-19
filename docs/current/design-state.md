@@ -1,10 +1,12 @@
 # CTRL design delivery state
 
-Status: Current
+Status: Current production release record; superseded as the material evolution state route
 Owner: Mindmaker
-Last verified: 2026-08-21 against the released positioning and data-class change
+Last verified: 2026-09-17 for state routing; the Blind Spot release evidence below remains unchanged
 
-This is the single resumable state route for material CTRL interface work. Product and architecture truth remain in the other `docs/current/` documents. Accepted product decisions remain in `project-documentation/DECISIONS_LOG.md`.
+This file preserves the current production Blind Spot design and release evidence. It is not the resumable route for the active CTRL evolution. The canonical evolution state is `project-documentation/ctrl-evolution/README.md`, currently at the founder-approved G23 product spine, founder-locked G24 R1 through R5 architecture, accepted R97 predicate-authority machine contract and the G25 legacy-capability preservation gate. Product and architecture truth for the released application remains in the other `docs/current/` documents. Accepted historical product decisions remain in `project-documentation/DECISIONS_LOG.md`.
+
+**The one current evolution action:** complete and verify the G25 legacy capability preservation register, then characterize the smallest prepared-intelligence seam behind an adapter: qualified news and decision signals become one governed prepared object with read and audio projections. R97 remains local machine-contract evidence only. No result-producing runtime integration, registry wiring, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.
 
 ## Current phase
 

@@ -1,0 +1,62 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.human-interaction.v1",
+  "module_id": "human_interaction_contract",
+  "supersedes_r78_sections": [
+    "human_authority_verifier",
+    "gap_prioritizer.cardinality_routing",
+    "gap_explainer.question_atom_required_fields"
+  ],
+  "atomic_judgement_registry": [
+    { "dependency_id": "krish_bounded_purpose", "owner_role": "krish", "judgement_kind": "purpose" },
+    { "dependency_id": "krish_allowed_source_classes", "owner_role": "krish", "judgement_kind": "boundary" },
+    { "dependency_id": "krish_review_date", "owner_role": "krish", "judgement_kind": "revisit_condition" },
+    { "dependency_id": "leader_accepts_exact_purpose_and_frame_version", "owner_role": "named_leader", "judgement_kind": "decision_frame" },
+    { "dependency_id": "krish_accepts_exact_purpose_and_frame_version", "owner_role": "krish", "judgement_kind": "decision_frame" },
+    { "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "owner_role": "named_leader", "judgement_kind": "meaningful_value" },
+    { "dependency_id": "krish_next_consequential_decision_or_evidenced_value", "owner_role": "krish", "judgement_kind": "meaningful_value" },
+    { "dependency_id": "leader_continuation_checkpoint", "owner_role": "named_leader", "judgement_kind": "boundary" },
+    { "dependency_id": "krish_continuation_checkpoint", "owner_role": "krish", "judgement_kind": "boundary" },
+    { "dependency_id": "leader_exit_or_revisit_condition", "owner_role": "named_leader", "judgement_kind": "revisit_condition" },
+    { "dependency_id": "krish_exit_or_revisit_condition", "owner_role": "krish", "judgement_kind": "revisit_condition" },
+    { "dependency_id": "leader_revalidates_purpose", "owner_role": "named_leader", "judgement_kind": "purpose" },
+    { "dependency_id": "krish_revalidates_purpose", "owner_role": "krish", "judgement_kind": "purpose" },
+    { "dependency_id": "leader_revalidates_next_value", "owner_role": "named_leader", "judgement_kind": "meaningful_value" },
+    { "dependency_id": "krish_revalidates_next_value", "owner_role": "krish", "judgement_kind": "meaningful_value" },
+    { "dependency_id": "leader_revalidates_checkpoint", "owner_role": "named_leader", "judgement_kind": "boundary" },
+    { "dependency_id": "krish_revalidates_checkpoint", "owner_role": "krish", "judgement_kind": "boundary" },
+    { "dependency_id": "krish_genuinely_new_purpose", "owner_role": "krish", "judgement_kind": "purpose" }
+  ],
+  "conditional_judgement_templates": [
+    { "template_id": "responsible_human_owner", "owner_role": "responsible_human_for_exact_outstanding_obligation", "judgement_kind": "boundary" },
+    { "template_id": "revisit_date", "owner_role": "responsible_human_for_exact_outstanding_obligation", "judgement_kind": "revisit_condition" }
+  ],
+  "direct_question_routing": {
+    "cardinality_unit": "unresolved_requested_value_kind_for_one_named_human",
+    "zero": "no_customer_question",
+    "one": "one_complete_question_atom",
+    "more_than_one": "safe_hold_or_one_krish_led_session_agenda",
+    "automatic_follow_up": false,
+    "queued_questions": 0,
+    "server_verify_only_question": "forbidden",
+    "authority_receipt_question": "forbidden"
+  },
+  "accepted_decision_delta": {
+    "material_paths": ["consequential_target", "route", "bounds", "stop_condition", "evidence_requirement", "checkpoint", "revisit_condition"],
+    "administrative_only_paths": ["lifecycle_status", "receipt_status", "queue_status", "notification_status"],
+    "minimum_material_changed_paths": 1,
+    "same_before_after_fingerprint": "reject",
+    "cross_case_effect": "reject",
+    "generic_effect_without_exact_case_state": "reject"
+  },
+  "unknown_rule": "preserve_unknown_and_route_to_hold_or_session_never_satisfied",
+  "free_expression_rule": "preserve_verbatim_as_proposal_until_same_named_human_confirms_one_closed_structured_interpretation_and_visible_consequence",
+  "default_surface_budget": {
+    "primary_heading_count": 1,
+    "primary_question_count": 1,
+    "answer_control_group_count": 1,
+    "optional_note_controls": 1,
+    "primary_action_count": 1,
+    "automatic_next_question_copy": 0,
+    "technical_labels": 0
+  }
+}

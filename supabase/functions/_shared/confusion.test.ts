@@ -222,6 +222,27 @@ describe('releaseVerdict', () => {
     expect(verdict.label).toBe('provisional');
   });
 
+  it('cannot earn verified by excluding most of a larger held-out set', () => {
+    const oneScored = metricsFrom(
+      confusionMatrix([
+        { human: 'would_not_send', gate: 'breaks' },
+        ...Array.from({ length: 11 }, () => ({
+          human: 'send' as const,
+          gate: 'insufficient' as const,
+        })),
+      ]),
+    );
+    const verdict = releaseVerdict({
+      metrics: oneScored,
+      heldOutGraded: 12,
+      selfAgreement: CONSISTENT,
+    });
+    expect(oneScored.n).toBe(1);
+    expect(verdict.label).toBe('provisional');
+    expect(verdict.reason).toMatch(/11 could not be scored/i);
+    expect(verdict.reason).toMatch(/1 piece of scored held-out work/i);
+  });
+
   it('caps the label at provisional when the grader disagrees with themselves', () => {
     const capped = releaseVerdict({
       metrics: strong,

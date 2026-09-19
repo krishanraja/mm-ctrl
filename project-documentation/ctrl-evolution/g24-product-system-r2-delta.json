@@ -1,0 +1,88 @@
+{
+  "schema_version": "ctrl.locked-revision.delta.v1",
+  "revision": "G24-R2",
+  "date": "2026-09-12",
+  "status": "proposed_founder_lock",
+  "baseline": {
+    "commit": "5e485aa458675df10cdb12d063404f1ebeb34e53",
+    "artifacts": [
+      {
+        "path": "project-documentation/ctrl-evolution/g24-product-system-blueprint.md",
+        "sha256": "2d006b3275be4f727c5e507abbc1c355bf3bab6f5565ca4d7e9be48750c24e0a"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g24-product-system-contract.json",
+        "sha256": "16b25ea7448997896cab2b5a6e024c78c97118c5593a87eb67d079f15a8064ba"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g24-product-system-qa-record.md",
+        "sha256": "e926095bd52560c2a70463ed6441f9f4f2a24dc31ba4fae9e61d743b59919731"
+      }
+    ]
+  },
+  "founder_feedback": [
+    "functional_requirements_are_directionally_right",
+    "relationship_may_continue_beyond_thirty_days",
+    "intuitiveness_and_magic_need_an_explicit_contract",
+    "enrichment_should_use_external_and_internal_sources_before_interrupting",
+    "question_answer_type_and_timing_must_be_selected_intelligently",
+    "krish_should_receive_a_specific_live_session_agenda_when_that_is_the_best_route"
+  ],
+  "allowed_changes": [
+    {
+      "area": "duration",
+      "from": "thirty_day_relationship_described_without_explicit_runtime_continuation_semantics",
+      "to": "thirty_day_intensive_entry_window_with_no_hard_product_expiry"
+    },
+    {
+      "area": "experience",
+      "from": "surface_level_simplicity_requirements",
+      "to": "explicit_preparedness_restraint_answerability_consequence_continuity_and_control_contract"
+    },
+    {
+      "area": "enrichment",
+      "from": "legitimate_sources_and_public_researcher_named",
+      "to": "gap_specific_least_burden_acquisition_planner_with_freshness_reuse_and_stop_rules"
+    },
+    {
+      "area": "questions",
+      "from": "one_operator_controlled_route_changing_question",
+      "to": "versioned_decision_value_question_contract_with_adaptive_answer_grammar_and_timing"
+    },
+    {
+      "area": "live_session",
+      "from": "session_plan_available_to_operator",
+      "to": "explicit_session_opportunity_threshold_and_prepared_agenda"
+    },
+    {
+      "area": "proof",
+      "from": "headless_crossing_over_evidence_range",
+      "to": "headless_crossing_proves_research_ask_session_and_abstention_selection"
+    }
+  ],
+  "preserved": [
+    "approved_g23_product_spine",
+    "r1_files_byte_for_byte",
+    "role_authority",
+    "canonical_brain_target",
+    "source_and_audience_integrity",
+    "human_owned_call",
+    "correction_and_repair",
+    "operator_customer_projection_split",
+    "qualified_judgement_transfer_hypothesis",
+    "crossing_as_first_complete_slice",
+    "all_external_actions_closed"
+  ],
+  "forbidden_interpretations": [
+    "g23_thirty_day_artifact_was_rewritten",
+    "engagement_continues_without_explicit_state_or_permission",
+    "public_research_can_infer_private_personhood",
+    "more_questions_mean_more_value",
+    "a_fixed_questionnaire_is_the_product",
+    "question_yield_is_a_customer_score",
+    "session_opportunity_can_push_or_schedule_itself",
+    "ui_intuitiveness_is_proven_by_documentation",
+    "r2_authorises_external_implementation"
+  ]
+}
+

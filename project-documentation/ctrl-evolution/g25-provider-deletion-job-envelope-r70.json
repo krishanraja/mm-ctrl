@@ -1,0 +1,45 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-job-envelope.r70.v1",
+  "contract_id": "G25-PROVIDER-DELETION-JOB-ENVELOPE-R70",
+  "status": "content_free_cross_cell_dispatch_locally_proved_queue_unproved",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-HANDLE-DB-AUTHORITY-R68",
+    "G25-PROVIDER-DELETION-RUNTIME-TOPOLOGY-R69"
+  ],
+  "implementation": {
+    "compiler": "supabase/functions/_shared/provider-deletion-job-envelope.r70.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-job-envelope.r70.test.ts",
+    "config": "vitest.g25-provider-deletion-job-envelope.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-job-envelope-r70.mjs"
+  },
+  "proved_locally": [
+    "dispatch carries a compact R68 authority and content-free routing metadata only",
+    "register routes only to crypto writer while lease and destroy route only to deletion worker",
+    "topology SHA-256 must match the expected R69 topology",
+    "dispatch begins no earlier and ends no later than its authority",
+    "dispatch lifetime is at most five minutes",
+    "attempts are integers from one through five",
+    "first attempt has no predecessor and later attempts require a different predecessor UUID",
+    "tampered authority tokens and cross-job reuse fail closed",
+    "unexpected fields such as a raw provider handle are rejected"
+  ],
+  "unproved": [
+    "queue or transport selection",
+    "transport identity and authorization",
+    "durable dispatch persistence",
+    "acknowledgement or terminal-result receipts",
+    "delivery retries, dead-letter handling and operator recovery",
+    "deployment-cell consumption"
+  ],
+  "artifact_sha256": {
+    "compiler": "98b722547897f3feac116ed43cf909609a467b984d159f38b01438466cceecd1",
+    "tests": "07f610c751ab44c1efb0878607a93e643028d9f3a12da0d325f6fc2a815414b1",
+    "config": "e25acdb4fbeaa6f3d83d4693dc4a4735dcbebef640923afa2f79c495cb2aca95"
+  },
+  "bounded_claim": "R70 proves a content-free, authority-bound dispatch compiler. It sends, stores and acknowledges nothing and selects no queue provider.",
+  "next_gate": "Define append-only dispatch and acknowledgement receipts with exact replay, terminal failure and operator recovery semantics before selecting a transport.",
+  "authority": {
+    "permits": ["local dispatch tests", "local documentation and commit"],
+    "forbids": ["queue creation", "message send", "secret creation", "deployment", "linked database access", "provider request", "merge", "release"]
+  }
+}

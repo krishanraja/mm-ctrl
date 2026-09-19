@@ -1,0 +1,864 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "role": {
+    "name": "standards_prosecutor",
+    "votingStatus": "non_voting",
+    "mandate": "Adversarially cross-examine every sealed pass and veto, reproduce technical claims against the exact frozen bytes where possible, test the strongest rebuttal, distinguish defect classes, and preserve the deterministic adjudication without changing any vote.",
+    "sealedVotesChanged": false,
+    "authorityLimit": "This record adds no eighth vote. It cannot acquit the artifact, grant diagnostic or product clearance, alter a frozen source or review record, or rewrite durable history."
+  },
+  "reviewedArtifact": {
+    "artifactCommit": "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317",
+    "artifactCommitObjectType": "commit",
+    "sealedRecordCommit": "16d7742ac19f746d8cb3e2c27d57955f5661bbb4",
+    "inputManifestPath": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json",
+    "freezeAnchorPath": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/freeze-anchor.json",
+    "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "compileClosureCompositeSha256": "9e6bb2b8b33e7a987ea2b5b67b1b6cfde001ab80065541c3a25c3f1384084fc6",
+    "rulingsCompositeSha256": "4c00498d638b439578af82c9b68677e9e15c6b5de282ba725611d46deeb66b45",
+    "questionPackSha256": "49a67c424238be1fe48dcaadc3bac785fba7b0a7dc9dd4d84d4d6beccaf46dd6",
+    "declaredArtifactFileCount": 16,
+    "semanticReviewFileCount": 9,
+    "provenanceOnlyFileCount": 7,
+    "compileClosureFileCount": 3,
+    "readerHashes": {
+      "adult_proxy_a.json": "5c77e3836d918d2be4371baa44c3a2c5b480a707f80194713a2b017734aa48d2",
+      "adult_proxy_b.json": "e6225872b092c3feb9ee25bdc80444bc13e7bf89eefd396488041d99bf661e25"
+    },
+    "rulingHashes": {
+      "human_agency.json": "f2851c3fb10a80f6fd30aa29697a4707ab9f981cb6e9bf71894b891875119075",
+      "epistemic_integrity.json": "da806bdf8010015522b93510bc79e78c9f38eda3a79dc974c3348aafb7d4d7cc",
+      "subject_audience_lifecycle_safety.json": "e541820b0a841d38b09bf9b7e0daa2a088e405100c3e7d43819414cff3d9432f",
+      "consequential_usefulness.json": "6db9cad0ea224a696eb09eb7dde0998f8e88eb8192caa2717f31ea9b4037377c",
+      "living_brain_integrity.json": "9732079a39563ef6c494edbd25d8fd45bf4d683099896417c76c8dca086268c6",
+      "human_comprehension_and_access.json": "ab5b8e02da16ed5265c6d36c96f7579855ac82c952f05b9f3ba4a796dc7a0a41",
+      "behavioural_and_implementation_reality.json": "ea330f7adf46fc52c67e2d6a1905fcfc724de90cfb5ba6ce99bead79fdcd0aa7"
+    },
+    "byteReviewMethod": "Every declared artifact hash was recomputed from Git object bytes at artifactCommit. The nine semantic working copies were also hashed and matched the frozen bytes before executable probes. Custom runtime probes loaded the hash-matched TypeScript through Vite or compiled Git-materialized bytes in an operating-system temporary directory that was removed on completion.",
+    "sourceLocators": [
+      "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/freeze-anchor.json#/artifactCommit",
+      "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/files",
+      "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/reviewBoundary",
+      "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#/compileClosure",
+      "16d7742ac19f746d8cb3e2c27d57955f5661bbb4:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json",
+      "16d7742ac19f746d8cb3e2c27d57955f5661bbb4:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/rulings-manifest.json",
+      "16d7742ac19f746d8cb3e2c27d57955f5661bbb4:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json#/result"
+    ]
+  },
+  "protocolAudit": {
+    "status": "hash_valid_history_free_record_with_one_frozen_count_metadata_defect",
+    "independentHashVerification": {
+      "artifactCompositeRecomputed": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+      "artifactCompositeMatches": true,
+      "allSixteenFrozenFileHashesMatch": true,
+      "allSixteenWorkingFileHashesMatch": true,
+      "semanticCompositeRecomputed": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+      "semanticCompositeMatches": true,
+      "compileClosureCompositeRecomputed": "9e6bb2b8b33e7a987ea2b5b67b1b6cfde001ab80065541c3a25c3f1384084fc6",
+      "compileClosureCompositeMatches": true,
+      "compileClosureFileHashesMatch": true,
+      "nodeVersionDeclaredAndObserved": "v24.13.0",
+      "typescriptVersionDeclaredAndObserved": "5.9.3",
+      "questionPackHashMatchesReadersManifest": true,
+      "bothAdultReaderHashesMatch": true,
+      "allSevenRulingHashesMatch": true,
+      "rulingsCompositeRecomputed": "4c00498d638b439578af82c9b68677e9e15c6b5de282ba725611d46deeb66b45",
+      "rulingsCompositeMatches": true,
+      "adjudicationArtifactAnchorMatches": true,
+      "adjudicationSemanticAnchorMatches": true,
+      "adjudicationRulingsAnchorMatches": true,
+      "failedPaths": []
+    },
+    "cleanReviewAttestation": {
+      "allSevenPresent": true,
+      "allSevenBindExactSemanticComposite": true,
+      "allSevenRecordExcludedHistoryEncounteredAsFalse": true,
+      "assessment": "The seven first-pass rulings are internally consistent, hash-bound to the same nine-file semantic allowlist, and attest that excluded history was not encountered. This later prosecution read history only after sealing and cannot retroactively contaminate the first-pass record.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json#/reviewBoundaryAttestation",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json#/reviewBoundaryAttestation",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json#/reviewBoundaryAttestation",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json#/reviewBoundaryAttestation",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json#/reviewBoundaryAttestation",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json#/reviewBoundaryAttestation",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json#/reviewBoundaryAttestation"
+      ]
+    },
+    "sealedRecord": {
+      "votes": 7,
+      "passes": 2,
+      "vetoes": 5,
+      "passJudges": [
+        "human_agency",
+        "behavioural_and_implementation_reality"
+      ],
+      "vetoRuleIds": [
+        "EPISTEMIC-RANGE-01",
+        "SAFETY-RANGE-01",
+        "USEFULNESS-RANGE-01",
+        "BRAIN-RANGE-01",
+        "COMPREHENSION-RANGE-01"
+      ],
+      "adjudicatedStatus": "blocked",
+      "protocolStandingRecordedByAdjudication": "valid_history_free_independent_review",
+      "prosecutorTreatment": "Preserved exactly. Vetoes are not averaged against passes, and no dissent is converted into an extra vote."
+    },
+    "compileClosure": {
+      "entryPoint": "src/features/operator-brain/g21InternalRangeCanary.ts",
+      "files": [
+        "src/features/operator-brain/g21InternalRangeCanary.ts",
+        "src/features/operator-brain/g21PublicRowCanary.ts",
+        "src/features/operator-brain/rangeCouncilContract.ts"
+      ],
+      "transitiveRepoOwnedClosureComplete": true,
+      "run004ClosureQualificationResolved": true,
+      "assessment": "The Run 004 omission is repaired. The separately hashed three-file closure exactly matches the repo-owned local TypeScript import closure and is contained within the semantic allowlist."
+    },
+    "frozenCountMetadataDefect": {
+      "field": "input-manifest.json#/frozenCounts/matchedFamilies",
+      "declared": 1,
+      "executedActual": 4,
+      "reproduced": true,
+      "cause": "The frozen generator maps profile.manifest.familyId, but familyId is a top-level profile field. Every mapped value is therefore undefined and the Set size is one.",
+      "effect": "This is a false count inside a correctly hashed manifest. It does not make the source a one-family fixture, change a sealed vote, or invalidate the independently observed four-family test result. It does show that the council verifier does not validate this declared count and that protocol metadata is not wholly self-checking.",
+      "classification": [
+        "protocol_metadata_defect",
+        "test_gap"
+      ],
+      "sourceLocators": [
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:scripts/prepare-g21-internal-freeze.mjs#L194-L199",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json#L176-L189",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.test.ts#L42-L61",
+        "scripts/check-g21-internal-range.mjs#executed-output/families"
+      ]
+    },
+    "frozenCouncilVerifier": {
+      "command": "node scripts/check-g21-internal-council.mjs G21-INTERNAL-RANGE-FREEZE-005",
+      "exitCode": 0,
+      "outputSummary": {
+        "status": "passed",
+        "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+        "contractSelfTests": 14,
+        "artifacts": 16,
+        "rulings": 7,
+        "result": "blocked"
+      },
+      "interpretation": "The verifier confirms integrity and deterministic blocked adjudication. Its pass is not substantive artifact clearance and it does not detect the matchedFamilies count error."
+    },
+    "directInternalGate": {
+      "command": "npm.cmd run brain:g21:internal:check",
+      "exitCode": 0,
+      "outputSummary": {
+        "status": "passed",
+        "profiles": 12,
+        "families": 4,
+        "cases": 36,
+        "inputs": 36,
+        "initial": 12,
+        "contradicted": 12,
+        "corrected": 12,
+        "oracleLeak": false,
+        "malformedJsonSamples": 128,
+        "adversarialMutationsRejected": 249
+      },
+      "interpretation": "The declared regression suite passes. The prosecutor's accepted attacks show that its finite adversarial set is incomplete, not that these passing counts are fabricated."
+    }
+  },
+  "theoryRouting": {
+    "boundary": "History was read only after the seven rulings were sealed. Current frozen bytes, the exact v5 standard, executable results, reader records, and sealed rulings control. Historical status and product assertions cannot override current evidence.",
+    "durableJudgeHistoryRead": [
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/human-agency.md",
+        "use": "Protected agency as an executable capability boundary while refusing to treat it as epistemic, safety, usefulness, or product clearance.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/human-agency.md#L45-L54"
+        ]
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/epistemic-integrity.md",
+        "use": "Tested whether content meaning, claim text, source capability, subject, audience, assertion standing, and lifecycle role earn trust together instead of borrowing it from a label.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/epistemic-integrity.md#L45-L55"
+        ]
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/subject-audience-lifecycle-safety.md",
+        "use": "Kept total arbitrary-input validation and semantic personhood, audience, authority, and lifecycle checks as independent invariants.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/subject-audience-lifecycle-safety.md#L45-L55"
+        ]
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/consequential-usefulness.md",
+        "use": "Required every accepted answer, including a placeholder-shaped answer, to change the exact route in fact rather than merely have nonempty route-effect prose.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/consequential-usefulness.md#L45-L54"
+        ]
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/living-brain-integrity.md",
+        "use": "Protected immutable records, claim-level correction, surviving claims, lineage, and the current view as one lifecycle system rather than treating a valid historical snapshot as proof of currentness.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/living-brain-integrity.md#L45-L54"
+        ]
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/human-comprehension-and-access.md",
+        "use": "Separated question, control, and route-effect answer types, retained adult disagreements as watchpoints, and preserved the explicit limit that adult screens are not child tests.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/human-comprehension-and-access.md#L45-L56"
+        ]
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/behavioural-and-implementation-reality.md",
+        "use": "Separated canonical fixture equality from total runtime validation and tested semantic state ordering rather than trusting ordered labels.",
+        "locators": [
+          "project-documentation/ctrl-evolution/judge-history/behavioural-and-implementation-reality.md#L45-L55"
+        ]
+      }
+    ],
+    "priorRunRecordsRead": [
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json",
+        "use": "Retested the Run 004 shared trust-root and dependency-closure conclusions against Run 005 rather than assuming the repairs worked."
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json",
+        "use": "Applied the explicit terminal Run 005 boundary and the if-and-only-if clearance condition without using founder calibration to revise a sealed judge.",
+        "locators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#L382-L413",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/founder-calibration.json#L518-L530"
+        ]
+      }
+    ],
+    "usefulHistoryTheory": [
+      {
+        "path": "docs/history/2026-09-07-intel-methodology-critical-thinking.md",
+        "locators": [
+          "docs/history/2026-09-07-intel-methodology-critical-thinking.md#L33-L50"
+        ],
+        "usefulFor": "Separating factual, causal, assumption, and forecast claims; requiring the strongest honest countercase; and treating reviewer disagreement as information instead of averaging it away.",
+        "notUsedFor": "Its statements about live product implementation, model panels, confidence bands, or product superiority were not treated as current evidence."
+      },
+      {
+        "path": "docs/history/2026-09-07-CTRL-BRAIN-ARCHITECTURE.md",
+        "locators": [
+          "docs/history/2026-09-07-CTRL-BRAIN-ARCHITECTURE.md#L62-L72",
+          "docs/history/2026-09-07-CTRL-BRAIN-ARCHITECTURE.md#L80-L87"
+        ],
+        "usefulFor": "The abstract distinction between preserved historical records, a current projection, explicit contradiction resolution, and auditable provenance lineage.",
+        "notUsedFor": "Its historical CTRL implementation status, schema recommendation, scoring formula, performance statements, and roadmap were not relied on."
+      },
+      {
+        "path": "docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md",
+        "locators": [
+          "docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md#L137-L154",
+          "docs/history/2026-09-07-AI Memory Systems for Multi-Agent Architectures  The Canonical Reference (2025-2026).md#L375-L383"
+        ],
+        "usefulFor": "The ghost-fact risk, preserving superseded history while surfacing a current projection, deterministic replay, auditable rationale, and provenance isolation.",
+        "notUsedFor": "No vendor claim, benchmark percentage, latency, topology, market claim, or asserted state of the field was used as proof."
+      }
+    ],
+    "inspectedButNotReliedOnHistoryTheory": [
+      {
+        "path": "docs/history/2026-09-07-intel-data-lifecycle.md",
+        "locators": [
+          "docs/history/2026-09-07-intel-data-lifecycle.md#L63-L94"
+        ],
+        "reason": "The inspected passage is primarily a dated audit of another implementation's capture and wiring status. The current Run 005 frozen source directly proves the isolated-component versus admitted-envelope dispute, so this historical status account added no evidential weight."
+      }
+    ],
+    "allOtherDocsHistory": "Not opened for this prosecution and not relied on because no additional live Run 005 dispute required them."
+  },
+  "reproductions": {
+    "method": "All code probes first required the working g21InternalRangeCanary.ts SHA-256 to equal the frozen value. A second harness materialized the same three source files directly from artifactCommit, compiled them with the declared Node and TypeScript versions, executed the attacks, and deleted its temporary directory. Question defects were inspected from the hash-matched frozen question pack.",
+    "exactRuntimeProbeCommand": {
+      "argv": [
+        "node",
+        "--input-type=module",
+        "-e",
+        "import {createServer} from 'vite'; import {readFileSync} from 'node:fs'; import {createHash} from 'node:crypto'; const path='src/features/operator-brain/g21InternalRangeCanary.ts'; const sha=createHash('sha256').update(readFileSync(path)).digest('hex'); if(sha!=='47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d') throw new Error('frozen hash mismatch'); const s=await createServer({configFile:false,root:process.cwd(),server:{middlewareMode:true},logLevel:'silent'}); const c=await s.ssrLoadModule('/'+path); const ps=c.G21_INTERNAL_RANGE_CANARY; const xs=c.buildG21InternalBlindInputs('G21-INTERNAL-RANGE-RUN-005-PROSECUTOR'); const map=new Map(ps.map(p=>[p.manifest.profileId,p])); const x=structuredClone(xs.find(i=>i.profileId==='RANGE-INTERNAL-CARE-I1'&&i.runtimeState==='initial')); const clean=c.buildG21CurrentClaimView(x.internalEvidence); x.currentClaims[0].kind='fabricated'; x.currentClaims[0].subjectScope='real_person'; x.currentClaims[0].audience='public'; const noHook=c.validateG21InternalBlindInput(x); x.currentClaims.toJSON=()=>clean; const safety=[c.validateG21InternalBlindInput(x),c.validateG21CanonicalInternalBlindInput(x,map.get(x.profileId))]; let accepted=0; for(const p of ps){const y=structuredClone(xs.find(i=>i.profileId===p.manifest.profileId&&i.runtimeState==='corrected')); const ids=new Set(p.internalEvidence.map(r=>r.evidenceId)); y.internalEvidence=y.internalEvidence.filter(r=>ids.has(r.evidenceId)); y.audienceAuthorities=y.audienceAuthorities.filter(a=>ids.has(a.evidenceId)); y.runtimeState='initial'; y.caseId=y.profileId+'-INITIAL'; y.currentClaims=c.buildG21CurrentClaimView(y.internalEvidence); if(c.validateG21InternalBlindInput(y).length===0&&c.validateG21CanonicalInternalBlindInput(y,p).length===0) accepted++; } const sp=map.get('RANGE-INTERNAL-STORY-I3'); const si=xs.find(i=>i.profileId===sp.manifest.profileId&&i.runtimeState==='initial'); const sr=si.internalEvidence.find(r=>r.evidenceId==='INT-STORY-007'); console.log(JSON.stringify({sha,noHook,safety,downgradeAccepted:accepted,causalBaseline:{kind:sr.claims[0].kind,text:sr.claims[0].text,runtime:c.validateG21InternalBlindInput(si),canonical:c.validateG21CanonicalInternalBlindInput(si,sp)}})); await s.close();"
+      ],
+      "workingDirectory": "repository root",
+      "repoMutation": false,
+      "exitCode": 0,
+      "outputSummary": {
+        "sourceSha256": "47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d",
+        "withoutToJSONErrors": [
+          "blind_input_current_claims_not_derived"
+        ],
+        "toJSONRuntimeErrors": [],
+        "toJSONCanonicalErrors": [],
+        "coherentDowngradesAcceptedByBothValidators": 12,
+        "causalBaselineKind": "observation",
+        "causalBaselineRuntimeErrors": [],
+        "causalBaselineCanonicalErrors": []
+      }
+    },
+    "baseline": {
+      "claim": "All exact generated state inputs are internally accepted before attack.",
+      "result": {
+        "runtimeAccepted": 36,
+        "canonicalAccepted": 36,
+        "total": 36
+      },
+      "interpretation": "This is a control only. It establishes that attack results are not caused by a generally broken harness."
+    },
+    "epistemicRange01": {
+      "exactFrozenProbe": {
+        "record": "INT-STORY-007",
+        "claimKind": "observation",
+        "claimText": "Across three fictional releases, character-first exposure lifted stated ticket intent among franchise-new viewers by 7 to 11 points. High theory density lifted core-fan sharing but twice reduced casual comprehension.",
+        "semanticReceiptId": "SEM-INT-STORY-007-BASE-V1",
+        "profileErrors": [],
+        "runtimeErrors": [],
+        "canonicalErrors": [],
+        "oracleNotice": "Across three releases, character-first exposure improved new-viewer intent while high theory density twice reduced casual comprehension.",
+        "controlledOrHeldOutDesignSuppliedForRecord": false,
+        "result": "reproduced_fixture_acceptance"
+      },
+      "postLoadFalsification": {
+        "mutation": "Replace the first lifted with drove after module load, update record content and claim text, and rederive currentClaims while retaining the receipt.",
+        "runtimeErrors": [
+          "INT-STORY-007:blind_input_semantic_receipt_binding_mismatch"
+        ],
+        "canonicalErrors": [
+          "INT-STORY-007:blind_input_semantic_receipt_binding_mismatch"
+        ],
+        "result": "rejected",
+        "meaning": "Full record receipt binding fixes the Run 004 post-load semantic substitution defect. It does not test a code-issued baseline with unsupported causal language."
+      },
+      "preLoadCounterfactual": {
+        "commandSummary": "A Node here-string used git show to materialize the three compile-closure files from artifactCommit into an operating-system temporary directory, replaced exactly one occurrence of lifted stated ticket intent with drove stated ticket intent, compiled with node_modules/typescript/bin/tsc using CommonJS and ES2022, built the Story I3 initial input from that module, ran both validators, then removed the directory.",
+        "originalSourceSha256": "47ea4ddbb4b5d92175997be9ff4ad3d6492018208d92e393acfb9eef9fb1b48d",
+        "alteredSourceSha256": "d08a15dd9459c30c44ecd3ad6efd360e3df6c6fc541d79da93b1565e1b7a9cf1",
+        "changedOccurrences": 1,
+        "alteredProfileErrors": [],
+        "alteredRuntimeErrors": [],
+        "alteredCanonicalErrorsAgainstSameModuleProfile": [],
+        "alteredSourceMatchesFrozenManifest": false,
+        "result": "module_local_self_authority_reproduced_but_full_freeze_bypass_falsified",
+        "scope": "This is deliberately a derived counterfactual, not an exact frozen input. It isolates same-module trust derivation. The external artifact hash rejects it."
+      },
+      "defectClassification": [
+        "fixture_defect",
+        "contract_trust_boundary_defect",
+        "causal_regression_test_gap"
+      ],
+      "productionNonClaim": "No production receipt issuer, storage path, external canonical digest, or product admission path was inspected or proven vulnerable.",
+      "sourceLocators": [
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L398-L444",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L1964-L1973",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2171-L2203",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2614-L2705",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3299-L3301",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.test.ts#L849-L875",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json#/veto"
+      ]
+    },
+    "safetyRange01": {
+      "seed": "Valid RANGE-INTERNAL-CARE-I1 initial input",
+      "mutation": {
+        "currentClaims0Kind": "fabricated",
+        "currentClaims0SubjectScope": "real_person",
+        "currentClaims0Audience": "public",
+        "arrayToJSONReturn": "buildG21CurrentClaimView(internalEvidence)"
+      },
+      "withoutToJSON": {
+        "runtimeErrors": [
+          "blind_input_current_claims_not_derived"
+        ],
+        "canonicalErrors": [
+          "blind_input_current_claims_not_derived"
+        ]
+      },
+      "withToJSON": {
+        "runtimeErrors": [],
+        "canonicalErrors": [],
+        "liveHostileValuesStillPresent": true,
+        "result": "reproduced"
+      },
+      "jsonBoundaryFalsification": {
+        "method": "JSON.parse(JSON.stringify(attackedInput))",
+        "runtimeErrorsAfterRoundTrip": [],
+        "canonicalErrorsAfterRoundTrip": [],
+        "roundTrippedValues": {
+          "kind": "direct_statement",
+          "subjectScope": "company",
+          "audience": "leader_private"
+        },
+        "hostileValuesSurvive": false,
+        "meaning": "A normal JSON transport cannot carry the function or the hidden live values. This limits production applicability but does not cure an exported validator whose declared input is unknown and whose own tests include non-JSON getters, proxies, and cycles."
+      },
+      "mechanism": "Resolved-claim shape validation checks kind, subjectScope, and audience only as nonempty strings. Derivation equality then trusts JSON.stringify on the attacker-controlled array, invoking its toJSON hook. Canonical validation delegates to the same runtime gate and does not independently compare currentClaims.",
+      "defectClassification": [
+        "in_process_arbitrary_input_contract_defect",
+        "nested_enum_validation_defect",
+        "test_gap"
+      ],
+      "productionNonClaim": "The probe does not establish a network JSON exploit, production audience disclosure, real-person processing, or a reachable product call path.",
+      "sourceLocators": [
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2973-L2983",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3100-L3124",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4183-L4205",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4222-L4228",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4306-L4347",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json#/veto"
+      ]
+    },
+    "usefulnessRange01": {
+      "command": "$q=(Get-Content -Raw 'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json'|ConvertFrom-Json).questions|Where-Object profileId -eq 'RANGE-INTERNAL-STORY-I1'; $q.answerContract|ConvertTo-Json -Depth 8",
+      "exactContractFinding": {
+        "acceptedOption": "Another named group",
+        "effect": "reshape",
+        "routeChange": "Replace the audience gate with the leader-named ticket-buyer group.",
+        "optionalNoteAllowed": true,
+        "requiredCustomGroupField": false,
+        "answerValidationFunctionPresent": false
+      },
+      "result": "reproduced_by_exact_contract_inspection",
+      "mechanism": "The accepted value is the placeholder itself. Nothing requires the named group to be supplied, yet the route-effect prose assumes that missing value exists.",
+      "defectClassification": [
+        "answer_contract_fixture_defect",
+        "answer_validation_test_gap"
+      ],
+      "productionNonClaim": "No product input control, UI write-in behavior, or customer response path is part of the freeze, so the probe does not claim the production interface necessarily accepts this placeholder.",
+      "sourceLocators": [
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#L320-L365",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2496-L2530",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3640-L3699",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json#/veto"
+      ]
+    },
+    "brainRange01": {
+      "attack": "For each corrected input, delete its two LIFE records, delete the matching audience authorities, set runtimeState to initial, derive the matching INITIAL caseId, and rebuild currentClaims from the remaining base evidence.",
+      "result": {
+        "profilesAttacked": 12,
+        "lifecycleRecordsRemovedPerProfile": 2,
+        "runtimeAccepted": 12,
+        "canonicalAccepted": 12,
+        "careI1Removed": [
+          "LIFE-CARE-I1-CONFLICT",
+          "LIFE-CARE-I1-CORRECTION"
+        ],
+        "careI1RuntimeErrors": [],
+        "careI1CanonicalErrors": []
+      },
+      "falsificationControl": {
+        "attack": "Change only corrected to initial and the caseId, leaving corrected evidence in place.",
+        "runtimeErrors": [
+          "blind_input_internal_evidence_binding_mismatch"
+        ],
+        "meaning": "The validator rejects a superficial state relabel. It accepts a coherent historical downgrade because the candidate chooses both the state and the evidence subset expected for that state."
+      },
+      "mechanism": "runtimeState selects the trusted evidence binding, caseId is checked against that same candidate value, and canonical verification derives expected evidence from input.runtimeState instead of an independently supplied expected case or current-state pointer.",
+      "defectClassification": [
+        "case_envelope_authority_defect",
+        "lifecycle_state_order_defect",
+        "all_state_test_gap"
+      ],
+      "productionNonClaim": "The freeze contains no production store, session state, current-case service, or ingress path. The probe proves that these validators cannot distinguish a legitimate initial snapshot from a downgraded corrected snapshot, not that a production correction has been deleted.",
+      "sourceLocators": [
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3977-L3987",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4262-L4300",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4314-L4347",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:scripts/check-g21-internal-range.mjs#L836-L845",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json#/veto"
+      ]
+    },
+    "comprehensionRange01": {
+      "command": "$ids=@('RANGE-INTERNAL-RESEARCH-I1','RANGE-INTERNAL-RESEARCH-I2','RANGE-INTERNAL-FORGE-I1','RANGE-INTERNAL-FORGE-I3'); (Get-Content -Raw 'project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json'|ConvertFrom-Json).questions|Where-Object {$ids -contains $_.profileId}|ConvertTo-Json -Depth 10",
+      "exactContractFindings": [
+        {
+          "profileId": "RANGE-INTERNAL-RESEARCH-I1",
+          "mechanicallyReproduced": true,
+          "finding": "The three options are Faster answers, Access between projects, and Live challenge. There is no other, mixed, tie, or custom answer. Unknown describes missing evidence, not a known unlisted result.",
+          "disposition": "stands"
+        },
+        {
+          "profileId": "RANGE-INTERNAL-RESEARCH-I2",
+          "mechanicallyReproduced": false,
+          "finding": "The visible question uses challenge without an explicit definition. Both adult proxies nevertheless paraphrased and answered it without reporting ambiguity.",
+          "disposition": "judgement_dispute_not_needed_to_sustain_veto"
+        },
+        {
+          "profileId": "RANGE-INTERNAL-FORGE-I1",
+          "mechanicallyReproduced": true,
+          "finding": "Neither the question nor decisionFocus names the target or defines fair targets. Both adult proxies nevertheless inferred the intended counterfactual and passed it.",
+          "disposition": "textual_omission_confirmed_but_material_ambiguity_contested"
+        },
+        {
+          "profileId": "RANGE-INTERNAL-FORGE-I3",
+          "mechanicallyReproduced": true,
+          "finding": "The question asks which role, while one option is The human named by the escalation rule. That option is not a role value and depends on a rule absent from the visible contract.",
+          "disposition": "stands_with_nonshared_adult_support"
+        }
+      ],
+      "result": "veto_reproduced_and_narrowed",
+      "defectClassification": [
+        "visible_question_contract_defect",
+        "semantic_answerability_judgement"
+      ],
+      "productionNonClaim": "This is a frozen text-contract review. It is not child testing, observed product usability, accessibility conformance testing, or proof of how actual users would answer.",
+      "sourceLocators": [
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/3",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/4",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/6",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/8",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json#/veto"
+      ]
+    }
+  },
+  "crossExamination": {
+    "method": "For every sealed ruling, state the strongest evidence-backed rebuttal, try to make it win, then say whether the owned ruling survives and at what scope. A surviving veto is never neutralized by a pass on another criterion.",
+    "crossVetoSynthesis": [
+      {
+        "relationship": "epistemic_integrity_and_living_brain_integrity",
+        "finding": "Both expose missing independent authority, but at different layers. Epistemic integrity concerns who may issue semantic standing and whether fixture meaning is justified. Living Brain integrity concerns which lifecycle snapshot is current. One external trust-root design may repair both, but neither veto subsumes the other."
+      },
+      {
+        "relationship": "safety_and_epistemic_integrity",
+        "finding": "The toJSON bypass is an object-validation flaw, while the causal baseline is a trusted-fixture meaning flaw. Exact enums and plain-data canonicalization will not independently justify causation, and an independent semantic receipt will not by itself neutralize hostile object hooks."
+      },
+      {
+        "relationship": "consequential_usefulness_and_human_comprehension",
+        "finding": "The usefulness judge found one answer that cannot actually reshape its named route. The comprehension judge passed that question but found four different visible-answer defects. This is not a score conflict. Usefulness asks whether a valid answer changes the material route; comprehension asks whether a person can understand and supply the demanded answer. Both vetoes stand independently."
+      },
+      {
+        "relationship": "human_agency_and_all_five_vetoes",
+        "finding": "Formal human ownership survives. It does not make the evidence true, the input safe, the answer useful, the state current, or the words comprehensible. A human final call made from a corrupted or cryptic frame remains human-owned but not cleared."
+      },
+      {
+        "relationship": "behavioural_reality_and_safety_brain_vetoes",
+        "finding": "The Reality pass accurately reports the attacks it ran, but it generalizes beyond them. Its state-relabel test changed the label without coherently changing the evidence subset. The Brain attack changes all candidate-controlled fields consistently and passes. Its malformed suite covers finite JSON samples, getters, proxies, cycles, and sparse arrays, but not an array toJSON view split. The passing counts and accepted new attacks can therefore both be true."
+      }
+    ],
+    "usefulnessVersusComprehension": {
+      "apparentTension": "The comprehension ruling calls STORY-I1 an explicit write-in and passes it, while the usefulness ruling vetoes its placeholder answer. Elsewhere both adult screens pass three of the comprehension judge's four challenged questions.",
+      "resolution": "The frozen contract has an option string but no write-in value field and makes notes optional. The usefulness veto therefore wins on the concrete consequence defect. Adult ease of paraphrase is relevant rebuttal evidence for ordinary wording, but it cannot supply an omitted option, missing target reference, or absent role value. The comprehension veto is retained but narrowed to the mechanically strongest defects rather than expanded by reader disagreement.",
+      "noAveraging": true
+    },
+    "brainIntegrityVersusBehaviouralReality": {
+      "apparentTension": "Reality says state bindings and lifecycle roles defeat relabelled states, while Brain proves a corrected input can become an accepted initial input.",
+      "resolution": "The Reality regression proves only that mismatched labels and evidence are rejected. The Brain attack constructs a fully self-consistent older state using candidate-controlled state, caseId, evidence, authorities, and currentClaims. Because no independent expected-current-state value exists, both validators accept all 12 downgrades. The Reality pass remains valid for its exact finite checks but cannot support its broader all-shortcuts conclusion.",
+      "noAveraging": true
+    }
+  },
+  "dispositionByJudge": [
+    {
+      "judge": "human_agency",
+      "sealedVerdict": "pass",
+      "vetoRuleId": null,
+      "strongestRebuttal": "A human can retain formal final authority yet be steered by causal overclaim, hidden public or real-person labels, erased corrections, an inert answer, or an incomprehensible question. Practical agency is weakened if the frame is corrupt.",
+      "rulingSurvivesCrossExamination": true,
+      "prosecutorDisposition": "pass_protected_and_strictly_bounded",
+      "why": "The owned criterion is the executable authority boundary, not the correctness of every input. The exact R1 task and authority object still permit framing only, forbid recommendation, execution, durable-truth promotion, and named-employee assessment, and reserve the final call to a human. None of the reproduced attacks changes those capabilities.",
+      "protectedStrengths": [
+        "responsibilityGate equals 1",
+        "mayFrameDecision equals true",
+        "mayRecommendConsequentialAction equals false",
+        "mayPromoteDurableTruth equals false",
+        "mayEvaluateNamedEmployees equals false",
+        "unknown answers stop rather than select a route",
+        "material final-call options remain human"
+      ],
+      "notClearanceFor": [
+        "epistemic integrity",
+        "privacy or audience safety",
+        "usefulness",
+        "current lifecycle state",
+        "comprehension",
+        "diagnostic or product value"
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json#/claims",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2909-L2918",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4208-L4219"
+      ]
+    },
+    {
+      "judge": "epistemic_integrity",
+      "sealedVerdict": "fail",
+      "vetoRuleId": "EPISTEMIC-RANGE-01",
+      "strongestRebuttal": "Receipts now bind complete records and authority, post-load drove mutation is rejected, three repeated releases can support a bounded observed association, and the external frozen artifact hash rejects every pre-load source edit. A module-local self-consistent edit is not the reviewed artifact.",
+      "rulingSurvivesCrossExamination": true,
+      "prosecutorDisposition": "veto_stands_narrowed",
+      "why": "The full freeze does defeat source-byte drift, so the veto must not claim a complete protocol bypass. It still stands because the exact frozen fixture itself issues observational standing to unqualified lifted and improved causal language while separately saying held-out proof is unresolved. The only causation rule misses lifted, raised, drove, resulted in, and attributed to. The pre-load control further proves that module-local issuance and canonical comparison share an authority source.",
+      "standingComponents": [
+        "current INT-STORY-007 fixture defect",
+        "same-module semantic issuance and canonical authority defect",
+        "missing binding-valid causal paraphrase regressions"
+      ],
+      "narrowedComponents": [
+        "A modified source does not pass the external artifact manifest hash.",
+        "The Run 004 post-load content-substitution exploit is fixed.",
+        "No production trust-root exploit is established."
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json#/veto",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L398-L444",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L1964-L1973",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L2171-L2203"
+      ]
+    },
+    {
+      "judge": "subject_audience_lifecycle_safety",
+      "sealedVerdict": "fail",
+      "vetoRuleId": "SAFETY-RANGE-01",
+      "strongestRebuttal": "Functions are not representable in JSON. A stringify-parse round trip removes both the toJSON hook and the hostile live claim values, so an ordinary network JSON ingress cannot carry this exact object. No production validator call path is claimed.",
+      "rulingSurvivesCrossExamination": true,
+      "prosecutorDisposition": "veto_stands_narrowed_to_declared_in_process_unknown_boundary",
+      "why": "The exported validator explicitly accepts unknown rather than JSON-only input, and its assurance suite intentionally includes getters, proxies, cycles, and sparse arrays. Against that declared in-process boundary, both runtime and canonical validators return empty errors while the live claim retains fabricated kind, real_person subjectScope, and public audience. The JSON transport rebuttal limits production scope but does not cure the contract.",
+      "standingComponents": [
+        "toJSON view split accepted by both validators",
+        "current claim kind, subjectScope, and audience lack enum checks",
+        "finite adversarial suite lacks this object-protocol case"
+      ],
+      "narrowedComponents": [
+        "No network JSON exploit is shown.",
+        "No actual production disclosure is shown.",
+        "Ordinary malformed JSON samples remain total and fail closed."
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json#/veto",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3100-L3124",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4183-L4228"
+      ]
+    },
+    {
+      "judge": "consequential_usefulness",
+      "sealedVerdict": "fail",
+      "vetoRuleId": "USEFULNESS-RANGE-01",
+      "strongestRebuttal": "In ordinary language, choosing Another named group implies that the leader will type or say the group, and the route effect clearly says the audience gate will be replaced. The comprehension judge expressly treated it as a write-in and passed it.",
+      "rulingSurvivesCrossExamination": true,
+      "prosecutorDisposition": "veto_stands",
+      "why": "The frozen machine-readable contract accepts only the literal option string, declares the note optional, and contains no custom-group field or answer validation. The route effect assumes a value the accepted answer does not contain. The comprehension judge's interpretation cannot create a required field absent from the artifact.",
+      "protectedStrengths": [
+        "The other 11 question contracts remain materially tied to distinct care, research, manufacturing, and campaign routes.",
+        "Known and unknown branches retain explicit select, stop, bound, or reshape prose.",
+        "Large fictional stakes establish consequential altitude without claiming efficacy."
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json#/veto",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#L320-L365",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json#/claims/9"
+      ]
+    },
+    {
+      "judge": "living_brain_integrity",
+      "sealedVerdict": "fail",
+      "vetoRuleId": "BRAIN-RANGE-01",
+      "strongestRebuttal": "Initial is a legitimate canonical state. Once every field is coherently changed to initial, the validators may be doing exactly what their names imply: validating an initial snapshot. A production caller or store could independently know the current state even though this synthetic envelope does not.",
+      "rulingSurvivesCrossExamination": true,
+      "prosecutorDisposition": "veto_stands_at_case_admission_boundary",
+      "why": "The v5 contract claims lifecycle integrity for admitted diagnostic input, but neither validator receives or derives an external expected-current-state value. Candidate runtimeState selects its own binding and caseId. All 12 corrected snapshots can therefore lose both lifecycle events and pass as canonical initial snapshots. The production-store possibility is a non-claim, not evidence inside this freeze.",
+      "standingComponents": [
+        "12 of 12 coherent corrected-to-initial downgrades accepted by both validators",
+        "no independently trusted current-state pointer",
+        "existing relabel test covers only an inconsistent label change"
+      ],
+      "protectedStrengths": [
+        "Within any declared snapshot, receipts remain immutable.",
+        "Claim-level challenges and supersessions preserve unaffected claims.",
+        "Current claims are deterministically derived from supplied evidence.",
+        "Canonical equality rejects byte drift inside the state the candidate selected."
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json#/veto",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L3977-L3987",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4262-L4347"
+      ]
+    },
+    {
+      "judge": "human_comprehension_and_access",
+      "sealedVerdict": "fail",
+      "vetoRuleId": "COMPREHENSION-RANGE-01",
+      "strongestRebuttal": "Both independent adult proxies passed RESEARCH-I1, RESEARCH-I2, and FORGE-I1, and one passed FORGE-I3. Business readers can infer the intended senses of challenge and target, Unknown remains safe, and the two concrete Forge roles are directly answerable.",
+      "rulingSurvivesCrossExamination": true,
+      "prosecutorDisposition": "veto_stands_narrowed",
+      "why": "Adult proxy agreement is strong rebuttal evidence for ordinary phrasing, so RESEARCH-I2 and the material severity of FORGE-I1 are not required to sustain the veto. RESEARCH-I1 mechanically omits other, mixed, and tie results, while FORGE-I3 includes a non-role that depends on an unseen rule. Adult proxy A independently flagged exactly the FORGE-I3 phrase. Those two contract defects are enough under the owned criterion.",
+      "standingComponents": [
+        "RESEARCH-I1 nonexhaustive fixed-choice contract",
+        "FORGE-I3 circular non-role option"
+      ],
+      "contestedComponentsNotReliedOnToSustainVeto": [
+        "Whether challenge is too specialist in RESEARCH-I2",
+        "Whether the unnamed target and fair targets make FORGE-I1 materially unanswerable"
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json#/veto",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_a.json#/reviews/8",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_b.json#/reviews/8",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/3",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/8"
+      ]
+    },
+    {
+      "judge": "behavioural_and_implementation_reality",
+      "sealedVerdict": "pass",
+      "vetoRuleId": null,
+      "strongestRebuttal": "The pass says arbitrary input fails closed and state bindings defeat lifecycle relabelling, yet exact frozen-byte probes admit the toJSON view split and all 12 coherent corrected-to-initial downgrades. The manifest also declares one matched family even though execution finds four.",
+      "rulingSurvivesCrossExamination": "only_as_bounded_subclaims",
+      "prosecutorDisposition": "sealed_pass_preserved_but_materially_narrowed",
+      "why": "Hashes, dependency closure, actual four-family nesting, 36 baseline inputs, safe-novel separation, finite malformed and adversarial counts, and nonthrowing behavior for the tested getter, proxy, cycle, sparse, and JSON cases all survive. The broad claims that arbitrary input fails closed and that state bindings enforce all likely lifecycle shortcuts do not. The pass cannot serve as global implementation clearance, but the prosecutor does not convert it into a new vote.",
+      "protectedStrengths": [
+        "nine semantic hashes and composite",
+        "three-file repo-owned compile closure",
+        "four actual matched fictional families with nested 2, 6, and 9 record depths",
+        "36 valid canonical baselines",
+        "128 malformed JSON samples rejected",
+        "249 declared adversarial mutations rejected",
+        "nine safe-novel runtime controls separated from canonical equality",
+        "Node v24.13.0 and TypeScript 5.9.3 reproduction"
+      ],
+      "claimsThatDoNotSurviveAtFullBreadth": [
+        "arbitrary-input validation fails closed",
+        "state bindings fix lifecycle state against coherent downgrade",
+        "the finite attack set covers all likely shortcuts",
+        "one-for-one nonempty route-effect prose proves every answer useful"
+      ],
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json#/claims",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:scripts/check-g21-internal-range.mjs#L754-L845",
+        "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317:src/features/operator-brain/g21InternalRangeCanary.ts#L4183-L4347"
+      ]
+    }
+  ],
+  "protectedPasses": {
+    "humanAgency": {
+      "status": "protected",
+      "scope": "Executable R1 capability and human final-call boundary only."
+    },
+    "behaviouralReality": {
+      "status": "protected_in_parts_and_not_global_clearance",
+      "scope": "Exact identity, dependency closure, actual family structure, passing baselines, finite tested attacks, safe-novel separation, and toolchain reproduction only."
+    },
+    "crossCriterionRule": "A protected passing invariant must remain intact in any explicitly authorized repair, but it cannot cancel a valid veto on another owned truth."
+  },
+  "adultScreenInterpretation": {
+    "reviewerRole": "independent_adult_answerability_proxy",
+    "adultProxyA": {
+      "verdict": "fail",
+      "passedQuestions": 11,
+      "failedQuestions": 1,
+      "failure": "RANGE-INTERNAL-FORGE-I3",
+      "ambiguity": "The human named by the escalation rule",
+      "naturalAnswer": "The operations leader on duty"
+    },
+    "adultProxyB": {
+      "verdict": "pass",
+      "passedQuestions": 12,
+      "failedQuestions": 0,
+      "forgeI3NaturalAnswer": "The planner responsible for the order"
+    },
+    "sharedFailures": [],
+    "reconciliation": "Both adults could paraphrase the Forge I3 decision and chose different legitimate named roles. Adult A alone judged the third option to make the contract unanswerable; adult B did not. The nonshared dissent is preserved as evidence, neither averaged away nor promoted into an independent council veto. The comprehension judge's separate history-free ruling supplies the owned veto.",
+    "evidentialLimit": "These are two adult literal answerability screens. They are not child tests, observed product studies, accessibility conformance evidence, founder taste, specialist clearance, or council clearance.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/reviews",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/sharedFailures",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json#/individualFailures",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_a.json#/reviews/8",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_b.json#/reviews/8"
+    ]
+  },
+  "overallConclusion": {
+    "status": "blocked_confirmed",
+    "sealedAdjudicationPreserved": true,
+    "vetoesStanding": [
+      "EPISTEMIC-RANGE-01",
+      "SAFETY-RANGE-01",
+      "USEFULNESS-RANGE-01",
+      "BRAIN-RANGE-01",
+      "COMPREHENSION-RANGE-01"
+    ],
+    "vetoesFailedReproduction": [],
+    "vetoesNarrowed": [
+      "EPISTEMIC-RANGE-01",
+      "SAFETY-RANGE-01",
+      "COMPREHENSION-RANGE-01"
+    ],
+    "vetoOverlap": "Epistemic and Brain vetoes share an independent-authority weakness but remain distinct. Usefulness and Comprehension overlap at visible answer contracts but fail different predicates. Safety is an independent hostile-object validation flaw.",
+    "passDisposition": "Human Agency survives at its exact capability scope. Behavioural and Implementation Reality survives only for its directly reproduced subclaims and cannot clear arbitrary input or lifecycle state admission.",
+    "reason": "The exact frozen baseline contains an unsupported causal fixture accepted as observation; both validators accept the toJSON live-view split; STORY-I1 accepts an unnamed placeholder as a complete route-changing answer; both validators accept coherent lifecycle downgrades for all 12 profiles; and at least RESEARCH-I1 plus FORGE-I3 retain concrete visible-answer defects. Any one valid veto blocks. Five stand."
+  },
+  "repairOrder": [
+    {
+      "order": 1,
+      "condition": "Only if the founder explicitly reopens terminal synthetic contract work",
+      "scope": "Create one independent trust boundary for both semantic issuance and current-case admission.",
+      "addresses": [
+        "EPISTEMIC-RANGE-01",
+        "BRAIN-RANGE-01"
+      ],
+      "requiredProof": "An immutable external receipt allowlist or digest must bind complete record and authority semantics. A separate trusted expected-case value must bind runId, profileId, caseId, and current runtimeState. Module-authored source and candidate fields cannot mint either authority. Prove all 12 coherent downgrades fail while legitimate initial snapshots still pass."
+    },
+    {
+      "order": 2,
+      "condition": "Only inside the same explicit reopening",
+      "scope": "Make unknown-input validation operate on inert plain data and validate every resolved-claim enum independently.",
+      "addresses": [
+        "SAFETY-RANGE-01"
+      ],
+      "requiredProof": "Reject the exact array-level toJSON exploit in both validators without throwing, preserve the existing getter, proxy, cycle, sparse-array, malformed-JSON, and safe-novel controls, and do not assume JSON transport unless the contract is explicitly narrowed to parsed JSON."
+    },
+    {
+      "order": 3,
+      "condition": "Only inside the same explicit reopening",
+      "scope": "Repair the trusted Story I3 causal fixture and its causation tests.",
+      "addresses": [
+        "EPISTEMIC-RANGE-01"
+      ],
+      "requiredProof": "Rewrite lifted and improved as bounded associations unless a frozen controlled or held-out design supports causation. Use pre-issued binding-valid controls for lifted, raised, drove, resulted in, and attributed to, and require causation-specific rejection instead of relying on receipt mismatch. Preserve the existing valid controlled INT-STORY-004 result."
+    },
+    {
+      "order": 4,
+      "condition": "Only inside the same explicit reopening",
+      "scope": "Repair the minimum visible answer-contract defects without adding explanatory furniture.",
+      "addresses": [
+        "USEFULNESS-RANGE-01",
+        "COMPREHENSION-RANGE-01"
+      ],
+      "requiredProof": "STORY-I1 must require a concrete custom group or remove its placeholder. RESEARCH-I1 must represent other and mixed or tie outcomes. Every FORGE-I3 choice must be a visible role or an explicit required write-in role. Retest RESEARCH-I2 and FORGE-I1 wording because their severity remains contested, while preserving Unknown and all material route effects."
+    },
+    {
+      "order": 5,
+      "condition": "For any later explicitly authorized immutable record, not by rewriting Run 005",
+      "scope": "Correct and verify frozen count generation.",
+      "addresses": [
+        "protocol_metadata_defect"
+      ],
+      "requiredProof": "Count profile.familyId rather than profile.manifest.familyId and make the council verifier compare every declared frozen count with executed output."
+    }
+  ],
+  "terminalBoundaryRecommendation": {
+    "default": "Stop at the immutable blocked Run 005 record.",
+    "doNotDefaultTo": "Another synthetic freeze or a Run 006 cycle.",
+    "diagnosticStatus": "Not authorized, because founder calibration permits diagnostic evidence only if the terminal Run 005 has no valid veto.",
+    "productStatus": "Not authorized.",
+    "ownerChoiceRequired": "The founder must explicitly choose between closing G21 without clearance or reopening only the bounded repair classes listed here under a newly stated exception. This prosecution does not infer that authority and does not name a default next run.",
+    "preservation": "Keep Run 005 source, manifests, reader outputs, judge rulings, adjudication, and histories immutable."
+  },
+  "limitations": [
+    "The frozen artifact is a synthetic evidence-range contract and oracle pack. No diagnostic model output was run or graded.",
+    "No production database, runtime service, UI control, network ingress, authentication boundary, or customer workflow was in scope.",
+    "The pre-load causal self-authority probe necessarily changed a temporary copy and therefore is not an exact frozen-input exploit. Its differing SHA-256 proves that the complete artifact manifest rejects it.",
+    "The exact toJSON exploit requires an in-process JavaScript object. A normal JSON serialization removes the function and hostile live values.",
+    "Comprehension findings are semantic contract judgements supported by two adult screens, not child research or observed user behavior.",
+    "The direct gate's 128 malformed samples and 249 mutations are finite coverage, not an exhaustive proof over JavaScript object behavior.",
+    "Historical theory informed questions and distinctions only. It was not treated as current implementation evidence.",
+    "The prosecutor is non-voting and cannot change any of the seven sealed verdicts."
+  ],
+  "nonClaims": [
+    "No frozen source, test, brief, question pack, reader ruling, judge ruling, manifest, adjudication, durable judge history, or docs/history file was edited.",
+    "No adult proxy was described or treated as a child.",
+    "No reader dissent was averaged away or promoted into an eighth vote.",
+    "No pass was treated as global clearance and no veto was averaged against a pass.",
+    "No production privacy breach, real-person processing, consent state, lifecycle deletion, product reachability, or customer harm was established.",
+    "No diagnostic intelligence, efficacy, judgement improvement, customer value, usability, child comprehension, accessibility conformance, longitudinal learning, deployment readiness, or product approval is claimed.",
+    "No Run 006 or further synthetic cycle is recommended by default.",
+    "No credential, token, secret, or environment value was read or recorded."
+  ],
+  "recordedAt": "2026-09-11T01:21:49.323Z"
+}

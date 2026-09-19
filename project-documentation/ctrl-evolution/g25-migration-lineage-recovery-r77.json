@@ -1,0 +1,79 @@
+{
+  "schema_version": "ctrl.g25.migration-lineage-recovery.r77.v1",
+  "contract_id": "G25-MIGRATION-LINEAGE-RECOVERY-R77",
+  "status": "read_only_audit_complete_recovery_execution_gated",
+  "observed_at": "2026-09-17",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-HOSTED-R76"
+  ],
+  "lineage_inventory": {
+    "local_migration_files": 170,
+    "local_distinct_versions": 169,
+    "remote_history_rows": 135,
+    "same_timestamp_versions": 6,
+    "local_only_versions": 164,
+    "remote_only_versions": 129,
+    "exact_normalized_content_matches_under_different_versions": 35,
+    "remote_rows_without_exact_local_content": 100,
+    "local_files_without_exact_remote_content": 135,
+    "duplicate_local_version": "20260602000000",
+    "duplicate_local_files": [
+      "supabase/migrations/20260602000000_create_audit_infrastructure.sql",
+      "supabase/migrations/20260602000000_decision_engine.sql"
+    ],
+    "remote_placeholder_version": "20260513000000",
+    "remote_placeholder_statement": "-- applied via dashboard",
+    "local_file_at_placeholder_version": "supabase/migrations/20260513000000_generated_artifacts.sql"
+  },
+  "first_replay_failure": {
+    "version": "20251209014653",
+    "reason": "backup_workshop_sessions is referenced before any replayable migration creates it",
+    "remote_rows_creating_table": 0,
+    "remote_rows_referencing_table": 1,
+    "production_table_exists": true
+  },
+  "production_public_schema_inventory": {
+    "tables": 171,
+    "views": 6,
+    "routines": 178,
+    "policies": 304,
+    "indexes": 571,
+    "constraints": 710
+  },
+  "recovery_route": [
+    "freeze direct production schema changes while the recovery snapshot is made",
+    "capture a schema-only production baseline plus separately versioned roles, grants, extensions, storage, cron and symbolic Vault inventory",
+    "reconcile the baseline against application references and intended local-only migrations",
+    "apply the baseline in a blank isolated environment that does not inherit the broken history",
+    "prove two clean replays and compare the required schema inventory, RLS, grants, routines and application smoke paths",
+    "only then present the in-place rebaseline and clean-project cutover as costed, reversible production choices"
+  ],
+  "rejected_shortcuts": [
+    "a forward migration cannot heal a failure that occurs before it runs",
+    "editing only the local copy does not change the remote statements replayed by Supabase Branching",
+    "bulk migration repair without statement and schema equivalence would turn unknown drift into false history",
+    "marking a baseline applied without executable stored statements can leave future branches with history but no schema",
+    "patching only backup_workshop_sessions would expose the next hidden dependency rather than restore lineage"
+  ],
+  "acceptance_gate": {
+    "clean_replay_count": 2,
+    "required_object_diff": 0,
+    "unexplained_policy_or_grant_diff": 0,
+    "production_writes_before_action_time_approval": 0,
+    "customer_data_writes_before_cutover_approval": 0
+  },
+  "authority": {
+    "permits": [
+      "read-only production catalog and migration-history inspection",
+      "local audit artifacts and checks",
+      "design of an isolated recovery rehearsal"
+    ],
+    "requires_new_approval": [
+      "another billed Supabase branch or project",
+      "production migration-history repair",
+      "production schema or data change",
+      "new-project data migration or cutover",
+      "deployment, merge, release or legacy retirement"
+    ]
+  }
+}

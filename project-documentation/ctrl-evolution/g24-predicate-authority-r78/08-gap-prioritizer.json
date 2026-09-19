@@ -1,0 +1,58 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "gap_prioritizer",
+  "responsibility": "Select at most one consequential human-answerable gap or route the case to a safe hold or Krish-led session.",
+  "forbidden": [
+    "ask_server_verify_only_gap",
+    "serial_interrogation",
+    "invent_priority",
+    "turn_administration_into_customer_work",
+    "ask_without_material_decision_effect"
+  ],
+  "input": "typed_dependency_results",
+  "eligible_gap_rules": [
+    "resolution_owner_equals_human_answerable",
+    "named_human_owns_exact_judgement",
+    "answer_can_select_stop_bound_or_materially_reshape_accepted_decision",
+    "system_cannot_verify_answer_itself",
+    "visible_consequence_can_be_disclosed_before_authority"
+  ],
+  "priority_order": [
+    "safety_critical_route_change",
+    "largest_reversible_consequence_reduction",
+    "highest_information_value"
+  ],
+  "closed_priority_policy": [
+    { "rank": 1, "criterion": "answer_can_prevent_or_stop_a_safety_critical_route" },
+    { "rank": 2, "criterion": "answer_can_prevent_an_irreversible_or_external_consequence" },
+    { "rank": 3, "criterion": "answer_can_change_go_no_go_route_boundary_or_stop_condition" },
+    { "rank": 4, "criterion": "answer_can_remove_the_largest_exact_count_of_remaining_founder_locked_routes" }
+  ],
+  "model_generated_priority_score_allowed": false,
+  "cardinality_routing": {
+    "zero_unresolved_human_answerable_gaps": "no_human_question",
+    "one_unresolved_human_answerable_gap": "one_question_candidate",
+    "more_than_one_unresolved_human_answerable_gap": "safe_hold_or_krish_led_session_with_one_decision_specific_agenda"
+  },
+  "priority_scope": "priority_order_selects_the_agenda_focus_for_krish_led_session_when_multiple_gaps_exist_and_never_creates_a_customer_question_queue",
+  "tie_rule": "operator_review_hold_no_invented_priority",
+  "interaction_limits": {
+    "maximum_direct_human_questions_per_interaction": 1,
+    "automatic_follow_up_question_after_answer": false,
+    "queued_customer_questions": 0,
+    "remaining_multiple_human_gaps_route": [
+      "safe_hold",
+      "krish_led_session"
+    ],
+    "server_gap_route": [
+      "system_resolution",
+      "krish_operator_resolution"
+    ]
+  },
+  "outputs": [
+    "one_question_candidate",
+    "safe_hold",
+    "krish_led_session",
+    "no_human_question"
+  ]
+}

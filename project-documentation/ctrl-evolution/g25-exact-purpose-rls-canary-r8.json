@@ -1,0 +1,63 @@
+{
+  "schema_version": "ctrl.g25.exact-purpose-rls-canary.r8.v1",
+  "contract_id": "G25-EXACT-PURPOSE-RLS-CANARY-R8",
+  "status": "postgresql_wasm_pass_supabase_local_parity_pending",
+  "prepared_at": "2026-09-17T10:02:00+01:00",
+  "depends_on": "project-documentation/ctrl-evolution/g25-authority-envelope-r7.json",
+  "candidate_sql": "supabase/tests/database/g25_prepared_receipt_purpose_canary.test.sql",
+  "not_a_migration": true,
+  "policy_requirements": [
+    "non-anonymous authenticated JWT",
+    "active membership in the exact workspace",
+    "active, unexpired grant for the exact user",
+    "exact audience equality between grant and row",
+    "exact purpose equality between grant and row"
+  ],
+  "adversarial_cases": [
+    "same workspace and audience but prepared_intelligence grant cannot read decision_support row",
+    "same workspace and audience but decision_support grant cannot read prepared_intelligence row",
+    "purpose grant without workspace membership reads zero rows",
+    "anonymous-auth session reads zero rows",
+    "authenticated role cannot write"
+  ],
+  "isolation": {
+    "transaction": "begin_then_rollback",
+    "table": "test-only public.g25_prepared_receipt_purpose_canary",
+    "production_tables_changed": false,
+    "residue_expected": 0
+  },
+  "verification": {
+    "static_contract": "passed",
+    "database_execution": "passed_on_postgresql_wasm",
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "runtime_harness": "scripts/run-ctrl-g25-purpose-rls-r8.mjs",
+    "positive_control": "passed_with_exact_purpose_isolation_and_zero_rollback_residue",
+    "negative_control": "removing_only_the_purpose_predicate_failed_at_the_expected_boundary",
+    "supabase_local_parity": "pending_no_docker_or_podman",
+    "required_parity_command_when_available": "npx supabase test db supabase/tests/database/g25_prepared_receipt_purpose_canary.test.sql --local"
+  },
+  "primary_references": [
+    "https://supabase.com/docs/guides/database/postgres/row-level-security",
+    "https://supabase.com/docs/guides/api/securing-your-api",
+    "https://pglite.dev/docs/",
+    "https://pglite.dev/docs/api"
+  ],
+  "bounded_claim": "R8 proves the exact-purpose policy in PostgreSQL 18.3 WASM under a non-owner authenticated role, including a failing negative control and zero rollback residue. It does not yet prove full Supabase-local image parity, PostgREST behavior or a deployable migration.",
+  "authority": {
+    "permits": [
+      "local rollback-only database test",
+      "pinned test-only PostgreSQL WASM harness",
+      "static contract checker",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "linked or production database test",
+      "migration file or migration execution",
+      "schema deployment",
+      "runtime integration",
+      "customer-facing change",
+      "legacy retirement"
+    ]
+  }
+}

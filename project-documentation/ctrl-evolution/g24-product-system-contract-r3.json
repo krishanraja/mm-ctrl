@@ -1,0 +1,474 @@
+{
+  "schema_version": "ctrl.product-system.g24.r3-repair.v1",
+  "status": "proposed_fresh_council_and_founder_lock",
+  "date": "2026-09-12",
+  "state_route": "project-documentation/ctrl-evolution/README.md",
+  "extends_frozen_r2": {
+    "blueprint_sha256": "52edc77136a68e1a25d647954f62410fa2f638b51dd96ed536b6ee5790f22980",
+    "contract_sha256": "1a62700f3f7f2b3c5cced1327296dbc00c438961c2c9a2d95a647b301e75cef2",
+    "delta_sha256": "d67e4f0af970101d6f9d116e8b162288502c48ea2950394db84e3a7f18b41ad2",
+    "evidence_note_sha256": "c505b2dad5657a99a7ef8804567290028eda3fcd2ec917bddbaa8b764a72cadb",
+    "council_run": "project-documentation/ctrl-evolution/runs/g24-r2-architecture-council-001/adjudication.md",
+    "council_status": "BLOCKED_PENDING_REPAIR"
+  },
+  "r1_baseline": {
+    "commit": "5e485aa458675df10cdb12d063404f1ebeb34e53",
+    "blueprint_sha256": "2d006b3275be4f727c5e507abbc1c355bf3bab6f5565ca4d7e9be48750c24e0a",
+    "contract_sha256": "16b25ea7448997896cab2b5a6e024c78c97118c5593a87eb67d079f15a8064ba",
+    "qa_sha256": "e926095bd52560c2a70463ed6441f9f4f2a24dc31ba4fae9e61d743b59919731"
+  },
+  "authority": {
+    "allowed": [
+      "local_architecture_repair",
+      "machine_contract",
+      "deterministic_checker",
+      "fresh_council",
+      "state_route_update"
+    ],
+    "closed": [
+      "production_write",
+      "customer_data",
+      "account_creation",
+      "external_research_run",
+      "model_spend",
+      "email_send",
+      "customer_contact",
+      "session_scheduling",
+      "session_capture",
+      "connector_creation",
+      "database_branch_creation",
+      "deployment",
+      "merge",
+      "feature_enablement",
+      "release",
+      "legacy_backend_deletion"
+    ]
+  },
+  "object_map": [
+    {
+      "r2_object": "engagement_period",
+      "r1_owner": "consequential_work.engagement",
+      "standing": "versioned_state",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "decision_requirement",
+      "r1_owner": "consequential_work.accepted_decision_frame",
+      "standing": "case_scoped_child",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "evidence_coverage",
+      "r1_owner": "sources_assertions_and_accepted_brain_versions",
+      "standing": "rebuildable_projection_cannot_award_standing",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "enrichment_plan",
+      "r1_owner": "model_and_execution.evidence_planner_run",
+      "standing": "proposed_bounded_run_state",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "enrichment_receipt",
+      "r1_owner": "sources_and_execution.receipt",
+      "standing": "append_only_attempt_and_result",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "question_plan",
+      "r1_owner": "consequential_work.question_plan",
+      "standing": "versioned_proposal",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "answer_receipt",
+      "r1_owner": "consequential_work.answer_event",
+      "standing": "immutable_case_evidence",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "session_opportunity",
+      "r1_owner": "intervention.intervention_candidate",
+      "standing": "proposed_or_rebuildable_projection",
+      "new_canonical_root": false
+    },
+    {
+      "r2_object": "intervention_delivery",
+      "r1_owner": "intervention.interruption_decision_delivery_intent_and_receipt",
+      "standing": "existing_chain_no_new_authority",
+      "new_canonical_root": false
+    }
+  ],
+  "inherited_integrity": {
+    "controlling_references": [
+      "workspace_version",
+      "subject_version",
+      "evidence_namespace",
+      "accepted_decision_frame_version",
+      "canonical_source_versions",
+      "canonical_assertion_versions",
+      "accepted_brain_item_versions",
+      "authority_or_permission_version",
+      "purpose",
+      "audience_ceiling",
+      "trusted_as_of",
+      "sensitivity",
+      "validity",
+      "retention_state",
+      "input_version_watermarks"
+    ],
+    "use_specific_semantics": [
+      "claim_kind",
+      "source_capability",
+      "supporting_assertion_refs",
+      "contradicting_assertion_refs",
+      "root_provenance",
+      "independence_requirement",
+      "sufficiency_rule",
+      "sufficiency_result",
+      "causal_standing",
+      "applicability_result"
+    ],
+    "causal_standing": [
+      "direct_fact",
+      "attributable_statement",
+      "observation",
+      "association",
+      "mechanism_hypothesis",
+      "causal_evidence",
+      "unknown"
+    ],
+    "ineligible_controlling_states": [
+      "unknown_reference",
+      "missing_reference",
+      "mismatched_reference",
+      "future_dated_reference",
+      "expired_authority",
+      "invalid_reference"
+    ],
+    "invalidation_triggers": [
+      "correction",
+      "permission_change",
+      "audience_change",
+      "identity_change",
+      "freshness_change",
+      "decision_version_change"
+    ],
+    "effective_state_from_canonical_references_only": true,
+    "derivative_can_award_standing": false,
+    "first_arrival_resolves_contradiction": false,
+    "derivative_sources_collapse_to_root_when_independence_required": true,
+    "observational_input_can_silently_become_causal_or_transferable": false,
+    "public_reuse_by_immutable_reference_only": true,
+    "private_reasoning_cross_case_reuse": false
+  },
+  "lifecycle_policy": {
+    "states": [
+      "preparing",
+      "intensive_proof",
+      "continuing",
+      "paused",
+      "closing",
+      "released"
+    ],
+    "transitions": [
+      {
+        "from": "none",
+        "to": "preparing",
+        "authority": "krish_bounded_operator_private_preparation",
+        "receipt_required": true
+      },
+      {
+        "from": "preparing",
+        "to": "intensive_proof",
+        "authority": "named_leader_and_mindmake_accept_purpose_and_permissions",
+        "receipt_required": true
+      },
+      {
+        "from": "intensive_proof",
+        "to": "continuing",
+        "authority": "named_leader_and_krish_explicit_agreement",
+        "receipt_required": true
+      },
+      {
+        "from": "continuing",
+        "to": "continuing",
+        "authority": "fresh_named_leader_and_krish_checkpoint_agreement",
+        "receipt_required": true
+      },
+      {
+        "from": "intensive_proof_or_continuing",
+        "to": "paused",
+        "authority": "either_named_human",
+        "receipt_required": true
+      },
+      {
+        "from": "paused",
+        "to": "continuing",
+        "authority": "named_leader_and_krish_revalidated_agreement",
+        "receipt_required": true
+      },
+      {
+        "from": "active_or_paused",
+        "to": "closing",
+        "authority": "either_named_human",
+        "receipt_required": true
+      },
+      {
+        "from": "closing",
+        "to": "released",
+        "authority": "leader_accepts_scope_and_mindmake_records_close",
+        "receipt_required": true
+      },
+      {
+        "from": "released",
+        "to": "preparing",
+        "authority": "new_explicit_engagement_decision",
+        "receipt_required": true
+      }
+    ],
+    "transition_fields": [
+      "actor",
+      "authority",
+      "precondition",
+      "version_match",
+      "idempotency_key",
+      "before_ref",
+      "after_ref",
+      "receipt"
+    ],
+    "capability_policy": {
+      "preparing": "public_or_separately_authorised_operator_private_preparation_only",
+      "intensive_proof": "current_grants_required_for_every_use",
+      "continuing": "fresh_current_grants_required_for_every_use",
+      "paused": "no_new_decision_shaping_work",
+      "closing": "close_access_release_and_repair_only",
+      "released": "no_operational_use"
+    },
+    "continuation_requirements": [
+      "named_human_agreement",
+      "next_consequential_decision_or_evidenced_value",
+      "checkpoint",
+      "exit_or_revisit_condition"
+    ],
+    "absence_of_continuation_receipt_means_continuation": false,
+    "commercial_state_grants_permission": false,
+    "reopen_revives_expired_authority": false,
+    "permission_change_invalidates_unsent_derivatives_before_use": true,
+    "correction_permission_change_and_erasure_are_distinct": true
+  },
+  "intervention_authority": {
+    "new_or_recomputed_state": "proposed",
+    "krish_transitions_before_delivery": [
+      "approve",
+      "edit",
+      "hold",
+      "suppress"
+    ],
+    "approval_binding": [
+      "content_version",
+      "control_version",
+      "purpose",
+      "audience",
+      "channel",
+      "timing",
+      "evidence_versions",
+      "decision_frame_version"
+    ],
+    "material_edit_invalidates_approval": true,
+    "answer_event_persists_immediately": true,
+    "answer_effect_layers": [
+      "immutable_case_evidence",
+      "rebuildable_case_update",
+      "pending_human_owned_proposal"
+    ],
+    "human_owned_changes_require_named_authority": [
+      "purpose",
+      "success_or_kill_condition",
+      "human_ai_boundary",
+      "durable_judgement",
+      "learning"
+    ],
+    "answer_can_be_authority_event_only_if": [
+      "respondent_is_named_authority",
+      "exact_material_effect_disclosed_before_commitment"
+    ],
+    "honest_exit_effect": "no_adverse_inference_no_automatic_reask_pressure_or_session_escalation",
+    "session_opportunity_authorises_contact_schedule_capture_or_learning": false
+  },
+  "intervention_selector": {
+    "owner": "trusted_application_intervention_selector",
+    "model_role": "propose_candidate_and_rationale_only",
+    "inputs": [
+      "accepted_decision_frame_ref",
+      "decision_requirement_ref",
+      "evidence_coverage_ref",
+      "authority_and_audience_state_ref",
+      "trusted_as_of_and_freshness_state",
+      "lifecycle_state",
+      "decision_deadline",
+      "permitted_intervention_set",
+      "current_intervention_state_refs",
+      "budget_envelope"
+    ],
+    "budget_dimensions": [
+      "wall_clock",
+      "source_requests",
+      "retrieval_hops",
+      "model_tokens_or_cost",
+      "leader_interruptions",
+      "open_operator_work"
+    ],
+    "hard_precedence": [
+      "identity_and_subject",
+      "authority_purpose_audience_and_lifecycle",
+      "validity_cutoff_freshness_source_capability_provenance_and_contradiction",
+      "sensitivity_deadline_and_permitted_routes",
+      "use_specific_sufficiency_and_expected_material_effect",
+      "least_burden_cost_and_interruption_among_eligible_routes"
+    ],
+    "outputs": [
+      "reuse",
+      "enrich",
+      "ask",
+      "session",
+      "abstain_hold"
+    ],
+    "output_fields": [
+      "route",
+      "reason_code",
+      "unresolved_gap",
+      "expected_material_effect",
+      "eligible_alternatives_and_rejection_reasons",
+      "controlling_version_watermarks",
+      "expiry",
+      "replanning_trigger"
+    ],
+    "reason_code_families": [
+      "current_sufficient",
+      "source_eligible",
+      "one_human_fact_required",
+      "tacit_interdependence",
+      "insufficient_authority",
+      "source_incapable",
+      "unresolved_contradiction",
+      "unknowable",
+      "deadline",
+      "budget",
+      "no_material_effect",
+      "invalid_input"
+    ],
+    "source_eligibility_before_burden": [
+      "source_capability",
+      "permission",
+      "freshness",
+      "use_specific_sufficiency",
+      "independent_root_when_required",
+      "counterevidence_treatment"
+    ],
+    "exactly_one_output": true,
+    "total_for_invalid_missing_stale_ambiguous_and_contradictory_input": true,
+    "fail_closed_output": "abstain_hold",
+    "first_arrival_decides_truth": false,
+    "binds_to_r1_decision_frame_not_new_value_root": true,
+    "controlling_change_invalidates_before_use": true,
+    "trusted_code_validates_references_precedence_and_transition": true
+  },
+  "intervention_atom": {
+    "question_version_fields": [
+      "question_plan_version",
+      "visible_question_wording",
+      "rendered_control_payload",
+      "answer_grammar",
+      "complete_options_unit_or_comparator",
+      "scoped_write_in",
+      "unknown_defer_refuse_behaviour",
+      "premise_or_options_wrong_route",
+      "material_effect_disclosed_before_commitment",
+      "per_answer_case_evidence_effect",
+      "per_answer_pending_human_owned_proposal",
+      "per_answer_visible_consequence",
+      "decision_evidence_authority_and_audience_watermarks",
+      "sensitivity_and_purpose_disclosure",
+      "krish_exact_version_approval_state"
+    ],
+    "premise_or_options_wrong_required_for": [
+      "closed_format",
+      "ranked_format",
+      "forced_format"
+    ],
+    "any_payload_change_creates_new_version": true,
+    "optional_note_can_carry_required_value": false,
+    "visible_consequence_separates_changed_and_unknown": true,
+    "session_version_fields": [
+      "session_opportunity_version",
+      "exact_agenda",
+      "leader_visible_purpose",
+      "accepted_decision_frame_ref",
+      "expected_material_effect",
+      "leader_decline_reject_or_reframe",
+      "krish_proposal_state_controls",
+      "desired_evidence_threshold_experiment_or_decision_end_state",
+      "no_contact_schedule_capture_transcription_or_learning_authority"
+    ],
+    "operator_first_frame": [
+      "customer_and_decision",
+      "one_sentence_why_live_time_is_earned",
+      "one_primary_action"
+    ]
+  },
+  "question_yield": {
+    "standing": "internal_unproven_routing_diagnostic",
+    "qualifying_signal": "independently_observed_decision_relevant_evidence_gain_uncertainty_reduction_or_valid_confirmation",
+    "planner_authored_route_mutation_is_sufficient": false,
+    "honest_exit_is_human_failure": false,
+    "customer_scoreboard": false
+  },
+  "later_gate_requirements": {
+    "g24_b_c": [
+      "exact_schema_and_validators",
+      "source_time_subject_audience_and_causality_attacks",
+      "high_and_low_value_decisions",
+      "competent_same_evidence_baseline",
+      "hidden_semantic_oracle",
+      "safe_novel_and_malformed_cases",
+      "all_honest_exit_routes",
+      "independently_observed_state_diff",
+      "bounded_slow_failed_duplicate_and_stale_execution"
+    ],
+    "g24_d": [
+      "exact_question_semantics",
+      "fresh_participant_comprehension",
+      "child_level_language_without_childish_reasoning",
+      "one_handed_phone_use",
+      "progressive_disclosure",
+      "failed_save_recovery",
+      "consequence_comprehension",
+      "operator_queue_legibility_and_load"
+    ],
+    "consented_data_gate": [
+      "sensitive_purpose_disclosure",
+      "participant_and_modality_permission",
+      "multi_speaker_handling",
+      "withdrawal",
+      "real_data_audience_enforcement"
+    ],
+    "founder_and_pilot": [
+      "session_usefulness",
+      "decision_quality_delta",
+      "customer_return",
+      "continuation_value",
+      "willingness_to_pay"
+    ],
+    "delivery_data_and_cutover": [
+      "atomic_delivery_revalidation",
+      "retention_expiry",
+      "revocation_and_erasure_traversal",
+      "export_residue_and_non_recall_limits",
+      "clean_legacy_cutover"
+    ]
+  },
+  "next_action": "freeze_r3_and_run_fresh_seven_judge_council_before_headless_implementation"
+}
+

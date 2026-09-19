@@ -1,0 +1,116 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "purpose": "Question-only plain-language proxy review. These are fictional test cases, not customer facts.",
+  "reviewBoundary": "Judge whether each immediate question contains one understandable ask and invites the expected answer form. Do not judge the hidden oracle or infer product efficacy.",
+  "questions": [
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I1",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to run a limited AI scheduling pilot or commit the whole care network before the safety and service gates are known.",
+      "question": "Which failure would make you stop the pilot even if it saves staff time?",
+      "expectedAnswerShape": "short_description"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I2",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether the service gain survives the two unsafe schedules and the continuity standard families value.",
+      "question": "How many unsafe journeys would make you stop the rollout?",
+      "expectedAnswerShape": "number"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I3",
+      "fictionalSubject": "Elena Ward",
+      "fictionalCompany": "Marrow & Tide Care",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Whether the pilot can restore complex-care continuity without Elena becoming the permanent exception handler.",
+      "question": "Out of every 100 vulnerable clients, how many must keep the same carer before you expand?",
+      "expectedAnswerShape": "number"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I1",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to move half the firm from bespoke projects into a monthly product before knowing what clients actually renew for.",
+      "question": "Across your last ten projects, what did clients pay to get that they could not get elsewhere?",
+      "expectedAnswerShape": "short_description"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I2",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether a repeatable decision-room product can preserve the senior challenge clients renew for without rebuilding a dashboard nobody needs.",
+      "question": "Would the renewing clients buy the product without a senior researcher challenging them live?",
+      "expectedAnswerShape": "yes_no"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I3",
+      "fictionalSubject": "Noor Patel",
+      "fictionalCompany": "Lumen Fieldwork",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Whether to scale the paid decision-room format after the dashboard route failed, and what proof should unlock moving half the team.",
+      "question": "How many clients must pay for the new service again before you move half the team?",
+      "expectedAnswerShape": "number"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I1",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to redesign planning roles and buy the system now, or first test whether data and measures are creating the apparent resistance.",
+      "question": "If the same planners hit the target with accurate information and fair targets, would you still change their roles?",
+      "expectedAnswerShape": "yes_no"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I2",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Whether one plant can prove the new operating conditions with the same planners before Forgepoint commits all six plants.",
+      "question": "Can one plant hit the delivery target with accurate information and the same planners before you fund all six?",
+      "expectedAnswerShape": "yes_no"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I3",
+      "fictionalSubject": "Jonah Okeke",
+      "fictionalCompany": "Forgepoint Components",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "Which planning work should move to AI after one plant showed the same people can improve when data and measures change.",
+      "question": "Which planning decisions should a person always make, even when all the data is clean?",
+      "expectedAnswerShape": "short_description"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I1",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "basic_intake",
+      "decisionFocus": "Whether to fund a precision fan-intelligence system before the campaign has a named audience movement and human creative boundary.",
+      "question": "Which group of fans must buy more tickets for you to move the GBP 18 million?",
+      "expectedAnswerShape": "choice"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I2",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "work_evidence",
+      "decisionFocus": "Which exposure route can invite franchise-new viewers in without exhausting core fans or confusing the story.",
+      "question": "What should a new viewer see first if the goal is to make them want a ticket?",
+      "expectedAnswerShape": "choice"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I3",
+      "fictionalSubject": "Mei Alvarez",
+      "fictionalCompany": "Aurora Storyworlds",
+      "internalDepth": "longitudinal_corrections",
+      "decisionFocus": "What held-out proof should unlock the next major shift after three releases showed audience and sequence matter more than content volume.",
+      "question": "How many more new viewers must want a ticket before you move the GBP 18 million?",
+      "expectedAnswerShape": "threshold"
+    }
+  ]
+}
+

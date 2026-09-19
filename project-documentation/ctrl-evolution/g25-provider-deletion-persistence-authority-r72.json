@@ -1,0 +1,49 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-persistence-authority.r72.v1",
+  "contract_id": "G25-PROVIDER-DELETION-PERSISTENCE-AUTHORITY-R72",
+  "status": "narrow_persistence_authority_overlay_locally_proved_provisioning_unproved",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-RUNTIME-TOPOLOGY-R69",
+    "G25-PROVIDER-DELETION-DISPATCH-LIFECYCLE-R71"
+  ],
+  "implementation": {
+    "compiler": "supabase/functions/_shared/provider-deletion-persistence-authority.r72.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-persistence-authority.r72.test.ts",
+    "config": "vitest.g25-provider-deletion-persistence-authority.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-persistence-authority-r72.mjs"
+  },
+  "grants": {
+    "authority_issuer": ["record_dispatch", "append_issuer_event"],
+    "crypto_writer": ["verified_register_handle", "append_target_event"],
+    "deletion_worker": ["verified_lease_handle", "verified_destroy_handle", "append_target_event"],
+    "operator": ["append_operator_recovery_event"]
+  },
+  "identity_rules": [
+    "issuer receives a dedicated dispatch-ledger login, never a custody or service-role credential",
+    "writer and worker persistence credentials must equal their already isolated R69 credentials",
+    "operator uses a human session and no machine database credential",
+    "credentials cannot be generic, duplicated or embedded as values",
+    "function sets are exact and cannot be widened"
+  ],
+  "proved_locally": [
+    "the R69 topology fingerprint binds the overlay",
+    "exact persistence functions are compiled per principal",
+    "issuer custody-function escalation is rejected",
+    "operator machine credentials are rejected",
+    "generic service credentials and cross-principal reuse are rejected",
+    "writer and worker identity drift from R69 is rejected",
+    "unexpected grant fields are rejected",
+    "canonical authority fingerprint is independent of grant ordering"
+  ],
+  "artifact_sha256": {
+    "compiler": "a12dc45da4b584cfae15cdfa4dcc0110db67b93dfae9c52cb7798e17b2654e90",
+    "tests": "ac07fce3960e114b97ae02da9aa856388f4428df639ef4bdddb29b7ac11c85d8",
+    "config": "61a981bca425b9d2ba024b6e999d768dd4d1931e748a19ce4b097c4a05ce34c6"
+  },
+  "bounded_claim": "R72 proves a content-free persistence-authority overlay. It does not create roles, users, grants, tables, sessions or migrations.",
+  "next_gate": "Implement R70 dispatch and R71 event persistence behind functions matching this exact authority overlay, then prove replay and transition locks in local PostgreSQL.",
+  "authority": {
+    "permits": ["local authority tests", "local documentation and commit"],
+    "forbids": ["credential creation", "role provisioning", "migration execution", "deployment", "linked database access", "provider request", "merge", "release"]
+  }
+}

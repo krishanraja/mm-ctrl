@@ -1,0 +1,77 @@
+{
+  "schema_version": "ctrl.g25.recovery-schema-fingerprint.r78.v1",
+  "contract_id": "G25-RECOVERY-SCHEMA-FINGERPRINT-R78",
+  "status": "production_fingerprint_captured_read_only",
+  "observed_at": "2026-09-17",
+  "depends_on": [
+    "G25-MIGRATION-LINEAGE-RECOVERY-R77"
+  ],
+  "probe": {
+    "path": "supabase/candidates/g25_recovery_public_schema_fingerprint_r78.sql",
+    "sha256": "39a68dfbf666c879781df77b2d9a8d8d9627da6e2f041626908425e555d28c7b",
+    "write_operations": 0,
+    "customer_rows_returned": 0,
+    "raw_definitions_returned": 0
+  },
+  "production_public_schema_fingerprint": {
+    "columns": {
+      "count": 2047,
+      "digest": "57ea100e96fb5bfef5754a3a70019887"
+    },
+    "constraints": {
+      "count": 710,
+      "digest": "e9e295b76c1191e4c61277a7fdda31d0"
+    },
+    "indexes": {
+      "count": 571,
+      "digest": "e0a35a11d2b0972b3a99e4918d9599d7"
+    },
+    "policies": {
+      "count": 304,
+      "digest": "db583e9d8c0cf3b920a728f4d6e276b3"
+    },
+    "rls": {
+      "count": 171,
+      "digest": "9f021b6fd2428b4ad308792c5f0dfaf3"
+    },
+    "routines": {
+      "count": 204,
+      "digest": "9b10551916b017ba92259208f8a34170"
+    },
+    "routine_grants": {
+      "count": 1063,
+      "digest": "6d5fc3b1f7d34860fb3d895c9514f3ff"
+    },
+    "schema_grants": {
+      "count": 7,
+      "digest": "d1d04772b3f44d4c06212695c384bb59"
+    },
+    "table_grants": {
+      "count": 5003,
+      "digest": "9f7fb9eece22661625755f238c091bcd"
+    },
+    "triggers": {
+      "count": 48,
+      "digest": "0eb513824bf978b912e11bcc862d3f7e"
+    },
+    "views": {
+      "count": 6,
+      "digest": "4dfbb8392147937fa6f2d9749b463e7b"
+    }
+  },
+  "bounded_claim": "The fingerprint can detect structural drift in the production public schema without exporting customer rows or raw SQL definitions. It does not capture Auth, Storage objects, Edge Functions, cron commands, Vault values, Realtime configuration, database roles, data or external services.",
+  "acceptance_use": "Run the identical pinned probe on each blank recovery rehearsal. Every digest must match or have one reviewed and documented intended delta before recovery can progress.",
+  "authority": {
+    "permits": [
+      "read-only fingerprint comparison",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "production write",
+      "migration-history repair",
+      "schema mutation",
+      "customer data export",
+      "deployment, merge, cutover or release"
+    ]
+  }
+}

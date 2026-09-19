@@ -1,0 +1,70 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-dispatch-postgres.r73.v1",
+  "contract_id": "G25-PROVIDER-DELETION-DISPATCH-POSTGRES-R73",
+  "status": "append_only_dispatch_postgres_locally_proved_independent_connections_closed",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-JOB-ENVELOPE-R70",
+    "G25-PROVIDER-DELETION-DISPATCH-LIFECYCLE-R71",
+    "G25-PROVIDER-DELETION-PERSISTENCE-AUTHORITY-R72"
+  ],
+  "implementation": {
+    "candidate": "supabase/candidates/g25_provider_deletion_dispatch_persistence_r73.sql",
+    "tests": "supabase/functions/_shared/provider-deletion-dispatch-postgres.r73.test.ts",
+    "config": "vitest.g25-provider-deletion-dispatch-postgres.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-dispatch-postgres-r73.mjs"
+  },
+  "stored_dispatch_projection": [
+    "routing and scope identifiers",
+    "authority token digest, never the token",
+    "envelope digest, never provider data or ciphertext",
+    "latest lifecycle state and event identity",
+    "automatic-terminal, operator-attention and closure projections"
+  ],
+  "append_authority": {
+    "provider_dispatch_issuer": [
+      "record dispatch",
+      "append dispatched, failure, retry and dead-letter events"
+    ],
+    "provider_handle_crypto_writer": [
+      "append accepted, completed or failure events only for crypto-writer dispatches"
+    ],
+    "provider_deletion_worker": [
+      "append accepted, completed or failure events only for deletion-worker dispatches"
+    ],
+    "provider_deletion_operator": [
+      "append operator recovery events"
+    ]
+  },
+  "proved_locally": [
+    "exact dispatch replay converges and changed replay conflicts",
+    "job, operation and attempt identity cannot fork",
+    "retry lineage cannot change workspace, receipt, handle, provider, topology or target",
+    "events form a locked append-only chain with exact transitions",
+    "event insertion and dispatch projection update occur in one transaction",
+    "invalid event detail rolls back without changing the projection",
+    "dead-lettered work remains visible for explicit human recovery",
+    "direct table access and service-role shortcuts are denied"
+  ],
+  "artifact_sha256": {
+    "candidate": "2489a9f63236b7890d2b48b195e63ebdba19ed0452f67b42de260b96bc6c700e",
+    "tests": "47dfe313c567c9b69ebeedf289a1bcb24de4805dca7bc453f46ed64928593747",
+    "config": "02103b370cc137fcc062b39b162f58cee01de3ee1f796c64527a24b4bb37696c"
+  },
+  "bounded_claim": "R73 proves the candidate in one local PGlite PostgreSQL 18.3 process. It does not prove separate login sessions, pooler behavior, Supabase Vault or pgcrypto verification, queue delivery, provider action, migration safety or deployment.",
+  "next_gate": "Run the R68 verifier and R73 role and transition suite through genuinely independent database connections in an empty disposable Supabase environment, then attest the deployed grants and topology without widening authority.",
+  "authority": {
+    "permits": [
+      "local PGlite execution",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "linked or production database access",
+      "credential or login provisioning",
+      "provider request",
+      "deployment",
+      "merge",
+      "release"
+    ]
+  }
+}

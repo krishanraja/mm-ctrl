@@ -1,0 +1,90 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "phase": "adjudication",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+  "rulingsCompositeSha256": "4c00498d638b439578af82c9b68677e9e15c6b5de282ba725611d46deeb66b45",
+  "rulings": [
+    {
+      "file": "human_agency.json",
+      "sha256": "f2851c3fb10a80f6fd30aa29697a4707ab9f981cb6e9bf71894b891875119075",
+      "judge": "human_agency",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "epistemic_integrity.json",
+      "sha256": "da806bdf8010015522b93510bc79e78c9f38eda3a79dc974c3348aafb7d4d7cc",
+      "judge": "epistemic_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "EPISTEMIC-RANGE-01"
+    },
+    {
+      "file": "subject_audience_lifecycle_safety.json",
+      "sha256": "e541820b0a841d38b09bf9b7e0daa2a088e405100c3e7d43819414cff3d9432f",
+      "judge": "subject_audience_lifecycle_safety",
+      "verdict": "fail",
+      "vetoRuleId": "SAFETY-RANGE-01"
+    },
+    {
+      "file": "consequential_usefulness.json",
+      "sha256": "6db9cad0ea224a696eb09eb7dde0998f8e88eb8192caa2717f31ea9b4037377c",
+      "judge": "consequential_usefulness",
+      "verdict": "fail",
+      "vetoRuleId": "USEFULNESS-RANGE-01"
+    },
+    {
+      "file": "living_brain_integrity.json",
+      "sha256": "9732079a39563ef6c494edbd25d8fd45bf4d683099896417c76c8dca086268c6",
+      "judge": "living_brain_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "BRAIN-RANGE-01"
+    },
+    {
+      "file": "human_comprehension_and_access.json",
+      "sha256": "ab5b8e02da16ed5265c6d36c96f7579855ac82c952f05b9f3ba4a796dc7a0a41",
+      "judge": "human_comprehension_and_access",
+      "verdict": "fail",
+      "vetoRuleId": "COMPREHENSION-RANGE-01"
+    },
+    {
+      "file": "behavioural_and_implementation_reality.json",
+      "sha256": "ea330f7adf46fc52c67e2d6a1905fcfc724de90cfb5ba6ce99bead79fdcd0aa7",
+      "judge": "behavioural_and_implementation_reality",
+      "verdict": "pass",
+      "vetoRuleId": null
+    }
+  ],
+  "result": {
+    "status": "blocked",
+    "vetoes": [
+      {
+        "ruleId": "EPISTEMIC-RANGE-01",
+        "failure": "Unsupported causal semantics can be code-issued as trusted observations, and a synchronised pre-load edit of fixture, receipt registry and oracle becomes the derived frozen baseline. The current INT-STORY-007 already uses causal lifted language without supplied controlled or held-out evidence. Receipt equality and same-module fixture equality therefore substitute for causal and independent canonical authority.",
+        "resolvingTest": "Introduce an independently frozen canonical digest and receipt allowlist that are not computed from G21_INTERNAL_RANGE_CANARY at module load. Add a pre-issued, binding-valid observation control using each unsupported causal form already at risk, including lifted, raised, drove, resulted in and attributed to, and require a causation-specific rejection rather than a receipt or substrate mismatch. Rewrite INT-STORY-007 and NOTICE-STORY-I3-01 as bounded associations unless a frozen controlled or held-out design supports causation, then prove the runtime accepts only the existing safe novel control and the canonical verifier rejects the old and synchronously edited fixture bytes."
+      },
+      {
+        "ruleId": "SAFETY-RANGE-01",
+        "failure": "validateG21InternalBlindInput and validateG21CanonicalInternalBlindInput accept a malformed currentClaims array that uses toJSON to present a benign derived view while retaining live relabelled assertion kind, claim subject and public audience values. This lets malformed nested input escape validation and can widen private claim metadata.",
+        "resolvingTest": "From a valid initial CARE input, change currentClaims[0] to kind fabricated, subjectScope real_person and audience public, add an array-level toJSON that returns buildG21CurrentClaimView(internalEvidence), and require both runtime and canonical validators to return a nonempty error array without throwing."
+      },
+      {
+        "ruleId": "USEFULNESS-RANGE-01",
+        "failure": "STORY-I1 permits the complete answer `Another named group` without requiring the group to be named, yet claims that this answer reshapes the GBP 18 million campaign route around a leader-named ticket-buyer group. The permitted answer therefore changes no executable customer target and its route effect evades the consequence it names.",
+        "resolvingTest": "Freeze a STORY-I1 answer contract in which every accepted response identifies a concrete ticket-buyer group, either by removing the placeholder option or by requiring a nonempty custom group value when it is selected, then add a deterministic negative test proving that the bare answer `Another named group` is rejected and a positive test proving that the supplied group becomes the customer gate for the GBP 18 million route."
+      },
+      {
+        "ruleId": "BRAIN-RANGE-01",
+        "failure": "Candidate-controlled state selection permits a corrected envelope to be downgraded to the canonical initial subset. The conflict and correction disappear, the earlier claim view is restored, and both validators accept it, so lifecycle lineage can be reversed without detection.",
+        "resolvingTest": "Bind runId, caseId, profileId and runtimeState to an independently trusted envelope receipt or an external expected-case input, then prove across all 12 profiles that deleting conflict and correction records from a corrected input, relabelling it initial and re-deriving currentClaims is rejected by every gate used to admit diagnostic input."
+      },
+      {
+        "ruleId": "COMPREHENSION-RANGE-01",
+        "failure": "RANGE-INTERNAL-RESEARCH-I1 has non-exhaustive choices and undefined live challenge wording; RANGE-INTERNAL-RESEARCH-I2 relies on the same undefined challenge meaning; RANGE-INTERNAL-FORGE-I1 leaves the target unnamed; and RANGE-INTERNAL-FORGE-I3 offers a circular non-role choice that depends on an unseen escalation rule. These main questions are cryptic, mismatched to their choices or missing a reference required for a meaningful answer.",
+        "resolvingTest": "Freeze revised visible contracts that add an explicit other or mixed answer for RANGE-INTERNAL-RESEARCH-I1, define the plain meaning of challenge for both research questions, name the target in RANGE-INTERNAL-FORGE-I1, and make every RANGE-INTERNAL-FORGE-I3 option an actual human role or an explicit write-in role; then rerun all 12 questions in a fresh history-blind review and require every question to pass the owned criterion."
+      }
+    ]
+  },
+  "protocolStanding": "valid_history_free_independent_review",
+  "recordedAt": "2026-09-11T01:08:34.348Z"
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "ctrl.g25.provider-closure-postgres.r63.v1",
+  "contract_id": "G25-PROVIDER-CLOSURE-POSTGRES-R63",
+  "status": "append_only_provider_closure_facts_postgres_verified",
+  "depends_on": [
+    "G25-PROVIDER-EXCHANGE-RECEIPT-REGISTRY-R49",
+    "G25-PROVIDER-EXCHANGE-RETRY-IDENTITY-R51",
+    "G25-PROVIDER-ROUTE-MATRIX-R53",
+    "G25-PROVIDER-CLOSURE-FACTS-R62"
+  ],
+  "observed": {
+    "local_database": "PostgreSQL 18.3 PGlite",
+    "tests": 7,
+    "failures": 0,
+    "multi_connection_race_proved": false,
+    "supabase_local_parity_proved": false
+  },
+  "proved_locally": [
+    "closure facts require an existing accepted provider exchange",
+    "Stripe operational deletion and regulated residual retention persist together",
+    "Resend policy expiry and external recipient copy persist separately",
+    "verification recovery requires and preserves an earlier failure",
+    "contradictory payload dispositions and failure after deletion success are rejected",
+    "exact retries converge while changed evidence conflicts",
+    "service role cannot insert raw rows and can read content-free facts only",
+    "function writes serialize on the parent exchange row"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_provider_closure_facts_r63.sql",
+    "candidate_sha256": "59981b652221484090ea986d9c91c5dd592bc4c5215bc3a1f6c9e7d171647401",
+    "test": "supabase/functions/_shared/provider-closure-postgres.r63.test.ts",
+    "test_sha256": "11dfd0e30084ed777236b67c85ae77a9f36c591e84f4d7969d365fb8c8c20df7",
+    "node_test_config": "vitest.g25-provider-postgres.config.ts",
+    "node_test_config_sha256": "83f3b3200060c0066d825cec7e3599eab0368a7b7a50d7203fa6199c582f132e",
+    "checker": "scripts/check-ctrl-g25-provider-closure-postgres-r63.mjs"
+  },
+  "bounded_claim": "R63 proves append-only closure-fact behavior in one local PGlite process. It is a non-migration candidate and proves no linked database, multi-connection race, PostgREST or provider behavior.",
+  "next_gate": "Design capability-specific encrypted deletion-handle custody, then compose its evidence into R63 without putting raw provider IDs in closure facts.",
+  "authority": {
+    "permits": [
+      "local disposable PostgreSQL execution",
+      "local candidate, tests, documentation and commit"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "linked or production database use",
+      "provider call or live route edit",
+      "deployment, merge or release"
+    ]
+  }
+}

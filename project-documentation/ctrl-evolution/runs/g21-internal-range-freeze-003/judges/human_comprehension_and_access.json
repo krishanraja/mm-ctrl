@@ -1,0 +1,28 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "judge": "human_comprehension_and_access",
+  "criterionVersion": "human-comprehension-and-access:g21-internal-range-freeze-v3",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "verdict": "inconclusive",
+  "claims": [
+    "All ten artifact SHA-256 values matched the input manifest, and the recomputed composite matched the frozen artifact composite.",
+    "An independent semantic verdict is unavailable because the manifest-required review set includes documentation that states prior council outcomes and adult proxy results, while the sealed protocol forbids loading prior rulings, judge histories, adult reviews and builder rationale.",
+    "No question-level comprehension finding is made after the review context became contaminated."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json#/files/6/path",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json#/files/7/path",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md:7",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md:10",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:111",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:125",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:127",
+    "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md:194"
+  ],
+  "veto": null,
+  "missingEvidence": [
+    "A clean Human Comprehension and Access criterion pack containing the frozen questions, visible answer contracts, relevant validators and criterion, with no prior outcomes, judge histories, adult proxy results, builder rationale, prosecution or founder calibration."
+  ],
+  "resolvingTest": "Create a new frozen run whose semantically reviewed file set excludes history-bearing documentation, then assign a fresh isolated Human Comprehension and Access reviewer only the clean criterion pack and require review of all twelve questions and visible answer contracts before saving a new eleven-field ruling.",
+  "recordedAt": "2026-09-10T21:08:43.925Z"
+}

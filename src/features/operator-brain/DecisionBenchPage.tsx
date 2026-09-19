@@ -1,328 +1,488 @@
-import { useEffect, useState, type ReactNode } from 'react'
-import {
-  ArrowRight,
-  BrainCircuit,
-  Eye,
-  FileText,
-  GitCompareArrows,
-  Mic,
-  Plus,
-  X,
-} from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowLeft, ArrowRight, Check, History, Search } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
+import { buildClaudeBrief, getAuditFindings, getChallengeSet, routePresentations } from './decisionBenchModel'
 import { decisionBenchFixture as fixture } from './fixtureDecisionBenchAdapter'
-import type { BenchPanel, BenchState, BrainItem, BrainSource } from './contract'
+import type {
+  AuditFinding,
+  BenchState,
+  BrainSource,
+  DecisionView,
+  RouteId,
+  SharpeningInput,
+  SharpeningStanding,
+} from './contract'
 import './DecisionBenchPage.css'
 
-const comparisonRows = [
-  {
-    label: 'Meaning',
-    current: ['Other people cannot yet see the quality loss Maya sees.', 'BI-105 · supported synthesis'],
-    history: ['Maya fundamentally distrusts delegation.', 'BI-109 · discarded interpretation'],
-  },
-  {
-    label: 'Evidence',
-    current: ['3 linked sources', 'SRC-101 · 102 · 105'],
-    history: ['Weakened by her correction', 'SRC-105'],
-  },
-  {
-    label: 'What changed',
-    current: ['She wants the team to notice before she fixes.', 'Voice reflection · 7 September'],
-    history: ['Control was mistaken for the cause.', 'Kept only as history'],
-  },
-  {
-    label: 'Session',
-    current: ['Test two directions that fail differently.', 'Current next move'],
-    history: ['Do not coach her to delegate more.', 'Cannot guide the session'],
-  },
+type ModalKind = 'challenge' | 'sources' | 'capture' | null
+
+const sourceGroups: Record<string, string[]> = {
+  comparison: ['SRC-204', 'SRC-210'],
+  surprise: ['SRC-206', 'SRC-208'],
+  unknown: ['SRC-201', 'SRC-210'],
+  all: fixture.sources.map((source) => source.id),
+}
+
+const testSteps = [
+  ['01', 'Customer value', 'Which route helps buyers act?'],
+  ['02', 'Judgement transfer', 'Can someone else apply your standard?'],
+  ['03', 'Role design', 'What disappears and what becomes human?'],
+  ['04', 'Incentives', 'What behaviour does the pilot reward?'],
 ] as const
 
-const meaningCopy = {
-  current: {
-    label: 'Why this guides the session',
-    text: 'Maya will hand work over. She steps back in when the team misses the quality problems she sees early.',
-  },
-  history: {
-    label: 'Why this cannot guide the session',
-    text: 'Maya corrected the idea that reluctance to delegate is the cause. The explanation remains visible as history.',
-  },
-} as const
-
-const fallbackStates: Record<BenchState, { label: string; title: string; body: string }> = {
-  sparse: {
-    label: 'Sparse record',
-    title: 'One useful signal. One open question.',
-    body: 'Maya becomes more precise when reacting to real work. Bring one concrete contrast to the next conversation.',
-  },
-  quiet: {
-    label: 'No new interruption',
-    title: 'The current route still holds.',
-    body: 'No recorded change needs Krish’s attention. The current session plan remains visible.',
-  },
-  loading: {
-    label: 'Reading the latest evidence',
-    title: 'Current meaning remains visible.',
-    body: 'The new source is still being checked. No current Brain meaning has changed.',
-  },
-  stale: {
-    label: 'Evidence needs rechecking',
-    title: 'The latest source could not be refreshed.',
-    body: 'This view uses evidence verified on 5 September. Recheck it before treating the route as current.',
-  },
-  error: {
-    label: 'Evidence unavailable',
-    title: 'The new evidence could not be processed.',
-    body: 'Nothing in Maya’s Brain has changed. Retry the source or add a short operator note.',
-  },
-  rejected: {
-    label: 'Current read rejected',
-    title: 'The evidence remains as history.',
-    body: 'This interpretation no longer guides the session. A different reading needs support before it replaces it.',
-  },
+function readBenchState(): BenchState | null {
+  const state = new URLSearchParams(window.location.search).get('state')
+  return state === 'sparse' || state === 'stale' || state === 'wrong' ? state : null
 }
 
-const nodeIds = ['BI-105', 'BI-102', 'BI-109', 'BI-101', 'BI-110'] as const
-const sourceIds = ['SRC-105', 'SRC-102', 'SRC-101'] as const
-type DialogKind = 'source' | 'prepare' | 'ask' | 'customer' | 'local' | null
-type MeaningMode = keyof typeof meaningCopy
-
-function findItem(id: string): BrainItem {
-  const item = fixture.brain_items.find((candidate) => candidate.id === id)
-  if (!item) throw new Error(`Missing Brain item ${id}`)
-  return item
+function readStartingView(): DecisionView {
+  const view = new URLSearchParams(window.location.search).get('view')
+  return view === 'test' || view === 'brief' || view === 'audit' ? view : 'decision'
 }
 
-function findSource(id: string): BrainSource {
+function sourceById(id: string): BrainSource {
   const source = fixture.sources.find((candidate) => candidate.id === id)
   if (!source) throw new Error(`Missing source ${id}`)
   return source
 }
 
-function nodeRelationship(id: string) {
-  if (id === 'BI-105') {
-    const relationship = fixture.relationships.find((candidate) => candidate.id === 'REL-101')!
-    return { label: `${relationship.type} · ${relationship.id}`, meaning: 'Interchangeable work supports the current read.' }
-  }
-  if (id === 'BI-102') {
-    const relationship = fixture.relationships.find((candidate) => candidate.id === 'REL-101')!
-    return { label: `${relationship.type} · ${relationship.id}`, meaning: 'This anti-standard supports the current synthesis.' }
-  }
-  if (id === 'BI-109') return { label: 'history · BI-109', meaning: 'It cannot guide the current session.' }
-  const relationshipId = id === 'BI-101' ? 'REL-104' : 'REL-105'
-  const relationship = fixture.relationships.find((candidate) => candidate.id === relationshipId)!
-  return { label: `${relationship.type} · ${relationship.id}`, meaning: relationship.meaning }
+function standingFor(mode: 'answer' | 'find' | 'history'): SharpeningStanding {
+  if (mode === 'find') return 'EVIDENCE REQUEST PENDING'
+  if (mode === 'history') return 'PRIOR DECISION MATCH'
+  return 'LEADER ANSWER'
 }
 
-function PanelHeader({ title, meta }: { title: string; meta: string }) {
-  return <div className="db-panel-head"><strong>{title}</strong><span>{meta}</span></div>
+function MainButton({ children, onClick, disabled = false }: {
+  children: React.ReactNode
+  onClick: () => void
+  disabled?: boolean
+}) {
+  return <button className="dt-primary" type="button" onClick={onClick} disabled={disabled}>{children}</button>
 }
 
-function ComparePanel({ active }: { active: boolean }) {
-  const [selected, setSelected] = useState<MeaningMode>('current')
+function BackButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  return <button className="dt-back" type="button" onClick={onClick}><ArrowLeft aria-hidden="true" />{children}</button>
+}
+
+function DecisionViewPanel({
+  benchState,
+  routeId,
+  onRouteChange,
+  onViewChange,
+  onOpenChallenge,
+  onOpenSources,
+  notify,
+}: {
+  benchState: BenchState | null
+  routeId: RouteId
+  onRouteChange: (routeId: RouteId) => void
+  onViewChange: (view: DecisionView) => void
+  onOpenChallenge: () => void
+  onOpenSources: (group: string) => void
+  notify: (message: string) => void
+}) {
+  const [counterOpen, setCounterOpen] = useState(false)
+  const route = routePresentations[routeId]
+  const sparse = benchState === 'sparse'
+  const brainRead = sparse
+    ? `${fixture.sparse_fallback.known} ${fixture.sparse_fallback.unknown}`
+    : 'The bigger risk is rebuilding the team before someone else can apply your quality standard.'
+  const counter = benchState === 'stale'
+    ? 'The latest evidence is stale. This read cannot steer the decision until it is checked.'
+    : `The counter-case: ${fixture.current_read.counter_case}`
 
   return (
-    <section className={`db-panel db-compare ${active ? 'is-mobile-active is-active-panel' : ''}`} data-mobile-panel="compare" aria-label="Compare interpretations">
-      <PanelHeader title="Compare the explanation" meta="Current and history" />
-      <div className="db-comparison">
-        <div className="db-table-corner">Test</div>
-        <div className="db-column-head"><i />Guiding now</div>
-        <div className="db-column-head is-history"><i />History</div>
-        {comparisonRows.map((row) => (
-          <div className="db-comparison-row" key={row.label}>
-            <div className="db-row-head">{row.label}</div>
-            <button
-              className={`db-cell is-current ${selected === 'current' ? 'is-selected' : ''}`}
-              onClick={() => setSelected('current')}
-              type="button"
-            >
-              <strong>{row.current[0]}</strong><small>{row.current[1]}</small>
-            </button>
-            <button
-              className={`db-cell is-history ${selected === 'history' ? 'is-selected' : ''}`}
-              onClick={() => setSelected('history')}
-              type="button"
-            >
-              <strong>{row.history[0]}</strong><small>{row.history[1]}</small>
-            </button>
+    <main className="dt-main dt-decision-view">
+      <section className="dt-decision-head" aria-labelledby="decision-title">
+        <div>
+          <h1 id="decision-title">How far should you rebuild marketing around AI?</h1>
+          <p className="dt-stakes">Twelve months · synthetic £1.2m operating budget · eight roles affected</p>
+        </div>
+        <div className="dt-brain-read">
+          <span>What your Brain sees</span>
+          <p>{brainRead}</p>
+          <small>{counter}</small>
+        </div>
+      </section>
+
+      <section className={`dt-recognitions ${sparse ? 'is-sparse' : ''}`} aria-label="Current Brain recognitions">
+        <article className="dt-recognition">
+          <span className="dt-mark">1</span>
+          <div><small>Your pattern</small><strong>You judge best through real comparison.</strong></div>
+          <button type="button" onClick={() => onOpenSources('comparison')}>2 sources</button>
+        </article>
+        {!sparse ? (
+          <article className="dt-recognition">
+            <span className="dt-mark">2</span>
+            <div><small>Your standard</small><strong>Make quality clear without killing surprise.</strong></div>
+            <button type="button" onClick={() => onOpenSources('surprise')}>2 sources</button>
+          </article>
+        ) : null}
+        <article className="dt-recognition">
+          <span className="dt-mark">?</span>
+          <div><small>Still unknown</small><strong>{sparse ? fixture.sparse_fallback.next_move : 'Can your standard travel without your final rescue?'}</strong></div>
+          <button type="button" onClick={onOpenChallenge} aria-label="Ask three useful questions about this decision">Ask me more</button>
+        </article>
+      </section>
+
+      <div className="dt-current-view">
+        <span>You</span>
+        <p>{fixture.decision.provisional_view}</p>
+      </div>
+
+      <section className="dt-route-table" aria-label="Three operating routes">
+        <div className="dt-route-tabs" role="tablist" aria-label="Operating routes">
+          {fixture.decision.routes.map((candidate, index) => {
+            const active = candidate.id === routeId
+            return (
+              <button
+                key={candidate.id}
+                className={active ? 'is-active' : ''}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => {
+                  onRouteChange(candidate.id)
+                  setCounterOpen(false)
+                }}
+              >
+                <small>{active && candidate.id === fixture.decision_sharpening.default_route ? 'Current best route' : `Route ${index + 1}`}</small>
+                <strong>{routePresentations[candidate.id].tabLabel}</strong>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="dt-route-body">
+          <div className="dt-route-main">
+            <span className="dt-label">The causal bet</span>
+            <h2>{route.title}</h2>
+            <p>{route.summary}</p>
+            <div className="dt-route-impact"><strong>{route.personal}</strong><span>{route.detail}</span></div>
           </div>
-        ))}
-      </div>
-      <div className={`db-selection ${selected === 'history' ? 'is-history' : ''}`} aria-live="polite">
-        <span>{meaningCopy[selected].label}</span>
-        <p>{meaningCopy[selected].text}</p>
-      </div>
-    </section>
-  )
-}
-
-function BrainRoute() {
-  const [selectedId, setSelectedId] = useState<(typeof nodeIds)[number]>('BI-105')
-  const item = findItem(selectedId)
-  const relationship = nodeRelationship(selectedId)
-
-  return (
-    <div className="db-brain-lens">
-      <div className="db-brain-field" aria-label="Local Living Brain route">
-        <svg viewBox="0 0 396 260" preserveAspectRatio="none" aria-hidden="true">
-          <line className="is-active" x1="214" y1="125" x2="75" y2="60" />
-          <line x1="214" y1="125" x2="76" y2="190" />
-          <line x1="214" y1="125" x2="300" y2="55" />
-          <line className="is-active" x1="214" y1="125" x2="302" y2="190" />
-        </svg>
-        {nodeIds.map((id, index) => {
-          const node = findItem(id)
-          const tone = id === 'BI-109' ? 'history' : id === 'BI-101' ? 'blue' : id === 'BI-110' ? 'boundary' : ''
-          return (
-            <button
-              key={id}
-              type="button"
-              className={`db-brain-node db-node-${index + 1} ${tone} ${selectedId === id ? 'is-focus' : ''}`}
-              onClick={() => setSelectedId(id)}
-              aria-label={node.title}
-            >
-              <i /><span>{node.title}</span>
-            </button>
-          )
-        })}
-      </div>
-      <div className="db-lens-readout" aria-live="polite">
-        <span className="db-label">Selected Brain item</span>
-        <h3>{item.title}</h3>
-        <p>{item.statement}</p>
-        <div className="db-relationship">
-          <small>{relationship.label}</small>
-          <strong>{relationship.meaning}</strong>
+          <div className="dt-route-proof">
+            <span className="dt-label">Why this route moves</span>
+            <div className="dt-proof-line is-support"><b>Supports</b><span>{route.support}</span></div>
+            <div className="dt-proof-line is-pullback"><b>Pulls back</b><span>{route.oppose}</span></div>
+            <div className="dt-counter">
+              <button type="button" onClick={() => setCounterOpen((open) => !open)} aria-expanded={counterOpen}>
+                {counterOpen ? 'Hide the counter-case' : 'Show the strongest counter-case'}
+              </button>
+              {counterOpen ? <p>{route.counter}</p> : null}
+            </div>
+          </div>
+          <div className="dt-route-action">
+            <div>
+              <span className="dt-label">What only you decide</span>
+              <h3>{route.question}</h3>
+              <p>{route.effect}</p>
+            </div>
+            <div>
+              <MainButton onClick={() => onViewChange('test')}>Design the test <ArrowRight aria-hidden="true" /></MainButton>
+              <button className="dt-text-action" type="button" onClick={() => notify('The three synthetic routes stay fixed in this proof.')}>I see another route</button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }
 
-function EvidencePanel({ active, openSource }: { active: boolean; openSource: (source: BrainSource) => void }) {
+function TestView({ killCondition, setKillCondition, onBack, onBuildBrief }: {
+  killCondition: string
+  setKillCondition: (value: string) => void
+  onBack: () => void
+  onBuildBrief: () => void
+}) {
   return (
-    <section className={`db-panel db-evidence ${active ? 'is-mobile-active is-active-panel' : ''}`} data-mobile-panel="evidence" aria-label="Evidence and Living Brain">
-      <PanelHeader title="Evidence behind the current read" meta="Exact sources · typed links" />
-      <div className="db-change-trace" aria-label="Evidence changed the interpretation">
-        <div className="is-source"><small>New evidence</small><strong>SRC-105</strong></div><b>›</b>
-        <div><small>Moved to history</small><strong>BI-109</strong></div><b>›</b>
-        <div className="is-current"><small>Guiding now</small><strong>BI-105 v2</strong></div>
-      </div>
-      <div className="db-source-list">
-        {sourceIds.map((id) => {
-          const source = findSource(id)
-          const preview = id === 'SRC-105'
-            ? '“I need them to notice what I notice...”'
-            : id === 'SRC-102'
-              ? '“Polished, but it could have belonged to anyone.”'
-              : '“Nearly there, not more options I have to rescue.”'
-          const date = id === 'SRC-105' ? '7 Sep' : id === 'SRC-102' ? '3 Sep' : '29 Aug'
-          return (
-            <button className="db-source-row" type="button" key={id} onClick={() => openSource(source)}>
-              <span className="db-source-id">{id}</span>
-              <span><strong>{source.label.replace('Maya ', '')}</strong><em>{preview}</em></span>
-              <time>{date}</time>
-            </button>
-          )
-        })}
-      </div>
-      <BrainRoute />
-    </section>
-  )
-}
-
-function ActionPanel({ active, openDialog }: { active: boolean; openDialog: (dialog: DialogKind) => void }) {
-  return (
-    <section className={`db-panel db-action ${active ? 'is-mobile-active is-active-panel' : ''}`} data-mobile-panel="action" aria-label="Prepare next move">
-      <PanelHeader title="Next session" meta="Operator private" />
-      <div className="db-action-body">
-        <section className="is-next"><span className="db-label">Prepare</span><h3>Two launch directions that fail differently.</h3><p>Ask which is closer, then what would still stop Maya shipping it.</p></section>
-        <section><span className="db-label">Why</span><h3>Comparison makes her standard visible.</h3><p>Abstract questions produced principles she later contradicted.</p></section>
-        <section className="is-open"><span className="db-label">Still unknown</span><h3>The first warning sign.</h3><p>The Brain knows what Maya rejects, but not the earliest detail she notices.</p></section>
-        <section><span className="db-label">Decision boundary</span><h3>Three sources support this route.</h3><p>The Brain has no rule that authorises the final decision.</p></section>
-      </div>
-      <div className="db-action-foot">
-        <button className="db-primary" type="button" onClick={() => openDialog('prepare')}>Prepare next move</button>
-        <button className="db-text-button" type="button" onClick={() => openDialog('ask')}>Ask privately</button>
-        <div>Private working view · does not change the Brain</div>
-      </div>
-    </section>
-  )
-}
-
-function BenchDialog({ kind, source, onClose }: { kind: DialogKind; source: BrainSource | null; onClose: () => void }) {
-  const [asked, setAsked] = useState(false)
-
-  useEffect(() => setAsked(false), [kind])
-
-  const title = kind === 'source' ? (source?.label ?? 'Source')
-    : kind === 'prepare' ? 'Prepare next move'
-      : kind === 'ask' ? 'Ask privately'
-        : kind === 'customer' ? 'Customer projection'
-          : 'Local proof'
-
-  return (
-    <Dialog open={kind !== null} onOpenChange={(open) => { if (!open) onClose() }}>
-      <DialogContent className="db-dialog" data-testid={kind ? `${kind}-dialog` : undefined}>
-        <div className="db-dialog-head">
-          <strong>{title}</strong>
-          <button type="button" onClick={onClose} aria-label="Close"><X /></button>
+    <main className="dt-main dt-secondary-view">
+      <BackButton onClick={onBack}>Back to the decision</BackButton>
+      <section className="dt-section-title">
+        <div><h1>One campaign can answer four questions.</h1><span>Current best route · prove the system first</span></div>
+        <p>Run the new operating model separately. Compare it blind with the current process. You keep the final call.</p>
+      </section>
+      <section className="dt-test-grid">
+        <div className="dt-test-main">
+          <span className="dt-label">What the test must reveal</span>
+          <div className="dt-test-steps">
+            {testSteps.map(([number, title, detail]) => (
+              <article key={number}><b>{number}</b><strong>{title}</strong><span>{detail}</span></article>
+            ))}
+          </div>
+          <label className="dt-condition">
+            <span>Your kill condition</span>
+            <textarea value={killCondition} onChange={(event) => setKillCondition(event.target.value)} />
+          </label>
         </div>
-        <div className="db-dialog-body">
-          {kind === 'source' && source && (
-            <>
-              <DialogTitle className="db-visually-hidden">{source.label}</DialogTitle>
-              <DialogDescription className="db-label">{source.id} · {source.kind.split('_').join(' ')} · {source.observed_at}</DialogDescription>
-              <blockquote>“{source.assertion}”</blockquote>
-              <div className="db-dialog-meta">Customer private · exact fixture assertion</div>
-            </>
-          )}
-          {kind === 'prepare' && (
-            <>
-              <DialogDescription className="db-label">Tomorrow · 10:30 · operator private</DialogDescription>
-              <DialogTitle>Bring two directions. Ask one question.</DialogTitle>
-              <blockquote>{fixture.intervention.exact_opening}</blockquote>
-              <div className="db-prep-grid">
-                <div><strong>Listen for</strong><ul>{fixture.intervention.listen_for.map((item) => <li key={item}>{item}</li>)}</ul></div>
-                <div><strong>If the session moves elsewhere</strong><p>{fixture.deepen_route.fallback}</p><strong>Material</strong><p>{fixture.intervention.material_to_bring.label}.</p></div>
-              </div>
-            </>
-          )}
-          {kind === 'ask' && (
-            <>
-              <DialogDescription className="db-label">Private working view · does not change the Brain</DialogDescription>
-              <DialogTitle>What changed in the room?</DialogTitle>
-              <p>Ask about the current evidence. The response stays private and has no durable effect.</p>
-              <div className="db-ask-row"><input aria-label="Private question" defaultValue={fixture.private_ask.demo_query} /><button className="db-primary" type="button" aria-label="Ask" onClick={() => setAsked(true)}><ArrowRight /></button></div>
-              {asked && <div className="db-ask-answer"><strong>Keep the two issues separate.</strong><p>{fixture.private_ask.demo_response.answer} {fixture.private_ask.demo_response.next_question}</p><div className="db-dialog-meta">Session guidance · operator private · 3 sources · no durable effect</div></div>}
-            </>
-          )}
-          {kind === 'customer' && (
-            <>
-              <DialogDescription className="db-label">Preview only · customer private</DialogDescription>
-              <DialogTitle className="db-visually-hidden">Customer projection</DialogTitle>
-              <div className="db-projection"><h3>{fixture.customer_preview.headline}</h3><p>{fixture.customer_preview.body}</p><div className="db-privacy-row"><div><small>Included</small><strong>Customer-visible sources</strong></div><div><small>Excluded</small><strong>Krish’s private note</strong></div></div></div>
-            </>
-          )}
-          {kind === 'local' && (
-            <>
-              <DialogTitle>No customer data will be changed.</DialogTitle>
-              <DialogDescription>This rendered proof can inspect the synthetic fixture. Evidence capture and persistence are outside its authority.</DialogDescription>
-            </>
-          )}
+        <aside className="dt-test-side">
+          <span className="dt-label">Brain recommendation</span>
+          <h2>{fixture.recommended_move.title}</h2>
+          <p>{fixture.recommended_move.reason}</p>
+          <MainButton onClick={onBuildBrief}>Build the Claude brief <ArrowRight aria-hidden="true" /></MainButton>
+          <small>You can change the test. The Brain cannot make the final organisational call.</small>
+        </aside>
+      </section>
+    </main>
+  )
+}
+
+function BriefView({ brief, wrongCustomer, onBack, onAudit, notify }: {
+  brief: string
+  wrongCustomer: boolean
+  onBack: () => void
+  onAudit: () => void
+  notify: (message: string) => void
+}) {
+  const [copied, setCopied] = useState(false)
+  const previewRef = useRef<HTMLPreElement>(null)
+
+  async function copyBrief() {
+    if (wrongCustomer) return
+    try {
+      await navigator.clipboard.writeText(brief)
+      setCopied(true)
+      notify('Complete brief copied')
+    } catch {
+      const selection = window.getSelection()
+      const range = document.createRange()
+      if (previewRef.current && selection) {
+        range.selectNodeContents(previewRef.current)
+        selection.removeAllRanges()
+        selection.addRange(range)
+      }
+      notify('Copy was blocked. The full brief is selected.')
+    }
+  }
+
+  return (
+    <main className="dt-main dt-secondary-view">
+      <BackButton onClick={onBack}>Back to the test</BackButton>
+      <section className="dt-section-title">
+        <div><h1>Claude gets the full decision.</h1><span>Prepared from Maya's Brain</span></div>
+        <p>The brief carries your view, evidence, standards, unknowns and the exact work you want back.</p>
+      </section>
+      <section className="dt-brief-shell">
+        <div className="dt-brief-summary">
+          <span className="dt-label">Included in the brief</span>
+          <div className="dt-brief-facts">
+            <div><small>Decision</small><strong>Three routes and their causal bets</strong></div>
+            <div><small>Maya's judgement</small><strong>Patterns, standards and one corrected belief</strong></div>
+            <div><small>Evidence boundary</small><strong>Twelve synthetic sources and explicit unknowns</strong></div>
+            <div><small>Output</small><strong>Two pilots, one recommendation, counter-case and kill conditions</strong></div>
+          </div>
+          <p className="dt-copy-note">{wrongCustomer ? 'This brief belongs to a different selected customer. Nothing can be copied.' : 'Copies the complete private synthetic brief. Nothing is sent automatically.'}</p>
+          <div className="dt-copy-actions">
+            <MainButton onClick={copyBrief} disabled={wrongCustomer}>
+              {wrongCustomer ? 'Return to Maya before copying' : copied ? <>Brief copied <Check aria-hidden="true" /></> : <>Copy complete brief <ArrowRight aria-hidden="true" /></>}
+            </MainButton>
+            {copied ? <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer">Open Claude ↗</a> : null}
+          </div>
+          <div className="dt-return-box">
+            <textarea
+              aria-label="Claude plan to assess"
+              placeholder="Paste Claude's plan back here"
+              onPaste={(event) => {
+                if (event.clipboardData.getData('text')) {
+                  event.preventDefault()
+                  onAudit()
+                }
+              }}
+            />
+            <button type="button" onClick={onAudit}>Use the synthetic return</button>
+          </div>
+        </div>
+        <div className="dt-brief-preview">
+          <span className="dt-label">Full brief · inspectable</span>
+          <pre ref={previewRef} id="brief-text">{brief}</pre>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function AuditText({ onSelect }: { onSelect: (index: number) => void }) {
+  return (
+    <p>
+      Aperture House should embrace an <button type="button" onClick={() => onSelect(0)}>AI-first marketing transformation</button>. Start by training the team on leading AI tools, <button type="button" onClick={() => onSelect(1)}>automate content creation</button> and use a <button type="button" onClick={() => onSelect(2)}>human-in-the-loop process</button> to maintain quality. Track <button type="button" onClick={() => onSelect(3)}>engagement and output</button> to prove success, then <button className="is-keep" type="button" onClick={() => onSelect(4)}>scale the programme in stages</button>.
+    </p>
+  )
+}
+
+function AuditView({ onBack, onRepair, notify }: { onBack: () => void; onRepair: () => void; notify: (message: string) => void }) {
+  const findings = useMemo(() => getAuditFindings(fixture), [])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const finding: AuditFinding = findings[activeIndex]
+
+  return (
+    <main className="dt-main dt-secondary-view">
+      <BackButton onClick={onBack}>Back to the brief</BackButton>
+      <section className="dt-section-title">
+        <div><h1>Do not use this plan yet.</h1><span>Claude proposal · not Brain truth</span></div>
+        <p>Your Brain found four material failures and one useful direction. You decide whether the criticism is fair.</p>
+      </section>
+      <section className="dt-audit">
+        <article className="dt-plan">
+          <span className="dt-label">Returned plan · select an underline</span>
+          <AuditText onSelect={setActiveIndex} />
+        </article>
+        <aside className="dt-findings">
+          <span className="dt-label">Maya's Brain · applied judgement</span>
+          <h2 className={finding.keep ? 'is-keep' : ''}>{finding.title}</h2>
+          <p>{finding.body}</p>
+          <div className="dt-finding-ref">{finding.reference}</div>
+          <div className="dt-audit-nav" aria-label="Assessment findings">
+            {findings.map((_, index) => (
+              <button key={index} className={index === activeIndex ? 'is-active' : ''} type="button" aria-label={`Finding ${index + 1}`} onClick={() => setActiveIndex(index)}>{index + 1}</button>
+            ))}
+          </div>
+          <div className="dt-audit-actions">
+            <MainButton onClick={onRepair}>Build the sharper request <ArrowRight aria-hidden="true" /></MainButton>
+            <button type="button" onClick={() => notify('Your correction stays separate until it is reviewed.')}>The Brain missed something</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+  )
+}
+
+function SourcesDialog({ open, sources, onClose }: { open: boolean; sources: BrainSource[]; onClose: () => void }) {
+  return (
+    <Dialog open={open} onOpenChange={(nextOpen) => { if (!nextOpen) onClose() }}>
+      <DialogContent className="dt-dialog dt-sources-dialog">
+        <DialogTitle>Why the Brain thinks this</DialogTitle>
+        <DialogDescription>Each claim keeps its source and privacy boundary.</DialogDescription>
+        <div className="dt-source-list">
+          {sources.map((source) => (
+            <article key={source.id}>
+              <small>{source.label} · synthetic · {source.audience.replace('_', ' ')}</small>
+              <p>{source.assertion}</p>
+            </article>
+          ))}
         </div>
       </DialogContent>
     </Dialog>
   )
 }
 
+function CaptureDialog({ open, onClose, notify }: { open: boolean; onClose: () => void; notify: (message: string) => void }) {
+  const [note, setNote] = useState('')
+  const [saved, setSaved] = useState(false)
+
+  return (
+    <Dialog open={open} onOpenChange={(nextOpen) => { if (!nextOpen) onClose() }}>
+      <DialogContent className="dt-dialog dt-capture-dialog">
+        <DialogTitle>Add evidence for Maya</DialogTitle>
+        <DialogDescription>This proof keeps the note only until you close the page.</DialogDescription>
+        <textarea value={note} onChange={(event) => setNote(event.target.value)} placeholder="Paste or type here" />
+        <MainButton onClick={() => {
+          if (!note.trim()) {
+            notify('Add a note first')
+            return
+          }
+          setSaved(true)
+          notify('Kept with this decision')
+        }}>Keep with this decision <ArrowRight aria-hidden="true" /></MainButton>
+        {saved ? <p className="dt-saved">Kept with this decision as an unreviewed synthetic note.</p> : null}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function ChallengeDialog({
+  open,
+  routeId,
+  onClose,
+  onKeep,
+  notify,
+}: {
+  open: boolean
+  routeId: RouteId
+  onClose: () => void
+  onKeep: (input: SharpeningInput) => void
+  notify: (message: string) => void
+}) {
+  const questions = useMemo(() => getChallengeSet(fixture, routeId), [routeId])
+  const [index, setIndex] = useState(0)
+  const [choice, setChoice] = useState('')
+  const [noteOpen, setNoteOpen] = useState(false)
+  const [note, setNote] = useState('')
+  const question = questions[index]
+
+  useEffect(() => {
+    if (!open) return
+    setIndex(0)
+    setChoice('')
+    setNoteOpen(false)
+    setNote('')
+  }, [open, routeId])
+
+  function next() {
+    if (index >= questions.length - 1) {
+      onClose()
+      return
+    }
+    setIndex((current) => current + 1)
+    setChoice('')
+    setNoteOpen(false)
+    setNote('')
+  }
+
+  function keep() {
+    if (!choice) return
+    onKeep({
+      standing: standingFor(question.mode),
+      question: question.question,
+      input: note.trim() ? `${choice}\nOptional note: ${note.trim()}` : choice,
+    })
+    notify(question.mode === 'find' ? 'The Brain will check this' : 'Answer kept')
+    next()
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(nextOpen) => { if (!nextOpen) onClose() }}>
+      <DialogContent className="dt-dialog dt-challenge-dialog" data-testid="challenge-dialog">
+        <DialogTitle>One question</DialogTitle>
+        <DialogDescription className="dt-challenge-meta"><span>{question.kind}</span><span>{index + 1} of {questions.length}</span></DialogDescription>
+        <h3>{question.question}</h3>
+        <p className="dt-challenge-why">{question.why}</p>
+        <div className="dt-challenge-choices" role="group" aria-label="Answer choices">
+          {question.choices.map((candidate) => (
+            <button
+              key={candidate}
+              className={choice === candidate ? 'is-selected' : ''}
+              type="button"
+              aria-pressed={choice === candidate}
+              onClick={() => {
+                setChoice(candidate)
+                if (candidate === 'Something else') setNoteOpen(true)
+              }}
+            >{candidate}</button>
+          ))}
+        </div>
+        <div className="dt-challenge-effect"><small>What the answer changes</small><p>{question.effect}</p></div>
+        <button className="dt-note-toggle" type="button" aria-expanded={noteOpen} onClick={() => setNoteOpen((shown) => !shown)}>{noteOpen ? 'Hide note' : 'Add a note'}</button>
+        {noteOpen ? <textarea aria-label="Optional note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="Add anything the choices miss" /> : null}
+        <div className="dt-challenge-actions">
+          <MainButton onClick={keep} disabled={!choice}>{question.mode === 'find' ? <><Search aria-hidden="true" />Find this for me</> : <><Check aria-hidden="true" />Keep answer</>}</MainButton>
+          <button type="button" onClick={next}>{index === questions.length - 1 ? 'Close' : 'Next question'}</button>
+        </div>
+        <p className="dt-question-source"><History aria-hidden="true" />{question.source}</p>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export default function DecisionBenchPage() {
-  const [panel, setPanel] = useState<BenchPanel>('compare')
-  const [dialog, setDialog] = useState<DialogKind>(null)
-  const [source, setSource] = useState<BrainSource | null>(null)
-  const [railHovered, setRailHovered] = useState(false)
-  const [railPinned, setRailPinned] = useState(false)
-  const stateCandidate = new URLSearchParams(window.location.search).get('state')
-  const state = stateCandidate && stateCandidate in fallbackStates ? stateCandidate as BenchState : null
+  const [view, setView] = useState<DecisionView>(readStartingView)
+  const [routeId, setRouteId] = useState<RouteId>(fixture.decision_sharpening.default_route)
+  const [modal, setModal] = useState<ModalKind>(() => new URLSearchParams(window.location.search).get('view') === 'challenge' ? 'challenge' : null)
+  const [sourceGroup, setSourceGroup] = useState('all')
+  const [inputs, setInputs] = useState<SharpeningInput[]>([])
+  const [killCondition, setKillCondition] = useState('Stop if the new route produces more material but still needs Maya to rescue the central idea.')
+  const [toast, setToast] = useState('')
+  const benchState = readBenchState()
+  const brief = useMemo(() => buildClaudeBrief(fixture, inputs, killCondition), [inputs, killCondition])
+  const shownSources = (sourceGroups[sourceGroup] ?? sourceGroups.all).map(sourceById)
 
   useEffect(() => {
     const previousTitle = document.title
@@ -333,118 +493,58 @@ export default function DecisionBenchPage() {
       robots.name = 'robots'
       document.head.appendChild(robots)
     }
-    robots.content = 'noindex,nofollow,noarchive'
-    document.title = 'Decision Bench | Mindmake preview'
-
+    document.title = 'Decision Table · synthetic operator proof'
+    robots.content = 'noindex,nofollow'
     return () => {
       document.title = previousTitle
-      if (existingRobots) robots.content = previousRobots ?? ''
+      if (existingRobots && previousRobots !== undefined) robots.content = previousRobots
       else robots.remove()
     }
   }, [])
 
-  const openSource = (nextSource: BrainSource) => {
-    setSource(nextSource)
-    setDialog('source')
+  function notify(message: string) {
+    setToast(message)
+    window.setTimeout(() => setToast(''), 1800)
   }
 
-  const choosePanel = (target: BenchPanel) => {
-    setPanel(target)
-    setRailHovered(false)
-    if (window.matchMedia('(max-width: 980px)').matches) window.scrollTo({ top: 0, behavior: 'smooth' })
+  function openSources(group: string) {
+    setSourceGroup(group)
+    setModal('sources')
   }
-
-  const mobilePanelButton = (target: BenchPanel, label: string, icon: ReactNode) => (
-    <button
-      type="button"
-      className={panel === target ? 'is-active' : ''}
-      onClick={() => choosePanel(target)}
-      aria-label={label}
-    >{icon}<span>{label}</span></button>
-  )
-
-  const railButton = (target: BenchPanel, label: string, detail: string, icon: ReactNode) => (
-    <button
-      type="button"
-      className={panel === target ? 'is-active' : ''}
-      onClick={() => choosePanel(target)}
-      aria-label={label}
-      aria-current={panel === target ? 'page' : undefined}
-    >
-      {icon}
-      <span className="db-rail-label"><strong>{label}</strong><small>{detail}</small></span>
-    </button>
-  )
-
-  const railOpen = railHovered || railPinned
 
   return (
-    <div className="decision-bench" data-testid="decision-bench">
-      <header className="db-topbar">
-        <button
-          className="db-brand"
-          type="button"
-          aria-label={railPinned ? 'Close navigation' : 'Open navigation'}
-          aria-expanded={railOpen}
-          onClick={() => setRailPinned((pinned) => !pinned)}
-        >
-          <img src="/mindmaker-favicon.png" alt="Mindmaker" />
-        </button>
-        <div className="db-identity"><div className="db-avatar">MC</div><div><strong>{fixture.customer.display_name}</strong><span>{fixture.customer.role} · {fixture.customer.organisation}</span></div></div>
-        <div className="db-top-actions">
-          <button className="db-quiet-button" type="button" onClick={() => setDialog('local')}><Plus />Add evidence</button>
-          <button className="db-icon-button db-customer-mobile" type="button" aria-label="Preview customer view" onClick={() => setDialog('customer')}><Eye /></button>
-          <button className="db-icon-button" type="button" aria-label="Ask privately" onClick={() => setDialog('ask')}><Mic /></button>
+    <div className="dt-shell">
+      <header className="dt-header">
+        <div className="dt-identity">
+          <img src="/mindmaker-favicon.png" alt="Mindmake" />
+          <span className="dt-avatar" aria-hidden="true">MC</span>
+          <div><strong>{fixture.subject.display_name}</strong><small>{fixture.subject.role} · {fixture.subject.organisation} · synthetic</small></div>
         </div>
+        <nav aria-label="Decision controls">
+          <button type="button" onClick={() => openSources('all')}>Sources</button>
+          <button type="button" onClick={() => setModal('capture')}>Add evidence</button>
+        </nav>
       </header>
 
-      <aside
-        className={`db-rail ${railOpen ? 'is-open' : ''}`}
-        aria-label="Decision Bench"
-        onMouseEnter={() => setRailHovered(true)}
-        onMouseLeave={() => setRailHovered(false)}
-      >
-        <div className="db-rail-heading"><BrainCircuit /><span>Decision Bench</span></div>
-        {railButton('compare', 'Compare', 'Current against history', <GitCompareArrows />)}
-        {railButton('evidence', 'Evidence', 'Sources and Brain route', <FileText />)}
-        {railButton('action', 'Next move', 'Prepare the session', <ArrowRight />)}
-        <button type="button" aria-label="Preview customer view" onClick={() => setDialog('customer')}><Eye /><span className="db-rail-label"><strong>Customer view</strong><small>Check what Maya sees</small></span></button>
-        <div className="db-rail-spacer" />
-        <div className="db-day"><strong>{fixture.customer.proof_day}/{fixture.customer.proof_length_days}</strong><span>proof day</span></div>
-      </aside>
+      {view === 'decision' ? (
+        <DecisionViewPanel
+          benchState={benchState}
+          routeId={routeId}
+          onRouteChange={setRouteId}
+          onViewChange={setView}
+          onOpenChallenge={() => setModal('challenge')}
+          onOpenSources={openSources}
+          notify={notify}
+        />
+      ) : null}
+      {view === 'test' ? <TestView killCondition={killCondition} setKillCondition={setKillCondition} onBack={() => setView('decision')} onBuildBrief={() => setView('brief')} /> : null}
+      {view === 'brief' ? <BriefView brief={brief} wrongCustomer={benchState === 'wrong'} onBack={() => setView('test')} onAudit={() => setView('audit')} notify={notify} /> : null}
+      {view === 'audit' ? <AuditView onBack={() => setView('brief')} onRepair={() => { setView('brief'); notify('The sharper instruction is already in the complete brief') }} notify={notify} /> : null}
 
-      <main className="db-stage">
-        <header className="db-decision-head">
-          <div>
-            <span className="db-label">Decision focus</span>
-            <h1>How can Maya make her quality standard usable by the team?</h1>
-            <div className="db-read-line"><span>Current read: <strong>the team misses early quality signals.</strong></span><span>Open question: what is the first warning sign?</span></div>
-          </div>
-          <div className="db-head-meta"><div><small>Next session</small><strong>Tomorrow · 10:30</strong></div><div><small>Current basis</small><strong>3 linked sources</strong></div></div>
-        </header>
-
-        <div className="db-grid">
-          <ComparePanel active={panel === 'compare'} />
-          <EvidencePanel active={panel === 'evidence'} openSource={openSource} />
-          <ActionPanel active={panel === 'action'} openDialog={setDialog} />
-        </div>
-
-        <footer className="db-status"><span>Current meaning · BI-105 v2</span><span>Changed by SRC-105</span><span>Customer projection excludes operator notes</span><span>Synthetic customer · local proof</span></footer>
-
-        {state && (
-          <section className="db-state-cover" data-testid={`state-${state}`}>
-            <div><span className="db-label">{fallbackStates[state].label}</span><h2>{fallbackStates[state].title}</h2><p>{fallbackStates[state].body}</p><a className="db-primary" href={window.location.pathname}>Return to current view</a></div>
-          </section>
-        )}
-      </main>
-
-      <nav className="db-mobile-nav" aria-label="Decision Bench sections">
-        {mobilePanelButton('compare', 'Compare', <GitCompareArrows />)}
-        {mobilePanelButton('evidence', 'Evidence', <FileText />)}
-        {mobilePanelButton('action', 'Next move', <ArrowRight />)}
-      </nav>
-
-      <BenchDialog kind={dialog} source={source} onClose={() => setDialog(null)} />
+      <ChallengeDialog open={modal === 'challenge'} routeId={routeId} onClose={() => setModal(null)} onKeep={(input) => setInputs((current) => [...current, input])} notify={notify} />
+      <SourcesDialog open={modal === 'sources'} sources={shownSources} onClose={() => setModal(null)} />
+      <CaptureDialog open={modal === 'capture'} onClose={() => setModal(null)} notify={notify} />
+      <div className={`dt-toast ${toast ? 'is-visible' : ''}`} role="status">{toast}</div>
     </div>
   )
 }

@@ -1,0 +1,56 @@
+{
+  "schema_version": "ctrl.g25.stable-custody-identity.r23.v1",
+  "record_id": "G25-STABLE-CUSTODY-IDENTITY-R23",
+  "status": "local_stable_identity_and_crypto_compatibility_verified",
+  "policy_decision_ref": "DEC-20260917-g25-owner-subject-separation-r19",
+  "supersedes_as_solution": "G25-NON-CASCADING-OWNER-GUARD-R22",
+  "identity_contract": {
+    "authentication_user": "Revocable login identity. Current access requires live workspace roles and exact audience-purpose grants.",
+    "subject_principal": "Stable identity of the person whose Brain this is. Auth-user removal cannot erase it.",
+    "operator_principal_and_custody": "Stable operator identity plus customer-authorised, workspace-scoped custody history. Transfer does not grant access.",
+    "historical_principal": "Immutable legacy identity retained for authority-fingerprint and ciphertext compatibility. It never grants access or current custody."
+  },
+  "behavioral_proof": {
+    "operator_identity_separation": "Operator principals use independent UUIDs and auth links rather than reusing auth-user IDs.",
+    "planned_transfer_then_removal": "Two differently-subjected workspaces, including a dual-role subject, remain intact after both custody assignments transfer and the former auth user is removed.",
+    "access_revocation": "Former auth links, roles and grants are absent; an outstanding JWT reads zero receipts.",
+    "replacement_access": "Replacement custody alone sees no data; explicit roles and grants make exactly one prepared receipt visible.",
+    "out_of_band_removal": "Brain data survives and custody becomes transfer_required until an authorised recovery transfer completes.",
+    "history_preservation": "Ciphertext, authority fingerprint and historical owner UUID remain byte-identical.",
+    "concurrency_guards": "A unique partial index permits one current custody assignment and the transfer function locks the workspace custody row.",
+    "crypto_compatibility": "Original prepared ciphertext decrypts after current custody changes; rewriting historical owner changes the authority fingerprint and fails authenticated decryption."
+  },
+  "negative_controls": [
+    "historical owner rebound to auth.users RESTRICT",
+    "stable subject rebound to auth.users CASCADE",
+    "second current custody assignment",
+    "transfer from a non-current operator",
+    "historical owner rewrite during cryptographic read"
+  ],
+  "artifacts": {
+    "candidate_sql": "supabase/candidates/g25_stable_custody_identity_r23.sql",
+    "candidate_sql_sha256": "69571f447c70ea9e95bc986b9cc7ebab4fbef3bee8cfb831ad85f75bfeb11484",
+    "runner": "scripts/run-ctrl-g25-stable-custody-identity-r23.mjs",
+    "runner_sha256": "585967d4780208f9fcfe58a0e8b2bd0a658be75f7381e652c777b6f49ed40fd3",
+    "crypto_test": "supabase/functions/_shared/stable-custody-identity.r23.test.ts",
+    "crypto_test_sha256": "7a22a90bb39557971a8a72ddd46a79f025287d3b70d97c7bb2761d0d6210553d",
+    "runtime": "@electric-sql/pglite@0.5.8"
+  },
+  "residuals": [
+    "Current prepared-write functions still use the legacy owner_id name and are not runtime-bound to stable custody.",
+    "Customer closure is represented but not exercised.",
+    "Anti-revival tombstone purpose, duration, expiry and re-consent remain unresolved.",
+    "Multi-connection transfer races, Supabase-local image and PostgREST parity remain untested.",
+    "Non-FK identifiers, storage, external processors and provider receipts remain outside this proof."
+  ],
+  "next_gate": "Bind new prepared writes and the principal-removal planner to stable custody without changing historical receipt bytes, then resolve anti-revival tombstone retention before proposing a migration.",
+  "not_authorized": [
+    "migration creation or execution",
+    "linked or production database use",
+    "auth-user deletion",
+    "automatic custody transfer",
+    "customer Brain closure",
+    "runtime integration",
+    "deployment, merge or release"
+  ]
+}

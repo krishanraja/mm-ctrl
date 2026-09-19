@@ -1,0 +1,64 @@
+{
+  "schema_version": "ctrl.g25.auth-user-profile-trigger-recovery.r86.v1",
+  "contract_id": "G25-AUTH-USER-PROFILE-TRIGGER-RECOVERY-R86",
+  "status": "auth_trigger_gap_proved_candidate_ready_for_isolated_test",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-TRIGGER-CALLERS-R85",
+    "G25-RECOVERY-FIRST-BLANK-REPLAY-R81"
+  ],
+  "production_evidence": {
+    "table": "auth.users",
+    "trigger": "on_auth_user_created",
+    "enabled": true,
+    "event": "AFTER INSERT",
+    "function": "public.handle_new_user_profile()",
+    "trigger_definition_digest": "5504e726ea31c59076a56dac4c4b4c88",
+    "function_definition_digest": "6b81e9f2af22853784a8849434c2fc85"
+  },
+  "recovery_preflight": {
+    "trigger_count": 0,
+    "function_present_with_production_digest": true,
+    "reason_r81_did_not_detect_gap": "R81 fingerprinted public, private and ctrl_discovery application schemas. The missing trigger belongs to auth.users."
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_auth_user_profile_trigger_r86.sql",
+    "sha256": "e3919042ae31c35ff2b99eb53ed345203aba4a621758c5a4f76e6def5a703486",
+    "verification_path": "supabase/candidates/g25_auth_user_profile_trigger_verification_r86.sql",
+    "verification_sha256": "3a0592213eebc073ec65b012de4ebaf8b11056cb069865e9335a1d4837e0b146",
+    "runtime_smoke_path": "supabase/tests/database/g25_auth_user_profile_trigger_r86.test.sql",
+    "runtime_smoke_sha256": "234e7deff4f230d7e99e3bf5f25c2ce255814f5fd09ed8ec6ae11ad9ad433848",
+    "behavior": "Create the missing trigger only when absent. Do not replace the function or touch production."
+  },
+  "runtime_smoke": {
+    "fixture_email_domain": "example.invalid",
+    "asserts_profile_created": true,
+    "asserts_default_user_role_created": true,
+    "self_cleaning_fixture": true,
+    "migration_receipt_expected": true,
+    "external_auth_api_called": false,
+    "email_sent": false
+  },
+  "acceptance_gate": {
+    "isolated_trigger_created": false,
+    "read_only_verification_passed": false,
+    "self_cleaning_runtime_smoke_passed": false,
+    "production_unchanged": true,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "production_queries": "read_only_trigger_metadata",
+    "production_writes": 0,
+    "permits": [
+      "isolated trigger creation when absent",
+      "read-only trigger verification",
+      "self-cleaning synthetic signup smoke migration"
+    ],
+    "forbids": [
+      "production trigger mutation",
+      "real user signup or email delivery",
+      "function replacement or deletion",
+      "merge, cutover or release"
+    ]
+  }
+}

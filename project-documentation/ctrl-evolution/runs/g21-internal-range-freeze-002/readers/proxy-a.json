@@ -1,0 +1,130 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "reviewerRole": "independent_adult_plain_language_proxy",
+  "questionPackSha256": "ff4076acd316a94bec85b20e0dc5a96f59e18bc2a7ee1965537f4559e292c824",
+  "reviews": [
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I1",
+      "paraphrase": "Identify the failure that would stop the pilot even when it saves staff time.",
+      "answerForm": "short_description",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I2",
+      "paraphrase": "Set the number of unsafe journeys that would trigger stopping the rollout.",
+      "answerForm": "number",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-CARE-I3",
+      "paraphrase": "Set the minimum number out of 100 vulnerable clients who must retain the same carer before expansion.",
+      "answerForm": "number",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I1",
+      "paraphrase": "State the distinctive result clients paid for across the last ten projects.",
+      "answerForm": "short_description",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I2",
+      "paraphrase": "Decide whether renewing clients would buy the product without live challenge from a senior researcher.",
+      "answerForm": "yes_no",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-RESEARCH-I3",
+      "paraphrase": "Set how many clients must pay for the new service a second time before half the team moves to it.",
+      "answerForm": "number",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I1",
+      "paraphrase": "Decide whether the planners' roles should still change if the same planners meet the target with accurate information and fair targets.",
+      "answerForm": "yes_no",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I2",
+      "paraphrase": "Decide whether one plant can meet the delivery target with accurate information and the same planners before all six plants are funded.",
+      "answerForm": "yes_no",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-FORGE-I3",
+      "paraphrase": "Name the planning decisions that must always remain with a person even when the data is clean.",
+      "answerForm": "short_description",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I1",
+      "paraphrase": "Choose the fan group whose increased ticket buying would justify moving the GBP 18 million.",
+      "answerForm": "choice",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I2",
+      "paraphrase": "Choose what a new viewer should see first to increase their desire for a ticket.",
+      "answerForm": "choice",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    },
+    {
+      "profileId": "RANGE-INTERNAL-STORY-I3",
+      "paraphrase": "Set the required increase in new viewers who want a ticket before moving the GBP 18 million.",
+      "answerForm": "threshold",
+      "oneAsk": true,
+      "ordinaryWords": true,
+      "businessSpecific": true,
+      "ambiguity": null,
+      "verdict": "pass"
+    }
+  ],
+  "overallVerdict": "pass",
+  "limitations": "This review is by an independent adult plain-language proxy and is not evidence of child comprehension.",
+  "recordedAt": "2026-09-10T19:19:52.841Z"
+}

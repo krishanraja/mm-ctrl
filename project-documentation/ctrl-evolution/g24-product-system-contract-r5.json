@@ -1,0 +1,138 @@
+{
+  "schema_version": "ctrl.product-system.g24.r5-dependent-release-watermark-repair.v1",
+  "status": "proposed_fresh_council_and_founder_lock",
+  "date": "2026-09-12",
+  "state_route": "project-documentation/ctrl-evolution/README.md",
+  "amends_frozen_r4": {
+    "blueprint_sha256": "d4c611ef25094d4dfa08dbcb3c41b756f14cbbf615b5255fb896347d203b266a",
+    "contract_sha256": "58c056ca26bd45a87bb460240637decdd853894c18b1a8173b9cc3297c7a927c",
+    "delta_sha256": "4cc685d736e295319c1199ddf521f16adae415e50a03f81459c8ab1c671f8c85",
+    "adjudication_sha256": "c0e37605b5257beb08775c0c088cd13e1cc3cc9282ae47bcba281f0f8524630b",
+    "adjudication_status": "BLOCKED_PENDING_REPAIR"
+  },
+  "normative_precedence": {
+    "r5_replaces_only": [
+      "dependent_pending_release_projection_watermark_binding_and_invalidation"
+    ],
+    "all_other_r4_rules_inherited": true,
+    "all_unaffected_r3_rules_inherited": true,
+    "r1_and_r2_direction_preserved": true,
+    "new_canonical_root": false
+  },
+  "authority": {
+    "allowed": [
+      "local_architecture_repair",
+      "machine_contract",
+      "deterministic_checker",
+      "fresh_council",
+      "state_route_update"
+    ],
+    "closed": [
+      "production_write",
+      "customer_data",
+      "account_creation",
+      "external_research_run",
+      "model_spend",
+      "email_send",
+      "customer_contact",
+      "session_scheduling",
+      "session_capture",
+      "connector_creation",
+      "database_branch_creation",
+      "deployment",
+      "merge",
+      "feature_enablement",
+      "release",
+      "legacy_backend_deletion"
+    ]
+  },
+  "dependent_release_watermark_closure": {
+    "owner": "existing_r1_canonical_release_object_and_dependency_graph",
+    "creates_new_release_or_dependency_root": false,
+    "applies_when": "included_content_depends_on_selector_result_or_trusted_epistemic_evaluation",
+    "required_binding_before_use_added": [
+      "included_selector_result_version_refs_when_applicable",
+      "included_selector_complete_controlling_watermark_sets_when_applicable"
+    ],
+    "complete_controlling_watermark_minimum": [
+      "identity_version",
+      "subject_version",
+      "workspace_version",
+      "authority_version",
+      "audience_version",
+      "purpose_version",
+      "lifecycle_version",
+      "accepted_decision_frame_version",
+      "evidence_coverage_version",
+      "trusted_cutoff",
+      "epistemic_policy_version",
+      "independent_challenger_result_version",
+      "applicable_canonical_source_versions",
+      "applicable_canonical_brain_versions"
+    ],
+    "invalidation_trigger_added": "included_selector_controlling_watermark_change",
+    "dependent_watermark_change_result": "pending_release_projection_invalid_before_use",
+    "dependent_watermark_change_receipt": "append_only_release_projection_invalidation_receipt",
+    "dependent_watermark_change_creates_approval_delivery_or_external_side_effect": false,
+    "applies_when_sources_and_brain_versions_are_unchanged": true,
+    "unrelated_watermark_change_outside_recorded_lineage_invalidates_projection": false,
+    "rebuild_alone_restores_eligibility": false,
+    "eligibility_after_rebuild_requires": [
+      "trusted_current_evaluation_under_new_complete_watermark_set",
+      "current_named_leader_release_authority_for_new_exact_projection_purpose_audience_and_canonical_versions"
+    ],
+    "changes_release_authority_owner": false
+  },
+  "identical_resolving_test": {
+    "fixed": [
+      "named_leader_release_action",
+      "identity",
+      "subject",
+      "workspace",
+      "authority",
+      "purpose",
+      "audience",
+      "permission",
+      "lifecycle",
+      "accepted_frame",
+      "epistemic_policy",
+      "canonical_sources",
+      "canonical_assertions",
+      "canonical_brain",
+      "decision_requirement",
+      "evidence_coverage",
+      "trusted_cutoff"
+    ],
+    "initial_dependent_challenger_result": "none_found_within_declared_boundary",
+    "only_mutation": "dependent_independent_challenger_result_version_to_countercase_found",
+    "required_mutated_case_result": [
+      "unchanged_pending_projection_ineligible_before_use",
+      "append_only_invalidation_receipt",
+      "zero_approval_delivery_or_external_side_effect"
+    ],
+    "rebuild_can_restore_only_after_trusted_resolution_and_new_exact_release_eligibility": true,
+    "unrelated_lineage_control_projection_remains_eligible_if_otherwise_current": true,
+    "architecture_gate_proof": "identical_blueprint_and_machine_semantics_plus_deterministic_inspection",
+    "runtime_gate_proof": "same_frozen_case_with_atomic_dependency_traversal_and_use_time_enforcement"
+  },
+  "protected_strengths": [
+    "one_canonical_brain",
+    "no_new_canonical_root",
+    "human_owned_consequential_work_and_release_authority",
+    "thirty_days_is_intensive_window_not_expiry",
+    "explicit_continuation_without_permission_renewal",
+    "exact_six_state_thirteen_edge_engagement_graph",
+    "engagement_close_separate_from_release",
+    "current_policy_and_challenger_binding_at_selector",
+    "exact_five_output_fail_closed_selector",
+    "one_versioned_human_facing_intervention_atom",
+    "decision_specific_material_effect",
+    "quiet_and_abstention",
+    "customer_never_administers_internal_policy_or_lifecycle",
+    "pull_only_krish_session_control",
+    "metrics_remain_unproven",
+    "headless_before_material_ui"
+  ],
+  "next_action": "freeze_r5_run_deterministic_checks_and_obtain_fresh_council_before_founder_lock_or_implementation"
+}
+

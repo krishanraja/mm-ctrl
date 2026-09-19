@@ -1,0 +1,102 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.executable-vectors.v1",
+  "module_id": "executable_vectors",
+  "specimens": {
+    "free_expressions": {
+      "free-1": "Prove the system in one campaign before changing the team."
+    },
+    "structured_interpretations": {
+      "free-1": { "answer_value": "proof-first", "accepted_decision_after_ref": "proof_first" }
+    },
+    "authentication_events": {
+      "auth-1": { "event_id": "auth-1", "named_human_id": "leader-1", "session_id": "session-1", "method": "passkey", "issued_at": "2026-09-16T08:00:00Z", "valid_until": "2026-09-16T10:00:00Z", "event_fingerprint": "d4fe676ce9de4f9c7e2da7417ee08002c2fd7c48bdc40a6bb6d02def87827fab" },
+      "auth-2": { "event_id": "auth-2", "named_human_id": "krish", "session_id": "session-2", "method": "webauthn", "issued_at": "2026-09-16T08:00:00Z", "valid_until": "2026-09-16T10:00:00Z", "event_fingerprint": "c32a9e7b20327a57ba3e84f79307804f47499896ee87bbc28d49704ec092509f" }
+    },
+    "decisions": {
+      "before": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "undecided", "bounds": ["No named-person employment recommendation"], "stop_condition": "No customer proof", "evidence_requirement": "Unspecified", "checkpoint": "Leadership review", "revisit_condition": "When evidence exists", "lifecycle_status": "intensive_proof" },
+      "proof_first": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "prove_the_system_first", "bounds": ["No named-person employment recommendation", "One campaign pilot"], "stop_condition": "Pilot fails quality threshold twice", "evidence_requirement": "Two priority campaigns meet Maya's quality bar without her final rewrite", "checkpoint": "Blind comparison after four weeks", "revisit_condition": "At the four-week evidence review", "lifecycle_status": "intensive_proof" },
+      "rebuild": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "rebuild_now", "bounds": ["No named-person employment recommendation", "Role design before hiring"], "stop_condition": "Customer delivery quality falls below current baseline", "evidence_requirement": "Board accepts the explicit risk", "checkpoint": "Two-week operating review", "revisit_condition": "At the two-week review", "lifecycle_status": "intensive_proof" },
+      "stop": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "stop_rebuild", "bounds": ["Retain team structure"], "stop_condition": "Immediate", "evidence_requirement": "None", "checkpoint": "No rebuild checkpoint", "revisit_condition": "Only if category economics materially change", "lifecycle_status": "intensive_proof" },
+      "lifecycle_only": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "undecided", "bounds": ["No named-person employment recommendation"], "stop_condition": "No customer proof", "evidence_requirement": "Unspecified", "checkpoint": "Leadership review", "revisit_condition": "When evidence exists", "lifecycle_status": "continuing" }
+    },
+    "free_expression_confirmations": {
+      "confirm-1": { "confirmation_id": "confirm-1", "named_human_id": "leader-1", "authentication_event_ref": "auth-1", "free_expression_fingerprint": "cd66ff5baefaacc35ebe5f6a42b278d9cd49ad0454374c2eb1bdb2d8451afd58", "structured_interpretation_fingerprint": "8cceed8b851540c35e4995f22dc87541d6437872ff5f808716b53f679685bc47", "visible_consequence_fingerprint": "97e3d3d84c036dbfe6bf8afba7a6736fe57a0e2e6995cc5c9a9ce7f5c9581bb2", "confirmed_at": "2026-09-16T08:35:00Z", "confirmation_fingerprint": "f41e69a1c7ef21017b969714f9df610fb783c6013c803b3c7d537db8fee4994e" }
+    },
+    "normative_receipt": {
+      "receipt_type": "normative_attestation", "domain_separator": "CTRL_G24_R80_NORMATIVE_ATTESTATION", "attestation_id": "att-1", "named_human_id": "leader-1", "authentication_event_ref": "auth-1", "authentication_event_fingerprint": "d4fe676ce9de4f9c7e2da7417ee08002c2fd7c48bdc40a6bb6d02def87827fab", "answer_status": "selected", "owned_judgement_kind": "meaningful_value", "structured_answer_value": "proof-first", "free_expression_ref": null, "free_expression_confirmation_ref": null, "accepted_decision_before_ref": "before", "accepted_decision_before_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726", "accepted_decision_after_ref": "proof_first", "accepted_decision_after_fingerprint": "fc97b169c5d133aa1db4b4ac23e8b200678f9edb8124db43f447da0f73ed21e9", "accepted_decision_changed_paths": ["bounds", "checkpoint", "evidence_requirement", "revisit_condition", "route", "stop_condition"], "displayed_consequence_text": "Your answer sets the route and the proof required before people or tools change.", "visible_consequence_fingerprint": "97e3d3d84c036dbfe6bf8afba7a6736fe57a0e2e6995cc5c9a9ce7f5c9581bb2", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "bundle_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "issued_at": "2026-09-16T08:35:00Z", "valid_until": "2026-09-16T09:35:00Z", "receipt_fingerprint": "cc8f8f25f74fa571545dfe7ae7efc7048522a83a4a8623cb39c7c970d077d0ae"
+    },
+    "final_authority_accept": {
+      "receipt_type": "final_transition_authority", "domain_separator": "CTRL_G24_R80_FINAL_TRANSITION_AUTHORITY", "authority_receipt_id": "authority-1", "authority_proofs": [{ "named_human_id": "leader-1", "authentication_event_ref": "auth-1", "authentication_event_fingerprint": "d4fe676ce9de4f9c7e2da7417ee08002c2fd7c48bdc40a6bb6d02def87827fab" }, { "named_human_id": "krish", "authentication_event_ref": "auth-2", "authentication_event_fingerprint": "c32a9e7b20327a57ba3e84f79307804f47499896ee87bbc28d49704ec092509f" }], "transition_id": "accept_intensive_proof", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "predecessor_version": "preparation-7", "predicate_proof_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "bundle_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "displayed_consequence_text": "Your answer sets the route and the proof required before people or tools change.", "visible_consequence_fingerprint": "97e3d3d84c036dbfe6bf8afba7a6736fe57a0e2e6995cc5c9a9ce7f5c9581bb2", "reserved_transition_receipt_version": "reserve-1", "server_commit_time": "2026-09-16T09:00:00Z", "valid_until": "2026-09-16T09:30:00Z", "authority_receipt_fingerprint": "34bceac7d096deaf45acb1e6708dfefe15c30d3e3c95970186e89ab69df690c5"
+    },
+    "final_authority_pause": {
+      "receipt_type": "final_transition_authority", "domain_separator": "CTRL_G24_R80_FINAL_TRANSITION_AUTHORITY", "authority_receipt_id": "authority-2", "authority_proofs": [{ "named_human_id": "leader-1", "authentication_event_ref": "auth-1", "authentication_event_fingerprint": "d4fe676ce9de4f9c7e2da7417ee08002c2fd7c48bdc40a6bb6d02def87827fab" }], "transition_id": "pause_continuing", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "predecessor_version": "continuing-3", "predicate_proof_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "bundle_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "displayed_consequence_text": "Pause new work until the engagement is revalidated.", "visible_consequence_fingerprint": "0000000000000000000000000000000000000000000000000000000000000000", "reserved_transition_receipt_version": "reserve-2", "server_commit_time": "2026-09-16T09:00:00Z", "valid_until": "2026-09-16T09:30:00Z", "authority_receipt_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    },
+    "question": {
+      "question_id": "question-1", "case_id": "case-1", "decision_id": "decision-1", "named_answer_owner": "leader-1", "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "requested_value_kind": "meaningful_value", "heading": "One thing to decide", "question": "What proof would justify rebuilding Aperture House's marketing team?", "case_specific_terms": ["Aperture House", "marketing team"], "answer_options": ["Prove the system first", "Rebuild now", "Stop the rebuild"], "unknown_option": "I do not know yet", "free_expression_option": "Something else", "answer_effect_refs": { "Prove the system first": "proof_first", "Rebuild now": "rebuild", "Stop the rebuild": "stop" }, "visible_consequence": "Your answer sets the route and proof required before people or tools change.", "optional_note_label": "Add context", "primary_action_label": "Keep answer", "optional_depth_ref": "why-question-1", "source_reason_ref": "case-1-gap-3"
+    },
+    "repair_graph": {
+      "graph_head": "graph-9", "graph_epoch": 9, "members": [{ "dependency_id": "dep-1", "dependency_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111", "edge_kind": "content_dependency" }, { "dependency_id": "dep-2", "dependency_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222", "edge_kind": "permission_dependency" }, { "dependency_id": "dep-3", "dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333", "edge_kind": "scope_dependency" }], "dependency_set_seal": "09b2c05881dfbaee934a78b32e5e2f968dba64642b59c1bf397673344d6f8758"
+    },
+    "repair_receipts": [
+      { "repair_id": "repair-1", "trigger_ref": "correction-1", "challenged_proof_ref": "proof-1", "dependency_id": "dep-1", "dependency_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111", "edge_kind": "content_dependency", "dependency_use_ref": "use-1", "affected_artifact_ref": "projection-1", "repair_action": "rebuild_projection", "terminal_status": "rebuilt", "current_steering_eligibility": false, "resulting_version_ref": "projection-2", "receipt_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111" },
+      { "repair_id": "repair-1", "trigger_ref": "correction-1", "challenged_proof_ref": "proof-1", "dependency_id": "dep-2", "dependency_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222", "edge_kind": "permission_dependency", "dependency_use_ref": "use-2", "affected_artifact_ref": "release-1", "repair_action": "flag_review", "terminal_status": "review_required", "current_steering_eligibility": false, "resulting_version_ref": null, "receipt_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222" },
+      { "repair_id": "repair-1", "trigger_ref": "correction-1", "challenged_proof_ref": "proof-1", "dependency_id": "dep-3", "dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333", "edge_kind": "scope_dependency", "dependency_use_ref": "use-3", "affected_artifact_ref": "permission-1", "repair_action": "quarantine", "terminal_status": "quarantined", "current_steering_eligibility": false, "resulting_version_ref": null, "receipt_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333" }
+    ]
+  },
+  "owner_vectors": [
+    { "id": "OWNER-VALID", "dependency_id": "current_checkpoint_exact", "profile_overrides": {}, "expected": "valid" },
+    { "id": "OWNER-SUBSTITUTED", "dependency_id": "current_checkpoint_exact", "profile_overrides": { "speaker_or_issuer": "attacker", "issuer_fact_kind_rule": "attacker_owns_current_checkpoint", "authority_policy_version": "attacker-policy" }, "expected": "owner_policy_mismatch" }
+  ],
+  "authority_vectors": [
+    { "id": "AUTH-NORMATIVE-VALID", "kind": "normative", "specimen": "normative_receipt", "mutation": null, "expected": "valid" },
+    { "id": "AUTH-UNKNOWN-FORBIDDEN", "kind": "normative", "specimen": "normative_receipt", "mutation": { "op": "replace", "path": ["answer_status"], "value": "unknown" }, "expected": "answer_status_invalid" },
+    { "id": "AUTH-FALSE-DELTA", "kind": "normative", "specimen": "normative_receipt", "mutation": { "op": "replace", "path": ["accepted_decision_after_ref"], "value": "before" }, "expected": "decision_fingerprint_or_delta_mismatch" },
+    { "id": "AUTH-LIFECYCLE-ONLY", "kind": "normative", "specimen": "normative_receipt", "mutation": { "op": "replace", "path": ["accepted_decision_after_ref"], "value": "lifecycle_only" }, "expected": "decision_fingerprint_or_delta_mismatch" },
+    { "id": "AUTH-CONSEQUENCE-CHANGED", "kind": "normative", "specimen": "normative_receipt", "mutation": { "op": "replace", "path": ["displayed_consequence_text"], "value": "A different hidden consequence" }, "expected": "consequence_fingerprint_mismatch" },
+    { "id": "AUTH-FREE-CONFIRMATION-FAKE", "kind": "normative", "specimen": "normative_receipt", "mutation": { "op": "free_expression_fake_confirmation" }, "expected": "free_expression_confirmation_invalid" },
+    { "id": "AUTH-FREE-CONFIRMATION-VALID", "kind": "normative", "specimen": "normative_receipt", "mutation": { "op": "free_expression_valid_confirmation" }, "expected": "valid" },
+    { "id": "AUTH-FINAL-ALL-VALID", "kind": "final", "specimen": "final_authority_accept", "mutation": null, "expected": "valid" },
+    { "id": "AUTH-FINAL-ANY-VALID", "kind": "final", "specimen": "final_authority_pause", "mutation": { "op": "recompute_consequence_fingerprint" }, "expected": "valid" },
+    { "id": "AUTH-FINAL-ANY-MALLORY", "kind": "final", "specimen": "final_authority_pause", "mutation": { "op": "replace", "path": ["authority_proofs"], "value": [{ "named_human_id": "mallory", "authentication_event_ref": "fake", "authentication_event_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }, "expected": "authority_actor_or_authentication_invalid" },
+    { "id": "AUTH-FINAL-FAKE-EVENT", "kind": "final", "specimen": "final_authority_accept", "mutation": { "op": "replace", "path": ["authority_proofs", 0, "authentication_event_ref"], "value": "model-event" }, "expected": "authority_actor_or_authentication_invalid" },
+    { "id": "AUTH-FINAL-EXPIRED", "kind": "final", "specimen": "final_authority_accept", "mutation": { "op": "replace", "path": ["valid_until"], "value": "2000-01-01T00:00:00Z" }, "expected": "authority_expired" }
+  ],
+  "routing_vectors": [
+    { "id": "ROUTE-ONE-HUMAN", "unresolved": [{ "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "case_id": "case-1", "decision_id": "decision-1", "resolution_owner": "human_answerable", "named_human_id": "leader-1", "requested_value_kind": "meaningful_value" }], "question_already_asked": false, "expected": "one_question_candidate" },
+    { "id": "ROUTE-TWO-SAME-KIND", "unresolved": [{ "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "case_id": "case-1", "decision_id": "decision-1", "resolution_owner": "human_answerable", "named_human_id": "leader-1", "requested_value_kind": "meaningful_value" }, { "dependency_id": "leader_revalidates_next_value", "case_id": "case-1", "decision_id": "decision-1", "resolution_owner": "human_answerable", "named_human_id": "leader-1", "requested_value_kind": "meaningful_value" }], "question_already_asked": false, "expected": "safe_hold_or_krish_led_session" },
+    { "id": "ROUTE-SERVER-GAP", "unresolved": [{ "dependency_id": "current_checkpoint_exact", "case_id": "case-1", "decision_id": "decision-1", "resolution_owner": "server_verify_only", "named_human_id": "leader-1", "requested_value_kind": "boundary" }], "question_already_asked": false, "expected": "system_or_krish_zero_questions" },
+    { "id": "ROUTE-UNKNOWN-GAP", "unresolved": [{ "dependency_id": "invented", "case_id": "case-1", "decision_id": "decision-1", "resolution_owner": "human_answerable", "named_human_id": "leader-1", "requested_value_kind": "meaningful_value" }], "question_already_asked": false, "expected": "reject_unknown_dependency" },
+    { "id": "ROUTE-NO-AUTO-FOLLOWUP", "unresolved": [{ "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "case_id": "case-1", "decision_id": "decision-1", "resolution_owner": "human_answerable", "named_human_id": "leader-1", "requested_value_kind": "meaningful_value" }], "question_already_asked": true, "expected": "safe_hold_no_automatic_followup" }
+  ],
+  "question_vectors": [
+    { "id": "QUESTION-VALID", "mutation": null, "expected": "valid" },
+    { "id": "QUESTION-GENERIC", "mutation": { "op": "replace", "path": ["question"], "value": "What would success look like?" }, "expected": "case_specificity_missing" },
+    { "id": "QUESTION-LONG", "mutation": { "op": "repeat_question", "count": 20 }, "expected": "copy_budget_exceeded" },
+    { "id": "QUESTION-UNKNOWN-DEPENDENCY", "mutation": { "op": "replace", "path": ["dependency_id"], "value": "invented" }, "expected": "dependency_invalid" },
+    { "id": "QUESTION-CROSS-CASE-EFFECT", "mutation": { "op": "replace_effect_case", "effect": "proof_first", "value": "case-other" }, "expected": "effect_invalid" }
+  ],
+  "predicate_vectors": [
+    { "id": "PRED-ALL-PRESENT", "dispositions": ["present", "present"], "expected": "satisfied" },
+    { "id": "PRED-CONTRADICTED", "dispositions": ["present", "contradicted"], "expected": "unsatisfied" },
+    { "id": "PRED-MISSING", "dispositions": ["contradicted", "missing"], "expected": "indeterminate" },
+    { "id": "PRED-UNKNOWN", "dispositions": ["present", "invented"], "expected": "indeterminate" }
+  ],
+  "predicate_program_mutations": [
+    { "id": "PRED-MUTATE-MISSING-TO-PRESENT", "path": ["disposition_classes", "missing"], "value": "present", "expected": "vector_failure" }
+  ],
+  "correction_vectors": [
+    { "id": "REPAIR-VALID", "mutation": null, "expected": "complete" },
+    { "id": "REPAIR-FORGED-SEAL", "mutation": { "op": "replace", "path": ["graph", "dependency_set_seal"], "value": "0000000000000000000000000000000000000000000000000000000000000000" }, "expected": "seal_mismatch" },
+    { "id": "REPAIR-MISSING-EDGE-KIND", "mutation": { "op": "remove_member", "dependency_id": "dep-2" }, "expected": "edge_kind_or_membership_incomplete" },
+    { "id": "REPAIR-DUPLICATE", "mutation": { "op": "duplicate_receipt", "dependency_id": "dep-2" }, "expected": "duplicate_or_extra_receipt" },
+    { "id": "REPAIR-SWAPPED-FINGERPRINT", "mutation": { "op": "swap_member_fingerprints", "left": "dep-1", "right": "dep-2" }, "expected": "seal_mismatch" }
+  ],
+  "external_vectors": [
+    { "id": "EXTERNAL-LEASE-HAPPY", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "immutable_lease_still_current"], "expected": "finalized" },
+    { "id": "EXTERNAL-CONSUME-HAPPY", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "conditional_token_consumed"], "expected": "finalized" },
+    { "id": "EXTERNAL-LOST-ACK-PENDING", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "ack_lost_query_same_token_nonce"], "expected": "local_committed_pending_ack" },
+    { "id": "EXTERNAL-ROLLBACK", "events": ["commit_local_reservation", "acquire_bound_external_authority", "local_commit_failed_release_or_expire"], "expected": "aborted" },
+    { "id": "EXTERNAL-RECONCILIATION-FAIL", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "reconciliation_failed"], "expected": "quarantined" },
+    { "id": "EXTERNAL-ILLEGAL-DIRECT-FINAL", "events": ["commit_local_reservation", "immutable_lease_still_current"], "expected": "illegal_transition" }
+  ]
+}

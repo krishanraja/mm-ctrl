@@ -1,0 +1,39 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.effective-resolution.v1",
+  "module_id": "effective_resolution",
+  "semantic_base": {
+    "commit": "ad64b1eb1b29b2b1a71c9917ae33b19da3c68417",
+    "tree": "22f57555d04cb73e3287397f0bc738e701663ebb",
+    "standing": "vetoed_source_material_not_effective_authority"
+  },
+  "imported_exact_sections": [
+    { "effective_section": "lineage", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/01-lineage-and-owner-policy.json", "json_pointer": "/lineage" },
+    { "effective_section": "semantic_profile_schema", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/02-closed-schemas.json", "json_pointer": "/schemas/semantic_profile" },
+    { "effective_section": "accepted_decision_state_schema", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/02-closed-schemas.json", "json_pointer": "/schemas/accepted_decision_state" },
+    { "effective_section": "external_authority_proof_schema", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/02-closed-schemas.json", "json_pointer": "/schemas/external_authority_proof" },
+    { "effective_section": "transition_catalogue", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/03-transition-catalogue.json", "json_pointer": "/transitions" },
+    { "effective_section": "atomic_judgement_registry", "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/05-human-interaction-contract.json", "json_pointer": "/atomic_judgement_registry" }
+  ],
+  "r80_replacement_sections": [
+    "owner_registry",
+    "authority_binding_program",
+    "interaction_program",
+    "predicate_program",
+    "correction_program",
+    "external_program",
+    "executable_vectors"
+  ],
+  "inheritance_rule": "only_imported_exact_sections_are_effective_no_other_r78_or_r79_semantic_rule_is_inherited",
+  "unknown_or_conflicting_section": "reject_contract",
+  "authority_still_closed": [
+    "semantic evaluator implementation",
+    "result-producing lifecycle success branch",
+    "runtime integration or live registry wiring",
+    "database schema migration or production data change",
+    "customer-facing UI",
+    "external research model spend email or service mutation",
+    "merge deployment release or production promotion",
+    "legacy backend deletion",
+    "cross-venture Supabase decision-ledger write"
+  ]
+}

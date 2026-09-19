@@ -1,0 +1,394 @@
+{
+  "schema_version": "ctrl.product-system.g24.r4-terminal-repair.v1",
+  "status": "proposed_fresh_council_and_founder_lock",
+  "date": "2026-09-12",
+  "state_route": "project-documentation/ctrl-evolution/README.md",
+  "amends_frozen_r3": {
+    "blueprint_sha256": "446476044415af172bc63b1ec8f61876460f1068120eded45323f667de2372a5",
+    "contract_sha256": "5d6109cd8d34a52f9a441d9a5906bbcac0efd10768d5329fac7dfc3f80083f09",
+    "delta_sha256": "c4fccebbe147706243196fc771ee2a73079cb6f08843cd7449aa0785dc4b4ceb",
+    "adjudication_sha256": "abe26c55559950c749d1f203444fe0cac452812182646478e546b82ed841829a",
+    "adjudication_status": "BLOCKED_PENDING_REPAIR"
+  },
+  "normative_precedence": {
+    "r4_replaces_only": [
+      "selector_eligible_epistemic_authority_binding",
+      "engagement_state_transition_and_release_non_inference",
+      "selector_invalidity_conflict_and_provisional_partition"
+    ],
+    "all_other_r3_rules_inherited": true,
+    "new_canonical_root": false
+  },
+  "authority": {
+    "allowed": [
+      "local_architecture_repair",
+      "machine_contract",
+      "deterministic_checker",
+      "fresh_council",
+      "state_route_update"
+    ],
+    "closed": [
+      "production_write",
+      "customer_data",
+      "account_creation",
+      "external_research_run",
+      "model_spend",
+      "email_send",
+      "customer_contact",
+      "session_scheduling",
+      "session_capture",
+      "connector_creation",
+      "database_branch_creation",
+      "deployment",
+      "merge",
+      "feature_enablement",
+      "release",
+      "legacy_backend_deletion"
+    ]
+  },
+  "epistemic_eligibility_binding": {
+    "owner": "existing_r1_governance_and_independent_challenger_authority",
+    "creates_new_evidence_policy_or_challenger_root": false,
+    "required_current_references": [
+      "epistemic_policy_version_ref",
+      "independent_challenger_result_version_ref"
+    ],
+    "policy_owned_outcomes": [
+      "source_capability",
+      "provenance_independence_requirement_and_result",
+      "use_specific_sufficiency",
+      "applicability",
+      "causal_standing",
+      "contradiction_treatment",
+      "countercase_status"
+    ],
+    "policy_scope": [
+      "claim_kind_to_source_class_capability",
+      "trusted_cutoff_derivation",
+      "independence_requirements",
+      "use_specific_sufficiency_and_applicability",
+      "causal_promotion_requirements",
+      "contradiction_treatment"
+    ],
+    "challenger_binding": [
+      "decision_requirement_version",
+      "evidence_coverage_version",
+      "trusted_as_of",
+      "epistemic_policy_version"
+    ],
+    "challenger_results": [
+      "countercase_found",
+      "none_found_within_declared_boundary",
+      "indeterminate"
+    ],
+    "declared_search_boundary_required_for_none_found": true,
+    "model_may_propose_but_not_make_outcome_eligible": true,
+    "missing_unknown_stale_invalid_inapplicable_or_indeterminate_result": "abstain_hold",
+    "selector_input_refs": [
+      "epistemic_policy_version_ref",
+      "independent_challenger_result_version_ref"
+    ],
+    "selector_output_watermarks": [
+      "epistemic_policy_version",
+      "independent_challenger_result_version"
+    ],
+    "invalidation_triggers": [
+      "epistemic_policy_version_change",
+      "independent_challenger_result_version_change"
+    ]
+  },
+  "lifecycle_policy_replacement": {
+    "states": [
+      "preparing",
+      "intensive_proof",
+      "continuing",
+      "paused",
+      "closing",
+      "closed"
+    ],
+    "transition_envelope": [
+      "actor",
+      "authority",
+      "precondition",
+      "from_version_match",
+      "idempotency_key",
+      "before_ref",
+      "after_ref",
+      "invalidation",
+      "receipt"
+    ],
+    "transitions": [
+      {
+        "id": "open_preparation",
+        "from": "none",
+        "to": "preparing",
+        "actor": "krish",
+        "authority": "new_bounded_operator_private_preparation_decision",
+        "precondition": "subject_purpose_eligible_source_classes_and_review_date_named",
+        "from_version_match": "none",
+        "invalidation": "none",
+        "receipt": "preparation_opened"
+      },
+      {
+        "id": "accept_intensive_proof",
+        "from": "preparing",
+        "to": "intensive_proof",
+        "actor": "named_leader_and_krish",
+        "authority": "accepted_engagement_purpose_and_current_permissions",
+        "precondition": "accepted_decision_frame_active_grants_and_checkpoint_recorded",
+        "from_version_match": "required",
+        "invalidation": "superseded_preparation_projections",
+        "receipt": "intensive_proof_accepted"
+      },
+      {
+        "id": "close_preparation",
+        "from": "preparing",
+        "to": "closed",
+        "actor": "krish_or_krish_recording_named_leader_decline_or_withdrawal",
+        "authority": "current_preparation_cancellation_decline_or_withdrawal",
+        "precondition": "current_preparation_version_and_reason",
+        "from_version_match": "required",
+        "invalidation": "all_prepared_and_unsent_derivatives",
+        "receipt": "preparation_closed"
+      },
+      {
+        "id": "continue_after_intensive_proof",
+        "from": "intensive_proof",
+        "to": "continuing",
+        "actor": "named_leader_and_krish",
+        "authority": "explicit_continuation_agreement",
+        "precondition": "next_consequential_decision_or_evidenced_value_checkpoint_and_exit_or_revisit_condition",
+        "from_version_match": "required",
+        "invalidation": "superseded_period_projections",
+        "receipt": "continuation_accepted"
+      },
+      {
+        "id": "renew_continuing_period",
+        "from": "continuing",
+        "to": "continuing",
+        "actor": "named_leader_and_krish",
+        "authority": "fresh_checkpoint_agreement",
+        "precondition": "next_consequential_decision_or_evidenced_value_and_exit_or_revisit_condition",
+        "from_version_match": "required",
+        "invalidation": "superseded_period_projections",
+        "receipt": "continuing_period_renewed"
+      },
+      {
+        "id": "pause_intensive_proof",
+        "from": "intensive_proof",
+        "to": "paused",
+        "actor": "named_leader_or_krish",
+        "authority": "pause_decision",
+        "precondition": "current_period",
+        "from_version_match": "required",
+        "invalidation": "all_unsent_interventions",
+        "receipt": "engagement_paused"
+      },
+      {
+        "id": "pause_continuing",
+        "from": "continuing",
+        "to": "paused",
+        "actor": "named_leader_or_krish",
+        "authority": "pause_decision",
+        "precondition": "current_period",
+        "from_version_match": "required",
+        "invalidation": "all_unsent_interventions",
+        "receipt": "engagement_paused"
+      },
+      {
+        "id": "resume_continuing",
+        "from": "paused",
+        "to": "continuing",
+        "actor": "named_leader_and_krish",
+        "authority": "revalidated_continuation_agreement",
+        "precondition": "purpose_identity_grants_audience_standing_freshness_next_value_and_checkpoint_revalidated",
+        "from_version_match": "required",
+        "invalidation": "all_stale_paused_projections",
+        "receipt": "engagement_resumed"
+      },
+      {
+        "id": "close_intensive_proof",
+        "from": "intensive_proof",
+        "to": "closing",
+        "actor": "named_leader_or_krish",
+        "authority": "close_request",
+        "precondition": "current_period",
+        "from_version_match": "required",
+        "invalidation": "new_decision_shaping_work_and_unsent_interventions",
+        "receipt": "engagement_close_requested"
+      },
+      {
+        "id": "close_continuing",
+        "from": "continuing",
+        "to": "closing",
+        "actor": "named_leader_or_krish",
+        "authority": "close_request",
+        "precondition": "current_period",
+        "from_version_match": "required",
+        "invalidation": "new_decision_shaping_work_and_unsent_interventions",
+        "receipt": "engagement_close_requested"
+      },
+      {
+        "id": "close_paused",
+        "from": "paused",
+        "to": "closing",
+        "actor": "named_leader_or_krish",
+        "authority": "close_request",
+        "precondition": "current_period",
+        "from_version_match": "required",
+        "invalidation": "new_decision_shaping_work_and_unsent_interventions",
+        "receipt": "engagement_close_requested"
+      },
+      {
+        "id": "complete_close",
+        "from": "closing",
+        "to": "closed",
+        "actor": "krish",
+        "authority": "record_completion_under_named_human_close_request",
+        "precondition": "access_correction_separate_release_and_close_obligations_fulfilled_or_recorded_outstanding",
+        "from_version_match": "required",
+        "invalidation": "all_prepared_and_unsent_derivatives",
+        "receipt": "engagement_closed"
+      },
+      {
+        "id": "open_new_preparation_after_close",
+        "from": "closed",
+        "to": "preparing",
+        "actor": "krish",
+        "authority": "new_bounded_operator_private_preparation_decision",
+        "precondition": "new_purpose_and_review_date_no_old_grant_revival",
+        "from_version_match": "required",
+        "invalidation": "none",
+        "receipt": "new_preparation_opened"
+      }
+    ],
+    "grouped_or_implicit_edges_allowed": false,
+    "absence_of_receipt_changes_state": false,
+    "stale_or_invalid_transition": "reject_without_state_change",
+    "capability_policy": {
+      "preparing": "bounded_operator_private_preparation_only",
+      "intensive_proof": "current_grants_required_for_every_use",
+      "continuing": "fresh_current_grants_required_for_every_use",
+      "paused": "no_new_decision_shaping_work",
+      "closing": "close_access_correction_separate_release_retention_and_deletion_only",
+      "closed": "no_operational_or_decision_shaping_use_only_required_access_correction_separate_release_retention_and_deletion"
+    },
+    "commercial_state_grants_permission": false,
+    "reopen_revives_expired_authority": false
+  },
+  "release_non_inference": {
+    "owner": "existing_r1_canonical_release_object",
+    "creates_new_release_root": false,
+    "engagement_state_grants_proves_or_completes_release": false,
+    "close_receipt_grants_proves_or_completes_release": false,
+    "commercial_or_elapsed_state_grants_release": false,
+    "release_entry": "current_named_leader_accepted_release_request_or_acceptance_for_the_release_mode",
+    "required_binding_before_use": [
+      "release_projection_version",
+      "purpose",
+      "audience",
+      "included_canonical_source_versions",
+      "included_canonical_brain_versions"
+    ],
+    "close_without_release_allowed": true,
+    "release_closes_engagement": false,
+    "pending_projection_invalidation_triggers": [
+      "identity_change",
+      "permission_change",
+      "audience_change",
+      "validity_change",
+      "epistemic_policy_version_change",
+      "included_source_or_brain_version_change"
+    ],
+    "invalidation_receipt_required": true
+  },
+  "selector_policy_replacement": {
+    "outputs": [
+      "reuse",
+      "enrich",
+      "ask",
+      "session",
+      "abstain_hold"
+    ],
+    "exactly_one_output": true,
+    "required_inputs_added": [
+      "epistemic_policy_version_ref",
+      "independent_challenger_result_version_ref"
+    ],
+    "required_output_watermarks_added": [
+      "epistemic_policy_version",
+      "independent_challenger_result_version"
+    ],
+    "invalid_controlling_conditions": [
+      "unknown",
+      "missing",
+      "mismatched",
+      "future_dated",
+      "expired",
+      "invalid",
+      "indeterminate"
+    ],
+    "invalid_controlling_dimensions": [
+      "identity",
+      "subject",
+      "workspace",
+      "authority",
+      "audience",
+      "purpose",
+      "lifecycle",
+      "accepted_frame",
+      "epistemic_policy",
+      "independent_challenger_result",
+      "controlling_version"
+    ],
+    "invalid_controlling_output": "abstain_hold",
+    "invalid_controlling_creates_actionable_intervention_or_derivative": false,
+    "invalid_controlling_enters_approval_or_delivery": false,
+    "valid_unresolved_evidence": {
+      "types": [
+        "gap",
+        "ambiguity",
+        "contradiction"
+      ],
+      "eligible_resolving_routes": [
+        "enrich",
+        "ask",
+        "session"
+      ],
+      "all_prior_guards_required": true,
+      "must_preserve_unresolved_evidence_refs_in_output": true,
+      "no_eligible_resolving_route_output": "abstain_hold"
+    },
+    "provisional": {
+      "is_route_standing_or_authority": false,
+      "allowed_location": "non_authoritative_diagnostic_metadata_on_abstain_hold_receipt_only",
+      "can_create_intervention_enter_approval_change_brain_or_bypass_invalidation": false
+    },
+    "first_arrival_model_confidence_or_same_root_count_resolves_conflict": false
+  },
+  "preserved_test_families": [
+    "epistemic_authority_and_countercase",
+    "lifecycle_totality",
+    "lifecycle_close_release_separation",
+    "selector_invalidity_and_resolvable_conflict_partition"
+  ],
+  "protected_strengths": [
+    "one_canonical_brain",
+    "no_new_canonical_root",
+    "human_owned_consequential_work",
+    "thirty_days_is_intensive_window_not_expiry",
+    "explicit_continuation_without_permission_renewal",
+    "decision_specific_material_effect",
+    "eligible_evidence_before_burden",
+    "common_root_collapse_and_causal_restraint",
+    "one_versioned_human_facing_intervention_atom",
+    "non_punitive_honest_exits",
+    "quiet_and_abstention",
+    "pull_only_krish_session_control",
+    "metrics_remain_unproven",
+    "headless_before_material_ui",
+    "customer_never_administers_internal_policy_or_lifecycle"
+  ],
+  "next_action": "freeze_r4_run_deterministic_checks_and_obtain_fresh_council_before_founder_lock_or_implementation"
+}
+

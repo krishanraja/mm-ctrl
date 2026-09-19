@@ -1,0 +1,59 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-handle-postgres.r65.v1",
+  "contract_id": "G25-PROVIDER-DELETION-HANDLE-POSTGRES-R65",
+  "status": "encrypted_handle_custody_postgres_verified_trusted_writer_required",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-HANDLE-CRYPTO-R64",
+    "G25-PROVIDER-CLOSURE-POSTGRES-R63"
+  ],
+  "observed": {
+    "local_database": "PostgreSQL 18.3 PGlite",
+    "tests": 7,
+    "failures": 0,
+    "multi_connection_race_proved": false,
+    "supabase_local_parity_proved": false
+  },
+  "proved_locally": [
+    "registration requires an accepted, provider-coherent exchange",
+    "the tested path composes R64 encryption with R65 persistence and decryption",
+    "registration and lease replay converge while changed ciphertext or competing leases reject",
+    "leases are bounded to at most 300 seconds",
+    "expired exchange-window handles are wiped before a lease can return ciphertext",
+    "operational or account-closure destruction requires a matching R63 success fact and active lease",
+    "Stripe account-lifetime custody has no calendar expiry and is wiped after closure proof",
+    "service role cannot insert table rows directly"
+  ],
+  "trust_boundary": {
+    "database_proves": "Envelope shape, provider and custody coherence, lifecycle, expiry, lease, fact-gated destruction, replay and table authority.",
+    "database_does_not_prove": "That an envelope-shaped value was cryptographically produced by R64. The database has no decryption key and must not gain one merely to authenticate registration.",
+    "required_before_runtime": [
+      "a dedicated trusted crypto writer that alone can register handles",
+      "a least-privilege deletion worker capability narrower than the broad service role",
+      "key custody and rotation operations",
+      "independent-connection lease-race proof"
+    ]
+  },
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_provider_deletion_handle_custody_r65.sql",
+    "candidate_sha256": "eb6a43421052910aed82985881114efc9a4834bd65bbacdec42fd041a13f7bb9",
+    "test": "supabase/functions/_shared/provider-deletion-handle-postgres.r65.test.ts",
+    "test_sha256": "a7efa52284eedd8f26d918ce2067187340dfae7d9fe96e8ba80b4e8a27719589",
+    "node_test_config": "vitest.g25-provider-handle-postgres.config.ts",
+    "node_test_config_sha256": "52335c2494ff0d6856112b801c9e27cdef6c1ddbc36539f2fb5b0cbd2e6c3dca",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-handle-postgres-r65.mjs"
+  },
+  "bounded_claim": "R65 proves one-process PostgreSQL custody around genuine R64 envelopes in the tested path. It is a non-migration candidate and does not prove envelope authenticity at the database boundary, least-privilege runtime identity, provider deletion or concurrent leases.",
+  "next_gate": "Create a dedicated writer and deletion-worker authority contract, then prove independent-connection leasing before any provider integration.",
+  "authority": {
+    "permits": [
+      "local disposable PostgreSQL execution",
+      "local candidate, tests, documentation and commit"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "linked or production database use",
+      "provider call or live route edit",
+      "deployment, merge or release"
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schema_version": "ctrl.locked-revision.delta.v1",
+  "revision": "G24-R3",
+  "date": "2026-09-12",
+  "status": "proposed_fresh_council_and_founder_lock",
+  "supersedes_for_review": "G24-R2",
+  "preserves_r2_as_history": true,
+  "r2_frozen_hashes": {
+    "blueprint": "52edc77136a68e1a25d647954f62410fa2f638b51dd96ed536b6ee5790f22980",
+    "contract": "1a62700f3f7f2b3c5cced1327296dbc00c438961c2c9a2d95a647b301e75cef2",
+    "delta": "d67e4f0af970101d6f9d116e8b162288502c48ea2950394db84e3a7f18b41ad2",
+    "evidence_note": "c505b2dad5657a99a7ef8804567290028eda3fcd2ec917bddbaa8b764a72cadb"
+  },
+  "council_source": {
+    "run": "g24-r2-architecture-council-001",
+    "status": "BLOCKED_PENDING_REPAIR",
+    "adjudication": "project-documentation/ctrl-evolution/runs/g24-r2-architecture-council-001/adjudication.md"
+  },
+  "allowed_repairs": [
+    {
+      "id": "R3-01",
+      "area": "r1_ownership_and_inherited_integrity",
+      "change": "map_nine_r2_objects_to_existing_r1_owners_and_bind_every_decision_shaping_derivative_to_canonical_references"
+    },
+    {
+      "id": "R3-02",
+      "area": "authority_and_lifecycle",
+      "change": "define_human_authorised_engagement_transitions_permission_change_invalidation_and_answer_to_human_owned_state_boundaries"
+    },
+    {
+      "id": "R3-03",
+      "area": "route_selection",
+      "change": "define_one_total_fail_closed_selector_with_five_mutually_exclusive_outputs_hard_precedence_and_budget_dimensions"
+    },
+    {
+      "id": "R3-04",
+      "area": "intervention_atom",
+      "change": "bind_visible_wording_controls_honest_exits_material_effect_and_visible_consequence_to_one_version"
+    }
+  ],
+  "deferred_not_deleted": [
+    "exact_physical_schema",
+    "numeric_budget_values",
+    "provider_policy",
+    "semantic_oracle_fixtures",
+    "exact_question_copy",
+    "rendered_comprehension",
+    "consented_capture",
+    "delivery_revalidation",
+    "full_erasure_traversal",
+    "real_decision_quality_and_commercial_efficacy"
+  ],
+  "protected_strengths": [
+    "thirty_days_is_intensive_window_not_hard_expiry",
+    "explicit_human_continuation",
+    "one_canonical_brain",
+    "human_owned_purpose_judgement_call_and_quality",
+    "decision_specific_not_profile_complete",
+    "eligible_evidence_before_interruption",
+    "one_visible_question",
+    "leader_prior_and_honest_exits",
+    "quiet_and_abstention",
+    "prepared_session_only_when_it_beats_alternatives",
+    "pull_only_krish_control",
+    "public_only_real_identity_tests",
+    "metrics_remain_unproven",
+    "headless_before_visual_polish",
+    "all_external_actions_closed"
+  ],
+  "forbidden_interpretations": [
+    "r2_was_rewritten_or_erased",
+    "r3_creates_a_second_evidence_permission_brain_answer_or_engagement_root",
+    "commercial_continuation_renews_permission",
+    "an_answer_automatically_changes_human_owned_state",
+    "least_burden_overrides_source_eligibility",
+    "contradiction_is_resolved_by_first_arrival",
+    "planner_output_is_canonical_truth",
+    "route_change_alone_proves_value",
+    "session_opportunity_authorises_contact_schedule_or_capture",
+    "architecture_proves_intuitiveness_or_efficacy",
+    "r3_authorises_external_implementation"
+  ]
+}
+

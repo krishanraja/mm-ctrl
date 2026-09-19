@@ -1,0 +1,585 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "role": {
+    "name": "founder_calibration_and_what_would_krish_do",
+    "votingStatus": "non_voting",
+    "clearanceAuthority": false,
+    "sealedVotesChanged": false,
+    "adjudicationChanged": false,
+    "purpose": "Predict the founder's most likely product decision from exact user-authority records and observed founder gates, cross-examine the already sealed prosecution, and define the narrowest honest route from blocked synthetic contract work to a real diagnostic and cold product experience.",
+    "boundary": "This calibration may identify a founder-intent mismatch and recommend a next move. It cannot replace Krish's cold reaction, revise a judge, average away a veto, or grant product, diagnostic, deployment, data-write, or efficacy clearance.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L101-L121",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/adjudication.json#/result",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/adjudication.json#/protocolStanding"
+    ]
+  },
+  "reviewedArtifact": {
+    "artifactCommit": "63b8550387f5dab60e09aad285d103b46af39279",
+    "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "rulingsCompositeSha256": "a5edff2b298c3818b702c96d55b43cb5600afa5b0dc81e8a17b73713250fd920",
+    "currentHeadInspected": "3ad32bfde69301f54cdef2ac8bc2f073c2669df3",
+    "currentSourceMatchesArtifactCommitForReviewedG21Files": true,
+    "chronologyQualification": "The README sentence that calls Run 004 unfrozen is stale narrative state. The later run-local manifest, freeze anchor, seven rulings, prosecution, and adjudication are the controlling record for this calibration.",
+    "directGateAtCalibration": {
+      "internalRangeChecker": "passed: 12 profiles, 4 families, 36 cases, 36 inputs, 12 per lifecycle state, no oracle leak, 108 adversarial mutations rejected",
+      "councilChecker": "passed mechanically: 11 self-tests, 12 artifacts, 7 rulings, deterministic result blocked",
+      "interpretation": "These green mechanical gates reproduce the declared baseline. They do not answer or reverse the four semantic vetoes."
+    },
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/freeze-anchor.json#/artifactCommit",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/input-manifest.json#/artifactCompositeSha256",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/input-manifest.json#/reviewBoundary/semanticReviewCompositeSha256",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/rulings-manifest.json#/rulingsCompositeSha256",
+      "project-documentation/ctrl-evolution/README.md#L31",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/input-manifest.json#/recordedAt",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/adjudication.json#/recordedAt",
+      "scripts/check-g21-internal-range.mjs",
+      "scripts/check-g21-internal-council.mjs"
+    ]
+  },
+  "reviewScope": {
+    "run004DirectoryReadInFull": [
+      "adjudication.json",
+      "council-brief.md",
+      "freeze-anchor.json",
+      "input-manifest.json",
+      "judges/behavioural_and_implementation_reality.json",
+      "judges/consequential_usefulness.json",
+      "judges/epistemic_integrity.json",
+      "judges/human_agency.json",
+      "judges/human_comprehension_and_access.json",
+      "judges/living_brain_integrity.json",
+      "judges/subject_audience_lifecycle_safety.json",
+      "question-pack.json",
+      "reader-brief.md",
+      "readers/adult-answerability-a.json",
+      "readers/adult-answerability-b.json",
+      "readers-manifest.json",
+      "rulings-manifest.json",
+      "standards-prosecutor.json"
+    ],
+    "durableJudgeHistoriesReadInFull": [
+      "project-documentation/ctrl-evolution/judge-history/human-agency.md",
+      "project-documentation/ctrl-evolution/judge-history/epistemic-integrity.md",
+      "project-documentation/ctrl-evolution/judge-history/subject-audience-lifecycle-safety.md",
+      "project-documentation/ctrl-evolution/judge-history/consequential-usefulness.md",
+      "project-documentation/ctrl-evolution/judge-history/living-brain-integrity.md",
+      "project-documentation/ctrl-evolution/judge-history/human-comprehension-and-access.md",
+      "project-documentation/ctrl-evolution/judge-history/behavioural-and-implementation-reality.md"
+    ],
+    "founderAndProductSourcesRead": [
+      "project-documentation/ctrl-evolution/ledger.snapshot.jsonl",
+      "project-documentation/ctrl-evolution/README.md",
+      "project-documentation/ctrl-evolution/session-method-learning-log.md",
+      "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md",
+      "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md",
+      "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-qa-record.md",
+      "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md",
+      "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+      "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+      "project-documentation/ctrl-evolution/g21-v4-contract-separation.md",
+      "project-documentation/ctrl-evolution/g21-public-row-canary.md",
+      "project-documentation/ctrl-evolution/g21-public-row-canary-research-brief.md",
+      "project-documentation/ctrl-evolution/g21-diagnostic-council-run.md"
+    ],
+    "methodLimitation": "This is intentionally not a fresh-context independent criterion review. The founder-calibration brief requires chronology, prior gates, durable histories, the ledger, and prosecution. Those materials are used only to predict founder action and bound the repair, never to rewrite the valid history-free Run 004 rulings.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/input-manifest.json#/files",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/rulings-manifest.json#/rulings",
+      "project-documentation/ctrl-evolution/judge-history/README.md",
+      "project-documentation/ctrl-evolution/README.md#L281-L287"
+    ]
+  },
+  "userAuthorityBasis": {
+    "method": "The prediction is grounded first in records whose authority field is user, then in Krish's verbatim or directly recorded founder gates, and only then in agent-authored synthesis. The 282-row local ledger snapshot was read in full, including all 120 user-authority rows. The snapshot ends at D-055, so D-056 through D-062 are taken from the later README record that states canonical Supabase readback verified their user authority. Agent-authored founder calibrations from earlier runs are context, not authority.",
+    "chronology": [
+      {
+        "period": "2026-09-04 to 2026-09-05: product promise and responsibility",
+        "authorityRecords": [
+          "D-001",
+          "D-006",
+          "D-007",
+          "D-008",
+          "D-009",
+          "D-010",
+          "D-015",
+          "D-017",
+          "D-018",
+          "D-019",
+          "D-022",
+          "D-024",
+          "D-027",
+          "D-031",
+          "D-032",
+          "D-033",
+          "D-034",
+          "D-035"
+        ],
+        "reading": "The primary user is a decision-owning leader. The seven-day proof is one materially sharper consequential decision, delivered through five useful minutes, joint reasoning, a leader-owned final call, evidence-adaptive insight, the smallest route-changing interruption, honest uncertainty, and durable correction. The Brain should do the interpretive work and must not evaluate a named employee or manufacture an aha.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L42",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L47-L51",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L56-L60",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L63-L76"
+        ]
+      },
+      {
+        "period": "2026-09-05 to 2026-09-07: strategic altitude, accountability, and first-slice limit",
+        "authorityRecords": [
+          "D-038",
+          "D-040",
+          "D-043",
+          "D-044",
+          "D-049",
+          "D-051",
+          "D-052",
+          "D-054",
+          "D-055"
+        ],
+        "reading": "The product must make calibrated human judgement visible without showing a technical checklist, preserve independent review and human release accountability, operate at visionary category and million-pound decision altitude, resist generic convergence, discard legacy machinery that does not serve the target, exceed current polish through devastating simplicity, and prove one human-first loop with at most one optional inspectable learning. The Living Map is retained only as a truthful projection over a rebuilt Brain substrate.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L79-L85",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L90-L96",
+          "project-documentation/ctrl-evolution/README.md#L99-L137"
+        ]
+      },
+      {
+        "period": "2026-09-08 to 2026-09-09: observed G20 founder gates",
+        "authorityRecords": [
+          "E-058",
+          "E-059",
+          "E-060"
+        ],
+        "reading": "Krish rejected a lovely but theatrical surface with little insight, approved the Decision Table direction only when it got materially better, demanded harder questions and better evidence without clutter, rejected an abstract question that an ordinary person could not understand, and moved on once the complete loop was good enough while explicitly removing empty reassurance copy. This is direct evidence that he protects deep machinery but has little patience for making the machinery the visible experience.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L154-L156",
+          "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#L12-L31",
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md#L12-L16",
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md#L10",
+          "project-documentation/ctrl-evolution/design/phase-5-complete-loop-r3-founder-gate.md#L9-L14"
+        ]
+      },
+      {
+        "period": "2026-09-09 to 2026-09-10: current Brain and council governance",
+        "authorityRecords": [
+          "D-056",
+          "D-057",
+          "D-058",
+          "D-059",
+          "D-060",
+          "D-061",
+          "D-062"
+        ],
+        "reading": "The Brain is customer-facing becoming, Krish is the near-term private per-customer operator, evidence namespaces must remain hard, the highest-risk responsibility gate governs human ownership, seven independent truth owners and valid vetoes are protected, history stays dormant, and Mindy is excluded. Run 005 cannot be skipped merely because synthetic review has become tiring: D-060 is exact user authority. It can and should be made terminal and proportionate.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/README.md#L33",
+          "project-documentation/ctrl-evolution/README.md#L273-L279",
+          "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L97-L121"
+        ]
+      }
+    ],
+    "governingInference": "Krish is not choosing simplicity instead of sophistication. He wants sophisticated, inspectable, corruption-resistant machinery to disappear beneath one concrete, consequential interaction. He will tolerate one more synthetic run because he explicitly created veto-first governance, but he will not tolerate the harness becoming the product or becoming an endless substitute for testing whether the Brain produces useful judgement.",
+    "confidence": "high",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/session-method-learning-log.md#L54",
+      "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L45-L78",
+      "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L354-L410",
+      "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L79-L93"
+    ]
+  },
+  "predictedReaction": {
+    "likelyImmediateReaction": "This is a strong internal instrument and the block is real, but I do not want to see another demo of the instrument. Fix the few shared contract defects, prove the vetoes are gone once, then show me whether the Brain can notice something important and ask me one sharp question about a consequential decision.",
+    "whatHeWouldValue": [
+      "The matched families are genuinely consequential rather than toy tasks.",
+      "Human ownership, fictional namespace isolation, evidence receipts, correction lineage, and safe unknown routes are explicit.",
+      "The council preserved dissent and found defects that green mechanical tests missed.",
+      "The recurring failures have compressed enough to support one bounded repair rather than another conceptual rewrite."
+    ],
+    "whatHeWouldChallenge": [
+      "Why has no diagnostic model yet seen the 36 oracle-free internal cases?",
+      "Why should a leader care that 108 synthetic mutations pass if the visible question is still confusing?",
+      "Does the Brain itself interpret evidence, or are hand-authored route tables doing the impressive work?",
+      "Can the trust model be explained as one simple invariant instead of seven new layers?",
+      "Where is the cold, five-minute proof that this improves the next real decision rather than merely validating a fixture?"
+    ],
+    "whatHeWouldRefuseToSeeInTheNextDemo": [
+      "A council dashboard, hash manifest, ontology, lifecycle grid, or mutation-count victory lap as the main screen.",
+      "The question pack reproduced as product UI.",
+      "A hand-scripted oracle answer presented as model intelligence.",
+      "Generic or abstract prompts such as asking the leader to decode an internal concept before answering.",
+      "Undefined labels such as delivery target, theory-first, or held-out test without a concrete business meaning.",
+      "A question asking for a named person while offering only role categories.",
+      "Repeated trust reassurance, custody copy, decorative maps, flashy meaningless imagery, sparkles, or motion without state meaning.",
+      "Clutter that exposes internal complexity before it helps the decision.",
+      "Claims that CTRL improves decisions, has learned the leader, is child-comprehensible, or is production-safe before the corresponding evidence exists."
+    ],
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/design/g20-context-exchange-r1-founder-gate.md#L12-L31",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md#L12-L16",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md#L10",
+      "project-documentation/ctrl-evolution/README.md#L29",
+      "project-documentation/ctrl-evolution/README.md#L137",
+      "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L122-L131"
+    ]
+  },
+  "crossExamination": {
+    "sealedStanding": {
+      "result": "blocked",
+      "passes": [
+        "human_agency",
+        "consequential_usefulness",
+        "living_brain_integrity"
+      ],
+      "vetoes": [
+        "EPISTEMIC-RANGE-01",
+        "SAFETY-RANGE-01",
+        "COMPREHENSION-RANGE-01",
+        "REALITY-RANGE-01"
+      ],
+      "finding": "The adjudication is a valid history-free independent review and remains untouched. The prosecutor was right to uphold the block. Founder calibration changes the prioritisation and implementation interpretation, not the rulings.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/adjudication.json#/rulings",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/adjudication.json#/result",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/overallConclusion"
+      ]
+    },
+    "passes": [
+      {
+        "judge": "human_agency",
+        "sealedVerdict": "pass",
+        "challenge": "The pass is valid because R1 Explore cannot recommend a consequential action, promote durable truth, evaluate named employees, or execute a route. It is not evidence that the prose is non-manipulative, that the question is answerable, or that the eventual product gives useful guidance. It also must not harden into permanent timidity: D-010 permits an evidence-backed preferred path after the leader forms a provisional view.",
+        "founderDisposition": "Protect the authority boundary. Do not cite this pass as proof of a satisfying interaction or as a reason to keep CTRL at question-only altitude.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/human_agency.json#/claims",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L4013-L4024",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L50-L51"
+        ]
+      },
+      {
+        "judge": "consequential_usefulness",
+        "sealedVerdict": "pass",
+        "challenge": "The pass proves that the hand-authored known and unknown branches select, stop, bound, or reshape material routes across GBP 1.8 million care, about GBP 900,000 research, GBP 4.2 million industrial planning, and GBP 18 million storyworld decisions. It does not prove that a person can answer the question, that a model will discover the route, or that a customer receives value. Large fictional numbers establish test altitude, not efficacy.",
+        "founderDisposition": "Protect the consequential altitude and route-effect mapping. Treat it as a prerequisite for the diagnostic, never as the seven-day product proof.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/consequential_usefulness.json#/claims",
+          "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L32-L39",
+          "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L47"
+        ]
+      },
+      {
+        "judge": "living_brain_integrity",
+        "sealedVerdict": "pass",
+        "challenge": "The pass correctly protects immutable source receipts, claim-level challenge and supersession, unaffected-claim retention, deterministic current views, and exact canonical drift rejection. It does not prove that arbitrary runtime prose is authentic, that correction meaning cannot be reversed, that every downstream use is repaired, or that the Brain learns longitudinally in product.",
+        "founderDisposition": "Keep the canonical substrate and claim-addressable lineage. Do not confuse a truthful fixture with a trustworthy live Brain.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/living_brain_integrity.json#/claims",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L3013-L3059",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L4106-L4139",
+          "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L354-L410"
+        ]
+      }
+    ],
+    "vetoes": [
+      {
+        "vetoRuleId": "EPISTEMIC-RANGE-01",
+        "validity": "valid_product_critical_root",
+        "challenge": "The exact unsupported use of `drove` is a useful regression, but it is not a complete epistemology. Adding more forbidden phrases would overfit the harness and still fail on paraphrases. The product-critical defect is that trustedEvidenceBinding covers IDs, metadata, relations, and kinds while omitting record content and claim text, so untrusted meaning can inherit trusted standing.",
+        "repairInterpretation": "Use one trusted evidence compiler or receipt that binds the content or its digest together with subject, source capability, audience, assertion standing, and lifecycle role. The runtime validator should verify that receipt or a validated structured equivalent. Keep safe novel evidence possible through trusted issuance, not by letting arbitrary prose borrow unchanged metadata.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/epistemic_integrity.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/reproductions/technicalVetoes",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L386-L388",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L2591-L2610",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L3136-L3138"
+        ]
+      },
+      {
+        "vetoRuleId": "SAFETY-RANGE-01",
+        "validity": "valid_with_two_different_priorities",
+        "challenge": "The exported validator accepts unknown and therefore must return errors rather than throw on sparse or malformed arrays. That is a real totality defect and a cheap fix. Sparse holes are probably lower-frequency at a JSON network ingress, so reproducing every profile-specific hole is not the product insight. The higher-risk product defect is that real-personhood, simulated-consent, or source-incompatible prose can inherit fictional and authorised metadata because content is outside the trust binding.",
+        "repairInterpretation": "Make all nested and top-level array validation dense, index-safe, and nonthrowing, then cover malformed unknowns with property-style tests. Solve personhood, consent, audience, and source capability through the same authenticated semantic receipt as the epistemic veto. Do not build an ever-growing language blacklist.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/subject_audience_lifecycle_safety.json#/veto",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L2854-L2885",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L3875-L4010",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L4062-L4094"
+        ]
+      },
+      {
+        "vetoRuleId": "COMPREHENSION-RANGE-01",
+        "validity": "valid_and_immediately_product_critical",
+        "challenge": "FORGE-I3 literally asks which named person owns the final call while offering only role categories. An optional note cannot carry required identity. This is not synthetic edge-case overfitting. It repeats the exact G20 founder failure pattern: asking the user to perform the product's interpretation. The two adult screens also independently share four failures, revealing visible-language debt beyond the single sealed veto.",
+        "repairInterpretation": "Ask for an owner role or offer actual fictional names, not both. Repair the four shared adult failures: define the Forge delivery target, make FORGE-I3's answer type match its question, state the Story purchase comparison in ordinary business terms, and replace held-out-test jargon with the actual comparison the leader can answer. Treat nonshared adult failures as useful reader variance, not additional sealed vetoes.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/human_comprehension_and_access.json#/veto",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/question-pack.json#/questions/8",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers-manifest.json#/sharedFailures",
+          "project-documentation/ctrl-evolution/design/g20-decision-table-r3-founder-gate.md#L10"
+        ]
+      },
+      {
+        "vetoRuleId": "REALITY-RANGE-01",
+        "validity": "valid_product_critical_root",
+        "challenge": "The conflict and correction texts can trade meaning while IDs, source types, relations, and currentClaims remain structurally green. This proves that metadata order is not semantic lifecycle truth. It is the same trust-root defect as the epistemic and semantic-safety attacks, not a reason to create twelve profile-specific lifecycle recognisers. Repeating the identical swap across all twelve profiles becomes harness redundancy once the shared primitive is fixed.",
+        "repairInterpretation": "Bind lifecycle role and content meaning in one trusted receipt, retain a safe-novel control, and use representative plus generative mutation tests to prove the shared primitive. Keep canonical byte equality as a separate fixture-truth check.",
+        "sourceLocators": [
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/behavioural_and_implementation_reality.json#/veto",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L3013-L3059",
+          "src/features/operator-brain/g21InternalRangeCanary.ts#L4027-L4085",
+          "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/crossExamination/byJudge/6"
+        ]
+      }
+    ],
+    "adultScreens": {
+      "inspected": true,
+      "adultA": "5 pass, 7 fail",
+      "adultB": "7 pass, 5 fail",
+      "sharedFailures": [
+        "RANGE-INTERNAL-FORGE-I2",
+        "RANGE-INTERNAL-FORGE-I3",
+        "RANGE-INTERNAL-STORY-I2",
+        "RANGE-INTERNAL-STORY-I3"
+      ],
+      "qualification": "These are adult plain-language and answerability proxies over the reader brief and question pack. They do not establish child comprehension, factual correctness, specialist criterion clearance, product efficacy, or a good rendered experience. A fresh adult screen can test repaired wording. Only actual child testing can support a child-comprehension claim, and only a cold rendered founder gate can answer the product-taste question.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers-manifest.json#/reviews",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers-manifest.json#/sharedFailures",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers-manifest.json#/boundary",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers/adult-answerability-a.json#/limitations",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers/adult-answerability-b.json#/limitations"
+      ]
+    },
+    "semanticDependencyClosure": {
+      "qualificationAccepted": true,
+      "classification": "bounded_next_freeze_protocol_defect",
+      "finding": "The seven-file semantic-review composite is history-free and its declared hashes are correct, but it is not a transitive compilation closure. g21InternalRangeCanary.ts imports G21_PUBLIC_ROW_CANARY from g21PublicRowCanary.ts, uses its manifests in complete-coordinate coverage, and both direct checkers compile that local dependency. The dependency is absent from the twelve-file input manifest.",
+      "impactOnRun004": "No sealed vote changes. The artifact commit still identifies the omitted bytes, the current omitted file matches the prosecutor's artifact-commit SHA-256 3891a861ff81d1f35587a32e3a9f11bb3034366b99207a53040ca73467f5c82c, and none of the four veto proofs depends on changing that module. Clean-review attestation remains valid. The narrower claim that fails is that the semantic composite alone identifies the whole repo-owned program compiled by the declared gates.",
+      "nextFreezeRequirement": "Hash the bounded transitive closure of repo-owned local source imports compiled by both checkers, or record a separate deterministic compile-closure digest alongside the human-readable semantic pack. Pin relevant compiler and runner versions separately. Do not expand the semantic review pack to node_modules, toolchain internals, prior verdicts, or other history-bearing material.",
+      "doesItAloneWarrantRun005": false,
+      "reason": "A corrected manifest without substantive artifact change could be handled as protocol identity work. Run 005 is already required by the four valid vetoes, so the closure repair belongs in that freeze rather than causing a separate cycle.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/protocolAudit/dependencyClosureQualification",
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/input-manifest.json#/semanticReviewFiles",
+        "src/features/operator-brain/g21InternalRangeCanary.ts#L1-L15",
+        "src/features/operator-brain/g21InternalRangeCanary.ts#L3756-L3774",
+        "scripts/check-g21-internal-range.mjs#L51-L73",
+        "scripts/check-g21-internal-council.mjs#L379-L405"
+      ]
+    },
+    "prosecutorDisposition": "Uphold the prosecutor's blocked conclusion and its evidence. Compress its seven-step repair order into four owned changes: totality, one semantic trust root, one visible-answer rewrite, and dependency-closed freeze identity. Priorities 2, 3, and 4 are manifestations of one production invariant and should not become three parallel subsystems. The prosecutor is right about what must fail; founder calibration narrows how to make it fail without teaching the product a list of synthetic test phrases.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/repairOrder",
+      "project-documentation/ctrl-evolution/session-method-learning-log.md#L40-L54"
+    ]
+  },
+  "whatWouldKrishDo": {
+    "decision": "Authorise one bounded Run 005 as the terminal synthetic contract-clearance run, then move immediately to the first real oracle-free internal diagnostic and a cold Decision Table experience if it clears.",
+    "run005Warranted": true,
+    "why": "D-060 is direct user authority for seven independent truth owners and veto protection, and the current G21 contract explicitly stops before any diagnostic model run or product surface on a valid veto. Skipping a fresh freeze would violate the founder's own governance. Repeating open-ended synthetic refinement would violate the equally clear demand for five useful minutes, visible intelligence, and devastating simplicity.",
+    "orderedActions": [
+      {
+        "order": 1,
+        "action": "Implement the shared semantic trust root first. Bind evidence content or digest, claim text or digest, assertion standing, subject scope, source capability, audience, authority, and lifecycle role in one authenticated or trusted compiler receipt. Preserve safe novel evidence through trusted issuance.",
+        "purpose": "Close EPISTEMIC-RANGE-01, the semantic half of SAFETY-RANGE-01, and REALITY-RANGE-01 with one production-shaped invariant."
+      },
+      {
+        "order": 2,
+        "action": "Make the exported unknown-input validator total, dense-array aware, and nonthrowing at every nested dereference. Use a small malformed-input property suite plus the exact sparse regressions.",
+        "purpose": "Close the runtime-totality half of SAFETY-RANGE-01 without multiplying profile-specific code."
+      },
+      {
+        "order": 3,
+        "action": "Rewrite the four questions both adult screens failed. Make each ask concrete, one-response, business-specific, safe on unknown, and matched to the answer type and route consequence. Keep optional notes genuinely optional.",
+        "purpose": "Close COMPREHENSION-RANGE-01 and prevent the next product demo from repeating the G20 abstract-question failure."
+      },
+      {
+        "order": 4,
+        "action": "Freeze Run 005 once with a dependency-closed repo-owned semantic identity, fresh adult screens, seven fresh isolated rulings, prosecution, and deterministic adjudication. Preserve Run 004 unchanged.",
+        "purpose": "Honor D-060 and make the repaired bytes independently auditable."
+      },
+      {
+        "order": 5,
+        "action": "If and only if Run 005 has no valid veto, stop synthetic contract design. Run the fixed diagnostic model and configuration against all 36 oracle-free internal inputs without exposing expected or forbidden oracles. Hash outputs before grading, compare against the already frozen oracles, and report specificity, appropriate caution, overreach, and abstention by lifecycle state.",
+        "purpose": "Test whether the Brain, rather than the hand-authored contract, becomes more useful as private evidence deepens and repairs itself after correction."
+      },
+      {
+        "order": 6,
+        "action": "Use a predeclared selection rule, not cherry-picking, to place one surviving high-consequence diagnostic into the verified but still unapproved G20 R4 Decision Table spine. Present it cold: what the Brain understands, why it matters now, what may be wrong, and one concrete tap-first question with optional depth.",
+        "purpose": "Let Krish judge the actual product interaction. The cold gate owns magic, taste, and whether the complexity has disappeared."
+      }
+    ],
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/README.md#L268-L278",
+      "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#L100-L104",
+      "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L203-L218",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md#L15-L52",
+      "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L79-L93"
+    ]
+  },
+  "protectedStrengths": [
+    {
+      "strength": "Veto-first independent governance",
+      "mustNotRegress": "Keep seven owned truths, history-free first-pass review, exact raw veto preservation, and no averaging. Run 004 remains immutable blocked history.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/README.md#L275-L278",
+        "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L97-L121"
+      ]
+    },
+    {
+      "strength": "Human authority at the highest-risk point",
+      "mustNotRegress": "Keep R1 limited to framing and one useful ask, keep final human ownership explicit, keep named-employee evaluation out, and retain safe unknown routes. Later recommendation may occur only under the already authorised staged human contract.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/human_agency.json#/claims",
+        "project-documentation/ctrl-evolution/README.md#L276",
+        "project-documentation/ctrl-evolution/ledger.snapshot.jsonl#L50-L51"
+      ]
+    },
+    {
+      "strength": "Consequential matched-family design",
+      "mustNotRegress": "Keep fixed identities and external envelopes while internal depth changes across four material decision families and three lifecycle states. Keep every known and unknown answer tied to a named route effect.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L9-L17",
+        "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L32-L39",
+        "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#L69-L89"
+      ]
+    },
+    {
+      "strength": "Hard evidence namespaces and fictional safety",
+      "mustNotRegress": "Keep real-public, consented private, consented anonymised, and wholly fictional material structurally separate. Do not use real people or simulated consent to make the canary feel richer.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/README.md#L275",
+        "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L36-L66"
+      ]
+    },
+    {
+      "strength": "Immutable receipts and claim-level correction lineage",
+      "mustNotRegress": "Keep old evidence inspectable, address correction to exact claims, retain unaffected claims and locators, and derive current views deterministically. Strengthen live semantic authenticity around this substrate rather than replacing it.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/judges/living_brain_integrity.json#/claims",
+        "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L56-L60",
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L45-L78"
+      ]
+    },
+    {
+      "strength": "Three-contract separation",
+      "mustNotRegress": "Keep runtime structural safety, canonical fixture truth, and human semantic judgement distinct. A shared trust root should connect evidence authority across them without collapsing their success conditions.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#L9-L32",
+        "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L121"
+      ]
+    },
+    {
+      "strength": "Simple product spine with optional depth",
+      "mustNotRegress": "Keep the G20 Decision Table's one concrete tap-first question, distinct evidence standing, pending evidence route, optional note, and deeper layers below a clean primary surface. Do not expose council mechanics in the product.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/README.md#L29",
+        "project-documentation/ctrl-evolution/design/g20-decision-table-r2-founder-gate.md#L12-L16",
+        "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md#L17-L52"
+      ]
+    }
+  ],
+  "repairBoundary": {
+    "productCritical": [
+      "A malformed unknown input never throws and always returns a stable nonempty error set.",
+      "Evidence meaning cannot inherit trusted subject, audience, consent, source capability, assertion standing, or lifecycle status unless one trusted receipt binds them together.",
+      "Conflict and correction meaning cannot be reversed while leaving the runtime projection green.",
+      "Unsupported causal standing cannot pass by choosing a verb outside a short regular expression.",
+      "Every visible question asks for the same kind of answer its controls provide, uses ordinary business language, and makes unknown safe.",
+      "The next freeze identifies the bounded repo-owned compiled source closure used by its declared gates."
+    ],
+    "syntheticHarnessOnlyOrLowerPriority": [
+      "Do not write profile-specific guards for all twelve versions of the same semantic mutation when one shared receipt invariant and generative tests prove the class.",
+      "Do not equate the exact word `drove` with the entire causal-standing model. Keep it as a regression after the structural trust fix.",
+      "Do not expand the semantic pack to dependencies that are not repo-owned compiled inputs, prior verdict history, or node_modules merely to make the manifest look exhaustive.",
+      "Do not turn adult-reader disagreements outside the four shared failures into new sealed vetoes. Use them as wording watchpoints.",
+      "Do not add ontology labels, governance copy, or explanation panels to compensate for a confusing question. Rewrite the question."
+    ],
+    "doNotBuildBeforeTheExit": [
+      "A G21 customer UI, database event family, authenticated integration, production write path, deployment, or release.",
+      "A broader Brain graph, connector programme, ambient capture system, or customer administration console.",
+      "A claim of diagnostic efficacy, judgement improvement, customer value, child comprehension, consented-private production safety, or longitudinal learning.",
+      "A second visible truth system or decorative Living Map detached from typed evidence."
+    ],
+    "scopeRule": "A Run 005 change is in scope only if it closes a sealed veto, removes a shared adult answerability defect, preserves a passing invariant, or makes the freeze reproducible. Any new feature or ontology that cannot be traced to one of those outcomes waits for diagnostic evidence.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/repairOrder",
+      "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L354-L410",
+      "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#L100-L104",
+      "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L169-L190"
+    ]
+  },
+  "exitCondition": {
+    "name": "terminal_synthetic_contract_clearance",
+    "syntheticContractWorkEndsWhen": [
+      "A new immutable Run 005 freezes repaired bytes without altering Run 004.",
+      "The exported unknown-input validator is total and nonthrowing under dense, sparse, nested malformed, and ordinary JSON inputs.",
+      "One shared semantic trust primitive rejects the exact unsupported-causation, real-personhood, simulated-consent, source-capability, and conflict/correction reversal attacks before canonical equality is consulted, while a trusted safe-novel-evidence control still passes.",
+      "FORGE-I3 has an answer-type match and fresh adult screens find all four previously shared failures literally clear, answerable, route-legible, safe on unknown, and optional in depth. The screens remain adult-only evidence.",
+      "The Run 005 manifest or separate compile-closure record hashes every repo-owned local source compiled by both declared checkers and preserves history exclusion.",
+      "All seven fresh history-free judges return pass with no valid veto, the prosecutor verifies the repaired failure classes and preserved passes, and deterministic adjudication returns passed."
+    ],
+    "immediateNextState": "Enter diagnostic evidence, not Run 006 contract elaboration. Execute the fixed model and configuration over the 36 frozen oracle-free internal lifecycle inputs, hash blind outputs before oracle comparison, and evaluate evidence-depth specificity, contradiction caution, correction repair, overreach, and appropriate abstention.",
+    "coldProductEntry": "After at least one diagnostic path meets its predeclared acceptance rule, transform it faithfully into the G20 R4 Decision Table and present that rendered interaction cold. The first screen should reveal what the Brain understands, why it matters now, where it may be wrong, and one consequential question. Deeper evidence and lineage remain one layer below.",
+    "noCherryPickingRule": "Choose the cold case through a predeclared rule such as highest decision consequence among all passing cases, with a deterministic tie-break. Preserve failed outputs and report them; do not hand-select the prettiest output.",
+    "reopenSyntheticContractsOnlyIf": "A real diagnostic failure exposes a class-level safety, authority, evidence-integrity, or answer-contract invariant that the passed contract falsely admitted. Poor model insight, weak prose, prompt behaviour, or an unimpressive screen moves to diagnostic or product repair and does not by itself justify more canary ontology.",
+    "founderGate": "Only Krish's unbriefed cold reaction can approve the product interaction. Council clearance permits the test; it does not predict or fabricate approval.",
+    "sourceLocators": [
+      "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L70-L95",
+      "project-documentation/ctrl-evolution/g21-internal-range-canary.md#L203-L218",
+      "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L205-L217",
+      "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L354-L410",
+      "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L79-L93",
+      "project-documentation/ctrl-evolution/design/g20-decision-table-r4-revision-delta.md#L15-L52"
+    ]
+  },
+  "nonClaims": [
+    {
+      "claimNotMade": "Krish has approved Run 004, Run 005, the G20 R4 Decision Table, a diagnostic model run, or a product surface.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/README.md#L29",
+        "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#L100-L104"
+      ]
+    },
+    {
+      "claimNotMade": "The three passes establish end-to-end product safety, usefulness, comprehension, diagnostic validity, or customer value.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/adjudication.json#/rulings",
+        "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md#L205-L213"
+      ]
+    },
+    {
+      "claimNotMade": "The two adult proxy screens establish child comprehension or specialist council clearance.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/readers-manifest.json#/boundary"
+      ]
+    },
+    {
+      "claimNotMade": "A semantic trust receipt proves the underlying evidence true. It proves integrity, declared provenance, authority, and standing at the boundary; truth still requires evidence and criterion-specific judgement.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/living-brain-domain-and-user-model.md#L45-L78",
+        "project-documentation/ctrl-evolution/g21-v4-contract-separation.md#L9-L32"
+      ]
+    },
+    {
+      "claimNotMade": "The omitted g21PublicRowCanary.ts dependency contaminated judges, caused a veto, changed the artifact bytes, or invalidated the sealed adjudication.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/standards-prosecutor.json#/protocolAudit/dependencyClosureQualification"
+      ]
+    },
+    {
+      "claimNotMade": "CTRL improves decisions, understands the leader, gets better over time, or has a defensible moat based on this synthetic contract work.",
+      "sourceLocators": [
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L79-L93",
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L122-L131",
+        "project-documentation/ctrl-evolution/research/competitive-moat-architecture-2026-09-07.md#L169-L190"
+      ]
+    }
+  ],
+  "recordedAt": "2026-09-11T00:51:54.9984309+01:00"
+}

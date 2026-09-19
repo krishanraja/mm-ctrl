@@ -1,0 +1,100 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "common_envelope",
+  "standing": "contract_only_no_runtime_authority",
+  "governing_decision": {
+    "decision_id": "DEC-20260916-g24-predicate-authority-r75",
+    "r75_commit": "e6494cda6fba4ce8209f99f1611ba3803de34370",
+    "r77_lock_commit": "4ab418d7815c914eef155fd017ef362f1983b9a7"
+  },
+  "authority_species": [
+    "mechanical_fact",
+    "normative_human_attestation",
+    "derived_fact"
+  ],
+  "common_required_fields": [
+    "fact_kind",
+    "authority_species",
+    "transition_id",
+    "precondition_id",
+    "tenant_id",
+    "leader_id",
+    "subject_id",
+    "case_id",
+    "engagement_id",
+    "purpose_id",
+    "permitted_audience",
+    "consequence_class",
+    "predecessor_state",
+    "predecessor_version",
+    "dispatch_snapshot_epoch",
+    "server_evaluation_time",
+    "source_set_proofs",
+    "semantic_profiles",
+    "evaluator_version",
+    "assembler_version",
+    "selection_policy_version",
+    "authority_policy_version",
+    "earliest_valid_until",
+    "canonical_bytes",
+    "bundle_fingerprint"
+  ],
+  "semantic_profile_required_fields": [
+    "source_type",
+    "source_identity",
+    "schema_version",
+    "row_version",
+    "content_fingerprint",
+    "atomic_assertion_or_span_ref",
+    "speaker_or_issuer",
+    "epistemic_basis",
+    "issuer_fact_kind_rule",
+    "authority_policy_version",
+    "applicable_from",
+    "valid_until",
+    "contrary_assertion_refs",
+    "contrary_disposition",
+    "brain_item_ref",
+    "brain_item_version",
+    "brain_standing"
+  ],
+  "brain_standing_values": [
+    "accepted",
+    "proposal_only",
+    "not_applicable"
+  ],
+  "epistemic_basis_values": [
+    "observed",
+    "human_stated",
+    "externally_attested",
+    "deterministically_derived"
+  ],
+  "canonicalization": {
+    "encoding": "UTF-8",
+    "unicode": "NFC",
+    "object_keys": "codepoint_sorted",
+    "arrays": "order_semantic_unless_field_declares_sorted_set",
+    "fingerprint": "domain_separated_sha256",
+    "floating_point": "forbidden",
+    "opaque_prose_satisfies_rule": false
+  },
+  "audience_rule": "intersection_of_current_permitted_grants_only",
+  "private_preparation_audience_rule": "before any audience grant exists, private preparation is restricted to the named subject and Krish only, cannot be shared externally, and cannot imply a customer audience grant",
+  "caller_forbidden_fields": [
+    "predicate",
+    "source_path",
+    "schema",
+    "issuer_policy",
+    "authority_policy",
+    "output_shape",
+    "satisfaction_result"
+  ],
+  "global_forbidden_effects": [
+    "runtime_connection",
+    "database_write",
+    "evidence_row_write",
+    "ui_render",
+    "deployment",
+    "external_mutation"
+  ]
+}

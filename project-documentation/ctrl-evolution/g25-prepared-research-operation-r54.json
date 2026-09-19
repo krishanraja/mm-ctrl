@@ -1,0 +1,41 @@
+{
+  "schema_version": "ctrl.g25.prepared-research-operation.r54.v1",
+  "record_id": "G25-PREPARED-RESEARCH-OPERATION-R54",
+  "status": "dormant_research_operation_composed",
+  "depends_on": [
+    "G25-PUBLIC-RESEARCH-QUERY-BOUNDARY-R50",
+    "G25-PROVIDER-EXCHANGE-RETRY-IDENTITY-R51",
+    "G25-PUBLIC-SOURCE-ADMISSION-R52",
+    "G25-PROVIDER-ROUTE-MATRIX-R53"
+  ],
+  "proved": [
+    "one strict input composes public-source admission, bounded query preparation and a corrected R51 receipt command",
+    "the provider command is explicitly not authorised to execute and the operation standing requires receipt persistence first",
+    "provider request digest and receipt request digest are identical",
+    "operation idempotency remains distinct from request payload identity",
+    "fixed fetches carry fixed-public-fetch control, no outbound query and no query-minimisation digest",
+    "customer-shaped public queries cannot use fixed-fetch, unverified or billing-retention controls",
+    "outer and nested private fields fail closed",
+    "future occurrence time and malformed custody or operation identity fail closed"
+  ],
+  "observed": {
+    "r54_targeted_tests": 9,
+    "r50_r52_r54_combined_tests": 37,
+    "targeted_failures": 0,
+    "new_type_errors": 0
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/prepared-research-operation.r54.ts",
+    "module_sha256": "ede2c2e674510a7e8a205c095a465bc7e0e22d48feeeee2e018476e8cad57a4f",
+    "test": "supabase/functions/_shared/prepared-research-operation.r54.test.ts",
+    "test_sha256": "6a4b660b36504f45350701279b45b4331c2ef621de9df890296b74d95599bb94",
+    "checker": "scripts/check-ctrl-g25-prepared-research-operation-r54.mjs"
+  },
+  "next_gate": "Add the post-dispatch outcome classifier and prove accepted, rejected and outcome-unknown lifecycle commands without exposing raw provider request IDs.",
+  "not_authorized": [
+    "provider dispatch",
+    "live public-source fetching",
+    "receipt persistence to a linked database",
+    "editing live routes, deployment, merge or release"
+  ]
+}

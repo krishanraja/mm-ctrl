@@ -1,0 +1,91 @@
+{
+  "schema_version": "ctrl.g24.trusted-ingress-r66-acceptance-receipt.r67.v1",
+  "receipt_kind": "adjudication_closure_only",
+  "round": "R67",
+  "recorded_on": "2026-09-15",
+  "accepted_contract": {
+    "status": "accepted_for_metadata-only architecture scope",
+    "commit": "224f66520b93f0bce4a5ef61ddad22a12fd4c462",
+    "tree": "a5517b29e7d33f3b6d38be2d6c02cd96c1fb585a",
+    "machine_sha256": "b930cff4b346aad614cc0a576ab7160a7846a5f1e9f5cb27f864d286fd32a920",
+    "blobs": {
+      "docs/current/design-state.md": "3372b4bebbd060b9317b340073fe25b06e7fdd49",
+      "package.json": "081e8aebe22d08f0867caedc2d6ea52c6960297b",
+      "project-documentation/ctrl-evolution/README.md": "a13c256dc2791bb4fe3ca32abe5405a5cc6ac27f",
+      "project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r66.json": "3cfdf96182f794b5221663170413315b7630219f",
+      "project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r66.md": "eb5b875222710260ef886ca669c626bb2857bb70",
+      "project-documentation/ctrl-evolution/g24-trusted-ingress-r66-qa-record.md": "da4f476f1e6c7de410a91bff0a032b5d38a3eda3",
+      "project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md": "5e4a0647a1909de09826d6b24ce76d32ee447311",
+      "scripts/check-ctrl-g24-founder-lock.mjs": "73de8dedf78b3c0a4bef2240ae86c1924db630cd",
+      "scripts/check-ctrl-g24-trusted-ingress-r66.mjs": "6bc7f0bbc16d00676b9e8c97900397567127e034",
+      "scripts/materialize-ctrl-g24-trusted-ingress-r66.mjs": "be4fdc2ea288747f242749ee2e0b0b678b0bfec5"
+    }
+  },
+  "independent_verdicts": [
+    {
+      "reviewer": "g24r5_adjudicator",
+      "verdict": "PASS",
+      "delivery": "conversation-delivered independent verdict",
+      "cryptographic_signature": "not claimed",
+      "separate_verdict_artifact": "not created",
+      "basis": [
+        "verified 20 exact operation queries and proofs",
+        "verified the full three-key binding",
+        "verified each operation's own export and proof compatibility",
+        "verified snapshot, member and set-seal lineage",
+        "verified lifecycle proof binding",
+        "verified the fail-closed executable boundary",
+        "verified the stated outside scope"
+      ]
+    },
+    {
+      "reviewer": "g24r5_defense",
+      "verdict": "PASS",
+      "delivery": "conversation-delivered independent verdict",
+      "cryptographic_signature": "not claimed",
+      "separate_verdict_artifact": "not created",
+      "basis": [
+        "verified the exact frozen archive",
+        "verified the same 20 of 20 derivation",
+        "verified query and proof fingerprints",
+        "verified coherent lineage",
+        "verified focused checks, founder lock, kernel and clean status"
+      ]
+    }
+  ],
+  "accepted_scope": [
+    "frozen R66 metadata-only evaluator compatibility architecture",
+    "20 exact operation-class selection queries and proofs",
+    "three-key selection binding over the sealed frozen registry snapshot",
+    "per-operation export and proof-family compatibility",
+    "snapshot, member, set-seal and lifecycle-proof lineage",
+    "fail-closed boundary when executable authority is absent"
+  ],
+  "unproved_outside_scope": [
+    "live registry completeness",
+    "serializable runtime selection",
+    "executable adapter/module authority and behavior",
+    "restart/runtime/DB integration",
+    "UI/product behavior",
+    "deployment/external action"
+  ],
+  "acceptance_authority": "authorizes only moving to a separate executable-adapter implementation gate",
+  "not_authorized": [
+    "runtime changes",
+    "deployment changes",
+    "database changes",
+    "UI changes",
+    "external actions"
+  ],
+  "next_frontier": {
+    "status": "brief only; no implementation in R67",
+    "ordered_gates": [
+      "locate or define the actual evaluator module contract and founder-locked source or bundle",
+      "build an isolated deterministic harness",
+      "define and verify the registry/live adapter",
+      "stage integration behind separate authorization and verification"
+    ]
+  },
+  "contract_semantics_change": "none",
+  "runtime_database_ui_deployment_or_external_action": "none"
+}

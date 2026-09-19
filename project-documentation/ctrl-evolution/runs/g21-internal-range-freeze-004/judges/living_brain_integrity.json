@@ -1,0 +1,40 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "living_brain_integrity",
+  "criterionVersion": "living-brain-integrity:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "pass",
+  "claims": [
+    "Source records are carried into each lifecycle state by deep clone and are never rewritten or removed when claim status changes.",
+    "Challenge and supersession relations target claim IDs, reject missing, self and forward targets, and allow supersession only from a later direct correction whose subject matches the target claim.",
+    "Current views are deterministically derived from immutable receipts. They retain every claim and attach evidence ID, source locator and audience while marking only the exact target as disputed or superseded.",
+    "The two multi-claim correction fixtures preserve the valid confidence observation and model association with their original provenance and audience while retiring only the unsupported unwillingness and causal inferences.",
+    "Trusted runtime bindings freeze evidence identity, lifecycle order and claim relations, while canonical verification separately requires exact fixture bytes. Misdirected lineage, stale current views, lifecycle reversal, and joint source or oracle drift cannot pass the relevant contract.",
+    "Blind inputs use an exact field allowlist that excludes the oracle, scan nested strings for frozen oracle values, and are built only after the frozen profile population validates. History-bearing paths are excluded from the first-pass semantic allowlist, and no excluded history was encountered in this review."
+  ],
+  "evidenceLocators": [
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L487-L556",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L2563-L2692",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L3013-L3192",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L3332-L3368",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L3621-L3676",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L3780-L3805",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L4027-L4188",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L1634-L1677",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L2187-L2235",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.test.ts#L415-L488",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.test.ts#L530-L600",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.test.ts#L805-L901",
+    "63b8550387f5dab60e09aad285d103b46af39279:scripts/check-g21-internal-range.mjs#L271-L345",
+    "63b8550387f5dab60e09aad285d103b46af39279:scripts/check-g21-internal-range.mjs#L624-L925",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/rangeCouncilContract.ts#L270-L329"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-10T23:07:05.580Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}

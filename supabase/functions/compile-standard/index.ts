@@ -50,8 +50,10 @@ import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
 import { selectModel } from "../_shared/openai-utils.ts";
 import { callLLMWithFallback, providerFromModel } from "../_shared/llm-fallback.ts";
-import { checkDailySoftCap, recordAiUsage } from "../_shared/ai-usage.ts";
+import { estimateCostUsd } from "../_shared/ai-usage.ts";
 import { getUserContext } from "../_shared/user-context.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 import {
   haltVerdict,
   pairSplitRate,
@@ -98,9 +100,11 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
-
 const WEIGHTS: CriterionWeight[] = ["essential", "important", "optional", "pitfall"];
+const REQUEST_KEYS = new Set(["run_id", "request_id"]);
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const REQUEST_ID = /^[A-Za-z0-9_-]{16,120}$/;
+const MAX_REQUEST_BYTES = 2_048;
 const MAX_EXAMPLE_CHARS = 280;
 const MAX_NAME_CHARS = 80;
 const MAX_CHECK_CHARS = 240;
@@ -162,6 +166,11 @@ interface Candidate {
   itemPositions: number[];
 }
 
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -173,12 +182,33 @@ Deno.serve(async (req) => {
     });
 
   try {
+    if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+    if (!isJsonRequest(req.headers)) return json({ error: "content_type_must_be_json" }, 415);
+
+    let payload: Record<string, unknown>;
+    try {
+      const raw = await readJsonWithLimit(req, MAX_REQUEST_BYTES);
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("invalid_shape");
+      payload = raw as Record<string, unknown>;
+    } catch (error) {
+      if (error instanceof Error && error.message === "request_too_large") {
+        return json({ error: "request_too_large" }, 413);
+      }
+      return json({ error: "invalid_json" }, 400);
+    }
+    if (Object.keys(payload).some((key) => !REQUEST_KEYS.has(key))) {
+      return json({ error: "unexpected_field" }, 400);
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      throw new Error("Database configuration error (unexpected project).");
+    const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+    const rpcCapability = Deno.env.get("COMPILE_STANDARD_RPC_SECRET") ?? "";
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+      log.error("database configuration does not match the configured project");
+      return json({ error: "database_configuration_error" }, 503);
     }
+    if (rpcCapability.length < 32) return json({ error: "compile_configuration_error" }, 503);
 
     const authHeader = req.headers.get("Authorization") ?? "";
     if (!authHeader) return json({ error: "Missing Authorization header" }, 401);
@@ -191,80 +221,59 @@ Deno.serve(async (req) => {
     const userId = userData?.user?.id ?? null;
     if (userErr || !userId) return json({ error: "Unauthorized" }, 401);
 
-    // Service-role client for the background writes: the response returns
-    // before the compile finishes, so the caller's JWT is not a safe thing to be
-    // holding by then. Every insert stamps user_id explicitly and RLS remains
-    // the boundary for every read path the frontend uses.
-    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
-
-    const payload = await req.json().catch(() => ({}));
     const sortRunId = typeof payload?.run_id === "string" ? payload.run_id.trim() : "";
-    if (!sortRunId) return json({ error: "run_id is required (the sort run to compile)." }, 400);
-
-    // Ownership check through RLS, and the surface comes from the sort itself.
-    const { data: sortRun, error: sortErr } = await userClient
-      .from("harness_runs")
-      .select("id, kind, surface, status, stage, created_at")
-      .eq("id", sortRunId)
-      .maybeSingle();
-    if (sortErr) throw new Error(`harness_runs read failed: ${sortErr.message}`);
-    if (!sortRun || sortRun.kind !== "sort") {
-      return json({ error: "That is not one of your sort runs." }, 404);
+    const requestId = typeof payload?.request_id === "string" ? payload.request_id.trim() : "";
+    if (!UUID.test(sortRunId)) return json({ error: "invalid_run_id" }, 400);
+    if (!REQUEST_ID.test(requestId)) return json({ error: "request_id_required" }, 400);
+    const requestFingerprint = await sha256Hex(JSON.stringify({ run_id: sortRunId }));
+    const thresholds = {
+      gap_min: DISC_GAP_MIN,
+      reject_fail_min: REJECT_FAIL_MIN,
+      cluster_agreement_min: CLUSTER_AGREEMENT_MIN,
+      provisional_pending_data: true,
+    };
+    const { data: reservation, error: reserveError } = await userClient.rpc("reserve_compile_standard_run", {
+      p_request_id: requestId,
+      p_request_fingerprint: requestFingerprint,
+      p_sort_run_id: sortRunId,
+      p_thresholds: thresholds,
+      p_capability: rpcCapability,
+    });
+    if (reserveError || !reservation) {
+      const message = reserveError?.message ?? "unknown";
+      if (message.includes("compile_standard_request_conflict")) return json({ error: "request_id_conflict" }, 409);
+      if (message.includes("compile_standard_sort_not_owned")) return json({ error: "sort_not_found" }, 404);
+      if (message.includes("compile_standard_sort_not_ready")) return json({ error: "sort_not_ready" }, 409);
+      if (message.includes("compile_standard_incomplete_grades")) return json({ error: "grades_incomplete" }, 409);
+      if (message.includes("compile_standard_unreceipted_grades")) return json({ error: "grades_unreceipted" }, 409);
+      if (message.includes("compile_standard_daily_run_limit")) return json({ error: "daily_run_limit" }, 429);
+      if (message.includes("compile_standard_daily_spend_limit")) return json({ error: "daily_spend_limit" }, 429);
+      throw new Error(`compile_reservation_failed:${reserveError?.code ?? "unknown"}`);
     }
-
-    // Idempotency: a retried compile returns the first run, never a second one.
-    const { data: existing } = await userClient
-      .from("harness_runs")
-      .select("id, stage, status")
-      .eq("user_id", userId)
-      .eq("kind", "compile")
-      .eq("stage_detail->>sort_run_id", sortRunId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (existing?.id && existing.status !== "failed") {
-      log.info("compile-standard idempotent replay", { userId, run_id: existing.id });
+    const compileRunId = typeof reservation.run_id === "string" ? reservation.run_id : "";
+    const surface = typeof reservation.surface === "string" ? reservation.surface : "";
+    const criteriaVersion = Number(reservation.criteria_version);
+    if (!UUID.test(compileRunId) || !surface || !Number.isInteger(criteriaVersion) || criteriaVersion < 1) {
+      throw new Error("compile_reservation_invalid");
+    }
+    if (reservation.idempotent === true) {
       return json({
-        run_id: existing.id,
+        run_id: compileRunId,
         sort_run_id: sortRunId,
-        stage: existing.stage,
-        status: existing.status,
+        stage: reservation.stage,
+        status: reservation.status,
         idempotent: true,
       }, 200);
     }
 
-    const softCap = await checkDailySoftCap(admin, userId, "compile-standard");
-
-    const surface = (sortRun.surface as string | null) ?? "";
-    const { data: runRow, error: runErr } = await userClient
-      .from("harness_runs")
-      .insert({
-        user_id: userId,
-        kind: "compile",
-        surface,
-        status: "running",
-        stage: "loading",
-        stage_detail: {
-          sort_run_id: sortRunId,
-          thresholds: {
-            gap_min: DISC_GAP_MIN,
-            reject_fail_min: REJECT_FAIL_MIN,
-            cluster_agreement_min: CLUSTER_AGREEMENT_MIN,
-            provisional_pending_data: true,
-          },
-        },
-      })
-      .select("id")
-      .single();
-    if (runErr || !runRow) throw new Error(`harness_runs insert failed: ${runErr?.message ?? "unknown"}`);
-    const compileRunId = runRow.id as string;
-
-    const work = compile(admin, {
+    const work = compile(userClient, {
       compileRunId,
       sortRunId,
       userId,
       surface,
-      log: log.withContext({ run_id: compileRunId, userId }),
+      criteriaVersion,
+      rpcCapability,
+      log: log.withContext({ run_id: compileRunId }),
     });
 
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
@@ -273,10 +282,10 @@ Deno.serve(async (req) => {
       await work;
     }
 
-    return json({ run_id: compileRunId, sort_run_id: sortRunId, stage: "loading", soft_cap: softCap }, 202);
+    return json({ run_id: compileRunId, sort_run_id: sortRunId, stage: "loading", idempotent: false }, 202);
   } catch (e) {
-    log.error("compile-standard handler error", { error: e });
-    return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
+    log.error("compile-standard handler error", { error: e instanceof Error ? e.message : "unknown" });
+    return json({ error: "compile_standard_failed" }, 500);
   }
 });
 
@@ -285,6 +294,8 @@ interface CompileParams {
   sortRunId: string;
   userId: string;
   surface: string;
+  criteriaVersion: number;
+  rpcCapability: string;
   log: ReturnType<typeof createLogger>;
 }
 
@@ -292,16 +303,19 @@ interface CompileParams {
  * The background pass. Every exit writes a terminal stage: a run stuck on
  * 'probing' forever is worse than a run that says it stopped and why.
  */
-async function compile(admin: SupabaseClient, params: CompileParams): Promise<void> {
-  const { compileRunId, sortRunId, userId, surface, log } = params;
+async function compile(client: SupabaseClient, params: CompileParams): Promise<void> {
+  const { compileRunId, sortRunId, userId, surface, criteriaVersion, rpcCapability, log } = params;
   const detail: Record<string, unknown> = {};
 
   const setStage = async (stage: string, extra: Record<string, unknown> = {}) => {
     Object.assign(detail, extra);
-    await admin
-      .from("harness_runs")
-      .update({ stage, stage_detail: { ...detail }, updated_at: new Date().toISOString() })
-      .eq("id", compileRunId);
+    const { error } = await client.rpc("advance_compile_standard_run", {
+      p_run_id: compileRunId,
+      p_stage: stage,
+      p_stage_detail: { ...detail },
+      p_capability: rpcCapability,
+    });
+    if (error) throw new Error(`compile_stage_update_failed:${error.code ?? "unknown"}`);
   };
 
   const finish = async (
@@ -311,20 +325,19 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
     error?: string,
   ) => {
     Object.assign(detail, extra);
-    await admin
-      .from("harness_runs")
-      .update({
-        stage,
-        status,
-        ...(error ? { error } : {}),
-        stage_detail: { ...detail },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", compileRunId);
+    const { error: finishError } = await client.rpc("finish_compile_standard_run", {
+      p_run_id: compileRunId,
+      p_stage: stage,
+      p_status: status,
+      p_stage_detail: { ...detail },
+      p_error: error ?? null,
+      p_capability: rpcCapability,
+    });
+    if (finishError) throw new Error(`compile_finish_failed:${finishError.code ?? "unknown"}`);
   };
 
   try {
-    const { data: existingRun } = await admin
+    const { data: existingRun } = await client
       .from("harness_runs")
       .select("stage_detail")
       .eq("id", compileRunId)
@@ -332,7 +345,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
     Object.assign(detail, (existingRun?.stage_detail as Record<string, unknown>) ?? {});
 
     // --- 1. load the sort ----------------------------------------------------
-    const { data: itemRows, error: itemErr } = await admin
+    const { data: itemRows, error: itemErr } = await client
       .from("sort_items")
       .select("id, position, body, origin, surface, pair_id, pair_role, held_out, repeat_of, targets")
       .eq("session_id", sortRunId)
@@ -345,7 +358,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       return;
     }
 
-    const { data: gradeRows, error: gradeErr } = await admin
+    const { data: gradeRows, error: gradeErr } = await client
       .from("sort_grades")
       .select("item_id, verdict, why")
       .eq("user_id", userId)
@@ -443,7 +456,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       return;
     }
 
-    const { data: constructRows, error: constructErr } = await admin
+    const { data: constructRows, error: constructErr } = await client
       .from("constructs")
       .select("id, emergent_pole, contrast_pole, rationale, observable, evidence_ids")
       .eq("user_id", userId)
@@ -459,7 +472,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
     const evidenceIds = [...new Set(constructs.flatMap((c) => c.evidence_ids ?? []))].slice(0, 60);
     const quotesByEvidence = new Map<string, string>();
     if (evidenceIds.length > 0) {
-      const { data: evidenceRows } = await admin
+      const { data: evidenceRows } = await client
         .from("evidence")
         .select("id, quote, body, redacted_at")
         .eq("user_id", userId)
@@ -542,6 +555,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
     });
 
     // --- 5. one batched call: name the criteria, write the probes ------------
+    const modelStartedAt = Date.now();
     const aiResponse = await callLLMWithFallback(
       {
         messages: [
@@ -556,17 +570,29 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       { useCache: false },
     );
 
-    await recordAiUsage(admin, {
-      userId,
+    const provider = providerFromModel(aiResponse.model);
+    const latencyMs = Date.now() - modelStartedAt;
+    const estimatedCost = estimateCostUsd({
       functionName: "compile-standard",
-      provider: providerFromModel(aiResponse.model),
+      provider,
       model: aiResponse.model,
-      purpose: "compile-standard-criteria",
       promptTokens: aiResponse.usage?.prompt_tokens,
       completionTokens: aiResponse.usage?.completion_tokens,
       totalTokens: aiResponse.usage?.total_tokens,
-      status: "ok",
+      latencyMs,
     });
+    const { error: usageError } = await client.rpc("record_compile_standard_usage", {
+      p_run_id: compileRunId,
+      p_provider: provider,
+      p_model: aiResponse.model,
+      p_prompt_tokens: aiResponse.usage?.prompt_tokens ?? 0,
+      p_completion_tokens: aiResponse.usage?.completion_tokens ?? 0,
+      p_total_tokens: aiResponse.usage?.total_tokens ?? 0,
+      p_latency_ms: latencyMs,
+      p_est_cost_usd: estimatedCost,
+      p_capability: rpcCapability,
+    });
+    if (usageError) throw new Error(`usage_receipt_failed:${usageError.code ?? "unknown"}`);
 
     let parsed: { criteria?: unknown };
     try {
@@ -760,27 +786,6 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       },
     });
 
-    const { data: priorRows } = await admin
-      .from("criteria")
-      .select("id, version")
-      .eq("user_id", userId)
-      .eq("surface", surface)
-      .eq("is_current", true);
-    const priorVersion = Math.max(0, ...((priorRows ?? []) as Array<{ version: number }>).map((r) => r.version ?? 1));
-    const nextVersion = priorVersion + 1;
-
-    if ((priorRows ?? []).length > 0) {
-      // Supersede rather than delete: the unique index is partial on is_current,
-      // and the old rows are what a six-week-old argument gets settled against.
-      const { error: supersedeErr } = await admin
-        .from("criteria")
-        .update({ is_current: false })
-        .eq("user_id", userId)
-        .eq("surface", surface)
-        .eq("is_current", true);
-      if (supersedeErr) throw new Error(`criteria supersede failed: ${supersedeErr.message}`);
-    }
-
     const usedNames = new Set<string>();
     const rendered: RenderCriterion[] = [];
     const criteriaRows: Record<string, unknown>[] = [];
@@ -814,10 +819,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       };
 
       criteriaRows.push({
-        user_id: userId,
-        scope: "person",
         construct_id: candidate.constructId,
-        surface,
         name,
         check_text: candidate.checkText,
         observable: candidate.observable,
@@ -830,8 +832,6 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
         n_accepted_failing: counts.n_accepted_failing,
         disc_verdict: verdict,
         provenance,
-        version: nextVersion,
-        is_current: true,
         // Always. Blocking is earned after false positives have been measured,
         // and that is a different decision on different evidence.
         disposition: "advisory",
@@ -858,41 +858,10 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       });
     }
 
-    if (criteriaRows.length > 0) {
-      const { error: insertErr } = await admin.from("criteria").insert(criteriaRows);
-      if (insertErr) throw new Error(`criteria insert failed: ${insertErr.message}`);
-    }
-
-    // Write the contrast pole back in their own words and, where the row's own
-    // CHECKs allow it, mark the construct compiled so a later sort knows it has
-    // been through this once. The pole is the valuable half: it came from a why
-    // line on a piece they turned down, and until now the row had one pole.
-    for (const keeper of capped) {
-      const constructId = keeper.candidate.constructId;
-      const pole = keeper.candidate.contrastPole;
-      const { error: statusErr } = await admin
-        .from("constructs")
-        .update({
-          ...(pole ? { contrast_pole: pole } : {}),
-          status: "compiled",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", userId)
-        .eq("id", constructId);
-      if (!statusErr) continue;
-      // elicited_needs_evidence wants two evidence rows and an emergent
-      // construct from one why line has one. Losing the status label costs
-      // nothing; losing the pole would lose the person's words, so retry it
-      // on its own.
-      log.warn("construct status update refused, keeping the pole", { error: statusErr });
-      if (pole) {
-        await admin
-          .from("constructs")
-          .update({ contrast_pole: pole, updated_at: new Date().toISOString() })
-          .eq("user_id", userId)
-          .eq("id", constructId);
-      }
-    }
+    const constructUpdates = capped.map((keeper) => ({
+      construct_id: keeper.candidate.constructId,
+      contrast_pole: keeper.candidate.contrastPole,
+    }));
 
     // --- 9. the standard as an artefact (CH-18) ------------------------------
     // Everything that did not make the final rubric lands in the profile as
@@ -925,7 +894,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
 
     let ownerName = "";
     try {
-      const ctx = await getUserContext(admin, userId);
+      const ctx = await getUserContext(client, userId);
       ownerName = (ctx.name ?? "").trim();
     } catch (e) {
       log.warn("owner name lookup failed", { error: e });
@@ -940,7 +909,7 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       untestedCount: awaiting.length,
       training,
       gradeByItem,
-      version: nextVersion,
+      version: criteriaVersion,
     });
 
     // ONE door to the label, and it is releaseVerdict (stage 5). Nothing has
@@ -979,62 +948,56 @@ async function compile(admin: SupabaseClient, params: CompileParams): Promise<vo
       },
     });
 
-    const { data: artifactRow, error: artifactErr } = await admin
-      .from("generated_artifacts")
-      .insert({
-        user_id: userId,
-        kind: "standard",
-        name: standardArtifactName(surface),
-        body: markdown,
-        metadata: {
-          criteria_version: nextVersion,
-          label,
-          surface,
-          sort_run_id: sortRunId,
-          compile_run_id: compileRunId,
-          criteria_kept: rendered.length,
-          criteria_awaiting: awaiting.length,
-          triage: triage.triage,
-          self_agreement: { matched: agreement.matched, total: agreement.total },
-          pair_split: { split: split.split, total: split.total, rate: split.rate },
-          held_out_graded: heldOutGraded,
-          // Absent on purpose until a measure stage runs. A missing baseline is
-          // information; a fabricated one is what this chain exists to prevent.
-          // All three are written as explicit nulls rather than omitted, so a
-          // reader can tell "measured and absent" from "this writer is older
-          // than the field".
-          precision: null,
-          recall: null,
-          tnr: null,
-          confusion: null,
-          release_reason: release.reason,
-          rendered_at: new Date().toISOString(),
-        },
-      })
-      .select("id")
-      .single();
-    if (artifactErr) {
-      // The rubric is written and real; losing the rendered file is a smaller
-      // failure than losing the criteria, so it is reported and not thrown.
-      log.warn("generated_artifacts insert failed", { error: artifactErr });
-    }
-
     const untestedCount = tested.filter((t) => t.verdict === "untested").length;
     const deletedCount = tested.filter((t) => t.verdict === "delete").length;
-
-    await finish("ready", "done", {
+    const artifact = {
+      name: standardArtifactName(surface),
+      body: markdown,
+      metadata: {
+        criteria_version: criteriaVersion,
+        label,
+        surface,
+        sort_run_id: sortRunId,
+        compile_run_id: compileRunId,
+        criteria_kept: rendered.length,
+        criteria_awaiting: awaiting.length,
+        triage: triage.triage,
+        self_agreement: { matched: agreement.matched, total: agreement.total },
+        pair_split: { split: split.split, total: split.total, rate: split.rate },
+        held_out_graded: heldOutGraded,
+        precision: null,
+        recall: null,
+        tnr: null,
+        confusion: null,
+        release_reason: release.reason,
+        rendered_at: new Date().toISOString(),
+      },
+    };
+    const finalDetail = {
+      ...detail,
       outcome: "ready",
       kept: rendered.length,
       deleted: deletedCount,
       untested: untestedCount,
       merged: clustered.merges.length,
       capped_out: cappedOut,
-      criteria_version: nextVersion,
+      criteria_version: criteriaVersion,
       label,
-      artifact_id: artifactRow?.id ?? null,
       gap_distribution: gapDistribution,
       criterion_rejects: rejects,
+    };
+    const { data: finalization, error: finalizationError } = await client.rpc("finalize_compile_standard_run", {
+      p_run_id: compileRunId,
+      p_sort_run_id: sortRunId,
+      p_criteria: criteriaRows,
+      p_construct_updates: constructUpdates,
+      p_artifact: artifact,
+      p_stage_detail: finalDetail,
+      p_capability: rpcCapability,
     });
+    if (finalizationError || !finalization) {
+      throw new Error(`compile_finalization_failed:${finalizationError?.code ?? "unknown"}`);
+    }
 
     log.info("standard compiled", {
       constructs: constructs.length,

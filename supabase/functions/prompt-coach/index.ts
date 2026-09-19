@@ -1,5 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.3";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -48,10 +50,73 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const { prompt } = await req.json();
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+  if (!isJsonRequest(req.headers)) {
+    return new Response(JSON.stringify({ error: 'JSON required' }), {
+      status: 415,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
 
-    if (!prompt || typeof prompt !== 'string') {
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const authorization = req.headers.get('Authorization') ?? '';
+    if (!supabaseUrl || !anonKey || !authorization) {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const supabase = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authorization } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData.user) {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    if (!serviceRoleKey) {
+      return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const admin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: limitData, error: limitError } = await admin.rpc('check_rate_limit', {
+      p_rate_limit_key: `prompt-coach:user:${authData.user.id}`,
+      p_max_requests: 20,
+      p_window_seconds: 3_600,
+    });
+    const limit = Array.isArray(limitData) ? limitData[0] : limitData;
+    if (limitError || typeof limit?.allowed !== 'boolean') {
+      return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (!limit.allowed) {
+      return new Response(JSON.stringify({ error: 'Too many requests. Try again later.' }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { prompt } = await readJsonWithLimit(req, 8_192) as { prompt?: unknown };
+
+    if (!prompt || typeof prompt !== 'string' || prompt.length > 6_000) {
       throw new Error('prompt is required and must be a string');
     }
 

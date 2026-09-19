@@ -1,0 +1,274 @@
+{
+  "schema_version": "ctrl.product-system.g24.v1",
+  "status": "proposed_founder_review",
+  "date": "2026-09-11",
+  "state_route": "project-documentation/ctrl-evolution/README.md",
+  "product_lock": {
+    "tag": "ctrl-product-spine-g23-approved-r2",
+    "gate": "project-documentation/ctrl-evolution/design/g23-product-spine-r2-founder-gate.md",
+    "artifact": "public/g23-product-spine-r2.html"
+  },
+  "authority": {
+    "allowed": [
+      "local_architecture",
+      "machine_contract",
+      "proof_sequence"
+    ],
+    "closed": [
+      "production_write",
+      "customer_data",
+      "account_creation",
+      "email_send",
+      "connector_creation",
+      "database_branch_creation",
+      "deployment",
+      "merge",
+      "feature_enablement",
+      "release",
+      "legacy_backend_deletion"
+    ]
+  },
+  "product": {
+    "spine": "private_ai_brain_built_with_one_leader_during_mindmake_thirty_day_relationship",
+    "scope": "consequential_ai_transition_decisions",
+    "payer_value": "a_more_capable_leader_producing_useful_organisational_and_commercial_change",
+    "leader_value": "owned_judgement_that_compounds_across_real_work",
+    "roles": {
+      "brain": {
+        "right": "prepare_and_propose",
+        "forbidden": "promote_own_inference_or_make_call"
+      },
+      "krish": {
+        "right": "challenge_and_control_interruption",
+        "forbidden": "silently_author_leader_view_or_call"
+      },
+      "leader": {
+        "right": "set_purpose_judge_decide_polish_and_own",
+        "forbidden": "none_beyond_normal_law_and_engagement_boundaries"
+      }
+    }
+  },
+  "non_goals": [
+    "generic_business_advice",
+    "ai_persuasion",
+    "content_feed_as_product",
+    "company_brain_without_personal_authority",
+    "questionnaire_as_product",
+    "e_learning",
+    "named_person_employment_recommendations",
+    "activity_or_completeness_scoreboard",
+    "graph_theatre",
+    "automatic_memory_promotion",
+    "github_as_hot_database",
+    "claude_as_second_brain_authority",
+    "autonomous_customer_messaging_v1"
+  ],
+  "memory_scopes": [
+    "run",
+    "session_or_case",
+    "person",
+    "company_or_project",
+    "product_learning"
+  ],
+  "canonical_kernel": [
+    "source",
+    "assertion",
+    "brain_item",
+    "decision",
+    "learning_proposal",
+    "correction_and_repair",
+    "release"
+  ],
+  "runtime_layers": [
+    {
+      "name": "supabase_postgres",
+      "role": "canonical_live_state"
+    },
+    {
+      "name": "encrypted_object_storage",
+      "role": "canonical_raw_source_bytes"
+    },
+    {
+      "name": "derived_retrieval_projections",
+      "role": "disposable_rebuildable_indexes_and_cache"
+    },
+    {
+      "name": "github_or_zip_release",
+      "role": "portable_customer_owned_projection"
+    }
+  ],
+  "current_brain_substrate": {
+    "standing": "confirmed_empty_and_disconnected",
+    "table_count": 11,
+    "tables": [
+      "brain_workspaces",
+      "brain_workspace_roles",
+      "brain_audience_grants",
+      "brain_sources",
+      "brain_assertions",
+      "brain_items",
+      "brain_item_versions",
+      "brain_item_version_assertions",
+      "brain_relationships",
+      "brain_relationship_versions",
+      "brain_relationship_version_assertions"
+    ],
+    "all_rls_enabled": true,
+    "all_zero_rows_at_readback": true,
+    "runtime_reader_or_writer_present": false
+  },
+  "model_tasks": [
+    "source_qualifier",
+    "public_researcher",
+    "decision_framer",
+    "question_planner",
+    "route_architect",
+    "evidence_planner_and_retriever",
+    "independent_challenger",
+    "reconciler",
+    "learning_compiler",
+    "repair_planner",
+    "context_compiler",
+    "release_compiler",
+    "evaluator_council"
+  ],
+  "surfaces": [
+    {
+      "id": "operator_portfolio",
+      "purpose": "select_the_exact_customer_and_work_that_earned_attention",
+      "entry": "engagement_queue",
+      "exit": "selected_customer_and_work_object",
+      "data_dependency": "engagement_state_and_intervention_candidates",
+      "verification_signal": "identity_collision_fails_closed_and_priority_is_plain"
+    },
+    {
+      "id": "operator_customer_room",
+      "purpose": "prepare_challenge_and_control_outreach",
+      "entry": "selected_customer_and_live_decision",
+      "exit": "session_plan_question_source_request_or_quiet",
+      "data_dependency": "full_authorised_brain_case_and_evidence_projection",
+      "verification_signal": "core_desktop_state_is_no_scroll_and_every_action_changes_state"
+    },
+    {
+      "id": "leader_companion",
+      "purpose": "handle_one_high_value_current_moment",
+      "entry": "secure_mobile_email_or_in_session_handoff",
+      "exit": "answer_correction_deferral_or_owned_call",
+      "data_dependency": "customer_safe_projection_and_one_intervention",
+      "verification_signal": "one_purpose_one_primary_action_on_first_view"
+    },
+    {
+      "id": "decision_room",
+      "purpose": "reconcile_and_own_a_consequential_call",
+      "entry": "framed_case_with_human_prior",
+      "exit": "owned_call_and_zero_or_one_learning_proposal",
+      "data_dependency": "routes_evidence_audit_reconciliation_and_authority",
+      "verification_signal": "leader_can_explain_why_the_call_is_theirs"
+    },
+    {
+      "id": "capture_membrane",
+      "purpose": "add_material_without_metadata_administration",
+      "entry": "paste_voice_share_upload_or_forward",
+      "exit": "source_safe_in_private_staging_with_receipt",
+      "data_dependency": "source_envelope_object_vault_identity_duplicate_and_safety_checks",
+      "verification_signal": "one_gesture_normal_paste_and_failure_preserves_source"
+    },
+    {
+      "id": "living_brain",
+      "purpose": "inspect_current_judgement_uncertainty_change_and_later_use",
+      "entry": "relevant_item_current_portrait_or_map",
+      "exit": "understanding_correction_scoped_share_or_return_to_work",
+      "data_dependency": "accepted_versions_relations_evidence_repair_and_use_history",
+      "verification_signal": "portrait_and_map_resolve_same_canonical_references"
+    },
+    {
+      "id": "claude_and_work_tool_bridge",
+      "purpose": "use_bounded_brain_context_where_work_happens",
+      "entry": "explicit_task_and_selected_customer",
+      "exit": "work_completed_or_returned_with_provenance",
+      "data_dependency": "purpose_capsule_version_watermark_exclusions_and_receipt",
+      "verification_signal": "fallback_context_is_intelligible_without_unresolved_references"
+    },
+    {
+      "id": "ownership_and_release",
+      "purpose": "deliver_a_comprehensible_portable_brain",
+      "entry": "accepted_release_request",
+      "exit": "verified_download_optional_private_repository_and_import_proof",
+      "data_dependency": "accepted_state_audience_split_and_evidence_manifest",
+      "verification_signal": "deterministic_bytes_and_two_clean_room_imports"
+    }
+  ],
+  "first_vertical_slice": {
+    "id": "the_crossing",
+    "fixture_namespace": "synthetic_fixture",
+    "decisions_required": 2,
+    "decisions_materially_different": true,
+    "learning_proposal_maximum": 1,
+    "customer_questions_visible_at_once": 1,
+    "includes": [
+      "source_staging",
+      "human_prior",
+      "causally_distinct_routes",
+      "one_operator_controlled_question",
+      "minimal_mobile_answer",
+      "owned_call",
+      "learning_authority",
+      "cross_decision_reuse",
+      "correction_and_repair",
+      "current_portrait_and_living_map",
+      "readable_claude_package_and_return",
+      "deterministic_release_and_reimport"
+    ]
+  },
+  "evidence_namespaces": [
+    {
+      "id": "real_public",
+      "real_named_identity": true,
+      "synthetic_private_material_allowed": false
+    },
+    {
+      "id": "consented_real",
+      "real_named_identity": true,
+      "synthetic_private_material_allowed": false
+    },
+    {
+      "id": "synthetic_fixture",
+      "real_named_identity": false,
+      "synthetic_private_material_allowed": true
+    },
+    {
+      "id": "anonymous_consented",
+      "real_named_identity": false,
+      "synthetic_private_material_allowed": false
+    }
+  ],
+  "north_star_hypothesis": {
+    "name": "qualified_judgement_transfer",
+    "standing": "proposed_unproven",
+    "customer_scoreboard": false,
+    "requires_materially_different_decisions": true,
+    "requires_authorised_judgement": true,
+    "requires_leader_review": true,
+    "requires_correction_survival": true
+  },
+  "permanent_council": [
+    "human_agency",
+    "epistemic_integrity",
+    "subject_audience_and_lifecycle_safety",
+    "consequential_usefulness",
+    "living_brain_integrity",
+    "human_comprehension_and_access",
+    "behavioural_and_implementation_reality"
+  ],
+  "gates": [
+    "product_system_lock",
+    "data_and_service_proof",
+    "intelligence_proof",
+    "experience_proof",
+    "complete_slice",
+    "founder_account",
+    "assisted_pilot",
+    "cutover"
+  ],
+  "next_action": "implement_headless_crossing_locally_against_deterministic_fixtures_and_existing_g16_g17_contracts_after_founder_approval"
+}

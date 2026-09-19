@@ -1,0 +1,91 @@
+{
+  "schema_version": "ctrl.g25.restart-operational-boundary.r42.v1",
+  "record_id": "G25-RESTART-OPERATIONAL-BOUNDARY-R42",
+  "status": "dormant_live_boundary_specified",
+  "depends_on": [
+    "G25-RECONSENT-ORCHESTRATOR-R41",
+    "G25-RUNTIME-CALLER-INVENTORY-R34"
+  ],
+  "endpoint": {
+    "method": "POST",
+    "authentication": "verified subject JWT only",
+    "max_json_bytes": 2048,
+    "cors": "configured product origins only",
+    "model_calls": 0,
+    "browser_operations": 1,
+    "internal_sequence": [
+      "authenticate_and_validate_R37",
+      "reserve_or_converge_R36",
+      "create_or_converge_R38",
+      "return_bounded_R41_standing"
+    ]
+  },
+  "rate_limits": {
+    "subject_workspace_15_minutes": 5,
+    "subject_24_hours": 20,
+    "response_code": "restart_rate_limited",
+    "http_status": 429,
+    "existence_leak": false,
+    "idempotency_authority": "R39 and R40 database convergence, never the limiter"
+  },
+  "telemetry": {
+    "allowed": [
+      "event name",
+      "release and route version",
+      "bounded outcome code",
+      "duration bucket",
+      "retry standing",
+      "keyed correlation digest"
+    ],
+    "forbidden": [
+      "bearer token",
+      "email",
+      "raw user or workspace UUID",
+      "request body",
+      "statement text",
+      "database error text",
+      "Brain content",
+      "old or new custody identity"
+    ],
+    "consent_record": false
+  },
+  "alerts": [
+    "any downstream contract mismatch",
+    "any returned scope identity mismatch",
+    "any uniqueness invariant failure",
+    "reserved-not-created unresolved for five minutes",
+    "failure rate above five percent over fifteen minutes with at least twenty attempts",
+    "p95 database duration above five seconds with at least twenty attempts"
+  ],
+  "rollout": [
+    "Supabase-local migration, grant, rollback and concurrency rehearsal",
+    "synthetic operator-only probes",
+    "one internal authenticated subject restart",
+    "one explicitly consenting pilot workspace",
+    "separate evidence-based decision for each additional workspace"
+  ],
+  "rollback": {
+    "first_action": "disable server flag",
+    "preserve": [
+      "accepted consent reservations",
+      "scope creation receipts",
+      "old erasure tombstones",
+      "already created new scopes",
+      "pending repair standing"
+    ],
+    "forbidden": [
+      "table drops",
+      "erasure reversal",
+      "consent-history edits",
+      "backup restore over newer human actions"
+    ]
+  },
+  "next_gate": "Extend whole-Brain deletion discovery to storage objects, provider receipts and non-FK identifiers while the runtime gates remain blocked by the missing container and connection-pool environment.",
+  "not_authorized": [
+    "creating or deploying the live endpoint",
+    "migration creation or execution",
+    "linked or production database use",
+    "customer rollout",
+    "deployment, merge or release"
+  ]
+}

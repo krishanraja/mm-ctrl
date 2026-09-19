@@ -1,0 +1,43 @@
+{
+  "schema_version": "ctrl.g25.provider-closure-facts.r62.v1",
+  "contract_id": "G25-PROVIDER-CLOSURE-FACTS-R62",
+  "status": "orthogonal_provider_closure_semantics_proved_persistence_closed",
+  "depends_on": [
+    "G25-PROVIDER-ERASURE-REVIEW-PLAN-R61"
+  ],
+  "implementation": {
+    "evaluator": "supabase/functions/_shared/provider-closure-facts.r62.ts",
+    "tests": "supabase/functions/_shared/provider-closure-facts.r62.test.ts",
+    "checker": "scripts/check-ctrl-g25-provider-closure-facts-r62.mjs"
+  },
+  "obligations": [
+    "payload_disposition",
+    "operational_deletion",
+    "residual_retention_boundary",
+    "external_copy_boundary"
+  ],
+  "proved_locally": [
+    "payload, provider object, regulated record and external copy are independent scopes",
+    "verified no-retention and policy expiry satisfy payload disposition without claiming provider-object deletion",
+    "operational deletion and regulated residual retention can be true together",
+    "CTRL completion can coexist with an external recipient copy",
+    "verification and operational failures remain visible until later recovery evidence",
+    "recovery without prior failure, wrong scope and contradictory payload outcomes are rejected",
+    "failure history remains append-only while a later success can satisfy the obligation",
+    "every result has execution authority none"
+  ],
+  "bounded_claim": "R62 proves pure orthogonal closure semantics. It stores no facts, mutates no R49 candidate and does not authorize provider or database action.",
+  "next_gate": "Persist R62 facts in a dormant append-only candidate with function-only writes and prove compound Stripe, Resend and failure-recovery histories in PostgreSQL.",
+  "authority": {
+    "permits": [
+      "local pure evaluator and unit tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "live receipt, provider or deletion edit",
+      "provider call or database connection",
+      "deployment, merge or release"
+    ]
+  }
+}

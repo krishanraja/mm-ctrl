@@ -1,0 +1,31 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "human_agency",
+  "criterionVersion": "human-agency:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "pass",
+  "claims": [
+    "The model-facing contract fixes the diagnostic at responsibility gate 1 and permits framing only. It explicitly forbids consequential recommendations or execution, durable-truth promotion and named-employee assessment, while reserving purpose, standards, exceptions and the final call to humans.",
+    "Across the care, research, manufacturing and story families at all three internal depths, the frozen boundaries assign service, quality, commercial, role, customer-accountability, investment and creative standards to accountable human roles. AI is limited to preparing analysis, tests or schedules inside human gates and rejection rights.",
+    "Every permitted answer exposes a declared select, stop, bound or reshape effect driven by the human answer. Unknown answers cannot select a route and instead preserve the consequential pause while requesting evidence, so the contract prepares the decision without committing it.",
+    "The manufacturing customer-impact question offers only human final-call owners. The profile validator rejects AI, system, model, automation or agent as a final-call option, and the frozen mutation checks exercise that rejection.",
+    "Role redesign remains separate from named-person employment judgement. The manufacturing correction, oracle boundary, forbidden claims, model task and exact authority checks prevent a frustration statement or system output from deciding who should leave."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md#Human-Agency",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:249-255,2909-2918,4208-4219,4350-4395",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:728-925,1129-1325,1540-1747,1999-2208",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2267-2579,3631-3718,3826-3855",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:117-149,168-213,654-721,986-1031",
+    "scripts/check-g21-internal-range.mjs:117-123,621-681,1092-1132",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json:questions[*].decisionFocus,questions[*].answerContract.routeEffects,questions[*].answerContract.unknownRouteEffect"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-11T00:43:05.889Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}

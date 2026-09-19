@@ -1,0 +1,143 @@
+{
+  "schema_version": "ctrl.g25.anonymous-reader-hardening-proof.r89.v1",
+  "contract_id": "G25-ANONYMOUS-READER-HARDENING-PROOF-R89",
+  "status": "isolated_subject_boundary_passed_production_unchanged",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-EXPOSURE-R82",
+    "G25-AUTH-TRIGGER-AND-TRIGGER-ACL-PROOF-R87",
+    "G25-DEPLOYED-RPC-DEPENDENCY-INDEX-R88"
+  ],
+  "surface": {
+    "target_count": 8,
+    "literal_deployed_caller_count": 1,
+    "literal_deployed_caller": "extract-user-context -> get_pending_verifications",
+    "current_repository_browser_caller": "src/hooks/useUserMemory.ts -> get_pending_verifications",
+    "production_role_policy_dependency_count": 5,
+    "isolated_role_policy_dependency_count": 3
+  },
+  "dispositions": {
+    "pure_invoker": [
+      "calculate_bootstrap_ci(numeric[],numeric,integer)"
+    ],
+    "service_only": [
+      "calculate_conversion_metrics(uuid)",
+      "has_role(uuid,text)",
+      "hash_company_identifier(text)"
+    ],
+    "subject_bound_authenticated_and_service": [
+      "get_pending_verifications(uuid)"
+    ],
+    "subject_bound_role_helper": [
+      "has_role(uuid,app_role)"
+    ],
+    "intentionally_public_minimal_lookup": [
+      "get_intake_for_registration(uuid)",
+      "get_share_card(uuid)"
+    ]
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_security_definer_anonymous_reader_hardening_r89.sql",
+    "sha256": "e547aa13fcc1a7b9c6ef6a35ccbc82751729ea080654623e8333c2e34ddfeb59",
+    "verification_path": "supabase/candidates/g25_security_definer_anonymous_reader_verification_r89.sql",
+    "verification_sha256": "30d6a41248acbdf2e2ddd1b3fdfa5fac8e1517963cd6f601a326f07c5cb3328a",
+    "runtime_smoke_path": "supabase/tests/database/g25_security_definer_anonymous_reader_r89.test.sql",
+    "runtime_smoke_sha256": "251095ee6b82d8e8164176a8d83d90e696304738ca0189875c04fc7cfa8bae37",
+    "isolated_migrations": [
+      "g25_security_definer_anonymous_reader_hardening_r89",
+      "g25_security_definer_anonymous_reader_runtime_smoke_r89"
+    ]
+  },
+  "isolated_verification": {
+    "target_count": 8,
+    "resolved_count": 8,
+    "definer_match_count": 8,
+    "anon_acl_match_count": 8,
+    "authenticated_acl_match_count": 8,
+    "service_acl_match_count": 8,
+    "public_denied_count": 8,
+    "pending_subject_guard_present": true,
+    "pending_service_route_present": true,
+    "role_subject_guard_present": true,
+    "role_service_route_present": true,
+    "definition_digests": {
+      "calculate_bootstrap_ci(numeric[],numeric,integer)": "94364e74979612de5e52d166ab1b8cd9",
+      "calculate_conversion_metrics(uuid)": "df9c25b9174579c139f3affc597ad663",
+      "get_intake_for_registration(uuid)": "20dc77afc1dfb7f7b554e8afdbee996b",
+      "get_pending_verifications(uuid)": "8e14b094b48208ee9b53aea064713eea",
+      "get_share_card(uuid)": "fda192765d5b9792ce48832fd10fa6eb",
+      "has_role(uuid,app_role)": "27fb57c94990e1e8b76993c8c5639e60",
+      "has_role(uuid,text)": "170d2134c3fe0537d88cc098b4b9d3ef",
+      "hash_company_identifier(text)": "738e182bbce81877a4966a006423ac2b"
+    }
+  },
+  "runtime_smoke": {
+    "migration": "g25_security_definer_anonymous_reader_runtime_smoke_r89",
+    "result": "pass",
+    "channel": "isolated_database_with_simulated_jwt_claim_context",
+    "authenticated_self_memory_read": true,
+    "authenticated_cross_subject_memory_read_blocked": true,
+    "authenticated_self_role_read": true,
+    "authenticated_cross_subject_role_enumeration_blocked": true,
+    "service_memory_read_preserved": true,
+    "service_role_read_preserved": true,
+    "fixture_counts_after": {
+      "auth_users": 0,
+      "profiles": 0,
+      "user_roles": 0,
+      "memory_facts": 0
+    }
+  },
+  "advisor_progress": {
+    "after_r87": {
+      "anonymous_security_definer_executable": 17,
+      "authenticated_security_definer_executable": 21
+    },
+    "after_r89": {
+      "anonymous_security_definer_executable": 12,
+      "authenticated_security_definer_executable": 17
+    },
+    "closed_by_r89": {
+      "anonymous": 5,
+      "authenticated": 4
+    },
+    "unrelated_findings_unchanged": {
+      "rls_enabled_no_policy": 24,
+      "extension_in_public": 2
+    }
+  },
+  "production_postcheck": {
+    "target_count": 8,
+    "anon_allowed_count": 8,
+    "authenticated_allowed_count": 8,
+    "service_allowed_count": 8,
+    "definitions_match_pre_change_digests": true,
+    "writes": 0
+  },
+  "bounded_claim": "The isolated recovery project now blocks cross-subject pending-memory reads and role enumeration while preserving self reads, trusted service reads, public registration and share lookups, pure computation and existing role-policy dependencies. This does not prove PostgREST transport behavior, authorize production application or disposition the remaining privileged functions.",
+  "acceptance_gate": {
+    "isolated_acl_verification_passed": true,
+    "isolated_subject_boundary_runtime_smoke_passed": true,
+    "fixtures_fully_cleaned": true,
+    "production_unchanged": true,
+    "all_45_routes_dispositioned": false,
+    "production_mutation_ready": false
+  },
+  "source_references": [
+    "https://supabase.com/docs/guides/database/functions",
+    "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+  ],
+  "authority": {
+    "isolated_target_writes": [
+      "one eight-function hardening migration",
+      "one self-cleaning two-user runtime smoke migration"
+    ],
+    "persistent_fixture_rows": 0,
+    "production_writes": 0,
+    "forbids": [
+      "production function or ACL mutation",
+      "function retirement",
+      "merge, cutover or release"
+    ]
+  }
+}

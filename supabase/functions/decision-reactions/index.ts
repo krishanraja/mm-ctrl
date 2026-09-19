@@ -16,13 +16,12 @@ import { createLogger } from "../_shared/logger.ts";
 import { proposeReaction } from "../decision-engine/reaction.ts";
 import { hasNumericEvidence, type EvidenceLite } from "../_shared/reaction-extraction.ts";
 import { distillKeyPoints, type KeyPointInput } from "../_shared/evidence-keypoint.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
-
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const log = createLogger("decision-reactions");
@@ -31,7 +30,10 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) return json({ error: "Database configuration error." }, 500);
+  const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+  if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+    return json({ error: "Database configuration error." }, 500);
+  }
 
   // Service-role only.
   const auth = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");

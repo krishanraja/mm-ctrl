@@ -1,0 +1,30 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "questionPackSha256": "49a67c424238be1fe48dcaadc3bac785fba7b0a7dc9dd4d84d4d6beccaf46dd6",
+  "reviewerRole": "independent_adult_answerability_proxy",
+  "reviews": [
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_a.json",
+      "sha256": "5c77e3836d918d2be4371baa44c3a2c5b480a707f80194713a2b017734aa48d2",
+      "overallVerdict": "fail",
+      "passedQuestions": 11,
+      "failedQuestions": 1
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_b.json",
+      "sha256": "e6225872b092c3feb9ee25bdc80444bc13e7bf89eefd396488041d99bf661e25",
+      "overallVerdict": "pass",
+      "passedQuestions": 12,
+      "failedQuestions": 0
+    }
+  ],
+  "sharedFailures": [],
+  "individualFailures": [
+    {
+      "review": "adult_proxy_a.json",
+      "profileId": "RANGE-INTERNAL-FORGE-I3",
+      "ambiguity": "The human named by the escalation rule"
+    }
+  ],
+  "boundary": "These adult proxy screens test literal clarity and answerability only. They are not child testing and cannot clear any specialist council criterion. A nonshared failure is retained as a wording watchpoint, not averaged away or promoted into a council veto."
+}

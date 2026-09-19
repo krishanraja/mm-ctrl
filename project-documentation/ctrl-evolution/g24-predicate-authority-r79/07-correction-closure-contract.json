@@ -1,0 +1,35 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.correction-closure.v1",
+  "module_id": "correction_closure_contract",
+  "supersedes_r78_sections": [
+    "correction_invalidator.completion_proof"
+  ],
+  "dependency_graph_proof": {
+    "required_fields": ["graph_head", "graph_epoch", "sorted_dependency_ids", "sorted_dependency_fingerprints", "dependency_set_seal", "edge_kinds"],
+    "edge_kinds_exact": ["content_dependency", "permission_dependency", "scope_dependency"],
+    "duplicates": "reject",
+    "omissions": "repair_incomplete",
+    "extras": "reject",
+    "stale_head": "repair_incomplete"
+  },
+  "terminal_receipt_join": {
+    "join_key": ["dependency_id", "dependency_fingerprint"],
+    "exactly_one_terminal_receipt_per_sealed_dependency": true,
+    "duplicate_receipt": "reject",
+    "missing_receipt": "repair_incomplete",
+    "extra_receipt": "reject",
+    "count_equality_without_identity_equality": "repair_incomplete"
+  },
+  "terminal_statuses": ["rebuilt", "quarantined", "review_required", "unaffected_with_reason", "erased"],
+  "completion_requires": [
+    "historical_source_proof_and_transition_receipt_preserved",
+    "consumed_precondition_proof_challenged_and_non_steering",
+    "every_content_permission_and_scope_dependency_traversed",
+    "every_affected_descendant_blocked_from_current_steering",
+    "every_sealed_dependency_has_exactly_one_terminal_receipt",
+    "no_extra_or_duplicate_terminal_receipt",
+    "no_eligible_current_path_retains_superseded_authority"
+  ],
+  "compensation_reopen_or_revalidation_requires_new_named_human_authority": true,
+  "history_rewrite": "forbidden"
+}

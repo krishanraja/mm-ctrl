@@ -1,0 +1,35 @@
+{
+  "schema_version": "ctrl.council.cross-examination-freeze.v1",
+  "run_id": "g24-r4-architecture-council-003",
+  "frozen_at": "2026-09-12",
+  "first_pass_seal_sha256": "67869c759a68ed7e31745a8c0a9416542ec37016d0509d31ab3eaf2ff4342140",
+  "cross_examination_brief": {
+    "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/cross-examination-brief.md",
+    "sha256": "e7b77bc180726281aaa2e20765d247f058beb1acf449d0cb04f496ed23edfb3c"
+  },
+  "records": [
+    {
+      "role": "standards_prosecution",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/standards-prosecution.md",
+      "sha256": "8dea6d24cc2a01f8d6a09ebc773f71b468e30ba20c95763c20e1200bd3ff3fa2",
+      "recommendation": "VETO",
+      "alleged_current_gate_defects": 1
+    },
+    {
+      "role": "veto_defense",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/veto-defense.md",
+      "sha256": "008e83b2836ec19decf41e4821f84a231ad0b9d17bf5b50ff7ff0bc9ce5c7269",
+      "recommendation": "PASS_WITH_WATCHPOINTS",
+      "sustained_current_gate_defects": 0
+    },
+    {
+      "role": "founder_calibration",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/founder-calibration.md",
+      "sha256": "2b2b039b48b21c024182414840554d183bcc335adeceb6145f0d87b7a251e66f",
+      "recommendation": "LIKELY_FOUNDER_ALIGNED",
+      "voting": false
+    }
+  ],
+  "frozen_before_final_adjudication": true,
+  "external_actions_opened": []
+}

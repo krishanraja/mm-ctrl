@@ -7,20 +7,23 @@
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
+// Node-only Postgres suites share this setup file, so browser mocks must remain
+// conditional rather than preventing those suites from collecting.
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+}
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -39,9 +42,11 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock,
+  });
+}
 
 // Mock sessionStorage
 const sessionStorageMock = (() => {
@@ -60,9 +65,11 @@ const sessionStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, 'sessionStorage', {
-  value: sessionStorageMock,
-});
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'sessionStorage', {
+    value: sessionStorageMock,
+  });
+}
 
 // Reset mocks before each test
 beforeEach(() => {
@@ -70,5 +77,4 @@ beforeEach(() => {
   localStorageMock.clear();
   sessionStorageMock.clear();
 });
-
 

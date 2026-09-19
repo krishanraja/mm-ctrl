@@ -1,0 +1,7 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "artifactCommit": "ad561fce1d82bcdcdfea800ad4e4aed64e2a5173",
+  "manifestPath": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json",
+  "verification": "All ten input-manifest file hashes, the manifest-order composite and the twelve question records were recomputed before review. The same artifact bytes are anchored at artifactCommit.",
+  "reason": "Resolve every Run 003 artifact path at artifactCommit so review evidence remains stable even if a later run repairs the source."
+}

@@ -1,7 +1,7 @@
 /**
  * build-sort - stage 2 of the harness chain, the build half.
  *
- * POST { surface, depth?: "short" | "full", session_label?, context?, request_id? }
+ * POST { surface, depth?: "short" | "full", session_label?, context?, request_id }
  *   -> 202 { run_id, stage: "planning" }
  *
  * Assembles one forced-sort deck. The FULL deck is 33 screens: 20 synthesised
@@ -21,13 +21,15 @@
  * Shape of the response is deliberate (CH-15). Generating ten matched pairs is
  * one large model call; the chain has no run state to poll unless we create it,
  * and section 9 bans covering a minute of work with a spinner. So a
- * harness_runs row is created first, returned immediately, and the work runs in
+ * harness_runs row is reserved atomically, returned immediately, and the work runs in
  * EdgeRuntime.waitUntil writing `stage` as it goes:
  *
  *   planning -> generating_pairs -> assembling -> ready
  *                                             \-> failed (+ error)
  *
- * exactly as decision-engine/pipeline.ts advances decision_cases.stage.
+ * exactly as decision-engine/pipeline.ts advances decision_cases.stage. The
+ * caller's JWT and RLS remain the only database access path. A security-definer
+ * function binds reservation, usage receipt and final deck writes to auth.uid().
  *
  * Two things this function will not do, both load-bearing:
  *
@@ -48,7 +50,9 @@ import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
 import { selectModel } from "../_shared/openai-utils.ts";
 import { callLLMWithFallback, providerFromModel } from "../_shared/llm-fallback.ts";
-import { checkDailySoftCap, recordAiUsage } from "../_shared/ai-usage.ts";
+import { estimateCostUsd } from "../_shared/ai-usage.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 import {
   budgetForDepth,
   chooseHoldOut,
@@ -78,12 +82,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
-
 const MAX_SURFACE_CHARS = 120;
 const MAX_LABEL_CHARS = 200;
 const MAX_CONTEXT_CHARS = 600;
 const MAX_REQUEST_ID_CHARS = 120;
+const MAX_REQUEST_BYTES = 4_096;
+const REQUEST_ID = /^[A-Za-z0-9_-]{16,120}$/;
+const REQUEST_KEYS = new Set(["surface", "depth", "session_label", "context", "request_id"]);
 
 /** Quotes handed to the generator per construct, and how much of each. */
 const QUOTES_PER_CONSTRUCT = 3;
@@ -110,6 +115,11 @@ interface GeneratedPair {
   violates?: unknown;
 }
 
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -121,124 +131,125 @@ Deno.serve(async (req) => {
     });
 
   try {
+    if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+    if (!isJsonRequest(req.headers)) return json({ error: "content_type_must_be_json" }, 415);
+
+    let payload: Record<string, unknown>;
+    try {
+      const raw = await readJsonWithLimit(req, MAX_REQUEST_BYTES);
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("invalid_shape");
+      payload = raw as Record<string, unknown>;
+    } catch (error) {
+      if (error instanceof Error && error.message === "request_too_large") {
+        return json({ error: "request_too_large" }, 413);
+      }
+      return json({ error: "invalid_json" }, 400);
+    }
+    if (Object.keys(payload).some((key) => !REQUEST_KEYS.has(key))) {
+      return json({ error: "unexpected_field" }, 400);
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      throw new Error("Database configuration error (unexpected project).");
+    const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+      log.error("database configuration does not match the configured project");
+      return json({ error: "database_configuration_error" }, 503);
     }
 
     const authHeader = req.headers.get("Authorization") ?? "";
-    if (!authHeader) return json({ error: "Missing Authorization header" }, 401);
-
+    if (!authHeader) return json({ error: "missing_authorization" }, 401);
     const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false },
     });
-    const { data: userData, error: userErr } = await userClient.auth.getUser();
+    const { data: userData, error: userError } = await userClient.auth.getUser();
     const userId = userData?.user?.id ?? null;
-    if (userErr || !userId) return json({ error: "Unauthorized" }, 401);
+    if (userError || !userId) return json({ error: "unauthorized" }, 401);
 
-    // Service-role client for the background writes. The response returns
-    // before the deck is built, so the caller's JWT is not a safe thing to be
-    // holding by then; every insert below stamps user_id explicitly and RLS
-    // stays the boundary for every read path the frontend uses.
-    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
-
-    const payload = await req.json().catch(() => ({}));
-    const surface = typeof payload?.surface === "string"
-      ? payload.surface.trim().slice(0, MAX_SURFACE_CHARS)
-      : "";
-    const sessionLabel = typeof payload?.session_label === "string"
-      ? payload.session_label.trim().slice(0, MAX_LABEL_CHARS)
-      : "";
-    const contextLine = typeof payload?.context === "string"
-      ? payload.context.trim().slice(0, MAX_CONTEXT_CHARS)
-      : "";
-    const requestId = typeof payload?.request_id === "string"
-      ? payload.request_id.trim().slice(0, MAX_REQUEST_ID_CHARS)
-      : "";
-    // Anything unreadable resolves to the short deck. Silently handing someone
-    // the twenty-minute deck because a field arrived malformed is the wrong way
-    // round: the long one is the deliberate, opted-into choice.
-    const depth = parseSortDepth(payload?.depth);
+    const surface = typeof payload.surface === "string" ? payload.surface.trim() : "";
+    const sessionLabel = typeof payload.session_label === "string" ? payload.session_label.trim() : "";
+    const contextLine = typeof payload.context === "string" ? payload.context.trim() : "";
+    const requestId = typeof payload.request_id === "string" ? payload.request_id.trim() : "";
+    if (!surface || surface.length > MAX_SURFACE_CHARS) {
+      return json({ error: "surface_required" }, 400);
+    }
+    if (sessionLabel.length > MAX_LABEL_CHARS || contextLine.length > MAX_CONTEXT_CHARS) {
+      return json({ error: "field_too_long" }, 400);
+    }
+    if (!REQUEST_ID.test(requestId) || requestId.length > MAX_REQUEST_ID_CHARS) {
+      return json({ error: "request_id_required" }, 400);
+    }
+    if (payload.depth !== undefined && payload.depth !== "short" && payload.depth !== "full") {
+      return json({ error: "invalid_depth" }, 400);
+    }
+    const depth = parseSortDepth(payload.depth);
     const budget = budgetForDepth(depth);
+    const reachesVerified = canReachVerified(budget);
+    const requestFingerprint = await sha256Hex(JSON.stringify({
+      surface,
+      depth,
+      session_label: sessionLabel,
+      context: contextLine,
+      budget,
+      can_reach_verified: reachesVerified,
+    }));
 
-    if (!surface) {
-      return json({
-        error: "Pick one surface for this sort, for example 'client updates' or 'board updates'.",
-      }, 400);
-    }
-
-    // --- Idempotency (CH-15) ------------------------------------------------
-    // A retried build must return the first deck, not a second one. sort_items
-    // already carries UNIQUE(session_id, position), which stops a retry doubling
-    // ONE session; this stops a retry creating a second session.
-    if (requestId) {
-      const { data: existing } = await userClient
-        .from("harness_runs")
-        .select("id, stage, status")
-        .eq("user_id", userId)
-        .eq("kind", "sort")
-        .eq("stage_detail->>request_id", requestId)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (existing?.id) {
-        log.info("build-sort idempotent replay", { userId, run_id: existing.id });
-        return json({
-          run_id: existing.id,
-          stage: existing.stage,
-          status: existing.status,
-          idempotent: true,
-        }, 200);
+    const { data: reservation, error: reservationError } = await userClient.rpc("reserve_build_sort_run", {
+      p_request_id: requestId,
+      p_request_fingerprint: requestFingerprint,
+      p_surface: surface,
+      p_depth: depth,
+      p_session_label: sessionLabel,
+      p_budget: budget,
+      p_can_reach_verified: reachesVerified,
+    });
+    if (reservationError || !reservation?.run_id) {
+      const message = reservationError?.message ?? "unknown";
+      if (message.includes("build_sort_daily_run_limit")) {
+        return json({ error: "daily_run_limit", retryable: false }, 429);
       }
+      if (message.includes("build_sort_daily_spend_limit")) {
+        return json({ error: "daily_spend_limit", retryable: false }, 429);
+      }
+      if (message.includes("build_sort_invalid_reservation")) {
+        return json({ error: "invalid_reservation" }, 400);
+      }
+      if (message.includes("build_sort_request_conflict")) {
+        return json({ error: "request_id_conflict", retryable: false }, 409);
+      }
+      throw new Error(`sort_reservation_failed:${reservationError?.code ?? "unknown"}`);
     }
-
-    const softCap = await checkDailySoftCap(admin, userId, "build-sort");
-
-    const { data: runRow, error: runErr } = await userClient
-      .from("harness_runs")
-      .insert({
-        user_id: userId,
-        kind: "sort",
-        surface,
-        status: "running",
-        stage: "planning",
-        stage_detail: {
-          ...(requestId ? { request_id: requestId } : {}),
-          ...(sessionLabel ? { session_label: sessionLabel } : {}),
-          depth,
-          budget,
-          can_reach_verified: canReachVerified(budget),
-        },
-      })
-      .select("id")
-      .single();
-    if (runErr || !runRow) throw new Error(`harness_runs insert failed: ${runErr?.message ?? "unknown"}`);
-    const runId = runRow.id as string;
-
-    const work = buildDeck(admin, {
+    if (reservation.idempotent) {
+      return json({
+        run_id: reservation.run_id,
+        stage: reservation.stage,
+        status: reservation.status,
+        idempotent: true,
+      }, 200);
+    }
+    const runId = reservation.run_id as string;
+    const work = buildDeck(userClient, {
       runId,
       userId,
       surface,
       contextLine,
       depth,
       budget,
-      log: log.withContext({ run_id: runId, userId, depth }),
+      log: log.withContext({ run_id: runId, depth }),
     });
-
     if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
       EdgeRuntime.waitUntil(work);
     } else {
-      // Local / fallback: await so the deck still gets built.
       await work;
     }
 
-    return json({ run_id: runId, stage: "planning", soft_cap: softCap }, 202);
-  } catch (e) {
-    log.error("build-sort handler error", { error: e });
-    return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
+    return json({ run_id: runId, stage: "planning", idempotent: false }, 202);
+  } catch (error) {
+    log.error("build-sort handler error", {
+      error: error instanceof Error ? error.message : "unknown",
+    });
+    return json({ error: "build_sort_failed" }, 500);
   }
 });
 
@@ -256,21 +267,23 @@ interface BuildParams {
  * The background pass. Every exit writes a terminal stage, because a run stuck
  * on 'generating_pairs' forever is worse than a run that says it failed.
  */
-async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<void> {
+async function buildDeck(client: SupabaseClient, params: BuildParams): Promise<void> {
   const { runId, userId, surface, contextLine, depth, budget, log } = params;
   const detail: Record<string, unknown> = {};
 
   const setStage = async (stage: string, extra: Record<string, unknown> = {}) => {
     Object.assign(detail, extra);
-    await admin
+    const { error } = await client
       .from("harness_runs")
       .update({ stage, stage_detail: { ...detail }, updated_at: new Date().toISOString() })
-      .eq("id", runId);
+      .eq("id", runId)
+      .eq("user_id", userId);
+    if (error) throw new Error(`run_stage_write_failed:${error.code ?? "unknown"}`);
   };
 
   const fail = async (message: string, extra: Record<string, unknown> = {}) => {
     Object.assign(detail, extra);
-    await admin
+    const { error } = await client
       .from("harness_runs")
       .update({
         stage: "failed",
@@ -279,24 +292,28 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
         stage_detail: { ...detail },
         updated_at: new Date().toISOString(),
       })
-      .eq("id", runId);
+      .eq("id", runId)
+      .eq("user_id", userId);
+    if (error) log.error("failed to persist terminal sort state", { code: error.code ?? "unknown" });
     log.warn("build-sort run failed", { reason: message });
   };
 
   try {
     // Merge the request_id / session_label already on the row so setStage does
     // not overwrite them with a fresh object.
-    const { data: existingRun } = await admin
+    const { data: existingRun, error: existingRunError } = await client
       .from("harness_runs")
       .select("stage_detail")
       .eq("id", runId)
+      .eq("user_id", userId)
       .maybeSingle();
+    if (existingRunError) throw new Error(`run_read_failed:${existingRunError.code ?? "unknown"}`);
     Object.assign(detail, (existingRun?.stage_detail as Record<string, unknown>) ?? {});
 
     // --- 1. constructs ------------------------------------------------------
     // Top 5 candidates, most evidence first. PostgREST cannot order by
     // array_length, so a bounded page is sorted here.
-    const { data: constructRows, error: constructErr } = await admin
+    const { data: constructRows, error: constructErr } = await client
       .from("constructs")
       .select("id, emergent_pole, evidence_ids, created_at")
       .eq("user_id", userId)
@@ -327,11 +344,12 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
     const evidenceIds = [...new Set(constructs.flatMap((c) => c.evidence_ids ?? []))].slice(0, 60);
     const quotesByEvidence = new Map<string, { quote: string; situation: string | null }>();
     if (evidenceIds.length > 0) {
-      const { data: evidenceRows } = await admin
+      const { data: evidenceRows, error: evidenceError } = await client
         .from("evidence")
         .select("id, quote, body, situation, redacted_at")
         .eq("user_id", userId)
         .in("id", evidenceIds);
+      if (evidenceError) throw new Error(`evidence_read_failed:${evidenceError.code ?? "unknown"}`);
       for (const row of evidenceRows ?? []) {
         // A redacted row keeps its pointer and loses its words (CH-06). It
         // contributes nothing to the prompt and that is correct.
@@ -363,7 +381,7 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
     let resolvedContext = contextLine;
     if (!resolvedContext) {
       try {
-        const ctx = await getUserContext(admin, userId);
+        const ctx = await getUserContext(client, userId);
         resolvedContext = composeContextLine(
           { role: ctx.role, company: ctx.company, industry: ctx.industry },
           surface,
@@ -384,6 +402,7 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
     // Temperature 0.7 on purpose: ten pairs from one call need variety in
     // subject and register, or the deck reads as ten versions of one email and
     // measures the topic instead of the construct.
+    const modelStartedAt = Date.now();
     const aiResponse = await callLLMWithFallback(
       {
         messages: [
@@ -405,17 +424,28 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
       { useCache: false },
     );
 
-    await recordAiUsage(admin, {
-      userId,
-      functionName: "build-sort",
-      provider: providerFromModel(aiResponse.model),
+    const provider = providerFromModel(aiResponse.model);
+    const latencyMs = Date.now() - modelStartedAt;
+    const estimatedCost = estimateCostUsd({
+      provider,
       model: aiResponse.model,
-      purpose: "build-sort-pairs",
+      functionName: "build-sort",
       promptTokens: aiResponse.usage?.prompt_tokens,
       completionTokens: aiResponse.usage?.completion_tokens,
       totalTokens: aiResponse.usage?.total_tokens,
-      status: "ok",
+      latencyMs,
     });
+    const { error: usageError } = await client.rpc("record_build_sort_usage", {
+      p_run_id: runId,
+      p_provider: provider,
+      p_model: aiResponse.model,
+      p_prompt_tokens: aiResponse.usage?.prompt_tokens ?? 0,
+      p_completion_tokens: aiResponse.usage?.completion_tokens ?? 0,
+      p_total_tokens: aiResponse.usage?.total_tokens ?? 0,
+      p_latency_ms: latencyMs,
+      p_est_cost_usd: estimatedCost,
+    });
+    if (usageError) throw new Error(`usage_receipt_failed:${usageError.code ?? "unknown"}`);
 
     let parsed: { pairs?: unknown };
     try {
@@ -482,7 +512,7 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
     });
 
     // --- 3. the person's own work (CH-08) -----------------------------------
-    const { data: artefactRows } = await admin
+    const { data: artefactRows, error: artefactError } = await client
       .from("evidence")
       .select("id, body, source_label, created_at, redacted_at")
       .eq("user_id", userId)
@@ -490,6 +520,7 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
       .is("redacted_at", null)
       .order("created_at", { ascending: false })
       .limit(budget.own * 3);
+    if (artefactError) throw new Error(`artefact_read_failed:${artefactError.code ?? "unknown"}`);
 
     const own: string[] = [];
     for (const row of artefactRows ?? []) {
@@ -516,7 +547,7 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
     const heldOut = new Set(holdOut.heldOutIds);
     const separation = minPairSeparation(planned);
 
-    // --- 6. write the deck ---------------------------------------------------
+    // --- 6. write the deck atomically ---------------------------------------
     const pairIdByKey = new Map<string, string>();
     for (const item of planned) {
       if (item.pairKey && !pairIdByKey.has(item.pairKey)) {
@@ -526,14 +557,14 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
 
     const unique = planned.filter((it) => !it.repeatOfKey);
     const repeats = planned.filter((it) => it.repeatOfKey);
+    const idByKey = new Map(planned.map((item) => [item.key, crypto.randomUUID()]));
 
-    // sort_items has no source_label column, so peer attribution rides
-    // stage_detail.peer_attribution below rather than being dropped. The
-    // attribution is the whole basis on which a peer item is allowed in the
-    // deck (CH-11); it does not get to go missing.
-    const uniqueRows = unique.map((item: PlannedItem) => ({
-      user_id: userId,
-      session_id: runId,
+    // Peer attribution rides stage_detail.peer_attribution because source_label
+    // is not part of the atomic RPC item contract. The attribution is the whole
+    // basis on which a peer item is allowed in the deck (CH-11); it does not get
+    // to go missing.
+    const rows = planned.map((item: PlannedItem) => ({
+      id: idByKey.get(item.key),
       surface,
       body: item.body,
       origin: item.origin,
@@ -542,77 +573,47 @@ async function buildDeck(admin: SupabaseClient, params: BuildParams): Promise<vo
       intended_dimension: item.intendedDimension,
       targets: item.constructId ? [item.constructId] : [],
       held_out: heldOut.has(item.key),
+      repeat_of: item.repeatOfKey ? idByKey.get(item.repeatOfKey) ?? null : null,
       position: item.position,
     }));
-
-    const { data: insertedUnique, error: itemErr } = await admin
-      .from("sort_items")
-      .insert(uniqueRows)
-      .select("id, position");
-    if (itemErr || !insertedUnique) throw new Error(`sort_items insert failed: ${itemErr?.message ?? "unknown"}`);
-
-    const idByPosition = new Map<number, string>();
-    for (const row of insertedUnique) idByPosition.set(row.position as number, row.id as string);
-
-    if (repeats.length > 0) {
-      const repeatRows = repeats.map((item) => ({
-        user_id: userId,
-        session_id: runId,
-        surface,
-        body: item.body,
-        origin: item.origin,
-        pair_id: null,
-        pair_role: null,
-        intended_dimension: null,
-        targets: [],
-        held_out: false,
-        repeat_of: idByPosition.get(item.repeatOfPosition ?? -1) ?? null,
-        position: item.position,
-      })).filter((row) => row.repeat_of !== null);
-      if (repeatRows.length > 0) {
-        const { error: repeatErr } = await admin.from("sort_items").insert(repeatRows);
-        if (repeatErr) {
-          // A missing probe costs the self-agreement number, not the deck.
-          log.warn("repeat probe insert failed", { error: repeatErr });
-        }
-      }
+    if (rows.some((row) => !row.id || (row.position > unique.length && !row.repeat_of))) {
+      throw new Error("deck_identity_invalid");
     }
 
     const peerAttribution = planned
       .filter((it) => it.origin === "peer" && it.sourceLabel)
       .map((it) => ({ position: it.position, source_label: it.sourceLabel }));
-
-    await admin
-      .from("harness_runs")
-      .update({
-        stage: "ready",
-        status: "done",
-        stage_detail: {
-          ...detail,
-          // Every `_expected` is the CHOSEN budget's target, never the full
-          // deck's. shortfallNotes() compares these to report what the deck was
-          // missing, so hardcoding the full numbers here would tell a short-sort
-          // user their deck "ran short" about a choice they made on purpose.
-          items: unique.length,
-          items_expected: budget.unique,
-          repeats: repeats.length,
-          own_available: own.length,
-          own_expected: budget.own,
-          own_shortfall: ownShortfall,
-          peer_available: peer.length,
-          peer_expected: budget.peer,
-          peer_shortfall: peerStatus.shortfall,
-          peer_awaiting_curation: peerStatus.awaitingCuration,
-          peer_surface: peerStatus.resolvedSurface,
-          peer_attribution: peerAttribution,
-          held_out: holdOut.heldOutIds.length,
-          held_out_expected: budget.holdOut.items,
-          held_out_shape: { pairs: holdOut.pairs, own: holdOut.own, peer: holdOut.peer },
-          min_pair_separation: Number.isFinite(separation) ? separation : null,
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", runId);
+    const finalDetail = {
+      ...detail,
+      // Every `_expected` is the chosen budget's target, never the full deck's.
+      items: unique.length,
+      items_expected: budget.unique,
+      repeats: repeats.length,
+      own_available: own.length,
+      own_expected: budget.own,
+      own_shortfall: ownShortfall,
+      peer_available: peer.length,
+      peer_expected: budget.peer,
+      peer_shortfall: peerStatus.shortfall,
+      peer_awaiting_curation: peerStatus.awaitingCuration,
+      peer_surface: peerStatus.resolvedSurface,
+      peer_attribution: peerAttribution,
+      held_out: holdOut.heldOutIds.length,
+      held_out_expected: budget.holdOut.items,
+      held_out_shape: { pairs: holdOut.pairs, own: holdOut.own, peer: holdOut.peer },
+      min_pair_separation: Number.isFinite(separation) ? separation : null,
+    };
+    const { data: finalized, error: finalizeError } = await client.rpc("finalize_build_sort_run", {
+      p_run_id: runId,
+      p_items: rows,
+      p_stage_detail: finalDetail,
+    });
+    if (finalizeError || !finalized) {
+      if (finalizeError?.message?.includes("build_sort_stale_construct")) {
+        throw new Error("The Brain changed while this check was being built. Start it again with the current evidence.");
+      }
+      throw new Error(`deck_finalization_failed:${finalizeError?.code ?? "unknown"}`);
+    }
 
     log.info("sort deck ready", {
       depth,

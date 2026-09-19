@@ -1,0 +1,112 @@
+{
+  "schema_version": "ctrl.g25.jwt-disabled-route-security.r100.v1",
+  "contract_id": "G25-JWT-DISABLED-ROUTE-SECURITY-R100",
+  "status": "static_route_classification_complete_runtime_and_deployment_proof_open",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+    "trust-containment-2026-09-05"
+  ],
+  "scope": {
+    "current_repo_routes": 121,
+    "current_verify_jwt_false": 34,
+    "contained_verify_jwt_false": 24,
+    "remaining_reviewed_verify_jwt_false": 10,
+    "original_uncontained_review_queue": 14,
+    "repaired_or_strengthened_in_r100": 6,
+    "current_unclassified_verify_jwt_false": 0
+  },
+  "original_review_queue": [
+    "backfill-pseudonymise",
+    "capture-lead",
+    "cleanup-expired-data",
+    "decision-reactions",
+    "live-headlines",
+    "nudge-briefing",
+    "prompt-coach",
+    "send-confirmation-email",
+    "send-daily-briefing",
+    "send-diagnostic-email",
+    "share-card",
+    "stripe-webhook",
+    "unsubscribe-briefing",
+    "video-radar-export"
+  ],
+  "r100_containment_additions": [
+    {
+      "route": "capture-lead",
+      "contract": "public_rate_limited_capture",
+      "gateway_jwt": false,
+      "controls": ["method_and_media_type", "hard_body_budget", "honeypot", "per_isolate_limit", "distributed_ip_limit", "distributed_hashed_email_limit", "fail_closed_rate_authority"]
+    },
+    {
+      "route": "prompt-coach",
+      "contract": "authenticated_user_paid_inference",
+      "gateway_jwt": true,
+      "controls": ["gateway_jwt", "auth_get_user", "hard_body_budget", "prompt_budget", "distributed_user_limit", "fail_closed_rate_authority"]
+    },
+    {
+      "route": "send-diagnostic-email",
+      "contract": "exact_service_credential_email",
+      "gateway_jwt": false,
+      "controls": ["exact_machine_credential", "method_and_media_type", "hard_body_budget"]
+    },
+    {
+      "route": "share-card",
+      "contract": "public_cached_bounded_render",
+      "gateway_jwt": false,
+      "controls": ["get_only", "url_and_field_budgets", "per_isolate_limit", "distributed_ip_limit", "fail_closed_rate_authority", "public_cache"]
+    }
+  ],
+  "reviewed_existing_guards": [
+    { "route": "backfill-pseudonymise", "contract": "exact_service_credential" },
+    { "route": "cleanup-expired-data", "contract": "exact_service_or_cron_credential" },
+    { "route": "decision-reactions", "contract": "exact_service_credential_and_exact_project_binding" },
+    { "route": "live-headlines", "contract": "authenticated_user_or_exact_service_or_cron_credential" },
+    { "route": "nudge-briefing", "contract": "authenticated_user" },
+    { "route": "send-confirmation-email", "contract": "standard_webhook_signature" },
+    { "route": "send-daily-briefing", "contract": "exact_service_or_cron_credential" },
+    { "route": "stripe-webhook", "contract": "stripe_signature_exact_project_binding_and_durable_idempotency" },
+    { "route": "unsubscribe-briefing", "contract": "high_entropy_capability_token_stored_as_hash" },
+    { "route": "video-radar-export", "contract": "exact_export_bearer_and_request_limit" }
+  ],
+  "portable_project_repairs": {
+    "hardcoded_production_write_bindings_removed": ["decision-reactions", "stripe-webhook"],
+    "replacement": "EXPECTED_SUPABASE_PROJECT_REF exact host binding",
+    "stripe_non_conflict_idempotency_error": "503_before_side_effect",
+    "public_email_asset_urls_still_bound_to_production_storage": true,
+    "public_email_asset_urls_are_write_authority": false
+  },
+  "verification": {
+    "pure_guard_tests": 12,
+    "trust_containment_contracts": 49,
+    "trust_containment_templates": 35,
+    "raw_secret_values_retrieved": false,
+    "function_deployments": 0,
+    "production_writes": 0
+  },
+  "open_gates": {
+    "approved_environment_value_source": false,
+    "distributed_rate_limit_hosted_transport_test": false,
+    "public_capture_bot_challenge_or_platform_waf": false,
+    "public_share_card_cache_and_abuse_load_test": false,
+    "stripe_signed_replay_hosted_test": false,
+    "send_confirmation_signed_hosted_test": false,
+    "all_route_specific_runtime_proofs_complete": false,
+    "isolated_function_deployment_ready": false,
+    "production_function_deployment_ready": false
+  },
+  "authority": {
+    "permits": [
+      "local source hardening",
+      "deterministic static classification",
+      "pure local guard tests"
+    ],
+    "forbids": [
+      "treating static markers as hosted behavior proof",
+      "retrieving or persisting secret values",
+      "deploying functions to the isolated or production project",
+      "production mutation, merge, cutover, release or legacy retirement"
+    ]
+  }
+}

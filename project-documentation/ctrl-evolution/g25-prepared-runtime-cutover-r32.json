@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g25.prepared-runtime-cutover.r32.v1",
+  "record_id": "G25-PREPARED-RUNTIME-CUTOVER-R32",
+  "status": "local_runtime_privilege_cutover_verified",
+  "depends_on": [
+    "G25-PREPARED-RECEIPT-ATOMIC-STORE-R10",
+    "G25-PREPARED-CORRECTION-INVALIDATION-R12",
+    "G25-PREPARED-SUBJECT-ERASURE-R13",
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25",
+    "G25-BOTH-GENERATION-CORRECTION-R29",
+    "G25-BOTH-GENERATION-SUBJECT-ERASURE-R30",
+    "G25-UNIFIED-CURRENT-PREPARED-READER-R31"
+  ],
+  "operation": "close service-role legacy-only and raw-write paths while preserving only custody create, both-generation lifecycle and unified read entrypoints",
+  "invariants": [
+    "service role cannot execute legacy-only create, correction or erasure functions",
+    "service role can execute only custody-native create, both-generation correction, both-generation erasure and unified current read entrypoints",
+    "all four active entrypoints execute with fixed empty search paths under their owning role",
+    "service role cannot insert directly into eight prepared receipt, event, dependency or correction tables",
+    "service role cannot directly update five lifecycle columns previously needed by invoker functions",
+    "historical tables and functions remain present for inspection and old-data lifecycle handling",
+    "the privilege overlay does not itself migrate, deploy or retire physical history"
+  ],
+  "verified": [
+    "PostgreSQL 18.3 executable privilege cutover",
+    "three legacy-only function denials",
+    "four active entrypoint grants",
+    "four active security-definer boundaries",
+    "eight raw insert closures",
+    "five direct lifecycle-update closures",
+    "active functions reach their own closed shape contracts under service role",
+    "seven mutation controls"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_prepared_runtime_cutover_r32.sql",
+    "candidate_sha256": "fe0d54b58151781146dc109e0e5976034081628784a74ab191bce1583c6e03b1",
+    "runner": "scripts/run-ctrl-g25-prepared-runtime-cutover-r32.mjs",
+    "runner_sha256": "95c6dae861113fddced58be17c05ecea1f436215df42247fcab0c33ae9cce360"
+  },
+  "next_gate": "Prove valid create, correct, erase and read operations through the exact post-cutover service boundary, then test multi-connection races.",
+  "not_authorized": [
+    "runtime integration or customer delivery",
+    "physical deletion of historical functions or tables",
+    "linked or production database use",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}

@@ -175,10 +175,22 @@ export function useReview() {
     setResponses({});
 
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke('critique-artefact', {
-        body: { body: text, ...(surface ? { surface } : {}) },
-      });
-      if (invokeError) throw invokeError;
+      const requestId = crypto.randomUUID();
+      let data: Record<string, unknown> | null = null;
+      let lastError: unknown = null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const result = await supabase.functions.invoke('critique-artefact', {
+          body: { request_id: requestId, body: text, ...(surface ? { surface } : {}) },
+        });
+        if (!result.error) {
+          data = (result.data ?? null) as Record<string, unknown> | null;
+          lastError = null;
+          break;
+        }
+        lastError = result.error;
+        if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      if (lastError) throw lastError;
       const newRunId = typeof data?.run_id === 'string' ? data.run_id : null;
       if (!newRunId) throw new Error('The review did not start.');
       setRunId(newRunId);
@@ -249,13 +261,15 @@ export function useReview() {
   const respond = useCallback(
     async (item: ReviewJudgement, response: ReviewResponse) => {
       const verdict = ledgerVerdict(item.verdict);
-      if (!verdict || !result) return;
+      if (!verdict || !result || !runId) return;
       const key = judgementKey(item);
       const previous = responses[key];
       setResponses((current) => ({ ...current, [key]: response }));
 
-      const { error: writeError } = await db.from('ledger').insert({
+      const { error: writeError } = await db.from('ledger').upsert({
         user_id: (await supabase.auth.getUser()).data.user?.id,
+        source_run_id: runId,
+        source_event_key: `judgement:${key}`,
         week: isoWeek(new Date()),
         surface: result.surface || 'unknown',
         signal: 'output',
@@ -264,6 +278,8 @@ export function useReview() {
         verdict,
         quote: truncateQuote(item.quote),
         disposition: response === 'agree' ? 'accepted' : 'rejected',
+      }, {
+        onConflict: 'user_id,source_run_id,source_event_key',
       });
 
       if (writeError) {
@@ -276,7 +292,7 @@ export function useReview() {
         setError('I could not record that. Try it again in a moment.');
       }
     },
-    [responses, result],
+    [responses, result, runId],
   );
 
   /**
@@ -286,13 +302,15 @@ export function useReview() {
    */
   const respondUncovered = useCallback(
     async (note: { note: string; quote: string | null }, index: number, response: ReviewResponse) => {
-      if (!result) return;
+      if (!result || !runId) return;
       const key = `uncovered:${index}`;
       const previous = responses[key];
       setResponses((current) => ({ ...current, [key]: response }));
 
-      const { error: writeError } = await db.from('ledger').insert({
+      const { error: writeError } = await db.from('ledger').upsert({
         user_id: (await supabase.auth.getUser()).data.user?.id,
+        source_run_id: runId,
+        source_event_key: `uncovered:${index}`,
         week: isoWeek(new Date()),
         surface: result.surface || 'unknown',
         signal: 'output',
@@ -301,6 +319,8 @@ export function useReview() {
         verdict: 'uncovered',
         quote: truncateQuote(note.quote ?? note.note),
         disposition: response === 'agree' ? 'accepted' : 'rejected',
+      }, {
+        onConflict: 'user_id,source_run_id,source_event_key',
       });
 
       if (writeError) {
@@ -313,7 +333,7 @@ export function useReview() {
         setError('I could not record that. Try it again in a moment.');
       }
     },
-    [responses, result],
+    [responses, result, runId],
   );
 
   const reset = useCallback(() => {

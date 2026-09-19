@@ -598,7 +598,7 @@ export async function buildMemoryContext(
   } = options;
 
   // Fetch hot facts (always)
-  const { data: hotFacts } = await supabase
+  const { data: hotFacts, error: hotFactsError } = await supabase
     .from("user_memory")
     .select("id, fact_category, fact_label, fact_value, fact_key, fact_subtype, temperature, verification_status, confidence_score, created_at, fact_context, source_type")
     .eq("user_id", userId)
@@ -607,11 +607,12 @@ export async function buildMemoryContext(
     .eq("temperature", "hot")
     .order("importance", { ascending: false, nullsFirst: false })
     .order("last_referenced_at", { ascending: false });
+  if (hotFactsError) throw new Error(`memory_export_hot_facts_failed:${hotFactsError.code ?? "unknown"}`);
 
   // Fetch warm facts (if requested)
   let warmFacts: Fact[] = [];
   if (includeWarm) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_memory")
       .select("id, fact_category, fact_label, fact_value, fact_key, fact_subtype, temperature, verification_status, confidence_score, created_at, fact_context, source_type")
       .eq("user_id", userId)
@@ -620,28 +621,31 @@ export async function buildMemoryContext(
       .eq("temperature", "warm")
       .order("importance", { ascending: false, nullsFirst: false })
     .order("last_referenced_at", { ascending: false });
+    if (error) throw new Error(`memory_export_warm_facts_failed:${error.code ?? "unknown"}`);
     warmFacts = (data || []) as Fact[];
   }
 
   const allFacts = [...(hotFacts || []) as Fact[], ...warmFacts];
 
   // Fetch patterns
-  const { data: patternData } = await supabase
+  const { data: patternData, error: patternError } = await supabase
     .from("user_patterns")
     .select("pattern_type, pattern_text, confidence, evidence_count, status")
     .eq("user_id", userId)
     .in("status", ["emerging", "confirmed"])
     .order("confidence", { ascending: false });
+  if (patternError) throw new Error(`memory_export_patterns_failed:${patternError.code ?? "unknown"}`);
 
   const patterns = (patternData || []) as Pattern[];
 
   // Fetch active decisions
-  const { data: decisionData } = await supabase
+  const { data: decisionData, error: decisionError } = await supabase
     .from("user_decisions")
     .select("decision_text, rationale, source, created_at")
     .eq("user_id", userId)
     .eq("status", "active")
     .order("created_at", { ascending: false });
+  if (decisionError) throw new Error(`memory_export_decisions_failed:${decisionError.code ?? "unknown"}`);
 
   const decisions = (decisionData || []) as Decision[];
 
@@ -695,7 +699,7 @@ export async function buildMemoryContext(
   return {
     context,
     tokenCount: finalTokenCount,
-    factCount: filtered.facts.length,
+    factCount: finalFacts.length,
     patternCount: filtered.patterns.length,
     decisionCount: filtered.decisions.length,
     lastUpdated: new Date().toISOString(),

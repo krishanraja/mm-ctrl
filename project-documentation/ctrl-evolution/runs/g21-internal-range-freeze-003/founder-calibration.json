@@ -1,0 +1,320 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "role": "founder_calibration",
+  "sourceHashes": {
+    "artifactCommit": "ad561fce1d82bcdcdfea800ad4e4aed64e2a5173",
+    "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+    "answerabilityReviewsCompositeSha256": "826470ab2a6f17ba26d56ad3e70790934e36df05c2931c85c0d7e47f84ab5eac",
+    "rulingsCompositeSha256": "33a68b031d22cd9eefd9e21494e8c89f134b589aa79bd59baaf4ffd503be8933",
+    "files": [
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json",
+        "sha256": "f6119ce871fb8af963d840618b26cb9674c0a76ad155a325bb429f8ee3bd5f68"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/reader-brief.md",
+        "sha256": "acbec089f885195d619559108c4487ca35705d846af64952b6e9e72ed6b228d3"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/readers-manifest.json",
+        "sha256": "f538f7e9c791540fbb08041beb41c448598e1770394cfefac55de193ffba85af"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/readers/proxy-a.json",
+        "sha256": "ae1d79f9255d256492b63344b8c610451c2ace44945246eb422f59fffb6c6305"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/readers/proxy-b.json",
+        "sha256": "0b2e644c878225f0a1dad377fba42dc2c14b5a5d61651ae17d4fae3f4cbe110a"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/behavioural_and_implementation_reality.json",
+        "sha256": "a8b91188e024a6b014dc2d1d05c2969dab264cbcafccb4cf9dc8c613da815bff"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/consequential_usefulness.json",
+        "sha256": "b486a5477074dee29eb38b3572ba0c66d9db245d4a68b4ea44b8985f484cbbc2"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/epistemic_integrity.json",
+        "sha256": "d896011c7a383fd15e3c6be0400d671a41eef5aacd86de841b27ba3792bd7e93"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/human_agency.json",
+        "sha256": "d6fc721666b335ff228d3214c75a61eafc5154b1c1d1470c9a695dce02e86c83"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/human_comprehension_and_access.json",
+        "sha256": "0c675678f68a2e625dfcc7dd9eb9a0e7eabf3799f6e03b4c056232768a03fdd1"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/living_brain_integrity.json",
+        "sha256": "129755caacf57d7bd2f63fbe6cfbdfc6873dd55052103b501b5b760661c55fcb"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/judges/subject_audience_lifecycle_safety.json",
+        "sha256": "acfaa36a56ab9d5c5245827e3bc5ec77f604fff5913c752bdf16847ecf459b91"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/adjudication.json",
+        "sha256": "e7af9aff30bacf23efcd929b24603c499441c485263f52c4f80d57c0b196d06c"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/review-protocol-failure.json",
+        "sha256": "76151cdd2360cdab3dd8d2f97f1b30acba6f6096a08992c83f1b5acaf0c6dcc7"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/input-manifest.json",
+        "sha256": "2323bda285fea2a81f81b2db32ce9174b8d6244389b7ee9e00372d685fc5f58f"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/freeze-anchor.json",
+        "sha256": "3955c5ccbf354ccadaefddf65152dd30cf9750bef5464d97f35f79f9988180ae"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/rulings-manifest.json",
+        "sha256": "95ebd0692e6bd7a51cab0a753fed93768f97a724b6295c126121cd90c560fee8"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md",
+        "sha256": "14dcdabfcde63e1b2b46c925754bcb6869a72ffeae00ddac5419711e90bf592d"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/session-method-learning-log.md",
+        "sha256": "7e43e92b01b1a65752ceab7fbc2b42cd162411b1d747482aea51a26ac3838fd7"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-diagnostic-council-run.md",
+        "sha256": "8429bc72b3b739ffa153d70f08baa3b77600c1bfc411d64c7878b207fd548875"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+        "sha256": "914796288ce8b3d1a43e4acbc07f7fe817e6c8020e3c6902a71bebad74272065"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+        "sha256": "e3d960f510060357cdcf6e72d84fd04c21f21f9ae9a2d3b55918ef8dc7610d51"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-public-row-canary-research-brief.md",
+        "sha256": "3092fc47a3ec7ad1b3af23069b6e77dad0b6c370fbd60a9f4d37c7835a65a2a0"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/g21-public-row-canary.md",
+        "sha256": "55f66a89d6f9ec3ad46f422fd7183ac953f9d4e5f02c539e178c49287a5b9336"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/README.md",
+        "sha256": "afc135a375083499c7e1d4414be22e07d9a954afaf9ed2843dfc4a296f3fa7a5"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/behavioural-and-implementation-reality.md",
+        "sha256": "0f44db61d9ffa3dd224b9040f5188b28a88c2d425ea08e85af3aea7ad5795f43"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/consequential-usefulness.md",
+        "sha256": "e3bf299302c952108e3b4b387cf78c1bc58416e92f838f79357d168ed0fef9ee"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/epistemic-integrity.md",
+        "sha256": "c2d49ebcb8c67482f401f77d08191c1919b9a011ad6b2f4fed7b646a3c2c04f5"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/human-agency.md",
+        "sha256": "aada601f3aac33308f599eedb17292db509a5d73789c9d592de721a93f6d307a"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/human-comprehension-and-access.md",
+        "sha256": "f7aa88e2adba6da6a9d9d40185a6f23c13e82b09feee4e9d3ed88d7213a91f24"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/living-brain-integrity.md",
+        "sha256": "588df9f8ba549ae056bc96b2fab102301c5ba51867a52b6607fe5e13620f8b38"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/judge-history/subject-audience-lifecycle-safety.md",
+        "sha256": "51b74ae12134c20fb0f81f909a6aee3b8938250f4a3f276e274aff5d4ff4a9fa"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/README.md",
+        "sha256": "7ef256d0403069eddb7f70f68e20dbcb5f8e7d35d5cabf8dd2b73a86762ec3ee"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/founder-calibration.json",
+        "sha256": "6a1f1a1b34cd53b198853ed69c0cdc2b6310308467e442e971f4f303f4d324df"
+      },
+      {
+        "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/founder-calibration.json",
+        "sha256": "25c7b9eb877b406a57bade5321f4e64cfbe807caaa4a0f4427fd8b711fb42e65"
+      }
+    ]
+  },
+  "protocolStanding": {
+    "status": "invalid_for_blind_independence",
+    "artifactStatus": "blocked",
+    "cleanIndependentCouncilClaimAllowed": false,
+    "finding": "The input manifest required semantic inspection of two current G21 documents that disclose Runs 001 and 002 outcomes and veto themes. A reviewer could not obey that allowlist and remain blind to prior council history.",
+    "treatment": "Preserve all seven Run 003 rulings as useful adversarial evidence and preserve all six vetoes without averaging, dilution or founder override. Do not describe the set as seven clean independent sealed rulings. The two adult answerability reviews retain their narrower standing because their brief allowed only the question pack.",
+    "nextProtocolGate": "Freeze a new run with hash-only provenance separated from the semantic review allowlist. Give fresh judges only current code, tests, question pack and their criterion brief, with no prior outcomes, identities, founder reaction or repair narrative, and require an attestation that excluded history was not encountered.",
+    "authorityBoundary": "This calibration is advisory and non-voting. It does not approve the artifact, replace Krish's cold review, weaken a veto or authorise a diagnostic run, data write, deployment or production use."
+  },
+  "calibrations": [
+    {
+      "id": "CAL-001",
+      "standard": "Devastating simplicity with depth one layer below",
+      "finding": "Run 003 made real surface progress. Both independent adult proxies found all twelve visible questions to contain one ask, ordinary words, a compatible answer form, a safe unknown path and optional depth. That establishes adult answerability for this frozen pack, not child comprehension or a finished experience. The comprehension judge made no semantic finding after encountering contaminated history.",
+      "implication": "Retain the bounded choice, threshold, yes or no, short-description and unknown contracts. In the eventual experience, one question must own the frame while why it matters, evidence, countercase and provenance remain available one layer below instead of arriving as simultaneous explanation."
+    },
+    {
+      "id": "CAL-002",
+      "standard": "Million-dollar decision usefulness",
+      "finding": "Answerable is not consequential. CARE-I3 can hit a continuity percentage while Elena remains the permanent exception handler. RESEARCH-I2 treats agreement to buy as proof that senior challenge transfers into a repeatable experience. STORY-I2 chooses test content without preserving both the ticket outcome and core-fan constraint. STORY-I3 gates GBP 18 million on stated ticket desire even though its own countercase leaves purchase prediction unresolved.",
+      "implication": "Each visible answer must select, kill, bound or materially reshape the named route. A next evidence request is valuable only when it advances that same decision and is clearly presented as evidence collection rather than as the main investment gate."
+    },
+    {
+      "id": "CAL-003",
+      "standard": "Human agency",
+      "finding": "RANGE-INTERNAL-FORGE-I3 offers The system as a valid final decision-maker when an AI plan could make a customer late. This contradicts the code-owned R1 boundary and the durable rule that humans own purpose, standards, exceptions and the final consequential call.",
+      "implication": "AI may prepare, compare, flag and challenge a plan. An accountable person must make the final call on customer impact, money, rights, employment, reputation, access or durable truth. The interface must make that ownership operational rather than narrating reassurance."
+    },
+    {
+      "id": "CAL-004",
+      "standard": "Specific evidence rather than business horoscopes",
+      "finding": "The frozen fixture is specific, but runtime validation can still admit future external evidence, incapable source relabelling, unsupported causal prose, cross-subject correction, counterfeit audience authority, a real-person costume and relabelled depth or lifecycle state. Specific-looking content is not trustworthy when standing can be changed by caller-controlled labels.",
+      "implication": "Specificity must be earned from a fail-closed evidence envelope: trusted time, source identity and capability, claim kind, subject, audience authority, depth and lifecycle state. Sparse evidence must produce a precise gap, honest question or abstention, never confident private backstory."
+    },
+    {
+      "id": "CAL-005",
+      "standard": "Self-healing memory",
+      "finding": "Run 003 preserves claim-addressable history in its intended fixture, but the runtime boundary still accepts misdirected supersession and synchronized base-source drift, including oracle content presented as a current direct statement. A current view can therefore be recomputed from the wrong lineage while the record still looks structurally complete.",
+      "implication": "Sources remain immutable receipts. Observations and interpretations remain separate claims. A correction targets only the exact invalid claim, preserves every still-valid claim with source and audience, derives the current view from explicit relations, and repairs every downstream use without deleting history or claiming that storage alone is learning."
+    },
+    {
+      "id": "CAL-006",
+      "standard": "Non-pompous tone",
+      "finding": "The question pack is materially plainer than its predecessors, and both adult proxies could answer it without specialist vocabulary. No rendered product interaction was reviewed, so the record cannot establish that the eventual tone is quiet, compact or free of trust theatre.",
+      "implication": "The product should behave like an instrument. Show the decision, the evidence boundary and the consequence. Do not congratulate the Brain, dramatise its intelligence, repeat custody promises or use large editorial declarations where a precise control or fact would do."
+    },
+    {
+      "id": "CAL-007",
+      "standard": "No false claims",
+      "finding": "The fixtures are fictional, no diagnostic model has run on the internal range, no customer value or improved judgement has been measured, the adult screens are not child tests and the council set is not cleanly blind. The current G21 documents also predate the recorded Run 003 outcome and therefore cannot be used alone as current run status.",
+      "implication": "Describe exactly what was observed: twelve adult-answerable contracts, six preserved substantive vetoes, one inconclusive comprehension ruling and an invalid blind-review protocol. Do not claim diagnostic efficacy, learning, child comprehension, seven clean independent rulings, approval or production readiness."
+    },
+    {
+      "id": "CAL-008",
+      "standard": "Concentrated rigor without test theatre",
+      "finding": "Across Runs 001, 002 and 003, the recurring product failures compress into a small set of mechanisms even though the adversarial examples multiply. The latest run closes much of the answer-contract gap but exposes a semantic route mismatch, one explicit agency violation and structural validators that still rely on fixture equality where general invariants are required.",
+      "implication": "Repair the common mechanisms once, keep the adversarial cases as regressions and do not convert every veto into a new customer-facing system. After a clean council pass, stop widening the synthetic rubric and test an oracle-free diagnostic in the actual interaction."
+    },
+    {
+      "id": "CAL-009",
+      "standard": "Protected strengths",
+      "finding": "The four matched fictional families still isolate internal evidence depth across materially different care, research, manufacturing and entertainment decisions from about GBP 900,000 to GBP 18 million. The question contracts now make unknown safe, preserve optional notes and allow a leader to answer without hidden oracle context.",
+      "implication": "Preserve the matched-family design, fictional namespace, high-value decision altitude, explicit uncertainty and one-question interaction while repairing the vetoed substrate and four route contracts."
+    }
+  ],
+  "productStandards": [
+    {
+      "id": "PS-001",
+      "name": "One plain route-changing ask",
+      "standard": "The Brain performs synthesis and diagnosis first, then asks for one fact, bounded choice, test decision or explicit threshold the person can answer now. Units, denominator and comparator appear when needed; unknown is safe; deeper reasoning and an optional note sit one layer below.",
+      "feltInExperience": "Within seconds, the leader knows what answer is needed, why it changes this decision and what to do if the answer is not yet known. It feels sharp, not simplistic, and never like a form or consulting riddle.",
+      "acceptanceSignal": "Every allowed answer and unknown path demonstrably selects, kills, bounds or reshapes the named route, or is explicitly labelled as the smallest evidence step that will do so."
+    },
+    {
+      "id": "PS-002",
+      "name": "Human-owned consequence",
+      "standard": "Purpose, standards, exceptions and the final consequential call remain with an accountable person. The system may prepare, compare, surface evidence, challenge and flag; it may not own the final customer-impact, money, rights, employment, reputation, access or durable-truth decision.",
+      "feltInExperience": "The leader is helped to see and choose, not pushed into confirming a machine answer. Ownership is evident in the decision control and audit trail, not repeated as reassurance copy.",
+      "acceptanceSignal": "No valid input, answer option, task or emitted authority can assign the final consequential call to the system or turn the person into a rubber stamp."
+    },
+    {
+      "id": "PS-003",
+      "name": "Fail-closed evidence and authority envelope",
+      "standard": "Runtime validation is total over arbitrary input and validates type before use. Trusted time, source identity and capability, claim kind, subject, audience authority, fictional or consented namespace, depth, lifecycle state and the code-owned capability boundary are structural, not caller-controlled decoration.",
+      "feltInExperience": "Evidence feels specific because the product can show where it came from, what it can support, who may see it and what remains unknown. A malformed or overreaching state stops cleanly instead of becoming polished certainty.",
+      "acceptanceSignal": "Novel null, wrong-type, future-time, relabelled, widened-audience, counterfeit-authority, real-person-costume and lifecycle-substitution inputs return stable errors without throwing and are refused before model emission."
+    },
+    {
+      "id": "PS-004",
+      "name": "Claim-level self-healing memory",
+      "standard": "Source receipts are immutable; claims are separately typed and addressable; challenge and supersession target the exact claim; surviving claims retain provenance and audience; the current view is derived; correction history stays inspectable; downstream uses are repaired.",
+      "feltInExperience": "When the leader corrects one interpretation, the Brain visibly changes the current view without forgetting the true observation or rewriting its past. The repair earns trust because the user can inspect what changed and what did not.",
+      "acceptanceSignal": "Misdirected relation targets, broken current views, oracle-bearing source drift and whole-record erasure are rejected, while a valid narrow correction preserves all unaffected evidence."
+    },
+    {
+      "id": "PS-005",
+      "name": "Evidence-earned specificity and causal restraint",
+      "standard": "Observation, direct statement, interpretation, supported pattern, correction and evidence gap retain distinct standing. A causal or route-changing claim is emitted only when capable evidence earns it; otherwise the Brain names the countercase, asks for the missing evidence or abstains.",
+      "feltInExperience": "The intervention feels personally and commercially specific without pretending to know the person. It exposes a real tension and its evidence, not a flattering business horoscope.",
+      "acceptanceSignal": "The same sparse evidence cannot produce a richer standing by relabelling source, claim kind, subject or time, and unsupported purchase, causation or personhood claims do not reach the model input or surface."
+    },
+    {
+      "id": "PS-006",
+      "name": "Quiet, honest million-dollar instrument",
+      "standard": "The main surface serves one consequential decision. It uses compact direct language, does not self-award usefulness, and states synthetic, provisional, unverified and blocked boundaries exactly. Small learning traces remain subordinate to the decision they improve.",
+      "feltInExperience": "The leader feels that CTRL found the one question that matters, can inspect the proof underneath and remains free to disagree. Nothing reads like e-learning, AI theatre, a ceremonial report or a claim of insight before value is experienced.",
+      "acceptanceSignal": "A cold leader can use the interaction to make or prepare a material call without encountering inflated status, repeated trust prose, generic praise or an unsupported efficacy or learning claim."
+    }
+  ],
+  "canaryOnlyControls": [
+    {
+      "id": "COC-001",
+      "control": "Artifact commit anchors, per-file SHA-256 values, ordered composite recipes and immutable run directories.",
+      "boundary": "These prove what reviewers saw and preserve chronology. They are governance controls, not evidence that novel runtime input is safe or that the product works."
+    },
+    {
+      "id": "COC-002",
+      "control": "The exact four fictional identities, twelve profiles, three depths, three lifecycle states, 36 blind cases and fixed .invalid and fixture locators.",
+      "boundary": "The range geometry isolates variables for this canary. Production does not require these names, counts or exact coordinates, while namespace separation and earned depth remain structural standards."
+    },
+    {
+      "id": "COC-003",
+      "control": "Byte-for-byte oracle, question, answer-contract, lifecycle and expected-profile maps.",
+      "boundary": "Exact equality prevents this evaluation from drifting or being gamed. It must never substitute for structural validation of unseen production input, and frozen question text must not become product logic."
+    },
+    {
+      "id": "COC-004",
+      "control": "Recursive proof that no frozen oracle value appears anywhere in the 36 allowed blind inputs, plus exact blind-input field allowlists.",
+      "boundary": "This protects evaluation integrity. The durable product requirement is that model input contains only authorised evidence and task fields, not that production scans against this fixture's answer strings."
+    },
+    {
+      "id": "COC-005",
+      "control": "Known bad question strings, jargon lists, word caps, punctuation checks, fixed mutation inventories and the current 65 canary and nine council attack counts.",
+      "boundary": "These are useful regression tripwires. They do not prove comprehension, usefulness, truth or agency and must not become a general language-policing product system."
+    },
+    {
+      "id": "COC-006",
+      "control": "Two adult answerability proxies, twelve-of-twelve pack coverage and exact proxy envelope fields.",
+      "boundary": "This is an ambiguity screen for the canary. It is not child testing, customer validation or product efficacy evidence. The durable standard is bounded answerability in the actual interaction."
+    },
+    {
+      "id": "COC-007",
+      "control": "A semantic review allowlist that excludes prior verdicts, judge identities, founder reaction and repair narrative, followed by a reviewer attestation and hash-only provenance verification.",
+      "boundary": "This is a council-independence control required to repair Run 003's protocol failure. It governs what a sealed review can claim, not what a customer must see."
+    }
+  ],
+  "openFounderQuestions": [
+    {
+      "id": "OFQ-001",
+      "question": "After the substrate passes a clean council, does the first oracle-free interaction feel like a million-dollar decision instrument within five useful minutes, or like a compliance questionnaire with expensive examples?",
+      "whyFounderOwned": "Only Krish's cold use of the interaction can resolve the product-altitude and taste judgment. The current records test fixture and contract behaviour, not the felt product.",
+      "evidenceNeeded": "A cold playable interaction shown without builder rationale, with the decision, one question, answer path and one-layer-deeper evidence available."
+    },
+    {
+      "id": "OFQ-002",
+      "question": "When the best immediate move is to collect evidence rather than set the final gate, what is the right visible distinction between an evidence request and the consequential decision so micro-learning never impersonates the main event?",
+      "whyFounderOwned": "The durable record supports both precise uncertainty-reducing experiments and million-dollar altitude, but the hierarchy and felt emphasis remain a product judgment.",
+      "evidenceNeeded": "Two minimal interaction states using the same case: one decision-gate question and one explicitly subordinate evidence-request question, reviewed cold."
+    },
+    {
+      "id": "OFQ-003",
+      "question": "What is the smallest visible correction trace that makes the Brain feel alive and trustworthy inside a consequential decision without becoming a standalone learning receipt or e-learning sequence?",
+      "whyFounderOwned": "The substrate can prove exact repair and preserved history, but only the founder gate can decide how much of that mechanism should be felt before it becomes explanatory theatre.",
+      "evidenceNeeded": "A before, correction and current-view interaction embedded in one live decision, with the unchanged evidence and repaired implication inspectable on demand."
+    }
+  ],
+  "conclusion": "Run 003 remains blocked and is invalid as a claim of blind independent review. The two adult screens establish only that the twelve visible contracts are answerable in ordinary language. They do not cure six preserved vetoes or the inconclusive comprehension ruling. The repair should consolidate into four structural outcomes: a fail-closed evidence and authority envelope, exact claim-level correction with preserved history, one plain route-changing human-owned question, and consequential proof that earns every claim. Keep fixture hashes, oracle isolation, exact counts, negative strings and reviewer-blindness machinery in the canary and governance layer. After a clean refreeze and fresh council, stop widening the synthetic rubric and show the actual cold experience: one clear decision move, evidence and uncertainty one layer below, a visible trustworthy correction, no pomp, and no claim of efficacy, learning, comprehension, independence or approval beyond the evidence.",
+  "recordedAt": "2026-09-10T21:26:59.901Z"
+}

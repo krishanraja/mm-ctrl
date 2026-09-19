@@ -1,0 +1,53 @@
+{
+  "role": "standards_prosecutor",
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "artifactHash": "sha256:86E254AE88F56E7DA05A43FB6CC251FA38B2B36CD9423269B849F65F48924D52",
+  "adjudicationHash": "sha256:CDB123FE3AC3D4ABFF54D56E0EF4E944201DF52CF1BB95A437D8283D13F57A1F",
+  "finding": "confirmed_pass",
+  "claims": [
+    "The frozen output and adjudication hashes match the supplied SHA-256 values exactly. Every adjudicated ruling hash matches its sealed judge file, and every sealed judge names the same frozen output hash and the matching frozen judge-pack hash.",
+    "The run 001 comprehension veto is repaired within the authorized six-field scope. The WPP frame and question now use concrete customer and profit language, and the Microsoft frame and question now name the limited-capacity priority decision plus the value, profit and safety proof that earns priority.",
+    "The run 001 Microsoft oracle gap is closed. RANGE-PUBLIC-03 now asks which customers or products receive limited AI computing capacity first and what proof earns that priority, matching the pre-frozen oracle's decision focus and route-changing behavior without claiming a private allocation rule.",
+    "The run 001 human-agency locator defect is repaired. All four authority pointers now identify input.json and resolve to the corresponding authority objects; the remaining ruling locators identify existing JSON values, Markdown headings or valid line ranges and no invalid locator undermines a pass.",
+    "The targeted repair changed only the schema and run identifiers plus the six authorized WPP and Microsoft surface fields. Typed notices, evidence identifiers, unknowns, recommendation states and human decision boundaries are unchanged, so no regression or scope violation is present.",
+    "The v2 mechanical contract checks return no errors for schema and run identity, one result per profile, evidence-ID resolution, multi-source bounded inferences, one explicit question per profile, surface word limits and the configured specialist-jargon patterns.",
+    "No sealed pass ignores an oracle mismatch, hard-veto condition, forbidden claim or regression. The adjudicated passed status is valid under the frozen oracle and the seven frozen criteria."
+  ],
+  "evidenceLocators": [
+    "output.json#/schemaVersion",
+    "output.json#/runId",
+    "output.json#/results/2/decisionFrame",
+    "output.json#/results/2/routeChangingQuestion",
+    "output.json#/results/2/answerWouldChange",
+    "output.json#/results/3/decisionFrame",
+    "output.json#/results/3/routeChangingQuestion",
+    "output.json#/results/3/answerWouldChange",
+    "judges/human_agency.json#/evidenceLocators/0",
+    "judges/human_agency.json#/evidenceLocators/3",
+    "judges/human_comprehension_and_access.json#/verdict",
+    "judges/epistemic_integrity.json#/verdict",
+    "adjudication.json#/rulings",
+    "adjudication.json#/result/status",
+    "repair-brief.md#Exact repair scope",
+    "src/features/operator-brain/g21PublicRowCanary.ts#G21_PUBLIC_ROW_CANARY/RANGE-PUBLIC-02/oracle",
+    "src/features/operator-brain/g21PublicRowCanary.ts#G21_PUBLIC_ROW_CANARY/RANGE-PUBLIC-03/oracle",
+    "project-documentation/ctrl-evolution/runs/g21-public-row-run-001/standards-prosecutor.json#/oracleComparison/gaps"
+  ],
+  "oracleComparison": {
+    "expectedBehavioursMet": [
+      "Diagnostic mode and decision specificity rise from intake_required through gap_first and decision_pressure to longitudinal_pressure as evidence depth increases.",
+      "The cold and sparse profiles abstain, expose evidence gaps and ask one route-changing question without generic advice or invented personhood.",
+      "The WPP result separates public strategy, reported outcomes and bounded causal inference, preserves the growth-versus-cost tension and asks for incremental business and profit before validating the integrated model.",
+      "The Microsoft result uses the eleven-year public strategy arc, tests demand against durable value, profit and safety, and asks which limited-capacity uses receive priority and what proof earns it.",
+      "All four results preserve explicit unknowns and the human consequential decision boundary within R1 Explore.",
+      "The WPP and Microsoft main surfaces satisfy the requested plain-language paraphrase test while preserving the prior analytical depth in typed notices and unknowns."
+    ],
+    "gaps": [],
+    "forbiddenClaimsTriggered": []
+  },
+  "residuals": [
+    "The public evidence still cannot resolve Cloud7 offer economics, WPP causal attribution or Microsoft workload-level return and security assurance; the output correctly keeps those matters unresolved rather than converting them into recommendations.",
+    "The repository Vitest command could not load its config in this restricted execution environment because an ancestor directory was denied. Equivalent deterministic v2 checks were reproduced directly against the frozen JSON and returned no errors."
+  ],
+  "nextTest": "Rerun the official G21 Vitest contract in an unrestricted repository execution context, then hold the same oracle and seven criteria fixed while testing a new public-row profile set for plain-language comprehension, causal restraint and one-question route change."
+}

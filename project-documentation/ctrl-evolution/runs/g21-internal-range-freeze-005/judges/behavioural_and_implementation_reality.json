@@ -1,0 +1,36 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "behavioural_and_implementation_reality",
+  "criterionVersion": "behavioural-and-implementation-reality:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "pass",
+  "claims": [
+    "The frozen review boundary is reproducible. All nine supplied semantic file hashes match commit a1a5c5e8a598e3efe911f07b5665e7f5b27bc317, and SHA-256 over the supplied path:hash lines reproduces semantic composite 944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003.",
+    "Matched-family isolation holds across four fictional families. Identity and external evidence are byte-equivalent within each family, while internal evidence nests from 2 to 6 to 9 records across basic intake, work evidence and longitudinal correction depth.",
+    "The twelve evidence scenarios can occur in ordinary care, research, manufacturing and campaign work. When the requested fact or threshold is not already knowable, the visible contract asks for a feasible baseline review, same-team test, client check, ownership review, economic model or comparable campaign test before route selection.",
+    "Every immediate question requests a human-supplied choice, threshold, fact or stopping condition. Every permitted answer maps one for one to a select, stop, bound or reshape effect, and Unknown always preserves uncertainty and requests evidence without selecting a route. The question pack exactly matches all twelve executable oracle questions and answer contracts.",
+    "Arbitrary-input validation fails closed without throwing. The sealed executable check rejected 128 deterministic malformed JSON samples and reported 249 rejected adversarial mutations; additional throwing-getter, throwing-proxy and cyclic-nested-value attacks all returned nonempty validation errors.",
+    "Semantic authority and lifecycle ordering are enforced independently of prose labels. Across all 36 state inputs, changed meaning with a reused receipt, an unknown receipt, reordered evidence and a relabelled state were each rejected in every case. Receipts bind the complete record and exact audience authority, while state bindings fix ordered evidence identities and lifecycle roles.",
+    "Fixture equality, runtime safety and usefulness remain separate. Nine applicable uses of the pre-issued fictional novel record passed runtime validation but failed canonical fixture equality, while usefulness is established only by the visible decision and answer contracts and is explicitly not claimed from validator success or diagnostic efficacy.",
+    "The repo-owned compiler closure is review-complete: the diagnostic entry imports only rangeCouncilContract.ts and g21PublicRowCanary.ts, with the latter importing only rangeCouncilContract.ts. The exact frozen source bytes compiled and the executable checks passed under Node v24.13.0 and TypeScript 5.9.3."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md#sealed-review-protocol and #behavioural-and-implementation-reality",
+    "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#total-arbitrary-input-validation, #trusted-semantic-receipt, #visible-answer-contract, #fixture-truth-and-oracle-isolation and #non-claims",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:494-580, 2581-2751, 3127-3204, 3216-3355, 3861-3936, 3977-4311 and 4314-4395",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:582-2265 and 2267-2579",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json#/questions/0 through #/questions/11",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:42-61, 168-213, 456-599, 601-758, 760-1031 and 1033-1075",
+    "scripts/check-g21-internal-range.mjs:79-182, 693-800, 802-1090 and 1157-1177; executed result status passed, 12 profiles, 36 inputs, 128 malformed JSON samples and 249 adversarial mutations rejected",
+    "Independent all-state execution against the frozen bytes: 36 canonical baselines passed; 36 receipt-reuse attacks, 36 evidence-order attacks, 36 state-relabel attacks and 36 unknown-receipt attacks were rejected; 9 safe-novel runtime controls passed and all 9 failed canonical equality",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1-15 and scripts/check-g21-internal-range.mjs:79-101; observed compiler execution Node v24.13.0 and TypeScript 5.9.3"
+  ],
+  "veto": null,
+  "missingEvidence": [],
+  "resolvingTest": null,
+  "recordedAt": "2026-09-11T01:07:28.172Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}

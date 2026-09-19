@@ -1,0 +1,95 @@
+{
+  "criterion": {
+    "judge": "epistemic_integrity",
+    "criterionVersion": "epistemic-integrity:g21-v1",
+    "ownedTruth": "Every claim has the standing, evidence and uncertainty it earns.",
+    "passConditions": [
+      "Facts, public statements, bounded inferences and gaps are visibly distinct.",
+      "Every evidenced notice resolves to the frozen input and every inference uses at least two sources.",
+      "Weak evidence produces abstention while richer evidence earns specificity without false certainty.",
+      "The strongest material countercase remains visible in the decision frame or unknowns."
+    ],
+    "failConditions": [
+      "A factual, causal or personal claim exceeds its evidence.",
+      "A declared strategy or management statement is treated as an observed outcome.",
+      "Missing information is filled with generic advice."
+    ],
+    "hardVetoRules": [
+      {
+        "ruleId": "EPISTEMIC-G21-01",
+        "condition": "The output fabricates a source, fact, private belief or causal conclusion."
+      },
+      {
+        "ruleId": "EPISTEMIC-G21-02",
+        "condition": "Cold or sparse evidence is presented as a supported route recommendation."
+      }
+    ],
+    "theoryTriggers": [
+      "claim_or_inference",
+      "consequential_choice"
+    ]
+  },
+  "theoryPack": {
+    "shared": [
+      {
+        "cardId": "agency",
+        "label": "Human agency",
+        "sourceLocator": "project-documentation/ctrl-evolution/README.md#product-truth-locked-through-g12",
+        "rule": "Humans own purpose, boundaries, standards, exceptions and the final consequential call.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "evidence",
+        "label": "Evidence standing",
+        "sourceLocator": "docs/current/architecture.md#architecture-invariants",
+        "rule": "Keep explicit facts, inferred candidates and behavioural feedback as different data types.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "boundary",
+        "label": "Subject and audience boundary",
+        "sourceLocator": "docs/current/architecture.md#trust-boundaries",
+        "rule": "Prove subject, ownership, audience and authority before an item can travel or act.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "reality",
+        "label": "Behavioural reality",
+        "sourceLocator": "project-documentation/ctrl-evolution/session-method-learning-log.md#confirmed-by-krish",
+        "rule": "Judge the real task and consequence, not an elegant description of the intended system.",
+        "advisoryOnly": true
+      }
+    ],
+    "optional": [
+      {
+        "cardId": "claim-decomposition",
+        "label": "Claim decomposition",
+        "sourceLocator": "docs/history/2026-09-07-intel-methodology-critical-thinking.md",
+        "rule": "Type the claim, identify its load-bearing assumption and name evidence that would disconfirm it.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "strongest-countercase",
+        "label": "Strongest countercase",
+        "sourceLocator": "docs/history/2026-09-07-LLM_CRITICAL_THINKING_TRAINING.md",
+        "rule": "Build the strongest plausible countercase before accepting a confident synthesis.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "reversibility-premortem",
+        "label": "Reversibility and premortem",
+        "sourceLocator": "docs/history/2026-09-07-CTRL-DECISIONING-FRAMEWORK.md",
+        "rule": "Test reversibility, premortem failure and opportunity cost separately from predicted upside.",
+        "advisoryOnly": true
+      },
+      {
+        "cardId": "decision-not-outcome",
+        "label": "Decision quality",
+        "sourceLocator": "docs/history/2026-09-07-DECISIONING CORPUS.md",
+        "rule": "Assess the quality of the decision process separately from the eventual outcome.",
+        "advisoryOnly": true
+      }
+    ],
+    "splitRequired": false
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "schema_version": "ctrl.g25.auth-trigger-and-trigger-acl-proof.r87.v1",
+  "contract_id": "G25-AUTH-TRIGGER-AND-TRIGGER-ACL-PROOF-R87",
+  "status": "auth_hook_recovered_trigger_acl_passed_production_unchanged",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-AUTH-USER-PROFILE-TRIGGER-RECOVERY-R86",
+    "G25-SECURITY-DEFINER-TRIGGER-CALLERS-R85"
+  ],
+  "auth_hook_recovery": {
+    "migration": "g25_auth_user_profile_trigger_r86",
+    "trigger_count": 1,
+    "enabled_count": 1,
+    "correct_function_count": 1,
+    "function_definition_unchanged_count": 1,
+    "trigger_definition_digest": "5504e726ea31c59076a56dac4c4b4c88",
+    "matches_production_trigger_digest": true
+  },
+  "runtime_smoke_history": [
+    {
+      "attempt": 1,
+      "channel": "read_only_sql_inspection",
+      "result": "blocked_before_insert",
+      "reason": "The inspection channel enforces a read-only transaction.",
+      "database_effect": "none"
+    },
+    {
+      "attempt": 2,
+      "channel": "isolated_self_cleaning_test_migration",
+      "migration": "g25_auth_user_profile_trigger_runtime_smoke_r87",
+      "result": "pass",
+      "profile_created": true,
+      "default_role_created": true,
+      "fixture_counts_after": {
+        "auth_user": 0,
+        "profile": 0,
+        "user_role": 0
+      }
+    },
+    {
+      "attempt": 3,
+      "channel": "isolated_self_cleaning_test_migration_after_acl",
+      "migration": "g25_auth_user_profile_trigger_post_acl_smoke_r87",
+      "result": "pass",
+      "profile_created": true,
+      "default_role_created": true,
+      "fixture_counts_after": {
+        "auth_user": 0,
+        "profile": 0,
+        "user_role": 0
+      }
+    }
+  ],
+  "trigger_acl": {
+    "migration": "g25_security_definer_trigger_acl_r85",
+    "target_count": 15,
+    "resolved_count": 15,
+    "anon_denied_count": 15,
+    "authenticated_denied_count": 15,
+    "service_allowed_count": 15,
+    "owner_allowed_count": 15,
+    "definition_unchanged_count": 15,
+    "attachment_count": 23,
+    "enabled_attachment_count": 23,
+    "direct_definition_caller_count": 1,
+    "acl_verification_digest": "85e20aed33ba6b1317789f1c30b7c45a"
+  },
+  "advisor_progress": {
+    "initial_r81": {
+      "anonymous_security_definer_executable": 41,
+      "authenticated_security_definer_executable": 45
+    },
+    "after_r87": {
+      "anonymous_security_definer_executable": 17,
+      "authenticated_security_definer_executable": 21
+    },
+    "closed_by_isolated_acl_proofs": {
+      "anonymous": 24,
+      "authenticated": 24
+    },
+    "unrelated_findings_unchanged": {
+      "rls_enabled_no_policy": 24,
+      "extension_in_public": 2
+    }
+  },
+  "production_postcheck": {
+    "trigger_acl_target_count": 15,
+    "anon_allowed_count": 15,
+    "authenticated_allowed_count": 15,
+    "service_allowed_count": 15,
+    "writes": 0
+  },
+  "bounded_claim": "The missing Auth signup hook is recovered and runtime-proved in the isolated project. Removing direct ordinary-role execution from 15 trigger functions preserves the tested signup trigger and all 23 attachments. This does not authorize production application or retire the three unattached candidates.",
+  "acceptance_gate": {
+    "auth_hook_recovered": true,
+    "pre_acl_runtime_smoke_passed": true,
+    "trigger_acl_verification_passed": true,
+    "post_acl_runtime_smoke_passed": true,
+    "fixtures_fully_cleaned": true,
+    "production_unchanged": true,
+    "all_45_routes_dispositioned": false,
+    "production_mutation_ready": false
+  },
+  "source_references": [
+    "https://supabase.com/docs/guides/database/functions",
+    "https://www.postgresql.org/docs/17/sql-createtrigger.html"
+  ],
+  "authority": {
+    "isolated_target_writes": [
+      "one missing Auth trigger",
+      "one trigger ACL migration",
+      "two self-cleaning synthetic signup test migrations"
+    ],
+    "persistent_fixture_rows": 0,
+    "production_writes": 0,
+    "forbids": [
+      "production trigger or ACL mutation",
+      "function or trigger retirement",
+      "merge, cutover or release"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "subject_audience_lifecycle_safety",
+  "criterionVersion": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "fail",
+  "claims": [
+    "The frozen fixtures structurally label identities and organisations as fictional, omit consent fields, use invalid external domains and bind each private evidence record to one exact audience authority.",
+    "The arbitrary-input contract is not total. A sparse internalEvidence array has no elements visited by flatMap, is therefore treated as shape-valid, and then yields undefined during for-of iteration, causing validateInternalRecord to dereference record.evidenceId and throw instead of failing closed.",
+    "The same sparse-array defect applies to other nested top-level arrays whose shape gate uses flatMap before later dereference, including externalEvidence and currentClaims.",
+    "The trusted runtime evidence binding omits record content and claim text, while the tests require safely changed prose to pass. As implemented, changed prose that asserts real personhood, simulated consent or a subject outside the frozen source capability can retain trusted metadata, recompute currentClaims and pass structural validation."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/council-brief.md#subject-audience-and-lifecycle-safety",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:296-299",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:509-526",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2591-2610",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2887-2999",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3072-3137",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3844-3854",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3875-4010",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4027-4093",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:722-743",
+    "scripts/check-g21-internal-range.mjs:655-705"
+  ],
+  "veto": {
+    "ruleId": "SAFETY-RANGE-01",
+    "failure": "Malformed nested sparse arrays can make validateG21InternalBlindInput throw rather than fail closed. In addition, unbound evidence content and claim text can carry real-person, simulated-consent or subject-incompatible prose while preserving trusted fictional metadata and a recomputed currentClaims view.",
+    "resolvingTest": "Add adversarial runtime tests that pass valid top-level envelopes with sparse externalEvidence, internalEvidence, audienceAuthorities and currentClaims arrays and require a nonthrowing nonempty error result. Also mutate trusted record content and claim text to assert real personhood or consent and to name a subject outside the frozen source capability, recompute currentClaims, and require rejection while preserving acceptance of explicitly safe novel fictional prose."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add adversarial runtime tests that pass valid top-level envelopes with sparse externalEvidence, internalEvidence, audienceAuthorities and currentClaims arrays and require a nonthrowing nonempty error result. Also mutate trusted record content and claim text to assert real personhood or consent and to name a subject outside the frozen source capability, recompute currentClaims, and require rejection while preserving acceptance of explicitly safe novel fictional prose.",
+  "recordedAt": "2026-09-10T22:56:28.013Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}

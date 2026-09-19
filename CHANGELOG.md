@@ -6,6 +6,17 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-11 - Decision Table R4 operator slice
+
+Branch-only and synthetic. Nothing in this section is deployed or connected to production data.
+
+- Replaced the older G14 operator harness at the protected synthetic route with the founder-approved G20 Decision Table R4 interaction.
+- Added three materially different routes, one contextual tap-first question at a time, optional notes, editable test limits, exact source inspection, ephemeral evidence capture and explicit sparse, stale and wrong-customer states.
+- Rebuilt the Claude bridge so it copies a complete, readable brief containing the decision, current view, personal judgement, evidence, unknowns, constraints and requested output. Returned work can be brought back for a five-part Brain audit.
+- Replaced loose fixture casting with a typed R4 schema and integrity checks for route identity, source references and audience boundaries.
+- Kept the route unlinked, non-indexable, unavailable in ordinary production builds and free of database writes, customer messaging, email and customer-surface projection.
+- Added six React-route browser acceptance tests across 1440x900, 390x844 and 320x568, plus fixture and brief-contract tests.
+
 ## 2026-09-08 - Fail-closed Living Brain substrate
 
 Applied and read back three additive migrations on the shared production Supabase project. No customer path is connected and all 11 new Brain tables remain empty.

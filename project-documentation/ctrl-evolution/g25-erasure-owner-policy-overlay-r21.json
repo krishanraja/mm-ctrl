@@ -1,0 +1,69 @@
+{
+  "schema_version": "ctrl.g25.erasure-owner-policy-overlay.r21.v1",
+  "record_id": "G25-ERASURE-OWNER-POLICY-OVERLAY-R21",
+  "status": "owner_policy_bound_schema_execution_blocked",
+  "base_registry": {
+    "path": "project-documentation/ctrl-evolution/g25-erasure-target-registry-r18.json",
+    "sha256": "a3613848792d7d730945b67cf52a46e7e7d57d5ec365711ce6fb9f396c24a854"
+  },
+  "policy_decision_ref": "DEC-20260917-g25-owner-subject-separation-r19",
+  "planner_contract": {
+    "path": "project-documentation/ctrl-evolution/g25-principal-removal-planner-r20.json",
+    "sha256": "b30ec01b09e1e7afd22ab0011cb9cae1d2cb181bdb7ee0225818db9ea0be19f9"
+  },
+  "classification": {
+    "from": "owner_scope_unresolved",
+    "to": "operator_custody_gate",
+    "meaning": "An owner match is never deletion authority. Revoke the removed operator's access, preserve every differently-subjected Brain, and block auth-user deletion until authorised transfer or explicit customer closure completes."
+  },
+  "overrides": [
+    {
+      "relation": "public.brain_workspaces",
+      "constraint": "brain_workspaces_owner_id_fkey",
+      "from_columns": ["owner_id"],
+      "classification": "operator_custody_gate",
+      "standing": "blocks_schema_execution",
+      "reason": "The current cascade can delete a differently-subjected workspace. Auth-user deletion stays blocked until a non-cascading custody path proves transfer or explicit customer closure."
+    },
+    {
+      "relation": "public.brain_prepared_receipts",
+      "constraint": "brain_prepared_receipts_owner_id_fkey",
+      "from_columns": ["owner_id"],
+      "classification": "operator_custody_gate",
+      "standing": "blocks_schema_execution",
+      "reason": "Prepared receipt custody is cryptographically bound to owner scope. Operator removal cannot cascade-delete another subject's receipt or silently rewrite its owner without a verified custody transition."
+    },
+    {
+      "relation": "public.brain_prepared_authority_corrections",
+      "constraint": "brain_prepared_authority_corrections_owner_id_fkey",
+      "from_columns": ["owner_id"],
+      "classification": "operator_custody_gate",
+      "standing": "blocks_schema_execution",
+      "reason": "Correction history belongs to the Brain subject and evidence chain. Removing its operator must preserve that history until custody is explicitly transferred or the customer closes it."
+    },
+    {
+      "relation": "public.brain_prepared_subject_erasure_tombstones",
+      "constraint": "brain_prepared_subject_erasure_tombstones_owner_id_fkey",
+      "from_columns": ["owner_id"],
+      "classification": "operator_custody_gate",
+      "standing": "blocks_schema_execution",
+      "reason": "Operator removal must not cascade-delete another subject's anti-revival protection. Custody and the separate retention policy must both be resolved before execution."
+    }
+  ],
+  "effective_gate": {
+    "status": "blocked",
+    "schema_blockers": 4,
+    "retention_policy_blockers": 2,
+    "owner_policy_unresolved_entries": 0,
+    "rule": "R19 resolves the owner-policy meaning, but current cascading schema behavior remains blocked until a non-cascading custody candidate and multi-identity database canary pass."
+  },
+  "not_authorized": [
+    "auth-user deletion",
+    "automatic ownership transfer",
+    "customer Brain closure",
+    "migration creation or execution",
+    "linked or production database use",
+    "runtime integration",
+    "deployment, merge or release"
+  ]
+}

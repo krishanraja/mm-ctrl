@@ -1,0 +1,85 @@
+{
+  "schema_version": "ctrl.g25.erasure-tombstone-policy.r35.v1",
+  "record_id": "G25-ERASURE-TOMBSTONE-POLICY-R35",
+  "status": "provisional_pre_migration_policy_verified",
+  "depends_on": [
+    "G25-BOTH-GENERATION-SUBJECT-ERASURE-R30",
+    "G25-POST-CUTOVER-LIFECYCLE-R33",
+    "G25-RUNTIME-CALLER-INVENTORY-R34"
+  ],
+  "policy": {
+    "purpose": "prevent any retry, delayed job or surviving writer from silently recreating erased prepared intelligence inside the erased Brain scope",
+    "retention_basis": "scope_bound_not_calendar_bound",
+    "retention_rule": "retain the minimal tombstone while its workspace Brain scope exists; remove it with the complete workspace closure",
+    "expiry_rule": "no tombstone expiry inside a continuing workspace because expiry would reopen silent revival",
+    "reconsent_rule": "never clear or overwrite an erasure tombstone; explicit subject reconsent creates a new workspace and custody scope after a separate consent receipt is durably accepted",
+    "old_scope_rule": "the erased scope remains erased and can return only status metadata with zero protected items",
+    "access_rule": "service-only, no browser table access, no protected payload, no evidence excerpts and no model use",
+    "backup_rule": "restored data must reapply the erasure state before any prepared-intelligence writer or reader is enabled",
+    "review_rule": "review purpose necessity at least annually and on every privacy-policy or deletion-flow change"
+  },
+  "data_minimisation": {
+    "allowed": [
+      "erasure identity",
+      "workspace, custody and stable subject scope identifiers",
+      "request and erasure fingerprints",
+      "occurred and recorded timestamps",
+      "per-generation erased receipt counts"
+    ],
+    "forbidden": [
+      "payload ciphertext",
+      "decryption material",
+      "authority dependencies",
+      "source excerpts",
+      "email or login identifier",
+      "inference or judgement content"
+    ]
+  },
+  "current_candidate_alignment": [
+    "tombstone has no expires_at column",
+    "one tombstone is unique per workspace and subject",
+    "workspace and custody deletion cascade to the tombstone",
+    "stable subject deletion is restricted while the scope exists",
+    "both legacy and custody writers reject erased scope",
+    "browser roles receive no tombstone table access",
+    "service role receives select only",
+    "R31 returns erased with zero items"
+  ],
+  "external_basis": [
+    {
+      "authority": "UK ICO storage limitation guidance",
+      "url": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/storage-limitation/",
+      "retrieved": "2026-09-17",
+      "use": "retention must have a necessary stated purpose, a documented rule and periodic review"
+    },
+    {
+      "authority": "UK ICO right to erasure guidance",
+      "url": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/",
+      "retrieved": "2026-09-17",
+      "use": "backup data must be put beyond use and the restoration process must preserve erasure"
+    },
+    {
+      "authority": "EDPB 2025 coordinated enforcement report on right to erasure",
+      "url": "https://www.edpb.europa.eu/system/files/2026-02/edpb_cef-report_2025_right-to-erasure_en.pdf",
+      "retrieved": "2026-09-17",
+      "use": "use a deletion matrix and track erasure so restored systems do not revive data"
+    }
+  ],
+  "artifacts": {
+    "r30_candidate": "supabase/candidates/g25_both_generation_subject_erasure_r30.sql",
+    "r30_candidate_sha256": "11bd0872ee1f3ad495d554dd7b8a7254532e82a9a0d5da783f4de5b478901b9c",
+    "r31_candidate": "supabase/candidates/g25_unified_current_prepared_reader_r31.sql",
+    "r31_candidate_sha256": "55494d4e1a63d72479ae4db72b5fbc9e553a6150c077bc9dc7d7b4a2855d00a6",
+    "checker": "scripts/check-ctrl-g25-erasure-tombstone-policy-r35.mjs",
+    "checker_sha256": "eeb0d0ad56c6943d96bf7011d2c1b439602adce9a81d261b180c1238d53bb6f7"
+  },
+  "next_gate": "Specify and prove the explicit subject-consent receipt that can create a new Brain scope without reopening or mutating the erased scope.",
+  "not_authorized": [
+    "treating this as legal advice or a final privacy notice",
+    "clearing an erasure tombstone",
+    "creating a new Brain without explicit subject consent",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": "ctrl.g25.both-generation-subject-erasure.r30.v1",
+  "record_id": "G25-BOTH-GENERATION-SUBJECT-ERASURE-R30",
+  "status": "local_both_generation_subject_erasure_verified",
+  "depends_on": [
+    "G25-PREPARED-SUBJECT-ERASURE-R13",
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25",
+    "G25-PREPARED-CUSTODY-CIPHER-ADMISSION-R27"
+  ],
+  "operation": "erase one stable-custody subject scope across legacy and custody-native prepared derivatives",
+  "invariants": [
+    "the erasure identity contains stable custody and subject scope but no operator or legacy owner identity",
+    "protected payload and encryption-version material are destroyed in both prepared generations",
+    "dependencies and prior events are replaced by one deterministic content-free erased event per receipt",
+    "unrelated subjects and workspaces remain byte-for-byte unchanged",
+    "a tombstone blocks both legacy and custody-native prepared writers from silently reviving the subject",
+    "existing legacy tombstones are bridged rather than treated as complete custody-native erasure",
+    "ended operator access and closed custody do not make an authorised privacy erasure impossible",
+    "both generations and the stable erasure tombstone commit or roll back together",
+    "exact replay is idempotent and conflicting replay fails closed"
+  ],
+  "verified": [
+    "PostgreSQL 18.3 both-generation subject erasure",
+    "one exact receipt erased in each generation",
+    "ciphertext and encryption-version destruction",
+    "dependency destruction and one final erased event per receipt",
+    "unrelated workspace byte preservation",
+    "legacy and custody-native silent-revival denial",
+    "legacy-tombstone bridge into stable erasure",
+    "erasure after custody closure",
+    "cross-generation forced-failure rollback",
+    "ordinary authenticated execution denial",
+    "legacy owner identity smuggling denial",
+    "future erasure-time denial",
+    "four mutation controls"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_both_generation_subject_erasure_r30.sql",
+    "candidate_sha256": "11bd0872ee1f3ad495d554dd7b8a7254532e82a9a0d5da783f4de5b478901b9c",
+    "runner": "scripts/run-ctrl-g25-both-generation-subject-erasure-r30.mjs",
+    "runner_sha256": "543788d01eddb961a8fe91517438d340874c605a2ef3dd7fc86d77ea44229265"
+  },
+  "policy_boundary": "The local proof retains a content-free anti-revival tombstone indefinitely because its lawful retention duration, expiry and re-consent behavior remain unresolved. This is not a final retention promise.",
+  "next_gate": "Provide one current-reader contract across both generations, then close legacy-only writer competition before migration planning.",
+  "not_authorized": [
+    "final tombstone retention, expiry or re-consent policy",
+    "legacy erasure writer retirement",
+    "unified current-reader runtime integration",
+    "linked or production database use",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "schema_version": "ctrl.g25.recovery-first-blank-replay.r81.v1",
+  "contract_id": "G25-RECOVERY-FIRST-BLANK-REPLAY-R81",
+  "status": "first_blank_replay_exact_second_blank_replay_gated",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-MIGRATION-LINEAGE-RECOVERY-R77",
+    "G25-RECOVERY-SCHEMA-FINGERPRINT-R78",
+    "G25-RECOVERY-NON-SCHEMA-MANIFEST-R79",
+    "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80"
+  ],
+  "capture": {
+    "source": "Mindmaker AI production, read only",
+    "target": "mm-ctrl-recovery-proof-20260917, isolated and data-less",
+    "postgres_dump_client": "17.11",
+    "baseline_path": "supabase/baselines/g25_production_application_schema_r81.sql",
+    "baseline_bytes": 569628,
+    "baseline_sha256": "7bb1a96145efa2b47227f7ed425ff4804dea8ee7b355bddc4dc716af33e3c80d",
+    "included_schemas": [
+      "public",
+      "private",
+      "ctrl_discovery"
+    ],
+    "top_level_copy_statements": 0,
+    "top_level_insert_statements": 0,
+    "customer_rows_included": false,
+    "excluded_lanes": [
+      "Auth and Storage platform schemas and rows",
+      "extension installation and behavior",
+      "custom role creation and credentials",
+      "cron commands",
+      "Vault values",
+      "Realtime configuration",
+      "Edge Function source, configuration and secrets",
+      "external provider configuration and data"
+    ]
+  },
+  "prerequisites": {
+    "production": {
+      "postgres": "17.4.1.064",
+      "pg_cron": "1.6",
+      "pg_net": "0.14.0",
+      "vector": "0.8.0"
+    },
+    "first_blank_replay": {
+      "postgres": "17.6.1.166",
+      "pg_cron": "1.6.4",
+      "pg_net": "0.20.4",
+      "vector": "0.8.2"
+    },
+    "standing": "platform_default_version_drift_recorded_runtime_compatibility_unproved"
+  },
+  "first_blank_replay": {
+    "application_tables": 176,
+    "application_sequences": 2,
+    "estimated_application_rows": 0,
+    "fingerprint_probe_path": "supabase/candidates/g25_recovery_application_schema_fingerprint_r81.sql",
+    "fingerprint_probe_sha256": "d934a537a33283041087e7261c6ab0b1beac6b587c5fd24afde98ba4b478e189",
+    "exact_domains": 11,
+    "unexplained_differences": 0,
+    "fingerprints": {
+      "columns": { "object_count": 2133, "digest": "6d21870f39c696a4bb087e6e8ff33438" },
+      "constraints": { "object_count": 774, "digest": "a290e41117eacaf26a8432e64942ca11" },
+      "indexes": { "object_count": 591, "digest": "40bec422cf245975fb4ed6034efc5e0e" },
+      "policies": { "object_count": 304, "digest": "db583e9d8c0cf3b920a728f4d6e276b3" },
+      "rls": { "object_count": 176, "digest": "c1962d417e21fc41cacf8174d46a9bc1" },
+      "routine_grants": { "object_count": 1080, "digest": "fc2586bdacb4ec9bb181a05996ef6881" },
+      "routines": { "object_count": 218, "digest": "e71c463e738e1bba91d784b8af66fb03" },
+      "schema_grants": { "object_count": 12, "digest": "f08632af471eac39debe086bfe584f03" },
+      "table_grants": { "object_count": 5071, "digest": "93b4759a3f418824bd775c83834f4815" },
+      "triggers": { "object_count": 53, "digest": "9138fb0284a3df5f69b33e96e5e9e2cc" },
+      "views": { "object_count": 9, "digest": "41073e0f76e7f2a4480078dcb8f8ed5a" }
+    }
+  },
+  "acl_repair": {
+    "cause": "Fresh-project default privileges were broader than the explicit production ACLs on restored objects.",
+    "normalization": [
+      "revoke default anon, authenticated and service_role object privileges before replaying captured ACLs",
+      "reduce postgres on private.mindmake_personal_read_rate_events_id_seq to the production USAGE-only grant"
+    ],
+    "result": "all table, routine and schema grant fingerprints exact"
+  },
+  "advisor_snapshot": {
+    "security": {
+      "anon_security_definer_function_executable": 41,
+      "authenticated_security_definer_function_executable": 45,
+      "extension_in_public": 2,
+      "rls_enabled_no_policy": 24
+    },
+    "performance": {
+      "auth_rls_initplan": 43,
+      "multiple_permissive_policies": 228,
+      "unindexed_foreign_keys": 13,
+      "unused_index": 320,
+      "no_primary_key": 1,
+      "auth_db_connections_absolute": 1
+    },
+    "standing": "inherited baseline findings, not accepted as safe or fixed by parity"
+  },
+  "acceptance_gate": {
+    "required_clean_blank_replays": 2,
+    "completed_clean_blank_replays": 1,
+    "required_object_diff": 0,
+    "first_replay_object_diff": 0,
+    "unexplained_policy_or_grant_diff": 0,
+    "extension_runtime_parity_required": true,
+    "non_schema_recovery_required": true,
+    "critical_application_smoke_required": true,
+    "production_recovery_choice_ready": false
+  },
+  "authority": {
+    "production_writes": 0,
+    "customer_data_writes": 0,
+    "permits": [
+      "local baseline, probes, checks and documentation",
+      "read-only production fingerprints",
+      "read and bounded verification in the already approved isolated recovery project"
+    ],
+    "requires_exact_new_gate": [
+      "a second blank hosted project or destructive reset",
+      "production history or schema mutation",
+      "customer data migration",
+      "deployment, merge, cutover, release or legacy retirement"
+    ]
+  }
+}

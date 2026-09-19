@@ -1,0 +1,64 @@
+{
+  "schema_version": "ctrl.g25.principal-removal-planner.r20.v1",
+  "record_id": "G25-PRINCIPAL-REMOVAL-PLANNER-R20",
+  "status": "local_planner_verified_schema_execution_blocked",
+  "policy_decision_ref": "DEC-20260917-g25-owner-subject-separation-r19",
+  "purpose": "Prevent a user-identity or operator-lifecycle action from becoming accidental authority to delete another person's Brain.",
+  "inputs": {
+    "intent": ["subject_erasure", "operator_removal"],
+    "relationship_inventory": {
+      "required_standing": "verified_complete",
+      "required_fields": ["evidence_ref", "relationship_count"],
+      "rule": "No safe result may be produced from a partial or unverified workspace relationship inventory."
+    },
+    "workspace_relationship": ["workspace_id", "subject_id", "owner_id", "active_operator_user_ids"]
+  },
+  "invariants": [
+    "erase_subject_brain is emitted only where workspace.subject_id exactly equals the subject-erasure identity",
+    "operator_removal never emits erase_subject_brain",
+    "operator access is revoked for differently-subjected workspaces the removed person owns or operates",
+    "ownership of a differently-subjected Brain creates a transfer-or-customer-closure gate",
+    "operator removal for a person who is also a Brain subject preserves that Brain behind a separate subject decision",
+    "auth-user deletion remains false while any protected Brain needs custody action",
+    "duplicate or unverified relationship evidence fails closed"
+  ],
+  "verified_scenarios": [
+    "plain subject erasure",
+    "role-only operator removal",
+    "owner removal for a different subject",
+    "one person's own Brain plus customer Brains they operate",
+    "ownership without subject authority",
+    "ambiguous duplicate workspace evidence",
+    "operator removal where the operator is also the Brain subject",
+    "unverified relationship inventory"
+  ],
+  "artifacts": {
+    "source": "supabase/functions/_shared/brain-principal-removal-plan.r20.ts",
+    "source_sha256": "d092801f28a368d7d331d77e07214795994ba5e92c99c320246b0903df2eb0da",
+    "tests": "supabase/functions/_shared/brain-principal-removal-plan.r20.test.ts",
+    "tests_sha256": "e4fb3e5c953f830891d7ceee78611da698423277823b17deb0d297511fb07ceb"
+  },
+  "verification": {
+    "focused_tests": 8,
+    "expected_test_files": 1,
+    "contract_checker": "scripts/check-ctrl-g25-principal-removal-planner-r20.mjs"
+  },
+  "execution_boundary": {
+    "allowed": [
+      "pure local planning",
+      "deterministic fixtures and tests",
+      "local documentation and commits"
+    ],
+    "blocked": [
+      "auth-user deletion",
+      "automatic ownership transfer",
+      "customer Brain closure",
+      "migration creation or execution",
+      "linked or production database use",
+      "runtime integration",
+      "deployment, merge or release"
+    ],
+    "reason": "The current schema still uses cascading auth-user owner references. A later non-cascading custody design and multi-identity database canary must prove the policy before execution."
+  },
+  "next_gate": "Bind all four R18 owner paths to this relationship-aware custody policy, then design and verify a non-cascading owner-reference candidate without changing a linked database."
+}

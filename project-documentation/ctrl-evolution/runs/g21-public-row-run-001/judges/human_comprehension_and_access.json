@@ -1,0 +1,32 @@
+{
+  "rulingId": "RULING-G21-HUMAN-COMPREHENSION-001",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "judge": "human_comprehension_and_access",
+  "phase": "sealed_review",
+  "verdict": "fail",
+  "criterionVersion": "human-comprehension-and-access:g21-v1",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "theoryPackHash": "sha256:5B8946386CDA8347E49C6D05EDC58BDD57E0C461343330E66481951D71687B7C",
+  "claims": [
+    "The WPP result makes the leader decode specialist terms such as attribution, margin change, integrated model and commercial causation before answering the main question.",
+    "The Microsoft result makes the leader decode workload-level economics, contribution margin, capacity-constrained growth and portfolio-allocation before answering the main question.",
+    "Each result contains one explicit route-changing question, but the specialist language in the richer results prevents criterion-wide comprehension by a bright 12-year-old."
+  ],
+  "evidenceLocators": [
+    "/results/2/decisionFrame",
+    "/results/2/notices/2/text",
+    "/results/2/routeChangingQuestion",
+    "/results/2/answerWouldChange",
+    "/results/3/decisionFrame",
+    "/results/3/routeChangingQuestion",
+    "/results/3/answerWouldChange",
+    "/results/0/routeChangingQuestion",
+    "/results/1/routeChangingQuestion"
+  ],
+  "veto": {
+    "ruleId": "COMPREHENSION-G21-01",
+    "failure": "The main decision questions for RANGE-PUBLIC-02 and RANGE-PUBLIC-03 are not intelligible to the stated non-technical audience without specialist interpretation.",
+    "resolvingTest": "Rewrite each main frame and question in plain language, then verify that a bright 12-year-old can state what is known, what matters and what single answer is requested without help defining business or finance terms."
+  },
+  "recordedAt": "2026-09-10T14:52:45.682Z"
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": "ctrl.g25.security-definer-exposure.r82.v1",
+  "contract_id": "G25-SECURITY-DEFINER-EXPOSURE-R82",
+  "status": "read_only_exposure_audit_complete_mutation_gated",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-RECOVERY-FIRST-BLANK-REPLAY-R81",
+    "G25-LIVE-ONLY-FUNCTION-SOURCE-AUDIT-R80"
+  ],
+  "fingerprint": {
+    "probe_path": "supabase/candidates/g25_security_definer_exposure_fingerprint_r82.sql",
+    "callable_security_definer_count": 45,
+    "anon_count": 41,
+    "authenticated_count": 45,
+    "public_default_count": 39,
+    "trigger_result_count": 15,
+    "non_trigger_count": 30,
+    "anon_non_trigger_count": 26,
+    "write_non_trigger_count": 20,
+    "anon_write_no_auth_marker_count": 9,
+    "anon_read_no_auth_marker_count": 8,
+    "exposure_digest": "e2917473e664296685ec4975f658ca3b",
+    "production_and_first_blank_replay_match": true
+  },
+  "route_classes": {
+    "anonymous_write_without_visible_identity_guard": [
+      "get_or_create_profile(text,text,text,text,text)",
+      "increment_automator_usage(uuid,text)",
+      "process_pending_sync_logs()",
+      "schedule_sync_processing()",
+      "snapshot_north_star()",
+      "sp_aggregate_briefing_feedback(integer,integer)",
+      "sync_lead_to_sheets(uuid,uuid,text)",
+      "track_referral_conversion(text,uuid,text,text)",
+      "trigger_google_sheets_sync(text)"
+    ],
+    "anonymous_read_without_visible_identity_guard": [
+      "calculate_bootstrap_ci(numeric[],numeric,integer)",
+      "calculate_conversion_metrics(uuid)",
+      "get_intake_for_registration(uuid)",
+      "get_pending_verifications(uuid)",
+      "get_share_card(uuid)",
+      "has_role(uuid,app_role)",
+      "has_role(uuid,text)",
+      "hash_company_identifier(text)"
+    ],
+    "auth_uid_marker_requires_behavioral_proof": [
+      "fix_memory_fact(uuid)",
+      "get_track_record(uuid)",
+      "list_mcp_tokens()",
+      "mint_mcp_token(text,boolean)",
+      "pin_decision(uuid)",
+      "record_decision_outcome(uuid,text,text,smallint,text,text)",
+      "resolve_decision(uuid,text,text)",
+      "revoke_mcp_token(uuid)",
+      "strengthen_memory_fact(uuid)",
+      "submit_contest(text,text,uuid,text,text,text,jsonb)",
+      "touch_memory_fact(uuid)",
+      "touch_memory_facts(uuid[])",
+      "verify_memory_fact(uuid,text,boolean)"
+    ],
+    "trigger_returning_direct_execute_should_be_removed": [
+      "handle_new_user()",
+      "handle_new_user_profile()",
+      "log_booking_request()",
+      "log_consent_change()",
+      "trigger_analytics_sheets_sync()",
+      "trigger_booking_http_sync()",
+      "trigger_booking_requests_sync()",
+      "trigger_booking_sheets_sync()",
+      "trigger_booking_sync()",
+      "trigger_business_context_sync()",
+      "trigger_contact_collection_sync()",
+      "trigger_google_sheets_edge_function()",
+      "trigger_lead_score_sheets_sync()",
+      "update_profile_from_insights()",
+      "update_updated_at_column()"
+    ]
+  },
+  "current_repository_runtime_references": {
+    "fix_memory_fact": [
+      "src/components/memory-web/BondReader.tsx",
+      "src/hooks/useMemoryEdges.ts",
+      "src/pages/MemoryCenter.tsx",
+      "supabase/functions/_shared/correction-guard.ts"
+    ],
+    "get_pending_verifications": [
+      "src/hooks/useUserMemory.ts",
+      "supabase/functions/extract-user-context/index.ts"
+    ],
+    "get_track_record": [
+      "src/hooks/useCapabilitySignals.ts",
+      "src/hooks/useTrackRecord.ts"
+    ],
+    "list_mcp_tokens": [
+      "src/hooks/useCapabilitySignals.ts",
+      "src/hooks/useMcpTokens.ts"
+    ],
+    "mint_mcp_token": [
+      "src/hooks/useMcpTokens.ts"
+    ],
+    "pin_decision": [
+      "src/hooks/usePinnedDecision.ts"
+    ],
+    "record_decision_outcome": [
+      "src/hooks/useResolveDecision.ts",
+      "src/hooks/useTrackRecord.ts"
+    ],
+    "resolve_decision": [
+      "src/hooks/useDecisionActions.ts",
+      "src/hooks/useResolveDecision.ts"
+    ],
+    "revoke_mcp_token": [
+      "src/hooks/useMcpTokens.ts"
+    ],
+    "strengthen_memory_fact": [
+      "src/components/memory-web/BondReader.tsx",
+      "src/hooks/useMemoryEdges.ts",
+      "src/pages/MemoryCenter.tsx"
+    ],
+    "submit_contest": [
+      "src/hooks/useContest.ts"
+    ],
+    "touch_memory_fact": [
+      "supabase/functions/_shared/memory-context-builder.ts",
+      "supabase/functions/decision-engine/index.ts",
+      "supabase/functions/edge-generate/index.ts",
+      "supabase/functions/generate-briefing/index.ts",
+      "supabase/functions/generate-custom-export/index.ts",
+      "supabase/functions/generate-skill-export/index.ts",
+      "supabase/functions/generate-team-instructions/index.ts",
+      "supabase/functions/memory-export/index.ts",
+      "supabase/functions/synthesize-edge-profile/index.ts"
+    ],
+    "touch_memory_facts": [
+      "supabase/functions/_shared/memory-context-builder.ts",
+      "supabase/functions/decision-engine/index.ts",
+      "supabase/functions/edge-generate/index.ts",
+      "supabase/functions/generate-briefing/index.ts",
+      "supabase/functions/generate-custom-export/index.ts",
+      "supabase/functions/generate-skill-export/index.ts",
+      "supabase/functions/generate-team-instructions/index.ts",
+      "supabase/functions/memory-export/index.ts",
+      "supabase/functions/synthesize-edge-profile/index.ts"
+    ],
+    "verify_memory_fact": [
+      "src/hooks/useUserMemory.ts",
+      "supabase/functions/_shared/correction-guard.ts"
+    ]
+  },
+  "highest_risk_caller_evidence": {
+    "actual_runtime_reference_count": 0,
+    "generated_types_only": [
+      "get_or_create_profile",
+      "process_pending_sync_logs",
+      "schedule_sync_processing",
+      "sync_lead_to_sheets",
+      "track_referral_conversion",
+      "trigger_google_sheets_sync"
+    ],
+    "no_current_repository_reference": [
+      "increment_automator_usage",
+      "snapshot_north_star",
+      "sp_aggregate_briefing_feedback"
+    ],
+    "boundary": "No current repository reference is not proof that a deployed, scheduled or external caller does not exist."
+  },
+  "disposition_rules": [
+    "Trigger-returning functions keep trigger behavior but lose direct public role execution unless a contrary dependency is proved.",
+    "Anonymous write functions without an independently verified subject or operator guard are blocked from the future backend.",
+    "Anonymous read functions require an explicit public product case, minimum returned data and adversarial cross-subject proof.",
+    "An auth.uid marker is only a review lead. It is not proof of ownership, fresh authorization or complete denial behavior.",
+    "Caller absence cannot authorize retirement until deployed clients, schedules, webhooks and live-only function sources are checked."
+  ],
+  "acceptance_gate": {
+    "all_45_routes_dispositioned": false,
+    "all_current_and_external_callers_proved": false,
+    "attacker_owner_and_service_role_tests_pass": false,
+    "least_privilege_acl_candidate_reviewed": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "production_queries": "read_only_metadata_and_definition_markers",
+    "production_writes": 0,
+    "permits": [
+      "read-only route inventory and definition-marker analysis",
+      "repository caller scan",
+      "local disposition contracts and tests"
+    ],
+    "forbids": [
+      "grant, revoke, routine or policy mutation in production",
+      "calling possibly mutating routines for verification",
+      "function deletion or retirement",
+      "deployment, merge, cutover or release"
+    ]
+  }
+}

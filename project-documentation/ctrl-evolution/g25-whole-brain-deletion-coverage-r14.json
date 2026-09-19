@@ -1,0 +1,125 @@
+{
+  "schema_version": "ctrl.g25.whole-brain-deletion-coverage.r14.v1",
+  "contract_id": "G25-WHOLE-BRAIN-DELETION-COVERAGE-R14",
+  "status": "repository_coverage_map_complete_execution_closed",
+  "prepared_at": "2026-09-17T15:20:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-prepared-subject-erasure-r13.json"
+  ],
+  "evidence": {
+    "canonical_brain_schema": "supabase/migrations/20260908111121_brain_workspace_audience_canary.sql",
+    "account_deletion_runtime": "supabase/functions/delete-account/index.ts",
+    "account_deletion_e2e": "src/__tests__/e2e/account-deletion.spec.ts",
+    "briefing_schema": "supabase/migrations/20260401000000_create_briefings.sql",
+    "skill_export_schema": "supabase/migrations/20260508000000_create_skill_exports.sql",
+    "artifact_schema": "supabase/migrations/20260513000000_generated_artifacts.sql",
+    "skill_export_runtime": "supabase/functions/generate-skill-export/index.ts",
+    "briefing_delivery_runtime": "supabase/functions/send-daily-briefing/index.ts",
+    "mcp_runtime": "supabase/functions/mcp-context/index.ts"
+  },
+  "canonical_brain_tables": [
+    "brain_workspaces",
+    "brain_workspace_roles",
+    "brain_audience_grants",
+    "brain_sources",
+    "brain_assertions",
+    "brain_items",
+    "brain_item_versions",
+    "brain_item_version_assertions",
+    "brain_relationships",
+    "brain_relationship_versions",
+    "brain_relationship_version_assertions"
+  ],
+  "coverage_planes": [
+    {
+      "id": "canonical_brain",
+      "locations": ["eleven canonical Brain tables"],
+      "current_mechanism": "Deleting auth.users cascades through subject and owner workspace foreign keys, but the delete-account runtime neither names nor independently verifies these rows.",
+      "verdict": "unproved",
+      "required_proof": "Explicit workspace discovery, row-count receipt for all eleven tables, transactional or resumable execution and post-delete verification."
+    },
+    {
+      "id": "prepared_intelligence",
+      "locations": ["R10 receipt store", "R12 corrections", "R13 erasure tombstones"],
+      "current_mechanism": "R13 proves local derivative erasure only; none of R10 through R13 is migrated or runtime-connected.",
+      "verdict": "proved_locally_not_live",
+      "required_proof": "Migration review, Supabase parity, concurrency and runtime caller."
+    },
+    {
+      "id": "legacy_memory_and_decisions",
+      "locations": ["user_memory", "memory_events", "memory_links", "memory_edges", "decision tables", "leader loop tables"],
+      "current_mechanism": "A manually maintained delete list plus a two-pass sweep handles some user_id tables.",
+      "verdict": "incomplete_and_drift_prone",
+      "required_proof": "Schema-derived ownership registry, FK-order plan and zero-row verification for every owned table."
+    },
+    {
+      "id": "briefings_news_and_audio",
+      "locations": ["briefings", "briefing feedback and preferences", "news caches", "ctrl-briefings storage", "signed URLs", "email inbox copies"],
+      "current_mechanism": "Briefing rows and up to 1000 root-prefix objects in ctrl-briefings are attempted. External email copies and provider retention are not controlled.",
+      "verdict": "partial",
+      "required_proof": "Recursive paginated storage deletion, signed-URL expiry accounting, cache ownership, provider retention and honest external-copy disclosure."
+    },
+    {
+      "id": "exports_and_skills",
+      "locations": ["skill_exports", "generated_artifacts", "skill-packages storage", "downloaded ZIPs", "GitHub repositories", "Claude or other work tools"],
+      "current_mechanism": "Database rows are in the manual sweep, but delete-account does not purge the skill-packages bucket. User-controlled and third-party copies have no recall mechanism.",
+      "verdict": "critical_gap",
+      "required_proof": "Purge owned storage objects, record export destinations and distinguish local deletion from copies the user or another provider controls."
+    },
+    {
+      "id": "mcp_and_access",
+      "locations": ["mcp_tokens", "mcp_pulls", "active bearer credentials", "downstream Claude context"],
+      "current_mechanism": "mcp_pulls is swept; token revocation is not an explicit first step and downstream copied context is not retractable.",
+      "verdict": "partial",
+      "required_proof": "Revoke credentials before data deletion, verify no usable token remains and disclose downstream-copy limits."
+    },
+    {
+      "id": "logs_caches_and_analytics",
+      "locations": ["AI response caches", "personal pool cache", "rate-limit logs", "LLM call logs", "email analytics", "data and security audit logs"],
+      "current_mechanism": "Ownership is inconsistent. Some caches have no user key. Audit rows intentionally survive, and the current deletion runtime writes the user's email into retained audit metadata.",
+      "verdict": "critical_gap",
+      "required_proof": "Purpose-specific retention, identifier redaction or keyed pseudonymisation, attributable cache eviction and a legal retention schedule."
+    },
+    {
+      "id": "external_processors",
+      "locations": ["OpenAI", "Anthropic", "Google or Gemini", "Perplexity", "Tavily", "Brave", "ElevenLabs", "Resend", "Stripe", "Google Sheets"],
+      "current_mechanism": "The repository sends data to processors but has no unified processing receipt or deletion orchestration. Stripe subscription cancellation is attempted, not customer-record deletion.",
+      "verdict": "unproved",
+      "required_proof": "Per-provider data classification, retention terms, request identifiers, deletion capability and evidence receipt."
+    },
+    {
+      "id": "backups_observability_and_devices",
+      "locations": ["Supabase backups", "Vercel logs", "provider logs", "browser caches", "downloaded files", "recipient inboxes"],
+      "current_mechanism": "No complete repository-level control exists.",
+      "verdict": "external_or_unmapped",
+      "required_proof": "Retention windows, restore-time suppression, log redaction and a plain-language boundary for user-controlled copies."
+    }
+  ],
+  "blocking_findings": [
+    "delete-account returns success true even when deletionErrors is non-empty; the UI contract catches this only in a skipped E2E test",
+    "the deletion E2E suite is skipped and verifies only a small table subset",
+    "skill-packages storage is written by generate-skill-export but is absent from account deletion",
+    "storage deletion lists one page of at most 1000 root-prefix objects and is not recursively proven",
+    "retained audit events include the user's email in metadata after an erasure request",
+    "canonical Brain deletion currently relies on eventual auth-user cascade without explicit coverage evidence",
+    "external AI, email, audio, billing and spreadsheet processors have no unified deletion receipt"
+  ],
+  "next_gate": "Design a provider-aware, schema-derived erasure plan and receipt. Do not edit the live delete-account path until exact retention exceptions, external-copy language and failure semantics are approved.",
+  "bounded_claim": "R14 is a repository-evidenced deletion coverage map. It proves neither complete account erasure nor any provider deletion. Its purpose is to prevent R13's prepared-derivative proof from being misrepresented as whole-Brain deletion.",
+  "authority": {
+    "permits": [
+      "read-only repository inventory",
+      "local machine contract and checker",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "delete-account runtime edit",
+      "migration file or migration execution",
+      "linked or production database use",
+      "external provider deletion",
+      "customer-facing deletion claim",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}

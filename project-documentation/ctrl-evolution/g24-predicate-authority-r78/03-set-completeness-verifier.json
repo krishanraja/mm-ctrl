@@ -1,0 +1,55 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "set_completeness_verifier",
+  "responsibility": "Prove the authoritative universe, query, head and sealed membership for every required source set.",
+  "forbidden": [
+    "interpret_human_prose",
+    "choose_supporting_members",
+    "omit_contrary_members",
+    "infer_absence_from_empty_caller_input",
+    "write_source_state"
+  ],
+  "required_proof_fields": [
+    "source_registry_version",
+    "selection_policy_version",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "audience_query",
+    "authoritative_collection_head_or_snapshot_epoch",
+    "sorted_member_identities",
+    "sorted_member_fingerprints",
+    "domain_separated_member_set_seal",
+    "supporting_member_refs",
+    "contrary_member_refs",
+    "negative_completeness_proof"
+  ],
+  "proof_forms": {
+    "singleton_current_head": "exact_record_identity_revision_head_and_absence_of_newer_revision",
+    "sealed_collection": "authoritative_collection_head_sorted_membership_seal_and_negative_completeness_proof",
+    "proof_forms_are_not_interchangeable": true
+  },
+  "validation": {
+    "duplicates": "reject",
+    "extras": "reject",
+    "omissions": "reject",
+    "stale_head": "reject",
+    "changed_member": "reject",
+    "unverifiable_absence": "indeterminate"
+  },
+  "special_sets": {
+    "open_preparation_lifecycle_set": "must_prove_no_active_row_and_predecessor_null",
+    "grant_set": "must_include_all_current_applicable_grants_and_revocations",
+    "close_obligation_set": "must_contain_exactly_one_each_of_access_correction_separate_release_close",
+    "prior_grant_set_after_close": "must_prove_no_expired_or_revoked_old_grant_can_revive"
+  },
+  "output": {
+    "kind": "sealed_complete_set_proof",
+    "success_values": [
+      "complete",
+      "incomplete",
+      "unverifiable"
+    ],
+    "success_does_not_mean_precondition_satisfied": true
+  }
+}

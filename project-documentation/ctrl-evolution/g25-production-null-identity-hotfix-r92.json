@@ -1,0 +1,125 @@
+{
+  "schema_version": "ctrl.g25.production-null-identity-hotfix.r92.v1",
+  "contract_id": "G25-PRODUCTION-NULL-IDENTITY-HOTFIX-R92",
+  "status": "hotfix_packet_proved_awaiting_explicit_production_authority",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-ANONYMOUS-READER-HARDENING-PROOF-R89",
+    "G25-MEMORY-MUTATOR-HARDENING-PROOF-R90",
+    "G25-AUTHENTICATED-PRODUCT-HARDENING-PROOF-R91"
+  ],
+  "scope": {
+    "target_count": 7,
+    "functions": [
+      "get_pending_verifications(uuid)",
+      "has_role(uuid,app_role)",
+      "fix_memory_fact(uuid)",
+      "touch_memory_fact(uuid)",
+      "touch_memory_facts(uuid[])",
+      "verify_memory_fact(uuid,text,boolean)",
+      "pin_decision(uuid)"
+    ],
+    "repairs": [
+      "anonymous and cross-subject pending-memory reads",
+      "cross-subject role enumeration",
+      "anonymous memory verification mutation",
+      "anonymous dispute-event injection",
+      "anonymous reliance telemetry mutation",
+      "anonymous decision pin mutation"
+    ]
+  },
+  "artifacts": {
+    "migration_path": "supabase/candidates/g25_production_null_identity_hotfix_r92.sql",
+    "migration_sha256": "d47a6135b91eb30bb82d409c71680a92e1908fe30f48ba0b9e1dc2c6000f7068",
+    "preflight_path": "supabase/candidates/g25_production_null_identity_hotfix_preflight_r92.sql",
+    "preflight_sha256": "7faefb87f7e0ba6d564ac019cf6e84651ac2e18d7a0cae5150305c38f77f9f2f",
+    "verification_path": "supabase/candidates/g25_production_null_identity_hotfix_verification_r92.sql",
+    "verification_sha256": "d16d082593bd3430b3eb62ffb7b3026238bc4e7c8bc2e4dbee0d4d970afd80f2",
+    "fail_closed_path": "supabase/candidates/g25_production_null_identity_hotfix_fail_closed_r92.sql",
+    "fail_closed_sha256": "0ffb565242490d10b14aa10dcbfd1b044bc1ec8a77590c788e9841ce77e467a9"
+  },
+  "production_preflight": {
+    "channel": "read_only",
+    "target_count": 7,
+    "resolved_count": 7,
+    "definition_match_count": 7,
+    "anon_allowed_count": 7,
+    "authenticated_allowed_count": 7,
+    "service_allowed_count": 7,
+    "writes": 0
+  },
+  "isolated_combined_payload_test": {
+    "attempts": [
+      {
+        "attempt": 1,
+        "result": "preflight_aborted_as_designed",
+        "reason": "The payload-only test transform failed to remove the production preflight, so hardened isolated definitions correctly failed the old-definition digest gate.",
+        "database_effect": "none"
+      },
+      {
+        "attempt": 2,
+        "migration": "g25_production_null_identity_hotfix_payload_test_r92",
+        "result": "pass"
+      }
+    ],
+    "verification": {
+      "target_count": 7,
+      "resolved_count": 7,
+      "definition_match_count": 7,
+      "anon_acl_match_count": 7,
+      "authenticated_allowed_count": 7,
+      "service_acl_match_count": 7,
+      "public_denied_count": 7
+    },
+    "post_payload_runtime_smokes": [
+      "g25_hotfix_payload_reader_smoke_r92",
+      "g25_hotfix_payload_memory_smoke_r92",
+      "g25_hotfix_payload_product_smoke_r92"
+    ],
+    "post_payload_runtime_smokes_passed": 3,
+    "persistent_fixture_rows": 0
+  },
+  "failure_control": {
+    "type": "fail_closed_kill_switch_not_vulnerable_rollback",
+    "customer_effect": "Temporarily disables the affected customer actions and role-policy path.",
+    "service_routes_retained": [
+      "get_pending_verifications(uuid)",
+      "has_role(uuid,app_role)",
+      "touch_memory_fact(uuid)",
+      "touch_memory_facts(uuid[])"
+    ],
+    "warning": "Restoring the prior public grants and definitions would reopen proved vulnerabilities and is not an acceptable normal rollback."
+  },
+  "release_order": [
+    "run read-only preflight and require seven exact definition and privilege matches",
+    "apply the atomic migration once",
+    "run read-only verification and require seven exact post-state matches",
+    "run anonymous denial and authenticated owner-path transport smokes",
+    "read security advisors and application error telemetry",
+    "use the fail-closed control only if the customer path is unsafe or unstable"
+  ],
+  "bounded_claim": "The exact seven-function production hotfix is drift-blocked, its combined payload passes three isolated runtime suites, and current production passes the read-only preflight. It has not been applied to production. Authenticated HTTP transport remains an execution prerequisite, not fabricated evidence.",
+  "acceptance_gate": {
+    "production_preflight_passed": true,
+    "combined_payload_isolated_verification_passed": true,
+    "combined_payload_runtime_smokes_passed": true,
+    "fail_closed_control_prepared": true,
+    "authenticated_http_transport_smoke_passed": false,
+    "explicit_production_execution_authority": false,
+    "production_applied": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "isolated_target_writes": [
+      "one combined hotfix payload rehearsal",
+      "three repeated self-cleaning runtime smokes"
+    ],
+    "production_queries": "read_only_preflight",
+    "production_writes": 0,
+    "forbids": [
+      "production hotfix application without explicit authority",
+      "unsafe rollback to vulnerable public grants",
+      "merge, cutover or release"
+    ]
+  }
+}

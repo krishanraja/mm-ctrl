@@ -1,0 +1,187 @@
+{
+  "schema_version": "ctrl.g25.second-blank-replay-packet.r97.v1",
+  "contract_id": "G25-SECOND-BLANK-REPLAY-PACKET-R97",
+  "status": "packet_prepared_execution_cost_gated",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-RECOVERY-FIRST-BLANK-REPLAY-R81",
+    "G25-PRODUCTION-NULL-IDENTITY-HOTFIX-R92",
+    "G25-HTTP-RPC-TRANSPORT-PROOF-R93",
+    "G25-EXTENSION-RUNTIME-COMPATIBILITY-R94",
+    "G25-CRITICAL-APPLICATION-SMOKE-R95",
+    "G25-NON-SCHEMA-RESTORATION-GATE-R96"
+  ],
+  "target_contract": {
+    "target_project_id": null,
+    "target_must_be": "new_blank_hosted_supabase_project_or_separately_authorized_destructive_reset",
+    "required_cost_confirmation": true,
+    "cost_confirmation_obtained": false,
+    "second_replay_executed": false,
+    "production_project_id": "bkyuxvschuwngtcdhsyg",
+    "first_rehearsal_project_id": "jnablbnztutbmnjvtioy",
+    "production_writes": 0
+  },
+  "platform_prerequisites": {
+    "postgres_family": "17",
+    "required_extensions": [
+      { "name": "pg_cron", "schema": "pg_catalog", "production_version": "1.6", "proved_recovery_version": "1.6.4" },
+      { "name": "pg_net", "schema": "public", "production_version": "0.14.0", "proved_recovery_version": "0.20.4" },
+      { "name": "pg_stat_statements", "schema": "extensions", "production_version": "1.11", "proved_recovery_version": "1.11" },
+      { "name": "pgcrypto", "schema": "extensions", "production_version": "1.3", "proved_recovery_version": "1.3" },
+      { "name": "plpgsql", "schema": "pg_catalog", "production_version": "1.0", "proved_recovery_version": "1.0" },
+      { "name": "supabase_vault", "schema": "vault", "production_version": "0.3.1", "proved_recovery_version": "0.3.1" },
+      { "name": "uuid-ossp", "schema": "extensions", "production_version": "1.1", "proved_recovery_version": "1.1" },
+      { "name": "vector", "schema": "public", "production_version": "0.8.0", "proved_recovery_version": "0.8.2" }
+    ],
+    "version_rule": "Use the hosted platform default version, preserve the required schema, and rely only on the R94 behaviorally proved application surface."
+  },
+  "ordered_stages": [
+    {
+      "order": 0,
+      "id": "platform_extensions",
+      "mutation_path": "supabase/candidates/g25_second_replay_extension_prerequisites_r97.sql",
+      "mutation_sha256": "9b9877a77d93b5c1e46d6048d059470c4283b46301e794394f022c076d300e2f",
+      "verification_path": "supabase/candidates/g25_second_replay_extension_prerequisites_r97.sql",
+      "verification_sha256": "9b9877a77d93b5c1e46d6048d059470c4283b46301e794394f022c076d300e2f"
+    },
+    {
+      "order": 1,
+      "id": "application_schema_baseline",
+      "mutation_path": "supabase/baselines/g25_production_application_schema_r81.sql",
+      "mutation_sha256": "7bb1a96145efa2b47227f7ed425ff4804dea8ee7b355bddc4dc716af33e3c80d",
+      "verification_path": "supabase/candidates/g25_recovery_application_schema_fingerprint_r81.sql",
+      "verification_sha256": "d934a537a33283041087e7261c6ab0b1beac6b587c5fd24afde98ba4b478e189"
+    },
+    {
+      "order": 2,
+      "id": "high_risk_service_acl",
+      "mutation_path": "supabase/candidates/g25_security_definer_high_risk_acl_r83.sql",
+      "mutation_sha256": "910c0cb36d512a7f4580d748f3c748b9247ba16da57641254c7b6707cd5daf8b",
+      "verification_path": "supabase/candidates/g25_security_definer_high_risk_acl_verification_r83.sql",
+      "verification_sha256": "744a7c09e64c28d366863112ecd321dc18778f4306a724c3c486a0f72f9ffd70"
+    },
+    {
+      "order": 3,
+      "id": "auth_profile_trigger",
+      "mutation_path": "supabase/candidates/g25_auth_user_profile_trigger_r86.sql",
+      "mutation_sha256": "e3919042ae31c35ff2b99eb53ed345203aba4a621758c5a4f76e6def5a703486",
+      "verification_path": "supabase/candidates/g25_auth_user_profile_trigger_verification_r86.sql",
+      "verification_sha256": "3a0592213eebc073ec65b012de4ebaf8b11056cb069865e9335a1d4837e0b146"
+    },
+    {
+      "order": 4,
+      "id": "trigger_function_acl",
+      "mutation_path": "supabase/candidates/g25_security_definer_trigger_acl_r85.sql",
+      "mutation_sha256": "eb9b91f7340ca70dba7a835dc3e24b5c1e359058ff25ba91c563a4dc64cf7b1c",
+      "verification_path": "supabase/candidates/g25_security_definer_trigger_acl_verification_r85.sql",
+      "verification_sha256": "31d75e9276e7176f714a16b3179ef0c3f57e0dc1788127dac2c229fc96062bd6"
+    },
+    {
+      "order": 5,
+      "id": "anonymous_reader_hardening",
+      "mutation_path": "supabase/candidates/g25_security_definer_anonymous_reader_hardening_r89.sql",
+      "mutation_sha256": "e547aa13fcc1a7b9c6ef6a35ccbc82751729ea080654623e8333c2e34ddfeb59",
+      "verification_path": "supabase/candidates/g25_security_definer_anonymous_reader_verification_r89.sql",
+      "verification_sha256": "30d6a41248acbdf2e2ddd1b3fdfa5fac8e1517963cd6f601a326f07c5cb3328a"
+    },
+    {
+      "order": 6,
+      "id": "memory_mutator_hardening",
+      "mutation_path": "supabase/candidates/g25_security_definer_memory_mutator_hardening_r90.sql",
+      "mutation_sha256": "2e8427dda42ad893e5fe6aa65e8448f1071dc842362e5d68ec2666d47d9726ee",
+      "verification_path": "supabase/candidates/g25_security_definer_memory_mutator_verification_r90.sql",
+      "verification_sha256": "2b2c169adf54d662b1d16343acf68e02da40b181bc1616d9b9f9e452dd971aa0"
+    },
+    {
+      "order": 7,
+      "id": "authenticated_product_hardening",
+      "mutation_path": "supabase/candidates/g25_security_definer_authenticated_product_hardening_r91.sql",
+      "mutation_sha256": "09e35beb6e95ca3caa336ab549348db9563920587283cd5d4d2b0244ef186226",
+      "verification_path": "supabase/candidates/g25_security_definer_authenticated_product_verification_r91.sql",
+      "verification_sha256": "98149aae13725a0305865f42d1099318d3e3855f8d7bd0b381b62195d5d8d965"
+    },
+    {
+      "order": 8,
+      "id": "null_identity_convergence",
+      "mutation_path": "supabase/candidates/g25_second_replay_null_identity_convergence_r97.sql",
+      "mutation_sha256": "10d6b2df2f08937809391888dc7436f03dc5f9dfed77d0d1b831160fb46b36d6",
+      "verification_path": "supabase/candidates/g25_production_null_identity_hotfix_verification_r92.sql",
+      "verification_sha256": "d16d082593bd3430b3eb62ffb7b3026238bc4e7c8bc2e4dbee0d4d970afd80f2"
+    },
+    {
+      "order": 9,
+      "id": "secret_free_non_schema_safe_plane",
+      "preflight_path": "supabase/candidates/g25_non_schema_safe_plane_preflight_r96.sql",
+      "preflight_sha256": "cb73cd34506861a4646bb7b04a7ca986ac711f2198f8147292bd76f0299660f2",
+      "mutation_path": "supabase/candidates/g25_non_schema_safe_plane_restore_r96.sql",
+      "mutation_sha256": "fc2eb0958ada92bd922e0b5f88836294b1cbca2e7030602c8d2d589c054321e7",
+      "verification_path": "supabase/candidates/g25_non_schema_safe_plane_verification_r96.sql",
+      "verification_sha256": "95cc833178bf7af7bb27279b8e790b1b982a2b5d5b3dc502b4a7c44afdf3adb4"
+    }
+  ],
+  "final_verification": {
+    "path": "supabase/candidates/g25_second_replay_final_verification_r97.sql",
+    "sha256": "4c6cdbf768c3705768414c485582df5765eecbb87ba5f7a8bd9d8e948d2f8b63",
+    "expected_extensions": 8,
+    "expected_hardened_functions": 7,
+    "expected_storage_buckets": 5,
+    "expected_storage_policies": 12,
+    "expected_application_realtime_tables": 3,
+    "expected_auth_users": 0,
+    "expected_profiles": 0
+  },
+  "expected_final_application_fingerprint": {
+    "columns": { "object_count": 2133, "digest": "6d21870f39c696a4bb087e6e8ff33438" },
+    "constraints": { "object_count": 774, "digest": "a290e41117eacaf26a8432e64942ca11" },
+    "indexes": { "object_count": 591, "digest": "40bec422cf245975fb4ed6034efc5e0e" },
+    "policies": { "object_count": 304, "digest": "db583e9d8c0cf3b920a728f4d6e276b3" },
+    "rls": { "object_count": 176, "digest": "c1962d417e21fc41cacf8174d46a9bc1" },
+    "routine_grants": { "object_count": 967, "digest": "8b848ea5edf8cad84a03c8aca1c6b3ef" },
+    "routines": { "object_count": 218, "digest": "860dc64e4a9591117674894bc9abfc92" },
+    "schema_grants": { "object_count": 12, "digest": "f08632af471eac39debe086bfe584f03" },
+    "table_grants": { "object_count": 5071, "digest": "93b4759a3f418824bd775c83834f4815" },
+    "triggers": { "object_count": 53, "digest": "9138fb0284a3df5f69b33e96e5e9e2cc" },
+    "views": { "object_count": 9, "digest": "41073e0f76e7f2a4480078dcb8f8ed5a" }
+  },
+  "execution_protocol": [
+    "Create or authorize one genuinely blank hosted target only after its exact cost is confirmed.",
+    "Run each mutation as a separate stage in ascending order. Never concatenate files or skip a verification.",
+    "Run the listed verification immediately after each mutation and stop on any mismatch.",
+    "After stage 8, compare all eleven application fingerprints with expected_final_application_fingerprint.",
+    "After stage 9, run final_verification and require every actual count to equal its expected count.",
+    "Run the R93 HTTP transport probes, R94 extension runtime probes and R95 critical application smoke against the new target.",
+    "Require complete fixture cleanup, zero Auth users, zero profile rows and zero unexplained differences before declaring replay two complete."
+  ],
+  "closed_lanes": {
+    "cron": "closed_until_all_15_commands_have_reviewed_executable_definitions",
+    "edge_functions": "closed_until_all_183_functions_have_frozen_source_configuration_and_route_authentication_proof",
+    "vault": "closed_until_two_required_names_and_values_are_injected_from_an_approved_secure_source_without_disclosure",
+    "production_cutover": "closed",
+    "legacy_retirement": "closed"
+  },
+  "acceptance_gate": {
+    "packet_hashes_complete": true,
+    "stage_order_complete": true,
+    "convergence_transactional_dry_run_passed": true,
+    "current_isolated_final_verification_extensions": "8_of_8",
+    "current_isolated_final_verification_functions": "7_of_7",
+    "required_clean_blank_replays": 2,
+    "completed_clean_blank_replays": 1,
+    "second_clean_blank_replay_passed": false,
+    "non_schema_restoration_passed": false,
+    "production_recovery_choice_ready": false
+  },
+  "authority": {
+    "permits": [
+      "local packet validation and documentation",
+      "read-only inspection of production and the first isolated rehearsal target"
+    ],
+    "requires_new_explicit_gate": [
+      "new paid Supabase project or destructive reset",
+      "secret retrieval or injection",
+      "Edge Function deployment",
+      "production mutation, merge, cutover, release or retirement"
+    ],
+    "production_writes": 0
+  }
+}

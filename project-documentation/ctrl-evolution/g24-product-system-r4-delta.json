@@ -1,0 +1,47 @@
+{
+  "schema_version": "ctrl.locked-revision.delta.v1",
+  "revision": "G24-R4",
+  "date": "2026-09-12",
+  "status": "proposed_fresh_council_and_founder_lock",
+  "supersedes_for_review": "G24-R3",
+  "preserves_r3_as_history": true,
+  "r3_frozen_hashes": {
+    "blueprint": "446476044415af172bc63b1ec8f61876460f1068120eded45323f667de2372a5",
+    "contract": "5d6109cd8d34a52f9a441d9a5906bbcac0efd10768d5329fac7dfc3f80083f09",
+    "delta": "c4fccebbe147706243196fc771ee2a73079cb6f08843cd7449aa0785dc4b4ceb",
+    "adjudication": "abe26c55559950c749d1f203444fe0cac452812182646478e546b82ed841829a"
+  },
+  "allowed_repairs": [
+    {
+      "id": "R4-01",
+      "area": "epistemic_eligibility_authority",
+      "change": "bind_selector_eligible_semantic_outcomes_and_countercase_status_to_current_versions_of_existing_r1_governance_and_independent_challenger_authority"
+    },
+    {
+      "id": "R4-02",
+      "area": "lifecycle_and_release_non_inference",
+      "change": "replace_grouped_edges_with_one_exact_state_graph_add_preparation_close_use_closed_as_terminal_and_keep_r1_release_separate"
+    },
+    {
+      "id": "R4-03",
+      "area": "selector_fail_closed_partition",
+      "change": "make_invalid_controlling_state_hold_exactly_allow_only_eligible_routes_for_valid_unresolved_evidence_and_confine_provisional_detail_to_non_actionable_hold_metadata"
+    }
+  ],
+  "explicitly_not_added": [
+    "second_brain",
+    "second_evidence_store",
+    "new_policy_root",
+    "new_release_root",
+    "customer_policy_console",
+    "customer_lifecycle_administration",
+    "physical_schema",
+    "numeric_thresholds",
+    "provider_policy",
+    "rendered_ui",
+    "empirical_efficacy_claim"
+  ],
+  "fresh_recheck_required": true,
+  "external_actions_opened": []
+}
+

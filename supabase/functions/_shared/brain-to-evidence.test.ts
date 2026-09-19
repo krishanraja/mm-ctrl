@@ -30,6 +30,7 @@ describe('composeBrainSource', () => {
   it('points every fact row back at its user_memory id', () => {
     const s = composeBrainSource([fact({ id: 'fact-1' })]);
     expect(s.items[0].memoryFactId).toBe('fact-1');
+    expect(s.items[0].sourceRef).toBe('user_memory:fact-1');
   });
 
   it('never mines a fact the leader already rejected or disputed', () => {
@@ -81,6 +82,7 @@ describe('composeBrainSource', () => {
     const s = composeBrainSource([], [{ id: 'd1', statement: 'Should we build or buy the agent stack?' }]);
     expect(s.items).toHaveLength(1);
     expect(s.items[0].memoryFactId).toBeNull();
+    expect(s.items[0].sourceRef).toBe('decision_case:d1');
     expect(s.body).toContain('build or buy');
   });
 

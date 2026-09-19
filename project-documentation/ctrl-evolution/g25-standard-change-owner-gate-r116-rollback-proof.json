@@ -1,0 +1,60 @@
+{
+  "schema_version": "ctrl.g25.standard-change-owner-gate.r116.rollback-proof.v1",
+  "observed_at": "2026-09-19",
+  "project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "production_writes": 0,
+  "adversarial_preflight": {
+    "criteria_only_later_state_created": true,
+    "criteria_only_later_state_refused": true,
+    "refusal_code": "r116_rollback_unknown_later_criteria_head",
+    "database_preserved_on_refusal": true,
+    "r116_tables_after_refusal": 5,
+    "r116_fixture_applications_after_refusal": 1,
+    "r116_migration_rows_after_refusal": 1,
+    "edge_route_preserved_on_refusal": true,
+    "active_edge_routes_after_refusal": 1,
+    "later_criteria_bytes_preserved_on_refusal": true,
+    "exact_r116_owned_snapshot_restored_before_successful_rollback": true,
+    "concurrent_criteria_writer_blocked_by_table_lock": true,
+    "concurrent_writer_failure": "statement_timeout",
+    "concurrent_owner_rpc_forced_immediate_rollback_refusal": true,
+    "owner_rpc_race_refusal": "lock_not_available",
+    "owner_rpc_race_refusal_seconds": 4.94,
+    "deadlock_sqlstate_observed": false,
+    "database_and_edge_route_preserved_after_owner_rpc_race": true,
+    "rollback_conflicts_non_retryable": true
+  },
+  "rollback": {
+    "status": "rolled_back",
+    "r116_tables": 0,
+    "r116_functions": 0,
+    "r116_edge_functions": 0,
+    "r116_migration_rows": 0,
+    "r115_tables": 5,
+    "r115_active_edge_functions": 3,
+    "r115_preserved": true,
+    "unknown_later_standard_head_policy": "fail_closed",
+    "unknown_later_criteria_head_policy": "fail_closed",
+    "database_preflight_precedes_edge_route_removal": true,
+    "snapshot_and_mutation_share_exclusive_table_locks": true,
+    "exclusive_lock_policy": "receipt_first_nowait"
+  },
+  "restore": {
+    "status": "restored",
+    "r116_tables": 5,
+    "owner_rpcs": 3,
+    "r116_active_edge_functions": 1,
+    "r116_migration_rows": 1,
+    "r115_tables": 5,
+    "r115_active_edge_functions": 3,
+    "r115_preserved": true
+  },
+  "post_restore": {
+    "exact_deployed_source_verified": true,
+    "hosted_probe_passed": true,
+    "exact_standard_reversal_passed": true,
+    "exact_criteria_reversal_passed": true,
+    "fixture_residue": 0
+  }
+}
