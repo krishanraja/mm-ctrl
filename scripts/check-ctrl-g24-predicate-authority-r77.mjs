@@ -66,6 +66,11 @@ check('canonical next action remains inside approved local contract gate',
         && currentNextAction.includes('without opening deployment or release')
         && currentNextAction.includes('Do not mutate production, merge, cut over, release or retire legacy machinery without its separate gate.')
       )
+      || (
+        currentNextAction.includes('radically minimal human review projection')
+        && currentNextAction.includes('must add no new deploy, release or production authority')
+        && currentNextAction.includes('Do not mutate production, merge, cut over, release or retire legacy machinery without its separate gate.')
+      )
     ))
 check('design route agrees', design.includes('complete and verify the G25 legacy capability preservation register') && design.includes('No result-producing runtime integration, registry wiring, database, customer-facing UI, deployment, merge, release, external action or legacy retirement is authorized.'))
 check('ledger preserves exact approval', ledger.includes('**Exact founder call:** `approve r75`') && ledger.includes('**Decision ID:** `DEC-20260916-g24-predicate-authority-r75`'))

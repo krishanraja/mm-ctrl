@@ -52,6 +52,9 @@ check(
     currentNextAction.includes('deployment, merge, release, external action or legacy retirement is authorized.')) ||
   (currentNextAction.includes('explicit owner apply-and-rollback gate') &&
     currentNextAction.includes('without opening deployment or release') &&
+    currentNextAction.includes('Do not mutate production, merge, cut over, release or retire legacy machinery without its separate gate.')) ||
+  (currentNextAction.includes('radically minimal human review projection') &&
+    currentNextAction.includes('no new deploy, release or production authority') &&
     currentNextAction.includes('Do not mutate production, merge, cut over, release or retire legacy machinery without its separate gate.')),
 )
 check(

@@ -6,17 +6,17 @@
 
 R99 found environment names in local route files and treated the shared directory as one global tree. That was useful for preservation, but too coarse for restoration. A route can import a shared module dynamically, and that module can introduce a provider key, privileged database client or external endpoint that is not visible in the entrypoint.
 
-R104 walks every relative static and dynamic import reachable from each entrypoint. It fingerprints the exact closure, records every `Deno.env.get` symbol, identifies missing imports, maps each symbol to its consuming routes and classifies the dependency without reading its value. The current manifest includes the two R105 portability routes added after the initial R104 gate.
+R104 walks every relative static and dynamic import reachable from each entrypoint. It fingerprints the exact closure, records every `Deno.env.get` symbol, identifies missing imports, maps each symbol to its consuming routes and classifies the dependency without reading its value. The current manifest includes all forward routes through the R116 owner-gated standard-change review route.
 
 The result is complete at the repository boundary:
 
-- 121 entrypoints inspected;
+- 122 entrypoints inspected;
 - zero missing relative imports;
 - 58 unique environment symbols;
 - zero unclassified symbols;
 - 76 routes with at least one secret dependency;
-- 45 routes without a secret dependency;
-- 35 routes with no environment dependency at all; and
+- 46 routes without a secret dependency;
+- 36 routes with no environment dependency at all; and
 - 17 routes whose only declared dependencies are platform-injected values.
 
 These are environment facts, not safety verdicts. Several routes with no environment dependency are deliberate containment stubs. Other routes can still have data, authorization, caller, cost or external-effect risks that the environment scan cannot see.

@@ -11,22 +11,22 @@
   "inspector": {
     "path": "scripts/inspect-ctrl-g25-function-env-requirements-r104.mjs",
     "sha256": "0cea2030f508c74c6fdaf8e969c4bd0ccfcc5e6636ebc644d8424e606c4c9e70",
-    "manifest_sha256": "6558cc3a9d27a5d8b551d33a5f9a288075a764ced8bda1cebd048fcfa22a72a4",
+    "manifest_sha256": "f54b2d4eb8ed18bc3783f9f5f0594f068ed194defc7832271e4de2e1c29668aa",
     "environment_policy_sha256": "6537ae11cfdd4dff2e3af0031543a6aabd3f5fb913f3ffe69b62a4e8f32b426f",
-    "route_requirements_sha256": "475fc8bd77c27d692fce456b38e0f8e89888c172ae7d866fecadd627e9d0ca5b",
+    "route_requirements_sha256": "8a699b14c9d1f1be6bfcb97850bd16ebe1f87ac4f3c9f0217614466674ac3119",
     "raw_source_emitted": false,
     "environment_values_retrieved": false
   },
   "coverage": {
-    "repository_function_count": 121,
-    "entrypoint_count": 121,
+    "repository_function_count": 122,
+    "entrypoint_count": 122,
     "functions_with_missing_relative_imports": 0,
     "unique_environment_symbol_count": 58,
     "unclassified_environment_symbol_count": 0,
     "stale_environment_policy_entry_count": 0,
     "routes_with_secret_dependency": 76,
-    "routes_without_secret_dependency": 45,
-    "routes_with_no_environment_dependency": 35,
+    "routes_without_secret_dependency": 46,
+    "routes_with_no_environment_dependency": 36,
     "routes_with_only_platform_injected_dependencies": 17
   },
   "classification_counts": {

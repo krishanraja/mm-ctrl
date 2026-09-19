@@ -30,7 +30,7 @@
     "target_neutral_database_runner": "scripts/db-query.mjs",
     "target_neutral_database_runner_sha256": "fce2450afa90970550006d7f870629bf5b8dc3b9a8e2eb31c6952bec0bb33588",
     "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
-    "function_config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd"
+    "function_config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3"
   },
   "hosted_function": {
     "slug": "ingest-brain",

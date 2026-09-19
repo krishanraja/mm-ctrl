@@ -12,7 +12,7 @@
 - Supabase returned 183 functions, all active.
 - 117 require platform JWT verification and 66 do not.
 - Git contained 115 deployable function directories plus `_shared` at the production observation; every one existed live.
-- Git now contains 121 deployable function directories. Six later routes are recorded as local-only since the observation rather than being falsely described as deployed.
+- Git now contains 122 deployable function directories. Seven later routes are recorded as local-only since the observation rather than being falsely described as deployed.
 - Sixty-eight live functions have no matching local source directory; all slugs are pinned in the contract.
 
 `verify_jwt=false` is not by itself a vulnerability because webhooks and cron handlers may enforce their own authentication. It is a mandatory review flag. No function is declared safe from metadata alone.

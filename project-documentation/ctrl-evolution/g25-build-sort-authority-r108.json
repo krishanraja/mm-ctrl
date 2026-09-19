@@ -29,7 +29,7 @@
     "probe": "scripts/probe-ctrl-g25-build-sort-authority-r108.mjs",
     "probe_sha256": "0717fdd44c8d8cc6643e254e4c0e80377d8e6d177b750ff250586c1bd4416d13",
     "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
-    "function_config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd"
+    "function_config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3"
   },
   "hosted_function": {
     "slug": "build-sort",

@@ -63,16 +63,17 @@
     "live_active": 183,
     "live_verify_jwt_true": 117,
     "live_verify_jwt_false": 66,
-    "local_function_directories_excluding_shared": 121,
+    "local_function_directories_excluding_shared": 122,
     "shared_live_and_local": 115,
-    "local_only_since_observation": 6,
+    "local_only_since_observation": 7,
     "local_only_since_observation_slugs": [
       "brain-portable-export",
       "brain-portable-import",
       "build-standard-change",
       "check-standard-change",
       "compile-standard-change",
-      "measure-standard"
+      "measure-standard",
+      "review-standard-change"
     ],
     "live_only": 68,
     "live_only_slugs": [

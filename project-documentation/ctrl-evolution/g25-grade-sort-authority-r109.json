@@ -25,7 +25,7 @@
     "probe": "scripts/probe-ctrl-g25-grade-sort-authority-r109.mjs",
     "probe_sha256": "e7c9e0839e82dc7a50a76fd87b3e6558d9e0c9fe9e407d79bcb824c246b93143",
     "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
-    "function_config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd"
+    "function_config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3"
   },
   "hosted_function": {
     "slug": "grade-sort",

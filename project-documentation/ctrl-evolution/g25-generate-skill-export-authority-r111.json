@@ -24,7 +24,7 @@
     "probe": "scripts/probe-ctrl-g25-generate-skill-export-authority-r111.mjs",
     "probe_sha256": "33d315ac38197652e28cd825e66befdd18c29ca0942e994bd8bda3b840619815",
     "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
-    "function_config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
+    "function_config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3",
     "environment_inspector_sha256": "0cea2030f508c74c6fdaf8e969c4bd0ccfcc5e6636ebc644d8424e606c4c9e70"
   },
   "hosted_function": {

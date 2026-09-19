@@ -97,10 +97,10 @@
     "hosted_proof_receipt_sha256": "85c458e3e6179de398914717fa0b01f1a60e08235c64db737661e0cb7cd12d41",
     "rollback_proof_receipt": "project-documentation/ctrl-evolution/g25-standard-change-candidate-pipeline-r115-rollback-proof.json",
     "rollback_proof_receipt_sha256": "a64dffcdffbdd32849280fb5edf004a1370ac8f722ef8b8ab5052b6bbf829aa3",
-    "config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
+    "config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3",
     "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
-    "repository_function_manifest_sha256": "33e4fba784882e523bbb87d6001ea3dae21ed6b40353d031d5c4569779700519",
-    "environment_manifest_sha256": "6558cc3a9d27a5d8b551d33a5f9a288075a764ced8bda1cebd048fcfa22a72a4"
+    "repository_function_manifest_sha256": "02d91002635f49eb064212da6b8e7ffe794f547c512221e68b242d3b8145536f",
+    "environment_manifest_sha256": "f54b2d4eb8ed18bc3783f9f5f0594f068ed194defc7832271e4de2e1c29668aa"
   },
   "deployment": {
     "functions": [

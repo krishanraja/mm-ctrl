@@ -431,3 +431,9 @@ entrypoint = "./functions/check-standard-change/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/check-standard-change/*.html" ]
+
+[functions.review-standard-change]
+enabled = true
+verify_jwt = true
+import_map = "./functions/review-standard-change/deno.json"
+entrypoint = "./functions/review-standard-change/index.ts"

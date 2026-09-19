@@ -12,23 +12,23 @@
     "path": "scripts/inspect-ctrl-g25-repo-function-manifest-r99.mjs",
     "sha256": "fc1e9f7e3d74d94f8885d6955744c949d1e56a6795e68772acca7f2c3585d504",
     "raw_source_emitted_by_default": false,
-    "manifest_sha256": "33e4fba784882e523bbb87d6001ea3dae21ed6b40353d031d5c4569779700519"
+    "manifest_sha256": "02d91002635f49eb064212da6b8e7ffe794f547c512221e68b242d3b8145536f"
   },
   "source": {
     "functions_root": "supabase/functions",
-    "local_function_count": 121,
-    "entrypoint_count": 121,
-    "shared_file_count": 187,
-    "shared_source_bytes": 1653418,
-    "shared_source_sha256": "7b3ae949d17b0d0bdeeb16176cddd397f48a98019658aab48d7b11bc51535743",
-    "per_function_source_digest_count": 121,
+    "local_function_count": 122,
+    "entrypoint_count": 122,
+    "shared_file_count": 189,
+    "shared_source_bytes": 1661486,
+    "shared_source_sha256": "fc0ca2d25d8cf89dabdbc45192dfbda7128c577130b977038a344c7674a163ab",
+    "per_function_source_digest_count": 122,
     "configured_without_local_source_count": 0,
     "shared_tree_bound_into_every_function": true
   },
   "gateway_posture": {
     "config_path": "supabase/config.toml",
-    "config_sha256": "49b84009d76126ae7ecac7ccfb184e7ea1e4a4481566786c86867c246a4bbbcd",
-    "explicit_verify_jwt_true": 87,
+    "config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3",
+    "explicit_verify_jwt_true": 88,
     "explicit_verify_jwt_false": 34,
     "verify_jwt_unspecified": 0,
     "shared_production_functions_compared": 115,
@@ -48,7 +48,7 @@
     "live_verify_jwt_true": 117,
     "live_verify_jwt_false": 66,
     "shared_live_and_local": 115,
-    "repo_only": 6,
+    "repo_only": 7,
     "live_only": 68,
     "metadata_digest_fields": [
       "slug",
@@ -116,7 +116,7 @@
     "boundary": "Static symbol names and markers are dependency evidence only. They do not prove value availability, correct authorization or safe route behavior."
   },
   "open_work": {
-    "repo_backed_route_authentication_proofs_required": 121,
+    "repo_backed_route_authentication_proofs_required": 122,
     "jwt_disabled_repo_routes_requiring_route_specific_review": 34,
     "live_only_functions_without_repo_source": 68,
     "live_only_disposition": "preserve_until_source_caller_authentication_and_replacement_or_retirement_evidence_is_complete",

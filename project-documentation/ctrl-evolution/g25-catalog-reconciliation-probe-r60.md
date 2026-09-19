@@ -2,7 +2,7 @@
 
 Status: deterministic read-only probe compiled. Database execution deferred.
 
-R57 exposed two uncertainties that static files cannot honestly settle: 94 identity candidates appear in migration history but not in generated types, while 116 current generated-schema JSON columns can conceal identifiers that their column names do not reveal. R60 compiles one metadata-only PostgreSQL query covering all 210 targets exactly once.
+R57 exposed two uncertainties that static files cannot honestly settle: 105 identity candidates appear in migration history but not in generated types, while 116 current generated-schema JSON columns can conceal identifiers that their column names do not reveal. R60 compiles one metadata-only PostgreSQL query covering all 221 targets exactly once.
 
 ## What the probe can establish
 
