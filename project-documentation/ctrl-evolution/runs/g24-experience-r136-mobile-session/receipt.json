@@ -1,7 +1,7 @@
 {
   "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
   "run_id": "g24-experience-r136-mobile-session",
-  "status": "passed_for_founder_review",
+  "status": "founder_approved_scope",
   "surface": "branch-only phone decision session proof",
   "materiality": "the rejected narrow-screen dashboard is replaced in the proof by a sequential one-turn mobile interaction model",
   "changed_surface_files": [
@@ -9,7 +9,10 @@
   ],
   "authority": "Rendered synthetic proof only. The responsive React product remains unchanged until founder approval.",
   "release_status": "ready for founder review on the branch preview; production, main and release remain closed",
-  "approval_claims": [],
+  "approval_claims": [
+    "Founder reaction on 2026-09-20: ok this much better",
+    "Founder explicitly answered yes when asked whether this approved replacing the current phone experience with the sequential model"
+  ],
   "candidate_count": 3,
   "first_pass_pack_hash": "18effc5117fb707639d9ed65f2e736ec9d069c509e2bd0686266aa2f97b27460",
   "implementation_pack_hash": "bbbf3a195566f7b164bae6c61e4a183f1eea65e140ed3cbd6e58474898649d3d",
@@ -26,7 +29,7 @@
     "build": "passed"
   },
   "unverified_or_blocked": [
-    "founder reaction is pending",
+    "responsive React implementation is recorded separately",
     "sparse, stale, conflicted and failed states are specified but not rendered in this first proof",
     "voice is a simulated entry affordance",
     "no database or product runtime is connected",

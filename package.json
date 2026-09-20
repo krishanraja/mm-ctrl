@@ -24,6 +24,7 @@
     "brain:canary:check": "node scripts/check-ctrl-brain-canary.mjs",
     "brain:g17:check": "vitest run supabase/functions/_shared/brain-crypto.test.ts supabase/functions/_shared/brain-ingest-core.test.ts",
     "brain:g18:check": "vitest run src/features/operator-brain/syntheticPopulation.test.ts src/features/operator-brain/SyntheticPopulationLabPage.test.tsx",
+    "brain:g20:mobile-session-check": "node scripts/check-ctrl-g20-mobile-decision-r136.mjs && vitest run src/features/operator-brain/mobileDecisionSessionModel.test.ts src/features/operator-brain/fixtureDecisionBenchAdapter.test.ts",
     "brain:g21:check": "vitest run src/features/operator-brain/rangeCouncilContract.test.ts src/features/operator-brain/g21PublicRowCanary.test.ts src/features/operator-brain/g21InternalRangeCanary.test.ts src/features/operator-brain/g21DiagnosticCanary.test.ts src/features/operator-brain/g21CouncilCriteria.test.ts src/features/operator-brain/g21DiagnosticRunArtifacts.test.ts",
     "brain:g21:internal:check": "node scripts/check-g21-internal-range.mjs",
     "brain:g21:internal:council-check": "node scripts/check-g21-internal-council.mjs",

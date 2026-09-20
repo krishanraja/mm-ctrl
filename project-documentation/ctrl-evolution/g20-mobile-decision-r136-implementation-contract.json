@@ -1,0 +1,61 @@
+{
+  "schema_version": "ctrl.g20.mobile-decision-session.implementation.v1",
+  "status": "founder_locked_contract",
+  "approved_artifact": {
+    "path": "public/g20-mobile-decision-r136.html",
+    "commit": "081443eae8716538ba0a7abe34e2c080c6e288f7",
+    "sha256": "bbbf3a195566f7b164bae6c61e4a183f1eea65e140ed3cbd6e58474898649d3d"
+  },
+  "scope": {
+    "route": "/operator/customers/SYN-CUST-014/decisions/INT-014",
+    "maximum_width_px": 620,
+    "actor": "mindmake_operator",
+    "data": "synthetic_fixture_only",
+    "write_policy": "session_only_no_database_write"
+  },
+  "first_turn": [
+    "decision",
+    "honest_standing",
+    "conditional_current_view",
+    "one_consequential_question",
+    "tap_or_voice_answer",
+    "evidence_cutoff",
+    "inspect_basis"
+  ],
+  "sequence": [
+    "orient",
+    "answer",
+    "recalculate_without_hiding_previous_view",
+    "show_effect_and_undo",
+    "optional_counter_case",
+    "separate_human_call"
+  ],
+  "basis": [
+    "evidence",
+    "routes",
+    "case_against",
+    "sources_and_history"
+  ],
+  "data_states": [
+    "ready",
+    "sparse",
+    "stale",
+    "conflicted",
+    "loading",
+    "error"
+  ],
+  "invariants": [
+    "DESKTOP_DECISION_TABLE_UNCHANGED",
+    "ONE_ACTIVE_TURN_ON_PHONE",
+    "ANSWER_DOES_NOT_RECORD_HUMAN_CALL",
+    "PREVIOUS_VIEW_REMAINS_DURING_RECALCULATION",
+    "EVIDENCE_COUNT_DERIVED_FROM_LINKED_FIXTURE_SOURCES",
+    "BASIS_IS_SEPARATE_FULL_SCREEN_LAYER",
+    "NO_NESTED_SCROLL",
+    "NO_HORIZONTAL_OVERFLOW",
+    "PHONE_FIRST_TURN_FITS_320_BY_568",
+    "MINIMUM_44PX_PRIMARY_TOUCH_TARGETS",
+    "NO_DATABASE_WRITE"
+  ],
+  "approval_boundary": "branch implementation and preview only; main, production, real customer data and durable writes remain closed"
+}

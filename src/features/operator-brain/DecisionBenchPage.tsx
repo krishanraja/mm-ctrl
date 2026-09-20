@@ -5,6 +5,7 @@ import { buildClaudeBrief, getAuditFindings, getChallengeSet, routePresentations
 import { decisionBenchFixture as fixture } from './fixtureDecisionBenchAdapter'
 import { OperatorReviewSignal } from './OperatorReviewSignal'
 import { readOperatorReviewFixture } from './operatorReviewFixture'
+import { MobileDecisionSession } from './MobileDecisionSession'
 import type {
   AuditFinding,
   BenchState,
@@ -96,7 +97,7 @@ function DecisionViewPanel({
     : `The counter-case: ${fixture.current_read.counter_case}`
 
   return (
-    <main className="dt-main dt-decision-view">
+    <main className="dt-main dt-decision-view dt-desktop-surface">
       <section className="dt-decision-head" aria-labelledby="decision-title">
         <div>
           <h1 id="decision-title">How far should you rebuild marketing around AI?</h1>
@@ -484,11 +485,13 @@ export default function DecisionBenchPage() {
   const [modal, setModal] = useState<ModalKind>(() => new URLSearchParams(window.location.search).get('view') === 'challenge' ? 'challenge' : null)
   const [sourceGroup, setSourceGroup] = useState('all')
   const [inputs, setInputs] = useState<SharpeningInput[]>([])
+  const [mobileInput, setMobileInput] = useState<SharpeningInput | null>(null)
   const [killCondition, setKillCondition] = useState('Stop if the new route produces more material but still needs Maya to rescue the central idea.')
   const [toast, setToast] = useState('')
   const benchState = readBenchState()
   const reviewQueue = useMemo(readOperatorReviewFixture, [])
-  const brief = useMemo(() => buildClaudeBrief(fixture, inputs, killCondition), [inputs, killCondition])
+  const briefInputs = useMemo(() => mobileInput ? [mobileInput, ...inputs] : inputs, [inputs, mobileInput])
+  const brief = useMemo(() => buildClaudeBrief(fixture, briefInputs, killCondition), [briefInputs, killCondition])
   const shownSources = (sourceGroups[sourceGroup] ?? sourceGroups.all).map(sourceById)
 
   useEffect(() => {
@@ -520,8 +523,8 @@ export default function DecisionBenchPage() {
   }
 
   return (
-    <div className="dt-shell">
-      <header className="dt-header">
+    <div className={`dt-shell ${view === 'decision' ? 'dt-is-decision' : ''}`} data-testid="decision-bench">
+      <header className="dt-header dt-desktop-header">
         <div className="dt-identity">
           <img src={`${import.meta.env.BASE_URL}mindmaker-favicon.png`} alt="Mindmake" />
           <span className="dt-avatar" aria-hidden="true">MC</span>
@@ -534,16 +537,24 @@ export default function DecisionBenchPage() {
       </header>
 
       {view === 'decision' ? (
-        <DecisionViewPanel
-          benchState={benchState}
-          reviewQueue={reviewQueue}
-          routeId={routeId}
-          onRouteChange={setRouteId}
-          onViewChange={setView}
-          onOpenChallenge={() => setModal('challenge')}
-          onOpenSources={openSources}
-          notify={notify}
-        />
+        <>
+          <MobileDecisionSession
+            onAnswer={setMobileInput}
+            onChallenge={setKillCondition}
+            onRouteChange={setRouteId}
+            notify={notify}
+          />
+          <DecisionViewPanel
+            benchState={benchState}
+            reviewQueue={reviewQueue}
+            routeId={routeId}
+            onRouteChange={setRouteId}
+            onViewChange={setView}
+            onOpenChallenge={() => setModal('challenge')}
+            onOpenSources={openSources}
+            notify={notify}
+          />
+        </>
       ) : null}
       {view === 'test' ? <TestView killCondition={killCondition} setKillCondition={setKillCondition} onBack={() => setView('decision')} onBuildBrief={() => setView('brief')} /> : null}
       {view === 'brief' ? <BriefView brief={brief} wrongCustomer={benchState === 'wrong'} onBack={() => setView('test')} onAudit={() => setView('audit')} notify={notify} /> : null}

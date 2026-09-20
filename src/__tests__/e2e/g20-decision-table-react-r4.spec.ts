@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 
 async function openDecision(page: Page, suffix = '') {
   await page.goto(`${route}${suffix}`)
-  await expect(page.getByRole('heading', { name: 'How far should you rebuild marketing around AI?' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /(?:How far should you rebuild marketing around AI\?|Should Aperture rebuild marketing around AI\?)/ })).toBeVisible()
 }
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -49,15 +49,86 @@ test.describe('G20 Decision Table R4 React slice', () => {
     await expect(page.getByText('For your next session')).toHaveCount(0)
   })
 
-  test('keeps a long pending review readable on a narrow phone', async ({ page }) => {
+  test('keeps one complete consequential turn inside a narrow phone viewport', async ({ page }) => {
+    for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 568 }]) {
+      await page.setViewportSize(viewport)
+      await openDecision(page, '?review=long')
+      await expect(page.getByTestId('mobile-decision-session')).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'What result would make this safe to scale?' })).toBeVisible()
+      await expect(page.getByText('7 linked sources', { exact: true })).toBeVisible()
+      await expect(page.getByText('For your next session')).toBeHidden()
+      await expectNoHorizontalOverflow(page)
+      const viewportFit = await page.evaluate(() => ({ scroll: document.documentElement.scrollHeight, viewport: innerHeight }))
+      expect(viewportFit.scroll).toBeLessThanOrEqual(viewportFit.viewport + 1)
+      const brand = page.getByRole('img', { name: 'Mindmake' })
+      expect(await brand.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0)).toBe(true)
+      const targets = await page.locator('.mds button:visible').evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().height))
+      expect(targets.every((height) => height >= 44)).toBe(true)
+    }
+  })
+
+  test('answers, recalculates and keeps the human call separate on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 568 })
-    await openDecision(page, '?review=long')
-    await expect(page.getByRole('heading', { name: /Should strong customer-facing proposals move/ })).toBeVisible()
-    await expectNoHorizontalOverflow(page)
-    const button = page.getByRole('button', { name: 'Copy question' })
-    await expect(button).toBeVisible()
-    const box = await button.boundingBox()
-    expect(box?.height).toBeGreaterThanOrEqual(44)
+    await openDecision(page)
+    await page.getByRole('button', { name: 'A customer result we can verify' }).click()
+    await expect(page.getByText('Checking what this changes')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Recommendation holds' })).toBeVisible()
+    await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute('data-testid'))).toBe('mobile-decision-result')
+    await expect(page.getByText('Saved in this session')).toBeVisible()
+    await expect(page.getByTestId('mobile-decision-call')).toHaveCount(0)
+    await page.getByRole('button', { name: 'Record my call' }).click()
+    await expect(page.getByTestId('mobile-decision-call')).toBeVisible()
+    await expect(page.getByText('Not recorded')).toBeVisible()
+    await page.getByRole('button', { name: 'Run the proof first' }).click()
+    await expect(page.getByRole('heading', { name: 'Run the proof first' })).toBeVisible()
+    await expect(page.getByText('Held for this session only.', { exact: false })).toBeVisible()
+    await expect(page.getByText(/has not written to a customer Brain or database/)).toBeVisible()
+    await page.getByRole('button', { name: 'Change my call' }).click()
+    await page.getByRole('button', { name: 'Leave this open' }).click()
+    await expect(page.getByRole('heading', { name: 'Decision left open' })).toBeVisible()
+    await expect(page.getByText('No human decision was recorded.', { exact: false })).toBeVisible()
+  })
+
+  test('opens the deeper basis as a separate full-screen layer', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await openDecision(page)
+    await page.getByRole('button', { name: 'Inspect basis' }).click()
+    const basis = page.getByTestId('mobile-decision-basis')
+    await expect(basis).toBeVisible()
+    await expect(basis.getByRole('heading', { name: /quality still depends on Maya/i })).toBeVisible()
+    await expect(basis.getByRole('heading', { name: 'Evidence' })).toBeVisible()
+    await expect(basis.getByRole('heading', { name: 'Routes considered' })).toBeVisible()
+    await expect(basis.getByRole('heading', { name: 'Case against' })).toBeVisible()
+    await basis.getByRole('button', { name: 'Back' }).click()
+    await expect(basis).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Inspect basis' })).toBeFocused()
+  })
+
+  test('uses captured browser speech as an answer instead of a decorative voice control', async ({ page }) => {
+    await page.addInitScript(() => {
+      class FakeSpeechRecognition {
+        continuous = false
+        interimResults = false
+        lang = ''
+        maxAlternatives = 1
+        onresult: ((event: unknown) => void) | null = null
+        onerror: (() => void) | null = null
+        onend: (() => void) | null = null
+        start() {
+          queueMicrotask(() => {
+            this.onresult?.({ results: [{ 0: { transcript: 'A repeatable quality check' } }] })
+            this.onend?.()
+          })
+        }
+        abort() {}
+      }
+      ;(window as unknown as { SpeechRecognition: typeof FakeSpeechRecognition }).SpeechRecognition = FakeSpeechRecognition
+    })
+    await page.setViewportSize({ width: 320, height: 568 })
+    await openDecision(page)
+    await page.getByRole('button', { name: 'Say it instead' }).click()
+    await expect(page.getByText('A repeatable quality check')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Still provisional' })).toBeVisible()
   })
 
   test('keeps one tap-first question at a time and adds it to the brief', async ({ page, context }) => {
@@ -129,12 +200,15 @@ test.describe('G20 Decision Table R4 React slice', () => {
       await page.setViewportSize(viewport)
       await openDecision(page)
       await expectNoHorizontalOverflow(page)
-      await expect(page.getByRole('tab')).toHaveCount(3)
-      await expect(page.getByRole('button', { name: /Design the test/i })).toBeVisible()
-      if (viewport.width === 390) await expect(page.getByRole('button', { name: /Design the test/i })).toBeInViewport()
       if (viewport.width === 1440) {
+        await expect(page.getByRole('tab')).toHaveCount(3)
+        await expect(page.getByRole('button', { name: /Design the test/i })).toBeVisible()
         const height = await page.evaluate(() => ({ scroll: document.documentElement.scrollHeight, viewport: innerHeight }))
         expect(height.scroll).toBeLessThanOrEqual(height.viewport + 1)
+      } else {
+        await expect(page.getByRole('tab')).toHaveCount(0)
+        await expect(page.getByRole('button', { name: /Design the test/i })).toBeHidden()
+        await expect(page.getByTestId('mobile-decision-question')).toBeVisible()
       }
       const undersized = await page.locator('.dt-shell button:visible, .dt-shell a:visible').evaluateAll((elements) => elements.filter((element) => {
         const rect = element.getBoundingClientRect()
@@ -154,5 +228,42 @@ test.describe('G20 Decision Table R4 React slice', () => {
     await page.getByRole('button', { name: /Build the Claude brief/i }).click()
     await expect(page.getByRole('button', { name: 'Return to Maya before copying' })).toBeDisabled()
     await expect(page.getByText(/belongs to a different selected customer/)).toBeVisible()
+  })
+
+  test('uses honest mobile projections for sparse, stale, conflicted, loading and failed data', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 })
+    const states = [
+      ['sparse', 'Needs evidence', 'There is not enough evidence'],
+      ['stale', 'Stale', 'The previous recommendation is paused.'],
+      ['conflicted', 'Evidence disagrees', 'Do not rebuild the whole function yet.'],
+      ['loading', 'Updating', 'The previous view stays visible'],
+      ['error', 'Update failed', 'No answer or decision has been lost.'],
+    ] as const
+
+    for (const [state, status, copy] of states) {
+      await openDecision(page, `?state=${state}`)
+      await expect(page.getByTestId('mobile-decision-status')).toHaveText(status)
+      await expect(page.getByText(copy, { exact: false })).toBeVisible()
+      await expectNoHorizontalOverflow(page)
+    }
+
+    const actionableStates = [
+      ['sparse', 'Evidence target set'],
+      ['stale', 'Refresh target set'],
+      ['conflicted', 'Conflict to resolve'],
+    ] as const
+    for (const [state, outcome] of actionableStates) {
+      await openDecision(page, `?state=${state}`)
+      await page.locator('.mds-choices button').first().click()
+      await expect(page.getByRole('heading', { name: outcome })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Recommendation holds' })).toHaveCount(0)
+    }
+
+    await openDecision(page, '?state=stale')
+    await page.getByRole('button', { name: 'Inspect basis' }).click()
+    const staleBasis = page.getByTestId('mobile-decision-basis')
+    await expect(staleBasis.getByRole('heading', { name: /recommendation is paused/i })).toBeVisible()
+    await expect(staleBasis.getByText(/history, not a current recommendation/i)).toBeVisible()
+    await expect(staleBasis.getByText('current view', { exact: false })).toHaveCount(0)
   })
 })
