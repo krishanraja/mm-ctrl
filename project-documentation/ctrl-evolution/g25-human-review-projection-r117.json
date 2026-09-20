@@ -1,10 +1,11 @@
 {
   "contract": "g25-human-review-projection-r117",
-  "status": "PUBLIC_REMOTE_VERIFICATION_PENDING",
+  "status": "PUBLIC_REMOTE_VERIFIED_FOUNDER_REVIEW_PENDING",
   "authority": {
     "allowed": [
       "local static proof",
       "non-production Vercel preview",
+      "public GitHub Pages proof",
       "synthetic browser-only state"
     ],
     "closed": [
@@ -56,7 +57,21 @@
     "1280x720",
     "1440x900"
   ],
-  "remote_verification": null,
+  "remote_verification": {
+    "provider": "GitHub Pages",
+    "url": "https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r117.html",
+    "deployment_commit": "8a6d94c32db38e1e28019025a9fd9de040c51a8d",
+    "authentication_required": false,
+    "artifact_hashes_match": true,
+    "http_status": 200,
+    "browser_acceptance": "7 of 7 passed",
+    "verified_viewports": [
+      "320x568",
+      "390x844",
+      "1280x720",
+      "1440x900"
+    ]
+  },
   "independent_verdict": "PASS",
   "next_gate": "Krish's cold first reaction to the exact non-production preview"
 }

@@ -1,7 +1,7 @@
 # G25 human review projection R117 strategy
 
-Status: internal proof passed; durable public preview replacement pending
-Date: 2026-09-19
+Status: durable public proof passed; founder review pending
+Date: 2026-09-20
 Depends on: G25 standard-change owner gate R116
 Data mode: synthetic projection over the exact R116 packet shape
 
@@ -59,4 +59,4 @@ Routine milestones do not interrupt the founder. Continue autonomously through c
 
 ## Exactly one next action
 
-Publish the exact committed proof through a durable public route, verify it without authentication and present it cold for the founder's first reaction.
+Present the verified public proof cold for the founder's first reaction.

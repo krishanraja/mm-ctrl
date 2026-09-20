@@ -1,8 +1,8 @@
 # G25 human review R117 QA record
 
-Status: local and independent proof passed; durable public preview replacement pending
-Date: 2026-09-19
-Authority: local proof and non-production preview only
+Status: local, independent and durable public proof passed; founder review pending
+Date: 2026-09-20
+Authority: local proof and non-production public preview only
 
 ## Proof boundary
 
@@ -60,6 +60,19 @@ Focused browser acceptance executed seven tests across the four named viewports.
 
 The [independent verdict](g25-human-review-r117-independent-verdict.md) records the initial veto, repair and fresh pass.
 
+## Durable public verification
+
+- URL: `https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r117.html`
+- Host: GitHub Pages over the public repository branch
+- Deployment commit: `8a6d94c32db38e1e28019025a9fd9de040c51a8d`
+- Access: HTTP 200 with no sign-in, redirect or interstitial
+- Asset delivery: HTML, CSS and JavaScript returned their correct content types
+- Identity: all three hosted SHA-256 hashes match the frozen local identity above
+- Remote browser result: seven of seven focused tests passed against the hosted URL
+- Remote viewports: 320x568, 390x844, 1280x720 and 1440x900
+
+The browser acceptance can target either the local proof or an absolute hosted proof through `E2E_PROOF_URL`. This prevents a successful public deployment from being mistaken for a successful local render.
+
 ## Retired temporary verification
 
 - Deployment: `dpl_FVDufLTy8Af17gPvw6rRh597ZSac`
@@ -77,4 +90,4 @@ This proof does not establish that the proposed rule is a valuable real-world le
 
 ## Next gate
 
-Publish the exact committed proof through a durable public route, verify it as a logged-out visitor and present it cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.
+Present the verified public proof cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.

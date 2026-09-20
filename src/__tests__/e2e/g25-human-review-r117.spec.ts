@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
 
-const proof = '/g25-human-review-r117.html'
+const proof = process.env.E2E_PROOF_URL ?? '/g25-human-review-r117.html'
 
 async function openProof(page: Page, state = 'ready') {
   await page.goto(`${proof}?state=${state}`)
