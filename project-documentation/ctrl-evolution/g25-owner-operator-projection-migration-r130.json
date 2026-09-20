@@ -1,0 +1,105 @@
+{
+  "schema_version": "ctrl.g25.owner-operator-projection-migration.r130.v1",
+  "contract_id": "G25-OWNER-OPERATOR-PROJECTION-MIGRATION-R130",
+  "status": "isolated_owner_to_operator_lifecycle_passed_zero_residue",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OWNER-OPERATOR-PROJECTION-BINDING-R129",
+    "G25-OPERATOR-REVIEW-MIGRATION-R127"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "migration": {
+    "version": "20260920190000",
+    "binding_columns": 2,
+    "six_field_scope_constraint": true,
+    "authenticated_rpc_execute": true,
+    "anonymous_rpc_execute": false,
+    "service_rpc_execute": false,
+    "existing_packets_bound": 0,
+    "r115_tables_preserved": 5,
+    "r123_owner_queue_preserved": true,
+    "r127_operator_membrane_preserved": true,
+    "rollback_rehearsed": true,
+    "prior_constraint_restored": true,
+    "restore_rehearsed": true,
+    "catalogue_sha256": "a52495727685241d2146a3247d754433b2df543e89a5ca000a1f20443effd05f"
+  },
+  "hosted": {
+    "real_owner_candidate_conveyor": true,
+    "presentation_and_binding_same_transaction": true,
+    "exact_retry_idempotent": true,
+    "first_binding_time_preserved": true,
+    "cross_workspace_rebind_denied": true,
+    "cross_owner_denied": true,
+    "roles_created_by_binding": 0,
+    "grants_created_by_binding": 0,
+    "operator_projection_status": 200,
+    "operator_ready_count": 1,
+    "returned_fields": [
+      "consequence",
+      "headline",
+      "question",
+      "ready_since",
+      "review_packet_id"
+    ],
+    "raw_packet_returned": false,
+    "direct_raw_packet_hidden": true,
+    "operator_decision_status": 404,
+    "owner_standard_unchanged": true
+  },
+  "cleanup": {
+    "access_receipts": 0,
+    "artifacts": 0,
+    "auth_users": 0,
+    "candidate_requests": 0,
+    "criteria": 0,
+    "grants": 0,
+    "operator_auth_links": 0,
+    "operator_principals": 0,
+    "review_packets": 0,
+    "roles": 0,
+    "workspaces": 0
+  },
+  "authority": {
+    "operator_access_granted_by_binding": false,
+    "decision_authority_granted": false,
+    "active_standard_mutated": false,
+    "notification_sent": false,
+    "permits": [
+      "local product wiring design",
+      "cross-device experience proof against disposable isolated data"
+    ],
+    "forbids": [
+      "customer data",
+      "production mutation",
+      "merge to main",
+      "release",
+      "cutover",
+      "legacy retirement"
+    ]
+  },
+  "artifacts": {
+    "migration": "supabase/migrations/20260920190000_owner_operator_projection_binding.sql",
+    "migration_sha256": "9c95bfe9b4e49226acf1c2b0304f91756b0fc0d38f78d3f2a2a340d3906dbfc7",
+    "migration_probe": "scripts/probe-ctrl-g25-owner-operator-projection-migration-r130.mjs",
+    "migration_probe_sha256": "8257d182d138f3dd161ee8eb6d2a6b9f8c8f83963c3607bae2d5339cc597d149",
+    "hosted_probe": "scripts/probe-ctrl-g25-owner-operator-hosted-lifecycle-r130.mjs",
+    "hosted_probe_sha256": "3ed863439e28b26862d27c3a0a7cdaad462eebe97e21bf8e4db009eaf3a5bfa9",
+    "rollback_sql": "scripts/rollback-ctrl-g25-owner-operator-projection-binding-r130.sql",
+    "rollback_sql_sha256": "40b6fd644e336c547f34ff71641cb16adaf87a27a8b6a5ed6528b3bbbde6d52d",
+    "rollback_operator": "scripts/rollback-ctrl-g25-owner-operator-projection-binding-r130.ps1",
+    "rollback_operator_sha256": "3a1eca23c798fcbf1249adffc41e15015783709e8d205524fb67fb60ec36decd",
+    "restore_operator": "scripts/restore-ctrl-g25-owner-operator-projection-binding-r130.ps1",
+    "restore_operator_sha256": "4dab6170a5e81a138be5a5a9bdd4d53b37bbc1b2213d3cc507a4cfb1cc630c8b",
+    "readback": "supabase/tests/database/g25_owner_operator_projection_binding_r130_readback.sql",
+    "readback_sha256": "3a0f9640f204f3ee65257b61b361435016ecb73b4ee7752cafca4eb3100e1183",
+    "rollback_readback": "supabase/tests/database/g25_owner_operator_projection_binding_r130_rollback_readback.sql",
+    "rollback_readback_sha256": "e8217d5f410b25436b5c175db5ba7376e922f923be16ccc54285d93c16a23ff1"
+  },
+  "next_safe_action": "Design the smallest product wiring for the owner action and radically minimal operator queue, then prove it cross-device with disposable isolated data before any release decision."
+}
