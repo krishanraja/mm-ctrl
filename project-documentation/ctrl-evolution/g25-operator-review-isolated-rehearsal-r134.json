@@ -1,0 +1,71 @@
+{
+  "schema_version": "ctrl.g25.operator-review-isolated-rehearsal.r134.v1",
+  "contract_id": "G25-OPERATOR-REVIEW-ISOLATED-REHEARSAL-R134",
+  "status": "two_sided_rehearsal_passed",
+  "observed_at": "2026-09-20",
+  "isolated_project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "production_project_excluded": true,
+  "hosted_rehearsal": {
+    "status": "passed",
+    "owner_binding_atomic": true,
+    "first_binding_identity_retained": true,
+    "exact_retry_idempotent": true,
+    "cross_workspace_rebind_denied": true,
+    "cross_owner_denied": true,
+    "operator_http_status": 200,
+    "ready_count": 1,
+    "returned_fields": [
+      "consequence",
+      "headline",
+      "question",
+      "ready_since",
+      "review_packet_id"
+    ],
+    "raw_packet_returned": false,
+    "direct_raw_packet_hidden": true,
+    "operator_decision_status": 404,
+    "owner_standard_unchanged": true,
+    "operator_access_granted_by_binding": false,
+    "decision_authority_granted": false,
+    "active_standard_mutated": false,
+    "notification_sent": false
+  },
+  "application_rehearsal": {
+    "r133_status": "runtime_gateway_passed",
+    "strict_adapter_only": true,
+    "complete_visible_identity": true,
+    "stale_response_suppressed": true,
+    "unavailable_states_render_null": true,
+    "global_supabase_client_imported": false
+  },
+  "cleanup": {
+    "access_receipts": 0,
+    "artifacts": 0,
+    "auth_users": 0,
+    "candidate_requests": 0,
+    "criteria": 0,
+    "grants": 0,
+    "operator_auth_links": 0,
+    "operator_principals": 0,
+    "review_packets": 0,
+    "roles": 0,
+    "workspaces": 0
+  },
+  "artifacts": {
+    "hosted_probe": "scripts/probe-ctrl-g25-owner-operator-hosted-lifecycle-r130.mjs",
+    "hosted_probe_sha256": "3ed863439e28b26862d27c3a0a7cdaad462eebe97e21bf8e4db009eaf3a5bfa9",
+    "r133_contract": "project-documentation/ctrl-evolution/g25-operator-review-runtime-gateway-r133.json",
+    "r133_contract_sha256": "40e79d53c08dfef8601845b65fc87b94ba4339a6137a8e1d32cbbd47e7b856af",
+    "gateway": "src/features/operator-brain/OperatorReviewSignalGateway.tsx",
+    "gateway_sha256": "ed922a98cd767d814197a10c7bc3a878375802a42c93803a41451e4d5bb26034",
+    "hook": "src/features/operator-brain/useOperatorReviewSignal.ts",
+    "hook_sha256": "212a4b8c34ca664b9de7f1afb72744f8378b219e7fbcf5331501b0776b32bb7d"
+  },
+  "route_connected": false,
+  "customer_surface_changed": false,
+  "production_writes": 0,
+  "cleanup_complete": true,
+  "next_safe_action": "Build a private isolated runtime composition that injects an explicitly non-production client into the R133 gateway. Do not use the current global Supabase client and do not expose a public route."
+}
+
