@@ -1,0 +1,38 @@
+{
+  "schema_version": "ctrl.g25.operator-adapter-hosted-composition.r135.v1",
+  "contract_id": "G25-OPERATOR-ADAPTER-HOSTED-COMPOSITION-R135",
+  "status": "strict_hosted_adapter_passed",
+  "observed_at": "2026-09-20",
+  "isolated_project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "production_writes": 0,
+  "strict_adapter_calls": 1,
+  "actual_rpc": "get_operator_pending_standard_change_review_v1",
+  "returned_fields": [
+    "consequence",
+    "headline",
+    "question",
+    "ready_since",
+    "review_packet_id"
+  ],
+  "raw_packet_returned": false,
+  "direct_raw_packet_hidden": true,
+  "operator_decision_status": 404,
+  "owner_standard_unchanged": true,
+  "active_standard_mutated": false,
+  "decision_authority_granted": false,
+  "notification_sent": false,
+  "cleanup_counts_all_zero": true,
+  "browser_rendered_from_live_data": false,
+  "route_connected": false,
+  "customer_surface_changed": false,
+  "artifacts": {
+    "composition_probe": "scripts/probe-ctrl-g25-operator-adapter-hosted-composition-r135.ts",
+    "composition_probe_sha256": "1b2577387a391d4c3cbb2ca116e6f25d84eada75ed6796e149ee25067bfe60fe",
+    "strict_adapter": "src/features/standard-review/operatorPendingQueue.ts",
+    "strict_adapter_sha256": "1240d70d9fd0741af083bd435d59bad0ae2ede17054dcc2c0cdaa1eb1bd57bfa",
+    "hosted_lifecycle": "scripts/probe-ctrl-g25-owner-operator-hosted-lifecycle-r130.mjs",
+    "hosted_lifecycle_sha256": "3ed863439e28b26862d27c3a0a7cdaad462eebe97e21bf8e4db009eaf3a5bfa9"
+  },
+  "next_safe_action": "Render the R133 gateway in a private disposable browser session backed by an explicitly isolated client. Keep all public and production routes closed."
+}
