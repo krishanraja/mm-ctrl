@@ -120,18 +120,19 @@ button:focus-visible, summary:focus-visible, [tabindex]:focus-visible { outline:
   cursor: pointer;
 }
 .primary {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 0 18px;
+  justify-content: center;
+  padding: 0 48px;
   background: var(--cream-bright);
   color: #08110d;
   font-weight: 740;
+  text-align: center;
 }
-.primary::after { content: "→"; font-size: 20px; font-weight: 400; }
+.primary::after { content: "→"; position: absolute; right: 18px; font-size: 20px; font-weight: 400; }
 .primary[disabled] { opacity: .55; cursor: progress; }
-.secondary { padding: 0 18px; background: transparent; color: var(--cream); font-weight: 650; }
+.secondary { padding: 0 18px; background: transparent; color: var(--cream); font-weight: 650; text-align: center; }
 .secondary:hover { border-color: var(--mint); background: rgba(120, 227, 174, .035); }
 .footnote { margin: 13px 0 0; color: var(--quiet); text-align: center; }
 

@@ -32,6 +32,8 @@ test.describe('G25 R117 human review projection', () => {
       await expect(page.getByRole('heading', { name: 'Should this be your proposal rule?' })).toBeVisible()
       await expect(page.getByRole('button', { name: 'Make this my proposal rule' })).toBeVisible()
       await expect(page.getByRole('button', { name: 'Keep my current rule' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Make this my proposal rule' })).toHaveCSS('text-align', 'center')
+      await expect(page.getByRole('button', { name: 'Keep my current rule' })).toHaveCSS('text-align', 'center')
       await expect(page.getByText('Synthetic preview. No data is saved.')).toBeVisible()
       const heights = await page.getByRole('button').evaluateAll((buttons) => buttons.map((button) => button.getBoundingClientRect().height))
       expect(Math.min(...heights)).toBeGreaterThanOrEqual(44)

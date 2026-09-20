@@ -55,7 +55,7 @@ Focused browser acceptance executed seven tests across the four named viewports.
 | File | SHA-256 |
 |---|---|
 | `public/g25-human-review-r117.html` | `425ef7dd7dc84e47d791785f8276e194b24fde791e8c11019730d6efa1c2d754` |
-| `public/g25-human-review-r117.css` | `4fd84d9b7d438c810ffbfb433e1cc43d8039f9f9e43951a8b6c9dfd9f889986f` |
+| `public/g25-human-review-r117.css` | `ded888daec84c99ca0e537782fdf805fdd8ed56c758be2bb387037980376c544` |
 | `public/g25-human-review-r117.js` | `273ddccb049a031567f98bd59bbfc9fd77dce7720e8f6a3718ea5f29b9ada1c8` |
 
 The [independent verdict](g25-human-review-r117-independent-verdict.md) records the initial veto, repair and fresh pass.
