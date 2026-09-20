@@ -67,6 +67,11 @@
   "defect_caught": "R116 reversal returns restored=true; the invented reversed field was removed before handoff",
   "public_preview": {
     "path": "public/g25-human-review-r118/index.html",
+    "url": "https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r118/index.html",
+    "deployment_commit": "c2dc64c94a717affaee44799122b5d0b3439039f",
+    "http_status": 200,
+    "remote_browser_journeys": "5/5 passed",
+    "authentication_required": false,
     "data_mode": "synthetic browser-only",
     "persistence": false,
     "indexing": false

@@ -20,6 +20,7 @@ Date: 2026-09-20
 | Typecheck | No new errors; current baseline 94, expected baseline 94 |
 | Targeted lint | Passed |
 | Dedicated Vite build | Passed; standalone synthetic preview emitted successfully |
+| Durable public preview | HTTP 200 with no authentication; 5 of 5 remote browser journeys passed |
 
 ## Hosted database proof
 
@@ -40,6 +41,8 @@ The Supabase security advisor reports the authenticated `SECURITY DEFINER` wrapp
 ## Experience and failure states
 
 The browser suite proves the approved one-question hierarchy, equal centred action labels, evidence disclosure, focus trap and restoration, approval, explicit reversal confirmation, exact restoration receipt, stale state, incomplete projection, no horizontal overflow and 44px controls. The standalone build was tested through the same five journeys, not only the development route.
+
+The durable cross-device proof is `https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r118/index.html`. GitHub Pages deployed commit `c2dc64c94a717affaee44799122b5d0b3439039f`; the page returns HTTP 200 without sign-in or an interstitial. Five of five journeys passed again against that exact remote URL.
 
 ## Defect caught before founder handoff
 
