@@ -201,6 +201,8 @@
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",
     "build": "cross-env ROLLUP_DISABLE_NATIVE=1 vite build && (npm run prerender || echo '[prerender] skipped; SPA shipped')",
+    "build:vercel": "node scripts/vercel-build.mjs",
+    "build:vercel-preview": "cross-env ROLLUP_DISABLE_NATIVE=1 vite build",
     "prerender": "cross-env ROLLUP_DISABLE_NATIVE=1 vite build --ssr src/entry-prerender.tsx --outDir .prerender && node scripts/prerender.mjs",
     "build:dev": "cross-env ROLLUP_DISABLE_NATIVE=1 vite build --mode development",
     "postinstall": "node scripts/patch-rollup.cjs",
