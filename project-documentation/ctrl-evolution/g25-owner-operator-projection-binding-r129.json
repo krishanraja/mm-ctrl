@@ -1,0 +1,62 @@
+{
+  "schema_version": "ctrl.g25.owner-operator-projection-binding.r129.v1",
+  "contract_id": "G25-OWNER-OPERATOR-PROJECTION-BINDING-R129",
+  "status": "local_owner_binding_candidate_passed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OPERATOR-HOSTED-LIFECYCLE-R128",
+    "G25-HUMAN-REVIEW-BINDING-R118"
+  ],
+  "operation": {
+    "name": "prepare_and_bind_standard_change_operator_projection_v1",
+    "authenticated_owner_only": true,
+    "presentation_and_binding_same_transaction": true,
+    "exact_retry_idempotent": true,
+    "first_binding_time_preserved": true,
+    "cross_owner_denied": true,
+    "cross_workspace_rebind_denied": true,
+    "stale_check_denied": true,
+    "decided_packet_denied": true,
+    "partial_scope_denied": true,
+    "direct_authenticated_table_update_denied": true
+  },
+  "binding": {
+    "workspace_exact": true,
+    "subject_exact": true,
+    "audience": "delivery_team_private",
+    "purpose": "standard_change_review_preparation",
+    "retains_owner_and_first_bound_time": true
+  },
+  "authority": {
+    "operator_roles_created": 0,
+    "audience_grants_created": 0,
+    "operator_access_granted": false,
+    "decision_authority_granted": false,
+    "active_standard_mutated": false,
+    "notification_sent": false,
+    "production_writes": 0,
+    "permits": [
+      "exact additive isolated migration, rollback and restore rehearsal",
+      "disposable hosted proof against the isolated project"
+    ],
+    "forbids": [
+      "customer data",
+      "production mutation",
+      "merge to main",
+      "release",
+      "cutover",
+      "legacy retirement"
+    ]
+  },
+  "verification": {
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "rebind_guard_negative_control": "failed_as_required_when_rebind_expectation_is_preserved"
+  },
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_owner_operator_projection_binding_r129.sql",
+    "candidate_sha256": "b6515f775aac6b83808c1b4d5f0c9716cdfec4a269b86961737f56de940553fb",
+    "runner": "scripts/run-ctrl-g25-owner-operator-projection-binding-r129.mjs",
+    "runner_sha256": "a21a3ed0b889116bd8b16d113dd80eadb1d1e050ff6d286c9081531f17bf4acb"
+  },
+  "next_safe_action": "Create R130 as the exact additive isolated migration, rehearse rollback and restore, and prove the hosted owner-to-operator lifecycle through the new owner RPC."
+}
