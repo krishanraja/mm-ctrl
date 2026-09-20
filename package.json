@@ -212,6 +212,7 @@
     "brain:g25:owner-projection-binding-r129-check": "node scripts/run-ctrl-g25-owner-operator-projection-binding-r129.mjs && node scripts/check-ctrl-g25-operator-hosted-lifecycle-r128.mjs && node scripts/check-ctrl-g25-owner-operator-projection-binding-r129.mjs",
     "brain:g25:owner-projection-migration-r130-check": "node scripts/probe-ctrl-g25-owner-operator-projection-migration-r130.mjs && node scripts/probe-ctrl-g25-owner-operator-hosted-lifecycle-r130.mjs && npm run brain:g25:owner-projection-binding-r129-check && node scripts/check-ctrl-g25-owner-operator-projection-migration-r130.mjs",
     "brain:g25:operator-client-r131-check": "vitest run src/features/standard-review/ownerOperatorBinding.test.ts src/features/standard-review/operatorPendingQueue.test.ts && node scripts/check-ctrl-g25-owner-operator-projection-migration-r130.mjs && node scripts/check-ctrl-g25-owner-operator-client-boundary-r131.mjs",
+    "brain:g25:operator-review-signal-r132-check": "vitest run src/features/operator-brain/OperatorReviewSignal.test.tsx src/features/standard-review/operatorPendingQueue.test.ts && node scripts/check-ctrl-g25-operator-review-signal-r132.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",

@@ -1,0 +1,44 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "run_id": "g24-experience-r132-operator-queue",
+  "status": "passed_for_founder_review",
+  "surface": "selected-customer operator review signal concepts and corrected React candidate",
+  "materiality": "fresh operator signal divergence followed by a council-selected React implementation",
+  "changed_surface_files": [
+    "public/g25-operator-review-queue-concepts-r132.html",
+    "src/features/operator-brain/OperatorReviewSignal.tsx",
+    "src/features/operator-brain/DecisionBenchPage.tsx",
+    "src/features/operator-brain/DecisionBenchPage.css"
+  ],
+  "authority": "Synthetic operator preview only. The customer participation surface remains closed.",
+  "release_status": "not approved, not released, production untouched",
+  "approval_claims": [],
+  "candidate_count": 3,
+  "first_pass_pack_hash": "8c23b8170a51754a592d016a6c9a98b4390e7535d353bca8722e4d159ffde513",
+  "implementation_pack_hash": "80c15f16b2e09c1c8de92f059e5d6553e731a2cea3fd783420c7ff9e7c6e207d",
+  "sealed_verdicts": [
+    "g25-operator-review-queue-r132-blind-verdict-one.md",
+    "g25-operator-review-queue-r132-blind-verdict-two.md",
+    "g25-operator-review-queue-r132-implementation-verdict.md",
+    "g25-operator-review-signal-r132-acceptance-one.md",
+    "g25-operator-review-signal-r132-implementation-acceptance.md",
+    "g25-operator-review-signal-r132-fresh-acceptance.md"
+  ],
+  "reality_lab_results": {
+    "viewports": ["1440x900", "390x844", "320x568"],
+    "states": ["ready", "long", "empty", "unavailable", "default"],
+    "component_and_boundary_tests": "8 passed",
+    "playwright_tests": "19 passed",
+    "decision_table_final_tests": "8 passed",
+    "typecheck": "94 current, 94 baseline, 0 new",
+    "build": "passed with 7 prerender routes",
+    "fresh_final_acceptance": "accepted"
+  },
+  "unverified_or_blocked": [
+    "runtime workspace selection is not connected",
+    "customer participation surface remains closed",
+    "production, merge, release and legacy retirement remain unauthorised"
+  ],
+  "customer_surface_changed": false,
+  "production_writes": 0
+}

@@ -33,6 +33,33 @@ test.describe('G20 Decision Table R4 React slice', () => {
     await expect(page.getByText(/customer projection/i)).toHaveCount(0)
   })
 
+  test('keeps the operator review signal truthful and quiet', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+    await openDecision(page, '?review=ready')
+    await expect(page.getByText('For your next session')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Should strong proposals move when the customer proof and three agreed quality checks are present?' })).toBeVisible()
+    await page.getByRole('button', { name: 'Copy question' }).click()
+    await expect(page.getByRole('button', { name: 'Copied' })).toBeVisible()
+    await expect(page.getByRole('status')).toHaveText('Question copied')
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Should strong proposals move when the customer proof and three agreed quality checks are present?')
+
+    await openDecision(page, '?review=empty')
+    await expect(page.getByText('For your next session')).toHaveCount(0)
+    await openDecision(page, '?review=unavailable')
+    await expect(page.getByText('For your next session')).toHaveCount(0)
+  })
+
+  test('keeps a long pending review readable on a narrow phone', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 })
+    await openDecision(page, '?review=long')
+    await expect(page.getByRole('heading', { name: /Should strong customer-facing proposals move/ })).toBeVisible()
+    await expectNoHorizontalOverflow(page)
+    const button = page.getByRole('button', { name: 'Copy question' })
+    await expect(button).toBeVisible()
+    const box = await button.boundingBox()
+    expect(box?.height).toBeGreaterThanOrEqual(44)
+  })
+
   test('keeps one tap-first question at a time and adds it to the brief', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])
     await openDecision(page)

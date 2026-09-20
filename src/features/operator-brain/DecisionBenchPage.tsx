@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowRight, Check, History, Search } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { buildClaudeBrief, getAuditFindings, getChallengeSet, routePresentations } from './decisionBenchModel'
 import { decisionBenchFixture as fixture } from './fixtureDecisionBenchAdapter'
+import { OperatorReviewSignal } from './OperatorReviewSignal'
+import { readOperatorReviewFixture } from './operatorReviewFixture'
 import type {
   AuditFinding,
   BenchState,
@@ -66,6 +68,7 @@ function BackButton({ children, onClick }: { children: React.ReactNode; onClick:
 
 function DecisionViewPanel({
   benchState,
+  reviewQueue,
   routeId,
   onRouteChange,
   onViewChange,
@@ -74,6 +77,7 @@ function DecisionViewPanel({
   notify,
 }: {
   benchState: BenchState | null
+  reviewQueue: ReturnType<typeof readOperatorReviewFixture>
   routeId: RouteId
   onRouteChange: (routeId: RouteId) => void
   onViewChange: (view: DecisionView) => void
@@ -104,6 +108,8 @@ function DecisionViewPanel({
           <small>{counter}</small>
         </div>
       </section>
+
+      <OperatorReviewSignal queue={reviewQueue} notify={notify} />
 
       <section className={`dt-recognitions ${sparse ? 'is-sparse' : ''}`} aria-label="Current Brain recognitions">
         <article className="dt-recognition">
@@ -481,6 +487,7 @@ export default function DecisionBenchPage() {
   const [killCondition, setKillCondition] = useState('Stop if the new route produces more material but still needs Maya to rescue the central idea.')
   const [toast, setToast] = useState('')
   const benchState = readBenchState()
+  const reviewQueue = useMemo(readOperatorReviewFixture, [])
   const brief = useMemo(() => buildClaudeBrief(fixture, inputs, killCondition), [inputs, killCondition])
   const shownSources = (sourceGroups[sourceGroup] ?? sourceGroups.all).map(sourceById)
 
@@ -529,6 +536,7 @@ export default function DecisionBenchPage() {
       {view === 'decision' ? (
         <DecisionViewPanel
           benchState={benchState}
+          reviewQueue={reviewQueue}
           routeId={routeId}
           onRouteChange={setRouteId}
           onViewChange={setView}
