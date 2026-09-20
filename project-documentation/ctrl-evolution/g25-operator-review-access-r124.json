@@ -137,8 +137,10 @@
     "finding_sha256": "3f00cfcbc6b078e17dec87302e9f017d5da9cc9628a1783644450d63bfdb5518",
     "qa_record": "project-documentation/ctrl-evolution/g25-operator-review-access-r124-qa-record.md",
     "qa_record_sha256": "21ff1397e12faa315434cf8f5cfb1a205ee24c2539c5cc686abdb18a5b34bd04",
+    "experience_receipt": "project-documentation/ctrl-evolution/runs/g24-experience-g25-operator-review-access-r124/receipt.json",
+    "experience_receipt_sha256": "386c360270b8c33f485e7138459a160fd8ccb552d1a7e46c42af9844d673c720",
     "checker": "scripts/check-ctrl-g25-operator-review-access-r124.mjs",
-    "checker_sha256": "2df53cdd0b5e716520344169e7fccdf8776c4133651d68663e365a39522f5e76"
+    "checker_sha256": "a9d68bcc6c8522140bf8c733fef38dc85c5fcb6809d309fcfa864c4175f06acf"
   },
   "authority": {
     "permits": [

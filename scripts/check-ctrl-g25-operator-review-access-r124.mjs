@@ -16,6 +16,7 @@ const evaluator = read('src/features/standard-review/operatorAccess.ts')
 const tests = read('src/features/standard-review/operatorAccess.test.ts')
 const brainSchema = read('supabase/migrations/20260908111121_brain_workspace_audience_canary.sql')
 const reviewSchema = read('supabase/migrations/20260919110000_standard_change_owner_apply_reversal.sql')
+const experienceReceipt = JSON.parse(read('project-documentation/ctrl-evolution/runs/g24-experience-g25-operator-review-access-r124/receipt.json'))
 
 check(contract.depends_on.includes(r123.contract_id), 'R124 does not preserve the R123 dependency')
 check(contract.status === 'headless_authority_contract_frozen_runtime_closed', 'R124 overclaims runtime access')
@@ -37,6 +38,8 @@ check(evaluator.includes('notificationSent: false'), 'operator access can imply 
 check(evaluator.includes("publicReason: 'not_available'"), 'denials can reveal private resource existence')
 check(tests.includes("it.each(deniedCases)"), 'adversarial access matrix is missing')
 check((tests.match(/name: '/g) ?? []).length === 17, 'adversarial access matrix does not contain seventeen cases')
+check(experienceReceipt.status === 'preflight' && experienceReceipt.approval_claims.length === 0, 'headless R124 experience receipt overclaims approval')
+check(experienceReceipt.changed_surface_files.length === 1 && experienceReceipt.changed_surface_files[0] === 'src/features/standard-review/operatorAccess.ts', 'headless R124 experience receipt has the wrong surface boundary')
 check(!`${evaluator}\n${tests}`.includes('service_role'), 'browser contract mentions service-role access')
 check(!`${evaluator}\n${tests}`.includes('\u2014'), 'R124 executable artifacts contain an em dash')
 

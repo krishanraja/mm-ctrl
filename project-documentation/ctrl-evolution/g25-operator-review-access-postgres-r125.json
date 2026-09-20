@@ -1,0 +1,117 @@
+{
+  "schema_version": "ctrl.g25.operator-review-access-postgres.r125.v1",
+  "contract_id": "G25-OPERATOR-REVIEW-ACCESS-POSTGRES-R125",
+  "status": "local_postgresql_candidate_pass_runtime_unproved",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OPERATOR-REVIEW-ACCESS-R124",
+    "G25-STABLE-CUSTODY-IDENTITY-R23"
+  ],
+  "not_a_migration": true,
+  "database_candidate": {
+    "review_packet_change": "extend_standard_change_review_packets_in_place",
+    "scope_columns": [
+      "workspace_id",
+      "subject_id",
+      "operator_projection_audience",
+      "operator_projection_purpose"
+    ],
+    "partial_scope_allowed": false,
+    "legacy_unbound_packets_remain_owner_only": true,
+    "workspace_subject_owner_foreign_key": true,
+    "single_new_concept": "brain_access_receipts",
+    "access_receipts_forced_rls": true,
+    "authenticated_receipt_mutation": false
+  },
+  "rpc": {
+    "name": "get_operator_pending_standard_change_review_v1(uuid)",
+    "caller_identity": "auth.uid()",
+    "stable_operator_identity_required": true,
+    "workspace_selected_by_operator": true,
+    "role": "operator",
+    "role_granted_by": "workspace_owner",
+    "audience": "delivery_team_private",
+    "purpose": "standard_change_review_preparation",
+    "finite_expiry_required": true,
+    "revocation_rechecked": true,
+    "queue_order": "oldest_ready_first_within_exact_workspace",
+    "materiality_inferred": false,
+    "decision_authority_granted": false,
+    "notification_sent": false
+  },
+  "allowed_projection": [
+    "review_packet_id",
+    "question",
+    "headline",
+    "consequence",
+    "ready_since"
+  ],
+  "local_proof": {
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "exact_operator_read": true,
+    "workspace_ready_count": 2,
+    "cross_workspace_packet_excluded": true,
+    "returned_field_count": 5,
+    "receipt_hash_valid": true,
+    "immediate_revocation": true,
+    "receipt_append_only_for_authenticated": true,
+    "denied_case_count": 14,
+    "uniform_public_denial": "not_available",
+    "exact_private_denial_receipts": true,
+    "purpose_predicate_negative_control": "failed_as_required",
+    "residue": "memory_database_closed_after_each_case",
+    "production_writes": 0
+  },
+  "repairs": [
+    {
+      "finding": "Pinned PostgreSQL WASM did not bundle pgcrypto.",
+      "repair": "Harness used PostgreSQL 18 core SHA-256 while the candidate continued calling the existing application hash function.",
+      "external_database_reached": false
+    },
+    {
+      "finding": "PGlite rejected a harness-only parameterized statement containing two inserts.",
+      "repair": "Separated the two fixture inserts and reran the complete matrix.",
+      "external_database_reached": false
+    }
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_operator_review_access_r125.sql",
+    "candidate_sha256": "5eaee313e7b9c6390e2fd11e5ff8c917ce08009a3324316421eba543e46931ed",
+    "runner": "scripts/run-ctrl-g25-operator-review-access-r125.mjs",
+    "runner_sha256": "1d48720172c1121cacb53b3ddc9b69a5943f3dd2d6720c39219428d3e2a94f24",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-review-access-postgres-r125.md",
+    "finding_sha256": "5ff8126f7958975ede915b7fef4c949a2797a19099cddb78ff5278cc08f3147d",
+    "qa_record": "project-documentation/ctrl-evolution/g25-operator-review-access-postgres-r125-qa-record.md",
+    "qa_record_sha256": "9779b5a859ddcfe332989e2a1324a30e96db306c5d9b26532cd6d3e278042d34",
+    "checker": "scripts/check-ctrl-g25-operator-review-access-r125.mjs",
+    "checker_sha256": "6f0e1ab1884123538dee5cd208f5da9cd9de8739b74c1319644eaa5c350603e2"
+  },
+  "runtime_gaps": [
+    "stable operator principal and auth-link tables are not yet part of the live review runtime",
+    "packet creation does not yet write the four explicit operator-projection bindings",
+    "candidate has not run against the isolated Supabase catalogue",
+    "PostgREST and Edge transport are unproved",
+    "concurrent revocation and read are unproved",
+    "receipt retention and customer audit visibility are unresolved"
+  ],
+  "authority": {
+    "permits": [
+      "local PostgreSQL WASM candidate",
+      "disposable fixture data",
+      "static checker",
+      "isolated catalogue read for R126"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "isolated Supabase write",
+      "live operator access",
+      "customer data",
+      "production mutation",
+      "merge to main",
+      "release",
+      "legacy retirement"
+    ]
+  },
+  "next_safe_action": "Read the isolated catalogue and reconcile the smallest stable-operator identity slice before converting this candidate into any migration."
+}

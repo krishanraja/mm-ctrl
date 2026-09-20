@@ -1,0 +1,12 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "status": "preflight",
+  "surface": "G25 operator review authority contract",
+  "materiality": "R124 adds a pure headless authority evaluator beside the approved review experience. It renders no UI, changes no copy, navigation, layout or interaction and keeps operator access runtime-closed.",
+  "changed_surface_files": [
+    "src/features/standard-review/operatorAccess.ts"
+  ],
+  "authority": "Headless contract and local verification only. The R117 founder-approved experience remains the visual authority; this receipt claims no new experience approval.",
+  "release_status": "No database migration, Edge deployment, customer data, production, merge, navigation, feature-enable or release authority.",
+  "approval_claims": []
+}
