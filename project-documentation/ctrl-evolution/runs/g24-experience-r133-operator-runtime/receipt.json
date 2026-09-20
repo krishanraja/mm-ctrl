@@ -1,0 +1,38 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "run_id": "g24-experience-r133-operator-runtime",
+  "status": "passed_for_founder_review",
+  "surface": "operator review signal runtime gateway and dynamic leader identity",
+  "materiality": "the accepted operator signal gains a fail-closed runtime seam while its synthetic visual proof remains unchanged",
+  "changed_surface_files": [
+    "src/features/operator-brain/OperatorReviewSignal.tsx",
+    "src/features/operator-brain/DecisionBenchPage.tsx",
+    "src/features/operator-brain/OperatorReviewSignalGateway.tsx",
+    "src/features/operator-brain/useOperatorReviewSignal.ts"
+  ],
+  "authority": "Fake-client operator proof only. Customer participation, runtime route wiring and all databases remain closed.",
+  "release_status": "not approved, not released, production untouched",
+  "approval_claims": [],
+  "first_pass_pack_hash": "e102c5717c80d663775dd0f260bf55ea818463078e0b605e9448324328d65154",
+  "sealed_verdicts": [
+    "g25-operator-review-runtime-gateway-r133-architecture-verdict.md",
+    "g25-operator-review-runtime-gateway-r133-human-value-verdict.md"
+  ],
+  "reality_lab_results": {
+    "focused_tests": "24 passed",
+    "playwright_regressions": "19 passed",
+    "decision_table_subset": "8 passed",
+    "typecheck": "94 current, 94 baseline, 0 new",
+    "build": "passed with 7 prerender routes",
+    "sealed_verdicts": "2 accepted"
+  },
+  "unverified_or_blocked": [
+    "runtime route is not wired",
+    "isolated and production databases are not connected by this gateway",
+    "customer participation remains closed",
+    "merge, release and legacy retirement remain unauthorised"
+  ],
+  "customer_surface_changed": false,
+  "production_writes": 0,
+  "isolated_database_writes": 0
+}

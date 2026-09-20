@@ -33,7 +33,7 @@ const unavailable: OperatorPendingQueue = {
 
 describe('OperatorReviewSignal', () => {
   it('renders nothing for the uniform not-available projection', () => {
-    const { container } = render(<OperatorReviewSignal queue={unavailable} notify={vi.fn()} />)
+    const { container } = render(<OperatorReviewSignal queue={unavailable} leaderLabel="Maya" notify={vi.fn()} />)
     expect(container).toBeEmptyDOMElement()
   })
 
@@ -41,7 +41,7 @@ describe('OperatorReviewSignal', () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })
     const notify = vi.fn()
-    render(<OperatorReviewSignal queue={ready} notify={notify} />)
+    render(<OperatorReviewSignal queue={ready} leaderLabel="Maya" notify={notify} />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Copy question' }))
 
@@ -54,7 +54,7 @@ describe('OperatorReviewSignal', () => {
   it('does not claim success when the clipboard rejects', async () => {
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: vi.fn().mockRejectedValue(new Error('blocked')) } })
     const notify = vi.fn()
-    render(<OperatorReviewSignal queue={ready} notify={notify} />)
+    render(<OperatorReviewSignal queue={ready} leaderLabel="Maya" notify={notify} />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Copy question' }))
 
@@ -62,4 +62,3 @@ describe('OperatorReviewSignal', () => {
     expect(screen.getByRole('button', { name: 'Copy question' })).toBeVisible()
   })
 })
-

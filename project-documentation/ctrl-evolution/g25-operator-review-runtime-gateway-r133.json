@@ -1,0 +1,67 @@
+{
+  "schema_version": "ctrl.g25.operator-review-runtime-gateway.r133.v1",
+  "contract_id": "G25-OPERATOR-REVIEW-RUNTIME-GATEWAY-R133",
+  "status": "runtime_gateway_passed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OWNER-OPERATOR-CLIENT-BOUNDARY-R131",
+    "G25-OPERATOR-REVIEW-SIGNAL-R132"
+  ],
+  "runtime_boundary": {
+    "client_injected": true,
+    "global_supabase_client_imported": false,
+    "only_adapter": "getOperatorPendingQueue",
+    "identity_fields": [
+      "client_reference",
+      "workspace_id",
+      "leader_label"
+    ],
+    "fail_closed_states": [
+      "idle",
+      "loading",
+      "unavailable",
+      "input_invalid",
+      "transport_failed",
+      "response_invalid",
+      "unknown"
+    ],
+    "public_failure_copy": false,
+    "raw_error_retained": false,
+    "polling": false,
+    "retry": false,
+    "persistence": false,
+    "leader_notification": false,
+    "standard_mutation": false,
+    "decision_authority": false,
+    "route_wired": false,
+    "live_database_connected": false
+  },
+  "r132_history": {
+    "rewritten": false,
+    "operator_signal_sha256": "c8261def114c1014b2edc1bfdc9ea0e365a950ccb4061365ec6b1161864260b8",
+    "decision_bench_sha256": "56d4f61fbcb0efb67ea15486909d550af2c1e374d8bc7b8c9fefb5ebac53ff22",
+    "successor_reason": "Replace synthetic hardcoded leader copy with a validated dynamic identity while preserving the accepted R132 appearance."
+  },
+  "verification": {
+    "targeted_tests_passed": 24,
+    "new_type_errors": 0,
+    "customer_surface_changed": false,
+    "production_writes": 0,
+    "isolated_database_writes": 0
+  },
+  "artifacts": {
+    "signal": "src/features/operator-brain/OperatorReviewSignal.tsx",
+    "signal_sha256": "82b82808b9d921cffbd6e6ac1729291803688a9fd148c66c5fd369a41c23cae2",
+    "gateway": "src/features/operator-brain/OperatorReviewSignalGateway.tsx",
+    "gateway_sha256": "ed922a98cd767d814197a10c7bc3a878375802a42c93803a41451e4d5bb26034",
+    "hook": "src/features/operator-brain/useOperatorReviewSignal.ts",
+    "hook_sha256": "212a4b8c34ca664b9de7f1afb72744f8378b219e7fbcf5331501b0776b32bb7d",
+    "signal_tests": "src/features/operator-brain/OperatorReviewSignal.test.tsx",
+    "signal_tests_sha256": "75b005baa784be57f83337cd5af82ec51d46fad8c60d8a772c7ecf000be06324",
+    "gateway_tests": "src/features/operator-brain/OperatorReviewSignalGateway.test.tsx",
+    "gateway_tests_sha256": "d318c5b44bfb25adb1e8d3a5944bc5cde639f9aa3397389733193f6e835219e7",
+    "synthetic_caller": "src/features/operator-brain/DecisionBenchPage.tsx",
+    "synthetic_caller_sha256": "d66b50d6533ce90ffcc31d7e4f4661514b9e9834b1270af97698ffb23239fd34"
+  },
+  "next_safe_action": "Run a disposable authenticated rehearsal against the exact isolated Supabase project without adding a public route or touching production."
+}

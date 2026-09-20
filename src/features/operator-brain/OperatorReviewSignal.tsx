@@ -4,9 +4,11 @@ import type { OperatorPendingQueue } from '@/features/standard-review/operatorPe
 
 export function OperatorReviewSignal({
   queue,
+  leaderLabel,
   notify,
 }: {
   queue: OperatorPendingQueue
+  leaderLabel: string
   notify: (message: string) => void
 }) {
   const [copied, setCopied] = useState(false)
@@ -16,8 +18,8 @@ export function OperatorReviewSignal({
 
   const item = queue.next
   const countLabel = queue.ready_count === 1
-    ? '1 question for Maya'
-    : `${queue.ready_count} questions, next for Maya`
+    ? `1 question for ${leaderLabel}`
+    : `${queue.ready_count} questions, next for ${leaderLabel}`
 
   async function copyQuestion() {
     try {
@@ -48,7 +50,7 @@ export function OperatorReviewSignal({
         <p><strong>{item.headline}</strong> {item.consequence}</p>
       </div>
       <div className="dt-review-action">
-        <span>Maya decides.</span>
+        <span>{leaderLabel} decides.</span>
         <button type="button" onClick={copyQuestion} data-copied={copied || undefined}>
           {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
           {copied ? 'Copied' : 'Copy question'}

@@ -109,7 +109,7 @@ function DecisionViewPanel({
         </div>
       </section>
 
-      <OperatorReviewSignal queue={reviewQueue} notify={notify} />
+      <OperatorReviewSignal queue={reviewQueue} leaderLabel="Maya" notify={notify} />
 
       <section className={`dt-recognitions ${sparse ? 'is-sparse' : ''}`} aria-label="Current Brain recognitions">
         <article className="dt-recognition">
