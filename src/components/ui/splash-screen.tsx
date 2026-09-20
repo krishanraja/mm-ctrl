@@ -50,7 +50,7 @@ function SplashCore() {
           {/* Inner circle with icon */}
           <div className="absolute inset-2 rounded-full bg-[#121212] flex items-center justify-center">
             <img
-              src="/mindmaker-favicon.png"
+              src={`${import.meta.env.BASE_URL}mindmaker-favicon.png`}
               alt="Mindmaker"
               className="w-14 h-14 sm:w-18 sm:h-18 splash-icon-pulse"
               style={{ filter: 'brightness(0) invert(1)' }}

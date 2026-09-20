@@ -1,0 +1,71 @@
+{
+  "schema_version": "ctrl.g25.memory-export-hosted-proof.r103.v1",
+  "contract_id": "G25-MEMORY-EXPORT-HOSTED-PROOF-R103",
+  "status": "authenticated_owner_export_hosted_pass_broader_brain_routes_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-ISOLATED-SHARE-CARD-HOSTED-PROOF-R102"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "production": false,
+    "deployed_function_count_after_probe": 2
+  },
+  "deployment": {
+    "function": "memory-export",
+    "version": 1,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "local_route_source_sha256": "45ff7c4146fddc80904a09d069fd498fd98da6d8693d112f3906cd6892deaade",
+    "hosted_bundle_sha256": "0f374ea40b916bf43b02bc9c86fb79bb191a05d76961d5ee0c63b1af7e9d05cd",
+    "probe_path": "scripts/probe-ctrl-g25-memory-export-r103.mjs",
+    "probe_sha256": "3e6f98850c59d3be0351c59ca55c5da92df08d98d76866181fcc51cf73d08a79"
+  },
+  "hosted_probe": {
+    "anonymous_status": 401,
+    "owner_status": 200,
+    "owner_fact_count": 1,
+    "owner_pattern_count": 0,
+    "owner_decision_count": 0,
+    "owner_marker_present": true,
+    "cross_subject_marker_absent": true,
+    "touched_fact_count": 1,
+    "primary_filename_present": true,
+    "invalid_format_status": 400,
+    "invalid_budget_status": 400,
+    "wrong_method_status": 405,
+    "reliance_reference_count": 1,
+    "reliance_timestamp_present": true
+  },
+  "implementation_repairs": [
+    "explicit POST and JSON contract",
+    "hard request-byte budget",
+    "closed format and use-case registries",
+    "bounded token budget",
+    "database read errors now fail instead of silently producing an empty Brain",
+    "fact count reports the facts that actually survive token trimming",
+    "reliance touch is awaited before the export receipt returns"
+  ],
+  "cleanup": {
+    "auth_users": 0,
+    "auth_identities": 0,
+    "profiles": 0,
+    "memory_facts": 0,
+    "secret_values_persisted": false
+  },
+  "authority": {
+    "synthetic_users_created": 2,
+    "synthetic_facts_created": 2,
+    "customer_rows_read": 0,
+    "customer_rows_written": 0,
+    "secret_values_retrieved": false,
+    "production_functions_deployed": 0,
+    "production_writes": 0,
+    "forbids": [
+      "treating formatted export as complete account portability proof",
+      "generalising one owner-scope pass to every Brain route",
+      "deploying email, payment or model-spend routes without provider-specific proof",
+      "production mutation, merge, cutover, release or legacy retirement"
+    ]
+  }
+}

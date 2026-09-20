@@ -1,0 +1,36 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "judge": "living_brain_integrity",
+  "criterionVersion": "living-brain-integrity:g21-internal-range-freeze-v2",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "verdict": "fail",
+  "claims": [
+    "The nine frozen file hashes and manifest-order composite were independently recomputed and match the manifest.",
+    "The base longitudinal correction path is claim-addressed, and buildG21CurrentClaimView preserves source records as current or superseded claim projections with evidenceId, sourceLocator and audience.",
+    "The lifecycle path is not claim-safe: makeProfile gives a conflict one default claim equal to its whole content and unconditionally makes the correction supersede that claim.",
+    "For RANGE-INTERNAL-FORGE-I2, the conflict claim is the still-valid 64 percent confidence result, while the correction says to keep that result and only reject an unwillingness inference; the corrected current view nevertheless retires the conflict claim.",
+    "For RANGE-INTERNAL-STORY-I3, the correction says to keep the association and remove causal use, but the same forced supersession retires the only claim containing the association.",
+    "The validator requires this whole conflict-claim retirement and the current-view tests compare emitted output to the same builder, so this broken lineage passes validation."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/g21InternalRangeCanary.ts:316-330",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:391-404",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1512-1542",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2027-2055",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2087-2113",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2323-2336",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:344-380",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:382-414",
+    "scripts/check-g21-internal-range.mjs:75-99",
+    "scripts/check-g21-internal-range.mjs:228-249",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:58-64"
+  ],
+  "veto": {
+    "ruleId": "BRAIN-RANGE-01",
+    "failure": "The lifecycle builder and validator retire still-valid claims. RANGE-INTERNAL-FORGE-I2 supersedes the only claim carrying the 64 percent confidence result even though its correction says to keep that result, and RANGE-INTERNAL-STORY-I3 similarly supersedes the association its correction says to preserve. Because these corrected projections pass validation, broken claim lineage can pass.",
+    "resolvingTest": "Split the affected lifecycle conflict records into claim-addressable assertions and change lifecycle validation so each direct correction supersedes only the false assertion. Add deterministic corrected-input tests proving that RANGE-INTERNAL-FORGE-I2 keeps the 64 percent confidence claim and RANGE-INTERNAL-STORY-I3 keeps the association claim current with their original evidenceId, sourceLocator and audience, while only the invalid inference or causal interpretation is superseded."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Split the affected lifecycle conflict records into claim-addressable assertions and change lifecycle validation so each direct correction supersedes only the false assertion. Add deterministic corrected-input tests proving that RANGE-INTERNAL-FORGE-I2 keeps the 64 percent confidence claim and RANGE-INTERNAL-STORY-I3 keeps the association claim current with their original evidenceId, sourceLocator and audience, while only the invalid inference or causal interpretation is superseded.",
+  "recordedAt": "2026-09-10T19:16:59.110Z"
+}

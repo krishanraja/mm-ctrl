@@ -1,0 +1,78 @@
+{
+  "schema_version": "ctrl.g25.prepared-authority-adapter.r11.v1",
+  "contract_id": "G25-PREPARED-AUTHORITY-ADAPTER-R11",
+  "status": "postgresql_wasm_real_brain_authority_pass_decision_authority_closed",
+  "prepared_at": "2026-09-17T13:10:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-authority-envelope-r7.json",
+    "project-documentation/ctrl-evolution/g25-exact-purpose-rls-canary-r8.json",
+    "project-documentation/ctrl-evolution/g25-prepared-receipt-crypto-r9.json",
+    "project-documentation/ctrl-evolution/g25-prepared-receipt-atomic-store-r10.json"
+  ],
+  "candidate_sql": "supabase/candidates/g25_prepared_authority_adapter_r11.sql",
+  "database_test": "supabase/tests/database/g25_prepared_authority_adapter_r11.test.sql",
+  "runtime_harness": "scripts/run-ctrl-g25-authority-adapter-r11.mjs",
+  "shared_harness": "scripts/lib/g25-postgres-harness.mjs",
+  "not_a_migration": true,
+  "enabled_authority_kinds": {
+    "brain_item_version": "Exact current or disputed canonical Brain item version, scoped to workspace owner, subject, audience and prepared-intelligence purpose. Superseded, expired and prohibited-in-context versions fail closed.",
+    "external_source_receipt": "Exact external Brain source with matching scope, prepared-intelligence purpose, integrity digest, locator and active retention."
+  },
+  "closed_authority_kinds": {
+    "decision_case_snapshot": "Legacy decision rows do not yet provide canonical Brain workspace binding and immutable snapshot authority.",
+    "decision_claim_snapshot": "Legacy decision rows do not yet provide canonical Brain workspace binding and immutable snapshot authority."
+  },
+  "verification": {
+    "runtime": "@electric-sql/pglite@0.5.8",
+    "postgres_version": "18.3",
+    "content_free_authority_receipts": true,
+    "content_covered_by_digest": true,
+    "semantic_change_moves_digest": true,
+    "exact_version_and_digest_required": true,
+    "recorded_before_observation_required": true,
+    "cross_workspace_closed": true,
+    "superseded_item_closed": true,
+    "prohibited_item_closed": true,
+    "expired_source_closed": true,
+    "wrong_purpose_source_closed": true,
+    "unverified_source_closed": true,
+    "atomic_store_used_real_authority": true,
+    "decision_authority_closed": true,
+    "rollback_residue": 0,
+    "negative_controls": [
+      "removing the item consequence-permission predicate makes the canary fail",
+      "removing the source retention predicate makes the canary fail",
+      "removing the item workspace predicate makes the canary fail"
+    ]
+  },
+  "interpretive_boundary": {
+    "disputed_is_not_truth": "A disputed item may be current enough to disclose as context, but its standing is included in the digest and must remain visible downstream. Currentness is not endorsement.",
+    "external_purpose_is_strict": "Legacy external sources without the exact prepared_intelligence purpose remain unavailable until deliberately remapped. No broad compatibility fallback exists.",
+    "returned_metadata_only": "The adapter returns version, digest, recorded time and exact scope. It does not return source or item content."
+  },
+  "remaining_gates": [
+    "Add atomic correction invalidation so changed authority cannot leave an apparently current prepared receipt.",
+    "Add cryptographic erasure plus a subject tombstone that prevents silent revival.",
+    "Define workspace-bound immutable authority for decision cases and claims before enabling them.",
+    "Prove concurrent replay convergence on a multi-connection PostgreSQL runtime.",
+    "Run candidates and tests through Supabase local plus PostgREST when Docker or Podman is available.",
+    "Review any migration and runtime caller separately before application."
+  ],
+  "bounded_claim": "R11 proves fail-closed current-authority adapters for canonical Brain item versions and external source receipts on a disposable PostgreSQL 18.3 fixture shaped after the production tables. It does not prove the full migration graph, Supabase/PostgREST parity, decision authority, correction, erasure, concurrency, migration or production readiness.",
+  "authority": {
+    "permits": [
+      "local non-migration SQL candidate",
+      "disposable PostgreSQL WASM execution",
+      "rollback-only fixtures and negative controls",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration file or migration execution",
+      "linked or production database use",
+      "runtime caller or producer connection",
+      "customer data or customer-facing change",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}

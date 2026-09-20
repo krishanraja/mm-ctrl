@@ -1,0 +1,126 @@
+{
+  "schema_version": "ctrl.g25.function-environment-requirements.r104.v1",
+  "contract_id": "G25-FUNCTION-ENVIRONMENT-REQUIREMENTS-R104",
+  "status": "value_free_dependency_map_complete_staged_restoration_open",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+    "G25-JWT-DISABLED-ROUTE-SECURITY-R100",
+    "G25-MEMORY-EXPORT-HOSTED-PROOF-R103"
+  ],
+  "inspector": {
+    "path": "scripts/inspect-ctrl-g25-function-env-requirements-r104.mjs",
+    "sha256": "0cea2030f508c74c6fdaf8e969c4bd0ccfcc5e6636ebc644d8424e606c4c9e70",
+    "manifest_sha256": "f54b2d4eb8ed18bc3783f9f5f0594f068ed194defc7832271e4de2e1c29668aa",
+    "environment_policy_sha256": "6537ae11cfdd4dff2e3af0031543a6aabd3f5fb913f3ffe69b62a4e8f32b426f",
+    "route_requirements_sha256": "8a699b14c9d1f1be6bfcb97850bd16ebe1f87ac4f3c9f0217614466674ac3119",
+    "raw_source_emitted": false,
+    "environment_values_retrieved": false
+  },
+  "coverage": {
+    "repository_function_count": 122,
+    "entrypoint_count": 122,
+    "functions_with_missing_relative_imports": 0,
+    "unique_environment_symbol_count": 58,
+    "unclassified_environment_symbol_count": 0,
+    "stale_environment_policy_entry_count": 0,
+    "routes_with_secret_dependency": 76,
+    "routes_without_secret_dependency": 46,
+    "routes_with_no_environment_dependency": 36,
+    "routes_with_only_platform_injected_dependencies": 17
+  },
+  "classification_counts": {
+    "billing_credential": 1,
+    "cross_project_privileged_credential": 1,
+    "cross_project_public_key": 1,
+    "cryptographic_custody_secret": 1,
+    "external_endpoint_configuration": 3,
+    "external_provider_credential": 15,
+    "machine_authentication_secret": 14,
+    "non_secret_commercial_configuration": 1,
+    "non_secret_feature_flag": 9,
+    "non_secret_origin_configuration": 2,
+    "non_secret_project_binding": 1,
+    "non_secret_runtime_policy": 4,
+    "outbound_delivery_credential": 1,
+    "platform_injected_privileged_runtime": 1,
+    "platform_injected_runtime": 3
+  },
+  "environment_scoped_route_risk_counts": {
+    "billing": 6,
+    "content_policy": 2,
+    "cross_project_access": 1,
+    "encrypted_data_custody": 3,
+    "external_research": 24,
+    "external_write": 3,
+    "model_spend": 41,
+    "outbound_delivery": 9,
+    "personal_data_enrichment": 5,
+    "platform_access": 82,
+    "platform_identity": 1,
+    "privileged_database_access": 54,
+    "project_binding": 10,
+    "scheduled_execution": 7
+  },
+  "restoration_ladder": [
+    {
+      "stage": 0,
+      "name": "hosted_proofs_already_closed",
+      "routes": [
+        "share-card",
+        "memory-export"
+      ],
+      "gate": "Preserve the R102 and R103 hosted receipts and do not infer safety for any other route."
+    },
+    {
+      "stage": 1,
+      "name": "portable_round_trip",
+      "routes": [],
+      "gate": "Implement and prove deterministic authenticated import of the governed export before selecting a route for deployment."
+    },
+    {
+      "stage": 2,
+      "name": "core_brain_without_external_effects",
+      "routes": [],
+      "gate": "Require route-specific caller, subject, RLS, idempotency and cleanup proof. Environment posture alone cannot admit a route."
+    },
+    {
+      "stage": 3,
+      "name": "model_and_research",
+      "routes": [],
+      "gate": "Require approved provider configuration, spend caps, provenance, retention, failure behavior and provider-exchange receipts."
+    },
+    {
+      "stage": 4,
+      "name": "scheduled_and_outbound_delivery",
+      "routes": [],
+      "gate": "Require isolated secret provisioning, preview recipients, duplicate-send protection, schedule ownership and visible opt-out behavior."
+    },
+    {
+      "stage": 5,
+      "name": "billing_cross_project_and_external_writes",
+      "routes": [],
+      "gate": "Restore last, with exact target binding, replay and idempotency evidence, bounded credentials and external-system reconciliation."
+    }
+  ],
+  "interpretation_boundary": {
+    "environment_scan_is_security_proof": false,
+    "absence_of_environment_dependency_means_safe": false,
+    "platform_injected_service_role_means_route_approved": false,
+    "route_lists_are_inferred_from_environment_only": true,
+    "route_specific_behavioral_proof_required": true
+  },
+  "authority": {
+    "production_writes": 0,
+    "isolated_secret_values_written": 0,
+    "secret_values_retrieved": false,
+    "raw_live_only_source_retrieved": false,
+    "isolated_functions_deployed_by_r104": 0,
+    "production_functions_deployed": 0,
+    "billing_routes_open": false,
+    "email_routes_open": false,
+    "model_spend_routes_open": false,
+    "legacy_retirement_open": false
+  },
+  "next_safe_action": "Build a versioned portable Brain package and deterministic authenticated re-import proof on the isolated target, with no model, email, payment or external-write dependency."
+}

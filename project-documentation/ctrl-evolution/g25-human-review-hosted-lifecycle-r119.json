@@ -1,0 +1,60 @@
+{
+  "contract": "g25-human-review-hosted-lifecycle-r119",
+  "status": "ISOLATED_AUTHENTICATED_LIFECYCLE_PASSED",
+  "date": "2026-09-20",
+  "target": {
+    "project_id": "cgkcplcamsijghalintq",
+    "function": "review-standard-change-v2",
+    "production": false,
+    "customer_data": false
+  },
+  "transport": {
+    "anonymous": 401,
+    "wrong_method": 405,
+    "wrong_media": 415,
+    "oversized": 413,
+    "malformed": 400,
+    "cross_owner": 404
+  },
+  "pipeline": {
+    "candidates": 3,
+    "compile_passed": 3,
+    "build_passed": 3,
+    "check_passed": 3,
+    "presentations_bound": 3
+  },
+  "owner_lifecycle": {
+    "rejection_mutated_nothing": true,
+    "approval_race_statuses": [
+      200,
+      409
+    ],
+    "approval_exact_retry_idempotent": true,
+    "approval_changed_retry_status": 409,
+    "stale_approval_status": 409,
+    "non_head_reversal_status": 409,
+    "reversal_status": 200,
+    "reversal_exact_retry_idempotent": true,
+    "reversal_changed_retry_status": 409,
+    "exact_standard_restored": true,
+    "exact_criteria_restored": true
+  },
+  "cleanup": {
+    "applications": 0,
+    "artifacts": 0,
+    "auth_users": 0,
+    "criteria": 0,
+    "decisions": 0,
+    "reversals": 0,
+    "review_packets": 0,
+    "versions": 0
+  },
+  "authority_closed": [
+    "production mutation",
+    "customer data",
+    "merge to main",
+    "production release",
+    "legacy retirement"
+  ],
+  "next_gate": "R120 actual product gateway over a short-lived authenticated isolated fixture"
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": "ctrl.g25.rendered-authenticated-review.r121.v1",
+  "contract_id": "G25-RENDERED-AUTHENTICATED-REVIEW-R121",
+  "status": "isolated_rendered_authenticated_lifecycle_proved_permanent_route_closed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-STANDARD-REVIEW-PRODUCT-GATEWAY-R120"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "preview_entry": "preview-r121/main.tsx",
+    "preview_entry_sha256": "80799a70ee97735e730458380e947f8c9837dde01cef426711be1f625597c9c3",
+    "vite_config": "vite.r121.config.ts",
+    "vite_config_sha256": "98f0e4f3aeac63a608d7d5bf91f2820f2c9562917e1c0caed950ab4d3c61049a",
+    "browser_spec": "src/__tests__/e2e/g25-human-review-live-r121.spec.ts",
+    "browser_spec_sha256": "103df3a23b435cfad0494ad35477754c0d2b5ce0293b9acb623cdb427eb7911b",
+    "probe": "scripts/probe-ctrl-g25-rendered-standard-review-r121.mjs",
+    "probe_sha256": "c8f94fec5a2cad0d8704dad014f4dffa4e3d16e65a4fb8f8b5915b2ac79f7aab",
+    "checker": "scripts/check-ctrl-g25-rendered-standard-review-r121.mjs",
+    "checker_sha256": "8a5d91ce67ffa9b403da6c2fd7131cfb692564bbdbbf1a5834f0f7e0545d8c6d",
+    "finding": "project-documentation/ctrl-evolution/g25-rendered-authenticated-review-r121.md",
+    "finding_sha256": "15d5a976003f9b75e6199041792678b5e4a876e34be7688e5f0d14b7117e77c7"
+  },
+  "hosted_browser_proof": {
+    "browser_tests_passed": 3,
+    "viewports": [
+      "1440x900",
+      "390x844"
+    ],
+    "exact_packet_rendered": true,
+    "evidence_disclosure_rendered": true,
+    "approval_receipt_rendered": true,
+    "reversal_receipt_rendered": true,
+    "rejection_receipt_rendered": true,
+    "concurrent_stale_state_rendered": true,
+    "mobile_horizontal_overflow": false,
+    "fixture_cleanup_zero": true,
+    "credentials_persisted": false
+  },
+  "authority": {
+    "approved_experience_changed": false,
+    "main_product_route_enabled": false,
+    "customer_data_used": false,
+    "production_deployed": false,
+    "merge_to_main_authorized": false,
+    "release_authorized": false,
+    "legacy_retirement_authorized": false
+  },
+  "next_safe_action": "Create a stable owner-private review address for an already frozen packet and connect the authenticated product route behind a closed feature flag."
+}

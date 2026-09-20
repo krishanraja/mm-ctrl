@@ -44,6 +44,12 @@ serve(async (req) => {
 
     const results: Record<string, unknown> = {};
 
+    const { data: rateLimitCleanup, error: rateLimitError } = await supabase
+      .rpc('cleanup_expired_edge_rate_limits');
+    results.expired_edge_rate_limits = rateLimitError
+      ? { error: rateLimitError.message }
+      : { cleaned: rateLimitCleanup };
+
     // 1. Clean up expired memories via existing DB function
     const { data: memoryCleanup, error: memoryError } = await supabase
       .rpc('cleanup_expired_memories');

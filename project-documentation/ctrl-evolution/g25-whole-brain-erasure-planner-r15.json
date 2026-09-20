@@ -1,0 +1,61 @@
+{
+  "schema_version": "ctrl.g25.whole-brain-erasure-planner.r15.v1",
+  "contract_id": "G25-WHOLE-BRAIN-ERASURE-PLANNER-R15",
+  "status": "local_erasure_planner_proved_policy_unbound",
+  "prepared_at": "2026-09-17T16:05:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-whole-brain-deletion-coverage-r14.json"
+  ],
+  "implementation": {
+    "planner": "supabase/functions/_shared/whole-brain-erasure-plan.r15.ts",
+    "tests": "supabase/functions/_shared/whole-brain-erasure-plan.r15.test.ts"
+  },
+  "proved_locally": [
+    "all nine R14 coverage planes are required before a plan can become ready",
+    "access revocation is ordered before row, object, provider, retention or customer work",
+    "every proved target requires a content-free proof reference",
+    "missing, duplicate or unknown target results invalidate the completion receipt",
+    "failed or pending work can never be called complete",
+    "CTRL-controlled erasure is distinguished from copies controlled by the customer",
+    "the planner remains held while any consequential policy is unbound"
+  ],
+  "policy_gate": {
+    "retained_audit": {
+      "status": "unbound",
+      "recommendation": "Retain only a content-free, keyed-pseudonymous completion receipt for an explicitly approved period. Never retain email, source text, generated content or reversible identifiers in the receipt.",
+      "founder_or_legal_choice": "Approve no retention or approve the exact retention period and basis.",
+      "regulatory_note": "Current ICO guidance sets no universal duration. The controller must justify the period from its purpose, document it and review it. Keyed pseudonymous data remains personal data, so it cannot be retained indefinitely merely because the receipt is content-free.",
+      "official_evidence": [
+        "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/storage-limitation/",
+        "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/"
+      ]
+    },
+    "customer_controlled_copies": {
+      "status": "unbound",
+      "recommendation": "Say plainly that CTRL deleted what it controls, then list exported copies still controlled by the customer and give a specific removal action for each destination.",
+      "proposed_language": "CTRL has deleted the data it controls. Copies you exported to another tool or device remain under your control. We will show you where they went and what to do next."
+    },
+    "partial_completion": {
+      "status": "unbound",
+      "recommendation": "Use resumable pending. Revoke access immediately, retry incomplete targets, show the exact remaining work and never return success until all mandatory proofs exist.",
+      "rejected_default": "Best-effort success with an error list"
+    }
+  },
+  "bounded_claim": "R15 proves a local, content-free planning and completion state machine. It performs no deletion, proves no live provider behavior and authorises no customer-facing erasure claim.",
+  "authority": {
+    "permits": [
+      "local pure planner and unit tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "binding founder or legal policy without approval",
+      "delete-account runtime edit",
+      "migration file or migration execution",
+      "linked or production database use",
+      "external provider deletion",
+      "customer-facing deletion claim",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  }
+}

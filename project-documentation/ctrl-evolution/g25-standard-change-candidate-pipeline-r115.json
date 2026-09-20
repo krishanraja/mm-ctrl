@@ -1,0 +1,444 @@
+{
+  "schema_version": "ctrl.g25.standard-change-candidate-pipeline.r115.v1",
+  "contract_id": "G25-STANDARD-CHANGE-CANDIDATE-PIPELINE-R115",
+  "status": "isolated_hosted_candidate_pipeline_concurrency_provenance_holdout_and_rollback_proved_production_closed",
+  "observed_at": "2026-09-19",
+  "depends_on": [
+    "G25-CAPTURE-LEARNING-AUTHORITY-R114",
+    "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+    "G25-FUNCTION-ENVIRONMENT-REQUIREMENTS-R104"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "compile_route": "supabase/functions/compile-standard-change/index.ts",
+    "compile_route_sha256": "13f3960d10b5aaa4a8b7565811d8b5a09d37f8e6496d0d1e5ddc2d594100b487",
+    "build_route": "supabase/functions/build-standard-change/index.ts",
+    "build_route_sha256": "e5084a1daa193c7b94676f984ba63da127af21bb8739dda2c372bd44b083fe5a",
+    "check_route": "supabase/functions/check-standard-change/index.ts",
+    "check_route_sha256": "7c7c4bd00204e7572af1cf046ce32aa3f10f55460378659ac954951d77ade2a9",
+    "core": "supabase/functions/_shared/standard-change-core.ts",
+    "core_sha256": "6ab83929eaa15c5080edab24229fa9b0bb663086a22b2c0503120a334d9c3953",
+    "core_test": "supabase/functions/_shared/standard-change-core.test.ts",
+    "core_test_sha256": "b3c13bf4d3e75c2903175c0cd1162f8dcc6b63531bf8729e64320824e6701eaf",
+    "request_guard": "supabase/functions/_shared/public-request-guard.ts",
+    "request_guard_sha256": "19db5ea1b5710497f780057c5a0b10a07974c893e825f99bad36c03810ecfb7f",
+    "deployment_manifest": "project-documentation/ctrl-evolution/g25-standard-change-candidate-pipeline-r115-deployment-manifest.json",
+    "deployment_manifest_sha256": "c69dc2db9fa408798f9325eb3b8aff517c0949cd484f2860ae2154d055f67dea",
+    "deployment_verifier": "scripts/verify-ctrl-g25-standard-change-r115-deployment.mjs",
+    "deployment_verifier_sha256": "436290be893628a60bdbde1a1f898a3fa817cd20ff00b1fbf53a41eff3859261",
+    "migrations": [
+      {
+        "path": "supabase/migrations/20260918203434_standard_change_candidate_pipeline.sql",
+        "sha256": "a86e1c6150f1f7ba8abe7a649a97b3a10ee2232877faf71655af420bf49e6ea1"
+      },
+      {
+        "path": "supabase/migrations/20260918205907_standard_change_source_manifest_fix.sql",
+        "sha256": "40ab0fc3446524acd144b2950bfef54bb3381d0ed1154a7234b5b5b477c995d6"
+      },
+      {
+        "path": "supabase/migrations/20260918210105_standard_change_source_identity_fix.sql",
+        "sha256": "1cd264f1b906fa6f2cadd1d40b1c26ae50b8cd170febb2d153c09681c2d8bdd0"
+      },
+      {
+        "path": "supabase/migrations/20260918224000_standard_change_nonretryable_stale_source.sql",
+        "sha256": "3f6bc8760a42cde201a87a4c3c3813a29680e73599b743561973d9068e015161"
+      },
+      {
+        "path": "supabase/migrations/20260918225000_standard_change_trigger_acl.sql",
+        "sha256": "ba9af3a004a4cd6e65cd110c92b71749e8bf3135b894d9b03e212302f2dba8c1"
+      },
+      {
+        "path": "supabase/migrations/20260918232000_standard_change_stage_exclusivity.sql",
+        "sha256": "b67a09a0034beaa9441ac0417bc3cedfb79f9ebf75e1210f6810469c639e8323"
+      },
+      {
+        "path": "supabase/migrations/20260918232500_standard_change_frozen_source_binding.sql",
+        "sha256": "e1b775a677b90b17fac1f8f1ec8f73f777807a7608ab96469a60d965161007d8"
+      },
+      {
+        "path": "supabase/migrations/20260918233000_standard_change_holdout_exclusion_receipt.sql",
+        "sha256": "e9e42678ede1173e8e2b8fdd231f34c906e5f55244738a3aac4074b45b36ea4d"
+      },
+      {
+        "path": "supabase/migrations/20260918233500_standard_change_binding_alias_fix.sql",
+        "sha256": "e14ddc50fc9cdc0b7fa88ce754e91d4a030007d8e6d7aeb639366858fc68d01a"
+      },
+      {
+        "path": "supabase/migrations/20260918234000_standard_change_binding_loop_fix.sql",
+        "sha256": "2a9fe5e96bf74d446c1fed3560f7611e3ec8aae888a55990c68bd74a1bfae477"
+      },
+      {
+        "path": "supabase/migrations/20260918234500_standard_change_binding_cast_fix.sql",
+        "sha256": "623efea8b37d66b4bb5243149fe25bcf49954899160e0d7a52c2eb8913daf3fe"
+      },
+      {
+        "path": "supabase/migrations/20260919090000_standard_change_proposal_type_binding_fix.sql",
+        "sha256": "3e3c7f05500b334f57108281c6586463596e4e61e91224dfe0f6f63abffd18ac"
+      },
+      {
+        "path": "supabase/migrations/20260919100000_standard_change_opportunity_packet_fix.sql",
+        "sha256": "f3102dd460dc1cb84c9159bbd4df45365dd9134340727b5e073b14814730fcf2"
+      }
+    ],
+    "probe": "scripts/probe-ctrl-g25-standard-change-r115.mjs",
+    "probe_sha256": "a14cb0b900819c9d49f3349bdd13a89d46b7382f2e8275d32cb1ef96dbf3796b",
+    "rollback": "scripts/rollback-ctrl-g25-standard-change-r115.sql",
+    "rollback_sha256": "7babf3505e3323498adc5305aaea62ab00de5fb3e65ea66d1ebfc24098a98025",
+    "rollback_operator": "scripts/rollback-ctrl-g25-standard-change-r115.ps1",
+    "rollback_operator_sha256": "ab1cecb18724cd163d06b7a0034766286350b04a3615b83a63d1a7d52038ed80",
+    "restore_operator": "scripts/restore-ctrl-g25-standard-change-r115.ps1",
+    "restore_operator_sha256": "2378cccfed0e3203fab3f76d44038c14a42e7894ee6acfdac2b6f27feaced842",
+    "hosted_proof_receipt": "project-documentation/ctrl-evolution/g25-standard-change-candidate-pipeline-r115-hosted-proof.json",
+    "hosted_proof_receipt_sha256": "85c458e3e6179de398914717fa0b01f1a60e08235c64db737661e0cb7cd12d41",
+    "rollback_proof_receipt": "project-documentation/ctrl-evolution/g25-standard-change-candidate-pipeline-r115-rollback-proof.json",
+    "rollback_proof_receipt_sha256": "a64dffcdffbdd32849280fb5edf004a1370ac8f722ef8b8ab5052b6bbf829aa3",
+    "config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3",
+    "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
+    "repository_function_manifest_sha256": "02d91002635f49eb064212da6b8e7ffe794f547c512221e68b242d3b8145536f",
+    "environment_manifest_sha256": "f54b2d4eb8ed18bc3783f9f5f0594f068ed194defc7832271e4de2e1c29668aa"
+  },
+  "deployment": {
+    "functions": [
+      {
+        "slug": "compile-standard-change",
+        "version": 1,
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "import_map": true,
+        "ezbr_sha256": "9446d02aa60b719e4c469942cf17f709de24b6d35c81cbe5f49c60953df3fb46",
+        "post_restore_hosted_probe_passed": true
+      },
+      {
+        "slug": "build-standard-change",
+        "version": 1,
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "import_map": true,
+        "ezbr_sha256": "619e76da71cb39f15812da017b8db55501163b338d294c69055f594273053243",
+        "post_restore_hosted_probe_passed": true
+      },
+      {
+        "slug": "check-standard-change",
+        "version": 1,
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "import_map": true,
+        "ezbr_sha256": "c465df3fa6f4a10908e02a946e79bc827dffc94272fc70ac45bfa138c421a10b",
+        "post_restore_hosted_probe_passed": true
+      }
+    ],
+    "isolated_functions_active": 16,
+    "exact_bundle_digest_verified": true,
+    "downloaded_runtime_source_matches_reviewed_source": true,
+    "secret_value_printed_or_persisted": false
+  },
+  "pipeline": {
+    "accepted_proposal_creates_immutable_change_request": true,
+    "exact_proposal_decision_and_source_hashes_pinned": true,
+    "exact_evidence_ids_lines_criteria_surfaces_and_verdicts_bound": true,
+    "proposal_validation_is_type_aware_for_false_positive_uncovered_and_drift": true,
+    "drift_absence_is_bound_to_frozen_applicable_review_opportunities": true,
+    "proposal_decision_and_source_snapshots_frozen_at_acceptance": true,
+    "hosted_runtime_source_cryptographically_bound_to_reviewed_bytes": true,
+    "single_running_worker_per_request_stage": true,
+    "candidate_only_compile": true,
+    "deterministic_repeat_build_required": true,
+    "fresh_check_required": true,
+    "criterion_level_findings_required": true,
+    "database_holdout_exclusion_receipt_required": true,
+    "aggregate_score_used": false,
+    "holdout_answers_loaded": false,
+    "active_standard_mutated": false,
+    "apply_authorized": false,
+    "deploy_authorized": false,
+    "release_authorized": false
+  },
+  "database_readback": {
+    "owner_readable_write_closed_tables": 5,
+    "tables_with_rls": 5,
+    "owner_select_policies": 5,
+    "pipeline_rpc_count": 7,
+    "trigger_only_helpers_directly_executable_by_ordinary_roles": 0,
+    "candidate_rows_after_cleanup": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "migrations_recorded": [
+      "20260918203434",
+      "20260918205907",
+      "20260918210105",
+      "20260918224000",
+      "20260918225000",
+      "20260918232000",
+      "20260918232500",
+      "20260918233000",
+      "20260918233500",
+      "20260918234000",
+      "20260918234500",
+      "20260919090000",
+      "20260919100000"
+    ]
+  },
+  "hosted_proof": {
+    "deployment_identity": {
+      "before": {
+        "schema_version": "ctrl.g25.standard-change-deployment-identity.r115.v1",
+        "project_ref": "cgkcplcamsijghalintq",
+        "production_project_ref": "bkyuxvschuwngtcdhsyg",
+        "production_writes": 0,
+        "inventory_stable_during_download": true,
+        "functions": [
+          {
+            "id": "26530f60-7315-494b-889d-d445a681666e",
+            "slug": "build-standard-change",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "import_map": true,
+            "ezbr_sha256": "619e76da71cb39f15812da017b8db55501163b338d294c69055f594273053243",
+            "updated_at": 1789804916815
+          },
+          {
+            "id": "37cb23cc-80f5-4fde-8e97-4763d57a7299",
+            "slug": "check-standard-change",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "import_map": true,
+            "ezbr_sha256": "c465df3fa6f4a10908e02a946e79bc827dffc94272fc70ac45bfa138c421a10b",
+            "updated_at": 1789804925392
+          },
+          {
+            "id": "8078026f-bc63-44bd-9823-d6f30276e929",
+            "slug": "compile-standard-change",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "import_map": true,
+            "ezbr_sha256": "9446d02aa60b719e4c469942cf17f709de24b6d35c81cbe5f49c60953df3fb46",
+            "updated_at": 1789804909397
+          }
+        ],
+        "downloaded_sources": [
+          {
+            "slug": "build-standard-change",
+            "exact_file_count": 5,
+            "exact_downloaded_source_match": true,
+            "exact_local_source_match": true
+          },
+          {
+            "slug": "check-standard-change",
+            "exact_file_count": 5,
+            "exact_downloaded_source_match": true,
+            "exact_local_source_match": true
+          },
+          {
+            "slug": "compile-standard-change",
+            "exact_file_count": 5,
+            "exact_downloaded_source_match": true,
+            "exact_local_source_match": true
+          }
+        ]
+      },
+      "after": {
+        "schema_version": "ctrl.g25.standard-change-deployment-identity.r115.v1",
+        "project_ref": "cgkcplcamsijghalintq",
+        "production_project_ref": "bkyuxvschuwngtcdhsyg",
+        "production_writes": 0,
+        "inventory_stable_during_download": true,
+        "functions": [
+          {
+            "id": "26530f60-7315-494b-889d-d445a681666e",
+            "slug": "build-standard-change",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "import_map": true,
+            "ezbr_sha256": "619e76da71cb39f15812da017b8db55501163b338d294c69055f594273053243",
+            "updated_at": 1789804916815
+          },
+          {
+            "id": "37cb23cc-80f5-4fde-8e97-4763d57a7299",
+            "slug": "check-standard-change",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "import_map": true,
+            "ezbr_sha256": "c465df3fa6f4a10908e02a946e79bc827dffc94272fc70ac45bfa138c421a10b",
+            "updated_at": 1789804925392
+          },
+          {
+            "id": "8078026f-bc63-44bd-9823-d6f30276e929",
+            "slug": "compile-standard-change",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "import_map": true,
+            "ezbr_sha256": "9446d02aa60b719e4c469942cf17f709de24b6d35c81cbe5f49c60953df3fb46",
+            "updated_at": 1789804909397
+          }
+        ],
+        "downloaded_sources": [
+          {
+            "slug": "build-standard-change",
+            "exact_file_count": 5,
+            "exact_downloaded_source_match": true,
+            "exact_local_source_match": true
+          },
+          {
+            "slug": "check-standard-change",
+            "exact_file_count": 5,
+            "exact_downloaded_source_match": true,
+            "exact_local_source_match": true
+          },
+          {
+            "slug": "compile-standard-change",
+            "exact_file_count": 5,
+            "exact_downloaded_source_match": true,
+            "exact_local_source_match": true
+          }
+        ]
+      },
+      "inventory_stable_across_exercise": true
+    },
+    "publish_inserted": 3,
+    "proposal_types_inserted": [
+      "drift",
+      "false_positive",
+      "uncovered"
+    ],
+    "uncovered_change_request_created": true,
+    "drift_change_request_created": true,
+    "decision_change_applied": false,
+    "decision_next": "compile_candidate",
+    "anonymous_status": 401,
+    "wrong_method_status": 405,
+    "wrong_media_status": 415,
+    "oversized_status": 413,
+    "extra_field_status": 400,
+    "cross_owner_status": 404,
+    "direct_rpc_statuses": [
+      403,
+      403,
+      403,
+      403,
+      403,
+      403,
+      403
+    ],
+    "compile_race_statuses": [
+      200,
+      409
+    ],
+    "compile_status": 200,
+    "compile_retry_idempotent": true,
+    "compile_conflict_status": 409,
+    "build_status": 200,
+    "build_retry_idempotent": true,
+    "check_status": 200,
+    "check_verdict": "passed",
+    "check_findings": 10,
+    "check_retry_idempotent": true,
+    "drift_compile_status": 200,
+    "drift_build_status": 200,
+    "drift_check_status": 200,
+    "drift_check_verdict": "passed",
+    "drift_candidate_status": "no_change",
+    "drift_provenance_status": "holds",
+    "durable": {
+      "builds": 2,
+      "candidate_status": "compiled",
+      "checks": 2,
+      "compilations": 2,
+      "findings": 10,
+      "holdout_intersection_count": 0,
+      "holdout_item_count": 1,
+      "holdout_manifest_sha256": "4a5146fa5aadbad7c0645a6caf27b411c49754918959b3f7aaeef9282c4f8e48",
+      "manifest_evidence": 4,
+      "package_sha256": "e14c38d10bad98db18437f6c9444135c4a9b573b386a5706ce36517bae75a25d",
+      "requests": 3,
+      "source_manifest_sha256": "8e1a899093ec09a50876d481510a4a86cca7721617278a017805713ae8a1302c",
+      "state": "checked",
+      "verdict": "passed"
+    },
+    "active_standard_unchanged": true,
+    "active_criteria_unchanged": true,
+    "cross_tenant_rows": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "direct_update_denied": true,
+    "stale_compile_status": 409,
+    "stale_compilations": 0,
+    "cleanup": {
+      "auth_users": 0,
+      "builds": 0,
+      "checks": 0,
+      "compilations": 0,
+      "proposals": 0,
+      "requests": 0,
+      "sort_items": 0,
+      "stage_runs": 0
+    }
+  },
+  "advisor_readback": {
+    "new_trigger_helper_warnings_after_acl_fix": 0,
+    "new_pipeline_table_performance_warnings": 0,
+    "intentional_capability_gated_security_definer_warnings": 7,
+    "direct_capability_rpc_statuses": [
+      403,
+      403,
+      403,
+      403,
+      403,
+      403,
+      403
+    ],
+    "inherited_capture_policy_performance_warnings": 3
+  },
+  "verification": {
+    "focused_test_files": 2,
+    "focused_tests": 16,
+    "full_test_files": 114,
+    "full_tests": 1689,
+    "trust_containment_contracts": 62,
+    "typecheck_current_errors": 94,
+    "typecheck_baseline_errors": 94,
+    "new_type_errors": 0,
+    "application_build_passed": true,
+    "documentation_gate_passed": true,
+    "historical_postdocs_gate_passed": true
+  },
+  "rollback": {
+    "source_prepared": true,
+    "operator_prepared": true,
+    "complete_rollback_cycle_passed": true,
+    "complete_restore_cycle_passed": true,
+    "post_restore_hosted_probe_passed": true,
+    "migration_versions_reverted_and_restored": 13,
+    "edge_functions_removed_and_restored": 3,
+    "vault_and_edge_capability_removed_and_regenerated": true,
+    "production_rollback_required": false,
+    "removes_candidate_pipeline_without_deleting_r114_decision_history": true
+  },
+  "boundary": {
+    "owner_apply_experience_proved": false,
+    "candidate_real_leader_value_proved": false,
+    "production_deployed": false,
+    "merge_or_cutover_authorized": false,
+    "release_authorized": false,
+    "legacy_retirement_authorized": false
+  },
+  "next_safe_action": "Prove an explicit owner apply and rollback gate that can atomically activate one passed candidate as a new standard version on the isolated target, while deployment, release, production and legacy retirement remain closed."
+}

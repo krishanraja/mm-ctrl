@@ -1,0 +1,34 @@
+{
+  "schema_version": "ctrl.g25.operator-projection-source-plan.r141.v1",
+  "contract_id": "G25-OPERATOR-PROJECTION-SOURCE-PLAN-R141",
+  "status": "live_catalogue_read_projection_not_ready",
+  "observed_at": "2026-09-20",
+  "baseline_commit": "a19488106c3f539411c103d95ff050bc3dcebf23",
+  "isolated_project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "required_blockers": 8,
+  "legacy_decision_authority": false,
+  "route_connection_allowed": false,
+  "database_writes": 0,
+  "production_writes": 0,
+  "live_catalogue_evidence": {
+    "method": "linked PostgREST type generation for public and private schemas",
+    "brain_authority_present": true,
+    "legacy_decision_case_present": true,
+    "legacy_decision_workspace_binding_present": false,
+    "complete_operator_projection_possible": false
+  },
+  "artifacts": {
+    "source_plan": "src/lib/operatorDecisionSourcePlan.ts",
+    "source_plan_sha256": "40b23a86e685cb48fe1221faaac48030c41677f2240e8853d2008b9e802acf74",
+    "tests": "src/lib/operatorDecisionSourcePlan.test.ts",
+    "tests_sha256": "b22bd9a465b6858b371bc1f08693840d02e7ffd297220328321a6f7c0f0e43c5",
+    "strategy": "project-documentation/ctrl-evolution/g25-operator-projection-source-plan-r141-strategy.md",
+    "strategy_sha256": "9011b9b5b36e507ea89ce1e07f25abe1628d598ea1d54ead22523b0cddf47b7d",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-projection-source-plan-r141.md",
+    "finding_sha256": "7b05f1fd3c8a4a832b77afbf72d8029425ddfbb372adf683162cb86dcfe1dd41",
+    "qa": "project-documentation/ctrl-evolution/g25-operator-projection-source-plan-r141-qa-record.md",
+    "qa_sha256": "9d8aba02eecfdf0b69bd2fbb5c2ea07250e59fc0df3661764a41b186a1cc5507"
+  },
+  "next_safe_action": "Build and prove the smallest canonical consequential-work spine for one Crossing in a disposable local database before any hosted migration or route connection."
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": "ctrl.g24.trusted-canonical-ingress.r2.v1",
+  "status": "repair_candidate_under_independent_review",
+  "date": "2026-09-13",
+  "supersedes_commit": "491ba15e19865a1522006ed42c0ccc4527460e9b",
+  "authority": {
+    "allowed": ["local_contract_repair", "deterministic_checker", "independent_review", "state_route_update"],
+    "closed": ["adapter_implementation", "runtime_connection", "supabase_change", "customer_data", "external_research", "model_call", "external_send", "deployment", "merge", "release", "legacy_backend_deletion"]
+  },
+  "transport": {
+    "session_source": "verified_server_transport_context",
+    "session_in_json": false,
+    "session_persisted_or_logged": false
+  },
+  "request": {
+    "exact_keys": ["operation_id", "requested_case_ref", "operation_class", "intent"],
+    "unknown_fields_rejected": true,
+    "invalid_result": "invalid_command_hold",
+    "invalid_side_effect": false
+  },
+  "operations": {
+    "select_intervention": {"actor": "authorized_operator_or_system", "intent_keys": [], "max_payload_bytes": 2, "idempotency_scope": "actor_case_operation_intent", "read_set": "complete_selector_snapshot", "write_set": "operation_result_only", "result": "selector_result_or_hold"},
+    "create_intervention": {"actor": "authorized_operator_or_system", "intent_keys": ["selector_result_ref", "content_proposal_ref"], "max_payload_bytes": 4096, "idempotency_scope": "actor_case_operation_intent", "read_set": "selector_and_content_proposal", "write_set": "proposed_intervention_atom", "result": "intervention_atom_or_hold"},
+    "approve_intervention": {"actor": "krish_operator", "intent_keys": ["intervention_atom_ref", "decision", "edited_content_ref", "visible_effect_receipt_ref"], "nullable_keys": ["edited_content_ref"], "max_payload_bytes": 4096, "idempotency_scope": "actor_case_operation_intent", "read_set": "intervention_authority_and_visible_effect", "write_set": "intervention_approval_receipt", "result": "approval_result_or_hold"},
+    "record_answer": {"actor": "named_leader", "intent_keys": ["intervention_atom_ref", "approval_receipt_ref", "answer_kind", "answer_value", "note", "visible_effect_receipt_ref"], "nullable_keys": ["note"], "max_payload_bytes": 32768, "idempotency_scope": "actor_case_operation_intent", "read_set": "approved_intervention_and_visible_effect", "write_set": "answer_receipt", "result": "answer_result_or_hold"},
+    "correct_answer": {"actor": "named_leader_or_explicit_operator", "intent_keys": ["original_answer_receipt_ref", "replacement_answer_kind", "replacement_value", "note", "reason_ref"], "nullable_keys": ["note"], "max_payload_bytes": 32768, "idempotency_scope": "actor_case_operation_intent", "read_set": "answer_chain_and_dependency_graph", "write_set": "replacement_answer_and_correction_receipt", "result": "correction_result_or_hold"},
+    "apply_lifecycle_transition": {"actor": "locked_transition_actor", "intent_keys": ["lifecycle_snapshot_ref", "transition_id", "authority_action_ref", "precondition_evidence_refs"], "max_payload_bytes": 16384, "idempotency_scope": "actor_case_operation_intent", "read_set": "lifecycle_chain_authority_and_preconditions", "write_set": "lifecycle_receipt_and_snapshot", "result": "lifecycle_snapshot_or_hold"},
+    "compile_release": {"actor": "authorized_operator_or_system", "intent_keys": ["accepted_release_request_ref"], "max_payload_bytes": 2048, "idempotency_scope": "actor_case_operation_intent", "read_set": "release_request_and_complete_selector_lineage", "write_set": "pending_release_projection", "result": "pending_projection_or_hold"},
+    "use_release": {"actor": "named_leader", "intent_keys": ["pending_projection_ref", "release_authority_receipt_ref"], "max_payload_bytes": 4096, "idempotency_scope": "actor_case_operation_intent", "read_set": "release_projection_authority_and_current_lineage", "write_set": "release_use_receipt_and_outbox_intent", "result": "outbox_intent_or_hold"},
+    "create_enrichment_plan": {"actor": "authorized_operator_or_system", "intent_keys": ["selector_result_ref", "budget_policy_ref"], "max_payload_bytes": 4096, "idempotency_scope": "actor_case_operation_intent", "read_set": "selector_capability_and_budget_policy", "write_set": "canonical_enrichment_plan", "result": "execution_plan_or_hold"},
+    "record_enrichment_attempt": {"actor": "trusted_worker", "intent_keys": ["plan_ref", "worker_attempt_ref", "provider_operation_ref", "outcome_class", "source_ref"], "nullable_keys": ["source_ref"], "max_payload_bytes": 8192, "idempotency_scope": "worker_plan_operation_intent", "read_set": "plan_receipt_chain_and_current_selector", "write_set": "execution_receipt_and_plan_state", "result": "execution_receipt_or_hold"}
+  },
+  "operation_registry": {
+    "unique_key": "operation_id",
+    "bindings": ["authenticated_actor", "live_session_id_hash", "case_derived_workspace", "case_derived_subject", "requested_case_ref", "operation_class", "intent_fingerprint", "schema_version", "limits_policy_version", "first_database_time", "status", "original_result_fingerprint"],
+    "exact_replay": "return_original_result_bytes",
+    "changed_binding": "operation_identity_conflict_hold",
+    "workspace_from_request": false,
+    "authority_rechecked_on_mutating_replay": true
+  },
+  "canonical_owners": {
+    "identity_authority_and_audience": "r1_brain_workspace_and_authority",
+    "case_frame_and_requirement": "existing_consequential_work_case_and_events",
+    "sources_and_assertions": "r1_canonical_evidence",
+    "accepted_items_and_relationships": "r1_canonical_brain_versions",
+    "epistemic_policy": "r1_governance_policy_lineage",
+    "challenger_result": "r1_independent_challenger_lineage",
+    "coverage_and_selector": "rebuildable_projection_only",
+    "intervention_answer_correction_lifecycle": "existing_consequential_work_events",
+    "release": "existing_r1_release_owner",
+    "enrichment_plan_and_receipts": "existing_evidence_planner_and_execution_receipts"
+  },
+  "no_second_brain": {"ingress_projection_persistent_authority": false, "cache_is_content_addressed_bounded_and_rebuildable": true, "canonical_current_state_read_from_cache": false, "shadow_brain_content_copy_allowed": false},
+  "set_seals": ["control_universe", "applicable_controls", "control_closure_edges", "visible_sources", "visible_assertions", "accepted_brain_items", "accepted_brain_relationships", "route_capability_registry", "receipt_chain_tips"],
+  "set_seal_shape": ["version", "canonical_count", "sha256_digest"],
+  "unknown_or_unclassified_control_result": "control_completeness_hold",
+  "candidate_contract": {"exact_routes": ["reuse", "enrich", "ask", "session"], "exactly_once_each": true, "ineligible_routes_retained": true, "burden_server_derived": true, "incomplete_result": "candidate_completeness_hold"},
+  "snapshot_fingerprint_components": ["operation_and_intent", "actor_session_workspace_subject_case_engagement", "purpose_audience_sensitivity_permission_authority", "frame_requirement_material_consequence", "all_control_and_evidence_set_seals", "canonical_source_assertion_and_brain_sets", "coverage_policy_and_challenger_boundary", "complete_candidates_capability_seal_and_burden_policy", "deadline_and_budget", "all_relevant_chain_tips", "plan_state_and_terminal_flag", "schema_evaluator_and_limits_versions", "database_time_and_snapshot_revision"],
+  "database_protocol": {"isolation": "serializable", "single_operation_procedure": true, "separate_data_api_reads": false, "lock_case_scope": true, "lock_plan_for_attempt": true, "fresh_time_recheck_before_append": true, "compare_and_swap": ["case_scope_version", "engagement_version", "control_universe_seal", "applicability_seal", "evidence_seal", "brain_seal", "capability_registry_seal", "relevant_chain_tips", "plan_version"], "serialization_retries": 3, "retry_exhausted_result": "serialization_retry_hold"},
+  "uniqueness": ["operation_id", "receipt_id", "scoped_idempotency_identity", "plan_fingerprint_and_attempt_ordinal", "one_terminal_receipt_per_plan"],
+  "write_authority": {"canonical_owner_roles_are_non_login": true, "application_direct_dml": false, "public_execute": false, "anon_execute": false, "authenticated_execute": false, "broad_service_role_direct_dml": false, "ingress_login": "dedicated_least_privilege", "rls_is_append_provenance": false},
+  "proof_bridge": {"server_only": true, "browser_exported": false, "caller_provenance_token_accepted": false, "capability_source": "successful_authoritative_resolver_closure", "rehydrator_types": ["selector_result", "intervention_approval", "answer", "correction", "lifecycle", "pending_release_and_authority", "enrichment_plan", "execution_receipt"], "terminal_state_registered_before_plan_use": true, "revives_expired_or_invalidated_state": false},
+  "outbox": {"external_call_inside_transaction": false, "unique_effect_id": true, "provider_idempotency_key": true, "outcomes": ["confirmed", "failed", "unknown"], "unknown_auto_retry_without_provider_guarantee": false, "authority_rechecked_before_send": true},
+  "limits_policy": {"version": "g24-ingress-limits-r2-v1", "request_bytes": 65536, "intent_bytes": 32768, "answer_text_bytes": 16384, "note_bytes": 8192, "selected_rows": 8192, "snapshot_bytes": 8388608, "control_keys": 256, "control_edges": 2048, "control_depth": 32, "visible_sources": 1024, "visible_assertions": 4096, "brain_items": 2048, "brain_relationships": 4096, "non_execution_receipts": 512, "execution_receipts": 33, "database_statement_ms": 5000, "operation_transaction_ms": 8000, "evaluator_ms": 1000, "serialization_retries": 3},
+  "limit_failure": {"checked_before_proportional_work": true, "kernel_envelope": false, "fabricated_receipt": false, "brain_mutation": false, "outbox_intent": false, "external_action": false},
+  "required_attack_families": 15,
+  "claim_limit": "local_repair_contract_only"
+}
+

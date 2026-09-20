@@ -1,0 +1,488 @@
+{
+  "schema_version": "ctrl.g24.trusted-ingress.r5.v1",
+  "status": "fourth_repair_candidate_under_independent_review",
+  "date": "2026-09-12",
+  "supersedes": {
+    "commit": "5e4ec8f6309a68542cd18b74e709d3490ec02b58",
+    "human_sha256": "658e34cca78d9b35e8994078892a87ef2d97c45f0ec92d58dd68955dc04b5004",
+    "machine_sha256": "4ff8bc3748deda96f94c2fac0ad5b698bd38200ce814b268c848ed8290973d59",
+    "qa_sha256": "7f967c29f69d9e53b344e332d7c6edb5bc212d7bbdcd8038a0503a7c40f5d69f"
+  },
+  "inheritance": {
+    "rule": "all_r4_fields_remain_exact_except_named_replacements",
+    "conflict_precedence": "r5_named_replacement_wins",
+    "unlisted_r4_field_reinterpretation": false,
+    "replaced_sections": [
+      "use_release_result_and_invalidation",
+      "set_seals_snapshot_and_compare_and_swap",
+      "set_member_identity",
+      "operation_registry_and_hold_fingerprint",
+      "proof_lineage_bundle_and_semantic_binding",
+      "fresh_execution_replay_lifecycle_and_edited_visibility",
+      "limit_phases_outbox_attempts_and_success_evidence"
+    ]
+  },
+  "authority": {
+    "closed": ["adapter_implementation", "runtime_connection", "supabase_change", "customer_data", "external_research", "model_call", "external_send", "deployment", "merge", "release", "legacy_backend_deletion"]
+  },
+  "scope": {
+    "verified_headless_kernel_seam": true,
+    "leader_final_business_call": false,
+    "accepted_brain_learning": false,
+    "complete_portable_release": false,
+    "customer_messaging": false,
+    "continuing_relationship": false,
+    "intelligence": false,
+    "comprehension": false,
+    "delight": false,
+    "value": false
+  },
+  "workload_capability_class_override": {
+    "effective_values": ["selector_executor", "intervention_compiler", "release_compiler", "enrichment_planner", "enrichment_worker", "delivery_worker", "outbox_lease_reaper", "provider_reconciler", "lifecycle_authority_recorder"],
+    "all_other_r4_workload_principal_fields_unchanged": true,
+    "new_class_authority": "may_only_combine_matching_current_human_lifecycle_actions_into_joint_receipt",
+    "new_class_grant_source": "current_case_workload_grants_set"
+  },
+  "release_use": {
+    "schema_version": "ctrl.g24.result.use-release.r5.v1",
+    "discriminator": "standing",
+    "additional_properties": false,
+    "variants": {
+      "pending_delivery": {
+        "type": "object",
+        "exact_keys": ["standing", "release_use_receipt_ref", "outbox_effect_ref"],
+        "required": ["standing", "release_use_receipt_ref", "outbox_effect_ref"],
+        "additional_properties": false,
+        "properties": {
+          "standing": {"const": "pending_delivery"},
+          "release_use_receipt_ref": {"type": "identifier"},
+          "outbox_effect_ref": {"type": "identifier"}
+        },
+        "write_set": ["release_use_receipt", "outbox_effect"]
+      },
+      "invalidated_before_use": {
+        "type": "object",
+        "exact_keys": ["standing", "pending_projection_ref", "pending_projection_version", "invalidation_receipt_ref", "changed_controlling_watermark_kinds", "delivery_eligible", "outbox_created"],
+        "required": ["standing", "pending_projection_ref", "pending_projection_version", "invalidation_receipt_ref", "changed_controlling_watermark_kinds", "delivery_eligible", "outbox_created"],
+        "additional_properties": false,
+        "properties": {
+          "standing": {"const": "invalidated_before_use"},
+          "pending_projection_ref": {"type": "identifier"},
+          "pending_projection_version": {"type": "positive_integer"},
+          "invalidation_receipt_ref": {"type": "identifier"},
+          "changed_controlling_watermark_kinds": {"type": "array", "min_items": 1, "unique": true, "sort": "canonical_watermark_kind_order", "items": {"type": "identifier"}},
+          "delivery_eligible": {"const": false},
+          "outbox_created": {"const": false}
+        },
+        "write_set": ["release_projection_invalidation_receipt"],
+        "forbidden_write_set": ["release_use_receipt", "outbox_effect", "approval_receipt", "delivery_receipt"]
+      }
+    },
+    "selection": "if_any_bound_controlling_watermark_differs_choose_invalidated_before_use_else_pending_delivery",
+    "selection_precedes_generic_snapshot_changed_hold_for_use_release": true,
+    "concurrent_controlling_watermark_change": "serializable_attempt_retries_then_selects_invalidated_before_use_against_current_state",
+    "unrelated_lineage_change_invalidates": false,
+    "rebuild_confers_use_or_delivery_authority": false,
+    "invalidation_receipt_schema": {
+      "type": "object",
+      "exact_keys": ["receipt_schema_version", "receipt_ref", "case_ref", "pending_projection_ref", "pending_projection_version", "bound_watermark_set_fingerprint", "current_watermark_set_fingerprint", "changed_controlling_watermark_kinds", "invalidated_at", "receipt_fingerprint"],
+      "required": ["receipt_schema_version", "receipt_ref", "case_ref", "pending_projection_ref", "pending_projection_version", "bound_watermark_set_fingerprint", "current_watermark_set_fingerprint", "changed_controlling_watermark_kinds", "invalidated_at", "receipt_fingerprint"],
+      "additional_properties": false,
+      "properties": {
+        "receipt_schema_version": {"const": "ctrl.g24.release-invalidation.r5.v1"},
+        "receipt_ref": {"type": "identifier"},
+        "case_ref": {"type": "identifier"},
+        "pending_projection_ref": {"type": "identifier"},
+        "pending_projection_version": {"type": "positive_integer"},
+        "bound_watermark_set_fingerprint": {"type": "sha256"},
+        "current_watermark_set_fingerprint": {"type": "sha256"},
+        "changed_controlling_watermark_kinds": {"type": "array", "min_items": 1, "unique": true, "sort": "canonical_watermark_kind_order", "items": {"type": "identifier"}},
+        "invalidated_at": {"type": "canonical_timestamp"},
+        "receipt_fingerprint": {"type": "sha256"}
+      },
+      "append_only": true,
+      "atomic_with_use_result": true
+    }
+  },
+  "evaluator_abi_override": {
+    "operation_result_exports": {"use_release": "ctrl.g24.result.use-release.r5.v1"},
+    "all_other_r4_operation_result_exports_unchanged": true,
+    "all_r4_proof_family_exports_unchanged": true,
+    "decoded_proof_payload_exports_added": "one_closed_payload_schema_for_every_proof_decoded_field_binding",
+    "manifest_canonical_bytes_cover_r5_overrides_and_all_decoded_payload_exports": true,
+    "manifest_sha256_recomputed_from_effective_r5_manifest": true,
+    "worker_attestation_must_match_effective_r5_manifest": true
+  },
+  "set_seals": ["control_universe", "applicable_controls", "control_closure_edges", "visible_sources", "visible_assertions", "accepted_brain_items", "accepted_brain_relationships", "route_capability_registry", "receipt_chain_tips", "evaluator_registry", "provider_capability_registry", "operator_grants", "workload_grants"],
+  "set_member_identity_projections": {
+    "control_universe": ["control_id"],
+    "applicable_controls": ["control_id"],
+    "control_closure_edges": ["source_control_id", "target_control_id", "edge_kind"],
+    "visible_sources": ["source_ref"],
+    "visible_assertions": ["assertion_ref"],
+    "accepted_brain_items": ["item_ref"],
+    "accepted_brain_relationships": ["relationship_ref"],
+    "route_capability_registry": ["route_id", "capability_ref"],
+    "receipt_chain_tips": ["chain_kind", "scope_ref"],
+    "evaluator_registry": ["evaluator_id", "policy_lineage_ref", "active_from"],
+    "provider_capability_registry": ["provider_ref", "operation_class", "active_from"],
+    "operator_grants": ["grant_ref"],
+    "workload_grants": ["grant_ref"]
+  },
+  "set_member_identity_encoding": {
+    "domain_ascii": "CTRL-G24-SET-MEMBER-IDENTITY-R5",
+    "variable_field_frame": "uint32_big_endian_byte_length_then_utf8_bytes",
+    "preimage_order": ["domain_ascii", "set_kind_framed", "ordered_projection_values_framed"],
+    "member_entry_order": ["identity_bytes_framed", "raw_complete_record_sha256"],
+    "sort": "ascending_unsigned_identity_bytes_then_raw_record_sha256",
+    "duplicate_identity_same_bytes": "invalid_no_seal",
+    "duplicate_identity_different_bytes": "invalid_no_seal",
+    "missing_extra_null_noncanonical_or_unsupported_projection_field": "invalid_no_seal"
+  },
+  "set_seal_encoding": {
+    "domain_ascii": "CTRL-G24-SET-SEAL-R5",
+    "variable_field_frame": "uint32_big_endian_byte_length_then_utf8_bytes",
+    "preimage_order": ["domain_ascii", "set_kind_framed", "set_schema_version_framed", "owner_lineage_version_framed", "uint64_big_endian_member_count", "sorted_unique_member_entries"],
+    "digest": "sha256_of_exact_preimage",
+    "member_entry_ref": "set_member_identity_encoding.member_entry_order"
+  },
+  "snapshot": {
+    "domain_ascii": "CTRL-G24-TRUSTED-SNAPSHOT-R5",
+    "variable_field_frame": "uint32_big_endian_byte_length_then_utf8_bytes",
+    "hash_encoding": "32_raw_bytes_from_lowercase_hex_sha256",
+    "integer_encoding": "uint64_big_endian",
+    "set_seal_object_order": ["set_kind_framed", "set_schema_version_framed", "owner_lineage_version_framed", "uint64_big_endian_member_count", "raw_sha256_digest"],
+    "preimage_order": ["domain_ascii", "operation_id_framed", "operation_class_framed", "request_fingerprint_raw", "intent_fingerprint_raw", "stable_principal_ref_framed", "principal_authority_version_framed", "thirteen_set_seal_objects_in_fixed_order", "case_scope_version_framed", "engagement_version_framed", "plan_version_framed"],
+    "set_order_ref": "set_seals",
+    "scalar_order": ["case_scope_version", "engagement_version", "plan_version"],
+    "digest": "sha256_of_exact_preimage",
+    "final_compare_and_swap": "recompute_exact_preimage_in_same_serializable_transaction_and_require_byte_equality",
+    "any_set_or_scalar_change": "snapshot_changed_hold",
+    "aggregate_aliases_allowed": false,
+    "set_or_scalar_omission_allowed": false,
+    "grant_mutation_rule": "operator_grants_or_workload_grants_change_advances_case_scope_version_in_same_authority_mutation"
+  },
+  "snapshot_and_cas": {
+    "operation_names_ref": "r4.operation_names",
+    "every_operation_set_seals_ref": "set_seals",
+    "every_operation_scalar_versions": ["case_scope_version", "engagement_version", "plan_version"],
+    "plan_version_rule": "current_only_for_record_enrichment_attempt_else_literal_not_applicable",
+    "same_snapshot_and_final_cas_bytes": true
+  },
+  "operation_registry": {
+    "unique_key": ["workspace_ref", "operation_id"],
+    "first_admission_bindings": ["stable_principal_ref", "case_derived_subject", "requested_case_ref", "operation_class", "request_fingerprint", "intent_fingerprint"],
+    "same_key_different_binding": "operation_identity_conflict_hold",
+    "credential_instance_part_of_identity": false,
+    "serialization_exhaustion": {
+      "result": "request_rejected",
+      "code": "service_temporarily_unavailable",
+      "operation_registry_row": false,
+      "committed_hold": false,
+      "same_operation_id_may_retry": true
+    },
+    "serialization_retry_hold_exists": false
+  },
+  "held_evaluation_fingerprint": {
+    "domain_ascii": "CTRL-G24-HELD-EVALUATION-R5",
+    "variable_field_frame": "uint32_big_endian_byte_length_then_utf8_bytes",
+    "preimage_order": ["domain_ascii", "workspace_ref_framed", "operation_id_framed", "operation_class_framed", "request_fingerprint_raw", "intent_fingerprint_raw", "hold_code_framed", "thirteen_dependency_slots_in_set_order", "three_scalar_slots_in_scalar_order"],
+    "dependency_slots_ref": "set_seals",
+    "scalar_slots": ["case_scope_version", "engagement_version", "plan_version"],
+    "valid_slot": "raw_32_byte_digest",
+    "invalid_or_unavailable_slot": {
+      "domain_ascii": "CTRL-G24-HELD-DEPENDENCY-SENTINEL-R5",
+      "preimage_order": ["domain_ascii", "set_kind_framed", "literal_invalid_or_unavailable_framed"],
+      "digest": "sha256_of_exact_preimage"
+    },
+    "slot_omission_allowed": false,
+    "digest": "sha256_of_exact_preimage"
+  },
+  "proof_lineage": {
+    "owner_families_ref": "r4.proof_family_names",
+    "genesis": {
+      "domain_ascii": "CTRL-G24-PROOF-GENESIS-R5",
+      "preimage_order": ["domain_ascii", "owner_family_framed"],
+      "digest": "sha256_of_exact_preimage"
+    },
+    "append": {
+      "domain_ascii": "CTRL-G24-PROOF-CHAIN-R5",
+      "preimage_order": ["domain_ascii", "owner_family_framed", "predecessor_chain_tip_raw", "canonical_record_fingerprint_raw", "uint64_big_endian_append_ordinal"],
+      "digest": "sha256_of_exact_preimage",
+      "first_predecessor": "family_genesis",
+      "ordinal_starts_at": 1,
+      "ordinal_must_equal_exact_next": true
+    }
+  },
+  "proof_bundle": {
+    "domain_ascii": "CTRL-G24-PROOF-BUNDLE-R5",
+    "variable_field_frame": "uint32_big_endian_byte_length_then_utf8_bytes",
+    "preimage_order": ["domain_ascii", "owner_family_framed", "common_canonical_bytes_sha256_raw", "extension_canonical_bytes_sha256_raw"],
+    "digest": "sha256_of_exact_preimage",
+    "canonical_json_grammar": "r3_canonical_json_utf8",
+    "base64url_decoding_required_before_use": true,
+    "decoded_bytes_must_parse_as_declared_closed_schema": true,
+    "decoded_bytes_must_recanonicalize_byte_equal": true,
+    "decoded_canonical_record_sha256_must_equal_declared_fingerprint": true,
+    "common_and_extension_must_agree": true,
+    "required_common_equalities": ["workspace_ref", "subject_ref", "case_ref", "snapshot_fingerprint", "predecessor_chain_tip"],
+    "required_authoritative_equalities": ["workspace_ref", "subject_ref", "case_ref", "snapshot_fingerprint", "append_provenance_ref", "canonical_record_ref", "canonical_record_fingerprint", "predecessor_chain_tip", "current_set_seals"]
+  },
+  "decoded_proof_record_envelope": {
+    "type": "object",
+    "exact_keys": ["decoded_schema_version", "record_ref", "record_kind", "owner_family", "workspace_ref", "subject_ref", "case_ref", "snapshot_fingerprint", "predecessor_chain_tip", "authoritative_record_fingerprint", "payload"],
+    "required": ["decoded_schema_version", "record_ref", "record_kind", "owner_family", "workspace_ref", "subject_ref", "case_ref", "snapshot_fingerprint", "predecessor_chain_tip", "authoritative_record_fingerprint", "payload"],
+    "additional_properties": false,
+    "properties": {
+      "decoded_schema_version": {"type": "evaluator_exported_decoded_schema_version"},
+      "record_ref": {"type": "identifier"},
+      "record_kind": {"type": "identifier"},
+      "owner_family": {"type": "r4_proof_family_name"},
+      "workspace_ref": {"type": "identifier"},
+      "subject_ref": {"type": "identifier"},
+      "case_ref": {"type": "identifier"},
+      "snapshot_fingerprint": {"type": "sha256"},
+      "predecessor_chain_tip": {"type": "sha256"},
+      "authoritative_record_fingerprint": {"type": "sha256"},
+      "payload": {"type": "closed_object_exported_by_evaluator_manifest"}
+    },
+    "canonical_bytes": "r3_canonical_json_utf8",
+    "fingerprint_rule": "sha256_of_exact_canonical_authoritative_row_bytes_equals_authoritative_record_fingerprint",
+    "all_common_fields_equal_bundle_common": true,
+    "record_ref_kind_and_fingerprint_equal_authoritative_row": true,
+    "payload_equal_authoritative_row_projection": true
+  },
+  "proof_decoded_field_bindings": {
+    "selector_result": {
+      "candidate_set_bytes_b64url": ["selector_candidate_set", "current_complete_selector_candidate_set"],
+      "canonical_record_bytes_b64url": ["selector_result", "current_selector_result_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "selector_result_chain_through_declared_tip"]
+    },
+    "intervention_approval": {
+      "intervention_atom_bytes_b64url": ["intervention_atom", "exact_approved_intervention_atom_version"],
+      "approval_receipt_bytes_b64url": ["intervention_approval_receipt", "receipt_bound_to_exact_approved_atom"],
+      "visible_effect_receipt_bytes_b64url": ["intervention_visible_effect_receipt", "receipt_bound_to_exact_approved_atom"],
+      "canonical_record_bytes_b64url": ["intervention_approval", "current_intervention_approval_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "intervention_approval_chain_through_declared_tip"]
+    },
+    "answer": {
+      "answer_receipt_bytes_b64url": ["answer_receipt", "exact_current_answer_receipt"],
+      "leader_authority_bytes_b64url": ["leader_answer_authority", "current_named_leader_authority_row"],
+      "visible_effect_receipt_bytes_b64url": ["answer_visible_effect_receipt", "receipt_bound_to_exact_answer"],
+      "canonical_record_bytes_b64url": ["answer", "current_answer_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "answer_chain_through_declared_tip"]
+    },
+    "correction": {
+      "answer_chain_bytes_b64url": ["answer_chain", "complete_answer_chain_through_current_correction"],
+      "correction_receipt_bytes_b64url": ["correction_receipt", "exact_current_correction_receipt"],
+      "canonical_record_bytes_b64url": ["correction", "current_correction_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "correction_chain_through_declared_tip"]
+    },
+    "lifecycle": {
+      "lifecycle_snapshot_bytes_b64url": ["lifecycle_snapshot", "exact_current_lifecycle_version"],
+      "authority_action_bytes_b64url": ["lifecycle_authority", "exact_consumed_authority_for_transition"],
+      "canonical_record_bytes_b64url": ["lifecycle_transition", "current_lifecycle_transition_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "lifecycle_chain_through_declared_tip"]
+    },
+    "pending_release_and_authority": {
+      "pending_release_bytes_b64url": ["pending_release_projection", "exact_pending_projection_version"],
+      "release_authority_receipt_bytes_b64url": ["release_authority_receipt", "exact_current_release_authority_receipt"],
+      "canonical_record_bytes_b64url": ["pending_release_and_authority", "current_pending_release_authority_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "pending_release_authority_chain_through_declared_tip"]
+    },
+    "enrichment_plan": {
+      "plan_bytes_b64url": ["enrichment_plan", "exact_current_plan_version"],
+      "budget_policy_bytes_b64url": ["enrichment_budget_policy", "exact_policy_version_bound_to_plan"],
+      "terminal_state_bytes_b64url": ["enrichment_terminal_state", "exact_terminal_state_bound_to_plan"],
+      "canonical_record_bytes_b64url": ["enrichment_plan_proof", "current_enrichment_plan_proof_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "enrichment_plan_chain_through_declared_tip"]
+    },
+    "execution_receipt": {
+      "execution_receipt_bytes_b64url": ["enrichment_execution_receipt", "exact_execution_attempt_receipt"],
+      "terminal_state_bytes_b64url": ["enrichment_terminal_state", "exact_terminal_state_after_attempt"],
+      "canonical_record_bytes_b64url": ["execution_receipt_proof", "current_execution_receipt_proof_row"],
+      "predecessor_chain_bytes_b64url": ["proof_chain_segment", "execution_receipt_chain_through_declared_tip"]
+    }
+  },
+  "proof_family_semantic_bindings": {
+    "selector_result": ["candidate_set_fingerprint", "selector_policy_version", "complete_four_route_candidate_set"],
+    "intervention_approval": ["intervention_atom_ref", "intervention_atom_version", "intervention_atom_content_fingerprint", "approval_receipt_atom_binding", "visible_effect_receipt_atom_binding"],
+    "answer": ["answer_receipt_ref", "answer_subject_ref", "leader_authority_ref", "visible_effect_receipt_answer_binding"],
+    "correction": ["answer_chain_tip", "correction_receipt_ref", "dependency_graph_seal"],
+    "lifecycle": ["lifecycle_version_ref", "transition_id", "predecessor_lifecycle_version", "authority_receipt_ref", "precondition_set_seal"],
+    "pending_release_and_authority": ["pending_projection_ref", "pending_projection_version", "bound_controlling_watermark_set_fingerprint", "release_authority_receipt_ref", "projection_invalidation_standing"],
+    "enrichment_plan": ["plan_ref", "plan_version", "budget_policy_ref", "terminal_state_ref"],
+    "execution_receipt": ["execution_receipt_ref", "plan_ref", "attempt_ordinal", "terminal_state_ref"]
+  },
+  "authority_phases": {
+    "fresh_execution_checks": ["current_authentication", "current_exact_operation_authority", "current_case_equality", "current_operator_and_workload_grants", "current_unconsumed_joint_lifecycle_receipt_when_required"],
+    "replay_disclosure_checks": ["current_authentication", "stable_principal_current_case_eligibility", "stable_principal_current_audience_eligibility", "retention_eligibility"],
+    "replay_reruns_fresh_execution_authority": false,
+    "replay_mutates": false,
+    "replay_current_standing": false,
+    "replay_returns": "exact_immutable_historical_response_bytes"
+  },
+  "lifecycle_authority": {
+    "action_schema": {
+      "type": "object",
+      "exact_keys": ["action_schema_version", "action_ref", "case_ref", "transition_id", "predecessor_lifecycle_version", "stable_actor_ref", "actor_class", "authority_version", "nonce", "issued_at", "expires_at", "action_fingerprint"],
+      "required": ["action_schema_version", "action_ref", "case_ref", "transition_id", "predecessor_lifecycle_version", "stable_actor_ref", "actor_class", "authority_version", "nonce", "issued_at", "expires_at", "action_fingerprint"],
+      "additional_properties": false,
+      "properties": {
+        "action_schema_version": {"const": "ctrl.g24.lifecycle-authority-action.r5.v1"},
+        "action_ref": {"type": "identifier"},
+        "case_ref": {"type": "identifier"},
+        "transition_id": {"type": "r4_lifecycle_transition_id"},
+        "predecessor_lifecycle_version": {"type": "identifier"},
+        "stable_actor_ref": {"type": "identifier"},
+        "actor_class": {"type": "enum", "values": ["named_leader", "krish_operator"]},
+        "authority_version": {"type": "identifier"},
+        "nonce": {"type": "identifier"},
+        "issued_at": {"type": "canonical_timestamp"},
+        "expires_at": {"type": "canonical_timestamp"},
+        "action_fingerprint": {"type": "sha256"}
+      },
+      "separately_authenticated": true,
+      "append_only": true,
+      "expires_after_issued_at": true
+    },
+    "joint_receipt_schema": {
+      "type": "object",
+      "exact_keys": ["receipt_schema_version", "receipt_ref", "case_ref", "transition_id", "predecessor_lifecycle_version", "named_leader_ref", "engagement_operator_ref", "leader_authority_version", "operator_authority_version", "leader_action_ref", "leader_action_fingerprint", "operator_action_ref", "operator_action_fingerprint", "recorder_workload_ref", "issued_at", "expires_at", "consumed_at", "receipt_fingerprint"],
+      "required": ["receipt_schema_version", "receipt_ref", "case_ref", "transition_id", "predecessor_lifecycle_version", "named_leader_ref", "engagement_operator_ref", "leader_authority_version", "operator_authority_version", "leader_action_ref", "leader_action_fingerprint", "operator_action_ref", "operator_action_fingerprint", "recorder_workload_ref", "issued_at", "expires_at", "receipt_fingerprint"],
+      "optional": ["consumed_at"],
+      "additional_properties": false,
+      "properties": {
+        "receipt_schema_version": {"const": "ctrl.g24.lifecycle-joint-authority.r5.v1"},
+        "receipt_ref": {"type": "identifier"},
+        "case_ref": {"type": "identifier"},
+        "transition_id": {"type": "r4_lifecycle_transition_id"},
+        "predecessor_lifecycle_version": {"type": "identifier"},
+        "named_leader_ref": {"type": "identifier"},
+        "engagement_operator_ref": {"type": "identifier"},
+        "leader_authority_version": {"type": "identifier"},
+        "operator_authority_version": {"type": "identifier"},
+        "leader_action_ref": {"type": "identifier"},
+        "leader_action_fingerprint": {"type": "sha256"},
+        "operator_action_ref": {"type": "identifier"},
+        "operator_action_fingerprint": {"type": "sha256"},
+        "recorder_workload_ref": {"type": "identifier"},
+        "issued_at": {"type": "canonical_timestamp"},
+        "expires_at": {"type": "canonical_timestamp"},
+        "consumed_at": {"type": "canonical_timestamp"},
+        "receipt_fingerprint": {"type": "sha256"}
+      },
+      "combine_requires": ["exactly_one_current_leader_action", "exactly_one_current_operator_action", "same_case_ref", "same_transition_id", "same_predecessor_lifecycle_version", "actors_equal_current_case_bindings", "authority_versions_equal_current_case_bindings", "both_actions_unexpired", "current_lifecycle_authority_recorder_grant"],
+      "recorder_can_invent_human_authority": false,
+      "consumed_at_must_be_absent_before_fresh_execution": true,
+      "consume_atomically_with_transition": true
+    },
+    "recorder_workload": {
+      "capability_class": "lifecycle_authority_recorder",
+      "stable_workload_must_match_current_case_grant": true,
+      "can_execute_transition": false
+    },
+    "issuance_protocol": {
+      "leader_action": {"authenticated_principal": "current_named_leader_human_session", "input": ["case_ref", "transition_id", "predecessor_lifecycle_version", "nonce"], "result": "immutable_action_schema_row"},
+      "operator_action": {"authenticated_principal": "current_engagement_operator_human_session", "input": ["case_ref", "transition_id", "predecessor_lifecycle_version", "nonce"], "result": "immutable_action_schema_row"},
+      "combine": {"authenticated_principal": "current_lifecycle_authority_recorder_workload", "input": ["leader_action_ref", "operator_action_ref"], "result": "immutable_joint_receipt_schema_row"},
+      "each_step_serializable": true,
+      "caller_supplied_actor_or_authority_version": false,
+      "server_resolves_current_actor_authority_and_time": true,
+      "failed_step_writes": false,
+      "joint_receipt_single_use": true
+    }
+  },
+  "edited_approval_visibility": {
+    "write_order": ["new_immutable_intervention_atom_version", "new_visible_effect_receipt_bound_to_new_atom", "new_approval_receipt_bound_to_new_atom"],
+    "binding_fields": ["intervention_atom_ref", "intervention_atom_version", "intervention_atom_content_fingerprint"],
+    "same_binding_required_for_visibility_and_approval": true,
+    "pre_edit_visibility_receipt_reuse_allowed": false,
+    "result_returns_new_visibility_receipt_ref": true
+  },
+  "rejection_codes_added": ["request_bytes_exceeded", "intent_bytes_exceeded", "answer_text_bytes_exceeded", "note_bytes_exceeded", "service_temporarily_unavailable"],
+  "hold_codes_removed": ["request_bytes_hold", "intent_bytes_hold", "answer_text_bytes_hold", "note_bytes_hold", "serialization_retry_hold"],
+  "effective_rejection_codes": ["unsupported_content_encoding", "raw_transport_bytes_exceeded", "decompressed_bytes_exceeded", "json_tokens_exceeded", "json_nesting_depth_exceeded", "json_property_count_exceeded", "string_code_units_exceeded", "escape_sequences_exceeded", "duplicate_json_key", "invalid_json_syntax", "unauthenticated", "invalid_request_shape", "invalid_operation_id", "invalid_requested_case_ref", "unknown_operation_class", "invalid_intent_schema", "not_authorized", "service_temporarily_unavailable", "request_bytes_exceeded", "intent_bytes_exceeded", "answer_text_bytes_exceeded", "note_bytes_exceeded"],
+  "effective_hold_codes": ["replay_access_hold", "operation_identity_conflict_hold", "authority_hold", "candidate_completeness_hold", "control_completeness_hold", "snapshot_changed_hold", "evaluator_artifact_hold", "result_schema_hold", "proof_schema_hold", "proof_capability_hold", "terminal_plan_hold", "selected_rows_hold", "snapshot_bytes_hold", "control_keys_hold", "control_edges_hold", "control_depth_hold", "visible_sources_hold", "visible_assertions_hold", "brain_items_hold", "brain_relationships_hold", "non_execution_receipts_hold", "execution_receipts_hold", "database_statement_timeout_hold", "operation_transaction_timeout_hold", "evaluator_timeout_hold", "outbox_authority_hold", "outbox_payload_changed_hold", "outbox_provider_capability_hold", "outbox_unknown_hold"],
+  "limit_order": ["raw_transport_bytes", "decompressed_bytes", "json_tokens", "json_nesting_depth", "json_property_count", "string_code_units", "escape_sequences", "request_bytes", "intent_bytes", "answer_text_bytes", "note_bytes", "selected_rows", "control_keys", "control_edges", "control_depth", "visible_sources", "visible_assertions", "brain_items", "brain_relationships", "non_execution_receipts", "execution_receipts", "snapshot_bytes", "evaluator_ms", "database_statement_ms", "operation_transaction_ms", "serialization_retries"],
+  "limit_phase_overrides": {
+    "request_bytes": {"phase": "pre_admission_canonical", "failure": "request_bytes_exceeded", "operation_registry_row": false},
+    "intent_bytes": {"phase": "pre_admission_canonical", "failure": "intent_bytes_exceeded", "operation_registry_row": false},
+    "answer_text_bytes": {"phase": "pre_admission_canonical", "failure": "answer_text_bytes_exceeded", "operation_registry_row": false},
+    "note_bytes": {"phase": "pre_admission_canonical", "failure": "note_bytes_exceeded", "operation_registry_row": false},
+    "serialization_retries": {"phase": "pre_commit_transaction", "failure": "service_temporarily_unavailable", "operation_registry_row": false}
+  },
+  "limit_semantics": {
+    "r3_max_annotations_consumed_only_by_r5_admission_engine": true,
+    "independent_schema_failure_from_r3_max_annotations": false,
+    "request_owned_content_limits_complete_before_admission": true,
+    "state_and_execution_limits_commit_hold_after_admission": true,
+    "first_failure_in_total_order_wins": true,
+    "one_input_one_limit_outcome": true,
+    "side_effect_before_all_applicable_limits_pass": false
+  },
+  "outbox_attempt": {
+    "reservation_schema": {
+      "type": "object",
+      "exact_keys": ["attempt_schema_version", "outbox_effect_ref", "attempt_ordinal", "fencing_token", "worker_ref", "provider_ref", "provider_operation_ref", "provider_key", "payload_fingerprint", "reserved_at", "state", "outcome"],
+      "required": ["attempt_schema_version", "outbox_effect_ref", "attempt_ordinal", "fencing_token", "worker_ref", "provider_ref", "provider_operation_ref", "provider_key", "payload_fingerprint", "reserved_at", "state"],
+      "optional": ["outcome"],
+      "additional_properties": false,
+      "properties": {
+        "attempt_schema_version": {"const": "ctrl.g24.outbox-attempt.r5.v1"},
+        "outbox_effect_ref": {"type": "identifier"},
+        "attempt_ordinal": {"type": "positive_integer", "maximum": 3},
+        "fencing_token": {"type": "positive_integer"},
+        "worker_ref": {"type": "identifier"},
+        "provider_ref": {"type": "identifier"},
+        "provider_operation_ref": {"type": "identifier"},
+        "provider_key": {"type": "identifier"},
+        "payload_fingerprint": {"type": "sha256"},
+        "reserved_at": {"type": "canonical_timestamp"},
+        "state": {"type": "enum", "values": ["reserved", "confirmed", "definitively_failed", "ambiguous"]},
+        "outcome": {"type": "identifier"}
+      },
+      "cross_field_rules": ["outcome_absent_iff_state_reserved", "outcome_required_iff_state_confirmed_definitively_failed_or_ambiguous", "state_confirmed_requires_matching_provider_success_evidence"]
+    },
+    "unique_key": ["outbox_effect_ref", "attempt_ordinal"],
+    "reserve_cas_reads": ["current_outbox_state", "current_fencing_token", "current_lease_owner", "current_lease_expiry", "committed_attempt_count"],
+    "reserve_cas_writes": ["attempt_reservation", "committed_attempt_count_increment"],
+    "reservation_commits_before_provider_call": true,
+    "provider_call_requires_reread_of_committed_reservation": true,
+    "provider_call_rechecks": ["current_fencing_token", "current_lease_owner", "unexpired_lease", "current_effect_authority", "exact_payload_fingerprint", "exact_payload_bytes", "exactly_one_current_provider_capability"],
+    "each_retry_requires_new_reservation": true,
+    "crash_after_reservation_consumes_attempt": true,
+    "lease_or_worker_change_resets_attempt_count": false,
+    "maximum_committed_reservations": 3,
+    "provider_call_at_or_above_maximum": false,
+    "ambiguous_without_current_idempotency_guarantee": "unknown_no_automatic_resend",
+    "ambiguous_with_current_idempotency_guarantee_below_maximum": "may_reserve_exact_next_attempt",
+    "ambiguous_with_current_idempotency_guarantee_at_maximum": "unknown_no_automatic_resend"
+  },
+  "provider_success_evidence_schema": {
+    "type": "object",
+    "exact_keys": ["evidence_schema_version", "evidence_ref", "outbox_effect_ref", "attempt_ordinal", "fencing_token", "worker_ref", "provider_ref", "provider_operation_ref", "provider_key", "payload_fingerprint", "provider_response_ref", "observed_success_at", "provider_receipt_bytes_fingerprint", "evidence_fingerprint"],
+    "required": ["evidence_schema_version", "evidence_ref", "outbox_effect_ref", "attempt_ordinal", "fencing_token", "worker_ref", "provider_ref", "provider_operation_ref", "provider_key", "payload_fingerprint", "provider_response_ref", "observed_success_at", "provider_receipt_bytes_fingerprint", "evidence_fingerprint"],
+    "additional_properties": false,
+    "properties": {
+      "evidence_schema_version": {"const": "ctrl.g24.provider-success-evidence.r5.v1"},
+      "evidence_ref": {"type": "identifier"},
+      "outbox_effect_ref": {"type": "identifier"},
+      "attempt_ordinal": {"type": "positive_integer", "maximum": 3},
+      "fencing_token": {"type": "positive_integer"},
+      "worker_ref": {"type": "identifier"},
+      "provider_ref": {"type": "identifier"},
+      "provider_operation_ref": {"type": "identifier"},
+      "provider_key": {"type": "identifier"},
+      "payload_fingerprint": {"type": "sha256"},
+      "provider_response_ref": {"type": "identifier"},
+      "observed_success_at": {"type": "canonical_timestamp"},
+      "provider_receipt_bytes_fingerprint": {"type": "sha256"},
+      "evidence_fingerprint": {"type": "sha256"}
+    },
+    "must_match_current_attempt_reservation": true,
+    "only_evidence_allowing_confirmed": true
+  },
+  "required_negative_fixture_families": ["release_use_invalidation", "thirteen_set_snapshot_and_cas", "set_member_identity_projection", "registry_unique_key_and_exhaustion", "complete_hold_fingerprint", "proof_lineage_and_semantic_bytes", "fresh_execution_vs_replay_disclosure", "two_party_action_and_joint_receipts", "edited_approval_visibility", "single_limit_outcome", "durable_outbox_attempt_reservation", "provider_success_evidence"],
+  "claim_limit": "unimplemented_local_repair_contract_only"
+}

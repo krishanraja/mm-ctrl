@@ -1,0 +1,66 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "deterministic_predicates",
+  "responsibility": "Evaluate an exact transition bundle with pure versioned rules and return typed dependency dispositions plus a tri-state result.",
+  "forbidden": [
+    "io",
+    "llm_call",
+    "clock_read",
+    "database_read",
+    "database_write",
+    "authority_grant",
+    "transition_write",
+    "convert_indeterminate_to_satisfied",
+    "convert_unsatisfied_to_satisfied"
+  ],
+  "dependency_dispositions": [
+    "present",
+    "contradicted",
+    "missing",
+    "stale",
+    "unreadable",
+    "ambiguous",
+    "revoked"
+  ],
+  "dependency_result_required_fields": [
+    "dependency_id",
+    "disposition",
+    "source_or_absence_proof_ref",
+    "rule_version",
+    "reason_code",
+    "valid_until",
+    "resolution_owner"
+  ],
+  "resolution_owner_values": [
+    "server_verify_only",
+    "human_answerable"
+  ],
+  "overall_results": [
+    "satisfied",
+    "unsatisfied",
+    "indeterminate"
+  ],
+  "result_rules": {
+    "satisfied": "every_required_dependency_present_and_every_rule_passes",
+    "unsatisfied": "complete_authoritative_picture_proves_at_least_one_contradiction",
+    "indeterminate": "any_required_dependency_cannot_be_established_safely"
+  },
+  "precedence": [
+    "indeterminate",
+    "unsatisfied",
+    "satisfied"
+  ],
+  "proof_output_required_fields": [
+    "transition_id",
+    "bundle_fingerprint",
+    "predicate_version",
+    "dependency_results",
+    "overall_result",
+    "reason_set",
+    "evaluated_at_from_bundle",
+    "earliest_valid_until",
+    "proof_fingerprint"
+  ],
+  "satisfied_capability": "factual_precondition_proof_only",
+  "may_apply_transition": false
+}

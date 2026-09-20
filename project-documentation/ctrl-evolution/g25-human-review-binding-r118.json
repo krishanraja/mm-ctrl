@@ -1,0 +1,80 @@
+{
+  "contract": "g25-human-review-binding-r118",
+  "status": "ISOLATED_IMPLEMENTATION_VERIFIED",
+  "date": "2026-09-20",
+  "authority": {
+    "allowed": [
+      "isolated Supabase migration and function",
+      "authenticated development RPC",
+      "synthetic browser-only product preview",
+      "public static synthetic preview",
+      "branch commit and preview deployment"
+    ],
+    "closed": [
+      "production mutation",
+      "customer data",
+      "merge to main",
+      "production release",
+      "legacy retirement"
+    ]
+  },
+  "isolated_provider": {
+    "project_id": "cgkcplcamsijghalintq",
+    "migration_name": "standard_change_human_projection_r118",
+    "migration_version": "20260920081457",
+    "function": "review-standard-change-v2",
+    "function_version": 2,
+    "function_status": "ACTIVE",
+    "verify_jwt": true,
+    "function_bundle_sha256": "f35c1cff99bee86a6ece6c922f5bc989b6a90f3628e7321377d8f32785212073",
+    "probe_user_residue": false
+  },
+  "presentation_requirements": [
+    "question",
+    "headline",
+    "current_rule",
+    "proposed_rule",
+    "consequence",
+    "risk_if_wrong",
+    "validation",
+    "alternative_explanations",
+    "two_or_more_resolved_evidence_rows"
+  ],
+  "verification": {
+    "focused_tests": "18/18 passed",
+    "browser_journeys": "5/5 passed",
+    "viewports": [
+      "1440x900",
+      "390x844",
+      "320x568"
+    ],
+    "typecheck": "0 new errors; 94 current equals 94 baseline",
+    "targeted_lint": "passed",
+    "dedicated_build": "passed",
+    "hosted_sql_probe": "passed and rolled back"
+  },
+  "artifact_hashes": {
+    "migration": "5ec8593dcb0e14f6a15b90e17efcaa410c406df25ac6781183b4eda59dd8d2b8",
+    "presentation_core": "387b1573a4dddabea8d39b7814aa4036aeb8631143986ad2ebd0abb6d20c0f67",
+    "edge_function": "4c4363b1a90e9ef0a44a421188419ce587d60472b782f3c0db9fd1c91611105e",
+    "product_contract": "196c5b576fe0739b59bd9ebad0db1d1808373ec56c7cbf6b604bb4f57e9b88aa",
+    "product_gateway": "cfc10c71255de1123b2dad838f6ba05f94b755231bbafa0b7d616572fe089b40",
+    "experience": "2790bd66ca440a8a9122d5cd6a98d4ec585a9e2756ed5dda95130fdfc9197340",
+    "experience_css": "536e0a700e2a75ff9705dfb0ca622beba263c401bf23da7931d891e1edd9133f",
+    "preview_page": "90112246b4d6731f90169613f0f6338e596d93342d5231a7f7786348086e41e4",
+    "hosted_probe": "c5bfcfa7a96fee1cca112df25b58d8719fb2461b8609baf024910cb45f14267b"
+  },
+  "defect_caught": "R116 reversal returns restored=true; the invented reversed field was removed before handoff",
+  "public_preview": {
+    "path": "public/g25-human-review-r118/index.html",
+    "url": "https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r118/index.html",
+    "deployment_commit": "c2dc64c94a717affaee44799122b5d0b3439039f",
+    "http_status": 200,
+    "remote_browser_journeys": "5/5 passed",
+    "authentication_required": false,
+    "data_mode": "synthetic browser-only",
+    "persistence": false,
+    "indexing": false
+  },
+  "next_gate": "R119 authenticated synthetic end-to-end exercise against the isolated database"
+}

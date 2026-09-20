@@ -1,0 +1,113 @@
+{
+  "schema_version": "ctrl.g25.standard-change-deployment-manifest.r115.v1",
+  "project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "production_allowed": false,
+  "download_mode": "supabase_cli_use_api",
+  "version_policy": "positive_observed_and_stable_during_each_proof",
+  "local_source_root": "supabase/functions",
+  "functions": [
+    {
+      "slug": "compile-standard-change",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "import_map": true,
+      "ezbr_sha256": "9446d02aa60b719e4c469942cf17f709de24b6d35c81cbe5f49c60953df3fb46",
+      "source_files": [
+        {
+          "path": "_shared/portable-brain-package.ts",
+          "bytes": 12580,
+          "sha256": "8e148f1b84a91116a1578cf6b7c201bb64c6ff4a7c17ef6f0c3b2cd005171bb6"
+        },
+        {
+          "path": "_shared/public-request-guard.ts",
+          "bytes": 2486,
+          "sha256": "19db5ea1b5710497f780057c5a0b10a07974c893e825f99bad36c03810ecfb7f"
+        },
+        {
+          "path": "_shared/standard-change-core.ts",
+          "bytes": 22873,
+          "sha256": "6ab83929eaa15c5080edab24229fa9b0bb663086a22b2c0503120a334d9c3953"
+        },
+        {
+          "path": "compile-standard-change/deno.json",
+          "bytes": 136,
+          "sha256": "a9a29da36c2576f755dd868b9f553a02afdf7d7bccf52e97e65c7f68cf36bfef"
+        },
+        {
+          "path": "compile-standard-change/index.ts",
+          "bytes": 4750,
+          "sha256": "13f3960d10b5aaa4a8b7565811d8b5a09d37f8e6496d0d1e5ddc2d594100b487"
+        }
+      ]
+    },
+    {
+      "slug": "build-standard-change",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "import_map": true,
+      "ezbr_sha256": "619e76da71cb39f15812da017b8db55501163b338d294c69055f594273053243",
+      "source_files": [
+        {
+          "path": "_shared/portable-brain-package.ts",
+          "bytes": 12580,
+          "sha256": "8e148f1b84a91116a1578cf6b7c201bb64c6ff4a7c17ef6f0c3b2cd005171bb6"
+        },
+        {
+          "path": "_shared/public-request-guard.ts",
+          "bytes": 2486,
+          "sha256": "19db5ea1b5710497f780057c5a0b10a07974c893e825f99bad36c03810ecfb7f"
+        },
+        {
+          "path": "_shared/standard-change-core.ts",
+          "bytes": 22873,
+          "sha256": "6ab83929eaa15c5080edab24229fa9b0bb663086a22b2c0503120a334d9c3953"
+        },
+        {
+          "path": "build-standard-change/deno.json",
+          "bytes": 136,
+          "sha256": "a9a29da36c2576f755dd868b9f553a02afdf7d7bccf52e97e65c7f68cf36bfef"
+        },
+        {
+          "path": "build-standard-change/index.ts",
+          "bytes": 5186,
+          "sha256": "e5084a1daa193c7b94676f984ba63da127af21bb8739dda2c372bd44b083fe5a"
+        }
+      ]
+    },
+    {
+      "slug": "check-standard-change",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "import_map": true,
+      "ezbr_sha256": "c465df3fa6f4a10908e02a946e79bc827dffc94272fc70ac45bfa138c421a10b",
+      "source_files": [
+        {
+          "path": "_shared/portable-brain-package.ts",
+          "bytes": 12580,
+          "sha256": "8e148f1b84a91116a1578cf6b7c201bb64c6ff4a7c17ef6f0c3b2cd005171bb6"
+        },
+        {
+          "path": "_shared/public-request-guard.ts",
+          "bytes": 2486,
+          "sha256": "19db5ea1b5710497f780057c5a0b10a07974c893e825f99bad36c03810ecfb7f"
+        },
+        {
+          "path": "_shared/standard-change-core.ts",
+          "bytes": 22873,
+          "sha256": "6ab83929eaa15c5080edab24229fa9b0bb663086a22b2c0503120a334d9c3953"
+        },
+        {
+          "path": "check-standard-change/deno.json",
+          "bytes": 136,
+          "sha256": "a9a29da36c2576f755dd868b9f553a02afdf7d7bccf52e97e65c7f68cf36bfef"
+        },
+        {
+          "path": "check-standard-change/index.ts",
+          "bytes": 5582,
+          "sha256": "7c7c4bd00204e7572af1cf046ce32aa3f10f55460378659ac954951d77ade2a9"
+        }
+      ]
+    }
+  ]
+}

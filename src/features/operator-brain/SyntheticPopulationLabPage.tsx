@@ -170,7 +170,7 @@ export default function SyntheticPopulationLabPage() {
   return (
     <div className="synthetic-population-lab" data-testid="synthetic-population-lab">
       <header className="spl-topbar">
-        <img src="/mindmaker-favicon.png" alt="Mindmaker" />
+        <img src={`${import.meta.env.BASE_URL}mindmaker-favicon.png`} alt="Mindmaker" />
         <div><strong>Synthetic Brain lab</strong><span>Internal quality instrument</span></div>
         <div className="spl-top-metrics">
           <span><b>{syntheticBrainPopulation.length}</b> people</span>

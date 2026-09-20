@@ -1,0 +1,34 @@
+{
+  "schema_version": "ctrl.g25.provider-exchange-retry-identity.r51.v1",
+  "record_id": "G25-PROVIDER-EXCHANGE-RETRY-IDENTITY-R51",
+  "status": "r49_operation_identity_defect_corrected",
+  "depends_on": ["G25-PROVIDER-EXCHANGE-RECEIPT-REGISTRY-R49"],
+  "defect": "R49 used workspace, callsite and request payload digest as a uniqueness key. That collapses legitimate later executions of the same request and its idempotent replay compared too few immutable fields.",
+  "correction": [
+    "each exchange and lifecycle event receives a stable operation idempotency digest",
+    "the same request payload under a different operation identity creates a distinct receipt",
+    "an exact retry with the same operation identity converges on the first receipt or event even if the caller proposes a new UUID",
+    "a retry that changes control evidence, minimisation evidence, time or any other immutable field fails closed",
+    "request payload digest remains evidence about content identity but is no longer operation identity"
+  ],
+  "observed": {
+    "local_database": "PostgreSQL 18.3 PGlite",
+    "checks": 6,
+    "failures": 0,
+    "multi_connection_race_proved": false
+  },
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_provider_exchange_retry_identity_r51.sql",
+    "candidate_sha256": "a037eb1ecc9b8eddbfed57a6b8450e0c2c345a7cce88a0f416b30948a1b057d3",
+    "runner": "scripts/run-ctrl-g25-provider-exchange-retry-identity-r51.mjs",
+    "runner_sha256": "73c7778541426bc75a84df903e022fbac3ad3aaae16ea963ceb87a7fbebd9ce8",
+    "checker": "scripts/check-ctrl-g25-provider-exchange-retry-identity-r51.mjs"
+  },
+  "next_gate": "Build public-source admission as R52, then compose admitted R50 queries with corrected R51 receipts.",
+  "not_authorized": [
+    "migration creation or execution",
+    "backfilling any live registry",
+    "editing live provider routes",
+    "deployment, merge or release"
+  ]
+}

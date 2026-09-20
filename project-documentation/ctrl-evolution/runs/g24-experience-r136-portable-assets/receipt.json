@@ -1,0 +1,29 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "run_id": "g24-experience-r136-portable-assets",
+  "status": "preflight",
+  "surface": "portable brand and favicon asset routing across the application and retained HTML proofs",
+  "materiality": "routine repair inside the approved visual system; root-relative image URLs break when the reviewed branch is served from a subpath",
+  "changed_surface_files": [
+    "index.html",
+    "src/features/operator-brain/DecisionBenchPage.tsx",
+    "src/features/operator-brain/SyntheticPopulationLabPage.tsx",
+    "src/components/ui/splash-screen.tsx",
+    "public/browserconfig.xml",
+    "public/faq.html",
+    "public/trust.html",
+    "public/pricing.html",
+    "public/g23-product-spine-r2.html",
+    "public/g23-product-spine-r1.html",
+    "public/g22-whole-product-golden-path-r1.html",
+    "public/g20-decision-table-proof-r4.html",
+    "public/g20-decision-table-proof-r3.html",
+    "public/g20-decision-table-proof-r2.html",
+    "public/g20-context-exchange-proof-r1.html"
+  ],
+  "authority": "Asset-path repair only. The material R136 mobile information architecture remains mock-only until founder approval.",
+  "release_status": "branch preview only; production, main and release remain closed",
+  "approval_claims": [],
+  "customer_surface_changed": false,
+  "production_writes": 0
+}

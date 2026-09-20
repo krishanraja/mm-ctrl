@@ -1,0 +1,58 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "source_adapters",
+  "responsibility": "Expose exact canonical source facts and source-earned semantic profiles.",
+  "forbidden": [
+    "select_transition_result",
+    "declare_precondition_satisfied",
+    "promote_brain_proposal",
+    "resolve_authority_conflict_dynamically",
+    "interpret_opaque_prose_as_fact"
+  ],
+  "inputs": [
+    "founder_locked_source_registry",
+    "founder_locked_fact_kind_policy",
+    "exact_subject_case_purpose_audience_query",
+    "authoritative_snapshot_or_head"
+  ],
+  "output": "source_fact_candidate",
+  "canonical_owner_rule": {
+    "owners_per_fact_kind": 1,
+    "hybrid_ownership_default": "forbidden",
+    "exception_requires": [
+      "separate_founder_lock",
+      "named_precedence_rule",
+      "conflict_resolution_rule",
+      "no_runtime_owner_selection"
+    ]
+  },
+  "fact_authority_rules": [
+    {
+      "authority_species": "mechanical_fact",
+      "owner": "canonical_system_for_exact_fact_kind",
+      "may_supply_final_transition_authority": false
+    },
+    {
+      "authority_species": "normative_human_attestation",
+      "owner": "exact_named_human_for_exact_judgement",
+      "may_supply_final_transition_authority": false
+    },
+    {
+      "authority_species": "derived_fact",
+      "owner": "versioned_deterministic_derivation",
+      "may_supply_final_transition_authority": false
+    }
+  ],
+  "external_atomic_fact_limits": {
+    "allowed_only_when": "external_issuer_is_indisputable_canonical_owner_of_exact_fact_kind",
+    "forbidden_conclusions": [
+      "legal_compliance_overall",
+      "business_suitability",
+      "decision_quality",
+      "precondition_satisfaction",
+      "transition_authority"
+    ],
+    "historical_event_rule": "completed_signature_envelope_proves_only_that_historical_event"
+  },
+  "failure_output": "unreadable_or_ambiguous_candidate_never_authority"
+}

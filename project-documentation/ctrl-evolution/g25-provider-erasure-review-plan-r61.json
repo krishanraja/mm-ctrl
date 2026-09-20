@@ -1,0 +1,57 @@
+{
+  "schema_version": "ctrl.g25.provider-erasure-review-plan.r61.v1",
+  "contract_id": "G25-PROVIDER-ERASURE-REVIEW-PLAN-R61",
+  "status": "provider_erasure_and_expiry_planning_proved_execution_closed",
+  "depends_on": [
+    "G25-PROVIDER-EXCHANGE-RECEIPT-REGISTRY-R49",
+    "G25-PROVIDER-ROUTE-MATRIX-R53",
+    "G25-CORE-MODEL-RETENTION-EVIDENCE-R46",
+    "G25-DELIVERY-BILLING-RETENTION-EVIDENCE-R47",
+    "G25-RESEARCH-EGRESS-BOUNDARY-R48"
+  ],
+  "implementation": {
+    "planner": "supabase/functions/_shared/provider-erasure-review-plan.r61.ts",
+    "tests": "supabase/functions/_shared/provider-erasure-review-plan.r61.test.ts",
+    "checker": "scripts/check-ctrl-g25-provider-erasure-review-plan-r61.mjs"
+  },
+  "proved_locally": [
+    "provider and processor kind must remain coherent",
+    "rejected exchanges create no invented deletion work",
+    "unknown outcomes and verification failures remain held",
+    "ZDR requires evidence before a no-retention exchange can be marked expired",
+    "a provider request identity HMAC is not a usable deletion handle",
+    "ElevenLabs operational deletion requires a separate handle and external receipt",
+    "Resend policy expiry remains distinct from the delivered recipient copy that cannot be recalled",
+    "research plans preserve the public-query boundary and distinguish fixed fetches",
+    "Stripe is held because the R49 lifecycle cannot express operational deletion and regulated residual retention together",
+    "every result has execution authority none"
+  ],
+  "design_defects_exposed": [
+    {
+      "id": "receipt_hmac_cannot_drive_provider_deletion",
+      "required_resolution": "Use a separately encrypted, provider-scoped, short-lived deletion handle or an immediate durable deletion job. Never weaken the content-free receipt into a raw provider-ID store."
+    },
+    {
+      "id": "stripe_compound_outcome_unrepresentable",
+      "required_resolution": "Replace the single mutually exclusive terminal event with orthogonal operational-closure and residual-retention facts or an exact compound event."
+    },
+    {
+      "id": "verification_failed_is_terminal_but_not_complete",
+      "required_resolution": "Add a remediation path that preserves the failed evidence without allowing the erasure workflow to report completion."
+    }
+  ],
+  "bounded_claim": "R61 produces content-free provider follow-up vocabulary from receipt metadata. It does not accept provider IDs, call providers, append events or claim deletion or expiry.",
+  "authority": {
+    "permits": [
+      "local pure planning and unit tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "provider call or deletion request",
+      "raw provider identifier persistence",
+      "live receipt or deletion-path edit",
+      "database or migration execution",
+      "deployment, merge or release"
+    ]
+  }
+}

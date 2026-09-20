@@ -1,0 +1,61 @@
+{
+  "schema_version": "ctrl.g25.auth-reachable-schema-discovery.r17.v1",
+  "contract_id": "G25-AUTH-REACHABLE-SCHEMA-DISCOVERY-R17",
+  "status": "local_auth_reachable_discovery_proved_registry_closed",
+  "prepared_at": "2026-09-17T12:28:00+01:00",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-whole-brain-erasure-policy-founder-lock-r16.json"
+  ],
+  "implementation": {
+    "candidate": "supabase/candidates/g25_auth_reachable_relation_discovery_r17.sql",
+    "runtime_proof": "scripts/run-ctrl-g25-auth-reachable-discovery-r17.mjs"
+  },
+  "semantic_boundary": {
+    "catalog_can_establish": [
+      "a foreign-key path from a public relation to auth.users",
+      "the path depth and constraints traversed",
+      "the exact child and parent columns for every traversed constraint",
+      "the declared ON DELETE action for each path",
+      "whether a previously visible relation disappeared or a new one appeared"
+    ],
+    "catalog_cannot_establish": [
+      "whether the relation contains subject data, ownership, attribution or a lawful retention exception",
+      "whether every personal-data relation has a foreign key",
+      "whether a provider, storage object, log or customer-controlled copy exists",
+      "whether deleting the auth user is sufficient or permitted"
+    ]
+  },
+  "proved_locally": [
+    "recursive pg_catalog discovery finds direct and transitive public relations reachable from auth.users",
+    "the canary schema yields exactly eleven expected canonical and prepared-Brain relations",
+    "private-schema references remain outside the discovery boundary",
+    "cycles are guarded by visited relation identifiers",
+    "the function is stable, security invoker and has an empty search path",
+    "anon and authenticated execution are closed while service-role execution is explicit",
+    "three negative controls fail when recursive discovery, schema containment or privilege closure is removed"
+  ],
+  "next_gate": "Create an explicit reviewed erasure-target registry that classifies every discovered relation as subject_delete, attribution_redact, retained_exception or out_of_scope_with_reason. Fail on both unregistered discovery and stale registry entries. Keep execution absent.",
+  "bounded_claim": "R17 proves read-only discovery of auth-reachable public relations in a local Postgres-compatible canary. It does not prove ownership, complete personal-data coverage, a deletion order or any live Supabase behavior.",
+  "authority": {
+    "permits": [
+      "local candidate SQL",
+      "local PGlite catalog proof and negative controls",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "treating auth reachability as deletion authority",
+      "registry approval without classification evidence",
+      "delete-account runtime edit",
+      "migration file or migration execution",
+      "linked or production database use",
+      "customer-facing deletion claim",
+      "deployment, merge or release",
+      "legacy retirement"
+    ]
+  },
+  "current_sources": [
+    "https://supabase.com/changelog?types=breaking-change",
+    "https://supabase.com/docs/guides/observability/inspect",
+    "https://supabase.com/docs/guides/database/connecting-to-postgres"
+  ]
+}

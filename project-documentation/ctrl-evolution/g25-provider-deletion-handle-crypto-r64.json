@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-handle-crypto.r64.v1",
+  "contract_id": "G25-PROVIDER-DELETION-HANDLE-CRYPTO-R64",
+  "status": "capability_specific_handle_encryption_proved_persistence_closed",
+  "depends_on": [
+    "G25-PROVIDER-ERASURE-REVIEW-PLAN-R61",
+    "G25-PROVIDER-CLOSURE-POSTGRES-R63"
+  ],
+  "implementation": {
+    "crypto": "supabase/functions/_shared/provider-deletion-handle-crypto.r64.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-handle-crypto.r64.test.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-handle-crypto-r64.mjs"
+  },
+  "custody_classes": {
+    "elevenlabs_exchange_window": {
+      "maximum_days": 35,
+      "closure": "calendar expiry or earlier operational deletion"
+    },
+    "stripe_account_lifetime": {
+      "calendar_expiry": null,
+      "closure": "mandatory encrypted-handle destruction after operational account closure"
+    }
+  },
+  "proved_locally": [
+    "AES-256-GCM ciphertext does not expose the raw provider handle",
+    "associated data binds workspace, receipt, handle record, provider, custody class, creation, expiry and purpose",
+    "moving ciphertext across any bound identity or expiry fails authentication",
+    "key rotation can read old ciphertext without relabeling it and writes under the new key",
+    "ElevenLabs handles are restricted to a maximum 35-day exchange window",
+    "Stripe handles are restricted to account-lifetime custody with no calendar expiry",
+    "provider or custody-class substitution is rejected",
+    "raw handles are bounded printable tokens with no whitespace or control characters"
+  ],
+  "bounded_claim": "R64 proves local cryptographic envelope and custody-class validation. It stores no handle, supplies no lease, calls no provider and cannot prove key custody or account-closure destruction.",
+  "next_gate": "Persist encrypted handles behind function-only writes, add single-purpose lease and consume semantics, and prove expiry or account-closure destruction in local PostgreSQL.",
+  "authority": {
+    "permits": [
+      "local Web Crypto encryption tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "raw provider handle persistence in receipts or facts",
+      "provider call or deletion request",
+      "linked database or migration execution",
+      "live route edit, deployment, merge or release"
+    ]
+  }
+}

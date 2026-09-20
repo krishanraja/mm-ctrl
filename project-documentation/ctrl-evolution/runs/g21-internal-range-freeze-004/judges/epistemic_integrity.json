@@ -1,0 +1,37 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "epistemic_integrity",
+  "criterionVersion": "epistemic-integrity:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "fail",
+  "claims": [
+    "The runtime validator does not enforce the safe qualifier on novel prose because its trusted evidence binding omits record content and claim text.",
+    "An observation rewritten to say that an exposure drove purchases avoids the narrow categorical-causation regex, preserves the trusted metadata binding, and passes once currentClaims is rebuilt.",
+    "Canonical byte verification rejects the altered fixture, but that separate check does not repair the runtime contract's acceptance of unsafe novel prose.",
+    "This is a hard EPISTEMIC-RANGE-01 failure because unsupported causation can pass the contract that claims to prevent it."
+  ],
+  "evidenceLocators": [
+    "63b8550387f5dab60e09aad285d103b46af39279:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/council-brief.md#L44-L49",
+    "63b8550387f5dab60e09aad285d103b46af39279:project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/council-brief.md#L67-L73",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L386-L388",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L2591-L2610",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L3136-L3138",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L4027-L4033",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L4079-L4093",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.ts#L4106-L4139",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.test.ts#L736-L743",
+    "63b8550387f5dab60e09aad285d103b46af39279:src/features/operator-brain/g21InternalRangeCanary.test.ts#L819-L833"
+  ],
+  "veto": {
+    "ruleId": "EPISTEMIC-RANGE-01",
+    "failure": "Unsupported causal prose can pass the runtime contract. trustedEvidenceBinding omits evidence content and claim text, and the observation guard rejects only the narrow phrases matched by CATEGORICAL_CAUSAL_CLAIM. A valid STORY-I3 input rewritten to say `Theory-heavy exposure drove opening-weekend purchase across all fan groups.` and followed by a derived currentClaims rebuild avoids every runtime error, although canonical verification rejects the altered fixture bytes.",
+    "resolvingTest": "Clone the valid RANGE-INTERNAL-STORY-I3 initial blind input, replace INT-STORY-007 content and observation text with `Theory-heavy exposure drove opening-weekend purchase across all fan groups.`, rebuild currentClaims, and require validateG21InternalBlindInput to reject it for unsupported causation while the existing safe-novel-prose case still passes runtime validation and fails canonical verification."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Clone the valid RANGE-INTERNAL-STORY-I3 initial blind input, replace INT-STORY-007 content and observation text with `Theory-heavy exposure drove opening-weekend purchase across all fan groups.`, rebuild currentClaims, and require validateG21InternalBlindInput to reject it for unsupported causation while the existing safe-novel-prose case still passes runtime validation and fails canonical verification.",
+  "recordedAt": "2026-09-10T22:53:43.962Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}

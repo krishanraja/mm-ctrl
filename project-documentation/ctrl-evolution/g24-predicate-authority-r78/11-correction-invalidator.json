@@ -1,0 +1,62 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "correction_invalidator",
+  "responsibility": "Traverse every use of corrected, revoked, superseded or incomplete authority and produce complete repair obligations without rewriting history.",
+  "forbidden": [
+    "delete_history",
+    "rewrite_source_receipt",
+    "leave_superseded_authority_steering",
+    "auto_promote_replacement_brain_knowledge",
+    "declare_repair_complete_without_terminal_receipts"
+  ],
+  "correction_triggers": [
+    "source_corrected",
+    "fact_revoked",
+    "fact_superseded",
+    "read_set_discovered_incomplete",
+    "authority_policy_changed",
+    "brain_item_standing_changed"
+  ],
+  "required_actions": [
+    "preserve_historical_source_proof_and_transition_receipt",
+    "mark_consumed_precondition_proof_challenged",
+    "make_challenged_proof_non_steering",
+    "traverse_complete_dependency_use_graph",
+    "block_affected_descendants_from_current_steering",
+    "rebuild_replaceable_projection_cache_and_portrait",
+    "quarantine_or_visibly_flag_irreversible_deliveries_releases_and_skills",
+    "require_compensating_transition_reopen_or_named_human_revalidation_when_lifecycle_affected",
+    "emit_terminal_repair_receipt_for_every_known_dependency",
+    "prove_no_eligible_current_path_retains_superseded_authority"
+  ],
+  "dependency_edge_kinds": [
+    "content_dependency",
+    "permission_dependency",
+    "scope_dependency"
+  ],
+  "dependency_graph_seal_covers_all_edge_kinds": true,
+  "repair_receipt_required_fields": [
+    "repair_id",
+    "trigger_ref",
+    "challenged_proof_ref",
+    "dependency_use_ref",
+    "affected_artifact_ref",
+    "repair_action",
+    "terminal_status",
+    "current_steering_eligibility",
+    "resulting_version_ref",
+    "receipt_fingerprint"
+  ],
+  "terminal_status_values": [
+    "rebuilt",
+    "quarantined",
+    "review_required",
+    "unaffected_with_reason",
+    "erased"
+  ],
+  "completion_proof": {
+    "complete_dependency_graph_seal_required": true,
+    "known_dependency_count_matches_terminal_receipt_count": true,
+    "superseded_authority_eligible_path_count": 0
+  }
+}

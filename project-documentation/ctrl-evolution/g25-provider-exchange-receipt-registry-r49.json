@@ -1,0 +1,41 @@
+{
+  "schema_version": "ctrl.g25.provider-exchange-receipt-registry.r49.v1",
+  "record_id": "G25-PROVIDER-EXCHANGE-RECEIPT-REGISTRY-R49",
+  "status": "dormant_provider_exchange_registry_verified",
+  "depends_on": [
+    "G25-PROVIDER-EGRESS-CLASSIFICATION-R45",
+    "G25-CORE-MODEL-RETENTION-EVIDENCE-R46",
+    "G25-DELIVERY-BILLING-RETENTION-EVIDENCE-R47",
+    "G25-RESEARCH-EGRESS-BOUNDARY-R48"
+  ],
+  "proved": [
+    "private Brain classes cannot be registered for model or audio processing under an unverified or public-policy-only control",
+    "research processing rejects every private data class and requires a query-minimisation digest unless it is a fixed public fetch",
+    "delivery and billing retain distinct provider-policy and regulated-retention standings",
+    "accepted delivery can progress through delivered, expiry pending and expired without reopening a terminal state",
+    "exact exchange and event replays are idempotent while identity conflicts fail closed",
+    "authenticated clients and raw service-role inserts cannot cross the security-definer write boundary",
+    "the registry schema contains digests and HMACs but no prompt, query, content, email, recipient or raw provider request identifier"
+  ],
+  "observed": {
+    "local_database": "PostgreSQL 18.3 PGlite",
+    "checks": 12,
+    "failures": 0,
+    "multi_connection_race_proved": false,
+    "supabase_local_parity_proved": false
+  },
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_provider_exchange_receipt_registry_r49.sql",
+    "candidate_sha256": "e741b923acc510a318ab671a3d26255b6e6a4f04512e5bcd93e30cd71db074e9",
+    "runner": "scripts/run-ctrl-g25-provider-exchange-receipt-registry-r49.mjs",
+    "runner_sha256": "b7617a9788ba00995a2c1a4628fcef0d31f7662802fdbc12b221ca9e2e4cd05f",
+    "checker": "scripts/check-ctrl-g25-provider-exchange-receipt-registry-r49.mjs"
+  },
+  "next_gate": "Create a strict typed public-query constructor that rejects raw private prose instead of pretending regex redaction can make it safe.",
+  "not_authorized": [
+    "migration creation or execution",
+    "editing or calling live provider routes",
+    "linked or production database use",
+    "external sends, deployment, merge or release"
+  ]
+}

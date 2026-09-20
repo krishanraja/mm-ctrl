@@ -1,0 +1,94 @@
+{
+  "allowed_module_flow": [
+    "lineage_and_owner_policy->closed_schemas",
+    "lineage_and_owner_policy->transition_catalogue",
+    "closed_schemas->executable_vectors",
+    "transition_catalogue->predicate_grammar",
+    "transition_catalogue->human_interaction_contract",
+    "transition_catalogue->external_finality_contract",
+    "predicate_grammar->executable_vectors",
+    "human_interaction_contract->executable_vectors",
+    "external_finality_contract->executable_vectors",
+    "correction_closure_contract->executable_vectors"
+  ],
+  "authority_still_closed": [
+    "semantic evaluator implementation",
+    "result-producing lifecycle success branch",
+    "runtime integration or live registry wiring",
+    "database schema migration or production data change",
+    "customer-facing UI",
+    "external research model spend email or service mutation",
+    "merge deployment release or production promotion",
+    "legacy backend deletion",
+    "cross-venture Supabase decision-ledger write"
+  ],
+  "base": {
+    "bundle_fingerprint": "424f6eca0fd5707f15e59ce721834c334d4e910d5e1603a03a039dec7764e72f",
+    "commit": "a645f13e11139b15596cd73f7b26eafb2a28a4a0",
+    "standing": "vetoed_design_catalogue_not_authority",
+    "tree": "74b6ed7be00ce959690dafa74c25d6393041a01d"
+  },
+  "bundle_fingerprint": "e7c8d32cdfd0a7756a805b9301b41f48bfa7f3f6fb50e14b1d68c3c748ea1bfd",
+  "decision_id": "DEC-20260916-g24-predicate-authority-r75",
+  "effective_precedence": "r79_overlay_supersedes_only_named_r78_sections_all_other_r78_constraints_remain_in_force",
+  "modules": [
+    {
+      "bytes": 2708,
+      "module_id": "lineage_and_owner_policy",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/01-lineage-and-owner-policy.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.lineage-owner.v1",
+      "sha256": "949a0e6442307b5b0d9665d33826a0e8d96ecc190c6e3241f9df2bd070f7ebff"
+    },
+    {
+      "bytes": 11088,
+      "module_id": "closed_schemas",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/02-closed-schemas.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.closed-schemas.v1",
+      "sha256": "772ad1d450d76b2487578d458ddaf2be94932a82c458bd56ccdbca598135ef99"
+    },
+    {
+      "bytes": 11026,
+      "module_id": "transition_catalogue",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/03-transition-catalogue.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.transition-catalogue.v1",
+      "sha256": "43ecb3090ffc7f0766718933a8da9240b00b6243486fb3c53400d80408bea0f9"
+    },
+    {
+      "bytes": 3100,
+      "module_id": "predicate_grammar",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/04-predicate-grammar.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.predicate-grammar.v1",
+      "sha256": "e102756d2b818e8774021f8926d9dc794e098b7e3438b052f23a0978db52b614"
+    },
+    {
+      "bytes": 4213,
+      "module_id": "human_interaction_contract",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/05-human-interaction-contract.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.human-interaction.v1",
+      "sha256": "9892b1d6b9101e10c69487d364903474f6b365257ebf5e999d6d6ada32c9a6d7"
+    },
+    {
+      "bytes": 3676,
+      "module_id": "external_finality_contract",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/06-external-finality-contract.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.external-finality.v1",
+      "sha256": "8a1bd43bcf2d2efa9408a21f90775d53e7d2bb9246e380bdc614727f1d085ea3"
+    },
+    {
+      "bytes": 1629,
+      "module_id": "correction_closure_contract",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/07-correction-closure-contract.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.correction-closure.v1",
+      "sha256": "67e5b568d32169417b8e3387b3a61ae1a141a6ec07ac085c33fdff5b8d0ce473"
+    },
+    {
+      "bytes": 18037,
+      "module_id": "executable_vectors",
+      "path": "project-documentation/ctrl-evolution/g24-predicate-authority-r79/08-executable-vectors.json",
+      "schema_version": "ctrl.g24.predicate-authority.r79.executable-vectors.v1",
+      "sha256": "a15058db4cecbf499414f72151e1b97bc2dd6e39ff89e0ca9ecdccbfc397f4c2"
+    }
+  ],
+  "schema_version": "ctrl.g24.predicate-authority.r79.manifest.v1",
+  "standing": "repaired_contract_candidate_no_runtime_authority"
+}

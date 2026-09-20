@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Operator review queue concepts</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f3efe5;
+      --muted: #99a69f;
+      --quiet: #62716a;
+      --ground: #06100b;
+      --raised: #0a1711;
+      --line: #1c3a2c;
+      --line-hot: #2d6248;
+      --mint: #86efbd;
+      --amber: #e5aa46;
+      --serif: Iowan Old Style, Baskerville, Georgia, serif;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--ground); color: var(--ink); font-family: var(--sans); }
+    button { color: inherit; font: inherit; }
+    button:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+    .shell { min-height: 100dvh; display: grid; grid-template-rows: 62px 1fr; }
+    .topbar { position: sticky; top: 0; z-index: 10; height: 62px; display: flex; align-items: center; gap: 14px; padding: 0 22px; border-bottom: 1px solid var(--line); background: rgba(6,16,11,.96); }
+    .mark { width: 28px; height: 28px; object-fit: contain; }
+    .identity { min-width: 0; }
+    .identity strong { display: block; font-size: 14px; letter-spacing: -.01em; }
+    .identity span { display: block; color: var(--quiet); font: 9px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-spacer { flex: 1; }
+    .synthetic { border: 1px solid rgba(229,170,70,.5); color: var(--amber); padding: 7px 9px; font: 9px/1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .layout { min-height: 0; display: grid; grid-template-columns: 224px minmax(0,1fr); }
+    .nav { border-right: 1px solid var(--line); padding: 24px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .nav button { min-height: 44px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); text-align: left; padding: 0 14px; }
+    .nav button.active { color: var(--ink); background: #0d2117; }
+    .stage { min-width: 0; padding: clamp(22px,4vw,56px); }
+    .customer-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; max-width: 1180px; margin: 0 auto 28px; }
+    .customer-head small, .eyebrow { display: block; color: var(--mint); font: 10px/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .customer-head h1 { margin: 8px 0 0; max-width: 760px; font: 500 clamp(30px,4.3vw,60px)/.98 var(--serif); letter-spacing: -.045em; }
+    .customer-head p { max-width: 270px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .decision-grid { max-width: 1180px; margin: auto; display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 18px; align-items: start; }
+    .decision { min-height: 430px; border: 1px solid var(--line); background: linear-gradient(145deg,#091a12,#07120d); padding: clamp(22px,4vw,42px); }
+    .decision h2 { margin: 14px 0 14px; max-width: 720px; font: 500 clamp(27px,3.6vw,48px)/1.02 var(--serif); letter-spacing: -.035em; }
+    .decision p { max-width: 650px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+    .routes { margin-top: 38px; display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--line); }
+    .route { min-height: 104px; padding: 18px; border-right: 1px solid var(--line); color: var(--muted); }
+    .route:last-child { border-right: 0; }
+    .route strong { display: block; margin-top: 8px; color: var(--ink); font-size: 14px; }
+    .route.active { background: #0c2117; box-shadow: inset 0 -3px 0 var(--mint); }
+    .muted-panel { border: 1px solid var(--line); padding: 22px; color: var(--muted); }
+    .muted-panel strong { display: block; color: var(--ink); margin: 9px 0; }
+    .review-card { border: 1px solid var(--line-hot); background: #0b1d14; box-shadow: 0 22px 70px rgba(0,0,0,.28); }
+    .review-card .inner { padding: clamp(20px,3vw,30px); }
+    .review-card h2 { margin: 12px 0 14px; font: 500 clamp(25px,3vw,39px)/1.04 var(--serif); letter-spacing: -.035em; }
+    .review-card .headline { margin: 0 0 14px; color: var(--ink); font-weight: 680; line-height: 1.4; }
+    .review-card .consequence { margin: 0; color: var(--muted); line-height: 1.58; font-size: 14px; }
+    .review-foot { display: flex; align-items: center; gap: 14px; padding: 14px clamp(20px,3vw,30px); border-top: 1px solid var(--line); }
+    .review-foot span { flex: 1; color: var(--quiet); font-size: 12px; }
+    .copy { min-height: 44px; border: 0; border-radius: 3px; padding: 0 18px; background: var(--ink); color: #07110c; font-weight: 760; cursor: pointer; }
+    .copy[data-copied="true"] { background: var(--mint); }
+    .quiet-button { min-height: 44px; border: 1px solid var(--line); background: transparent; padding: 0 16px; cursor: pointer; }
+    .candidate-a .review-card { max-width: 1180px; margin: 0 auto 18px; display: grid; grid-template-columns: 180px minmax(0,1fr) auto; align-items: stretch; }
+    .candidate-a .signal { padding: 26px; border-right: 1px solid var(--line); }
+    .candidate-a .signal b { display: block; margin-top: 10px; font: 500 24px/1 var(--serif); }
+    .candidate-a .inner { padding: 24px 28px; }
+    .candidate-a .inner h2 { font-size: clamp(24px,2.5vw,34px); margin: 0 0 12px; }
+    .candidate-a .review-foot { min-width: 190px; display: flex; flex-direction: column; justify-content: center; align-items: stretch; border-top: 0; border-left: 1px solid var(--line); }
+    .candidate-a .review-foot span { flex: 0; }
+    .candidate-b .decision-grid { grid-template-columns: minmax(0,1fr) minmax(300px,360px); }
+    .candidate-b .review-card { position: sticky; top: 86px; }
+    .candidate-b .review-card h2 { font-size: 31px; }
+    .candidate-b .muted-panel { display: none; }
+    .candidate-c .queue-trigger { position: fixed; right: 24px; bottom: 24px; z-index: 22; min-height: 56px; border: 1px solid var(--line-hot); background: #10251a; padding: 0 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 20px 70px rgba(0,0,0,.46); }
+    .candidate-c .queue-trigger b { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--mint); color: #06100b; }
+    .candidate-c .overlay { position: fixed; inset: 0; z-index: 20; display: none; place-items: center; padding: 22px; background: rgba(2,8,5,.78); backdrop-filter: blur(8px); }
+    .candidate-c.is-open .overlay { display: grid; }
+    .candidate-c .overlay .review-card { width: min(680px,100%); }
+    .candidate-c .close { float: right; width: 44px; height: 44px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
+    .empty-card { border: 1px solid var(--line); padding: 28px; color: var(--muted); }
+    .empty-card strong { display: block; color: var(--ink); margin-bottom: 8px; }
+    .toast { position: fixed; left: 50%; bottom: 24px; translate: -50% 12px; opacity: 0; background: var(--ink); color: #06100b; padding: 12px 16px; font-size: 13px; font-weight: 700; transition: .18s ease; z-index: 50; }
+    .toast.show { opacity: 1; translate: -50% 0; }
+    @media (max-width: 840px) {
+      .shell { grid-template-rows: 58px 1fr; }
+      .topbar { height: 58px; padding: 0 15px; }
+      .synthetic { display: none; }
+      .layout { display: block; }
+      .nav { display: none; }
+      .stage { padding: 22px 14px calc(92px + env(safe-area-inset-bottom)); }
+      .customer-head { align-items: start; margin-bottom: 20px; }
+      .customer-head p { display: none; }
+      .customer-head h1 { font-size: 35px; }
+      .decision-grid, .candidate-b .decision-grid { display: block; }
+      .decision { min-height: 340px; padding: 22px; }
+      .decision h2 { font-size: 30px; }
+      .routes { grid-template-columns: 1fr; }
+      .route { min-height: 70px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .route:last-child { border-bottom: 0; }
+      .muted-panel { display: none; }
+      .candidate-a .review-card { display: block; margin-bottom: 16px; }
+      .candidate-a .signal { padding: 18px 20px; border-right: 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+      .candidate-a .signal b { margin: 0; font-size: 20px; }
+      .candidate-a .review-foot { min-width: 0; flex-direction: row; align-items: center; border-left: 0; border-top: 1px solid var(--line); }
+      .candidate-b .review-card { position: relative; top: auto; margin-bottom: 16px; }
+      .candidate-b .decision-grid { display: flex; flex-direction: column; }
+      .candidate-b .review-card { order: -1; }
+      .candidate-c .queue-trigger { left: 14px; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); justify-content: center; }
+      .candidate-c .overlay { align-items: end; padding: 0; }
+      .candidate-c .overlay .review-card { width: 100%; max-height: calc(100dvh - 46px); overflow: auto; border-width: 1px 0 0; }
+      .candidate-c .overlay .inner { padding-top: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div class="toast" role="status" aria-live="polite">Question copied</div>
+  <script>
+    const params = new URLSearchParams(location.search)
+    const candidate = ['a','b','c'].includes(params.get('candidate')) ? params.get('candidate') : 'a'
+    const state = ['ready','empty','unavailable','long'].includes(params.get('state')) ? params.get('state') : 'ready'
+    const isLong = state === 'long'
+    const data = {
+      question: isLong
+        ? 'Should strong customer-facing proposals move without Maya’s final rewrite when the named buyer proof, the comparison against the existing route and all three agreed quality checks are already present?'
+        : 'Should strong proposals move when the customer proof and three agreed quality checks are present?',
+      headline: isLong
+        ? 'Maya may be protecting quality by correcting work too late instead of teaching the team to recognise the proof she uses before a proposal reaches her.'
+        : 'Maya’s team may no longer need her final rewrite.',
+      consequence: isLong
+        ? 'If Maya agrees, routine proposals can move without waiting for her once the named buyer proof, the route comparison and all three quality checks are visible. High-stakes, novel or brand-defining proposals still come to her.'
+        : 'Routine proposals can move without waiting for her. High-stakes proposals still come to her.',
+    }
+    const icon = '/g25-human-review-r118/assets/mindmaker-icon-BN7SrhYH.png'
+    const empty = state !== 'ready' && state !== 'long'
+
+    function reviewCard(extra = '') {
+      if (empty) return `<section class="empty-card"><strong>Nothing needs Maya right now.</strong><span>Her Brain will bring the next material change here when it is ready.</span></section>`
+      return `<section class="review-card ${extra}" aria-labelledby="review-question">
+        <div class="inner">
+          ${candidate === 'c' ? '<button class="close" type="button" aria-label="Close">×</button>' : ''}
+          <span class="eyebrow">For your next session</span>
+          <h2 id="review-question">${data.question}</h2>
+          <p class="headline">${data.headline}</p>
+          <p class="consequence">${data.consequence}</p>
+        </div>
+        <div class="review-foot"><span>Maya decides.</span><button class="copy" type="button">Copy question</button></div>
+      </section>`
+    }
+
+    function baseDecision() {
+      return `<section class="decision"><span class="eyebrow">Current decision</span><h2>How far should Aperture House rebuild marketing around AI?</h2><p>The strongest route is to prove a new operating system on one customer campaign before changing the whole team.</p><div class="routes"><div class="route"><span>Route 1</span><strong>Rebuild now</strong></div><div class="route active"><span>Current route</span><strong>Prove the system first</strong></div><div class="route"><span>Route 3</span><strong>Add tools gradually</strong></div></div></section>`
+    }
+
+    const topbar = `<div class="topbar"><img class="mark" src="${icon}" alt="Mindmaker"/><div class="identity"><strong>Maya Chen</strong><span>Founder and CEO · Aperture House</span></div><div class="top-spacer"></div><span class="synthetic">Synthetic interaction proof</span></div>`
+    const nav = `<nav class="nav" aria-label="Customer workspace"><button class="active">Now</button><button>What changed</button><button>Living Brain</button><button>Customer view</button></nav>`
+    const head = `<header class="customer-head"><div><small>Maya’s working room</small><h1>One consequential call is moving.</h1></div><p>Everything here is preparation. Maya owns the decision and any change to her Brain.</p></header>`
+    let body = ''
+    if (candidate === 'a') {
+      body = `${head}${empty ? reviewCard() : `<section class="review-card"><div class="signal"><span class="eyebrow">Waiting</span><b>1 discussion</b></div><div class="inner"><h2>${data.question}</h2><p class="headline">${data.headline}</p><p class="consequence">${data.consequence}</p></div><div class="review-foot"><span>Maya decides.</span><button class="copy" type="button">Copy question</button></div></section>`}<div class="decision-grid">${baseDecision()}<aside class="muted-panel"><span class="eyebrow">Brain at work</span><strong>Judgement transfer</strong><span>The current uncertainty is whether Maya’s standard can travel without her final rescue.</span></aside></div>`
+    } else if (candidate === 'b') {
+      body = `${head}<div class="decision-grid">${baseDecision()}<aside>${reviewCard()}</aside></div>`
+    } else {
+      body = `${head}<div class="decision-grid">${baseDecision()}<aside class="muted-panel"><span class="eyebrow">Brain at work</span><strong>Judgement transfer</strong><span>The current uncertainty is whether Maya’s standard can travel without her final rescue.</span></aside></div><button class="queue-trigger" type="button" aria-haspopup="dialog"><b>${empty ? '0' : '1'}</b><span>${empty ? 'Nothing waiting' : 'One discussion for Maya'}</span></button><div class="overlay" role="dialog" aria-modal="true" aria-label="Next session">${reviewCard()}</div>`
+    }
+    document.querySelector('#app').innerHTML = `<div class="shell candidate-${candidate}">${topbar}<div class="layout">${nav}<main class="stage">${body}</main></div></div>`
+    const shell = document.querySelector('.shell')
+    const toast = document.querySelector('.toast')
+    document.querySelectorAll('.copy').forEach(button => button.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(data.question) } catch {}
+      button.dataset.copied = 'true'
+      button.textContent = 'Copied'
+      toast.classList.add('show')
+      setTimeout(() => toast.classList.remove('show'), 1400)
+    }))
+    const trigger = document.querySelector('.queue-trigger')
+    const close = document.querySelector('.close')
+    const open = () => { shell.classList.add('is-open'); setTimeout(() => close?.focus(), 0) }
+    const shut = () => { shell.classList.remove('is-open'); trigger?.focus() }
+    trigger?.addEventListener('click', open)
+    close?.addEventListener('click', shut)
+    document.querySelector('.overlay')?.addEventListener('click', event => { if (event.target.classList.contains('overlay')) shut() })
+    addEventListener('keydown', event => { if (event.key === 'Escape' && shell.classList.contains('is-open')) shut() })
+    if (candidate === 'c' && params.get('open') === '1' && !empty) open()
+  </script>
+</body>
+</html>

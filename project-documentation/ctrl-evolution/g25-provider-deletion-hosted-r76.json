@@ -1,0 +1,84 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-hosted.r76.v1",
+  "contract_id": "G25-PROVIDER-DELETION-HOSTED-R76",
+  "status": "hosted_candidate_path_proved_production_integration_blocked_by_migration_drift",
+  "depends_on": [
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-PROVIDER-DELETION-HANDLE-DB-AUTHORITY-R68",
+    "G25-PROVIDER-DELETION-DISPATCH-POSTGRES-R73",
+    "G25-PROVIDER-DELETION-OPERATOR-CUSTODY-R75"
+  ],
+  "implementation": {
+    "bootstrap": "supabase/candidates/g25_hosted_provider_deletion_verification_bootstrap_r76.sql",
+    "authority_repair": "supabase/candidates/g25_provider_deletion_handle_db_authority_hosted_r76.sql",
+    "hardening": "supabase/candidates/g25_provider_deletion_hosted_hardening_r76.sql",
+    "authority_probe": "supabase/candidates/g25_hosted_provider_deletion_authority_probe_r76.sql",
+    "dispatch_probe": "supabase/candidates/g25_hosted_provider_deletion_dispatch_probe_r76.sql",
+    "outsider_probe": "supabase/candidates/g25_hosted_provider_deletion_outsider_probe_r76.sql",
+    "owner_probe": "supabase/candidates/g25_hosted_provider_deletion_owner_probe_r76.sql",
+    "transfer_probe": "supabase/candidates/g25_hosted_provider_deletion_transfer_probe_r76.sql",
+    "auth_api_probe": "supabase/candidates/g25_hosted_provider_deletion_auth_api_probe_r76.sql",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-hosted-r76.mjs"
+  },
+  "artifact_sha256": {
+    "bootstrap": "725af71c861c1996c78446f6e9bd8fcdcf17f15c2834a1a353998032f33ab36c",
+    "authority_repair": "ba01c5485613e16fe60d05a389ad2e74e36836c01c3f6ae40ab97aa4a1737ebc",
+    "hardening": "8af851195d797db3a67378a9c5721731f270331ebefd0da57c69f48fa8de9cf6",
+    "authority_probe": "40a4e9714bf1c658a27bebc711dbba96536a62d749281b9c5bf4dd770ce4da11",
+    "dispatch_probe": "e7a41b167e6545ff2cde2a0de2cd2d2593d85aeb50cdae3c339e1cdefb8d0124",
+    "outsider_probe": "6df8d309ba5d81846f1812f87ee60eb95170c76787ae28062e82dc011b1e341b",
+    "owner_probe": "ea4b7d9e218c1b0e6ef70ca956c6d99b5853568a36697a33b972b97c27117dcb",
+    "transfer_probe": "2da9e57be4a40f4ea69bd54db2fcaa8fe7cbdd3fc480fdf10ce354769f064917",
+    "auth_api_probe": "1919d3284174bf5fd7a0ba5779ae68e1b28fad026b2710673883695055af3674"
+  },
+  "hosted_evidence": [
+    "a data-less Supabase branch was created at the founder-approved hourly rate",
+    "production migration replay stopped before any candidate at a historical migration that references an absent backup table",
+    "the exact dormant candidate chain through R75 applied to a labelled verification-only foundation",
+    "the first Vault-backed R68 call exposed an ambiguous key_id reference unique to hosted Supabase Vault",
+    "the narrow R76 repair removed the collision without widening execute authority",
+    "a valid Vault-backed authority token registered one encrypted deletion handle",
+    "a corrupted authority token was rejected and wrote no second handle or spend",
+    "issuer and worker roles used only their granted functions and retained no direct table access",
+    "an authenticated workspace operator without custody was denied",
+    "the current custodian was admitted",
+    "a customer-authorised custody transfer denied the former custodian and admitted the replacement",
+    "a real synthetic Auth JWT through the hosted Data API denied the outsider and admitted the replacement",
+    "the same real JWT completed the recovery link after deny-all RLS policies and covering indexes were added",
+    "the disposable branch and every synthetic user and row were deleted after evidence capture"
+  ],
+  "production_boundary": {
+    "production_writes": 0,
+    "production_reads": [
+      "migration ledger metadata",
+      "one historical migration statement",
+      "the absent backup table column shape"
+    ],
+    "provider_calls": 0,
+    "customer_records": 0,
+    "merge_or_release": false,
+    "disposable_branch_deleted": true,
+    "elapsed_minutes": 31.22,
+    "prorated_cost_estimate_usd": 0.006992,
+    "one_hour_cost_ceiling_usd": 0.01344
+  },
+  "bounded_claim": "R76 proves the candidate authority, role, lifecycle, custody and real synthetic JWT path inside one isolated hosted Supabase branch. It does not prove clean production-schema replay, production migration compatibility, queue delivery, provider deletion, customer data behavior, production concurrency or release readiness.",
+  "next_gate": "Restore a reproducible production schema from versioned migrations without editing live customer data, then repeat R76 from a branch that reaches a healthy migration-complete state before selecting any production integration path.",
+  "authority": {
+    "permits": [
+      "local documentation and commit",
+      "disposable branch verification",
+      "synthetic Auth users and fixtures",
+      "branch deletion after evidence capture"
+    ],
+    "forbids": [
+      "production migration-history repair",
+      "production candidate execution",
+      "provider request",
+      "customer data",
+      "deployment",
+      "merge",
+      "release"
+    ]
+  }
+}

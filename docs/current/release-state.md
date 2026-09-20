@@ -13,12 +13,12 @@ Last verified: 2026-09-08 against the exact G16 application release at `860dea0`
 | G16 application baseline | `860dea0046a1b7a84c26ba1db1085f4a853daef1` |
 | G16 Vercel deployment | `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, READY and PROMOTED from the exact `860dea0` SHA |
 | Main test suite | 945 tests in 60 files; zero new type errors against the 94-error legacy baseline |
-| Edge Function source inventory | 115 directories excluding `_shared` |
+| Edge Function source inventory | 123 directories excluding `_shared` |
 | Shared-project Edge Functions | 183 live |
 | Hook files | 51 |
-| SQL migration files | 170 in the source tree |
+| SQL migration files | 197 in the source tree |
 
-Current source inventory is 115 Edge Function directories excluding `_shared`, 51 hook files, and 170 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
+Current source inventory is 125 Edge Function directories excluding `_shared`, 51 hook files, and 201 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
 
 ## Living Brain substrate canary, 2026-09-08
 

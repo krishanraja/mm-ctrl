@@ -1,0 +1,63 @@
+{
+  "schema_version": "ctrl.g25.storage-erasure-surface.r43.v1",
+  "record_id": "G25-STORAGE-ERASURE-SURFACE-R43",
+  "status": "critical_storage_erasure_gap_confirmed",
+  "depends_on": [
+    "G25-WHOLE-BRAIN-DELETION-COVERAGE-R14",
+    "G25-RESTART-OPERATIONAL-BOUNDARY-R42"
+  ],
+  "owned_buckets": [
+    {
+      "bucket": "ctrl-briefings",
+      "content": "personalised briefing audio",
+      "path_owner": "first path segment user UUID",
+      "live_delete_account": "included",
+      "e2e_assertion": "included"
+    },
+    {
+      "bucket": "documents",
+      "content": "user-uploaded source documents",
+      "path_owner": "first path segment user UUID",
+      "live_delete_account": "included",
+      "e2e_assertion": "included"
+    },
+    {
+      "bucket": "skill-packages",
+      "content": "generated installable Brain and skill ZIP packages",
+      "path_owner": "first path segment user UUID",
+      "live_delete_account": "missing",
+      "e2e_assertion": "missing"
+    }
+  ],
+  "algorithm_findings": {
+    "listing": "one root-prefix page limited to 1000 objects",
+    "pagination": false,
+    "recursive_subfolders": false,
+    "post_delete_zero_object_verification": false,
+    "partial_failure_standing": "HTTP 200 success true with an optional errors array"
+  },
+  "risk": [
+    "skill package ZIPs can outlive account deletion",
+    "more than 1000 root objects can outlive deletion",
+    "nested objects can outlive deletion",
+    "the current response can claim success while storage deletion failed",
+    "the current E2E contract cannot detect the skill-package gap"
+  ],
+  "required_future_proof": [
+    "schema-derived owned-bucket registry",
+    "recursive paginated listing per owned prefix",
+    "batched deletion with resumable receipt",
+    "post-delete zero-object verification for every registered bucket",
+    "partial completion returned as pending or failed, never unconditional success",
+    "E2E fixtures above 1000 objects and with nested paths"
+  ],
+  "artifact": "scripts/check-ctrl-g25-storage-erasure-surface-r43.mjs",
+  "next_gate": "Inventory external processor callsites and identify which calls have provider request identity, retention classification and deletion evidence.",
+  "not_authorized": [
+    "editing the live delete-account function",
+    "deleting any storage object",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}

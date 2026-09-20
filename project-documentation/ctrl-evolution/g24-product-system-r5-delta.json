@@ -1,0 +1,46 @@
+{
+  "schema_version": "ctrl.product-system.g24.r5-delta.v1",
+  "status": "proposed_single_seam_repair",
+  "baseline": {
+    "blueprint_sha256": "d4c611ef25094d4dfa08dbcb3c41b756f14cbbf615b5255fb896347d203b266a",
+    "contract_sha256": "58c056ca26bd45a87bb460240637decdd853894c18b1a8173b9cc3297c7a927c",
+    "delta_sha256": "4cc685d736e295319c1199ddf521f16adae415e50a03f81459c8ab1c671f8c85",
+    "adjudication_sha256": "c0e37605b5257beb08775c0c088cd13e1cc3cc9282ae47bcba281f0f8524630b"
+  },
+  "allowed_repair_areas": [
+    "dependent_pending_release_projection_watermark_binding_and_invalidation"
+  ],
+  "added_semantics": [
+    "bind_dependent_selector_result_version_before_release_use",
+    "bind_complete_dependent_selector_controlling_watermark_set_before_release_use",
+    "invalidate_pending_release_on_any_included_watermark_change",
+    "include_dependent_independent_challenger_result_version",
+    "emit_append_only_invalidation_receipt",
+    "create_zero_approval_delivery_or_external_side_effect_on_invalidation",
+    "scope_invalidation_to_recorded_dependency_lineage",
+    "require_trusted_resolution_and_separate_exact_release_authority_after_rebuild"
+  ],
+  "preserved": [
+    "all_other_r4_rules",
+    "all_unaffected_r3_rules",
+    "r1_and_r2_product_direction",
+    "one_canonical_brain",
+    "existing_r1_release_owner",
+    "human_owned_release_authority",
+    "exact_engagement_graph",
+    "exact_five_output_selector",
+    "one_versioned_intervention_atom",
+    "customer_hidden_technical_machinery",
+    "later_gate_empirical_claims_remain_unproven"
+  ],
+  "external_actions_opened": [],
+  "forbidden_interpretations": [
+    "invalidate_unrelated_challenger_changes_globally",
+    "rebuild_alone_restores_release_eligibility",
+    "lifecycle_state_grants_release_authority",
+    "new_release_root_created",
+    "architecture_check_proves_runtime_atomicity_or_delivery_safety",
+    "founder_lock_or_implementation_is_implied"
+  ]
+}
+

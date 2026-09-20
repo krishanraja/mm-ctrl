@@ -1,0 +1,41 @@
+{
+  "schema_version": "ctrl.g25.prepared-research-postgres-corridor.r56.v1",
+  "record_id": "G25-PREPARED-RESEARCH-POSTGRES-CORRIDOR-R56",
+  "status": "synthetic_research_corridor_postgres_verified",
+  "depends_on": [
+    "G25-PREPARED-RESEARCH-OPERATION-R54",
+    "G25-RESEARCH-PROVIDER-OUTCOME-R55",
+    "G25-PROVIDER-ROUTE-MATRIX-R53"
+  ],
+  "proved": [
+    "PostgreSQL rejects an initial provider event before its receipt exists",
+    "the exact R54 receipt command and R55 accepted event command persist under the R49 plus R51 plus R53 registry",
+    "exact receipt and event replay converge idempotently",
+    "changed provider-response evidence under the same event operation identity fails closed",
+    "stored receipt and event rows contain neither the raw provider request ID nor the outbound public query",
+    "request-verified response evidence reaches an accepted event",
+    "rejected and outcome-unknown initial states persist with null provider identity rather than invented evidence"
+  ],
+  "observed": {
+    "local_database": "PostgreSQL 18.3 PGlite",
+    "targeted_tests": 4,
+    "targeted_failures": 0,
+    "provider_dispatches": 0,
+    "multi_connection_race_proved": false
+  },
+  "artifacts": {
+    "test": "supabase/functions/_shared/prepared-research-postgres.r56.test.ts",
+    "test_sha256": "b91ef40082687abc8c6d53618998b848faedcb9f508a0c29d66a448169b22445",
+    "node_test_config": "vitest.g25-postgres.config.ts",
+    "node_test_config_sha256": "c8a8527103ccd9ef98d98577050dc05c28c09c0ffae70604fc9cc7e3db54718b",
+    "checker": "scripts/check-ctrl-g25-prepared-research-postgres-corridor-r56.mjs"
+  },
+  "next_gate": "Return to non-FK identifier discovery and provider deletion or expiry planning. Keep this corridor dormant until the real database and transport gates exist.",
+  "not_authorized": [
+    "provider dispatch",
+    "live public-source fetching",
+    "linked database persistence",
+    "migration creation or execution",
+    "editing live routes, deployment, merge or release"
+  ]
+}

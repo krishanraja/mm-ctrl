@@ -1,0 +1,35 @@
+{
+  "schema_version": "ctrl.council.cross-examination-freeze.v1",
+  "run_id": "g24-r5-architecture-council-004",
+  "frozen_at": "2026-09-12",
+  "first_pass_seal_sha256": "2c10c4d07df8f266b3c26a0251e51f2aa7cab41915ffbde24c1d2f79d7970783",
+  "cross_examination_brief": {
+    "path": "project-documentation/ctrl-evolution/runs/g24-r5-architecture-council-004/cross-examination-brief.md",
+    "sha256": "44131879489b597fde9973877f5a216b7604e241c32b1ff00718a54aacbcdf9f"
+  },
+  "records": [
+    {
+      "role": "standards_prosecution",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r5-architecture-council-004/standards-prosecution.md",
+      "sha256": "a165dd87008dfa90a442febcd5f0def74e2c971c083728b3832d59e5c9e5949c",
+      "recommendation": "NO_CURRENT_GATE_VETO_SURVIVES",
+      "alleged_current_gate_defects": 0
+    },
+    {
+      "role": "veto_defense",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r5-architecture-council-004/veto-defense.md",
+      "sha256": "196f1ee11d9340b9ea2da6ad95842a321bc5c4b41dd4e51d6c28313692435fb2",
+      "recommendation": "DEFEND_AND_ADVANCE_TO_FINAL_ADJUDICATION",
+      "sustained_current_gate_defects": 0
+    },
+    {
+      "role": "founder_calibration",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r5-architecture-council-004/founder-calibration.md",
+      "sha256": "507c4bede69f0ab4fedeb807d747ff70f046baf0d5bf2e0d1b7e7efe2ed41a88",
+      "recommendation": "LIKELY_FOUNDER_ALIGNED",
+      "voting": false
+    }
+  ],
+  "frozen_before_final_adjudication": true,
+  "external_actions_opened": []
+}

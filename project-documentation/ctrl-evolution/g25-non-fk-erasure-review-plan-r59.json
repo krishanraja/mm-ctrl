@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g25.non-fk-erasure-review-plan.r59.v1",
+  "contract_id": "G25-NON-FK-ERASURE-REVIEW-PLAN-R59",
+  "status": "zero_write_review_plan_proved_execution_held",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-non-fk-identifier-discovery-r57.json",
+    "project-documentation/ctrl-evolution/g25-non-fk-erasure-registry-r58.json"
+  ],
+  "implementation": {
+    "compiler": "supabase/functions/_shared/non-fk-erasure-review-plan.r59.ts",
+    "tests": "supabase/functions/_shared/non-fk-erasure-review-plan.r59.test.ts",
+    "checker": "scripts/check-ctrl-g25-non-fk-erasure-review-plan-r59.mjs"
+  },
+  "proved_locally": [
+    "all 36 discovered high-risk anchors must receive exactly one disposition",
+    "the current registry yields 18 abstract draft steps and 18 explicit blockers",
+    "execution authority is always none",
+    "selectors are symbolic and accept no UUID, email, phone or other personal value",
+    "phone remains subordinate to an already-authorized parent row",
+    "shared-record and retained-audit actions cannot be disguised as draft-eligible",
+    "missing, stale, duplicate and unknown standings invalidate the plan"
+  ],
+  "current_result": {
+    "status": "held",
+    "discovered_targets": 36,
+    "dispositioned_targets": 36,
+    "draft_targets": 18,
+    "blocked_targets": 18,
+    "hold_reasons": [
+      "non_fk_execution_not_authorized",
+      "registry_contains_blocking_targets"
+    ]
+  },
+  "bounded_claim": "R59 compiles the R58 semantic registry into an exhaustive, content-free review plan. It generates no SQL, receives no personal value, writes nothing and cannot authorize execution.",
+  "authority": {
+    "permits": [
+      "local pure compilation and unit tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "SQL or database client generation",
+      "personal identifier input",
+      "live deletion path edit",
+      "linked database access or migration execution",
+      "provider call, deployment, merge or release"
+    ]
+  }
+}

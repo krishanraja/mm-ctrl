@@ -1,0 +1,84 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "recordedAt": "2026-09-10T20:42:57.017Z",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "compositeRecipe": "SHA-256 of UTF-8 path:sha256 lines joined with LF in the listed order, with no trailing LF.",
+  "criterionVersions": {
+    "human_agency": "human-agency:g21-internal-range-freeze-v3",
+    "epistemic_integrity": "epistemic-integrity:g21-internal-range-freeze-v3",
+    "subject_audience_lifecycle_safety": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v3",
+    "consequential_usefulness": "consequential-usefulness:g21-internal-range-freeze-v3",
+    "living_brain_integrity": "living-brain-integrity:g21-internal-range-freeze-v3",
+    "human_comprehension_and_access": "human-comprehension-and-access:g21-internal-range-freeze-v3",
+    "behavioural_and_implementation_reality": "behavioural-and-implementation-reality:g21-internal-range-freeze-v3"
+  },
+  "files": [
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.ts",
+      "sha256": "737f301df5d76d2f96716577b7f47319eb3ed82dffc95eb411077af427a393b8"
+    },
+    {
+      "path": "src/features/operator-brain/g21InternalRangeCanary.test.ts",
+      "sha256": "2551cd44dfbb7be62042fbca11d4fb7b2b0d9269e8bfabe295575962419633a2"
+    },
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.ts",
+      "sha256": "07174fa9e70baed67740690c9c20da922e5f46d97b2b1dfec0de04edb0d4995c"
+    },
+    {
+      "path": "src/features/operator-brain/rangeCouncilContract.test.ts",
+      "sha256": "534acd5fb20f59133b17426e7f02513193cfb12411dc6d716432be7acb2ea5f1"
+    },
+    {
+      "path": "scripts/check-g21-internal-range.mjs",
+      "sha256": "cace10df7d14b45ae7d96e06431ec017ed70ba35fb84ae3b77789aa8995ef150"
+    },
+    {
+      "path": "scripts/check-g21-internal-council.mjs",
+      "sha256": "09f4751410c26e8b44d11234cc738497a41b12803257742e0adafb11478f3f1c"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+      "sha256": "e3d960f510060357cdcf6e72d84fd04c21f21f9ae9a2d3b55918ef8dc7610d51"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md",
+      "sha256": "914796288ce8b3d1a43e4acbc07f7fe817e6c8020e3c6902a71bebad74272065"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/council-brief.md",
+      "sha256": "14dcdabfcde63e1b2b46c925754bcb6869a72ffeae00ddac5419711e90bf592d"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-003/question-pack.json",
+      "sha256": "f6119ce871fb8af963d840618b26cb9674c0a76ad155a325bb429f8ee3bd5f68"
+    }
+  ],
+  "frozenCounts": {
+    "profiles": 12,
+    "matchedFamilies": 4,
+    "lifecycleCases": 36,
+    "oracleFreeInputs": 36,
+    "initialInputs": 12,
+    "contradictedInputs": 12,
+    "correctedInputs": 12,
+    "adversarialMutationsRejected": 65,
+    "councilContractSelfTests": 9,
+    "questions": 12
+  },
+  "authority": {
+    "allowed": [
+      "Review the frozen local evidence-range fixture",
+      "Return one sealed ruling against one owned criterion",
+      "Return one sealed adult answerability proxy review"
+    ],
+    "prohibited": [
+      "Change the artifact while reviewing it",
+      "Infer approval from another judge",
+      "Average away a valid veto",
+      "Treat fictional evidence as real research or consent",
+      "Represent an adult proxy review as a child usability test",
+      "Recommend deployment, database writes or production use"
+    ]
+  }
+}

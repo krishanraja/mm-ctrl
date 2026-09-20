@@ -1,0 +1,85 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "phase": "adjudication",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+  "rulingsCompositeSha256": "a5edff2b298c3818b702c96d55b43cb5600afa5b0dc81e8a17b73713250fd920",
+  "rulings": [
+    {
+      "file": "human_agency.json",
+      "sha256": "f8a1af69df8364100a4767357a58a738905be076c24771e62c4909b82d34d131",
+      "judge": "human_agency",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "epistemic_integrity.json",
+      "sha256": "79dbffaac933cb1b8d4636941de53d27c684043e14aad2d27e18b9d278a98b5d",
+      "judge": "epistemic_integrity",
+      "verdict": "fail",
+      "vetoRuleId": "EPISTEMIC-RANGE-01"
+    },
+    {
+      "file": "subject_audience_lifecycle_safety.json",
+      "sha256": "0150263ca82d2b9e7eeb8142b430873fd1593c17955be7f421846e6e5fa3941c",
+      "judge": "subject_audience_lifecycle_safety",
+      "verdict": "fail",
+      "vetoRuleId": "SAFETY-RANGE-01"
+    },
+    {
+      "file": "consequential_usefulness.json",
+      "sha256": "152da43e2bccab31ab367a3af2a86ff7da345dc1a3810253c286bbc6d7259c70",
+      "judge": "consequential_usefulness",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "living_brain_integrity.json",
+      "sha256": "2c88a0034eaf84e77dcf4df2b25eed4ba0e70e766a268989d1642dc06ea4a8b5",
+      "judge": "living_brain_integrity",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "human_comprehension_and_access.json",
+      "sha256": "098b5bae42acf3be0ccccfc7248fd9905297dd29566286ceb59a9111229871ae",
+      "judge": "human_comprehension_and_access",
+      "verdict": "fail",
+      "vetoRuleId": "COMPREHENSION-RANGE-01"
+    },
+    {
+      "file": "behavioural_and_implementation_reality.json",
+      "sha256": "b314511e711309e002574b1e83fdf894f770e1cadbf45d385a56e0e11528d80f",
+      "judge": "behavioural_and_implementation_reality",
+      "verdict": "fail",
+      "vetoRuleId": "REALITY-RANGE-01"
+    }
+  ],
+  "result": {
+    "status": "blocked",
+    "vetoes": [
+      {
+        "ruleId": "EPISTEMIC-RANGE-01",
+        "failure": "Unsupported causal prose can pass the runtime contract. trustedEvidenceBinding omits evidence content and claim text, and the observation guard rejects only the narrow phrases matched by CATEGORICAL_CAUSAL_CLAIM. A valid STORY-I3 input rewritten to say `Theory-heavy exposure drove opening-weekend purchase across all fan groups.` and followed by a derived currentClaims rebuild avoids every runtime error, although canonical verification rejects the altered fixture bytes.",
+        "resolvingTest": "Clone the valid RANGE-INTERNAL-STORY-I3 initial blind input, replace INT-STORY-007 content and observation text with `Theory-heavy exposure drove opening-weekend purchase across all fan groups.`, rebuild currentClaims, and require validateG21InternalBlindInput to reject it for unsupported causation while the existing safe-novel-prose case still passes runtime validation and fails canonical verification."
+      },
+      {
+        "ruleId": "SAFETY-RANGE-01",
+        "failure": "Malformed nested sparse arrays can make validateG21InternalBlindInput throw rather than fail closed. In addition, unbound evidence content and claim text can carry real-person, simulated-consent or subject-incompatible prose while preserving trusted fictional metadata and a recomputed currentClaims view.",
+        "resolvingTest": "Add adversarial runtime tests that pass valid top-level envelopes with sparse externalEvidence, internalEvidence, audienceAuthorities and currentClaims arrays and require a nonthrowing nonempty error result. Also mutate trusted record content and claim text to assert real personhood or consent and to name a subject outside the frozen source capability, recompute currentClaims, and require rejection while preserving acceptance of explicitly safe novel fictional prose."
+      },
+      {
+        "ruleId": "COMPREHENSION-RANGE-01",
+        "failure": "The RANGE-INTERNAL-FORGE-I3 main question asks for a named person, while its exhaustive visible choices contain no person names. The question is therefore mismatched to its choices and cannot be answered from the visible contract without supplying hidden information or making the optional note mandatory.",
+        "resolvingTest": "Freeze a replacement for RANGE-INTERNAL-FORGE-I3 whose main question and answer contract either provide concrete fictional person names as choices or ask for a role or category instead, then have a fresh blind bright-twelve-year-old proxy answer it using only the visible contract and verify that no required information is relegated to an optional note."
+      },
+      {
+        "ruleId": "REALITY-RANGE-01",
+        "failure": "State ordering can be faked at runtime by swapping conflict and correction content plus claim text while preserving the trusted metadata binding and recomputing currentClaims. The structural validator accepts the reversed meaning, and only canonical fixture equality rejects it.",
+        "resolvingTest": "For every profile, construct a corrected-state blind input that swaps only conflict and correction content plus claim text, recompute currentClaims, and assert validateG21InternalBlindInput rejects it while a genuinely novel safe record still passes structural validation; bind the authenticated state role to the prose or to a content digest so the test passes for the runtime contract rather than only the canonical fixture contract."
+      }
+    ]
+  },
+  "protocolStanding": "valid_history_free_independent_review",
+  "recordedAt": "2026-09-10T23:16:02.5233811Z"
+}

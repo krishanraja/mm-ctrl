@@ -1,0 +1,145 @@
+{
+  "schema_version": "ctrl.g25.memory-mutator-hardening-proof.r90.v1",
+  "contract_id": "G25-MEMORY-MUTATOR-HARDENING-PROOF-R90",
+  "status": "isolated_memory_subject_boundary_passed_live_risk_preserved",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-EXPOSURE-R82",
+    "G25-DEPLOYED-RPC-DEPENDENCY-INDEX-R88",
+    "G25-ANONYMOUS-READER-HARDENING-PROOF-R89"
+  ],
+  "risk_found": {
+    "production_affected": true,
+    "production_mutated": false,
+    "affected_functions": [
+      "fix_memory_fact(uuid)",
+      "touch_memory_fact(uuid)",
+      "touch_memory_facts(uuid[])",
+      "verify_memory_fact(uuid,text,boolean)"
+    ],
+    "root_cause": "Ordinary roles could execute the owner-privileged functions, while SQL NULL comparisons or an explicit auth.uid() IS NULL branch treated missing identity as non-denial or trusted service authority.",
+    "bounded_effects": [
+      "anonymous verification-state mutation by known fact id",
+      "anonymous dispute-event injection by known fact id",
+      "anonymous reliance-counter mutation by known fact id"
+    ],
+    "unknowns": [
+      "whether any external caller has exercised the paths",
+      "whether guessed or leaked fact ids exist outside current evidence"
+    ]
+  },
+  "surface": {
+    "target_count": 5,
+    "browser_only_mutators": [
+      "fix_memory_fact(uuid)",
+      "strengthen_memory_fact(uuid)",
+      "verify_memory_fact(uuid,text,boolean)"
+    ],
+    "browser_and_service_touch_routes": [
+      "touch_memory_fact(uuid)",
+      "touch_memory_facts(uuid[])"
+    ],
+    "deployed_touch_memory_facts_callers": 8
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_security_definer_memory_mutator_hardening_r90.sql",
+    "sha256": "2e8427dda42ad893e5fe6aa65e8448f1071dc842362e5d68ec2666d47d9726ee",
+    "verification_path": "supabase/candidates/g25_security_definer_memory_mutator_verification_r90.sql",
+    "verification_sha256": "2b2c169adf54d662b1d16343acf68e02da40b181bc1616d9b9f9e452dd971aa0",
+    "runtime_smoke_path": "supabase/tests/database/g25_security_definer_memory_mutator_r90.test.sql",
+    "runtime_smoke_sha256": "5ebfaeb6bb13c4acbef823a2de681c22b38c99d3ee048e9060a41c7a82c3328f",
+    "isolated_migrations": [
+      "g25_security_definer_memory_mutator_hardening_r90",
+      "g25_security_definer_memory_mutator_runtime_smoke_r90"
+    ]
+  },
+  "isolated_verification": {
+    "target_count": 5,
+    "resolved_count": 5,
+    "definer_count": 5,
+    "anon_denied_count": 5,
+    "authenticated_allowed_count": 5,
+    "service_acl_match_count": 5,
+    "public_denied_count": 5,
+    "fix_null_guard_present": true,
+    "verify_exact_owner_guard_present": true,
+    "touch_service_guard_present": true,
+    "definition_digests": {
+      "fix_memory_fact(uuid)": "7bfc0b216b9102b831edc52ca8a4da2c",
+      "strengthen_memory_fact(uuid)": "f3bd8a3de45826e67301e13fa76a086d",
+      "touch_memory_fact(uuid)": "84e289e5cf89baab91b9250d6ffe7e16",
+      "touch_memory_facts(uuid[])": "3d25b2b52734d93094943a3db9dbce05",
+      "verify_memory_fact(uuid,text,boolean)": "ab2dcd761a18a741441a3b138f4b58e1"
+    }
+  },
+  "runtime_smoke": {
+    "result": "pass",
+    "channel": "isolated_database_with_simulated_jwt_claim_context",
+    "cross_subject_fix_blocked": true,
+    "cross_subject_verify_blocked": true,
+    "cross_subject_strengthen_blocked": true,
+    "cross_subject_single_touch_blocked": true,
+    "batch_touch_confined_to_authenticated_subject": true,
+    "owned_strengthen_verify_and_fix_preserved": true,
+    "owned_correction_events_exact_once": true,
+    "anonymous_touch_body_guard_blocked": true,
+    "service_touch_route_preserved": true,
+    "fixture_counts_after": {
+      "auth_users": 0,
+      "profiles": 0,
+      "user_roles": 0,
+      "memory_facts": 0,
+      "memory_events": 0
+    }
+  },
+  "advisor_progress": {
+    "after_r89": {
+      "anonymous_security_definer_executable": 12,
+      "authenticated_security_definer_executable": 17
+    },
+    "after_r90": {
+      "anonymous_security_definer_executable": 7,
+      "authenticated_security_definer_executable": 17
+    },
+    "closed_by_r90": {
+      "anonymous": 5,
+      "authenticated": 0
+    },
+    "unrelated_findings_unchanged": {
+      "rls_enabled_no_policy": 24,
+      "extension_in_public": 2
+    }
+  },
+  "production_postcheck": {
+    "target_count": 5,
+    "anon_allowed_count": 5,
+    "authenticated_allowed_count": 5,
+    "service_allowed_count": 5,
+    "definitions_match_pre_change_digests": true,
+    "writes": 0
+  },
+  "bounded_claim": "The isolated project now binds five memory mutators to an authenticated subject and reserves null-identity touch access for the explicit service role. Browser correction behavior and deployed service reliance telemetry pass. The vulnerable production definitions and grants remain unchanged pending a separately authorised production change.",
+  "acceptance_gate": {
+    "isolated_acl_verification_passed": true,
+    "isolated_subject_boundary_runtime_smoke_passed": true,
+    "deployed_service_touch_route_preserved": true,
+    "fixtures_fully_cleaned": true,
+    "production_unchanged": true,
+    "production_risk_closed": false,
+    "all_45_routes_dispositioned": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "isolated_target_writes": [
+      "one five-function hardening migration",
+      "one self-cleaning two-user mutation smoke migration"
+    ],
+    "persistent_fixture_rows": 0,
+    "production_writes": 0,
+    "forbids": [
+      "production function or ACL mutation",
+      "claiming the live risk is remediated",
+      "merge, cutover or release"
+    ]
+  }
+}

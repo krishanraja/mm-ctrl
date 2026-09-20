@@ -1,0 +1,49 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "run_id": "g24-experience-r138-operator-live-composition",
+  "status": "passed_for_founder_review",
+  "surface": "approved private operator instrument receiving one live isolated five-field review signal",
+  "materiality": "runtime-only data composition inside the approved desktop hierarchy, with the approved phone projection preserved and hidden reads suppressed",
+  "changed_surface_files": [
+    "src/features/operator-brain/DecisionBenchPage.tsx"
+  ],
+  "authority": "Branch implementation and disposable isolated proof only. No public route, customer data, production write, merge or release.",
+  "release_status": "private isolated composition verified; persistent routing, main, production, merge and release remain closed",
+  "approval_claims": [
+    "The material phone experience is inherited unchanged from founder-approved R137.",
+    "No new material visual or product decision is claimed by R138; this receipt covers only the private runtime composition."
+  ],
+  "first_pass_pack": "first-pass-pack.json",
+  "first_pass_pack_hash": "f276eff0344d2e8c5b4259db2a5abae1da3cbd02071dd309166fcddf4ad2df2d",
+  "sealed_verdicts": [
+    "architecture-security-verdict.md",
+    "rendered-experience-verdict.md"
+  ],
+  "reality_lab_results": {
+    "live_isolated_browser_proof": "3 of 3 passed",
+    "successful_lifecycle_cleanup": "11 of 11 categories zero",
+    "forced_failure_cleanup": "11 of 11 categories zero after deterministic post-write fault",
+    "browser_auth_storage": "local-storage auth key absent in all 3 browser scenarios",
+    "focused_tests": "28 of 28 passed",
+    "typecheck": "94 baseline, 94 current, zero new",
+    "build_and_prerender": "passed",
+    "independent_review_sequence": ["architecture veto", "repair", "architecture accept", "rendered final accept"]
+  },
+  "unverified_or_blocked": [
+    "persistent authenticated operator route",
+    "real customer data or value",
+    "production deployment, merge or release",
+    "customer participation in a standard-change review"
+  ],
+  "protected_invariants": [
+    "founder-approved R137 phone surface",
+    "strict five-field operator projection",
+    "owner-only decision authority",
+    "unauthorised-workspace concealment",
+    "production isolation",
+    "zero disposable isolated residue on success and forced failure"
+  ],
+  "customer_surface_changed": false,
+  "production_writes": 0,
+  "isolated_residue_after_proof": 0
+}

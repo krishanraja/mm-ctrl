@@ -1,0 +1,39 @@
+{
+  "schema_version": "ctrl.g25.reconsent-orchestrator.r41.v1",
+  "record_id": "G25-RECONSENT-ORCHESTRATOR-R41",
+  "status": "dormant_restart_composition_verified",
+  "depends_on": [
+    "G25-SUBJECT-RECONSENT-ENDPOINT-R37",
+    "G25-RECONSENT-RETRY-IDENTITY-R39",
+    "G25-SCOPE-CREATE-RETRY-IDENTITY-R40"
+  ],
+  "proved": [
+    "authentication and exact request validation complete before creation can run",
+    "reservation standing must be reserved-not-created before the creator is called",
+    "creation request identity is stable for the accepted consent",
+    "an unknown creation result is exposed as retryable reserved-pending-creation rather than false success",
+    "a later attempt can return the original idempotent creation",
+    "mismatched creation identity is rejected",
+    "success response exposes only bounded new-scope standing"
+  ],
+  "observed": {
+    "targeted_tests": 5,
+    "targeted_failures": 0,
+    "recoverable_middle_state": "reconsent_reserved_pending_creation",
+    "success_state": "brain_restarted"
+  },
+  "artifacts": {
+    "module": "supabase/functions/_shared/prepared-reconsent-orchestrator.r41.ts",
+    "module_sha256": "9efd9abac3c5348c3f724f0acb8ac92f388d06ed623f834595dadf02d83e0dda",
+    "test": "supabase/functions/_shared/prepared-reconsent-orchestrator.r41.test.ts",
+    "test_sha256": "40af8f3d45125880775b292d494594b7e536bd513a156efb81c28272a5cead12",
+    "checker": "scripts/check-ctrl-g25-reconsent-orchestrator-r41.mjs"
+  },
+  "next_gate": "Specify the live adapter boundary, rate limits, telemetry and rollout controls without creating the caller until migration and Supabase-local gates pass.",
+  "not_authorized": [
+    "creating an Edge Function entrypoint or application caller",
+    "migration creation or execution",
+    "linked or production database use",
+    "deployment, merge or release"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": "ctrl.council.sealed-verdicts.v1",
+  "run_id": "g24-r4-architecture-council-003",
+  "frozen_at": "2026-09-12",
+  "standard_sha256": "8e227ccb4c9ad2a7a6b9dfd97df9a9bb24dad3e44e1f9153a75cf11720819e3b",
+  "submission_sha256": {
+    "blueprint": "d4c611ef25094d4dfa08dbcb3c41b756f14cbbf615b5255fb896347d203b266a",
+    "contract": "58c056ca26bd45a87bb460240637decdd853894c18b1a8173b9cc3297c7a927c",
+    "delta": "4cc685d736e295319c1199ddf521f16adae415e50a03f81459c8ab1c671f8c85"
+  },
+  "verdicts": [
+    {
+      "specialist": "human-agency",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/human-agency.md",
+      "sha256": "a3ebd3a597ad46c4680e1d47f123c961ea5854af76c8cc5008914d8583723deb"
+    },
+    {
+      "specialist": "epistemic-integrity",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/epistemic-integrity.md",
+      "sha256": "81aa488556ebf513f8caebea44591f11b34cb97b2cc433a82fafcbec0061beb3"
+    },
+    {
+      "specialist": "subject-audience-lifecycle-safety",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/subject-audience-lifecycle-safety.md",
+      "sha256": "c2e5d34519ccae56fa2ac6c8f769735052aab2eaf6dfdfe10dccb39a2b210cbf"
+    },
+    {
+      "specialist": "consequential-usefulness",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/consequential-usefulness.md",
+      "sha256": "f53f44653cf34d9210cfcc0f250af1c09181b0e732ec63bf3f3b3c1cff854fc0"
+    },
+    {
+      "specialist": "living-brain-integrity",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/living-brain-integrity.md",
+      "sha256": "5371e1497d3e22e2ec8e5af1715d59ca6ebfdf5670a5480ca141a3ea1f8bac7d"
+    },
+    {
+      "specialist": "human-comprehension-and-access",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/human-comprehension-and-access.md",
+      "sha256": "e8417f1c2a993f2c7facd9feee2302e8ac997f6e4dee093a25d74eda661402bd"
+    },
+    {
+      "specialist": "behavioural-and-implementation-reality",
+      "verdict": "PASS_WITH_WATCHPOINTS",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r4-architecture-council-003/behavioural-and-implementation-reality.md",
+      "sha256": "5110086fb863f817b27427aa9e3a17954b8e721a4deb185b0d5c87518bb11379"
+    }
+  ],
+  "counts": {
+    "pass": 0,
+    "pass_with_watchpoints": 7,
+    "veto": 0,
+    "inconclusive": 0
+  },
+  "frozen_before_history_or_cross_examination": true
+}

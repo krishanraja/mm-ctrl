@@ -1,0 +1,123 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r81.executable-vectors.v1",
+  "module_id": "executable_vectors",
+  "specimens": {
+    "authentication_events": {
+      "auth-1": { "event_id": "auth-1", "named_human_id": "leader-1", "credential_id": "cred-leader-1", "session_id": "session-1", "method": "passkey", "issuer_id": "mindmake-authenticator-v5", "issued_at": "2026-09-16T08:00:00Z", "valid_until": "2026-09-16T10:00:00Z", "issuer_signature_base64": "o0kfipjBNxOCIoosB34+T+Gp5ctxO5UNa9L19W5FLcAhQzvM05VKatF3na6L9EC0G9Z+XSUH1fV93e9qy4C6Aw==" },
+      "auth-2": { "event_id": "auth-2", "named_human_id": "krish", "credential_id": "cred-krish", "session_id": "session-2", "method": "webauthn", "issuer_id": "mindmake-authenticator-v5", "issued_at": "2026-09-16T08:00:00Z", "valid_until": "2026-09-16T10:00:00Z", "issuer_signature_base64": "VE2LtpixBlwMJuYQxGBrv8RuF06jXQbhTpUoMl6vn0y0QIUo5HZpRsEXIvgmUGTWwtxnFuS6uSW4MmPTyneVAA==" }
+    },
+    "answer_events": {
+      "answer-1": { "event_id": "answer-1", "named_human_id": "leader-1", "credential_id": "cred-leader-1", "session_id": "session-1", "method": "passkey", "issuer_id": "mindmake-authenticator-v5", "question_id": "question-1", "question_version": "qv1", "selected_option": "Prove the system first", "render_receipt_fingerprint": "609fbb865c0e77d7912c560e182f4114ea1cfcf93a2e596604cdeb06a8fa15fb", "answered_at": "2026-09-16T08:35:00Z", "issuer_signature_base64": "f9jJw3uxO1UezxAg/QLRhJD14EsCjk9CeD5RqBe18PAak/0J0NcCJw+e7SM22f/WVzfhsN9K4bS1MsLRB8JXBw==" },
+      "answer-leader_accepts_exact_purpose_and_frame_version": { "event_id": "answer-leader_accepts_exact_purpose_and_frame_version", "named_human_id": "leader-1", "credential_id": "cred-leader-1", "session_id": "session-1", "method": "passkey", "issuer_id": "mindmake-authenticator-v5", "question_id": "question-leader_accepts_exact_purpose_and_frame_version", "question_version": "qv1", "selected_option": "Prove the system first", "render_receipt_fingerprint": "b89fd7936a699f67abeb153734547cce73940b9065704bbf634cc0d798476e66", "answered_at": "2026-09-16T08:35:00Z", "issuer_signature_base64": "gZlISTWQ6dSoWZMki7Mc19mI0X9vMXa97xCdL+zKta2eEjDbEMoedMC7ClvN9vr/teibSaWDkz3LT8xygmItBA==" },
+      "answer-krish_accepts_exact_purpose_and_frame_version": { "event_id": "answer-krish_accepts_exact_purpose_and_frame_version", "named_human_id": "krish", "credential_id": "cred-krish", "session_id": "session-2", "method": "webauthn", "issuer_id": "mindmake-authenticator-v5", "question_id": "question-krish_accepts_exact_purpose_and_frame_version", "question_version": "qv1", "selected_option": "Prove the system first", "render_receipt_fingerprint": "b8e90afd3fc30d22b2a88f7e03c1f84dd2f6f4e8b3d3069eebd9cbd55dcd2e6f", "answered_at": "2026-09-16T08:35:00Z", "issuer_signature_base64": "NasUewJCrVMCtTImNVQZQwoj6AtQSo8qkOVVH4g7nS3K9jPidUgqtOgAEHLLSOZa3N9aC0v2ppgCbZLu8rWQCg==" }
+    },
+    "free_expressions": { "free-1": "Prove the system in one campaign before changing the team." },
+    "structured_interpretations": { "free-1": { "selected_option": "Something else", "accepted_decision_after_ref": "proof_first" } },
+    "free_expression_confirmations": {
+      "confirm-1": { "confirmation_id": "confirm-1", "named_human_id": "leader-1", "credential_id": "cred-leader-1", "session_id": "session-1", "method": "passkey", "issuer_id": "mindmake-authenticator-v5", "authentication_event_ref": "auth-1", "question_id": "question-1", "question_version": "qv1", "free_expression_fingerprint": "cd66ff5baefaacc35ebe5f6a42b278d9cd49ad0454374c2eb1bdb2d8451afd58", "structured_interpretation_fingerprint": "22427c2c7777459021cea0e7bbb098c1fc2d1454aa056b40b06dd2815a6fd3df", "visible_consequence_fingerprint": "9d9b2e823c22e0e372813bb37e0a99909e35da0f6ce37ebd3a4b6e04466d5355", "confirmed_at": "2026-09-16T08:36:00Z", "issuer_signature_base64": "BQjBwDZChpYp03oQALqjFWcz1J2x0j/vgaZS4mCRQhBl/vz4B8f2aktp46Ps0xRoywFkDvafIkvl8EtnGpazAw==" }
+    },
+    "final_authority_events": {
+      "final-authority-leader-1": { "event_id": "final-authority-leader-1", "named_human_id": "leader-1", "credential_id": "cred-leader-1", "session_id": "session-1", "method": "passkey", "issuer_id": "mindmake-authenticator-v5", "transition_id": "accept_intensive_proof", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "predecessor_version": "preparation-7", "predicate_proof_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "authority_bundle_fingerprint": "1eb364278d9832b11196f170854ad075c79536170317dddd153c076ebca8ffcf", "render_receipt_ref": "render-1", "visible_consequence_fingerprint": "9d9b2e823c22e0e372813bb37e0a99909e35da0f6ce37ebd3a4b6e04466d5355", "reserved_transition_receipt_version": "reserve-1", "authorized_at": "2026-09-16T08:55:00Z", "issuer_signature_base64": "pyQTmBMPi+3ExjyVj++eh3/0QC2aGreFrONyq6vqKSPwIHnIHOydgRT8XvbKgcIZUr780UGTwndiPtTyjKv4Dw==" },
+      "final-authority-krish": { "event_id": "final-authority-krish", "named_human_id": "krish", "credential_id": "cred-krish", "session_id": "session-2", "method": "webauthn", "issuer_id": "mindmake-authenticator-v5", "transition_id": "accept_intensive_proof", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "predecessor_version": "preparation-7", "predicate_proof_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "authority_bundle_fingerprint": "1eb364278d9832b11196f170854ad075c79536170317dddd153c076ebca8ffcf", "render_receipt_ref": "render-1", "visible_consequence_fingerprint": "9d9b2e823c22e0e372813bb37e0a99909e35da0f6ce37ebd3a4b6e04466d5355", "reserved_transition_receipt_version": "reserve-1", "authorized_at": "2026-09-16T08:55:00Z", "issuer_signature_base64": "m+gGBeu6BvVJCuT1xxEKlsiT/0Zjj0XBl5Jlj0PVIzFWU0vFy1GpyH6fdFlKsuxbZEHN87xQh2r5XoFWU5kiDg==" }
+    },
+    "decisions": {
+      "before": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "undecided", "bounds": ["No named-person employment recommendation"], "stop_condition": "No customer proof", "evidence_requirement": "Unspecified", "checkpoint": "Leadership review", "revisit_condition": "When evidence exists", "lifecycle_status": "intensive_proof" },
+      "proof_first": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "prove_the_system_first", "bounds": ["No named-person employment recommendation", "One campaign pilot"], "stop_condition": "Pilot fails quality threshold twice", "evidence_requirement": "Two priority campaigns meet Maya's quality bar without her final rewrite", "checkpoint": "Blind comparison after four weeks", "revisit_condition": "At the four-week evidence review", "lifecycle_status": "intensive_proof" },
+      "rebuild": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "rebuild_now", "bounds": ["No named-person employment recommendation", "Role design before hiring"], "stop_condition": "Customer delivery quality falls below current baseline", "evidence_requirement": "Board accepts the explicit risk", "checkpoint": "Two-week operating review", "revisit_condition": "At the two-week review", "lifecycle_status": "intensive_proof" },
+      "stop": { "decision_id": "decision-1", "case_id": "case-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "route": "stop_rebuild", "bounds": ["Retain team structure"], "stop_condition": "Immediate", "evidence_requirement": "None", "checkpoint": "No rebuild checkpoint", "revisit_condition": "Only if category economics materially change", "lifecycle_status": "intensive_proof" }
+    },
+    "case_context": { "case_id": "case-1", "decision_id": "decision-1", "consequential_target": "Whether to rebuild Aperture House's marketing team around AI", "case_terms": ["Aperture House", "marketing team"], "required_question_concepts": ["proof", "evidence", "result"], "current_decision_ref": "before" },
+    "question": { "question_id": "question-1", "question_version": "qv1", "case_id": "case-1", "decision_id": "decision-1", "named_answer_owner": "leader-1", "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "requested_value_kind": "meaningful_value", "heading": "One thing to decide", "question": "What proof would justify rebuilding Aperture House's marketing team?", "answer_options": ["Prove the system first", "Rebuild now", "Stop the rebuild"], "unknown_option": "I do not know yet", "free_expression_option": "Something else", "answer_effect_refs": { "Prove the system first": "proof_first", "Rebuild now": "rebuild", "Stop the rebuild": "stop" }, "visible_consequence": "Your answer sets the route and proof required before people or tools change.", "optional_note_label": "Add context", "primary_action_label": "Keep answer", "optional_depth_ref": "why-question-1", "source_reason_ref": "case-1-gap-3" },
+    "empty_session": { "session_id": "session-1", "case_id": "case-1", "decision_id": "decision-1", "named_human_id": "leader-1", "question_receipt_ids": [], "last_question_ordinal": 0, "state_version": "session-v1" },
+    "asked_session": { "session_id": "session-1", "case_id": "case-1", "decision_id": "decision-1", "named_human_id": "leader-1", "question_receipt_ids": ["render-1"], "last_question_ordinal": 1, "state_version": "session-v2" },
+    "binding_context": { "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "transition_id": "accept_intensive_proof", "predecessor_version": "preparation-7", "predicate_proof_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "reserved_transition_receipt_version": "reserve-1", "render_receipt_ref": "render-1", "displayed_consequence_text": "Your answer sets the route and proof required before people or tools change.", "server_commit_time": "2026-09-16T09:00:00Z" },
+    "correction_graph": {
+      "graph_head": "graph-9", "graph_epoch": 9, "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "root_dependency_ids": ["dep-1"],
+      "edges": [
+        { "from_dependency_id": "dep-1", "to_dependency_id": "dep-1", "to_dependency_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111", "edge_kind": "content_dependency" },
+        { "from_dependency_id": "dep-1", "to_dependency_id": "dep-2", "to_dependency_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222", "edge_kind": "permission_dependency" },
+        { "from_dependency_id": "dep-2", "to_dependency_id": "dep-3", "to_dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333", "edge_kind": "scope_dependency" }
+      ]
+    },
+    "external_reservation": { "reservation_id": "reservation-1", "reserved_receipt_version": "reserve-1", "fact_kind": "test_external_fact", "policy_id": "test-policy-1", "external_identity": "token-1", "idempotency_key": "idem-1", "transaction_nonce": "nonce-1", "canonical_request_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "predecessor_version": "preparation-7", "source_heads_seal": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "set_seals_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "revocation_epochs_fingerprint": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "human_authority_receipt_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "visible_consequence_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "provisional_transition_version": "provisional-1", "protocol": "immutable_authority_lease", "server_transaction_time": "2026-09-16T09:00:00Z", "valid_until": "2026-09-16T09:30:00Z", "maximum_clock_skew_seconds": 30 },
+    "test_external_policy": { "policy_id": "test-policy-1", "fact_kind": "test_external_fact", "external_identity": "token-1", "protocol": "immutable_authority_lease", "valid_until": "2026-09-16T09:30:00Z", "maximum_clock_skew_seconds": 30, "standing": "test_only_not_effective_authority" },
+    "test_consume_policy": { "policy_id": "test-policy-1", "fact_kind": "test_external_fact", "external_identity": "token-1", "protocol": "online_conditional_verify_and_consume", "valid_until": "2026-09-16T09:30:00Z", "maximum_clock_skew_seconds": 30, "standing": "test_only_not_effective_authority" }
+  },
+  "authentication_vectors": [
+    { "id": "AUTH-SIGNED-VALID", "mutation": null, "expected": "valid" },
+    { "id": "AUTH-FORGED-SIGNATURE", "mutation": { "path": ["issuer_signature_base64"], "value": "AAAA" }, "expected": "signature_invalid" },
+    { "id": "AUTH-WORKLOAD-ISSUER", "mutation": { "path": ["issuer_id"], "value": "workload" }, "expected": "issuer_invalid" },
+    { "id": "AUTH-CREDENTIAL-SWAP", "mutation": { "path": ["credential_id"], "value": "cred-krish" }, "expected": "credential_invalid" }
+  ],
+  "semantic_profile_vectors": [
+    { "id": "PROFILE-VALID-DIRECT", "dependency_id": "current_checkpoint_exact", "mutation": null, "expected": "valid" },
+    { "id": "PROFILE-PARTIAL", "dependency_id": "current_checkpoint_exact", "mutation": { "op": "delete", "path": ["tenant_id"] }, "expected": "shape_invalid" },
+    { "id": "PROFILE-OWNER-SUBSTITUTION", "dependency_id": "current_checkpoint_exact", "mutation": { "path": ["speaker_or_issuer"], "value": "attacker" }, "expected": "owner_invalid" },
+    { "id": "PROFILE-EXPIRED", "dependency_id": "current_checkpoint_exact", "mutation": { "path": ["valid_until"], "value": "2026-09-16T08:00:00Z" }, "expected": "stale" },
+    { "id": "PROFILE-VALID-DERIVED", "dependency_id": "checkpoint_integrity_valid", "mutation": null, "expected": "valid" },
+    { "id": "PROFILE-WRONG-DERIVATION", "dependency_id": "checkpoint_integrity_valid", "mutation": { "path": ["derivation_function_id"], "value": "attacker" }, "expected": "derivation_invalid" },
+    { "id": "PROFILE-WIDENED-AUDIENCE", "dependency_id": "checkpoint_integrity_valid", "mutation": { "path": ["permitted_audience"], "value": ["leader-1", "krish", "public"] }, "expected": "derivation_non_widening_invalid" },
+    { "id": "PROFILE-DERIVED-MISSING-INPUT", "dependency_id": "checkpoint_integrity_valid", "mutation": { "op": "remove_derived_input" }, "expected": "derivation_input_set_invalid" },
+    { "id": "PROFILE-DERIVED-STALE-INPUT", "dependency_id": "checkpoint_integrity_valid", "mutation": { "op": "expire_derived_input" }, "expected": "derivation_freshness_invalid" }
+  ],
+  "normative_vectors": [
+    { "id": "NORMATIVE-VALID", "mutation": null, "consume_at": "2026-09-16T09:00:00Z", "expected": "valid" },
+    { "id": "NORMATIVE-WRONG-DOMAIN", "mutation": { "path": ["domain_separator"], "value": "ATTACKER" }, "expected": "constant_invalid" },
+    { "id": "NORMATIVE-WRONG-BUNDLE", "mutation": { "path": ["authority_bundle_fingerprint"], "value": "0000000000000000000000000000000000000000000000000000000000000000" }, "expected": "binding_invalid" },
+    { "id": "NORMATIVE-WRONG-KIND", "mutation": { "path": ["owned_judgement_kind"], "value": "purpose" }, "expected": "question_binding_invalid" },
+    { "id": "NORMATIVE-WRONG-VALUE", "mutation": { "path": ["selected_option"], "value": "banana" }, "expected": "question_binding_invalid" },
+    { "id": "NORMATIVE-WRONG-AUDIENCE", "mutation": { "path": ["permitted_audience"], "value": ["public"] }, "expected": "binding_invalid" },
+    { "id": "NORMATIVE-EXPIRED-CONSUMPTION", "mutation": null, "consume_at": "2026-09-16T09:40:00Z", "expected": "expired" },
+    { "id": "NORMATIVE-STALE-BEFORE", "mutation": { "path": ["accepted_decision_before_fingerprint"], "value": "0000000000000000000000000000000000000000000000000000000000000000" }, "expected": "decision_invalid" },
+    { "id": "NORMATIVE-CONSEQUENCE-REHASH", "mutation": { "path": ["displayed_consequence_text"], "value": "A hidden different consequence" }, "expected": "render_binding_invalid" }
+    ,{ "id": "NORMATIVE-FREE-VALID", "mutation": { "op": "free_expression_valid" }, "consume_at": "2026-09-16T09:00:00Z", "expected": "valid" }
+    ,{ "id": "NORMATIVE-FREE-LATE", "mutation": { "op": "free_expression_late" }, "consume_at": "2026-09-16T09:00:00Z", "expected": "free_confirmation_invalid" }
+  ],
+  "final_authority_vectors": [
+    { "id": "FINAL-VALID", "mutation": null, "expected": "valid" },
+    { "id": "FINAL-WRONG-DOMAIN", "mutation": { "path": ["domain_separator"], "value": "ATTACKER" }, "expected": "constant_invalid" },
+    { "id": "FINAL-WRONG-SUBJECT", "mutation": { "path": ["subject_id"], "value": "other-subject" }, "expected": "binding_invalid" },
+    { "id": "FINAL-WRONG-AUDIENCE", "mutation": { "path": ["permitted_audience"], "value": ["public"] }, "expected": "binding_invalid" },
+    { "id": "FINAL-WRONG-PREDECESSOR", "mutation": { "path": ["predecessor_version"], "value": "attacker" }, "expected": "binding_invalid" },
+    { "id": "FINAL-WRONG-RESERVATION", "mutation": { "path": ["reserved_transition_receipt_version"], "value": "attacker" }, "expected": "binding_invalid" },
+    { "id": "FINAL-FORGED-AUTH-EVENT", "mutation": { "path": ["authority_proofs", 0, "authentication_event_ref"], "value": "forged" }, "expected": "authority_invalid" },
+    { "id": "FINAL-FORGED-AUTHORITY-SIGNATURE", "mutation": { "op": "mutate_authority_event", "event_ref": "final-authority-leader-1", "path": ["issuer_signature_base64"], "value": "AAAA" }, "expected": "authority_invalid" },
+    { "id": "FINAL-SIGNED-AUTHORITY-MISMATCH", "mutation": { "op": "mutate_authority_event", "event_ref": "final-authority-leader-1", "path": ["predecessor_version"], "value": "attacker" }, "expected": "authority_invalid" },
+    { "id": "FINAL-EXPIRED", "mutation": { "path": ["valid_until"], "value": "2026-09-16T08:30:00Z" }, "expected": "expired" }
+  ],
+  "predicate_vectors": [
+    { "id": "PREDICATE-COMPLETE", "transition_id": "accept_intensive_proof", "mutation": null, "expected": "satisfied" },
+    { "id": "PREDICATE-ONE-ONLY", "transition_id": "accept_intensive_proof", "mutation": { "op": "keep_first_result" }, "expected": "set_mismatch" },
+    { "id": "PREDICATE-EXTRA", "transition_id": "accept_intensive_proof", "mutation": { "op": "add_extra_result" }, "expected": "set_mismatch" },
+    { "id": "PREDICATE-DUPLICATE", "transition_id": "accept_intensive_proof", "mutation": { "op": "duplicate_first_result" }, "expected": "set_mismatch" },
+    { "id": "PREDICATE-MISSING", "transition_id": "accept_intensive_proof", "mutation": { "op": "set_first_disposition", "value": "missing" }, "expected": "indeterminate" },
+    { "id": "PREDICATE-CONTRADICTED", "transition_id": "accept_intensive_proof", "mutation": { "op": "set_first_disposition", "value": "contradicted" }, "expected": "unsatisfied" }
+  ],
+  "question_vectors": [
+    { "id": "QUESTION-VALID", "mutation": null, "session": "empty_session", "expected": "valid" },
+    { "id": "QUESTION-GENERIC", "mutation": { "path": ["question"], "value": "What would success look like?" }, "session": "empty_session", "expected": "case_specificity_missing" },
+    { "id": "QUESTION-CASE-NAME-GAMING", "mutation": { "path": ["question"], "value": "What would success look like for Aperture House's marketing team?" }, "session": "empty_session", "expected": "required_concept_missing" },
+    { "id": "QUESTION-HUGE-OPTION", "mutation": { "op": "repeat_option", "count": 100 }, "session": "empty_session", "expected": "copy_budget_exceeded" },
+    { "id": "QUESTION-TECHNICAL", "mutation": { "path": ["heading"], "value": "Predicate proof" }, "session": "empty_session", "expected": "technical_vocabulary" },
+    { "id": "QUESTION-SERIAL", "mutation": null, "session": "asked_session", "expected": "safe_hold_no_followup" }
+  ],
+  "correction_vectors": [
+    { "id": "CORRECTION-VALID", "mutation": null, "expected": "complete" },
+    { "id": "CORRECTION-OMIT-DESCENDANT", "mutation": { "op": "remove_receipt", "dependency_id": "dep-3" }, "expected": "closure_or_receipt_mismatch" },
+    { "id": "CORRECTION-TAMPER-ACTION", "mutation": { "op": "tamper_receipt_without_rehash", "dependency_id": "dep-2", "field": "repair_action", "value": "erase_unrelated_subject" }, "expected": "receipt_fingerprint_invalid" },
+    { "id": "CORRECTION-TAMPER-AND-REHASH", "mutation": { "op": "tamper_receipt_and_rehash", "dependency_id": "dep-2", "field": "repair_action", "value": "erase_authorized_copy" }, "expected": "authoritative_receipt_mismatch" },
+    { "id": "CORRECTION-REPLAY-GRAPH", "mutation": { "op": "change_graph_epoch_only", "value": 10 }, "expected": "graph_or_binding_invalid" },
+    { "id": "CORRECTION-RESIDUAL-STEERING", "mutation": { "op": "set_current_steering", "dependency_id": "dep-1", "value": true }, "expected": "receipt_or_steering_invalid" }
+  ],
+  "external_vectors": [
+    { "id": "EXTERNAL-INACTIVE-BLOCKED", "policy": "none", "events": ["commit_local_reservation", "acquire_bound_external_authority"], "expected": "policy_inactive" },
+    { "id": "EXTERNAL-LEASE-HAPPY-TEST-POLICY", "policy": "test_external_policy", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "immutable_lease_still_current"], "expected": "finalized" },
+    { "id": "EXTERNAL-CONSUME-HAPPY-TEST-POLICY", "policy": "test_consume_policy", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "conditional_token_consumed"], "expected": "finalized" },
+    { "id": "EXTERNAL-CONSUME-REPLAY-BLOCKED", "policy": "test_consume_policy", "mutation": { "op": "preconsume_external_identity" }, "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "conditional_token_consumed"], "expected": "guard_failed" },
+    { "id": "EXTERNAL-CAS-CHANGED", "policy": "test_external_policy", "mutation": { "event": "commit_local_provisional", "path": ["predecessor_version"], "value": "changed" }, "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional"], "expected": "guard_failed" },
+    { "id": "EXTERNAL-EXPIRED", "policy": "test_external_policy", "mutation": { "event": "acquire_bound_external_authority", "path": ["server_transaction_time"], "value": "2026-09-16T10:00:00Z" }, "events": ["commit_local_reservation", "acquire_bound_external_authority"], "expected": "guard_failed" },
+    { "id": "EXTERNAL-LOST-ACK", "policy": "test_external_policy", "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "ack_lost_query_same_token_nonce"], "expected": "local_committed_pending_ack" },
+    { "id": "EXTERNAL-COLLISION", "policy": "test_external_policy", "mutation": { "event": "ack_lost_query_same_token_nonce", "path": ["canonical_request_fingerprint"], "value": "9999999999999999999999999999999999999999999999999999999999999999" }, "events": ["commit_local_reservation", "acquire_bound_external_authority", "commit_local_provisional", "ack_lost_query_same_token_nonce"], "expected": "collision" },
+    { "id": "EXTERNAL-ILLEGAL-DIRECT-FINAL", "policy": "test_external_policy", "events": ["commit_local_reservation", "immutable_lease_still_current"], "expected": "illegal_transition" }
+  ]
+}

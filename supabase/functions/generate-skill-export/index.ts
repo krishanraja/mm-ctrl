@@ -60,6 +60,7 @@
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { buildMemoryContext } from "../_shared/memory-context-builder.ts";
 import { selectModel } from "../_shared/openai-utils.ts";
 import { callLLMWithFallback, providerFromModel } from "../_shared/llm-fallback.ts";
@@ -71,7 +72,9 @@ import {
 } from "./prompt.ts";
 import { runQualityGate, type QualityCheck, type SkillData } from "./quality-gate.ts";
 import { buildSkillZipFromPackage, packageFromZipInput, type BuildSkillZipInput } from "./zip.ts";
-import { recordAiUsage, checkDailySoftCap } from "../_shared/ai-usage.ts";
+import { estimateCostUsd } from "../_shared/ai-usage.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 import {
   collectClaims,
   collectNotEstablished,
@@ -101,7 +104,7 @@ import {
   citedMemoryFactIds,
   loadGradedWork,
   loadPointerTargets,
-  persistCitedSpans,
+  prepareCitedSpans,
 } from "./provenance.ts";
 import { loadReleaseContext } from "./release.ts";
 import { threeNumbers } from "../_shared/skill-release.ts";
@@ -111,6 +114,9 @@ const log = createLogger("generate-skill-export");
 
 /** Spec 4.5: one regeneration attempt, then the leader decides. Never a loop. */
 const MAX_GENERATION_PASSES = 2;
+const MAX_REQUEST_BYTES = 100_000;
+const REQUEST_ID = /^[A-Za-z0-9_-]{16,120}$/;
+const REQUEST_KEYS = new Set(["request_id", "transcript", "own_words", "skill_name_hint", "seed"]);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -136,21 +142,69 @@ interface SkillJson {
   };
 }
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+async function sha256Hex(value: string | Uint8Array): Promise<string> {
+  const bytes = typeof value === "string" ? new TextEncoder().encode(value) : value;
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
 
+async function advanceRun(
+  client: SupabaseClient,
+  runId: string,
+  stage: "generating" | "checking" | "packaging",
+  detail: Record<string, unknown>,
+  capability: string,
+): Promise<void> {
+  const { error } = await client.rpc("advance_generate_skill_export_run", {
+    p_run_id: runId,
+    p_stage: stage,
+    p_stage_detail: detail,
+    p_capability: capability,
+  });
+  if (error) throw new Error(`skill_export_stage_failed:${error.code ?? "unknown"}`);
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  let markFailed: ((message: string) => Promise<void>) | null = null;
+  let removeUploaded: (() => Promise<void>) | null = null;
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return jsonResponse({ error: "Missing Authorization header" }, 401);
+    if (req.method !== "POST") return jsonResponse({ error: "method_not_allowed" }, 405);
+    if (!isJsonRequest(req.headers)) return jsonResponse({ error: "content_type_must_be_json" }, 415);
+
+    let body: Record<string, unknown>;
+    try {
+      const raw = await readJsonWithLimit(req, MAX_REQUEST_BYTES);
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("invalid_shape");
+      body = raw as Record<string, unknown>;
+    } catch (error) {
+      if (error instanceof Error && error.message === "request_too_large") {
+        return jsonResponse({ error: "request_too_large" }, 413);
+      }
+      return jsonResponse({ error: "invalid_json" }, 400);
+    }
+    if (Object.keys(body).some((key) => !REQUEST_KEYS.has(key))) {
+      return jsonResponse({ error: "unexpected_field" }, 400);
     }
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+    const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+    const rpcCapability = Deno.env.get("GENERATE_SKILL_EXPORT_RPC_SECRET") ?? "";
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+      log.error("database configuration does not match the configured project");
+      return jsonResponse({ error: "database_configuration_error" }, 503);
+    }
+    if (rpcCapability.length < 32) return jsonResponse({ error: "skill_export_configuration_error" }, 503);
+
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader) return jsonResponse({ error: "Missing Authorization header" }, 401);
+
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
+      supabaseUrl,
+      anonKey,
+      { global: { headers: { Authorization: authHeader } }, auth: { persistSession: false } },
     );
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -158,19 +212,8 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Unauthorized" }, 401);
     }
 
-    // Skill building is open to any authenticated user (free for now). The
-    // service client is still used for the soft cap and the row insert below.
-    const serviceClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
-    // Generous soft cap: logs an overage signal, never blocks. Reported back so
-    // the client may show a gentle notice.
-    const softCap = await checkDailySoftCap(serviceClient, user.id, "generate-skill-export");
-
-    const body = await req.json().catch(() => ({}));
-    const transcript = typeof body?.transcript === "string" ? body.transcript : "";
+    const requestId = typeof body.request_id === "string" ? body.request_id.trim() : "";
+    const transcript = typeof body.transcript === "string" ? body.transcript.trim() : "";
     const skillNameHint = typeof body?.skill_name_hint === "string"
       ? body.skill_name_hint.trim()
       : undefined;
@@ -190,7 +233,7 @@ Deno.serve(async (req) => {
      * pass nothing keep the old behaviour, where the whole transcript is the
      * leader's because they typed or spoke it.
      */
-    const ownWords = typeof body?.own_words === "string" ? body.own_words.trim() : "";
+    const ownWords = typeof body.own_words === "string" ? body.own_words.trim() : "";
 
     // Optional seed: when an entry point (Edge view chip, Memory blocker
     // button, Briefing decision_trigger button) hands the user a pre-anchored
@@ -199,24 +242,88 @@ Deno.serve(async (req) => {
     const SEED_KINDS = ["blocker", "decision", "mission", "briefing_segment", "example"] as const;
     type SeedKind = typeof SEED_KINDS[number];
     let seed: { kind: SeedKind; text: string } | undefined;
-    if (body?.seed && typeof body.seed === "object") {
-      const rawKind = body.seed.kind;
-      const rawText = body.seed.text;
+    if (body.seed !== undefined) {
+      if (!body.seed || typeof body.seed !== "object" || Array.isArray(body.seed)) {
+        return jsonResponse({ error: "invalid_seed" }, 400);
+      }
+      const rawSeed = body.seed as Record<string, unknown>;
+      if (Object.keys(rawSeed).some((key) => !["kind", "text"].includes(key))) {
+        return jsonResponse({ error: "invalid_seed" }, 400);
+      }
+      const rawKind = rawSeed.kind;
+      const rawText = rawSeed.text;
       if (
         typeof rawText === "string" &&
-        rawText.trim().length > 0 &&
+        rawText.trim().length > 0 && rawText.trim().length <= 1000 &&
         SEED_KINDS.includes(rawKind as SeedKind)
       ) {
-        seed = { kind: rawKind as SeedKind, text: rawText.trim().slice(0, 1000) };
+        seed = { kind: rawKind as SeedKind, text: rawText.trim() };
+      } else {
+        return jsonResponse({ error: "invalid_seed" }, 400);
       }
     }
 
-    if (!transcript || transcript.trim().length < 20) {
+    if (!REQUEST_ID.test(requestId)) return jsonResponse({ error: "request_id_required" }, 400);
+    if (transcript.length < 20 || transcript.length > 50_000) {
       return jsonResponse(
         { error: "Transcript must be at least 20 characters. Describe the workflow in more detail." },
         400,
       );
     }
+    if (ownWords.length > 30_000 || (ownWords && !transcript.includes(ownWords))) {
+      return jsonResponse({ error: "invalid_own_words" }, 400);
+    }
+    if (skillNameHint && (skillNameHint.length > 120 || /[\u0000-\u001f]/.test(skillNameHint))) {
+      return jsonResponse({ error: "invalid_skill_name_hint" }, 400);
+    }
+
+    const requestFingerprint = await sha256Hex(JSON.stringify({
+      transcript,
+      own_words: ownWords,
+      skill_name_hint: skillNameHint ?? null,
+      seed: seed ?? null,
+    }));
+    const transcriptSha = await sha256Hex(transcript);
+    const { data: reservation, error: reserveError } = await supabase.rpc(
+      "reserve_generate_skill_export_run",
+      {
+        p_request_id: requestId,
+        p_request_fingerprint: requestFingerprint,
+        p_transcript_sha: transcriptSha,
+        p_capability: rpcCapability,
+      },
+    );
+    if (reserveError || !reservation) {
+      const message = reserveError?.message ?? "unknown";
+      if (message.includes("generate_skill_export_request_conflict")) return jsonResponse({ error: "request_id_conflict" }, 409);
+      if (message.includes("generate_skill_export_daily_run_limit")) return jsonResponse({ error: "daily_run_limit" }, 429);
+      if (message.includes("generate_skill_export_daily_spend_limit")) return jsonResponse({ error: "daily_spend_limit" }, 429);
+      throw new Error(`skill_export_reservation_failed:${reserveError?.code ?? "unknown"}`);
+    }
+    const generateRunId = typeof reservation.run_id === "string" ? reservation.run_id : "";
+    if (!generateRunId) throw new Error("skill_export_reservation_invalid");
+    if (reservation.idempotent === true) {
+      return jsonResponse({
+        run_id: generateRunId,
+        stage: reservation.stage,
+        status: reservation.status,
+        result: reservation.result ?? {},
+        idempotent: true,
+      }, reservation.status === "running" ? 202 : 200);
+    }
+
+    markFailed = async (message: string) => {
+      await supabase.rpc("finish_generate_skill_export_run", {
+        p_run_id: generateRunId,
+        p_stage: "failed",
+        p_status: "failed",
+        p_stage_detail: { failed_at: new Date().toISOString() },
+        p_error: message.slice(0, 1000),
+        p_capability: rpcCapability,
+      });
+    };
+
+    await advanceRun(supabase, generateRunId, "generating", {}, rpcCapability);
 
     // Pull Memory Web context + edge profile so the LLM has the leader's
     // background. Identical pattern to generate-custom-export.
@@ -240,7 +347,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { data: edgeProfile } = await serviceClient
+    const { data: edgeProfile } = await supabase
       .from("edge_profiles")
       .select("strengths, weaknesses")
       .eq("user_id", user.id)
@@ -277,7 +384,7 @@ Deno.serve(async (req) => {
     // sourced as NOT ESTABLISHED, which is the system working rather than
     // failing.
     const citableText = ownWords || transcript;
-    const targets = await loadPointerTargets(serviceClient, user.id, citableText)
+    const targets = await loadPointerTargets(supabase, user.id, citableText)
       .catch((err) => {
         log.warn("pointer targets unavailable, prov.* checks stay advisory", {
           userId: user.id,
@@ -285,14 +392,14 @@ Deno.serve(async (req) => {
         });
         return null;
       });
-    const gradedWork = await loadGradedWork(serviceClient, user.id);
+    const gradedWork = await loadGradedWork(supabase, user.id);
 
     // What this package is compiled from, and what (if anything) was actually
     // measured about those rules. Read once, before the generation loop, and
     // used in two places that must never disagree: the status in the package's
     // own frontmatter, and the release block on the artefact row.
     const releaseContext = await loadReleaseContext(
-      serviceClient,
+      supabase,
       user.id,
       targets?.surface ?? null,
     );
@@ -317,6 +424,17 @@ Deno.serve(async (req) => {
     // eventually edit a line the gate never flagged.
     let gateQuotes: string[] = [];
     let gateOptions: ProvenanceOptions = {};
+    let citedSource: { id: string; kind: "transcript"; label: string; body: string } | null = null;
+    const citedEvidence: Array<{
+      id: string;
+      body: string;
+      quote: string;
+      quote_start: number;
+      quote_end: number;
+      source_label: string;
+      situated: true;
+      situation: string;
+    }> = [];
 
     // The first user turn, identical on both passes. The regeneration pass
     // appends the previous attempt and a repair instruction to it rather than
@@ -350,6 +468,7 @@ Deno.serve(async (req) => {
 
       // Generate via the LLM. JSON mode keeps the model on-format. The
       // system prompt encodes the triage gate + extraction rules.
+      const modelStartedAt = Date.now();
       const aiResponse = await callLLMWithFallback(
         {
           messages,
@@ -364,62 +483,82 @@ Deno.serve(async (req) => {
 
       lastModel = aiResponse.model;
 
-      // Record the spend signal (service role: ai_usage_audit has no INSERT policy).
-      await recordAiUsage(serviceClient, {
-        userId: user.id,
+      const provider = providerFromModel(aiResponse.model);
+      const latencyMs = Date.now() - modelStartedAt;
+      const estimatedCost = estimateCostUsd({
         functionName: "generate-skill-export",
-        provider: providerFromModel(aiResponse.model),
+        provider,
         model: aiResponse.model,
-        purpose: pass === 1 ? "skill-export" : "skill-export-regen",
         promptTokens: aiResponse.usage?.prompt_tokens,
         completionTokens: aiResponse.usage?.completion_tokens,
         totalTokens: aiResponse.usage?.total_tokens,
-        status: "ok",
+        latencyMs,
       });
+      const { error: usageError } = await supabase.rpc("record_generate_skill_export_usage", {
+        p_run_id: generateRunId,
+        p_pass: pass,
+        p_provider: provider,
+        p_model: aiResponse.model,
+        p_prompt_tokens: aiResponse.usage?.prompt_tokens ?? 0,
+        p_completion_tokens: aiResponse.usage?.completion_tokens ?? 0,
+        p_total_tokens: aiResponse.usage?.total_tokens ?? 0,
+        p_latency_ms: latencyMs,
+        p_est_cost_usd: estimatedCost,
+        p_capability: rpcCapability,
+      });
+      if (usageError) throw new Error(`usage_receipt_failed:${usageError.code ?? "unknown"}`);
 
       try {
         parsed = JSON.parse(aiResponse.content || "{}") as SkillJson;
       } catch (err) {
         console.error("generate-skill-export: failed to parse LLM JSON", err, aiResponse.content?.slice(0, 200));
-        return jsonResponse(
-          { error: "We couldn't generate a skill from this. Try being more specific about the steps you follow." },
-          502,
-        );
+        throw new Error("skill_generation_unreadable");
       }
 
       if (!parsed?.triage) {
-        return jsonResponse(
-          { error: "We couldn't generate a skill from this. Try being more specific about the steps you follow." },
-          502,
-        );
+        throw new Error("skill_generation_unreadable");
       }
 
       // Triage failure - record the routing decision so the UI can show what to do next.
       if (!parsed.triage.passed) {
         const triageResult = parsed.triage.result || "memory_fact";
-        await serviceClient.from("skill_exports").insert({
-          user_id: user.id,
-          skill_name: skillNameHint || "(triage routed)",
-          description: parsed.triage.reasoning || "",
-          transcript,
-          triage_result: triageResult,
-        });
+        const { data: triageFinalized, error: triageError } = await supabase.rpc(
+          "finalize_generate_skill_export_triage",
+          {
+            p_run_id: generateRunId,
+            p_skill_export_id: crypto.randomUUID(),
+            p_export: {
+              skill_name: skillNameHint || "(triage routed)",
+              description: parsed.triage.reasoning || "",
+              transcript,
+              triage_result: triageResult,
+            },
+            p_stage_detail: { triage_result: triageResult, passes: pass },
+            p_capability: rpcCapability,
+          },
+        );
+        if (triageError || !triageFinalized) {
+          if ((triageError?.message ?? "").includes("generate_skill_export_stale_source")) {
+            throw new Error("source_changed_retry");
+          }
+          throw new Error(`triage_finalization_failed:${triageError?.code ?? "unknown"}`);
+        }
+        markFailed = null;
 
         return jsonResponse({
+          run_id: generateRunId,
           triage: {
             passed: false,
             result: triageResult,
             reasoning: parsed.triage.reasoning || "",
           },
+          idempotent: triageFinalized.already_finalized === true,
         }, 200);
       }
 
       const skill = parsed.skill;
       if (!skill || !skill.name || !skill.description || !skill.body) {
-        return jsonResponse(
-          { error: "The generated skill was incomplete. Please try again." },
-          502,
-        );
+        throw new Error("skill_generation_incomplete");
       }
 
       const zipInput: BuildSkillZipInput = {
@@ -465,13 +604,11 @@ Deno.serve(async (req) => {
       gateQuotes = quotes;
       const files = gatedFiles(pkg);
 
-      // Persist the transcript spans this package actually cited BEFORE the gate
-      // reads the id sets, so every id the gate resolves is a live row.
+      // Prepare the transcript spans this package cites before the gate reads
+      // the id sets. The rows are committed with the package, never ahead of it.
       if (targets && targets.pendingSpans.size > 0) {
         const cited = citedEvidenceShortIds(collectClaims(files, quotes));
-        const { dropped } = await persistCitedSpans(
-          serviceClient,
-          user.id,
+        const prepared = prepareCitedSpans(
           // The SAME string the spans were sliced from. Passing the full
           // transcript here when the spans came from citableText would store a
           // source the offsets no longer index, which is a silent provenance
@@ -480,18 +617,15 @@ Deno.serve(async (req) => {
           skill.name,
           targets,
           cited,
+          () => crypto.randomUUID(),
+          citedSource?.id,
         );
-        if (dropped.length > 0) {
-          log.warn("cited transcript spans could not be persisted", {
-            userId: user.id,
-            dropped: dropped.length,
-          });
-        }
+        citedSource = prepared.source ?? citedSource;
+        citedEvidence.push(...prepared.evidence);
       }
 
-      // Built AFTER the persist, because that step is what decides which ids
-      // are live. The gate must read the sets as they are now, not as they were
-      // when the model was asked.
+      // Built after preparation, against the same ids the final transaction
+      // will own.
       gateOptions = { ...(targets?.options ?? {}), evidenceQuotes: quotes };
       // Collected once, against the final id sets, so the ledger rows and the
       // gate findings describe the same package. Two collections that disagree
@@ -517,10 +651,7 @@ Deno.serve(async (req) => {
       // advisory or handled by the regeneration path below.
       const nameCheck = qualityGate.checks.find((c) => c.id === "package.nameFormat");
       if (nameCheck && !nameCheck.passed) {
-        return jsonResponse(
-          { error: `Generated skill name "${skill.name}" is invalid. Please regenerate.` },
-          502,
-        );
+        throw new Error("skill_name_invalid");
       }
 
       violations = provenanceViolations(qualityGate.checks);
@@ -538,7 +669,7 @@ Deno.serve(async (req) => {
 
     const skill = parsed?.skill;
     if (!parsed || !skill || !pkg || !qualityGate) {
-      return jsonResponse({ error: "The generated skill was incomplete. Please try again." }, 502);
+      throw new Error("skill_generation_incomplete");
     }
 
     // The number this phase exists to move: rules stated without pointing at
@@ -645,152 +776,131 @@ Deno.serve(async (req) => {
       skill_name: skill.name,
     });
 
-    const zipResult = await buildSkillZipFromPackage(pkg, skill.test_prompts || [], skill.name);
+    await advanceRun(supabase, generateRunId, "checking", {
+      passes: pass,
+      baseline_unresolved_claims: baselineUnresolvedClaims,
+      demoted_claims: demotedClaims,
+      unpointed_after_demotion: unpointedAfterDemotion,
+    }, rpcCapability);
 
-    // Persist the package in Storage FIRST, so the artefact survives the
-    // response unmounting. Before this, the installable ZIP existed only in
-    // the generation response: closing the tab lost it forever (live data
-    // loss, spec 4.8a / Phase 0 item 11). Non-fatal on failure - the inline
-    // base64 download still works for this session.
-    const zipPath = `${user.id}/${crypto.randomUUID()}-${skill.name}.zip`;
-    const { error: uploadError } = await serviceClient.storage
+    const zipResult = await buildSkillZipFromPackage(pkg, skill.test_prompts || [], skill.name);
+    const packageSha256 = await sha256Hex(zipResult.bytes);
+    const skillExportId = crypto.randomUUID();
+    const artifactId = crypto.randomUUID();
+    const zipPath = `${user.id}/${generateRunId}-${skill.name}.zip`;
+
+    await advanceRun(supabase, generateRunId, "packaging", {
+      package_sha256: packageSha256,
+      package_bytes: zipResult.byteLength,
+    }, rpcCapability);
+
+    // The object must exist before the database records may point at it. If
+    // the atomic finalization fails, the catch path removes this orphan.
+    const { error: uploadError } = await supabase.storage
       .from("skill-packages")
       .upload(zipPath, zipResult.bytes, {
         contentType: "application/zip",
-        upsert: true,
+        upsert: false,
       });
-    if (uploadError) {
-      console.warn("generate-skill-export: skill-packages upload failed", uploadError);
-    }
-    const storedZipPath = uploadError ? null : zipPath;
+    if (uploadError) throw new Error(`skill_package_upload_failed:${uploadError.message}`);
+    removeUploaded = async () => {
+      await supabase.storage.from("skill-packages").remove([zipPath]);
+    };
 
-    // Persist the export record with the Storage path.
-    const { data: insertRow } = await serviceClient
-      .from("skill_exports")
-      .insert({
-        user_id: user.id,
-        skill_name: skill.name,
-        description: skill.description,
-        transcript,
-        triage_result: "skill",
-        body_content: skill.body,
-        references_json: skill.references || [],
-        test_prompts: skill.test_prompts || [],
-        quality_gate: qualityGate as unknown as Record<string, unknown>,
-        archetype: skill.archetype || null,
-        version: 1,
-        zip_path: storedZipPath,
-      })
-      .select("id, created_at")
-      .single();
-
-    // Also persist in the unified generated_artifacts table so the Library
-    // tab on /memory can surface it alongside drafts, frameworks, exports,
-    // and custom briefings. Quiet on failure - if the table doesn't exist
-    // yet (migration not yet applied), the user still gets their skill.
-    //
-    // body is the FLATTENED package (CH-02): mcp-context.get_skill returns this
-    // one column, so a router whose leaves cannot be fetched would resolve to
-    // nothing on the far side. The flat form carries every leaf beneath the
-    // router under its own delimiter.
-    const { data: artifactRow, error: artifactInsertError } = await serviceClient
-      .from("generated_artifacts")
-      .insert({
-        user_id: user.id,
-        kind: "skill",
-        name: skill.name,
-        body: flattenPackageForPull(pkg),
-        metadata: {
-          archetype: skill.archetype || null,
-          zip_filename: `${skill.name}.zip`,
-          zip_path: storedZipPath,
-          skill_export_id: insertRow?.id || null,
-          test_prompts: skill.test_prompts || [],
-          // Which provider actually generated this artefact. The critique
-          // stage's "different provider on Signature" rule checks against
-          // this recorded fact, not an assumption (CH-14).
-          provider: providerFromModel(lastModel),
-          model: lastModel,
-          package_files: pkg.files.map((f) => f.path),
-          router_lines: routerLineCount(pkg),
-          provenance_passes: pass,
-          provenance_blocked: provenanceBlocked,
-          // The three numbers, persisted together so the reading survives the
-          // response. baseline is the generator, demoted is the repair, after
-          // is what the leader actually received.
-          baseline_unresolved_claims: baselineUnresolvedClaims,
-          total_imperatives: totalImperatives,
-          demoted_claims: demotedClaims,
-          unpointed_after_demotion: unpointedAfterDemotion,
-          // CH-02. Which version of the leader's standard this body was
-          // rendered from, and when. Without the pair, a pull cannot tell a
-          // current package from one the standard has moved past, and would go
-          // on serving the old one silently.
-          surface: targets?.surface ?? null,
-          criteria_version: releaseContext.criteriaVersion,
-          rendered_at: releaseContext.renderedAt,
-          // The label the delivery screen shows, and the numbers under it, with
-          // their provenance attached. Re-derived on read; never trusted raw.
-          release: {
-            label: releaseContext.release.label,
-            reason: releaseContext.release.reason,
-            numbers: releaseContext.release.numbers,
-          },
-        },
-      })
-      .select("id")
-      .single();
-    if (artifactInsertError) {
-      console.warn(
-        "generate-skill-export: generated_artifacts insert failed",
-        artifactInsertError,
-      );
-    }
-
-    // The provenance ledger: one row per claim per pass, plus the edges from
-    // this artefact back to the memory facts it was built out of. Both are
-    // best effort; neither is worth losing a package the leader is waiting for.
-    if (artifactRow?.id && targets) {
-      try {
-        const rows = passLedger.flatMap((entry) =>
+    const provenanceRows = targets
+      ? passLedger.flatMap((entry) =>
           buildProvenanceRows({
             userId: user.id,
-            artifactId: artifactRow.id,
+            artifactId,
             pass: entry.pass,
             claims: entry.claims,
             notEstablished: entry.notEstablished,
             targets,
-          })
-        );
-        if (rows.length > 0) {
-          const { error } = await serviceClient.from("skill_provenance").insert(rows);
-          if (error) log.warn("skill_provenance insert failed", { userId: user.id, error });
-        }
+          }).map(({ user_id: _userId, ...row }) => row)
+        )
+      : [];
+    const memoryLinkRows = targets
+      ? buildMemoryLinkRows(user.id, artifactId, citedMemoryFactIds(claims, targets))
+          .map(({ user_id: _userId, ...row }) => row)
+      : [];
 
-        const linkRows = buildMemoryLinkRows(
-          user.id,
-          artifactRow.id,
-          citedMemoryFactIds(claims, targets),
-        );
-        if (linkRows.length > 0) {
-          const { error } = await serviceClient
-            .from("memory_links")
-            .upsert(linkRows, {
-              onConflict: "user_id,from_type,from_id,to_type,to_id,edge_type",
-              ignoreDuplicates: true,
-            });
-          if (error) log.warn("memory_links insert failed", { userId: user.id, error });
-        }
-      } catch (err) {
-        log.warn("provenance ledger write failed", { userId: user.id, error: err });
+    const artifactMetadata = {
+      archetype: skill.archetype || null,
+      zip_filename: `${skill.name}.zip`,
+      zip_path: zipPath,
+      test_prompts: skill.test_prompts || [],
+      provider: providerFromModel(lastModel),
+      model: lastModel,
+      package_files: pkg.files.map((f) => f.path),
+      router_lines: routerLineCount(pkg),
+      provenance_passes: pass,
+      provenance_blocked: provenanceBlocked,
+      baseline_unresolved_claims: baselineUnresolvedClaims,
+      total_imperatives: totalImperatives,
+      demoted_claims: demotedClaims,
+      unpointed_after_demotion: unpointedAfterDemotion,
+      surface: targets?.surface ?? null,
+      criteria_version: releaseContext.criteriaVersion,
+      rendered_at: releaseContext.renderedAt,
+      release: {
+        label: releaseContext.release.label,
+        reason: releaseContext.release.reason,
+        numbers: releaseContext.release.numbers,
+      },
+    };
+    const { data: finalized, error: finalizeError } = await supabase.rpc(
+      "finalize_generate_skill_export_run",
+      {
+        p_run_id: generateRunId,
+        p_skill_export_id: skillExportId,
+        p_artifact_id: artifactId,
+        p_export: {
+          skill_name: skill.name,
+          description: skill.description,
+          transcript,
+          triage_result: "skill",
+          body_content: skill.body,
+          references_json: skill.references || [],
+          test_prompts: skill.test_prompts || [],
+          quality_gate: qualityGate,
+          archetype: skill.archetype || "",
+          version: 1,
+          zip_path: zipPath,
+          package_sha256: packageSha256,
+        },
+        p_artifact: {
+          name: skill.name,
+          body: flattenPackageForPull(pkg),
+          metadata: artifactMetadata,
+        },
+        p_cited_source: citedSource,
+        p_cited_evidence: citedEvidence,
+        p_provenance: provenanceRows,
+        p_memory_links: memoryLinkRows,
+        p_stage_detail: {
+          passes: pass,
+          provenance_blocked: provenanceBlocked,
+          quality_passed: qualityGate.summary.passed,
+          quality_total: qualityGate.summary.total,
+        },
+        p_capability: rpcCapability,
+      },
+    );
+    if (finalizeError || !finalized) {
+      const message = finalizeError?.message ?? "unknown";
+      if (message.includes("generate_skill_export_stale_source")) {
+        throw new Error("source_changed_retry");
       }
+      throw new Error(`skill_export_finalization_failed:${finalizeError?.code ?? "unknown"}`);
     }
+    removeUploaded = null;
+    markFailed = null;
 
     return jsonResponse({
-      soft_cap: softCap,
+      run_id: generateRunId,
       triage: parsed.triage,
       skill: {
-        id: insertRow?.id || null,
+        id: skillExportId,
         name: skill.name,
         description: skill.description,
         body: skill.body,
@@ -833,11 +943,21 @@ Deno.serve(async (req) => {
       zip_base64: zipResult.base64,
       zip_filename: `${skill.name}.zip`,
       zip_byte_length: zipResult.byteLength,
-      created_at: insertRow?.created_at || new Date().toISOString(),
+      package_sha256: packageSha256,
+      artifact_id: artifactId,
+      created_at: new Date().toISOString(),
+      idempotent: finalized.already_finalized === true,
     }, 200);
   } catch (err) {
-    console.error("generate-skill-export error:", err);
-    return jsonResponse({ error: (err as Error).message }, 500);
+    const message = err instanceof Error ? err.message : "skill_export_failed";
+    if (removeUploaded) await removeUploaded().catch(() => undefined);
+    if (markFailed) await markFailed(message).catch(() => undefined);
+    console.error("generate-skill-export error:", message);
+    if (message === "source_changed_retry") return jsonResponse({ error: message }, 409);
+    if (message === "skill_generation_unreadable" || message === "skill_generation_incomplete" || message === "skill_name_invalid") {
+      return jsonResponse({ error: message }, 502);
+    }
+    return jsonResponse({ error: "skill_export_failed" }, 500);
   }
 });
 

@@ -1,0 +1,166 @@
+{
+  "schema_version": "ctrl.g25.authenticated-product-hardening-proof.r91.v1",
+  "contract_id": "G25-AUTHENTICATED-PRODUCT-HARDENING-PROOF-R91",
+  "status": "isolated_authenticated_product_routes_passed_live_pin_risk_preserved",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECURITY-DEFINER-EXPOSURE-R82",
+    "G25-MEMORY-MUTATOR-HARDENING-PROOF-R90"
+  ],
+  "risk_found": {
+    "production_affected": true,
+    "production_mutated": false,
+    "function": "pin_decision(uuid)",
+    "root_cause": "The owner comparison uses ordinary inequality against auth.uid(). A null identity makes the condition unknown rather than true, so an anonymous caller with a known case id can pass the denial branch.",
+    "bounded_effect": "The target case can be pinned and the owner's other pinned case can be cleared.",
+    "historical_exploitation_known": false
+  },
+  "surface": {
+    "target_count": 8,
+    "signed_in_only_routes": [
+      "list_mcp_tokens()",
+      "mint_mcp_token(text,boolean)",
+      "pin_decision(uuid)",
+      "record_decision_outcome(uuid,text,text,smallint,text,text)",
+      "resolve_decision(uuid,text,text)",
+      "revoke_mcp_token(uuid)",
+      "submit_contest(text,text,uuid,text,text,text,jsonb)"
+    ],
+    "signed_in_and_service_route": [
+      "get_track_record(uuid)"
+    ],
+    "literal_deployed_callers": 0,
+    "current_browser_callers_present": true
+  },
+  "candidate": {
+    "path": "supabase/candidates/g25_security_definer_authenticated_product_hardening_r91.sql",
+    "sha256": "09e35beb6e95ca3caa336ab549348db9563920587283cd5d4d2b0244ef186226",
+    "verification_path": "supabase/candidates/g25_security_definer_authenticated_product_verification_r91.sql",
+    "verification_sha256": "98149aae13725a0305865f42d1099318d3e3855f8d7bd0b381b62195d5d8d965",
+    "runtime_smoke_path": "supabase/tests/database/g25_security_definer_authenticated_product_r91.test.sql",
+    "runtime_smoke_sha256": "351a833f6c8f3bec31ed55599c159502fb804412e0caedde759d60191d8f06f9",
+    "isolated_migrations": [
+      "g25_security_definer_authenticated_product_hardening_r91",
+      "g25_security_definer_authenticated_product_runtime_smoke_r91"
+    ]
+  },
+  "isolated_verification": {
+    "target_count": 8,
+    "resolved_count": 8,
+    "definer_count": 8,
+    "anon_denied_count": 8,
+    "authenticated_allowed_count": 8,
+    "service_acl_match_count": 8,
+    "public_denied_count": 8,
+    "pin_null_guard_present": true,
+    "pin_exact_owner_guard_present": true,
+    "definition_digests": {
+      "get_track_record(uuid)": "acd7e12ffcafe004e3f351cb796edd05",
+      "list_mcp_tokens()": "0746c83bce44e5c8a8351565ee926f1f",
+      "mint_mcp_token(text,boolean)": "31d4fb5408b43c40c7dda86491c667f3",
+      "pin_decision(uuid)": "00a04460113c474969b496aa691341d7",
+      "record_decision_outcome(uuid,text,text,smallint,text,text)": "df38fcde5f40fd5301f06b64ce0baf73",
+      "resolve_decision(uuid,text,text)": "d11442df74ac537692a774ba5895566e",
+      "revoke_mcp_token(uuid)": "7e633f217ed18e8bdb68553324689df6",
+      "submit_contest(text,text,uuid,text,text,text,jsonb)": "b207a003c0e848aa0677fb573480e106"
+    }
+  },
+  "runtime_smoke_history": [
+    {
+      "attempt": 1,
+      "result": "rolled_back_before_assertions",
+      "reason": "The test supplied an integer where the exact RPC signature requires smallint.",
+      "database_effect": "none"
+    },
+    {
+      "attempt": 2,
+      "result": "pass",
+      "cross_subject_track_record_blocked": true,
+      "cross_subject_pin_blocked": true,
+      "cross_subject_outcome_blocked": true,
+      "cross_subject_resolve_blocked": true,
+      "owned_pin_preserved": true,
+      "owned_outcome_and_brain_application_preserved": true,
+      "owned_resolve_preserved": true,
+      "owned_track_record_preserved": true,
+      "mcp_mint_list_revoke_preserved": true,
+      "contest_submission_preserved": true,
+      "service_track_record_preserved": true,
+      "anonymous_pin_body_guard_blocked": true,
+      "fixture_counts_after": {
+        "auth_users": 0,
+        "profiles": 0,
+        "user_roles": 0,
+        "decision_cases": 0,
+        "decision_outcomes": 0,
+        "mcp_tokens": 0,
+        "contest_reports": 0
+      }
+    }
+  ],
+  "advisor_progress": {
+    "after_r90": {
+      "anonymous_security_definer_executable": 7,
+      "authenticated_security_definer_executable": 17
+    },
+    "after_r91": {
+      "anonymous_security_definer_executable": 3,
+      "authenticated_security_definer_executable": 17
+    },
+    "remaining_anonymous_routes": [
+      "get_intake_for_registration(uuid)",
+      "get_share_card(uuid)",
+      "has_role(uuid,app_role)"
+    ],
+    "remaining_anonymous_routes_are_intentional_and_guarded": true,
+    "unrelated_findings_unchanged": {
+      "rls_enabled_no_policy": 24,
+      "extension_in_public": 2
+    }
+  },
+  "production_postcheck": {
+    "target_count": 8,
+    "anon_allowed_count": 4,
+    "authenticated_allowed_count": 8,
+    "service_allowed_count": 8,
+    "definitions_match_pre_change_digests": true,
+    "writes": 0
+  },
+  "whole_surface": {
+    "r82_route_count": 45,
+    "isolated_disposition_count": 45,
+    "isolated_behavior_tested_families": [
+      "high-risk service and scheduler routes",
+      "trigger routes and Auth signup hook",
+      "anonymous and subject-bound readers",
+      "memory mutators",
+      "decision, contest, track-record and MCP-token product routes"
+    ],
+    "production_applied": false,
+    "http_transport_proved": false,
+    "dynamic_external_callers_exhaustively_proved": false
+  },
+  "bounded_claim": "All 45 privileged routes identified by R82 now have an isolated disposition. The remaining product actions preserve owned behavior and deny cross-subject operations under simulated JWT claims. This does not close the two recorded production null-identity risks, prove PostgREST transport or authorize production application.",
+  "acceptance_gate": {
+    "isolated_acl_verification_passed": true,
+    "isolated_runtime_smoke_passed": true,
+    "fixtures_fully_cleaned": true,
+    "all_45_routes_dispositioned_in_isolation": true,
+    "production_unchanged": true,
+    "production_risks_closed": false,
+    "production_mutation_ready": false
+  },
+  "authority": {
+    "isolated_target_writes": [
+      "one eight-function ACL and pin-guard migration",
+      "one self-cleaning authenticated product smoke migration"
+    ],
+    "persistent_fixture_rows": 0,
+    "production_writes": 0,
+    "forbids": [
+      "production function or ACL mutation",
+      "claiming the live risks are remediated",
+      "merge, cutover or release"
+    ]
+  }
+}

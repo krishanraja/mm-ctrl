@@ -1,0 +1,47 @@
+{
+  "schema_version": "ctrl.g25.both-generation-correction.r29.v1",
+  "record_id": "G25-BOTH-GENERATION-CORRECTION-R29",
+  "status": "local_both_generation_correction_verified",
+  "depends_on": [
+    "G25-PREPARED-CORRECTION-INVALIDATION-R12",
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25"
+  ],
+  "operation": "apply one stable-custody correction to affected legacy and custody-native prepared derivatives",
+  "invariants": [
+    "the replacement authority is current and exact under stable custody",
+    "legacy ownership is absent from the correction identity",
+    "only receipts depending on the exact affected authority record are invalidated",
+    "unrelated intelligence remains current in both generations",
+    "each affected receipt receives a payload-free generation-specific event",
+    "both generations and the correction receipt commit or roll back together",
+    "exact replay is idempotent and conflicting replay fails closed",
+    "custody transfer does not change correction scope"
+  ],
+  "verified": [
+    "PostgreSQL 18.3 both-generation invalidation",
+    "one exact affected receipt in each generation",
+    "unrelated receipt preservation in each generation",
+    "operator-transfer stability",
+    "payload-free invalidation events",
+    "cross-generation forced-failure rollback",
+    "ordinary authenticated execution denial",
+    "legacy owner identity smuggling denial",
+    "superseded replacement denial",
+    "three mutation controls"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_both_generation_correction_r29.sql",
+    "candidate_sha256": "646b6667f6eefeb9af68d0ef8a0c916a11ff71de3af8e010ab76589f5d36adbd",
+    "runner": "scripts/run-ctrl-g25-both-generation-correction-r29.mjs",
+    "runner_sha256": "a3de3523404a9cafd01a0bf212dbcbd0086ff11231a2c59317dae254a25c8a01"
+  },
+  "next_gate": "Extend subject erasure and unified current reading across both generations, then close legacy-only writer competition before migration planning.",
+  "not_authorized": [
+    "runtime writer integration or legacy writer retirement",
+    "subject erasure",
+    "linked or production database use",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}

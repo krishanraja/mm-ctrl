@@ -1,0 +1,1036 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r84.semantic-set.v1",
+  "module_id": "semantic_set_program",
+  "profile_validation": {
+    "schema_source": "imported_semantic_profile_schema",
+    "additional_fields": "reject",
+    "owner_binding_source": "imported_owner_registry",
+    "content_fingerprint": "recompute_from_atomic_assertion_bytes",
+    "validity": "applicable_from_less_than_or_equal_to_evaluation_time_strictly_less_than_valid_until",
+    "accepted_brain_item": "requires_exact_item_ref_version_and_current_accepted_standing",
+    "contrary_assertions": "must_resolve_and_disposition_must_match",
+    "unregistered_dependency": "indeterminate"
+  },
+  "derivation_registry": [
+    {
+      "dependency_id": "all_dependencies_fresh",
+      "function_id": "derive_all_dependency_validity_intersection",
+      "version": "1",
+      "input_fact_kinds": [
+        "dependency_validity_boundaries"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    },
+    {
+      "dependency_id": "checkpoint_integrity_valid",
+      "function_id": "derive_checkpoint_integrity",
+      "version": "1",
+      "input_fact_kinds": [
+        "current_checkpoint_version",
+        "checkpoint_evidence_set"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    },
+    {
+      "dependency_id": "every_obligation_fulfilled_or_recorded_outstanding",
+      "function_id": "derive_close_obligation_disposition_completeness",
+      "version": "1",
+      "input_fact_kinds": [
+        "complete_close_obligation_set",
+        "obligation_dispositions"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    },
+    {
+      "dependency_id": "fresh_issuance_exists_where_required",
+      "function_id": "derive_required_grant_fresh_issuance",
+      "version": "1",
+      "input_fact_kinds": [
+        "complete_current_grant_set",
+        "grant_issuance_events"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    },
+    {
+      "dependency_id": "no_old_grant_can_revive",
+      "function_id": "derive_prior_grant_non_revival",
+      "version": "1",
+      "input_fact_kinds": [
+        "complete_prior_grant_set",
+        "complete_current_revocation_set"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    },
+    {
+      "dependency_id": "old_expired_or_revoked_grants_unusable",
+      "function_id": "derive_expired_revoked_grant_ineligibility",
+      "version": "1",
+      "input_fact_kinds": [
+        "complete_current_grant_set",
+        "complete_current_revocation_set"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    },
+    {
+      "dependency_id": "subject_and_case_identities_exact",
+      "function_id": "derive_subject_case_identity_binding",
+      "version": "1",
+      "input_fact_kinds": [
+        "current_subject_identity_binding",
+        "current_case_identity_binding"
+      ],
+      "freshness": "minimum_input_valid_until",
+      "non_widening": true
+    }
+  ],
+  "derived_profile_rules": [
+    "registered_dependency_function_and_version_exact",
+    "input_receipt_set_complete_and_content_addressed",
+    "output_subject_case_purpose_equal_inputs",
+    "output_audience_is_intersection_of_inputs",
+    "output_allowed_uses_is_intersection_of_inputs",
+    "output_consequence_not_wider_than_inputs",
+    "output_valid_until_equals_minimum_input_valid_until"
+  ],
+  "fixture_authority_resolver": {
+    "store_id": "r84-frozen-semantic-fixture-store",
+    "store_version": "1",
+    "profile_resolution_key_fields": [
+      "tenant_id",
+      "leader_id",
+      "subject_id",
+      "case_id",
+      "engagement_id",
+      "purpose_id",
+      "dependency_id",
+      "source_identity",
+      "row_version",
+      "authority_policy_version"
+    ],
+    "authoritative_context": {
+      "tenant_id": "tenant-1",
+      "leader_id": "leader-1",
+      "subject_id": "leader-1",
+      "case_id": "case-1",
+      "engagement_id": "engagement-1",
+      "purpose_id": "purpose-1",
+      "permitted_audience": [
+        "leader-1",
+        "krish"
+      ],
+      "allowed_uses": [
+        "predicate_evaluation"
+      ],
+      "consequence_class": "consequential_internal",
+      "schema_version": "semantic-profile-v1",
+      "row_version": "row-v1",
+      "applicable_from": "2026-09-16T08:00:00Z",
+      "valid_until": "2026-09-16T10:00:00Z"
+    },
+    "assertion_ref_prefix": "assertion:",
+    "assertion_bytes_domain": "R84_FIXTURE_ASSERTION_BYTES",
+    "mechanical_authority_species": "mechanical_fact",
+    "mechanical_epistemic_basis": "observed",
+    "derived_authority_species": "derived_fact",
+    "derived_epistemic_basis": "deterministically_derived",
+    "brain_item_policy": "no_fixture_profile_is_accepted_brain_standing",
+    "contrary_assertion_policy": "empty_fixture_store_reject_every_claimed_contrary_ref",
+    "derived_input_receipt_domain": "R84_DERIVED_INPUT_RECEIPT",
+    "evidence_kind_resolution": "owner_registry_mechanical_or_derived_equals_profile_atomic_judgement_equals_normative",
+    "disposition_resolution": "valid_resolved_current_evidence_equals_present_otherwise_typed_rejection"
+  },
+  "authoritative_conditional_state": {
+    "case_id": "case-1",
+    "state_version": "close-obligations-v1",
+    "outstanding_obligation_ids": [
+      "obligation-1"
+    ],
+    "set_seal": "7b03f6dccd55ced07389db2474410c444910a3cbb10be7804c3d23f0fcabfc85"
+  },
+  "conditional_dependency_rules": {
+    "responsible_human_owner_prefix": "responsible_human_owner:",
+    "revisit_date_prefix": "revisit_date:",
+    "authority_species": "mechanical_fact",
+    "epistemic_basis": "observed",
+    "source_type": "authoritative_close_obligation_store",
+    "canonical_owner": "lifecycle_transaction_coordinator"
+  },
+  "derived_fact_proof_required": [
+    "dependency_id",
+    "function_id",
+    "function_version",
+    "input_receipts",
+    "input_set_seal",
+    "output_profile_fingerprint",
+    "proof_fingerprint"
+  ],
+  "derived_input_required": [
+    "source_ref",
+    "source_version",
+    "fact_kind",
+    "value",
+    "member_ids",
+    "set_seal",
+    "issuance_event_ref",
+    "issuance_time",
+    "revocation_event_refs",
+    "revocation_epoch",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "allowed_uses",
+    "consequence_class",
+    "valid_until",
+    "receipt_fingerprint"
+  ],
+  "predicate_proof_required": [
+    "proof_id",
+    "transition_id",
+    "conditional_context",
+    "expected_dependency_ids",
+    "expected_dependency_set_seal",
+    "dependency_results",
+    "decision_before_ref",
+    "decision_before_fingerprint",
+    "reconciled_decision",
+    "reconciled_decision_fingerprint",
+    "reconciled_changed_paths",
+    "route_receipts",
+    "evaluation_time",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "authority_bundle_fingerprint",
+    "proof_fingerprint"
+  ],
+  "dependency_result_required": [
+    "dependency_id",
+    "disposition",
+    "evidence_ref",
+    "evidence_fingerprint"
+  ],
+  "disposition_classes": {
+    "present": "present",
+    "contradicted": "contradicted",
+    "missing": "indeterminate",
+    "stale": "indeterminate",
+    "unreadable": "indeterminate",
+    "ambiguous": "indeterminate",
+    "revoked": "indeterminate"
+  },
+  "precedence": [
+    "indeterminate",
+    "contradicted",
+    "present"
+  ],
+  "class_to_result": {
+    "indeterminate": "indeterminate",
+    "contradicted": "unsatisfied",
+    "present": "satisfied"
+  },
+  "complete_set_rules": [
+    "derive_required_server_and_normative_ids_from_exact_transition",
+    "materialize_conditional_dependency_ids_from_authoritative_sealed_obligation_state",
+    "canonical_sort_and_seal_exact_required_dependency_ids",
+    "reject_missing_extra_duplicate_or_unknown_dependency_result",
+    "resolve_every_server_profile_or_normative_receipt",
+    "reject_empty_required_set",
+    "aggregate_only_after_exact_set_and_evidence_validation"
+  ],
+  "proof_may_apply_transition": false,
+  "authoritative_source_record_required": [
+    "source_ref",
+    "source_version",
+    "fact_kind",
+    "value",
+    "member_ids",
+    "set_seal",
+    "issuance_event_ref",
+    "issuance_time",
+    "revocation_event_refs",
+    "revocation_epoch",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "permitted_audience",
+    "allowed_uses",
+    "consequence_class",
+    "valid_until",
+    "receipt_fingerprint"
+  ],
+  "authoritative_source_store": {
+    "store_id": "r84-versioned-derived-source-store",
+    "store_version": "1",
+    "records": [
+      {
+        "source_ref": "source:purpose-1:checkpoint_evidence_set",
+        "source_version": "source-v1-purpose-1",
+        "fact_kind": "checkpoint_evidence_set",
+        "value": {
+          "satisfied": true,
+          "checkpoint_version": "checkpoint-v2",
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        "member_ids": [
+          "evidence-1"
+        ],
+        "set_seal": "4464065a83555f0b4dd2eba8dfe178741a7fcaaa8588df5e153e49a8f8b08932",
+        "issuance_event_ref": "issuance:purpose-1:checkpoint_evidence_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "6b9783b435806ccf863628ea76134f0c33e6ad5ca1e254045e2a652e43da5074"
+      },
+      {
+        "source_ref": "source:purpose-new-1:checkpoint_evidence_set",
+        "source_version": "source-v1-purpose-new-1",
+        "fact_kind": "checkpoint_evidence_set",
+        "value": {
+          "satisfied": true,
+          "checkpoint_version": "checkpoint-v2",
+          "evidence_ids": [
+            "evidence-1"
+          ]
+        },
+        "member_ids": [
+          "evidence-1"
+        ],
+        "set_seal": "4464065a83555f0b4dd2eba8dfe178741a7fcaaa8588df5e153e49a8f8b08932",
+        "issuance_event_ref": "issuance:purpose-new-1:checkpoint_evidence_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "3e4a1ba69393c0532e8c3aa6fd5da5092c4df946bbbec2ad5ecdc9cb70626959"
+      },
+      {
+        "source_ref": "source:purpose-1:complete_close_obligation_set",
+        "source_version": "source-v2-purpose-1",
+        "fact_kind": "complete_close_obligation_set",
+        "value": {
+          "satisfied": true,
+          "obligation_ids": [
+            "access",
+            "correction",
+            "separate_release",
+            "close"
+          ]
+        },
+        "member_ids": [
+          "access",
+          "correction",
+          "separate_release",
+          "close"
+        ],
+        "set_seal": "3431d0e36fa5bbf04917760b5d31c0b17561406088cd3ebd818ea2727fee214c",
+        "issuance_event_ref": "issuance:purpose-1:complete_close_obligation_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "3352a4ea0d48584b59978640f0b480127e886bee1078b32e4bfd5d82d440e566"
+      },
+      {
+        "source_ref": "source:purpose-new-1:complete_close_obligation_set",
+        "source_version": "source-v2-purpose-new-1",
+        "fact_kind": "complete_close_obligation_set",
+        "value": {
+          "satisfied": true,
+          "obligation_ids": [
+            "access",
+            "correction",
+            "separate_release",
+            "close"
+          ]
+        },
+        "member_ids": [
+          "access",
+          "correction",
+          "separate_release",
+          "close"
+        ],
+        "set_seal": "3431d0e36fa5bbf04917760b5d31c0b17561406088cd3ebd818ea2727fee214c",
+        "issuance_event_ref": "issuance:purpose-new-1:complete_close_obligation_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "e9acbaaa9be4d84cab4fdc76f6771d31b486491e5f1d2ba36ccfbd2917b2e8e8"
+      },
+      {
+        "source_ref": "source:purpose-1:complete_current_grant_set",
+        "source_version": "source-v3-purpose-1",
+        "fact_kind": "complete_current_grant_set",
+        "value": {
+          "satisfied": true,
+          "grant_ids": [
+            "grant-new-1"
+          ],
+          "statuses": [
+            "active"
+          ]
+        },
+        "member_ids": [
+          "grant-new-1"
+        ],
+        "set_seal": "b844358015d68c7fee428779154586da87f326d148d7eb99b5c4eabe8201b992",
+        "issuance_event_ref": "issuance:purpose-1:complete_current_grant_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "9e7c451604aaade0406ddc49fe572384d104c4e1e955d5a138770d0253cb00a2"
+      },
+      {
+        "source_ref": "source:purpose-new-1:complete_current_grant_set",
+        "source_version": "source-v3-purpose-new-1",
+        "fact_kind": "complete_current_grant_set",
+        "value": {
+          "satisfied": true,
+          "grant_ids": [
+            "grant-new-1"
+          ],
+          "statuses": [
+            "active"
+          ]
+        },
+        "member_ids": [
+          "grant-new-1"
+        ],
+        "set_seal": "b844358015d68c7fee428779154586da87f326d148d7eb99b5c4eabe8201b992",
+        "issuance_event_ref": "issuance:purpose-new-1:complete_current_grant_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "05f2e3f08a487a80bb3d4452ed540f7c4bc568c1b291b44a870a6b0592d37152"
+      },
+      {
+        "source_ref": "source:purpose-1:complete_current_revocation_set",
+        "source_version": "source-v4-purpose-1",
+        "fact_kind": "complete_current_revocation_set",
+        "value": {
+          "satisfied": true,
+          "revoked_grant_ids": [
+            "grant-old-1"
+          ],
+          "revocation_epochs": [
+            "revocation-epoch-2"
+          ]
+        },
+        "member_ids": [
+          "grant-old-1"
+        ],
+        "set_seal": "3e7b74a6c364f2f0035d989e557137eea39243b73a23d07da85caece461627d3",
+        "issuance_event_ref": "issuance:purpose-1:complete_current_revocation_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [
+          "revocation:grant-old-1"
+        ],
+        "revocation_epoch": "revocation-epoch-2",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "c0850e02f90b4f777a65d54da1d08a5aef5a33582d895419818986553ef4ecf6"
+      },
+      {
+        "source_ref": "source:purpose-new-1:complete_current_revocation_set",
+        "source_version": "source-v4-purpose-new-1",
+        "fact_kind": "complete_current_revocation_set",
+        "value": {
+          "satisfied": true,
+          "revoked_grant_ids": [
+            "grant-old-1"
+          ],
+          "revocation_epochs": [
+            "revocation-epoch-2"
+          ]
+        },
+        "member_ids": [
+          "grant-old-1"
+        ],
+        "set_seal": "3e7b74a6c364f2f0035d989e557137eea39243b73a23d07da85caece461627d3",
+        "issuance_event_ref": "issuance:purpose-new-1:complete_current_revocation_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [
+          "revocation:grant-old-1"
+        ],
+        "revocation_epoch": "revocation-epoch-2",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "c53e7cbbc449686b5ff9c15083df9e9fce7cede284b87ed435adb98d15b9329b"
+      },
+      {
+        "source_ref": "source:purpose-1:complete_prior_grant_set",
+        "source_version": "source-v5-purpose-1",
+        "fact_kind": "complete_prior_grant_set",
+        "value": {
+          "satisfied": true,
+          "grant_ids": [
+            "grant-old-1"
+          ],
+          "statuses": [
+            "revoked"
+          ]
+        },
+        "member_ids": [
+          "grant-old-1"
+        ],
+        "set_seal": "3e7b74a6c364f2f0035d989e557137eea39243b73a23d07da85caece461627d3",
+        "issuance_event_ref": "issuance:purpose-1:complete_prior_grant_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [
+          "revocation:grant-old-1"
+        ],
+        "revocation_epoch": "revocation-epoch-2",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "9c43ee054219fcd704f2f584c647ec5881c25760426c77011368cfb213137026"
+      },
+      {
+        "source_ref": "source:purpose-new-1:complete_prior_grant_set",
+        "source_version": "source-v5-purpose-new-1",
+        "fact_kind": "complete_prior_grant_set",
+        "value": {
+          "satisfied": true,
+          "grant_ids": [
+            "grant-old-1"
+          ],
+          "statuses": [
+            "revoked"
+          ]
+        },
+        "member_ids": [
+          "grant-old-1"
+        ],
+        "set_seal": "3e7b74a6c364f2f0035d989e557137eea39243b73a23d07da85caece461627d3",
+        "issuance_event_ref": "issuance:purpose-new-1:complete_prior_grant_set",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [
+          "revocation:grant-old-1"
+        ],
+        "revocation_epoch": "revocation-epoch-2",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "809b28f449944fefa05d91b33c43c8ba1bbb7dbcb1e71bc4bc2139aa2ca1d260"
+      },
+      {
+        "source_ref": "source:purpose-1:current_case_identity_binding",
+        "source_version": "source-v6-purpose-1",
+        "fact_kind": "current_case_identity_binding",
+        "value": {
+          "satisfied": true,
+          "case_id": "case-1"
+        },
+        "member_ids": [
+          "current_case_identity_binding"
+        ],
+        "set_seal": "cb9b50750b0657c7f064061a3636989e9a43eaf32d79b7d57e989738b1fa7525",
+        "issuance_event_ref": "issuance:purpose-1:current_case_identity_binding",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "6b80a6d8e974a5435d163d8f8960d4343b93cbd19bbe36a105b2a6f72dc7c464"
+      },
+      {
+        "source_ref": "source:purpose-new-1:current_case_identity_binding",
+        "source_version": "source-v6-purpose-new-1",
+        "fact_kind": "current_case_identity_binding",
+        "value": {
+          "satisfied": true,
+          "case_id": "case-1"
+        },
+        "member_ids": [
+          "current_case_identity_binding"
+        ],
+        "set_seal": "cb9b50750b0657c7f064061a3636989e9a43eaf32d79b7d57e989738b1fa7525",
+        "issuance_event_ref": "issuance:purpose-new-1:current_case_identity_binding",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "5b344da4465cdb5c5ce03abaf0fd17a877c17ff43cf9636ef9ae08531443c3d6"
+      },
+      {
+        "source_ref": "source:purpose-1:current_checkpoint_version",
+        "source_version": "source-v7-purpose-1",
+        "fact_kind": "current_checkpoint_version",
+        "value": {
+          "satisfied": true,
+          "checkpoint_version": "checkpoint-v2"
+        },
+        "member_ids": [
+          "current_checkpoint_version"
+        ],
+        "set_seal": "cb3868dcbc99d1133e57458b76eae4e7501bf3eba90bc978275c7ec93be1bf27",
+        "issuance_event_ref": "issuance:purpose-1:current_checkpoint_version",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "2e0abf1db4bd4693ece647c4849817e2bea2037dda6e88190bee35a9b03d8f4e"
+      },
+      {
+        "source_ref": "source:purpose-new-1:current_checkpoint_version",
+        "source_version": "source-v7-purpose-new-1",
+        "fact_kind": "current_checkpoint_version",
+        "value": {
+          "satisfied": true,
+          "checkpoint_version": "checkpoint-v2"
+        },
+        "member_ids": [
+          "current_checkpoint_version"
+        ],
+        "set_seal": "cb3868dcbc99d1133e57458b76eae4e7501bf3eba90bc978275c7ec93be1bf27",
+        "issuance_event_ref": "issuance:purpose-new-1:current_checkpoint_version",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "3e81b1fc218d20f2b688f29693cbcabf17b3aa9ed6ef5449125032c09d33fad6"
+      },
+      {
+        "source_ref": "source:purpose-1:current_subject_identity_binding",
+        "source_version": "source-v8-purpose-1",
+        "fact_kind": "current_subject_identity_binding",
+        "value": {
+          "satisfied": true,
+          "subject_id": "leader-1"
+        },
+        "member_ids": [
+          "current_subject_identity_binding"
+        ],
+        "set_seal": "a71430b8c3b98b248a1ffdedc247c260069f2bc72deaa51ef9a0af87a277cb22",
+        "issuance_event_ref": "issuance:purpose-1:current_subject_identity_binding",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "8d91a70a4dd4b968a4ec377fcf414e58ba0fd093faf5ed504a85a81950939909"
+      },
+      {
+        "source_ref": "source:purpose-new-1:current_subject_identity_binding",
+        "source_version": "source-v8-purpose-new-1",
+        "fact_kind": "current_subject_identity_binding",
+        "value": {
+          "satisfied": true,
+          "subject_id": "leader-1"
+        },
+        "member_ids": [
+          "current_subject_identity_binding"
+        ],
+        "set_seal": "a71430b8c3b98b248a1ffdedc247c260069f2bc72deaa51ef9a0af87a277cb22",
+        "issuance_event_ref": "issuance:purpose-new-1:current_subject_identity_binding",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "17bd1ab381c552263d45b7111c5367265c149c3ddade149833ad419121e4daba"
+      },
+      {
+        "source_ref": "source:purpose-1:dependency_validity_boundaries",
+        "source_version": "source-v9-purpose-1",
+        "fact_kind": "dependency_validity_boundaries",
+        "value": {
+          "satisfied": true,
+          "dependency_ids": [
+            "all"
+          ],
+          "minimum_valid_until": "2026-09-16T10:00:00Z"
+        },
+        "member_ids": [
+          "all"
+        ],
+        "set_seal": "bea0e3ec4c32132ca0641ce9a12dd75c620a9fc89ccc91c8a6bca8432f1bc24f",
+        "issuance_event_ref": "issuance:purpose-1:dependency_validity_boundaries",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "1cb6185d103469b864bd83de6bf09c52de92ec9c7feaa25195a21ff69eecfd17"
+      },
+      {
+        "source_ref": "source:purpose-new-1:dependency_validity_boundaries",
+        "source_version": "source-v9-purpose-new-1",
+        "fact_kind": "dependency_validity_boundaries",
+        "value": {
+          "satisfied": true,
+          "dependency_ids": [
+            "all"
+          ],
+          "minimum_valid_until": "2026-09-16T10:00:00Z"
+        },
+        "member_ids": [
+          "all"
+        ],
+        "set_seal": "bea0e3ec4c32132ca0641ce9a12dd75c620a9fc89ccc91c8a6bca8432f1bc24f",
+        "issuance_event_ref": "issuance:purpose-new-1:dependency_validity_boundaries",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "91d17a79893310046450669dacfd2717349ce8f2ae1f3adaebf31dad944e2b62"
+      },
+      {
+        "source_ref": "source:purpose-1:grant_issuance_events",
+        "source_version": "source-v10-purpose-1",
+        "fact_kind": "grant_issuance_events",
+        "value": {
+          "satisfied": true,
+          "issued_grant_ids": [
+            "grant-new-1"
+          ],
+          "issued_after_predecessor_close": true,
+          "predecessor_closed_at": "2026-09-16T08:40:00Z"
+        },
+        "member_ids": [
+          "grant-new-1"
+        ],
+        "set_seal": "b844358015d68c7fee428779154586da87f326d148d7eb99b5c4eabe8201b992",
+        "issuance_event_ref": "issuance:purpose-1:grant_issuance_events",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "82be7e2530dde09689c80f018e1800accc1e958270ea52dd4b882b254a5d9f7a"
+      },
+      {
+        "source_ref": "source:purpose-new-1:grant_issuance_events",
+        "source_version": "source-v10-purpose-new-1",
+        "fact_kind": "grant_issuance_events",
+        "value": {
+          "satisfied": true,
+          "issued_grant_ids": [
+            "grant-new-1"
+          ],
+          "issued_after_predecessor_close": true,
+          "predecessor_closed_at": "2026-09-16T08:40:00Z"
+        },
+        "member_ids": [
+          "grant-new-1"
+        ],
+        "set_seal": "b844358015d68c7fee428779154586da87f326d148d7eb99b5c4eabe8201b992",
+        "issuance_event_ref": "issuance:purpose-new-1:grant_issuance_events",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "d0a4707e586931d6361f032efc9d0c1d6a1e7d073b58dc0a3bcc4a369cc0f9d3"
+      },
+      {
+        "source_ref": "source:purpose-1:obligation_dispositions",
+        "source_version": "source-v11-purpose-1",
+        "fact_kind": "obligation_dispositions",
+        "value": {
+          "satisfied": true,
+          "fulfilled_ids": [
+            "access",
+            "correction",
+            "separate_release",
+            "close"
+          ],
+          "outstanding_ids": []
+        },
+        "member_ids": [
+          "access",
+          "correction",
+          "separate_release",
+          "close"
+        ],
+        "set_seal": "3431d0e36fa5bbf04917760b5d31c0b17561406088cd3ebd818ea2727fee214c",
+        "issuance_event_ref": "issuance:purpose-1:obligation_dispositions",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "d75b6d9b67cbd7bb963664df1e949db2c9218330b3f97b540edfe339ce6a7f9d"
+      },
+      {
+        "source_ref": "source:purpose-new-1:obligation_dispositions",
+        "source_version": "source-v11-purpose-new-1",
+        "fact_kind": "obligation_dispositions",
+        "value": {
+          "satisfied": true,
+          "fulfilled_ids": [
+            "access",
+            "correction",
+            "separate_release",
+            "close"
+          ],
+          "outstanding_ids": []
+        },
+        "member_ids": [
+          "access",
+          "correction",
+          "separate_release",
+          "close"
+        ],
+        "set_seal": "3431d0e36fa5bbf04917760b5d31c0b17561406088cd3ebd818ea2727fee214c",
+        "issuance_event_ref": "issuance:purpose-new-1:obligation_dispositions",
+        "issuance_time": "2026-09-16T08:45:00Z",
+        "revocation_event_refs": [],
+        "revocation_epoch": "revocation-epoch-1",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "allowed_uses": [
+          "predicate_evaluation"
+        ],
+        "consequence_class": "consequential_internal",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "receipt_fingerprint": "b11adc4d50f7d49590129ce0b244167878f32f41db5a996bee8111659766e195"
+      }
+    ]
+  },
+  "derivation_execution_rules": {
+    "generic": "every_exact_resolved_input_value_satisfied_true",
+    "fresh_issuance_exists_where_required": "current_grant_ids_equal_issued_grant_ids_and_every_issuance_is_after_predecessor_close",
+    "no_old_grant_can_revive": "every_prior_grant_id_is_in_current_revoked_grant_ids_with_current_revocation_epoch",
+    "old_expired_or_revoked_grants_unusable": "no_current_active_grant_id_is_in_current_revoked_grant_ids",
+    "checkpoint_integrity_valid": "checkpoint_versions_equal_and_evidence_set_nonempty",
+    "every_obligation_fulfilled_or_recorded_outstanding": "complete_obligation_ids_equal_fulfilled_union_outstanding",
+    "subject_and_case_identities_exact": "resolved_subject_and_case_equal_predicate_context"
+  }
+}

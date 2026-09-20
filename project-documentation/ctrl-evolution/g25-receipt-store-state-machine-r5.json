@@ -1,0 +1,52 @@
+{
+  "schema_version": "ctrl.g25.receipt-store-state-machine.r5.v1",
+  "contract_id": "G25-RECEIPT-STORE-STATE-MACHINE-R5",
+  "status": "local_pure_state_machine_pass",
+  "prepared_at": "2026-09-17T09:35:00+01:00",
+  "depends_on": "project-documentation/ctrl-evolution/g25-lossless-producer-receipts-r4.json",
+  "implementation": "supabase/functions/_shared/prepared-intelligence-receipt-store.r5.ts",
+  "test": "supabase/functions/_shared/prepared-intelligence-receipt-store.r5.test.ts",
+  "storage_model": {
+    "ledger": "Append-only payload-free events with SHA-256 content fingerprints and exact owner, subject, audience and purpose scope.",
+    "content": "Separately held canonical JSON blobs that can be removed on erasure without deleting the audit tombstone.",
+    "authority": "Receipt availability is derived from accepted scope, current content, expiry, correction and erasure. Delivery never grants authority.",
+    "projection": "A prepared projection binds exact receipt IDs and becomes stale when any dependency becomes unavailable."
+  },
+  "invariants": [
+    "Exact receipt replay is idempotent and byte-stable.",
+    "Conflicting replay under one receipt identity is held without mutation.",
+    "Owner, subject, audience and purpose mismatch fails closed.",
+    "Expired, corrected or erased receipts are unavailable.",
+    "Correction invalidates only receipts with matching dependencies and stales their projections.",
+    "Correction time cannot predate the receipt it invalidates.",
+    "Erasure removes content, keeps a payload-free tombstone and blocks silent subject revival.",
+    "Delivery can occur only while a receipt is available and cannot preserve authority after correction.",
+    "Exact projection retry remains idempotent after later truth changes.",
+    "Non-JSON and malformed runtime input cannot create state."
+  ],
+  "evidence": {
+    "state_machine_tests": 13,
+    "full_g25_chain_tests": 53,
+    "database_files_modified": 0,
+    "runtime_callers_added": 0,
+    "deliveries_sent": 0
+  },
+  "closed_scope": [
+    "database schema or migration",
+    "transaction isolation or concurrent database behavior",
+    "encryption or key destruction",
+    "trusted event authentication",
+    "runtime integration",
+    "customer delivery",
+    "deployment",
+    "merge",
+    "legacy retirement"
+  ],
+  "residual_risks": [
+    "The caller-provided in-memory state is not authenticated against tampering.",
+    "Content erasure models deletion but not encrypted key destruction or backup convergence.",
+    "Correction invalidation is terminal in R5; governed revalidation and replacement lineage are not yet modeled.",
+    "The erasure tombstone blocks future subject content until an explicit new-consent lifecycle is designed.",
+    "No database transaction, row policy, concurrent writer or readback behavior is proven."
+  ]
+}

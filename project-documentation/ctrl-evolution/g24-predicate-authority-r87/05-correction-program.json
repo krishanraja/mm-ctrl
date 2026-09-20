@@ -1,0 +1,91 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r87.correction.v1",
+  "module_id": "correction_program",
+  "authoritative_dependency_graph_required": ["graph_head", "graph_epoch", "subject_id", "case_id", "purpose_id", "permitted_audience", "root_dependency_ids", "edges", "graph_fingerprint"],
+  "edge_required": ["from_dependency_id", "to_dependency_id", "to_dependency_fingerprint", "edge_kind"],
+  "edge_kind_values": ["content_dependency", "permission_dependency", "scope_dependency"],
+  "sealed_closure_required": ["graph_head", "graph_epoch", "subject_id", "case_id", "purpose_id", "permitted_audience", "root_dependency_ids", "members", "dependency_set_seal"],
+  "member_required": ["dependency_id", "dependency_fingerprint", "edge_kind"],
+  "repair_receipt_required": ["receipt_type", "domain_separator", "repair_id", "graph_head", "graph_epoch", "dependency_set_seal", "subject_id", "case_id", "purpose_id", "permitted_audience", "authority_bundle_fingerprint", "trigger_ref", "challenged_proof_ref", "dependency_id", "dependency_fingerprint", "edge_kind", "dependency_use_ref", "affected_artifact_ref", "repair_action", "history_preserved_ref", "descendant_block_ref", "fresh_reopen_authority_ref", "terminal_status", "current_steering_eligibility", "resulting_version_ref", "issued_at", "receipt_fingerprint"],
+  "repair_action_values": ["rebuild_projection", "quarantine_artifact", "erase_authorized_copy", "mark_unaffected_with_reason", "require_human_review"],
+  "terminal_status_values": ["rebuilt", "quarantined", "review_required", "unaffected_with_reason", "erased"],
+  "authoritative_referent_required": ["ref", "kind", "graph_head", "subject_id", "case_id", "purpose_id", "permitted_audience", "current_state", "effect"],
+  "authoritative_referent_store": {
+    "store_id": "r87-correction-referent-store",
+    "store_version": "1",
+    "records": [
+      { "ref": "correction-1", "kind": "correction_trigger", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "accepted", "effect": "invalidates_challenged_dependencies" },
+      { "ref": "proof-1", "kind": "challenged_proof", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "challenged", "effect": "cannot_steer" },
+      { "ref": "use-dep-1", "kind": "dependency_use", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "superseded", "effect": "cannot_steer" },
+      { "ref": "projection-1", "kind": "affected_artifact", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "affected", "effect": "repair_required" },
+      { "ref": "history-dep-1", "kind": "history_record", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "immutable_preserved", "effect": "preserves_superseded_version" },
+      { "ref": "block-dep-1", "kind": "descendant_block", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "active", "effect": "blocks_descendant_steering" },
+      { "ref": "projection-2", "kind": "resulting_version", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "current", "effect": "replaces_affected_artifact" },
+      { "ref": "use-dep-2", "kind": "dependency_use", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "superseded", "effect": "cannot_steer" },
+      { "ref": "release-1", "kind": "affected_artifact", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "affected", "effect": "repair_required" },
+      { "ref": "history-dep-2", "kind": "history_record", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "immutable_preserved", "effect": "preserves_superseded_version" },
+      { "ref": "block-dep-2", "kind": "descendant_block", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "active", "effect": "blocks_descendant_steering" },
+      { "ref": "use-dep-3", "kind": "dependency_use", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "superseded", "effect": "cannot_steer" },
+      { "ref": "permission-1", "kind": "affected_artifact", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "affected", "effect": "repair_required" },
+      { "ref": "history-dep-3", "kind": "history_record", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "immutable_preserved", "effect": "preserves_superseded_version" },
+      { "ref": "block-dep-3", "kind": "descendant_block", "graph_head": "graph-9", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "active", "effect": "blocks_descendant_steering" },
+      { "ref": "correction-2", "kind": "correction_trigger", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "accepted", "effect": "invalidates_challenged_dependencies" },
+      { "ref": "proof-2", "kind": "challenged_proof", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "challenged", "effect": "cannot_steer" },
+      { "ref": "use-dep-10", "kind": "dependency_use", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "superseded", "effect": "cannot_steer" },
+      { "ref": "projection-10", "kind": "affected_artifact", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "affected", "effect": "repair_required" },
+      { "ref": "history-dep-10", "kind": "history_record", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "immutable_preserved", "effect": "preserves_superseded_version" },
+      { "ref": "block-dep-10", "kind": "descendant_block", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "active", "effect": "blocks_descendant_steering" },
+      { "ref": "projection-11", "kind": "resulting_version", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "current", "effect": "replaces_affected_artifact" },
+      { "ref": "use-dep-11", "kind": "dependency_use", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "superseded", "effect": "cannot_steer" },
+      { "ref": "permission-10", "kind": "affected_artifact", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "affected", "effect": "repair_required" },
+      { "ref": "history-dep-11", "kind": "history_record", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "immutable_preserved", "effect": "preserves_superseded_version" },
+      { "ref": "block-dep-11", "kind": "descendant_block", "graph_head": "graph-10", "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "current_state": "active", "effect": "blocks_descendant_steering" }
+    ]
+  },
+  "authoritative_fixture_graphs": [
+    {
+      "graph": {
+        "graph_head": "graph-9", "graph_epoch": 9, "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "root_dependency_ids": ["dep-1"],
+        "edges": [
+          { "from_dependency_id": "dep-1", "to_dependency_id": "dep-1", "to_dependency_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111", "edge_kind": "content_dependency" },
+          { "from_dependency_id": "dep-1", "to_dependency_id": "dep-2", "to_dependency_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222", "edge_kind": "permission_dependency" },
+          { "from_dependency_id": "dep-2", "to_dependency_id": "dep-3", "to_dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333", "edge_kind": "scope_dependency" }
+        ],
+        "graph_fingerprint": "7c9dabc908e3890a75e8e17b9073afa2ae23511356e6ece04a50ece725aad7bf"
+      },
+      "repairs": [
+        { "dependency_id": "dep-1", "trigger_ref": "correction-1", "challenged_proof_ref": "proof-1", "dependency_use_ref": "use-dep-1", "affected_artifact_ref": "projection-1", "repair_action": "rebuild_projection", "history_preserved_ref": "history-dep-1", "descendant_block_ref": "block-dep-1", "terminal_status": "rebuilt", "resulting_version_ref": "projection-2" },
+        { "dependency_id": "dep-2", "trigger_ref": "correction-1", "challenged_proof_ref": "proof-1", "dependency_use_ref": "use-dep-2", "affected_artifact_ref": "release-1", "repair_action": "require_human_review", "history_preserved_ref": "history-dep-2", "descendant_block_ref": "block-dep-2", "terminal_status": "review_required", "resulting_version_ref": null },
+        { "dependency_id": "dep-3", "trigger_ref": "correction-1", "challenged_proof_ref": "proof-1", "dependency_use_ref": "use-dep-3", "affected_artifact_ref": "permission-1", "repair_action": "quarantine_artifact", "history_preserved_ref": "history-dep-3", "descendant_block_ref": "block-dep-3", "terminal_status": "quarantined", "resulting_version_ref": null }
+      ]
+    },
+    {
+      "graph": {
+        "graph_head": "graph-10", "graph_epoch": 10, "subject_id": "leader-1", "case_id": "case-1", "purpose_id": "purpose-1", "permitted_audience": ["leader-1", "krish"], "root_dependency_ids": ["dep-10"],
+        "edges": [
+          { "from_dependency_id": "dep-10", "to_dependency_id": "dep-10", "to_dependency_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "edge_kind": "content_dependency" },
+          { "from_dependency_id": "dep-10", "to_dependency_id": "dep-11", "to_dependency_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "edge_kind": "scope_dependency" }
+        ],
+        "graph_fingerprint": "a93bce05d86d18d9dbdb8a66d468b96cbcb1323b3f1cc7983e53d13d302d62f0"
+      },
+      "repairs": [
+        { "dependency_id": "dep-10", "trigger_ref": "correction-2", "challenged_proof_ref": "proof-2", "dependency_use_ref": "use-dep-10", "affected_artifact_ref": "projection-10", "repair_action": "rebuild_projection", "history_preserved_ref": "history-dep-10", "descendant_block_ref": "block-dep-10", "terminal_status": "rebuilt", "resulting_version_ref": "projection-11" },
+        { "dependency_id": "dep-11", "trigger_ref": "correction-2", "challenged_proof_ref": "proof-2", "dependency_use_ref": "use-dep-11", "affected_artifact_ref": "permission-10", "repair_action": "quarantine_artifact", "history_preserved_ref": "history-dep-11", "descendant_block_ref": "block-dep-11", "terminal_status": "quarantined", "resulting_version_ref": null }
+      ]
+    }
+  ],
+  "validation_rules": [
+    "recompute_authoritative_graph_fingerprint",
+    "traverse_every_reachable_descendant_from_exact_roots",
+    "reject_omitted_extra_duplicate_or_unreachable_closure_member",
+    "recompute_domain_separated_closure_seal_over_graph_identity_context_and_member_tuples",
+    "recompute_every_domain_separated_repair_receipt_fingerprint",
+    "bind_every_receipt_to_exact_graph_epoch_seal_subject_case_purpose_and_audience",
+    "bind_trigger_challenged_proof_dependency_use_and_affected_artifact_to_authoritative_graph_records",
+    "require_exactly_one_terminal_receipt_per_closure_member",
+    "require_history_preservation_and_descendant_block_evidence",
+    "require_fresh_named_human_authority_before_any_reopen",
+    "prove_no_affected_current_path_retains_superseded_steering_authority"
+  ],
+  "receipt_current_steering_eligibility": false
+}

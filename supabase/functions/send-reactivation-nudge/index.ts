@@ -24,6 +24,7 @@ import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supa
 import { sendEmail, getDefaultSender, createEmailTemplate, createEmailButton, getAppUrl } from "../_shared/email-utils.ts";
 import { createLogger } from "../_shared/logger.ts";
 import { hasExactServiceCredential } from "../_shared/service-auth.ts";
+import { isCronRequest } from "../_shared/service-request.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -93,7 +94,12 @@ Deno.serve(async (req) => {
 
   try {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    if (!hasExactServiceCredential(req.headers.get("Authorization"), [serviceRoleKey])) {
+    const serviceRequest = hasExactServiceCredential(req.headers.get("Authorization"), [serviceRoleKey]);
+    const cronRequest = isCronRequest(
+      req.headers.get("X-CTRL-Cron-Secret"),
+      Deno.env.get("CTRL_CRON_SECRET") ?? "",
+    );
+    if (!serviceRequest && !cronRequest) {
       return jsonResponse({ error: "Forbidden" }, 403);
     }
 

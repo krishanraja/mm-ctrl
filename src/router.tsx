@@ -152,6 +152,8 @@ const ProposalsPage = lazyWithRetry(() => import('@/pages/ProposalsPage'))
 // Bench. It remains unlinked and is not included in authenticated prefetching.
 const DecisionBenchPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionBenchPage'))
 const SyntheticPopulationLabPage = lazyWithRetry(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
+const StandardReviewPreviewPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewPreviewPage'))
+const StandardReviewAddressPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewAddressPage'))
 const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 /**
@@ -172,6 +174,13 @@ function preloadInitialRouteChunk() {
     warm(() => import('@/pages/Auth'))
   } else if (p.startsWith('/operator/lab/synthetic-population/')) {
     warm(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
+  } else if (p.startsWith('/operator/reviews/')) {
+    const reviewId = p.split('/').filter(Boolean).at(-1) ?? ''
+    if (import.meta.env.VITE_ENABLE_STANDARD_REVIEW_ADDRESS === '1' && /^[0-9a-f-]{36}$/i.test(reviewId)) {
+      warm(() => import('@/features/standard-review/StandardReviewAddressPage'))
+    } else {
+      warm(() => import('@/features/standard-review/StandardReviewPreviewPage'))
+    }
   } else if (p.startsWith('/operator/customers/')) {
     warm(() => import('@/features/operator-brain/DecisionBenchPage'))
   } else {
@@ -248,6 +257,17 @@ function SyntheticPopulationLabGate() {
   return previewEnabled && fixtureExists ? <SyntheticPopulationLabPage /> : <NotFound />
 }
 
+function StandardReviewPreviewGate() {
+  const { reviewId } = useParams()
+  const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
+  if (previewEnabled && reviewId === 'SYN-REVIEW-118') return <StandardReviewPreviewPage />
+  const addressEnabled = import.meta.env.VITE_ENABLE_STANDARD_REVIEW_ADDRESS === '1'
+  const stableAddress = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(reviewId ?? '')
+  return addressEnabled && stableAddress
+    ? <RequireAuth><StandardReviewAddressPage /></RequireAuth>
+    : <NotFound />
+}
+
 export const router = createBrowserRouter([
   // Public routes
   {
@@ -280,6 +300,12 @@ export const router = createBrowserRouter([
     // Internal range harness. It is unlinked, non-indexable and accepts only explicit synthetic IDs.
     path: '/operator/lab/synthetic-population/:accountId',
     element: <LazyWrapper><SyntheticPopulationLabGate /></LazyWrapper>,
+  },
+  {
+    // Exact R118 synthetic proof, plus an authenticated stable packet address
+    // only when its separately controlled feature flag is enabled.
+    path: '/operator/reviews/:reviewId',
+    element: <LazyWrapper><StandardReviewPreviewGate /></LazyWrapper>,
   },
   {
     // Agent-native marketing page (public): the read-only Memory Web MCP offering.
@@ -410,4 +436,9 @@ export const router = createBrowserRouter([
     path: '*',
     element: <LazyWrapper><NotFound /></LazyWrapper>,
   },
-])
+], {
+  // Vite exposes `/` in normal builds and the configured public subpath in
+  // portable previews such as GitHub Pages. Keeping this at the router edge
+  // makes the same frozen product build usable without rewriting its routes.
+  basename: import.meta.env.BASE_URL,
+})

@@ -1,0 +1,49 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.authority-binding.v1",
+  "module_id": "authority_binding_program",
+  "canonicalization": "recursive_codepoint_sorted_json_utf8_no_whitespace",
+  "fingerprint": "sha256_over_canonical_bytes",
+  "schemas": {
+    "authentication_event": {
+      "required": ["event_id", "named_human_id", "session_id", "method", "issued_at", "valid_until", "event_fingerprint"],
+      "allowed_methods": ["passkey", "webauthn", "magic_link_reauthenticated_session", "operator_witnessed_named_human_confirmation"]
+    },
+    "free_expression_confirmation": {
+      "required": ["confirmation_id", "named_human_id", "authentication_event_ref", "free_expression_fingerprint", "structured_interpretation_fingerprint", "visible_consequence_fingerprint", "confirmed_at", "confirmation_fingerprint"]
+    },
+    "normative_attestation_receipt": {
+      "required": ["receipt_type", "domain_separator", "attestation_id", "named_human_id", "authentication_event_ref", "authentication_event_fingerprint", "answer_status", "owned_judgement_kind", "structured_answer_value", "free_expression_ref", "free_expression_confirmation_ref", "accepted_decision_before_ref", "accepted_decision_before_fingerprint", "accepted_decision_after_ref", "accepted_decision_after_fingerprint", "accepted_decision_changed_paths", "displayed_consequence_text", "visible_consequence_fingerprint", "subject_id", "case_id", "purpose_id", "permitted_audience", "bundle_fingerprint", "issued_at", "valid_until", "receipt_fingerprint"],
+      "answer_status_values": ["selected", "free_expression_confirmed"]
+    },
+    "final_transition_authority_receipt": {
+      "required": ["receipt_type", "domain_separator", "authority_receipt_id", "authority_proofs", "transition_id", "subject_id", "case_id", "purpose_id", "permitted_audience", "predecessor_version", "predicate_proof_fingerprint", "bundle_fingerprint", "displayed_consequence_text", "visible_consequence_fingerprint", "reserved_transition_receipt_version", "server_commit_time", "valid_until", "authority_receipt_fingerprint"],
+      "authority_proof_required": ["named_human_id", "authentication_event_ref", "authentication_event_fingerprint"]
+    }
+  },
+  "normative_validation_program": [
+    "recompute_and_match_receipt_fingerprint",
+    "reject_unknown_or_unlisted_answer_status",
+    "resolve_authentication_event_and_match_named_human_fingerprint_and_freshness",
+    "resolve_exact_before_and_after_decision_states",
+    "recompute_and_match_before_and_after_fingerprints",
+    "require_same_decision_and_case",
+    "recompute_material_changed_paths_and_match_claimed_paths",
+    "require_at_least_one_material_changed_path",
+    "recompute_visible_consequence_fingerprint_from_displayed_text",
+    "if_free_expression_resolve_confirmation_and_match_same_human_exact_text_interpretation_and_consequence",
+    "bind_subject_case_purpose_audience_bundle_and_validity"
+  ],
+  "final_authority_validation_program": [
+    "recompute_and_match_receipt_fingerprint",
+    "resolve_transition_catalogue_authority_rule",
+    "all_cardinality_requires_exact_complete_allowed_actor_set",
+    "any_one_cardinality_requires_exactly_one_allowed_actor",
+    "resolve_every_authentication_event_and_match_actor_fingerprint_and_freshness",
+    "recompute_visible_consequence_fingerprint_from_displayed_text",
+    "bind_subject_case_purpose_audience_transition_predecessor_predicate_bundle_consequence_and_reserved_receipt",
+    "require_server_commit_time_strictly_before_receipt_and_authentication_expiry"
+  ],
+  "model_or_workload_may_create_receipt": false,
+  "claimed_paths_without_actual_state_delta": "reject",
+  "unknown_may_create_receipt": false
+}

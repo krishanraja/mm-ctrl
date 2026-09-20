@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g25.operator-route-readiness.r139.v1",
+  "contract_id": "G25-OPERATOR-ROUTE-READINESS-R139",
+  "status": "route_connection_blocked_by_design",
+  "observed_at": "2026-09-20",
+  "baseline_commit": "c0741093b24c0e1f140e460d96913e282ee69759",
+  "isolated_project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "route_pattern": "/operator/workspaces/{workspace UUID}/decisions/{decision UUID}",
+  "current_r138_readiness": {
+    "status": "blocked",
+    "reasons": [
+      "decision_id_invalid",
+      "decision_projection_not_live",
+      "decision_workspace_mismatch",
+      "decision_environment_mismatch",
+      "review_decision_unbound"
+    ]
+  },
+  "required_bindings": [
+    "exact isolated runtime environment",
+    "dedicated non-global client",
+    "authenticated non-anonymous human",
+    "stable operator principal",
+    "server-verified selected workspace",
+    "complete live decision projection",
+    "live review projection",
+    "same workspace, decision and environment"
+  ],
+  "adversarial_cases_passed": 19,
+  "route_added": false,
+  "customer_surface_changed": false,
+  "database_writes": 0,
+  "production_writes": 0,
+  "artifacts": {
+    "strategy": "project-documentation/ctrl-evolution/g25-operator-route-readiness-r139-strategy.md",
+    "strategy_sha256": "d5d5495ac521f21531ca6bb96591a8bf3037bc6cf8331763f274e37827adfcd2",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-route-readiness-r139.md",
+    "finding_sha256": "0e79c7fa5ad56e081990c18d24f0f4c917c9e29531be235b79652fca1264f5ba",
+    "qa": "project-documentation/ctrl-evolution/g25-operator-route-readiness-r139-qa-record.md",
+    "qa_sha256": "920b4f62e9b5b37aea3473729ea3c521afaf98ac8b9dcbdbabda0d6246ada660",
+    "readiness": "src/features/operator-brain/operatorDecisionRouteReadiness.ts",
+    "readiness_sha256": "c82b29858f08dd0c6119eb00bdc3fe244f84068b47d0cd0b736ade1ce78be6d4",
+    "tests": "src/features/operator-brain/operatorDecisionRouteReadiness.test.ts",
+    "tests_sha256": "57888cfcc5efc1c5e402362aee00b224df75f9719dc22ff627f2ae2427e44590"
+  },
+  "next_safe_action": "Build and prove one complete strict live operator decision projection that replaces every synthetic customer, decision, route, question, evidence, judgement and Claude-handoff dependency. Keep route connection closed."
+}

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildProposal,
+  captureCadenceDue,
   DriftCarriesDeltaError,
   groupBySignal,
   isoWeekOf,
@@ -28,6 +29,7 @@ import {
 
 const NOW = "2026-W32";
 const WINDOW = windowWeeks(NOW); // 2026-W28 .. 2026-W32
+const OPPORTUNITIES = new Map([["email", 3], ["client updates", 3]]);
 
 /**
  * One check that happened in the window, on an unrelated criterion. Drift only
@@ -80,6 +82,36 @@ describe("the window", () => {
   });
 });
 
+describe("owner cadence", () => {
+  const now = new Date("2026-09-18T12:00:00Z");
+
+  it("runs when no governed pass exists", () => {
+    expect(captureCadenceDue(null, "2026-W38", 7, now).reason).toBe("never_run");
+  });
+
+  it("admits a same-week replay for the database idempotency receipt", () => {
+    const result = captureCadenceDue(
+      { captureWeek: "2026-W38", createdAt: "2026-09-18T11:00:00Z" },
+      "2026-W38",
+      30,
+      now,
+    );
+    expect(result).toEqual({ due: true, reason: "same_capture_week", nextDueAt: null });
+  });
+
+  it("holds a new week until the owner's cadence has elapsed", () => {
+    const result = captureCadenceDue(
+      { captureWeek: "2026-W37", createdAt: "2026-09-17T12:00:00Z" },
+      "2026-W38",
+      7,
+      now,
+    );
+    expect(result.due).toBe(false);
+    expect(result.reason).toBe("cadence_pending");
+    expect(result.nextDueAt).toBe("2026-09-24T12:00:00.000Z");
+  });
+});
+
 describe("two strikes", () => {
   it("proposes nothing from a single occurrence", () => {
     const rows = [row({ week: "2026-W31" })];
@@ -106,6 +138,21 @@ describe("two strikes", () => {
     const struck = twoStrikes([row(), row({ quote: "excited about the opportunity to" })], WINDOW);
     expect(struck[0].occurrences).toBe(2);
     expect(struck[0].weeks).toEqual([NOW]);
+  });
+
+  it("counts unique evidence, not a duplicated write from the same review event", () => {
+    const duplicated = row({ id: "l1", source_run_id: "run-1", source_event_key: "criterion:c1" });
+    expect(twoStrikes([duplicated, { ...duplicated, id: "l2" }], WINDOW)).toEqual([]);
+    const independent = row({ id: "l3", source_run_id: "run-2", source_event_key: "criterion:c1" });
+    expect(twoStrikes([duplicated, independent], WINDOW)).toHaveLength(1);
+  });
+
+  it("uses the owner's configured evidence threshold rather than a universal two", () => {
+    const rows = [
+      row({ id: "a", source_run_id: "r1", source_event_key: "c1" }),
+      row({ id: "b", source_run_id: "r2", source_event_key: "c1" }),
+    ];
+    expect(twoStrikes(rows, WINDOW, undefined, 3)).toEqual([]);
   });
 });
 
@@ -157,6 +204,14 @@ describe("type A, uncovered", () => {
     );
     expect(candidates).toEqual([]);
   });
+
+  it("does not flatten the same words across different work surfaces", () => {
+    const candidates = typeAUncovered([
+      uncovered("2026-W30", "the close repeats the opening"),
+      { ...uncovered("2026-W31", "the close repeats the opening"), surface: "board memo" },
+    ], WINDOW);
+    expect(candidates).toEqual([]);
+  });
 });
 
 describe("type B, false positive", () => {
@@ -205,14 +260,14 @@ describe("type C, drift", () => {
   ];
 
   it("raises only the criterion that has not fired, on zero occurrences", () => {
-    const drifted = typeCDrift(criteria, [row({ criterion_id: "c1" })], NOW);
+    const drifted = typeCDrift(criteria, [row({ criterion_id: "c1" })], NOW, OPPORTUNITIES);
     expect(drifted).toHaveLength(1);
     expect(drifted[0].criterionName).toBe("Named owner");
     expect(drifted[0].occurrences).toBe(0);
   });
 
   it("carries no delta, and its type cannot produce one", () => {
-    const [drifted] = typeCDrift(criteria, [row({ criterion_id: "c1" })], NOW);
+    const [drifted] = typeCDrift(criteria, [row({ criterion_id: "c1" })], NOW, OPPORTUNITIES);
     // The candidate itself holds no delta of any spelling.
     expect("delta" in drifted).toBe(false);
     expect("delta_text" in drifted).toBe(false);
@@ -230,7 +285,7 @@ describe("type C, drift", () => {
   });
 
   it("refuses to build a proposal from a drift row that arrived carrying a delta", () => {
-    const [drifted] = typeCDrift(criteria, [aCheckHappened()], NOW);
+    const [drifted] = typeCDrift(criteria, [aCheckHappened()], NOW, OPPORTUNITIES);
     const smuggled = { ...drifted, delta_text: "retire it" } as unknown as Candidate;
     expect(() => buildProposal(smuggled, 5)).toThrow(DriftCarriesDeltaError);
   });
@@ -240,6 +295,7 @@ describe("type C, drift", () => {
       criteria,
       [row({ week: "2026-W20", criterion_id: "c2", criterion_name: "Named owner" }), aCheckHappened()],
       NOW,
+      OPPORTUNITIES,
     );
     const named = drifted.find((c) => c.criterionName === "Named owner");
     expect(named?.lastFiredWeek).toBe("2026-W20");
@@ -251,7 +307,7 @@ describe("type C, drift", () => {
 describe("ordering", () => {
   it("is A, then B, then C, and most-struck first inside each", () => {
     const candidates = [
-      ...typeCDrift([{ id: "c9", user_id: "u1", surface: "email", name: "Quiet rule" }], [aCheckHappened()], NOW),
+      ...typeCDrift([{ id: "c9", user_id: "u1", surface: "email", name: "Quiet rule" }], [aCheckHappened()], NOW, OPPORTUNITIES),
       ...typeBFalsePositive(
         [row({ week: "2026-W31", criterion_id: "c1" }), row({ week: "2026-W32", criterion_id: "c1" })],
         WINDOW,
@@ -344,7 +400,7 @@ describe("the proposal row", () => {
       [row({ week: "2026-W31", criterion_id: "c1" }), row({ week: "2026-W32", criterion_id: "c1" })],
       WINDOW,
     ),
-    ...typeCDrift([{ id: "c2", user_id: "u1", surface: "email", name: "Named owner" }], [aCheckHappened()], NOW),
+    ...typeCDrift([{ id: "c2", user_id: "u1", surface: "email", name: "Named owner" }], [aCheckHappened()], NOW, OPPORTUNITIES),
   ];
 
   it("always carries a non-empty if_wrong", () => {
@@ -457,9 +513,14 @@ describe("drift needs the gate to have run", () => {
       criterion_id: "other", criterion_name: "Something else",
       verdict: "holds", disposition: "accepted",
     }];
-    const drift = typeCDrift(crit, rows, "2026-W32");
+    const drift = typeCDrift(crit, rows, "2026-W32", OPPORTUNITIES);
     expect(drift).toHaveLength(1);
     expect(drift[0].key).toContain("c1");
+    expect(drift[0].question).toContain("3 applicable reviews");
+  });
+
+  it("makes no freshness inference when applicable opportunity exposure is unknown", () => {
+    expect(typeCDrift(crit, [aCheckHappened()], "2026-W32", new Map())).toEqual([]);
   });
 
   it("stays silent for a rule that did fire", () => {
@@ -468,6 +529,6 @@ describe("drift needs the gate to have run", () => {
       criterion_id: "c1", criterion_name: "Named owner",
       verdict: "breaks", disposition: "accepted",
     }];
-    expect(typeCDrift(crit, rows, "2026-W32")).toEqual([]);
+    expect(typeCDrift(crit, rows, "2026-W32", OPPORTUNITIES)).toEqual([]);
   });
 });

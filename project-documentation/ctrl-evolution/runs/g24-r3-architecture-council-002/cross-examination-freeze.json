@@ -1,0 +1,27 @@
+{
+  "schema_version": "ctrl.council.cross-examination-freeze.v1",
+  "run_id": "g24-r3-architecture-council-002",
+  "sealed_verdicts_sha256": "e79e4353d85387710ddf8b239ca68a150fbdc155fae68ca4f692fffddd19ee87",
+  "records": [
+    {
+      "role": "standards_prosecution",
+      "outcome": "REPAIR",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r3-architecture-council-002/standards-prosecution.md",
+      "sha256": "87e542c842f3362f0e05ce5f7d74c5073494cd3a2fb8f9c5be73dee74e36a7b7"
+    },
+    {
+      "role": "veto_defense",
+      "outcome": "REPAIR",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r3-architecture-council-002/veto-defense.md",
+      "sha256": "9be2137b4fa5566a4374ed5271dadc79532c89eb306645041ba234c70fa3d6a4"
+    },
+    {
+      "role": "founder_calibration",
+      "outcome": "KEEP_DIRECTION_REPAIR_BEFORE_LOCK",
+      "path": "project-documentation/ctrl-evolution/runs/g24-r3-architecture-council-002/founder-calibration.md",
+      "sha256": "02e82111ecb0e5a8592a528548d4c9c3a70b16c5f8f2fdf097ecc92c2baff1e7"
+    }
+  ],
+  "disagreement_for_adjudication": "whether_selector_eligible_epistemic_outcomes_need_an_explicit_versioned_binding_to_existing_r1_governance_authority_at_g24_a",
+  "frozen_before_final_adjudication": true
+}

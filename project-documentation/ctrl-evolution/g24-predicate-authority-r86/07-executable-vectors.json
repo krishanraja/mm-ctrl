@@ -1,0 +1,3999 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r86.executable-vectors.v1",
+  "module_id": "executable_vectors",
+  "specimens": {
+    "authentication_events": {
+      "auth-1": {
+        "event_id": "auth-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "issued_at": "2026-09-16T08:00:00Z",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "issuer_signature_base64": "Mu1UBJeR18T4ZBARZe71Fbm++y9ZWzwOFwvDL9zazGqxE4l1oWQxvJqN1X+MpgqBD3petfvZFDZ7vK4ISX+2Cg=="
+      },
+      "auth-2": {
+        "event_id": "auth-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "issued_at": "2026-09-16T08:00:00Z",
+        "valid_until": "2026-09-16T10:00:00Z",
+        "issuer_signature_base64": "nVSfZ7lTcEyppdzjKjK0sLc9MFXEMKxk7j/b/A00hxonDGIN99eXBXd6N9R/PJKhj3gEn5oYeffBN/WlMIbDAg=="
+      }
+    },
+    "answer_events": {
+      "answer-open_preparation-krish_bounded_purpose-1": {
+        "event_id": "answer-open_preparation-krish_bounded_purpose-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_bounded_purpose",
+        "question_version": "qv1",
+        "selected_option": "Prove quality can travel before changing the team",
+        "render_receipt_fingerprint": "8fcb97842a05c3d63a3d2ec13e8f5d3da3f36b5bf8ca014e857cc11f795f42c6",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "JH89umZv/WRy6dwkWZxlWflRW5g/V1Tubls2MYergWFvHzNCsquOI9C+fPmeRlEwSi20CiQyIw0VlNhhideiBw=="
+      },
+      "answer-open_preparation-krish_bounded_purpose-2": {
+        "event_id": "answer-open_preparation-krish_bounded_purpose-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_bounded_purpose",
+        "question_version": "qv1",
+        "selected_option": "Design the team rebuild now",
+        "render_receipt_fingerprint": "8fcb97842a05c3d63a3d2ec13e8f5d3da3f36b5bf8ca014e857cc11f795f42c6",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "tSQJJV/Xm93SroQr24p/Lw2YpgSeP5T+y/NwGQGSSCW917l0jPHREKlTt/2ibqjbK/2jaWKDTEHarwmbHC2ZCQ=="
+      },
+      "answer-open_preparation-krish_bounded_purpose-3": {
+        "event_id": "answer-open_preparation-krish_bounded_purpose-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_bounded_purpose",
+        "question_version": "qv1",
+        "selected_option": "Stop this work",
+        "render_receipt_fingerprint": "8fcb97842a05c3d63a3d2ec13e8f5d3da3f36b5bf8ca014e857cc11f795f42c6",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "diG1LfmPD5JrIR6Ii+imcuJ8fGXqaBHIsfz1BHiWzse9EoP4GlbnZgGoGk29QKBWSTUY2LHN/5zehYRvqy7ECw=="
+      },
+      "answer-open_preparation-krish_allowed_source_classes-1": {
+        "event_id": "answer-open_preparation-krish_allowed_source_classes-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_allowed_source_classes",
+        "question_version": "qv1",
+        "selected_option": "Customer and delivery evidence only",
+        "render_receipt_fingerprint": "8ce34376f33960567e3e0950e3487e35ea1de4f2bd27a21d7442c9eca00e2a06",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "gApqMwaFcd1Nk4q444M18WoyWNGM/VG7SVoO8ujq2pH8cLk1SknlVVmpMZX9jnLgdLgEhpIMif/6N4wTN4gCCw=="
+      },
+      "answer-open_preparation-krish_allowed_source_classes-2": {
+        "event_id": "answer-open_preparation-krish_allowed_source_classes-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_allowed_source_classes",
+        "question_version": "qv1",
+        "selected_option": "Add leadership records",
+        "render_receipt_fingerprint": "8ce34376f33960567e3e0950e3487e35ea1de4f2bd27a21d7442c9eca00e2a06",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "g1fjEQgalBuuZOZS4I45Vlpo17v9KRXYnMtrknOX8vju//KAt7FQDI6tSYau4GlCT6HCbefGm/efRbFzo9X4DQ=="
+      },
+      "answer-open_preparation-krish_allowed_source_classes-3": {
+        "event_id": "answer-open_preparation-krish_allowed_source_classes-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_allowed_source_classes",
+        "question_version": "qv1",
+        "selected_option": "Pause until sources are agreed",
+        "render_receipt_fingerprint": "8ce34376f33960567e3e0950e3487e35ea1de4f2bd27a21d7442c9eca00e2a06",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "uwfunDoUFKSoTvuTC9/xe+sJM2GvFHvlvMPHK/Oe22dVCuTKkSqpmEXWHEq3YsUtVjENNfOSlUfJKSUv8HUIDA=="
+      },
+      "answer-open_preparation-krish_review_date-1": {
+        "event_id": "answer-open_preparation-krish_review_date-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_review_date",
+        "question_version": "qv1",
+        "selected_option": "The four-week evidence review",
+        "render_receipt_fingerprint": "a6cbbd3def12dbb9b53b40c6aa1b8fe2ca10a68f8be965e54ff9bfe86311b83a",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "ytKXtrd3qmRPcYTupNk0pBTL0odUHfa/T6mOugxU93b+Y7equJg/Xs2fWBQ2FQxeI6HiYIh/wg+hV60nwFCiDw=="
+      },
+      "answer-open_preparation-krish_review_date-2": {
+        "event_id": "answer-open_preparation-krish_review_date-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_review_date",
+        "question_version": "qv1",
+        "selected_option": "The two-week operating review",
+        "render_receipt_fingerprint": "a6cbbd3def12dbb9b53b40c6aa1b8fe2ca10a68f8be965e54ff9bfe86311b83a",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "NTdVAB7YhPZmSkzhRBW2KdGXzoAhyPUt0gpuyeC/nAvzVofrhV9X2zD8M0WZU8QoaPzpB34u238hcEsOnYf5DQ=="
+      },
+      "answer-open_preparation-krish_review_date-3": {
+        "event_id": "answer-open_preparation-krish_review_date-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_preparation-krish_review_date",
+        "question_version": "qv1",
+        "selected_option": "Only a material change in category economics",
+        "render_receipt_fingerprint": "a6cbbd3def12dbb9b53b40c6aa1b8fe2ca10a68f8be965e54ff9bfe86311b83a",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "AAtGlxfDdPt4qYN9+yLIFo7Bu6MGh8rol+9f57ZkDzsJWGUGiuapRqlyZyel/OhU1qoA0R1hRpqkcWf7zlIcDg=="
+      },
+      "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-1": {
+        "event_id": "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "selected_option": "Prove the system before changing the team",
+        "render_receipt_fingerprint": "aba5f555f5abcf293ac140a2358b75a65dd6b28596f1f396921fe39e5174e248",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "Z3N501GeH7LOrL/au7uXpMRhBTnhJ5q7PBVPLocj6MM1eI399wAHtrdOSobcq56JJQxwQ0g6TPy5B8DrnMYmDA=="
+      },
+      "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-2": {
+        "event_id": "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "selected_option": "Design the rebuild now",
+        "render_receipt_fingerprint": "aba5f555f5abcf293ac140a2358b75a65dd6b28596f1f396921fe39e5174e248",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "uZucbBo03hf5JHL07A9tTRmArdE2cF3Nvf23Md2Q6immKRY3AOfY30Ll2NM9oFVDmULj4xjY0KvDGG0Mp+VuCA=="
+      },
+      "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-3": {
+        "event_id": "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "selected_option": "Stop the rebuild",
+        "render_receipt_fingerprint": "aba5f555f5abcf293ac140a2358b75a65dd6b28596f1f396921fe39e5174e248",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "Z5LbC/v4zL35Z9ryidnzvWO4z6VN80vsMH4XO9Iq6TWbVqNFLHr3DxMDSlHByhHcEJW6bBwpiVzaOer+Dn45CQ=="
+      },
+      "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-1": {
+        "event_id": "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "selected_option": "Prove the system before changing the team",
+        "render_receipt_fingerprint": "2bdf3ba028724c62193b2a03795eafc990179ee7269493ffbcc084e17c26e1be",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "6ntdcG6SIGYdXItffNGEqwT+KLYhzhj8tqIuBjIcxHLSrWYa+3lTsK3191jFYGo8Y94c1Ap1Hv3F7lUzvIhpBQ=="
+      },
+      "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-2": {
+        "event_id": "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "selected_option": "Design the rebuild now",
+        "render_receipt_fingerprint": "2bdf3ba028724c62193b2a03795eafc990179ee7269493ffbcc084e17c26e1be",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "i86Oibc1q4J8GbvBiUJfhTn1dPRbG65Ec5VPp5b0iXg9DA+35GgcbG1hulrGktTo7EXdcRSWoPYUCI76r9PQDw=="
+      },
+      "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-3": {
+        "event_id": "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "selected_option": "Stop the rebuild",
+        "render_receipt_fingerprint": "2bdf3ba028724c62193b2a03795eafc990179ee7269493ffbcc084e17c26e1be",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "c6L3brUnkEMe94Yt3hMViINckLPfBVT2D5O7Mdw23OYs6KjNruqzB01TXxRl+z24cO7QtaR7Q5BiS2D1GVSvBw=="
+      },
+      "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-1": {
+        "event_id": "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "Two campaigns meet Maya's bar without her rewrite",
+        "render_receipt_fingerprint": "04364c74483e348349f950cb6ea44d2660c50a74848b4bab5d8f4b15d27e3ecd",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "EZkoomsYOdLkJWO9tYIMLcNWlr4hf+9OFt8zm+jrE/uXlv8pc5C4zQF6JjS5suDaOSuv01UO0BibQY3aG/ASAg=="
+      },
+      "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-2": {
+        "event_id": "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "The board accepts the explicit rebuild risk",
+        "render_receipt_fingerprint": "04364c74483e348349f950cb6ea44d2660c50a74848b4bab5d8f4b15d27e3ecd",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "XyvLurzkRb/EYEPBbc62kRahIK+k8GoMOfV3UGumBpO3QC5FmaKS7Y/RrJLJ/5xODnsVgfOMCD6HjNuNloNzBw=="
+      },
+      "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-3": {
+        "event_id": "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "A written case that more proof adds no value",
+        "render_receipt_fingerprint": "04364c74483e348349f950cb6ea44d2660c50a74848b4bab5d8f4b15d27e3ecd",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "dIaruCHJo6a7Q9NaDqFkke6ea5jaFm211iTcs8BSF8OuA2jCl6SvbyWYdGmqpPtq0BY1PfxbL3V3pHiKsHKWDw=="
+      },
+      "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-1": {
+        "event_id": "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "Two campaigns meet Maya's bar without her rewrite",
+        "render_receipt_fingerprint": "b2fcdf841f45157fc3e6e0a228c02ee4737bec92da78aa354d2d73a43f7d19e5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "AUCN+8BFKQ1WtSzNguFJwzXSoMl3/IX3x+VivAPnH3/4VFaHkQIeyPQP5shNGh7MqPdWk5ogM9ExAq3NYCZsBw=="
+      },
+      "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-2": {
+        "event_id": "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "The board accepts the explicit rebuild risk",
+        "render_receipt_fingerprint": "b2fcdf841f45157fc3e6e0a228c02ee4737bec92da78aa354d2d73a43f7d19e5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "Vy924TK8I7wVqzF9b19PGIjqACDbXzBkeGv8VXUDKFDTmJ86YzgDUPy/9LBsFSjWbF8Tc6yxkFA2YF6JtsMYAw=="
+      },
+      "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-3": {
+        "event_id": "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "A written case that more proof adds no value",
+        "render_receipt_fingerprint": "b2fcdf841f45157fc3e6e0a228c02ee4737bec92da78aa354d2d73a43f7d19e5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "R4N4z3NkMUiYx5RsfoiMmZ0dBSdqzJIWj7QiWFmnmLs486Nh/nLRq/KzpDGs15GeTU+m9wzcVDC84jfa5vEnCA=="
+      },
+      "answer-continue_after_intensive_proof-leader_continuation_checkpoint-1": {
+        "event_id": "answer-continue_after_intensive_proof-leader_continuation_checkpoint-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_continuation_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Blind comparison after four weeks",
+        "render_receipt_fingerprint": "b16273a5d55e8346408b306dde5d253750f16148808c8708a0c31a69b06c4210",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "DhL5A+aER81MJOvw1RIdzXAwjsUPwbXj4Ps7/1f2eCq6NJ+BsW36xALid/qKJ57a8MiUc3AsMS8+Kbcibe7bBQ=="
+      },
+      "answer-continue_after_intensive_proof-leader_continuation_checkpoint-2": {
+        "event_id": "answer-continue_after_intensive_proof-leader_continuation_checkpoint-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_continuation_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Operating review after two weeks",
+        "render_receipt_fingerprint": "b16273a5d55e8346408b306dde5d253750f16148808c8708a0c31a69b06c4210",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "TAL8zaqSZEKcaTJRZjs01vR8KpvPQXhZeHkwra8KcSJtuoAMnU/mwsMszhQso65JA/C9unE5xYW4baAqg5mnCg=="
+      },
+      "answer-continue_after_intensive_proof-leader_continuation_checkpoint-3": {
+        "event_id": "answer-continue_after_intensive_proof-leader_continuation_checkpoint-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_continuation_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Review only if category economics change",
+        "render_receipt_fingerprint": "b16273a5d55e8346408b306dde5d253750f16148808c8708a0c31a69b06c4210",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "wUWHG2M9P8xaPXVUH+nLQ1ebdNG4r+SbCkOPFpjPfKqwayRTW5dRxn31Vko+M6PZhfGv74M6hIttGCQ2a2rEBQ=="
+      },
+      "answer-continue_after_intensive_proof-krish_continuation_checkpoint-1": {
+        "event_id": "answer-continue_after_intensive_proof-krish_continuation_checkpoint-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_continuation_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Blind comparison after four weeks",
+        "render_receipt_fingerprint": "05e64b76ea3b1bf34616fd49ab7a8828429b08569eb6592022414e9e110e95c5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "egpr+u0tfVq03fkMsw8hbGHiQS6Ud3M7uZgSS+joscMZIyi4IExydcbYPlRFY93WFAICrcGH+jHQswPyZ5h2CQ=="
+      },
+      "answer-continue_after_intensive_proof-krish_continuation_checkpoint-2": {
+        "event_id": "answer-continue_after_intensive_proof-krish_continuation_checkpoint-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_continuation_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Operating review after two weeks",
+        "render_receipt_fingerprint": "05e64b76ea3b1bf34616fd49ab7a8828429b08569eb6592022414e9e110e95c5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "KOs2jSJZXHEeBuuUYs0UhfyWc8d/6h23qcn353HjrrhzUI4w6u6am/n4GbvsdSPBwR+AGESR0pSGMTuONymACA=="
+      },
+      "answer-continue_after_intensive_proof-krish_continuation_checkpoint-3": {
+        "event_id": "answer-continue_after_intensive_proof-krish_continuation_checkpoint-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_continuation_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Review only if category economics change",
+        "render_receipt_fingerprint": "05e64b76ea3b1bf34616fd49ab7a8828429b08569eb6592022414e9e110e95c5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "cOmqBWa3rNaO5F5W/dG97Ah20Jb5n4jD2d7impp/yIKC3fpFMc2eau5PToYjSjNlEs/etVAOyXWGnLc6odJ7Bw=="
+      },
+      "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-1": {
+        "event_id": "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The four-week evidence review",
+        "render_receipt_fingerprint": "4f0f2e26b5b6c951b462cb62d1051b5d37de1bda4b0911f91b2e0268fc5d3ade",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "hdwoT7h+0kdyDF9Q+hiFaEIcy5uW/uIRCHzlZ4NjzDOnE+Gd+IhzZVKbUqFphHoMofDuInDFuAUv75aWqHf8Bw=="
+      },
+      "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-2": {
+        "event_id": "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The two-week operating review",
+        "render_receipt_fingerprint": "4f0f2e26b5b6c951b462cb62d1051b5d37de1bda4b0911f91b2e0268fc5d3ade",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "/NQxjgwul6QhaeFmG+6l/ku2bdP7Nb9c7vgTUEqCgecb20ktg2V/ImRhlbrG6aS0/MeQNeZzcu111cKbJUsICw=="
+      },
+      "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-3": {
+        "event_id": "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "Only a material change in category economics",
+        "render_receipt_fingerprint": "4f0f2e26b5b6c951b462cb62d1051b5d37de1bda4b0911f91b2e0268fc5d3ade",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "IAG4jxH6LJGQnVnD0mz7sSav4wHUsDRhov2qeoc5YERzMLrfWJUrT+UadlRYgQDzIepoWmU7W6hhaAvdTjahAg=="
+      },
+      "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-1": {
+        "event_id": "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The four-week evidence review",
+        "render_receipt_fingerprint": "cfd7295c187b28921545f1e24b79e24948417a5fad9cf7e99ced45b59702b7d1",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "dUfTxpw98oAhSrD2PIiLOa+mQwikZtpuqVTnBXWmDVEFB0Y5M4mBusprNe/R42zkXJ+MjLfmchl4QDGvg9UPCw=="
+      },
+      "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-2": {
+        "event_id": "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The two-week operating review",
+        "render_receipt_fingerprint": "cfd7295c187b28921545f1e24b79e24948417a5fad9cf7e99ced45b59702b7d1",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "ErY2v0SDQ+7LeZJewiqPAxPCnNg6a8RHOw4eHZMw/RvrCSj7f9ry585EIR6GoRnbjqKLCmksXclCL43itrnTDg=="
+      },
+      "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-3": {
+        "event_id": "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-continue_after_intensive_proof-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "Only a material change in category economics",
+        "render_receipt_fingerprint": "cfd7295c187b28921545f1e24b79e24948417a5fad9cf7e99ced45b59702b7d1",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "Oc93dAqjwyxsJ2mngVDX3lCiYBW5l1IMgHV9RUblTUsyD5rPjBOTGGGQ1qj00ciK6tFFA8kJMc3a560EMbLHBg=="
+      },
+      "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-1": {
+        "event_id": "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "Two campaigns meet Maya's bar without her rewrite",
+        "render_receipt_fingerprint": "6c3663875a73835281905686f9424535a053b68cf53bfc293374ff2a459b3d89",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "PyHukZlC3HedvrT4qFMdFlAoJUcAC0xF9ZpKLErF6bIb3O0hNCBF248/Tdki7muzARdsb/Qjk1pyJUz780SHBw=="
+      },
+      "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-2": {
+        "event_id": "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "The board accepts the explicit rebuild risk",
+        "render_receipt_fingerprint": "6c3663875a73835281905686f9424535a053b68cf53bfc293374ff2a459b3d89",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "5PVGTebKpulY67CNo0jeON5ddJILL3HsfwV843TFLMvySDRjRLvyBMmlEMKLxIDZ3zpTtEJWNauvntzR6GkOCw=="
+      },
+      "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-3": {
+        "event_id": "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "A written case that more proof adds no value",
+        "render_receipt_fingerprint": "6c3663875a73835281905686f9424535a053b68cf53bfc293374ff2a459b3d89",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "Uev9vxaf1NCb5bM8e0OtQSC10Du7WjuvQu95qYiOnT+4wl4UaF8KkrySsRFRpl+CxzT/XnRlnACvdRvUTCy3CQ=="
+      },
+      "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-1": {
+        "event_id": "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "Two campaigns meet Maya's bar without her rewrite",
+        "render_receipt_fingerprint": "adc87d96a1eaf1780c36fddccaf62ba63e7cd7b016182b9093c85ff657a53449",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "MxWxBddKWvwyX0u7GJyl4U+1BGwCwWer3beIY98FGFuY0X9BLFkjrLLetrv+Hd5hEP2PzNcDKoIBwrt3f44WCA=="
+      },
+      "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-2": {
+        "event_id": "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "The board accepts the explicit rebuild risk",
+        "render_receipt_fingerprint": "adc87d96a1eaf1780c36fddccaf62ba63e7cd7b016182b9093c85ff657a53449",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "249nWNvI8StzVMx0qdaHf93Hu4vauJaCFZFy0eRjxOVQPkQc8KsMk3kuGaRzZa8kyAUzJfL1F5dsJHFWcHKfDg=="
+      },
+      "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-3": {
+        "event_id": "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "selected_option": "A written case that more proof adds no value",
+        "render_receipt_fingerprint": "adc87d96a1eaf1780c36fddccaf62ba63e7cd7b016182b9093c85ff657a53449",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "9tsch3Q8f55+iM/WcATXRbyqasAbMkTOYooiNTWUhWqXg3iZVE4QQ+cPLmXeMMpe+dm54dhr79MKrv4vQ7Z9BA=="
+      },
+      "answer-renew_continuing_period-leader_exit_or_revisit_condition-1": {
+        "event_id": "answer-renew_continuing_period-leader_exit_or_revisit_condition-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The four-week evidence review",
+        "render_receipt_fingerprint": "0e71416faf9d68691f32b4e16b21ee6cdddb994b29bf904313a07e9016b474b5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "/6/375zIdj1B4+MWm9xK46arYR16ts3kJa+pW/OlP9Acik2Kk3D69KqmOLZFyz7m+6aZuZ/bI9+GWhXQR+JmAg=="
+      },
+      "answer-renew_continuing_period-leader_exit_or_revisit_condition-2": {
+        "event_id": "answer-renew_continuing_period-leader_exit_or_revisit_condition-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The two-week operating review",
+        "render_receipt_fingerprint": "0e71416faf9d68691f32b4e16b21ee6cdddb994b29bf904313a07e9016b474b5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "MD9vWQHqTMdYVJdP05zjISQ4DQgXc+5VZYINCFbQccezJ+yCHh7bfA62VxhCHMVCNeUyI69ts56lWnG8PgkHBA=="
+      },
+      "answer-renew_continuing_period-leader_exit_or_revisit_condition-3": {
+        "event_id": "answer-renew_continuing_period-leader_exit_or_revisit_condition-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "Only a material change in category economics",
+        "render_receipt_fingerprint": "0e71416faf9d68691f32b4e16b21ee6cdddb994b29bf904313a07e9016b474b5",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "dhi1kF67re8uAXFFgBwg90Im38kKvjULwKetCVRxKnRekNYPFu/0yR/y0MElddxAHwk3hT+6uCQZ7HGPp9AJDw=="
+      },
+      "answer-renew_continuing_period-krish_exit_or_revisit_condition-1": {
+        "event_id": "answer-renew_continuing_period-krish_exit_or_revisit_condition-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The four-week evidence review",
+        "render_receipt_fingerprint": "8def68bc1615e4fb285729957e17af28c3788037c29141083f09cea8ffe626cb",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "H5GE8XN/zJgIrkqQI3OWx5zYjn/6E5QV8w1L4M7Yli3iCFUX1mUyoj83LWbUQSsKesjF6ditSFr5pxpwgcemDw=="
+      },
+      "answer-renew_continuing_period-krish_exit_or_revisit_condition-2": {
+        "event_id": "answer-renew_continuing_period-krish_exit_or_revisit_condition-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "The two-week operating review",
+        "render_receipt_fingerprint": "8def68bc1615e4fb285729957e17af28c3788037c29141083f09cea8ffe626cb",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "coBpVfsettJ424NJunQioT7sjEfVMmvb/KuRzrPUu4aiX3Y7VHiG59HKYy4/24nmmK3z+3JdJ07qmME23N4hAw=="
+      },
+      "answer-renew_continuing_period-krish_exit_or_revisit_condition-3": {
+        "event_id": "answer-renew_continuing_period-krish_exit_or_revisit_condition-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-renew_continuing_period-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "selected_option": "Only a material change in category economics",
+        "render_receipt_fingerprint": "8def68bc1615e4fb285729957e17af28c3788037c29141083f09cea8ffe626cb",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "9dHLH1bWRY2yMFybYIRtpCnLyvmv7iq2EDilMWZEzXya2gS4YCiClYP0eVYpcbNejujsNT7a5dfJQq4ps55pBw=="
+      },
+      "answer-resume_continuing-leader_revalidates_purpose-1": {
+        "event_id": "answer-resume_continuing-leader_revalidates_purpose-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_purpose",
+        "question_version": "qv1",
+        "selected_option": "Prove quality can travel before changing the team",
+        "render_receipt_fingerprint": "5a8f22ef1f6a9f44b5f1d5e9d964ccf81fc70375306c499957ebb5ba5d91055b",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "8Ym7kB3ObBDDOEJRLIXRPX+1YKjL++nKVKTjBZbK71dCyVPwPfRd9cZqZ0tm1aEVAmLlxk9sjDfRIXjr3bopDg=="
+      },
+      "answer-resume_continuing-leader_revalidates_purpose-2": {
+        "event_id": "answer-resume_continuing-leader_revalidates_purpose-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_purpose",
+        "question_version": "qv1",
+        "selected_option": "Design the team rebuild now",
+        "render_receipt_fingerprint": "5a8f22ef1f6a9f44b5f1d5e9d964ccf81fc70375306c499957ebb5ba5d91055b",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "jImJjoCDYup07MkVVqY0zhZwdf88nzppYKXA4e1jeoBA9e8DhvepNKLWY8kkAOzZA6tW6uoJhimqfPYJJ8/OBQ=="
+      },
+      "answer-resume_continuing-leader_revalidates_purpose-3": {
+        "event_id": "answer-resume_continuing-leader_revalidates_purpose-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_purpose",
+        "question_version": "qv1",
+        "selected_option": "Stop this work",
+        "render_receipt_fingerprint": "5a8f22ef1f6a9f44b5f1d5e9d964ccf81fc70375306c499957ebb5ba5d91055b",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "d2YZqSvoXuD1tjK6dM21lNEsn1AyPRxUX/BiasknIfo+AfCcY0CuVXP5OCNTi9ug53wSs2Kd7V3EOs/dySRlDA=="
+      },
+      "answer-resume_continuing-krish_revalidates_purpose-1": {
+        "event_id": "answer-resume_continuing-krish_revalidates_purpose-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_purpose",
+        "question_version": "qv1",
+        "selected_option": "Prove quality can travel before changing the team",
+        "render_receipt_fingerprint": "72a6b2c2cd2785a4f13e492861c339fee1bf4f2fe45e5bd74f18e30c563a3a19",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "3diFoBFcS/71G6KNd5cPww27uo0nI124P6GL+BTZflaxX/V6XNcLnOctT89lSsPsyVFP9VMtuZSVDKHRN1SlAw=="
+      },
+      "answer-resume_continuing-krish_revalidates_purpose-2": {
+        "event_id": "answer-resume_continuing-krish_revalidates_purpose-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_purpose",
+        "question_version": "qv1",
+        "selected_option": "Design the team rebuild now",
+        "render_receipt_fingerprint": "72a6b2c2cd2785a4f13e492861c339fee1bf4f2fe45e5bd74f18e30c563a3a19",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "IRkhel/81zxYpmDepuas5IiU5eK1qrAI2Y1bBQRccVJLOKo2HKr8RjafSwrb1+g5Qi9z1RhAXlGtu7/ViwUzAQ=="
+      },
+      "answer-resume_continuing-krish_revalidates_purpose-3": {
+        "event_id": "answer-resume_continuing-krish_revalidates_purpose-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_purpose",
+        "question_version": "qv1",
+        "selected_option": "Stop this work",
+        "render_receipt_fingerprint": "72a6b2c2cd2785a4f13e492861c339fee1bf4f2fe45e5bd74f18e30c563a3a19",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "8BvSvfoNIDbfwJJkNUwlI8N1kZveDvtLeOARzhHqiuZsWTG5KPmXLDV9rsD5JZa7MZ7vRpfpqNRL/CloI1MfCg=="
+      },
+      "answer-resume_continuing-leader_revalidates_next_value-1": {
+        "event_id": "answer-resume_continuing-leader_revalidates_next_value-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_next_value",
+        "question_version": "qv1",
+        "selected_option": "Two campaigns meet Maya's bar without her rewrite",
+        "render_receipt_fingerprint": "4e6adc96a672d5104e9926133c54e111375bb0dbcf74c3fd4449917a19aca609",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "07Ew3VkBrjbIAgjhLNgEOrYG3FTC9R9gzTb36+AWPXlQlzQUXGFzi49AyNgcuPmGfiHERWNIa/qxEzjNHqS/DQ=="
+      },
+      "answer-resume_continuing-leader_revalidates_next_value-2": {
+        "event_id": "answer-resume_continuing-leader_revalidates_next_value-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_next_value",
+        "question_version": "qv1",
+        "selected_option": "The board accepts the explicit rebuild risk",
+        "render_receipt_fingerprint": "4e6adc96a672d5104e9926133c54e111375bb0dbcf74c3fd4449917a19aca609",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "J871J0hLsSeK3/OBa33z+3nbh12iuV830OVX4JS9YCCC5MlyCI85ZJWuzKEQubEGrOq4dU4DsM9AUiP33saZDg=="
+      },
+      "answer-resume_continuing-leader_revalidates_next_value-3": {
+        "event_id": "answer-resume_continuing-leader_revalidates_next_value-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_next_value",
+        "question_version": "qv1",
+        "selected_option": "A written case that more proof adds no value",
+        "render_receipt_fingerprint": "4e6adc96a672d5104e9926133c54e111375bb0dbcf74c3fd4449917a19aca609",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "vImsynpPGEjM4H5NU9Scv+5eW4J8emMInrSc6xT6vKH40pvu+iirDMnadMuvvVNxnkBR34J6FzpXIx08G96UDw=="
+      },
+      "answer-resume_continuing-krish_revalidates_next_value-1": {
+        "event_id": "answer-resume_continuing-krish_revalidates_next_value-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_next_value",
+        "question_version": "qv1",
+        "selected_option": "Two campaigns meet Maya's bar without her rewrite",
+        "render_receipt_fingerprint": "37916bef8ff797d2bb47e27d92b71311c4f3b33825168c893267c349dee1864e",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "+TrQ1yaPPYmYQzUQTQwGWEncpvYenTLi+wECpo543n4opvlFOCpHtM1uU6TWLY4ivukbP2IpzThRAvraLPFfBA=="
+      },
+      "answer-resume_continuing-krish_revalidates_next_value-2": {
+        "event_id": "answer-resume_continuing-krish_revalidates_next_value-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_next_value",
+        "question_version": "qv1",
+        "selected_option": "The board accepts the explicit rebuild risk",
+        "render_receipt_fingerprint": "37916bef8ff797d2bb47e27d92b71311c4f3b33825168c893267c349dee1864e",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "Z56IhgL+r3LdotVM8cwfzqhgY8tvfxzunHXPxOnW2oaffcwWA0wtLha2DuhnfIiww7U73eVGKOTkbeGkRtN9BA=="
+      },
+      "answer-resume_continuing-krish_revalidates_next_value-3": {
+        "event_id": "answer-resume_continuing-krish_revalidates_next_value-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_next_value",
+        "question_version": "qv1",
+        "selected_option": "A written case that more proof adds no value",
+        "render_receipt_fingerprint": "37916bef8ff797d2bb47e27d92b71311c4f3b33825168c893267c349dee1864e",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "hbGGXKOe7sOxiugUH/0s6cNlBCKcdODsVISNk8KqnHb1zN/BrG1s3cAmwgWmfNYfbwC3ZSnNRdHwX3md/r6ACg=="
+      },
+      "answer-resume_continuing-leader_revalidates_checkpoint-1": {
+        "event_id": "answer-resume_continuing-leader_revalidates_checkpoint-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Blind comparison after four weeks",
+        "render_receipt_fingerprint": "3a3a19b05a3f55a103c3e112034ae8793123e667a34d9d857651d07fdb983f0c",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "D4uPOCGaOWS/KtiDya/lgrLwKo5dkfSMFmjr+4LEWZtFvE1FvvkWxgIucG3gHFpW50nPvmWcMIiAaszl+2jrDg=="
+      },
+      "answer-resume_continuing-leader_revalidates_checkpoint-2": {
+        "event_id": "answer-resume_continuing-leader_revalidates_checkpoint-2",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Operating review after two weeks",
+        "render_receipt_fingerprint": "3a3a19b05a3f55a103c3e112034ae8793123e667a34d9d857651d07fdb983f0c",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "lzS8AIns9IsS+I7emzGRilDtZjpO8CUFMYUQE/oDQuBdCqkvLTL44TEQQVKpfapjbQuIv5pjlEGinw/D8vKlDQ=="
+      },
+      "answer-resume_continuing-leader_revalidates_checkpoint-3": {
+        "event_id": "answer-resume_continuing-leader_revalidates_checkpoint-3",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-leader_revalidates_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Review only if category economics change",
+        "render_receipt_fingerprint": "3a3a19b05a3f55a103c3e112034ae8793123e667a34d9d857651d07fdb983f0c",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "uB1qlVv5/KLp4Sx0/TqbpQBDVc1Yx0v0jx/HsGlobW/Jre/JrRY1pacZD6C+/OQBH3x3KDJufocQpN2QDw6wDw=="
+      },
+      "answer-resume_continuing-krish_revalidates_checkpoint-1": {
+        "event_id": "answer-resume_continuing-krish_revalidates_checkpoint-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Blind comparison after four weeks",
+        "render_receipt_fingerprint": "a2b7e864a7c757f0015e70349a7b0ac87ce644f4c381cca037081302c1fc55a1",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "/ALdwgWvyLcL9j9y7VmrpQTbeIOU5QMmbLn6+jzC/Bk/r1lym5UYiUEJ5Ry+KIqxEH7imGHYgkEAakIasjWUBQ=="
+      },
+      "answer-resume_continuing-krish_revalidates_checkpoint-2": {
+        "event_id": "answer-resume_continuing-krish_revalidates_checkpoint-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Operating review after two weeks",
+        "render_receipt_fingerprint": "a2b7e864a7c757f0015e70349a7b0ac87ce644f4c381cca037081302c1fc55a1",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "OjyaWKJ4/mCb/XRhI7+n6OdKTo7sh3vDMneg6Mt8lZEuX+60/XPsLUpnKNMBNDhBAH/9LMEk5lVF/nfhCLM0Dw=="
+      },
+      "answer-resume_continuing-krish_revalidates_checkpoint-3": {
+        "event_id": "answer-resume_continuing-krish_revalidates_checkpoint-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-resume_continuing-krish_revalidates_checkpoint",
+        "question_version": "qv1",
+        "selected_option": "Review only if category economics change",
+        "render_receipt_fingerprint": "a2b7e864a7c757f0015e70349a7b0ac87ce644f4c381cca037081302c1fc55a1",
+        "answered_at": "2026-09-16T08:32:00Z",
+        "issuer_signature_base64": "SZGvOZTwaw3Y4t0IIPf5ek9ZmyajBKSzEnEXBjvmVfs/o9YZURXpr8ia+cDUHp+3nEfMPDBWstvQoXz30wfwAw=="
+      },
+      "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-1": {
+        "event_id": "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "selected_option": "Prove a new customer promise can travel without Maya",
+        "render_receipt_fingerprint": "5800ce1d2af4793e39cf57b0ea7a6fc174331607f4ebe4fa76b127c9eca32572",
+        "answered_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "GxU8As/3ID6yh7CRx1otbHeUU8kpZqfbb6P4vmRnCkwnWupNcZQ03U1Vx+PFyElytnj6D6KYcMcwkTyKyUDYDA=="
+      },
+      "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-2": {
+        "event_id": "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "selected_option": "Design a new category position for Aperture House",
+        "render_receipt_fingerprint": "5800ce1d2af4793e39cf57b0ea7a6fc174331607f4ebe4fa76b127c9eca32572",
+        "answered_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "g5efY3iVha9SV12jx3muviAnCEFKYD9V5eYbT73SfXzHajbQLRAw8HfuFo1nheWx8mkuLwg/5+9/n+j9jhpbDg=="
+      },
+      "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-3": {
+        "event_id": "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "selected_option": "Keep the previous decision closed",
+        "render_receipt_fingerprint": "5800ce1d2af4793e39cf57b0ea7a6fc174331607f4ebe4fa76b127c9eca32572",
+        "answered_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "Jh3flzrFmcqi1S5fOUZ13nsbG19i1AAi2FT7AEcPLMUcHhv/F9pulgyH3IQ67vGgMZfhRL+0wa/zTOA6oQNfDA=="
+      },
+      "answer-open_new_preparation_after_close-krish_review_date-1": {
+        "event_id": "answer-open_new_preparation_after_close-krish_review_date-1",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_new_preparation_after_close-krish_review_date",
+        "question_version": "qv1",
+        "selected_option": "The four-week evidence review",
+        "render_receipt_fingerprint": "00d73492f51a3ff2e13fa812f1f141555db305a8e2cc4abd8ff83ac6cc0cbfc2",
+        "answered_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "l6SxG6eAEYjho8tzmDAqb+Qv27aiyvuYGs4Sdhzo+GBKOid4GTsO4A5/B42FEXLaSLIxupE+y2C5MFmN0k49CQ=="
+      },
+      "answer-open_new_preparation_after_close-krish_review_date-2": {
+        "event_id": "answer-open_new_preparation_after_close-krish_review_date-2",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_new_preparation_after_close-krish_review_date",
+        "question_version": "qv1",
+        "selected_option": "The two-week operating review",
+        "render_receipt_fingerprint": "00d73492f51a3ff2e13fa812f1f141555db305a8e2cc4abd8ff83ac6cc0cbfc2",
+        "answered_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "RyoA3mVhn/DL2tbqswOx4vpoXR0jq4iohOUp1C7LtV/XuGujq/9V+RNwaKugxnM+3VGLR/hhJbVgdY9PcvJzDA=="
+      },
+      "answer-open_new_preparation_after_close-krish_review_date-3": {
+        "event_id": "answer-open_new_preparation_after_close-krish_review_date-3",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "question_id": "question-open_new_preparation_after_close-krish_review_date",
+        "question_version": "qv1",
+        "selected_option": "Only a material change in category economics",
+        "render_receipt_fingerprint": "00d73492f51a3ff2e13fa812f1f141555db305a8e2cc4abd8ff83ac6cc0cbfc2",
+        "answered_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "bFMcx2ykh6Bw5xoU/6iRgvhb286Of92WrmtK0e3D+QmNE2oZhmskevZaADncexTE+QkhJdJIIo3GCK4hFFSCBg=="
+      }
+    },
+    "free_expressions": {
+      "free-1": "Prove the system in one campaign before changing the team.",
+      "free-stop": "Stop the rebuild.",
+      "free-pause": "Pause this until the evidence changes.",
+      "free-remain-closed": "Keep the old decision closed."
+    },
+    "structured_interpretations": {
+      "interpretation-1": {
+        "interpretation_id": "interpretation-1",
+        "free_expression_ref": "free-1",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "plain_language_interpretation": "Require one priority campaign to meet Maya's quality bar without her final rewrite before changing the team.",
+        "decision_value": {
+          "path": "evidence_requirement",
+          "value": "One priority campaign meets Maya's quality bar without her final rewrite"
+        },
+        "derived_effect_id": "free-value-one-campaign",
+        "interpretation_fingerprint": "a76d602ecc17e27b96872062480ceeee72c476e39997638d45c08627df9b025e",
+        "transition_disposition": "supports_transition"
+      },
+      "interpretation-stop": {
+        "interpretation_id": "interpretation-stop",
+        "free_expression_ref": "free-stop",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "plain_language_interpretation": "Keep the current team decision stopped.",
+        "decision_value": {
+          "path": "route",
+          "value": "stop_rebuild"
+        },
+        "derived_effect_id": "free-stop-effect",
+        "transition_disposition": "blocks_transition",
+        "interpretation_fingerprint": "cdaf8abcef2776e018ef7772254812be23da6f5eff09dd6f5e40c1b5985e3946"
+      },
+      "interpretation-pause": {
+        "interpretation_id": "interpretation-pause",
+        "free_expression_ref": "free-pause",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "plain_language_interpretation": "Pause continuation until new evidence exists.",
+        "decision_value": {
+          "path": "route",
+          "value": "pause"
+        },
+        "derived_effect_id": "free-pause-effect",
+        "transition_disposition": "blocks_transition",
+        "interpretation_fingerprint": "23bad6d4ec128209a697bc0b1f0917e567cf500bde19b4d5f3326738be892cd6"
+      },
+      "interpretation-remain-closed": {
+        "interpretation_id": "interpretation-remain-closed",
+        "free_expression_ref": "free-remain-closed",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "plain_language_interpretation": "Keep the previous decision closed.",
+        "decision_value": {
+          "path": "route",
+          "value": "remain_closed"
+        },
+        "derived_effect_id": "free-remain-closed-effect",
+        "transition_disposition": "blocks_transition",
+        "interpretation_fingerprint": "7b31528d786b6e6760ee9d51736d9b6f7966245714a4351f615d37b316d4b7b9"
+      }
+    },
+    "free_expression_confirmations": {
+      "confirm-1": {
+        "confirmation_id": "confirm-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "authentication_event_ref": "auth-1",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "free_expression_fingerprint": "cd66ff5baefaacc35ebe5f6a42b278d9cd49ad0454374c2eb1bdb2d8451afd58",
+        "structured_interpretation_fingerprint": "9de6c5e758410ac0f97959efed8c60cf38a5f54d6815ce575fd1af555f29ee9b",
+        "interpretation_render_fingerprint": "a0acf180e5b1d60cb8465d34d445420d377149bd108e889911e7ee84ca209e0b",
+        "decision_value_fingerprint": "638f72296e52bfd54ede8e7c4933f66b10040e53fea4b7b2da6474929829f062",
+        "visible_consequence_fingerprint": "94d5a8090c20d3ee73b20e8d255998cf733645d30606b67d0e9a9259b1490254",
+        "confirmed_at": "2026-09-16T08:36:00Z",
+        "issuer_signature_base64": "1AVBg244hqXqaF6aoRTK/m2dcBI/oaTevAQP0R8vgr+zC4hyH4OEG1OWIETsWAYXDuY6tYIgu44z7bt5tKbYCw=="
+      },
+      "confirm-stop": {
+        "confirmation_id": "confirm-stop",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "authentication_event_ref": "auth-1",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "free_expression_fingerprint": "ff2ced7685fad8e55e9966c4fc3e9ed0b18bc4911a7c2d2a9d4db96c24822a57",
+        "structured_interpretation_fingerprint": "8331703168115b218e8f36f3b4329baae79df04c5d51ef81f670e3809fd675f7",
+        "interpretation_render_fingerprint": "af758899cea0581d1dde83758c2fdbe714efadb648801cd8739fa269358b129f",
+        "decision_value_fingerprint": "9e8291488ae7b39324df3ac3af35dc6ca52fe8a1a4e53a415e7567c67844a2fa",
+        "visible_consequence_fingerprint": "ac20924b3b13b85bdde6f78024dffa03a3a01ef066aaf02c0b86625d1c98fee8",
+        "confirmed_at": "2026-09-16T08:34:00Z",
+        "issuer_signature_base64": "HumV9Kd7fnRbmgJ5ojPCMv8MceWPJsy5zKTYOdYVcolRC8knov/DXJYauMEJAcSv5OvwJqkioDZ0yxPvldGPBA=="
+      },
+      "confirm-pause": {
+        "confirmation_id": "confirm-pause",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "authentication_event_ref": "auth-1",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "free_expression_fingerprint": "17b27bf05d00806c0cb3537597ca9c7ab92b43c8d1b93ba8ffbe5efd32cb0f80",
+        "structured_interpretation_fingerprint": "b2b77c8f7da9358cd53e4051c394d3b194bb2c47bb911cfbbbf3682a128c3a19",
+        "interpretation_render_fingerprint": "18f2448da79b3fa693c5e6ad6facf84d1187eb5a42aaf4f5a8ff5d46ac174f90",
+        "decision_value_fingerprint": "8e4ee303c876c3269c2a82457a4821ab2d4cd56f9831a4a44abbc6193ec406b5",
+        "visible_consequence_fingerprint": "94d5a8090c20d3ee73b20e8d255998cf733645d30606b67d0e9a9259b1490254",
+        "confirmed_at": "2026-09-16T08:34:00Z",
+        "issuer_signature_base64": "gcO43wXCiAJIn0n/UG/An7p6KVBdJAmFsh80I0a9rP5x7q0gNTQLrMc3NPpWLxWd8NqUQgePduuPKz4EHR/CAw=="
+      },
+      "confirm-remain-closed": {
+        "confirmation_id": "confirm-remain-closed",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "authentication_event_ref": "auth-2",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "free_expression_fingerprint": "bf94eb45d3098a2bc6b607dfb32db220a1cd6391b7fec8feb1dcb8f5fd4256b7",
+        "structured_interpretation_fingerprint": "b8fd25d7d99c3d4c32665c925c526bcaaa121e4f2418d1f70efd56260f29b58f",
+        "interpretation_render_fingerprint": "985e87a2481f8ba219a7424dc523a23b5f3e48e9c2c5ebf2f43b3257505af44b",
+        "decision_value_fingerprint": "96f9ce2e731162554cd0760c2cb6998b52b5dd9d4c6404f5b14b241bb86197b6",
+        "visible_consequence_fingerprint": "3eac6452858087ac0e0d819c8dcdd77843cfa5b39987f5a2a205353313f8224f",
+        "confirmed_at": "2026-09-16T08:45:00Z",
+        "issuer_signature_base64": "RJcDSyk1MJtz64gDCkjckT6WO51tQVfw8h2DPjRNy9nOQ02QXopkdtvTJ/SiDxKbLDtgMxwrdzsWXTe8Z8ytDA=="
+      }
+    },
+    "final_authority_events": {
+      "final-authority-open_preparation-krish": {
+        "event_id": "final-authority-open_preparation-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "open_preparation",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "none-7",
+        "predicate_proof_fingerprint": "8fb57644ab31449d033f9176d03bffe1b2f65c8de556ad2a660684d55e38bcb6",
+        "reconciled_decision_fingerprint": "ba3909113f633de7da6812119f89a0a1399617eeaaf0a9cdbdcc91bf2c110d20",
+        "final_render_fingerprint": "7e097f3ca54c17ac936daeaa60e56e330a121d7fc5be6c05d8789b9db8393434",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-open_preparation",
+        "visible_consequence_fingerprint": "582f0e1bd9abe02263a19dc5c1726dca91046d1a07e32b7c5e2ead596b8caa3c",
+        "reserved_transition_receipt_version": "reserve-open_preparation",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "N/AoiZCJUIfz5sHIBOyDFLIJvY2e6XUk3R4qF4MaJjQxsoxu+1Wmyzj2RtF35YQCwzcT/tRobovTgUpHJrkTAA=="
+      },
+      "final-authority-accept_intensive_proof-krish": {
+        "event_id": "final-authority-accept_intensive_proof-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "accept_intensive_proof",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "preparing-7",
+        "predicate_proof_fingerprint": "b1b9a461c439599d288a51e47af1c43c5e2586d44017d728d6f94f926e3b60c0",
+        "reconciled_decision_fingerprint": "d80cf09bc835a6d4749d3469634dbdb1cb826656920c9ccf3da85cdad80fda6a",
+        "final_render_fingerprint": "bb4d0939efc03fcfbc0b0e07a6134268f362901b8b6d2705474df23865dca175",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-accept_intensive_proof",
+        "visible_consequence_fingerprint": "73fd0c909611011cce116ed01472fb5fd465f6a6212186aa49c241c6c206d17b",
+        "reserved_transition_receipt_version": "reserve-accept_intensive_proof",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "Ks+6L9G1NTrIk9qaZ54ddrdxTBxxBX9IOpTJS3/j1VMGPuwBLFKgrCT4em64msLM2mOGO/KybJiejlABMmd+Bg=="
+      },
+      "final-authority-accept_intensive_proof-leader-1": {
+        "event_id": "final-authority-accept_intensive_proof-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "accept_intensive_proof",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "preparing-7",
+        "predicate_proof_fingerprint": "b1b9a461c439599d288a51e47af1c43c5e2586d44017d728d6f94f926e3b60c0",
+        "reconciled_decision_fingerprint": "d80cf09bc835a6d4749d3469634dbdb1cb826656920c9ccf3da85cdad80fda6a",
+        "final_render_fingerprint": "bb4d0939efc03fcfbc0b0e07a6134268f362901b8b6d2705474df23865dca175",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-accept_intensive_proof",
+        "visible_consequence_fingerprint": "73fd0c909611011cce116ed01472fb5fd465f6a6212186aa49c241c6c206d17b",
+        "reserved_transition_receipt_version": "reserve-accept_intensive_proof",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "BK6wQV0ZHGai+rJmX9ZiXn/jD148rWYF0pBC6stsB3zC6WOGnCaPe8xcaFS6D9dhkHQYVmJdVJc3+kPrcSgyAQ=="
+      },
+      "final-authority-close_preparation-krish": {
+        "event_id": "final-authority-close_preparation-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "close_preparation",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "preparing-7",
+        "predicate_proof_fingerprint": "37a93e6df9efedd031d3ab20b4d2e4bbf939ffe3a2b9a91d763c021ba8185969",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "38630c7b40987e730ed3bf75320b3f074ce154a314baa7591230c3a7baf0818c",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-close_preparation",
+        "visible_consequence_fingerprint": "079c88a6c1d2b17dcfb2d03fd14c69287e9b54d1317b248638a5cd0a4eef61ac",
+        "reserved_transition_receipt_version": "reserve-close_preparation",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "L8J9a4wMCqhHomDqIjhRtd1BXb66ldwwu1rH7Hwxg7k6cNnMME9a5KBMNSHM9h2SSR6JDmJCDlt1QqqsmRrrCg=="
+      },
+      "final-authority-continue_after_intensive_proof-krish": {
+        "event_id": "final-authority-continue_after_intensive_proof-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "continue_after_intensive_proof",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "intensive_proof-7",
+        "predicate_proof_fingerprint": "eddfacfd4152dd4d5adeb0727722d2c8a0fdc0d6052ef12fda801e735a769cde",
+        "reconciled_decision_fingerprint": "1b2061ab4a17d9342f5a6a565df05df7afc013c67245f5db001ed602a82bde66",
+        "final_render_fingerprint": "8dabd1857ea5088537f1920c99f07829ec14504ccdda04ab5911091e8e004d3a",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-continue_after_intensive_proof",
+        "visible_consequence_fingerprint": "10c0416e5645ff4d0c92bd8ced9d7e78d91ba1caf905f69d092d7ccf02693d51",
+        "reserved_transition_receipt_version": "reserve-continue_after_intensive_proof",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "HTkObBRjroPJPM1Q7JkqTAc5e79CbT7yjfGuSac0omYRWY7OkGaS8jEl8QmqHwqPcdvLzrQBqTixlq2L5aTbBQ=="
+      },
+      "final-authority-continue_after_intensive_proof-leader-1": {
+        "event_id": "final-authority-continue_after_intensive_proof-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "continue_after_intensive_proof",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "intensive_proof-7",
+        "predicate_proof_fingerprint": "eddfacfd4152dd4d5adeb0727722d2c8a0fdc0d6052ef12fda801e735a769cde",
+        "reconciled_decision_fingerprint": "1b2061ab4a17d9342f5a6a565df05df7afc013c67245f5db001ed602a82bde66",
+        "final_render_fingerprint": "8dabd1857ea5088537f1920c99f07829ec14504ccdda04ab5911091e8e004d3a",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-continue_after_intensive_proof",
+        "visible_consequence_fingerprint": "10c0416e5645ff4d0c92bd8ced9d7e78d91ba1caf905f69d092d7ccf02693d51",
+        "reserved_transition_receipt_version": "reserve-continue_after_intensive_proof",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "Zh4bDMR970fpJ1znct6y1m/bkdcSEdpDWMxHicmFW4AqyoVKXlC6ih7/JvZfC45PqWlKg5RWylbxHQAniNqZAw=="
+      },
+      "final-authority-renew_continuing_period-krish": {
+        "event_id": "final-authority-renew_continuing_period-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "renew_continuing_period",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "continuing-7",
+        "predicate_proof_fingerprint": "a5a90253140c81d0049776e9f6c6c18dce6b9e8dc136b1c8c80f6b9a6f0f1c7c",
+        "reconciled_decision_fingerprint": "731ee05878c8a0412c9cb44d4856e23c39660693c534c46f07b06ec632298315",
+        "final_render_fingerprint": "646e98b9a090c5318aaff1f3d4a4eaeffc870ce4bdfd157a483e5030a22b25ad",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-renew_continuing_period",
+        "visible_consequence_fingerprint": "51b154fc6e00f840858b6820c7019c08ad067af5376194deed0be41d02221008",
+        "reserved_transition_receipt_version": "reserve-renew_continuing_period",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "a04w058LC2pDBlIB80QWcMXTfATB5i2ct9xQnUxBhDN0vxKmGJ6wSnjeaX6Wxy+QBcL1dwmljQzs14FaJWtsAA=="
+      },
+      "final-authority-renew_continuing_period-leader-1": {
+        "event_id": "final-authority-renew_continuing_period-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "renew_continuing_period",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "continuing-7",
+        "predicate_proof_fingerprint": "a5a90253140c81d0049776e9f6c6c18dce6b9e8dc136b1c8c80f6b9a6f0f1c7c",
+        "reconciled_decision_fingerprint": "731ee05878c8a0412c9cb44d4856e23c39660693c534c46f07b06ec632298315",
+        "final_render_fingerprint": "646e98b9a090c5318aaff1f3d4a4eaeffc870ce4bdfd157a483e5030a22b25ad",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-renew_continuing_period",
+        "visible_consequence_fingerprint": "51b154fc6e00f840858b6820c7019c08ad067af5376194deed0be41d02221008",
+        "reserved_transition_receipt_version": "reserve-renew_continuing_period",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "v5B/yzf4O0FBDs3tiUuoNKYniJA+23+0cf+rGLgA5JeTobqD9h3OXg9kxBcQJRC4FIwCLcPCJ7XmJtZ8YIrVBQ=="
+      },
+      "final-authority-pause_intensive_proof-leader-1": {
+        "event_id": "final-authority-pause_intensive_proof-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "pause_intensive_proof",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "intensive_proof-7",
+        "predicate_proof_fingerprint": "487a48945cda2c0321771d5c135ce8c585008be0e9c39060f44e39141529fd78",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "a0801b918b3ac88b1c5417c6db18d4ada113d8a0d0d29028af799742d9f7d319",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-pause_intensive_proof",
+        "visible_consequence_fingerprint": "d70760499802a3793022e0ed98e75e159efeaad9bcbbf2f36e84795b5f71585d",
+        "reserved_transition_receipt_version": "reserve-pause_intensive_proof",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "+hjVy6QqIzncxOee7dc3lYuDbGo0iFJfW8JTnTU5qmy5yjKj5lyCtJqeUjuwbjcdBxOW5k17cuUvrabGRhbpAg=="
+      },
+      "final-authority-pause_continuing-leader-1": {
+        "event_id": "final-authority-pause_continuing-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "pause_continuing",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "continuing-7",
+        "predicate_proof_fingerprint": "2b4d1e820c8edfc7dac56753663d1b7bf462be44ed61108d345e75f9c99f1fa6",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "7c17be4e3b8e2df82551561fd1eae7800b3698f12cc67f67d999b067a9e4174d",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-pause_continuing",
+        "visible_consequence_fingerprint": "153b4dede8dc6f49e0747c122ef3a675f2699e949f879b0c11eb54f3556418b4",
+        "reserved_transition_receipt_version": "reserve-pause_continuing",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "RfHue8nar3Uk6HaDFANlyunxifw629WLPBbVjvwK5kkTTGNY6UpvEf/KZ+KLFVz7uF0duHptg7fZFqS8uMDMAg=="
+      },
+      "final-authority-resume_continuing-krish": {
+        "event_id": "final-authority-resume_continuing-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "resume_continuing",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "paused-7",
+        "predicate_proof_fingerprint": "29f3453551ac069538d3148ab26612d8d214a4c94ce899dcf38139ecd77d1e15",
+        "reconciled_decision_fingerprint": "ae31f066a080e417098d382f36921248f97b7da5713cded37d04f0a90e50ea6e",
+        "final_render_fingerprint": "c7dd6cb66ea100b94b5f8243ce95eca82d88a091707460b90bc082eab02a183a",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-resume_continuing",
+        "visible_consequence_fingerprint": "b2942ac1bc98242610a44b25d7ef038d2feff7bcb03a9ba36f091d9ed8a8a7fb",
+        "reserved_transition_receipt_version": "reserve-resume_continuing",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "hTLruMvPLFhT80YyReo8fr5jMA7cqlQ4D7Ep8nb4mrj4+F6nM8Dv5y7/XnpkdNzuPBcj74NxpjQzk7nloiO8BA=="
+      },
+      "final-authority-resume_continuing-leader-1": {
+        "event_id": "final-authority-resume_continuing-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "resume_continuing",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "paused-7",
+        "predicate_proof_fingerprint": "29f3453551ac069538d3148ab26612d8d214a4c94ce899dcf38139ecd77d1e15",
+        "reconciled_decision_fingerprint": "ae31f066a080e417098d382f36921248f97b7da5713cded37d04f0a90e50ea6e",
+        "final_render_fingerprint": "c7dd6cb66ea100b94b5f8243ce95eca82d88a091707460b90bc082eab02a183a",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-resume_continuing",
+        "visible_consequence_fingerprint": "b2942ac1bc98242610a44b25d7ef038d2feff7bcb03a9ba36f091d9ed8a8a7fb",
+        "reserved_transition_receipt_version": "reserve-resume_continuing",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "+1kJZCvCVP1guT6qwsMdI9kFqlkbCjzbyXcf5BE+6MPyEFQQ3jNHc1B1ueBd4nzifu8nnhJHFkjNlo+8k+HwAA=="
+      },
+      "final-authority-close_intensive_proof-leader-1": {
+        "event_id": "final-authority-close_intensive_proof-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "close_intensive_proof",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "intensive_proof-7",
+        "predicate_proof_fingerprint": "edf4634b6729f9342d49acb038da61e00c844a2693b3d1a589d3a3ce06fb3877",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "e868c0a3b879e6b4536f9b4f4303c0bbd6d0747bf5bf762bd5938e38a6132390",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-close_intensive_proof",
+        "visible_consequence_fingerprint": "4d8e0c860b42176a792959bb08c860d474085485ecd8ccc3bf62d5cce27994d2",
+        "reserved_transition_receipt_version": "reserve-close_intensive_proof",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "H8cT7CZEQ/cRjx9Tt7hsNaVrl2hzvF2KexJkwELGrayydgO6r0n/T3CyN7Aa5lYkIb37JrmynZnBVSpTLYrTBQ=="
+      },
+      "final-authority-close_continuing-leader-1": {
+        "event_id": "final-authority-close_continuing-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "close_continuing",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "continuing-7",
+        "predicate_proof_fingerprint": "de47acbb1275886f5fb1ba5b188368d921a7c5fe58c5e27fd4a5210536319ba9",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "35b96296056ffc8bbb6afa2fe53d7920cf51cc7d8e70b1d8124d264fb48667f4",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-close_continuing",
+        "visible_consequence_fingerprint": "b6463132bac0413bf4c6ee860a4866ef406758a98ee33d8a91034b13e7244ef2",
+        "reserved_transition_receipt_version": "reserve-close_continuing",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "Wz4Gh5CYMLrSeftSbVYhrlV1LAv/mdU3320x9bTNQxLRO/rZxl1slYx9A2NiLOYZJxlx6hfX6VA/Bt7tVHRaCA=="
+      },
+      "final-authority-close_paused-leader-1": {
+        "event_id": "final-authority-close_paused-leader-1",
+        "named_human_id": "leader-1",
+        "credential_id": "cred-leader-1",
+        "session_id": "session-1",
+        "method": "passkey",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "close_paused",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "paused-7",
+        "predicate_proof_fingerprint": "4bc5c40071d15dd7902250966470574d8ce1b98f184157231e1a6cb42a3068c3",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "714bbd476254a2e893985cf969ddeb773adadb5a71befcb4f9f1018ad93a2e53",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-close_paused",
+        "visible_consequence_fingerprint": "909da8c1290ea7d6cc59e0ea8c74666cafbcc5c17f019fc1782734c17ac11214",
+        "reserved_transition_receipt_version": "reserve-close_paused",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "i0stWVDk39fM72dLviW9zNFCoOuCTQxbQ3lsRJHxWYh1GmB6G/9WKSJYRYe4aevFokC/KP7PodrOqrgyHEHtBw=="
+      },
+      "final-authority-complete_close-krish": {
+        "event_id": "final-authority-complete_close-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "complete_close",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "closing-7",
+        "predicate_proof_fingerprint": "b390f7eb8c23a5438f466d3c8dbb5b7c2f004d95bf03d07c7094a05fa9c0761f",
+        "reconciled_decision_fingerprint": "3c753b7475b3ce4822ab789fc9fd7b9f3519315da89dd5c1250e61963ec60726",
+        "final_render_fingerprint": "96b723c4e47f4cf371bfd43a402ae04533bddd1a29394b2e6c2e7367b0ebc287",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-complete_close",
+        "visible_consequence_fingerprint": "b8ba885cb0a5ab70fdad7d48c4eeca1c60b172eddade2c102bbe5fe350877cac",
+        "reserved_transition_receipt_version": "reserve-complete_close",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "R/6ljO1uDu72wYpHyZ9TDfJTohTGo8OjRZu5gGnY0cLrf/B56K6geMoItCz1dpxirig07DnmBd3q0hnwX+ZzBw=="
+      },
+      "final-authority-open_new_preparation_after_close-krish": {
+        "event_id": "final-authority-open_new_preparation_after_close-krish",
+        "named_human_id": "krish",
+        "credential_id": "cred-krish",
+        "session_id": "session-2",
+        "method": "webauthn",
+        "issuer_id": "mindmake-authenticator-v9",
+        "transition_id": "open_new_preparation_after_close",
+        "subject_id": "leader-1",
+        "case_id": "case-1",
+        "purpose_id": "purpose-new-1",
+        "permitted_audience": [
+          "leader-1",
+          "krish"
+        ],
+        "predecessor_version": "closed-7",
+        "predicate_proof_fingerprint": "9edb2bd63a82d1d9ee7a57669a33973ef2d8523707f49fc6696669b431991fd5",
+        "reconciled_decision_fingerprint": "9d8458223b4d6d5dc17e6a196daff1aca0711aa4550edcc0c79091890eef9a62",
+        "final_render_fingerprint": "c093b15b6727f0d0d8c1410c57a6d213628f978d6c5b77f00946284c93dc618e",
+        "authority_bundle_fingerprint": "ef57412b1b5e135fb530762b085040d84f919b2b28ba4e2622ba00afc15a8fcc",
+        "render_receipt_ref": "final-render-open_new_preparation_after_close",
+        "visible_consequence_fingerprint": "9a363a7fd97e64f9d8e1e4b870bac4267617d6579030a786d668b01366e66824",
+        "reserved_transition_receipt_version": "reserve-open_new_preparation_after_close",
+        "authorized_at": "2026-09-16T08:55:00Z",
+        "issuer_signature_base64": "DwGQgVvQA2HAkWaAt1tRFbqlZKG3YQwAzb8N4hItw2tet8U9pZzBCCayvXIB3TGyifZLEjZDoktJrTi1JiYgDw=="
+      }
+    },
+    "decisions": {
+      "before": {
+        "decision_id": "decision-1",
+        "case_id": "case-1",
+        "consequential_target": "Whether to rebuild Aperture House's marketing team around AI",
+        "route": "undecided",
+        "bounds": [
+          "No named-person employment recommendation"
+        ],
+        "stop_condition": "No customer proof",
+        "evidence_requirement": "Unspecified",
+        "checkpoint": "Leadership review",
+        "revisit_condition": "When evidence exists",
+        "lifecycle_status": "intensive_proof"
+      },
+      "proof_first": {
+        "decision_id": "decision-1",
+        "case_id": "case-1",
+        "consequential_target": "Whether to rebuild Aperture House's marketing team around AI",
+        "route": "prove_the_system_first",
+        "bounds": [
+          "No named-person employment recommendation",
+          "One campaign pilot"
+        ],
+        "stop_condition": "Pilot fails quality threshold twice",
+        "evidence_requirement": "Two priority campaigns meet Maya's quality bar without her final rewrite",
+        "checkpoint": "Blind comparison after four weeks",
+        "revisit_condition": "At the four-week evidence review",
+        "lifecycle_status": "intensive_proof"
+      },
+      "rebuild": {
+        "decision_id": "decision-1",
+        "case_id": "case-1",
+        "consequential_target": "Whether to rebuild Aperture House's marketing team around AI",
+        "route": "rebuild_now",
+        "bounds": [
+          "No named-person employment recommendation",
+          "Role design before hiring"
+        ],
+        "stop_condition": "Customer delivery quality falls below current baseline",
+        "evidence_requirement": "Board accepts the explicit risk",
+        "checkpoint": "Two-week operating review",
+        "revisit_condition": "At the two-week review",
+        "lifecycle_status": "intensive_proof"
+      },
+      "stop": {
+        "decision_id": "decision-1",
+        "case_id": "case-1",
+        "consequential_target": "Whether to rebuild Aperture House's marketing team around AI",
+        "route": "stop_rebuild",
+        "bounds": [
+          "Retain team structure"
+        ],
+        "stop_condition": "Immediate",
+        "evidence_requirement": "None",
+        "checkpoint": "No rebuild checkpoint",
+        "revisit_condition": "Only if category economics materially change",
+        "lifecycle_status": "intensive_proof"
+      },
+      "closed_before": {
+        "decision_id": "decision-1",
+        "case_id": "case-1",
+        "consequential_target": "Whether to rebuild Aperture House's marketing team around AI",
+        "route": "closed",
+        "bounds": [
+          "No named-person employment recommendation"
+        ],
+        "stop_condition": "Closed at predecessor version closed-7",
+        "evidence_requirement": "Unspecified",
+        "checkpoint": "Leadership review",
+        "revisit_condition": "When evidence exists",
+        "lifecycle_status": "closed"
+      }
+    },
+    "case_context": {
+      "case_id": "case-1",
+      "decision_id": "decision-1",
+      "consequential_target": "Whether to rebuild Aperture House's marketing team around AI",
+      "case_terms": [
+        "Aperture House",
+        "marketing team"
+      ],
+      "required_question_concepts": [
+        "proof",
+        "evidence",
+        "result"
+      ],
+      "current_decision_ref": "before"
+    },
+    "question": {
+      "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+      "question_version": "qv1",
+      "case_id": "case-1",
+      "decision_id": "decision-1",
+      "transition_id": "continue_after_intensive_proof",
+      "named_answer_owner": "leader-1",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "requested_value_kind": "meaningful_value",
+      "heading": "Choose the proof that matters",
+      "question": "Which result would make the Aperture House marketing team decision worth pursuing?",
+      "answer_options": [
+        "Two campaigns meet Maya's bar without her rewrite",
+        "The board accepts the explicit rebuild risk",
+        "A written case that more proof adds no value"
+      ],
+      "unknown_option": "I do not know yet",
+      "free_expression_option": "Something else",
+      "answer_effect_refs": {
+        "Two campaigns meet Maya's bar without her rewrite": "value-independent-quality",
+        "The board accepts the explicit rebuild risk": "value-board-risk",
+        "A written case that more proof adds no value": "value-no-more-proof"
+      },
+      "visible_consequence": "Your answer changes the evidence required before this decision can move.",
+      "optional_note_label": "Add context",
+      "primary_action_label": "Keep answer",
+      "optional_depth_ref": "why-leader_next_consequential_decision_or_evidenced_value",
+      "source_reason_ref": "case-1-gap-3"
+    },
+    "empty_session": {
+      "session_id": "session-1",
+      "case_id": "case-1",
+      "decision_id": "decision-1",
+      "named_human_id": "leader-1",
+      "question_receipt_ids": [],
+      "last_question_ordinal": 0,
+      "state_version": "session-v1"
+    },
+    "asked_session": {
+      "session_id": "session-1",
+      "case_id": "case-1",
+      "decision_id": "decision-1",
+      "named_human_id": "leader-1",
+      "question_receipt_ids": [
+        "render-1"
+      ],
+      "last_question_ordinal": 1,
+      "state_version": "session-v2"
+    },
+    "binding_context": {
+      "subject_id": "leader-1",
+      "case_id": "case-1",
+      "purpose_id": "purpose-1",
+      "permitted_audience": [
+        "leader-1",
+        "krish"
+      ],
+      "transition_id": "accept_intensive_proof",
+      "predecessor_version": "preparing-7",
+      "predicate_proof_fingerprint": "092a52b23ab4d7d29edd453d9de83c3295066b003831076bfd786abf53c549ee",
+      "reconciled_decision_fingerprint": "d80cf09bc835a6d4749d3469634dbdb1cb826656920c9ccf3da85cdad80fda6a",
+      "final_render_fingerprint": "e01c74c8dde8c467a8fa61c939f4a5532fa2c3761105af717e3fd4c5498448f2",
+      "reserved_transition_receipt_version": "reserve-accept_intensive_proof",
+      "render_receipt_ref": "final-render-accept_intensive_proof",
+      "displayed_consequence_text": "Aperture House has 1 agreed decision change, with the evidence and review boundaries shown below.",
+      "server_commit_time": "2026-09-16T09:00:00Z",
+      "authority_bundle_fingerprint": "d172bfb566c56c964da5296a04cd8bbbff5c2d779d8d7c75f22adfd73367e963"
+    },
+    "correction_graph": {
+      "graph_head": "graph-9",
+      "graph_epoch": 9,
+      "subject_id": "leader-1",
+      "case_id": "case-1",
+      "purpose_id": "purpose-1",
+      "permitted_audience": [
+        "leader-1",
+        "krish"
+      ],
+      "root_dependency_ids": [
+        "dep-1"
+      ],
+      "edges": [
+        {
+          "from_dependency_id": "dep-1",
+          "to_dependency_id": "dep-1",
+          "to_dependency_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111",
+          "edge_kind": "content_dependency"
+        },
+        {
+          "from_dependency_id": "dep-1",
+          "to_dependency_id": "dep-2",
+          "to_dependency_fingerprint": "2222222222222222222222222222222222222222222222222222222222222222",
+          "edge_kind": "permission_dependency"
+        },
+        {
+          "from_dependency_id": "dep-2",
+          "to_dependency_id": "dep-3",
+          "to_dependency_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333",
+          "edge_kind": "scope_dependency"
+        }
+      ]
+    },
+    "external_reservation": {
+      "reservation_id": "reservation-1",
+      "reserved_receipt_version": "reserve-1",
+      "fact_kind": "test_external_fact",
+      "policy_id": "test-policy-1",
+      "external_identity": "token-1",
+      "idempotency_key": "idem-1",
+      "transaction_nonce": "nonce-1",
+      "canonical_request_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "predecessor_version": "preparation-7",
+      "source_heads_seal": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "set_seals_fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "revocation_epochs_fingerprint": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "human_authority_receipt_fingerprint": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "visible_consequence_fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "provisional_transition_version": "provisional-1",
+      "protocol": "immutable_authority_lease",
+      "server_transaction_time": "2026-09-16T09:00:00Z",
+      "valid_until": "2026-09-16T09:30:00Z",
+      "maximum_clock_skew_seconds": 30
+    },
+    "test_external_policy": {
+      "policy_id": "test-policy-1",
+      "fact_kind": "test_external_fact",
+      "external_identity": "token-1",
+      "protocol": "immutable_authority_lease",
+      "valid_until": "2026-09-16T09:30:00Z",
+      "maximum_clock_skew_seconds": 30,
+      "standing": "test_only_not_effective_authority"
+    },
+    "test_consume_policy": {
+      "policy_id": "test-policy-1",
+      "fact_kind": "test_external_fact",
+      "external_identity": "token-1",
+      "protocol": "online_conditional_verify_and_consume",
+      "valid_until": "2026-09-16T09:30:00Z",
+      "maximum_clock_skew_seconds": 30,
+      "standing": "test_only_not_effective_authority"
+    },
+    "free_expression_renders": {
+      "interpretation-render-1": {
+        "interpretation_render_id": "interpretation-render-1",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "named_human_id": "leader-1",
+        "free_expression_fingerprint": "cd66ff5baefaacc35ebe5f6a42b278d9cd49ad0454374c2eb1bdb2d8451afd58",
+        "plain_language_interpretation": "Require one priority campaign to meet Maya's quality bar without her final rewrite before changing the team.",
+        "decision_value": {
+          "path": "evidence_requirement",
+          "value": "One priority campaign meets Maya's quality bar without her final rewrite"
+        },
+        "derived_effect_id": "free-value-one-campaign",
+        "displayed_consequence_text": "Your answer changes the evidence required before this decision can move.",
+        "rendered_at": "2026-09-16T08:36:00Z",
+        "receipt_fingerprint": "a0acf180e5b1d60cb8465d34d445420d377149bd108e889911e7ee84ca209e0b",
+        "transition_disposition": "supports_transition"
+      },
+      "interpretation-render-stop": {
+        "interpretation_render_id": "interpretation-render-stop",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "named_human_id": "leader-1",
+        "free_expression_fingerprint": "ff2ced7685fad8e55e9966c4fc3e9ed0b18bc4911a7c2d2a9d4db96c24822a57",
+        "plain_language_interpretation": "Keep the current team decision stopped.",
+        "decision_value": {
+          "path": "route",
+          "value": "stop_rebuild"
+        },
+        "derived_effect_id": "free-stop-effect",
+        "transition_disposition": "blocks_transition",
+        "displayed_consequence_text": "Your answer accepts one exact decision frame and rejects the other routes.",
+        "rendered_at": "2026-09-16T08:33:00Z",
+        "receipt_fingerprint": "af758899cea0581d1dde83758c2fdbe714efadb648801cd8739fa269358b129f"
+      },
+      "interpretation-render-pause": {
+        "interpretation_render_id": "interpretation-render-pause",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "named_human_id": "leader-1",
+        "free_expression_fingerprint": "17b27bf05d00806c0cb3537597ca9c7ab92b43c8d1b93ba8ffbe5efd32cb0f80",
+        "plain_language_interpretation": "Pause continuation until new evidence exists.",
+        "decision_value": {
+          "path": "route",
+          "value": "pause"
+        },
+        "derived_effect_id": "free-pause-effect",
+        "transition_disposition": "blocks_transition",
+        "displayed_consequence_text": "Your answer changes the evidence required before this decision can move.",
+        "rendered_at": "2026-09-16T08:33:00Z",
+        "receipt_fingerprint": "18f2448da79b3fa693c5e6ad6facf84d1187eb5a42aaf4f5a8ff5d46ac174f90"
+      },
+      "interpretation-render-remain-closed": {
+        "interpretation_render_id": "interpretation-render-remain-closed",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "named_human_id": "krish",
+        "free_expression_fingerprint": "bf94eb45d3098a2bc6b607dfb32db220a1cd6391b7fec8feb1dcb8f5fd4256b7",
+        "plain_language_interpretation": "Keep the previous decision closed.",
+        "decision_value": {
+          "path": "route",
+          "value": "remain_closed"
+        },
+        "derived_effect_id": "free-remain-closed-effect",
+        "transition_disposition": "blocks_transition",
+        "displayed_consequence_text": "This answer either keeps the closed decision closed or names the distinct purpose for a new preparation.",
+        "rendered_at": "2026-09-16T08:44:00Z",
+        "receipt_fingerprint": "985e87a2481f8ba219a7424dc523a23b5f3e48e9c2c5ebf2f43b3257505af44b"
+      }
+    },
+    "route_receipts": {
+      "krish-session-open_preparation-krish": {
+        "session_route_id": "krish-session-open_preparation-krish",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "open_preparation",
+        "named_human_id": "krish",
+        "dependency_ids": [
+          "krish_allowed_source_classes",
+          "krish_bounded_purpose",
+          "krish_review_date"
+        ],
+        "gap_set_seal": "17aaf89e75fe69ee696600f2f96e027536affe3916814dd4e01f3ef78746ef1e",
+        "agenda": [
+          "Set the evidence boundary",
+          "Confirm the purpose",
+          "Set the revisit condition"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "hMviTMgBc4Gpz9yqRGVWKep+tOX4JaSTbQ/i4Ug/e0i+HowXAeD+06U94BbJihDE8jHA1OkDnXS/3gISg4GuDA==",
+        "receipt_fingerprint": "7c897d858afca87550c16fd58298c7b0b1846aa19df574b14e0090174c0679ee"
+      },
+      "question-reservation-accept_intensive_proof-krish": {
+        "reservation_id": "question-reservation-accept_intensive_proof-krish",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "accept_intensive_proof",
+        "named_human_id": "krish",
+        "dependency_id": "krish_accepts_exact_purpose_and_frame_version",
+        "session_state_version": "session-v1",
+        "gap_set_seal": "6b11bb054c379d562bf908eae7b8e51df3da39e70228441c7192aa1cc8d20239",
+        "reserved_ordinal": 1,
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "6tmd3xhBSjAPn21znmpGp3gKeEuL/Rfrr+BMBTgwRvv8stLZHSyc0JaZmNlLg3FSkKdnw7iXNpAWsEXiP1OHBw==",
+        "reservation_fingerprint": "535d62577f8ce494cabe5a66cf9f0d40f2b7c75a520a93580ef9fb5c2b42d817"
+      },
+      "question-reservation-accept_intensive_proof-leader-1": {
+        "reservation_id": "question-reservation-accept_intensive_proof-leader-1",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "accept_intensive_proof",
+        "named_human_id": "leader-1",
+        "dependency_id": "leader_accepts_exact_purpose_and_frame_version",
+        "session_state_version": "session-v1",
+        "gap_set_seal": "8656657b29b2d8dcc192d8d65962d17d3a8411218e5ba6252a58dbe18a8838ca",
+        "reserved_ordinal": 1,
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "ETI6pZR7wBONNGAGzid/RMmTGdlFglHW4jXbN00YtLhkn13dU8WdYKu/VKiX4uo4x8kSTgjn3jItsrSSdgQxCg==",
+        "reservation_fingerprint": "3998910aff4ef5d7327ca0ed7e1a0725bb12196fb8578e4d09e8cc5869b53a31"
+      },
+      "krish-session-continue_after_intensive_proof-krish": {
+        "session_route_id": "krish-session-continue_after_intensive_proof-krish",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "continue_after_intensive_proof",
+        "named_human_id": "krish",
+        "dependency_ids": [
+          "krish_continuation_checkpoint",
+          "krish_exit_or_revisit_condition",
+          "krish_next_consequential_decision_or_evidenced_value"
+        ],
+        "gap_set_seal": "bc6a169857d35bcb4cb743eb6148492b1d63127eb011475c288930243e543cd0",
+        "agenda": [
+          "Set the checkpoint",
+          "Set the revisit condition",
+          "Choose the proof that matters"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "6YPdaE+1AangIzDPPV3J6RWVAKXLgY8aLq4TcTyteHjV24LB7BnDEZ5L+tOSRSLdmHX3gEvLwORVYFcOEsRXCA==",
+        "receipt_fingerprint": "09e6448115be75fdcb5293ad89bc787a783fad609ccfab23518278b9aadb5236"
+      },
+      "krish-session-continue_after_intensive_proof-leader-1": {
+        "session_route_id": "krish-session-continue_after_intensive_proof-leader-1",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "continue_after_intensive_proof",
+        "named_human_id": "leader-1",
+        "dependency_ids": [
+          "leader_continuation_checkpoint",
+          "leader_exit_or_revisit_condition",
+          "leader_next_consequential_decision_or_evidenced_value"
+        ],
+        "gap_set_seal": "7c5edf00cab7d37a284ad42b09abbe58137273ce2409a7a0355f5d51c138b43a",
+        "agenda": [
+          "Set the checkpoint",
+          "Set the revisit condition",
+          "Choose the proof that matters"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "3Y9C3N1a0Kq3Dwtvmzf+J4Lyz2Dmiq/R43jcbJW3Yprbc8QprsClO8qktIG6vYk0MbWfSAf7xL0rD0nsnNCMAQ==",
+        "receipt_fingerprint": "78a0b2c27bbeef3f00ea287a5db4c200849e21b462d46031fa6467e6de3f230c"
+      },
+      "krish-session-renew_continuing_period-krish": {
+        "session_route_id": "krish-session-renew_continuing_period-krish",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "renew_continuing_period",
+        "named_human_id": "krish",
+        "dependency_ids": [
+          "krish_exit_or_revisit_condition",
+          "krish_next_consequential_decision_or_evidenced_value"
+        ],
+        "gap_set_seal": "46a1c6ebc77bf153ba8d3a666035ccc45c879c999a4a00456dd46ded1d52db65",
+        "agenda": [
+          "Set the revisit condition",
+          "Choose the proof that matters"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "gcSBrv4FYK2/m0yAY4k2p63IdUdyKBXCzLERZ9v6UA2IpK+EN0WoVeOw6gT6k9gq+xDSfltG2uB32z2CKsyDBA==",
+        "receipt_fingerprint": "07a1a7b05dbe095a1b668c9b739e315c8207499353253b79758ae64f159229de"
+      },
+      "krish-session-renew_continuing_period-leader-1": {
+        "session_route_id": "krish-session-renew_continuing_period-leader-1",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "renew_continuing_period",
+        "named_human_id": "leader-1",
+        "dependency_ids": [
+          "leader_exit_or_revisit_condition",
+          "leader_next_consequential_decision_or_evidenced_value"
+        ],
+        "gap_set_seal": "8e5b7ca3e430fe7866b78b0e23e17f1754d2f9be047a2459155113e41828a068",
+        "agenda": [
+          "Set the revisit condition",
+          "Choose the proof that matters"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "MNvuALzxMaBamePhCpPU4RyVWeT9Djn8d3vsj57UIRRykJjn5xpWi3LgmjsolB+pwKe0l4GEO3kiO2rMIJYxCw==",
+        "receipt_fingerprint": "8f3b79505c2e7bcf0a52ebf8102cca4d15309814d684a497e84dd5ec08273c41"
+      },
+      "krish-session-resume_continuing-krish": {
+        "session_route_id": "krish-session-resume_continuing-krish",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "resume_continuing",
+        "named_human_id": "krish",
+        "dependency_ids": [
+          "krish_revalidates_checkpoint",
+          "krish_revalidates_next_value",
+          "krish_revalidates_purpose"
+        ],
+        "gap_set_seal": "73d290ca5b9ad71b2ea82aecb071044e93adccb1df075b4be7c8ff17eb7b2c69",
+        "agenda": [
+          "Set the checkpoint",
+          "Choose the proof that matters",
+          "Confirm the purpose"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "1kPTOPyYoi+RB8aHJ3RzlEH2rZInqzubCD4Z5ltNW356aZDU2flogB6LvzT/EEOiHAEqiivXgQRVW5skKkucCQ==",
+        "receipt_fingerprint": "e54acb45e3eec48548e778206bfff92c68d02e3f7a68990fdf917902bca0e533"
+      },
+      "krish-session-resume_continuing-leader-1": {
+        "session_route_id": "krish-session-resume_continuing-leader-1",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "resume_continuing",
+        "named_human_id": "leader-1",
+        "dependency_ids": [
+          "leader_revalidates_checkpoint",
+          "leader_revalidates_next_value",
+          "leader_revalidates_purpose"
+        ],
+        "gap_set_seal": "7c6b221ee179bc79a56e1caba1eaed925315c8d1fcf73c9af952b304e10affee",
+        "agenda": [
+          "Set the checkpoint",
+          "Choose the proof that matters",
+          "Confirm the purpose"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:20:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "fLImWfOSGyMnYF8J3JJvYJtr6saxfAysLkTvNkpxnb1Uf2Syo/Z1Mc6qNF/VPU124zdSzVENx1keZU/2TirPDg==",
+        "receipt_fingerprint": "5251733bb43cb1a3c4a9e0ee635e725f8a89dcb2d37534a7c38c0c389f72fac5"
+      },
+      "krish-session-open_new_preparation_after_close-krish": {
+        "session_route_id": "krish-session-open_new_preparation_after_close-krish",
+        "case_id": "case-1",
+        "decision_id": "decision-1",
+        "transition_id": "open_new_preparation_after_close",
+        "named_human_id": "krish",
+        "dependency_ids": [
+          "krish_genuinely_new_purpose",
+          "krish_review_date"
+        ],
+        "gap_set_seal": "1ae4271a194b43721f58f3121a87ebd3e55e99ee5b3ebbd8dc43a75355c28adf",
+        "agenda": [
+          "A genuinely new purpose",
+          "Set the revisit condition"
+        ],
+        "route": "one_krish_led_session",
+        "facilitator_id": "krish",
+        "issued_at": "2026-09-16T08:42:00Z",
+        "issuer_id": "mindmake-authenticator-v9",
+        "route_status": "issued",
+        "issuer_signature_base64": "uuK5vrBwyWUZtG5S9AnqUNravW5m7oX7/Jhq0k+pMci1RUYjcHG5Hx1R40LYryXLaCjD1Q/wGDfGMcYVQy0PAw==",
+        "receipt_fingerprint": "deab153a5f0dec6b642b3bb2b69df29ad247ba29439cc657b85b0f14078bc939"
+      }
+    }
+  },
+  "authentication_vectors": [
+    {
+      "id": "AUTH-SIGNED-VALID",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "AUTH-FORGED-SIGNATURE",
+      "mutation": {
+        "path": [
+          "issuer_signature_base64"
+        ],
+        "value": "AAAA"
+      },
+      "expected": "signature_invalid"
+    },
+    {
+      "id": "AUTH-WORKLOAD-ISSUER",
+      "mutation": {
+        "path": [
+          "issuer_id"
+        ],
+        "value": "workload"
+      },
+      "expected": "issuer_invalid"
+    },
+    {
+      "id": "AUTH-CREDENTIAL-SWAP",
+      "mutation": {
+        "path": [
+          "credential_id"
+        ],
+        "value": "cred-krish"
+      },
+      "expected": "credential_invalid"
+    },
+    {
+      "id": "AUTH-NULL-SIGNATURE",
+      "mutation": {
+        "path": [
+          "issuer_signature_base64"
+        ],
+        "value": null
+      },
+      "expected": "shape_invalid"
+    }
+  ],
+  "semantic_profile_vectors": [
+    {
+      "id": "PROFILE-VALID-DIRECT",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "PROFILE-PARTIAL",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "op": "delete",
+        "path": [
+          "tenant_id"
+        ]
+      },
+      "expected": "shape_invalid"
+    },
+    {
+      "id": "PROFILE-OWNER-SUBSTITUTION",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "path": [
+          "speaker_or_issuer"
+        ],
+        "value": "attacker"
+      },
+      "expected": "owner_invalid"
+    },
+    {
+      "id": "PROFILE-FAKE-CONTENT",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "path": [
+          "content_fingerprint"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": "content_invalid"
+    },
+    {
+      "id": "PROFILE-SPECIES-SUBSTITUTION",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "path": [
+          "authority_species"
+        ],
+        "value": "normative_human_attestation"
+      },
+      "expected": "owner_invalid"
+    },
+    {
+      "id": "PROFILE-SELF-PROMOTED-BRAIN",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "op": "self_promote_brain"
+      },
+      "expected": "brain_standing_invalid"
+    },
+    {
+      "id": "PROFILE-UNRESOLVED-CONTRARY",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "op": "invent_contrary"
+      },
+      "expected": "contrary_assertion_invalid"
+    },
+    {
+      "id": "PROFILE-EXPIRED",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "path": [
+          "valid_until"
+        ],
+        "value": "2026-09-16T08:00:00Z"
+      },
+      "expected": "stale"
+    },
+    {
+      "id": "PROFILE-VALID-DERIVED",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "PROFILE-WRONG-DERIVATION",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": {
+        "path": [
+          "derivation_function_id"
+        ],
+        "value": "attacker"
+      },
+      "expected": "derivation_invalid"
+    },
+    {
+      "id": "PROFILE-WIDENED-AUDIENCE",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": {
+        "path": [
+          "permitted_audience"
+        ],
+        "value": [
+          "leader-1",
+          "krish",
+          "public"
+        ]
+      },
+      "expected": "derivation_non_widening_invalid"
+    },
+    {
+      "id": "PROFILE-DERIVED-MISSING-INPUT",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": {
+        "op": "remove_derived_input"
+      },
+      "expected": "derivation_input_set_invalid"
+    },
+    {
+      "id": "PROFILE-DERIVED-STALE-INPUT",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": {
+        "op": "expire_derived_input"
+      },
+      "expected": "derivation_invalid"
+    },
+    {
+      "id": "PROFILE-DERIVED-INVENTED-RECEIPT",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": {
+        "op": "invent_derived_receipt"
+      },
+      "expected": "derivation_invalid"
+    },
+    {
+      "id": "PROFILE-CROSS-CONTEXT-DIRECT",
+      "dependency_id": "current_checkpoint_exact",
+      "mutation": {
+        "op": "cross_context"
+      },
+      "expected": "authority_record_mismatch"
+    },
+    {
+      "id": "PROFILE-CROSS-CONTEXT-DERIVED",
+      "dependency_id": "checkpoint_integrity_valid",
+      "mutation": {
+        "op": "cross_context_derived"
+      },
+      "expected": "derivation_non_widening_invalid"
+    }
+  ],
+  "normative_vectors": [
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-BOUNDED-PURPOSE-OPTION-1",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_bounded_purpose",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-BOUNDED-PURPOSE-OPTION-2",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_bounded_purpose",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-BOUNDED-PURPOSE-OPTION-3",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_bounded_purpose",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-ALLOWED-SOURCE-CLASSES-OPTION-1",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_allowed_source_classes",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-ALLOWED-SOURCE-CLASSES-OPTION-2",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_allowed_source_classes",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-ALLOWED-SOURCE-CLASSES-OPTION-3",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_allowed_source_classes",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-REVIEW-DATE-OPTION-1",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_review_date",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-REVIEW-DATE-OPTION-2",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_review_date",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-PREPARATION-KRISH-REVIEW-DATE-OPTION-3",
+      "transition_id": "open_preparation",
+      "dependency_id": "krish_review_date",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-ACCEPT-INTENSIVE-PROOF-LEADER-ACCEPTS-EXACT-PURPOSE-AND-FRAME-VERSION-OPTION-1",
+      "transition_id": "accept_intensive_proof",
+      "dependency_id": "leader_accepts_exact_purpose_and_frame_version",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-ACCEPT-INTENSIVE-PROOF-LEADER-ACCEPTS-EXACT-PURPOSE-AND-FRAME-VERSION-OPTION-2",
+      "transition_id": "accept_intensive_proof",
+      "dependency_id": "leader_accepts_exact_purpose_and_frame_version",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-ACCEPT-INTENSIVE-PROOF-LEADER-ACCEPTS-EXACT-PURPOSE-AND-FRAME-VERSION-OPTION-3",
+      "transition_id": "accept_intensive_proof",
+      "dependency_id": "leader_accepts_exact_purpose_and_frame_version",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-ACCEPT-INTENSIVE-PROOF-KRISH-ACCEPTS-EXACT-PURPOSE-AND-FRAME-VERSION-OPTION-1",
+      "transition_id": "accept_intensive_proof",
+      "dependency_id": "krish_accepts_exact_purpose_and_frame_version",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-ACCEPT-INTENSIVE-PROOF-KRISH-ACCEPTS-EXACT-PURPOSE-AND-FRAME-VERSION-OPTION-2",
+      "transition_id": "accept_intensive_proof",
+      "dependency_id": "krish_accepts_exact_purpose_and_frame_version",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-ACCEPT-INTENSIVE-PROOF-KRISH-ACCEPTS-EXACT-PURPOSE-AND-FRAME-VERSION-OPTION-3",
+      "transition_id": "accept_intensive_proof",
+      "dependency_id": "krish_accepts_exact_purpose_and_frame_version",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-1",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-2",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-3",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-1",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_next_consequential_decision_or_evidenced_value",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-2",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_next_consequential_decision_or_evidenced_value",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-3",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_next_consequential_decision_or_evidenced_value",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-CONTINUATION-CHECKPOINT-OPTION-1",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_continuation_checkpoint",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-CONTINUATION-CHECKPOINT-OPTION-2",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_continuation_checkpoint",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-CONTINUATION-CHECKPOINT-OPTION-3",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_continuation_checkpoint",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-CONTINUATION-CHECKPOINT-OPTION-1",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_continuation_checkpoint",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-CONTINUATION-CHECKPOINT-OPTION-2",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_continuation_checkpoint",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-CONTINUATION-CHECKPOINT-OPTION-3",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_continuation_checkpoint",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-EXIT-OR-REVISIT-CONDITION-OPTION-1",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_exit_or_revisit_condition",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-EXIT-OR-REVISIT-CONDITION-OPTION-2",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_exit_or_revisit_condition",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-LEADER-EXIT-OR-REVISIT-CONDITION-OPTION-3",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "leader_exit_or_revisit_condition",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-EXIT-OR-REVISIT-CONDITION-OPTION-1",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_exit_or_revisit_condition",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-EXIT-OR-REVISIT-CONDITION-OPTION-2",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_exit_or_revisit_condition",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-CONTINUE-AFTER-INTENSIVE-PROOF-KRISH-EXIT-OR-REVISIT-CONDITION-OPTION-3",
+      "transition_id": "continue_after_intensive_proof",
+      "dependency_id": "krish_exit_or_revisit_condition",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-LEADER-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-1",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-LEADER-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-2",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-LEADER-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-3",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-KRISH-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-1",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "krish_next_consequential_decision_or_evidenced_value",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-KRISH-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-2",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "krish_next_consequential_decision_or_evidenced_value",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-KRISH-NEXT-CONSEQUENTIAL-DECISION-OR-EVIDENCED-VALUE-OPTION-3",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "krish_next_consequential_decision_or_evidenced_value",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-LEADER-EXIT-OR-REVISIT-CONDITION-OPTION-1",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "leader_exit_or_revisit_condition",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-LEADER-EXIT-OR-REVISIT-CONDITION-OPTION-2",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "leader_exit_or_revisit_condition",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-LEADER-EXIT-OR-REVISIT-CONDITION-OPTION-3",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "leader_exit_or_revisit_condition",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-KRISH-EXIT-OR-REVISIT-CONDITION-OPTION-1",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "krish_exit_or_revisit_condition",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-KRISH-EXIT-OR-REVISIT-CONDITION-OPTION-2",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "krish_exit_or_revisit_condition",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RENEW-CONTINUING-PERIOD-KRISH-EXIT-OR-REVISIT-CONDITION-OPTION-3",
+      "transition_id": "renew_continuing_period",
+      "dependency_id": "krish_exit_or_revisit_condition",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-PURPOSE-OPTION-1",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_purpose",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-PURPOSE-OPTION-2",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_purpose",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-PURPOSE-OPTION-3",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_purpose",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-PURPOSE-OPTION-1",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_purpose",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-PURPOSE-OPTION-2",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_purpose",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-PURPOSE-OPTION-3",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_purpose",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-NEXT-VALUE-OPTION-1",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_next_value",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-NEXT-VALUE-OPTION-2",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_next_value",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-NEXT-VALUE-OPTION-3",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_next_value",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-NEXT-VALUE-OPTION-1",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_next_value",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-NEXT-VALUE-OPTION-2",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_next_value",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-NEXT-VALUE-OPTION-3",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_next_value",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-CHECKPOINT-OPTION-1",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_checkpoint",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-CHECKPOINT-OPTION-2",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_checkpoint",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-LEADER-REVALIDATES-CHECKPOINT-OPTION-3",
+      "transition_id": "resume_continuing",
+      "dependency_id": "leader_revalidates_checkpoint",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-CHECKPOINT-OPTION-1",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_checkpoint",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-CHECKPOINT-OPTION-2",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_checkpoint",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-RESUME-CONTINUING-KRISH-REVALIDATES-CHECKPOINT-OPTION-3",
+      "transition_id": "resume_continuing",
+      "dependency_id": "krish_revalidates_checkpoint",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-NEW-PREPARATION-AFTER-CLOSE-KRISH-GENUINELY-NEW-PURPOSE-OPTION-1",
+      "transition_id": "open_new_preparation_after_close",
+      "dependency_id": "krish_genuinely_new_purpose",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-NEW-PREPARATION-AFTER-CLOSE-KRISH-GENUINELY-NEW-PURPOSE-OPTION-2",
+      "transition_id": "open_new_preparation_after_close",
+      "dependency_id": "krish_genuinely_new_purpose",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-NEW-PREPARATION-AFTER-CLOSE-KRISH-GENUINELY-NEW-PURPOSE-OPTION-3",
+      "transition_id": "open_new_preparation_after_close",
+      "dependency_id": "krish_genuinely_new_purpose",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-NEW-PREPARATION-AFTER-CLOSE-KRISH-REVIEW-DATE-OPTION-1",
+      "transition_id": "open_new_preparation_after_close",
+      "dependency_id": "krish_review_date",
+      "option_index": 0,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-NEW-PREPARATION-AFTER-CLOSE-KRISH-REVIEW-DATE-OPTION-2",
+      "transition_id": "open_new_preparation_after_close",
+      "dependency_id": "krish_review_date",
+      "option_index": 1,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-MATRIX-OPEN-NEW-PREPARATION-AFTER-CLOSE-KRISH-REVIEW-DATE-OPTION-3",
+      "transition_id": "open_new_preparation_after_close",
+      "dependency_id": "krish_review_date",
+      "option_index": 2,
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "NORMATIVE-WRONG-DOMAIN",
+      "mutation": {
+        "path": [
+          "domain_separator"
+        ],
+        "value": "ATTACKER"
+      },
+      "expected": "constant_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-WRONG-BUNDLE",
+      "mutation": {
+        "path": [
+          "authority_bundle_fingerprint"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": "binding_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-WRONG-KIND",
+      "mutation": {
+        "path": [
+          "owned_judgement_kind"
+        ],
+        "value": "purpose"
+      },
+      "expected": "question_binding_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-WRONG-VALUE",
+      "mutation": {
+        "path": [
+          "selected_option"
+        ],
+        "value": "banana"
+      },
+      "expected": "question_binding_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-WRONG-AUDIENCE",
+      "mutation": {
+        "path": [
+          "permitted_audience"
+        ],
+        "value": [
+          "public"
+        ]
+      },
+      "expected": "binding_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-EXPIRED-CONSUMPTION",
+      "mutation": null,
+      "consume_at": "2026-09-16T09:40:00Z",
+      "expected": "expired",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-STALE-BEFORE",
+      "mutation": {
+        "path": [
+          "accepted_decision_before_fingerprint"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "expected": "decision_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-CONSEQUENCE-REHASH",
+      "mutation": {
+        "path": [
+          "displayed_consequence_text"
+        ],
+        "value": "A hidden different consequence"
+      },
+      "expected": "render_binding_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-FREE-VALID",
+      "mutation": {
+        "op": "free_expression_valid"
+      },
+      "consume_at": "2026-09-16T09:00:00Z",
+      "expected": "valid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-FREE-LATE",
+      "mutation": {
+        "op": "free_expression_late"
+      },
+      "consume_at": "2026-09-16T09:00:00Z",
+      "expected": "free_confirmation_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-NULL-CHANGED-PATHS",
+      "mutation": {
+        "path": [
+          "accepted_decision_changed_paths"
+        ],
+        "value": null
+      },
+      "expected": "shape_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "NORMATIVE-FREE-INTERPRETATION-MISMATCH",
+      "mutation": {
+        "op": "free_expression_mismatch"
+      },
+      "expected": "free_confirmation_invalid",
+      "transition_id": "continue_after_intensive_proof"
+    }
+  ],
+  "final_authority_vectors": [
+    {
+      "id": "FINAL-OPEN-PREPARATION-POSITIVE",
+      "transition_id": "open_preparation",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-ACCEPT-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "accept_intensive_proof",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-CLOSE-PREPARATION-POSITIVE",
+      "transition_id": "close_preparation",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-CONTINUE-AFTER-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "continue_after_intensive_proof",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-RENEW-CONTINUING-PERIOD-POSITIVE",
+      "transition_id": "renew_continuing_period",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-PAUSE-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "pause_intensive_proof",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-PAUSE-CONTINUING-POSITIVE",
+      "transition_id": "pause_continuing",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-RESUME-CONTINUING-POSITIVE",
+      "transition_id": "resume_continuing",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-CLOSE-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "close_intensive_proof",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-CLOSE-CONTINUING-POSITIVE",
+      "transition_id": "close_continuing",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-CLOSE-PAUSED-POSITIVE",
+      "transition_id": "close_paused",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-COMPLETE-CLOSE-POSITIVE",
+      "transition_id": "complete_close",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-OPEN-NEW-PREPARATION-AFTER-CLOSE-POSITIVE",
+      "transition_id": "open_new_preparation_after_close",
+      "mutation": null,
+      "expected": "valid"
+    },
+    {
+      "id": "FINAL-WRONG-DOMAIN",
+      "mutation": {
+        "path": [
+          "domain_separator"
+        ],
+        "value": "ATTACKER"
+      },
+      "expected": "constant_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-WRONG-SUBJECT",
+      "mutation": {
+        "path": [
+          "subject_id"
+        ],
+        "value": "other-subject"
+      },
+      "expected": "binding_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-WRONG-AUDIENCE",
+      "mutation": {
+        "path": [
+          "permitted_audience"
+        ],
+        "value": [
+          "public"
+        ]
+      },
+      "expected": "binding_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-WRONG-PREDECESSOR",
+      "mutation": {
+        "path": [
+          "predecessor_version"
+        ],
+        "value": "attacker"
+      },
+      "expected": "binding_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-WRONG-RESERVATION",
+      "mutation": {
+        "path": [
+          "reserved_transition_receipt_version"
+        ],
+        "value": "attacker"
+      },
+      "expected": "binding_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-FORGED-AUTH-EVENT",
+      "mutation": {
+        "path": [
+          "authority_proofs",
+          0,
+          "authentication_event_ref"
+        ],
+        "value": "forged"
+      },
+      "expected": "authority_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-FORGED-AUTHORITY-SIGNATURE",
+      "mutation": {
+        "op": "mutate_authority_event",
+        "event_ref": "final-authority-accept_intensive_proof-leader-1",
+        "path": [
+          "issuer_signature_base64"
+        ],
+        "value": "AAAA"
+      },
+      "expected": "authority_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-SIGNED-AUTHORITY-MISMATCH",
+      "mutation": {
+        "op": "mutate_authority_event",
+        "event_ref": "final-authority-accept_intensive_proof-leader-1",
+        "path": [
+          "predecessor_version"
+        ],
+        "value": "attacker"
+      },
+      "expected": "authority_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-NULL-AUTHORITY-PROOFS",
+      "mutation": {
+        "path": [
+          "authority_proofs"
+        ],
+        "value": null
+      },
+      "expected": "shape_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-EXPIRED",
+      "mutation": {
+        "path": [
+          "valid_until"
+        ],
+        "value": "2026-09-16T08:30:00Z"
+      },
+      "expected": "expired",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-NULL-AUTHORITY-MEMBER",
+      "mutation": {
+        "path": [
+          "authority_proofs",
+          0
+        ],
+        "value": null
+      },
+      "expected": "shape_invalid",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "FINAL-MISSING-PREDICATE-EVIDENCE",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "drop_predicate_evidence"
+      },
+      "expected": "shape_invalid"
+    },
+    {
+      "id": "FINAL-HIDDEN-DECISION-DELTA",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "mutate_final_render",
+        "path": [
+          "changed_fields"
+        ],
+        "value": []
+      },
+      "expected": "predicate_invalid"
+    },
+    {
+      "id": "FINAL-MISLEADING-TRANSITION-EFFECT",
+      "transition_id": "pause_intensive_proof",
+      "mutation": {
+        "op": "mutate_final_render",
+        "path": [
+          "transition_effect",
+          "plain_language_action"
+        ],
+        "value": "Aperture House has reviewed this decision and kept the current direction."
+      },
+      "expected": "predicate_invalid"
+    }
+  ],
+  "predicate_vectors": [
+    {
+      "id": "PREDICATE-OPEN-PREPARATION-POSITIVE",
+      "transition_id": "open_preparation",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-ACCEPT-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "accept_intensive_proof",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-CLOSE-PREPARATION-POSITIVE",
+      "transition_id": "close_preparation",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-CONTINUE-AFTER-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "continue_after_intensive_proof",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-RENEW-CONTINUING-PERIOD-POSITIVE",
+      "transition_id": "renew_continuing_period",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-PAUSE-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "pause_intensive_proof",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-PAUSE-CONTINUING-POSITIVE",
+      "transition_id": "pause_continuing",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-RESUME-CONTINUING-POSITIVE",
+      "transition_id": "resume_continuing",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-CLOSE-INTENSIVE-PROOF-POSITIVE",
+      "transition_id": "close_intensive_proof",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-CLOSE-CONTINUING-POSITIVE",
+      "transition_id": "close_continuing",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-CLOSE-PAUSED-POSITIVE",
+      "transition_id": "close_paused",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-COMPLETE-CLOSE-POSITIVE",
+      "transition_id": "complete_close",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-OPEN-NEW-PREPARATION-AFTER-CLOSE-POSITIVE",
+      "transition_id": "open_new_preparation_after_close",
+      "mutation": null,
+      "expected": "satisfied"
+    },
+    {
+      "id": "PREDICATE-ONE-ONLY",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "keep_first_result"
+      },
+      "expected": "set_mismatch"
+    },
+    {
+      "id": "PREDICATE-EXTRA",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "add_extra_result"
+      },
+      "expected": "set_mismatch"
+    },
+    {
+      "id": "PREDICATE-DUPLICATE",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "duplicate_first_result"
+      },
+      "expected": "set_mismatch"
+    },
+    {
+      "id": "PREDICATE-MISSING",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "set_first_disposition",
+        "value": "missing"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-CONTRADICTED",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "set_first_disposition",
+        "value": "contradicted"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-CLOSE-CALLER-EMPTY",
+      "transition_id": "complete_close",
+      "mutation": {
+        "op": "set_conditional_empty"
+      },
+      "expected": "conditional_context_invalid"
+    },
+    {
+      "id": "PREDICATE-EVIDENCE-KIND-RELABEL",
+      "transition_id": "open_preparation",
+      "mutation": {
+        "op": "relabel_first_evidence_kind"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-CROSS-CONTEXT-PROFILE",
+      "transition_id": "open_preparation",
+      "mutation": {
+        "op": "cross_context_first_profile"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-CONFLICT-ROUTE",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "set_normative_options",
+        "selections": {
+          "leader_accepts_exact_purpose_and_frame_version": 0,
+          "krish_accepts_exact_purpose_and_frame_version": 2
+        }
+      },
+      "expected": "contradicted"
+    },
+    {
+      "id": "PREDICATE-CONFLICT-VALUE",
+      "transition_id": "continue_after_intensive_proof",
+      "mutation": {
+        "op": "set_normative_options",
+        "selections": {
+          "leader_next_consequential_decision_or_evidenced_value": 0,
+          "krish_next_consequential_decision_or_evidenced_value": 1
+        }
+      },
+      "expected": "contradicted"
+    },
+    {
+      "id": "PREDICATE-MULTI-GAP-ROUTE-MISSING",
+      "transition_id": "continue_after_intensive_proof",
+      "mutation": {
+        "op": "remove_route_receipts"
+      },
+      "expected": "route_invalid"
+    },
+    {
+      "id": "PREDICATE-REOPEN-STOP-BLOCKS",
+      "transition_id": "open_new_preparation_after_close",
+      "mutation": {
+        "op": "set_normative_options",
+        "selections": {
+          "krish_genuinely_new_purpose": 2
+        }
+      },
+      "expected": "contradicted"
+    },
+    {
+      "id": "PREDICATE-REOPEN-INITIAL-REVIEW-REJECTED",
+      "transition_id": "open_new_preparation_after_close",
+      "mutation": {
+        "op": "reuse_initial_review_receipt"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-DERIVED-SOURCE-TAMPER",
+      "transition_id": "resume_continuing",
+      "mutation": {
+        "op": "tamper_derived_source_value"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-DERIVED-ISSUANCE-TIME-TAMPER",
+      "transition_id": "resume_continuing",
+      "mutation": {
+        "op": "tamper_derived_source_issuance_time"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-DERIVED-REVOCATION-EPOCH-TAMPER",
+      "transition_id": "resume_continuing",
+      "mutation": {
+        "op": "tamper_derived_source_revocation_epoch"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-DERIVED-MEMBER-SET-TAMPER",
+      "transition_id": "resume_continuing",
+      "mutation": {
+        "op": "tamper_derived_source_member_set"
+      },
+      "expected": "evidence_invalid"
+    },
+    {
+      "id": "PREDICATE-UNREFERENCED-NORMATIVE-EVIDENCE",
+      "transition_id": "open_preparation",
+      "mutation": {
+        "op": "add_unreferenced_normative_evidence"
+      },
+      "expected": "set_mismatch"
+    },
+    {
+      "id": "PREDICATE-FREE-STOP-BLOCKS",
+      "transition_id": "accept_intensive_proof",
+      "mutation": {
+        "op": "set_free_expression",
+        "dependency_id": "leader_accepts_exact_purpose_and_frame_version",
+        "suffix": "stop"
+      },
+      "expected": "contradicted"
+    },
+    {
+      "id": "PREDICATE-FREE-PAUSE-BLOCKS",
+      "transition_id": "continue_after_intensive_proof",
+      "mutation": {
+        "op": "set_free_expression",
+        "dependency_id": "leader_next_consequential_decision_or_evidenced_value",
+        "suffix": "pause"
+      },
+      "expected": "contradicted"
+    },
+    {
+      "id": "PREDICATE-FREE-REMAIN-CLOSED-BLOCKS",
+      "transition_id": "open_new_preparation_after_close",
+      "mutation": {
+        "op": "set_free_expression",
+        "dependency_id": "krish_genuinely_new_purpose",
+        "suffix": "remain-closed"
+      },
+      "expected": "contradicted"
+    },
+    {
+      "id": "PREDICATE-PREDECESSOR-VERSION-MISMATCH",
+      "transition_id": "open_new_preparation_after_close",
+      "mutation": {
+        "op": "set_proof_field",
+        "path": [
+          "decision_before_version"
+        ],
+        "value": "closed-attacker"
+      },
+      "expected": "decision_invalid"
+    }
+  ],
+  "question_vectors": [
+    {
+      "id": "QUESTION-VALID",
+      "mutation": null,
+      "session": "empty_session",
+      "expected": "valid"
+    },
+    {
+      "id": "QUESTION-GENERIC",
+      "mutation": {
+        "path": [
+          "question"
+        ],
+        "value": "What would success look like?"
+      },
+      "session": "empty_session",
+      "expected": "case_specificity_missing"
+    },
+    {
+      "id": "QUESTION-CASE-NAME-GAMING",
+      "mutation": {
+        "path": [
+          "question"
+        ],
+        "value": "What would success look like for Aperture House's marketing team?"
+      },
+      "session": "empty_session",
+      "expected": "required_concept_missing"
+    },
+    {
+      "id": "QUESTION-HUGE-OPTION",
+      "mutation": {
+        "op": "repeat_option",
+        "count": 100
+      },
+      "session": "empty_session",
+      "expected": "copy_budget_exceeded"
+    },
+    {
+      "id": "QUESTION-TECHNICAL",
+      "mutation": {
+        "path": [
+          "heading"
+        ],
+        "value": "Predicate proof"
+      },
+      "session": "empty_session",
+      "expected": "technical_vocabulary"
+    },
+    {
+      "id": "QUESTION-NULL-TEXT",
+      "mutation": {
+        "path": [
+          "question"
+        ],
+        "value": null
+      },
+      "session": "empty_session",
+      "expected": "shape_invalid"
+    },
+    {
+      "id": "QUESTION-CROSS-KIND-SUBSTITUTION",
+      "mutation": {
+        "path": [
+          "dependency_id"
+        ],
+        "value": "krish_bounded_purpose"
+      },
+      "session": "empty_session",
+      "expected": "dependency_invalid"
+    },
+    {
+      "id": "QUESTION-SERIAL",
+      "mutation": null,
+      "session": "asked_session",
+      "expected": "safe_hold_no_followup"
+    },
+    {
+      "id": "QUESTION-NULL-UNKNOWN",
+      "mutation": {
+        "path": [
+          "unknown_option"
+        ],
+        "value": null
+      },
+      "session": "empty_session",
+      "expected": "shape_invalid"
+    }
+  ],
+  "correction_vectors": [
+    {
+      "id": "CORRECTION-VALID",
+      "mutation": null,
+      "expected": "complete"
+    },
+    {
+      "id": "CORRECTION-SECOND-GRAPH-VALID",
+      "mutation": {
+        "op": "use_graph",
+        "graph_head": "graph-10"
+      },
+      "expected": "complete"
+    },
+    {
+      "id": "CORRECTION-OMIT-DESCENDANT",
+      "mutation": {
+        "op": "remove_receipt",
+        "dependency_id": "dep-3"
+      },
+      "expected": "closure_or_receipt_mismatch"
+    },
+    {
+      "id": "CORRECTION-TAMPER-ACTION",
+      "mutation": {
+        "op": "tamper_receipt_without_rehash",
+        "dependency_id": "dep-2",
+        "field": "repair_action",
+        "value": "erase_unrelated_subject"
+      },
+      "expected": "receipt_fingerprint_invalid"
+    },
+    {
+      "id": "CORRECTION-TAMPER-AND-REHASH",
+      "mutation": {
+        "op": "tamper_receipt_and_rehash",
+        "dependency_id": "dep-2",
+        "field": "repair_action",
+        "value": "erase_authorized_copy"
+      },
+      "expected": "authoritative_receipt_mismatch"
+    },
+    {
+      "id": "CORRECTION-REPLAY-GRAPH",
+      "mutation": {
+        "op": "change_graph_epoch_only",
+        "value": 10
+      },
+      "expected": "graph_or_binding_invalid"
+    },
+    {
+      "id": "CORRECTION-RESIDUAL-STEERING",
+      "mutation": {
+        "op": "set_current_steering",
+        "dependency_id": "dep-1",
+        "value": true
+      },
+      "expected": "receipt_or_steering_invalid"
+    },
+    {
+      "id": "CORRECTION-UNRESOLVED-REFERENT",
+      "mutation": {
+        "op": "tamper_receipt_and_rehash",
+        "dependency_id": "dep-1",
+        "field": "history_preserved_ref",
+        "value": "invented-history"
+      },
+      "expected": "referent_invalid"
+    }
+  ],
+  "external_vectors": [
+    {
+      "id": "EXTERNAL-INACTIVE-BLOCKED",
+      "mode": "effective",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority"
+      ],
+      "expected": "policy_inactive"
+    },
+    {
+      "id": "EXTERNAL-LEASE-HAPPY-TEST-POLICY",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "immutable_lease_still_current"
+      ],
+      "expected": "test_finalized_non_authoritative"
+    },
+    {
+      "id": "EXTERNAL-CONSUME-HAPPY-TEST-POLICY",
+      "mode": "test_consume",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "conditional_token_consumed"
+      ],
+      "expected": "test_finalized_non_authoritative"
+    },
+    {
+      "id": "EXTERNAL-CONSUME-REPLAY-BLOCKED",
+      "mode": "test_consume",
+      "mutation": {
+        "op": "preconsume_external_identity"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "conditional_token_consumed"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-DOUBLE-CONSUME-ATOMIC",
+      "mode": "test_consume",
+      "mutation": {
+        "op": "double_consume"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "conditional_token_consumed"
+      ],
+      "expected": "test_finalized_non_authoritative|test_finalized_non_authoritative"
+    },
+    {
+      "id": "EXTERNAL-CAS-CHANGED",
+      "mode": "test_lease",
+      "mutation": {
+        "event": "commit_local_provisional",
+        "path": [
+          "predecessor_version"
+        ],
+        "value": "changed"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-EXPIRED",
+      "mode": "test_lease",
+      "mutation": {
+        "event": "acquire_bound_external_authority",
+        "path": [
+          "server_transaction_time"
+        ],
+        "value": "2026-09-16T10:00:00Z"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-NEGATIVE-SKEW",
+      "mode": "test_lease",
+      "mutation": {
+        "event": "acquire_bound_external_authority",
+        "path": [
+          "maximum_clock_skew_seconds"
+        ],
+        "value": -3600
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-LEASE-WRONG-POLICY-EVIDENCE",
+      "mode": "test_lease",
+      "mutation": {
+        "event": "immutable_lease_still_current",
+        "path": [
+          "protocol_evidence",
+          "policy_id"
+        ],
+        "value": "attacker"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "immutable_lease_still_current"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-CONSUME-WRONG-RESERVATION",
+      "mode": "test_consume",
+      "mutation": {
+        "event": "conditional_token_consumed",
+        "path": [
+          "protocol_evidence",
+          "reservation_id"
+        ],
+        "value": "attacker"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "conditional_token_consumed"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-LOST-ACK",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "ack_lost_query_same_token_nonce"
+      ],
+      "expected": "local_committed_pending_ack"
+    },
+    {
+      "id": "EXTERNAL-COLLISION",
+      "mode": "test_lease",
+      "mutation": {
+        "event": "ack_lost_query_same_token_nonce",
+        "path": [
+          "canonical_request_fingerprint"
+        ],
+        "value": "9999999999999999999999999999999999999999999999999999999999999999"
+      },
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "ack_lost_query_same_token_nonce"
+      ],
+      "expected": "collision"
+    },
+    {
+      "id": "EXTERNAL-TERMINAL-UNRESOLVED",
+      "mode": "test_lease",
+      "mutation": {
+        "event": "reservation_cancel_or_expire",
+        "path": [
+          "terminal_receipt_ref"
+        ],
+        "value": "invented"
+      },
+      "events": [
+        "commit_local_reservation",
+        "reservation_cancel_or_expire"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-ILLEGAL-DIRECT-FINAL",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation",
+        "immutable_lease_still_current"
+      ],
+      "expected": "illegal_transition"
+    },
+    {
+      "id": "EXTERNAL-NULL-EVENTS",
+      "mode": "effective",
+      "events": null,
+      "expected": "shape_invalid"
+    },
+    {
+      "id": "EXTERNAL-EFFECTIVE-TERMINAL-BLOCKED",
+      "mode": "effective",
+      "events": [
+        "commit_local_reservation",
+        "reservation_cancel_or_expire"
+      ],
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-CHANGED-BYTES-REPLAY-COLLISION",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "immutable_lease_still_current"
+      ],
+      "mutation": {
+        "op": "changed_bytes_replay"
+      },
+      "expected": "test_finalized_non_authoritative|collision"
+    },
+    {
+      "id": "EXTERNAL-TEST-ABORT-NOT-EFFECTIVE",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation",
+        "reservation_cancel_or_expire"
+      ],
+      "mutation": {
+        "op": "test_then_effective_replay"
+      },
+      "expected": "aborted|guard_failed"
+    },
+    {
+      "id": "EXTERNAL-EARLY-PROTOCOL-EVIDENCE-CLOSED",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority"
+      ],
+      "mutation": {
+        "event": "commit_local_reservation",
+        "path": [
+          "protocol_evidence"
+        ],
+        "value": {
+          "attacker": true
+        }
+      },
+      "expected": "guard_failed"
+    },
+    {
+      "id": "EXTERNAL-MALFORMED-MUTATION-PATH",
+      "mode": "test_lease",
+      "events": [
+        "commit_local_reservation"
+      ],
+      "mutation": {
+        "event": "commit_local_reservation",
+        "path": null,
+        "value": 0
+      },
+      "expected": "shape_invalid"
+    },
+    {
+      "id": "EXTERNAL-FAILED-CONSUME-EXACT-RETRY",
+      "mode": "test_consume",
+      "events": [
+        "commit_local_reservation",
+        "acquire_bound_external_authority",
+        "commit_local_provisional",
+        "conditional_token_consumed",
+        "commit_local_reservation"
+      ],
+      "mutation": {
+        "op": "failed_consume_then_exact_retry"
+      },
+      "expected": "illegal_transition|illegal_transition"
+    }
+  ],
+  "routing_vectors": [
+    {
+      "id": "ROUTING-ONE-DIRECT",
+      "named_human_id": "leader-1",
+      "dependency_ids": [
+        "leader_accepts_exact_purpose_and_frame_version"
+      ],
+      "expected": "direct_question_reserved",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "ROUTING-ATOMIC-DUPLICATE",
+      "named_human_id": "leader-1",
+      "dependency_ids": [
+        "leader_accepts_exact_purpose_and_frame_version"
+      ],
+      "repeat": true,
+      "expected": "direct_question_reserved|already_reserved",
+      "transition_id": "accept_intensive_proof"
+    },
+    {
+      "id": "ROUTING-MULTI-GAP-KRISH-SESSION",
+      "named_human_id": "leader-1",
+      "dependency_ids": [
+        "leader_next_consequential_decision_or_evidenced_value",
+        "leader_continuation_checkpoint",
+        "leader_exit_or_revisit_condition"
+      ],
+      "expected": "krish_session_reserved",
+      "transition_id": "continue_after_intensive_proof"
+    },
+    {
+      "id": "ROUTING-MULTI-GAP-ATOMIC",
+      "named_human_id": "krish",
+      "dependency_ids": [
+        "krish_bounded_purpose",
+        "krish_allowed_source_classes",
+        "krish_review_date"
+      ],
+      "repeat": true,
+      "expected": "krish_session_reserved|already_reserved",
+      "transition_id": "open_preparation"
+    }
+  ]
+}

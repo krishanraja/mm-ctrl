@@ -239,7 +239,14 @@ export function useSort() {
    * is one grade short of the one the person actually gave.
    */
   const inFlightGradeRef = useRef<Promise<GradeResponse | null> | null>(null);
+  /**
+   * Grade writes are deliberately serialized. The screen may keep moving, but
+   * an earlier verdict must not arrive after a later amendment and overwrite
+   * it, and the final promise must include every earlier write before compile.
+   */
+  const gradeWriteQueueRef = useRef<Promise<void>>(Promise.resolve());
   const compileStartedRef = useRef(false);
+  const compileRequestIdRef = useRef<string | null>(null);
   const runIdRef = useRef<string | null>(null);
   const gradedIdsRef = useRef<Set<string>>(new Set());
   const askedPairsRef = useRef<Set<string>>(new Set());
@@ -291,7 +298,9 @@ export function useSort() {
       setCompileDetail({});
       setCompileError(null);
       compileStartedRef.current = false;
+      compileRequestIdRef.current = null;
       inFlightGradeRef.current = null;
+      gradeWriteQueueRef.current = Promise.resolve();
       gradedIdsRef.current = new Set();
       askedPairsRef.current = new Set();
       lastGradeRef.current = null;
@@ -436,24 +445,34 @@ export function useSort() {
    * missing row, so the failure is counted and surfaced rather than swallowed.
    */
   const sendGrade = useCallback(
-    async (payload: GradePayload): Promise<GradeResponse | null> => {
+    (payload: GradePayload): Promise<GradeResponse | null> => {
       const session = runIdRef.current;
-      if (!session) return null;
-      for (let attempt = 0; attempt < 2; attempt += 1) {
-        try {
-          const { data, error: invokeError } = await supabase.functions.invoke('grade-sort', {
-            body: { run_id: session, ...payload },
-          });
-          if (invokeError) throw invokeError;
-          const response = (data ?? null) as GradeResponse | null;
-          applyProgress(response);
-          return response;
-        } catch {
-          if (attempt === 0) await delay(RETRY_DELAY_MS);
-        }
-      }
-      setUnsavedGrades((n) => n + 1);
-      return null;
+      if (!session) return Promise.resolve(null);
+      const requestId = crypto.randomUUID();
+      const operation = gradeWriteQueueRef.current
+        .catch(() => undefined)
+        .then(async (): Promise<GradeResponse | null> => {
+          for (let attempt = 0; attempt < 2; attempt += 1) {
+            try {
+              const { data, error: invokeError } = await supabase.functions.invoke('grade-sort', {
+                body: { run_id: session, ...payload, request_id: requestId },
+              });
+              if (invokeError) throw invokeError;
+              const response = (data ?? null) as GradeResponse | null;
+              applyProgress(response);
+              return response;
+            } catch {
+              if (attempt === 0) await delay(RETRY_DELAY_MS);
+            }
+          }
+          setUnsavedGrades((n) => n + 1);
+          return null;
+        });
+      gradeWriteQueueRef.current = operation.then(
+        () => undefined,
+        () => undefined,
+      );
+      return operation;
     },
     [applyProgress],
   );
@@ -493,10 +512,23 @@ export function useSort() {
     }
 
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke('compile-standard', {
-        body: { run_id: session },
-      });
-      if (invokeError) throw invokeError;
+      const requestId = compileRequestIdRef.current ?? crypto.randomUUID();
+      compileRequestIdRef.current = requestId;
+      let data: Record<string, unknown> | null = null;
+      let lastError: unknown = null;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const result = await supabase.functions.invoke('compile-standard', {
+          body: { run_id: session, request_id: requestId },
+        });
+        if (!result.error) {
+          data = result.data as Record<string, unknown>;
+          lastError = null;
+          break;
+        }
+        lastError = result.error;
+        if (attempt === 0) await delay(RETRY_DELAY_MS);
+      }
+      if (lastError) throw lastError;
       const id = typeof data?.run_id === 'string' ? data.run_id : null;
       if (!id) throw new Error('The standard did not start building.');
       setCompileRunId(id);

@@ -1,0 +1,103 @@
+{
+  "schema_version": "ctrl.g24.lifecycle-precondition-evaluator-r70-acceptance-receipt.r71.v1",
+  "receipt_kind": "adjudication_closure_only",
+  "round": "R71",
+  "recorded_on": "2026-09-15",
+  "accepted_contract": {
+    "status": "accepted_for_structural_executable_loading_scope",
+    "commit": "f4c46b1c345ad05f5f997e905b5b0204400ae88f",
+    "tree": "fb4809821a9c02955040b6876b1e6b10214c78c5",
+    "parent": "bbe6569749726892060a09338af25cbec9c34830",
+    "source_sha256": "e7b70f3816b38fa3744c1a86e627e835b770765745e370e569a350ddb1df05c9",
+    "source_bytes": 7451,
+    "source_blob": "27a9d8767d6e666bcdd184f7b511951f6bb4026e",
+    "machine_sha256": "bc83f908bc9b4a2fee46917ab9501b6ae730c5fe419b7f3c1e2a55c59314cb80",
+    "founder_lock_identity": "8ee0ef4dd286e7f13f54f2d80d26ea341783d2dc89bb858e91b865fa2ce77fbf",
+    "blobs": {
+      "docs/current/design-state.md": "9d4b4e5e82bda0581788b84a7827995d80a51bf4",
+      "package.json": "3e14cfcba68f950e85706f3497f78f2dec6066e1",
+      "project-documentation/ctrl-evolution/README.md": "d7a002d283f33a119985273e8ff15631493ba533",
+      "project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70-qa-record.md": "dcac8a6abc6b288c6bc2cae6c0aad062f435818d",
+      "project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70.json": "7e68c41a9ca014f0e14d84e272b860355d6e3755",
+      "project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r70.md": "a68144f0aee688232a27aa0e37adad144c4f02a1",
+      "project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md": "7cf8a29d43d92220fdb205c74fff87b61bf3a26a",
+      "scripts/check-ctrl-g24-founder-lock.mjs": "dec343873a922a5b8b744cd54c6114972747e3b9",
+      "scripts/check-ctrl-g24-lifecycle-evaluator-r70.mjs": "a79bd7b057f7d115001eb8494ca071e412af999f",
+      "scripts/materialize-ctrl-g24-lifecycle-evaluator-r70.mjs": "8c8eebc77236a362cf61f10553e78776abe13741",
+      "scripts/run-ctrl-g24-lifecycle-evaluator-r70-harness.mjs": "01bf45a848b9c418762af6d8e6684384ebe4782b",
+      "supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r70.mjs": "27a9d8767d6e666bcdd184f7b511951f6bb4026e",
+      "supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r70.test.ts": "829d2ad920cba5654f0e014ce8821118c0689bfe"
+    }
+  },
+  "independent_verdicts": [
+    {
+      "reviewer": "specialist_architecture_judge",
+      "verdict": "PASS",
+      "delivery": "conversation-delivered independent verdict",
+      "cryptographic_signature": "not claimed",
+      "separate_verdict_artifact": "not created",
+      "basis": [
+        "verified exact commit, tree, parent, clean worktree and frozen identities",
+        "verified hostile primitive and Proxy inputs fail closed without traps",
+        "verified no live or product import route",
+        "verified the semantic and write boundary remains closed",
+        "graded modular inspectability A- with helper separation carried forward"
+      ]
+    },
+    {
+      "reviewer": "r68_correctness",
+      "verdict": "PASS",
+      "delivery": "conversation-delivered independent verdict",
+      "cryptographic_signature": "not claimed",
+      "separate_verdict_artifact": "not created",
+      "basis": [
+        "verified exact frozen identities and thirteen-file diff",
+        "verified zero Proxy traps and no caller authority slot",
+        "verified exact 65536-byte input and 131072-byte request boundaries",
+        "verified missing hard paths fail closed",
+        "verified package gate and no result, evidence, write or live integration"
+      ]
+    }
+  ],
+  "accepted_scope": [
+    "closed caller-authority structural executable-loading gate",
+    "pre-parse authentication of exact local R66, R70 and source bytes",
+    "lossless UTF-8, canonical JSON and exact resource limits",
+    "trusted-constant hold envelopes",
+    "hold or verified_not_runnable only",
+    "no result, evidence row or write authority",
+    "test-only reachability of low-level helpers"
+  ],
+  "unproved_outside_scope": [
+    "semantic evaluation or satisfaction",
+    "predicate authority and thirteen typed fact meanings",
+    "live registry completeness or runtime attestation",
+    "transaction and database behavior",
+    "product and UI behavior",
+    "deployment, release or external action"
+  ],
+  "carry_forward": [
+    "physically separate test-only helpers before a live evaluator gate",
+    "remove the optional no-input sample before a live evaluator gate",
+    "bind dispatch-time fact freshness",
+    "separate deployment attestation from repository conformance pins",
+    "optimize expensive parent replay without weakening authority"
+  ],
+  "recommended_next_lane": "server-derived closed structured read-set with thirteen discriminated fact variants",
+  "alternative_lane": "separately governed signed assertions as provenance-bearing imports, not a parallel truth system",
+  "rejected_predicate_authority": [
+    "human-text presence alone",
+    "LLM interpretation alone"
+  ],
+  "acceptance_authority": "authorizes only a separate predicate-authority design and founder-choice gate",
+  "not_authorized": [
+    "result-producing evaluator",
+    "runtime connection",
+    "database write",
+    "UI change",
+    "deployment or release",
+    "external action"
+  ],
+  "contract_semantics_change": "none",
+  "runtime_registry_database_ui_deployment_or_external_action": "none"
+}

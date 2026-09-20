@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.interaction.v1",
+  "module_id": "interaction_program",
+  "unresolved_dependency_schema": {
+    "required": ["dependency_id", "case_id", "decision_id", "resolution_owner", "named_human_id", "requested_value_kind"],
+    "resolution_owner_values": ["human_answerable", "server_verify_only"],
+    "requested_value_kind_values": ["purpose", "decision_frame", "meaningful_value", "boundary", "stop_condition", "revisit_condition"]
+  },
+  "routing_program": [
+    "reject_unknown_dependency_id",
+    "reject_dependency_registry_owner_or_kind_mismatch",
+    "route_server_verify_only_to_system_or_krish_with_zero_customer_questions",
+    "group_human_answerable_by_exact_case_decision_named_human_and_dependency_id",
+    "zero_unresolved_atomic_facts_means_no_customer_question",
+    "one_unresolved_atomic_fact_means_one_question_candidate",
+    "more_than_one_unresolved_atomic_fact_means_safe_hold_or_one_krish_led_session_agenda",
+    "never_queue_or_automatically_follow_with_another_question"
+  ],
+  "question_payload_schema": {
+    "required": ["question_id", "case_id", "decision_id", "named_answer_owner", "dependency_id", "requested_value_kind", "heading", "question", "case_specific_terms", "answer_options", "unknown_option", "free_expression_option", "answer_effect_refs", "visible_consequence", "optional_note_label", "primary_action_label", "optional_depth_ref", "source_reason_ref"],
+    "maximum_lengths": { "heading": 42, "question": 180, "visible_consequence": 180, "optional_note_label": 24, "primary_action_label": 24 },
+    "maximum_answer_options": 4,
+    "minimum_case_specific_terms_present_in_question": 1,
+    "accessory_copy_fields_allowed": ["visible_consequence"],
+    "automatic_next_question_field": "forbidden",
+    "technical_contract_vocabulary": "forbidden"
+  },
+  "question_validation_program": [
+    "validate_registered_human_answerable_atomic_dependency",
+    "validate_exact_case_decision_and_named_human",
+    "derive_copy_counts_and_lengths_from_actual_payload",
+    "require_case_specific_term_in_question",
+    "resolve_every_answer_effect_state",
+    "require_same_case_and_decision_for_every_effect",
+    "require_at_least_one_recomputed_material_decision_delta_for_every_normal_answer",
+    "unknown_has_no_satisfaction_effect",
+    "free_expression_has_no_effect_until_same_human_confirmation"
+  ],
+  "default_surface": {
+    "heading_count": 1,
+    "question_count": 1,
+    "answer_control_group_count": 1,
+    "optional_note_count": 1,
+    "primary_action_count": 1,
+    "automatic_follow_up_count": 0,
+    "technical_label_count": 0
+  }
+}

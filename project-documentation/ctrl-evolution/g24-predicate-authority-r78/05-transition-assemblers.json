@@ -1,0 +1,268 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "transition_assemblers",
+  "responsibility": "Build one exact discriminated precondition bundle for each founder-locked lifecycle transition.",
+  "forbidden": [
+    "caller_selected_variant",
+    "caller_selected_schema",
+    "borrow_dependency_from_other_transition",
+    "declare_satisfied",
+    "infer_human_agreement",
+    "write_lifecycle_state"
+  ],
+  "variant_selection": "server_derived_from_exact_requested_transition_id",
+  "variant_count": 13,
+  "variants": [
+    {
+      "transition_id": "open_preparation",
+      "predecessor_rule": "explicit_null_with_complete_active_lifecycle_absence_proof",
+      "frame_standing": "not_yet_created_allowed",
+      "server_dependencies": [
+        "no_active_lifecycle_row",
+        "subject_identity_valid",
+        "eligible_source_class_values_valid"
+      ],
+      "human_requirements": [
+        "krish_bounded_purpose",
+        "krish_allowed_source_classes",
+        "krish_review_date"
+      ],
+      "human_interaction_owner": "krish",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "bound_private_preparation",
+        "stop_private_preparation"
+      ]
+    },
+    {
+      "transition_id": "accept_intensive_proof",
+      "predecessor_rule": "exact_current_preparation_version",
+      "frame_standing": "exact_candidate_frame_must_be_accepted_by_both_named_humans",
+      "server_dependencies": [
+        "current_preparation_exact",
+        "active_grant_set_complete",
+        "revocation_set_complete",
+        "checkpoint_exists"
+      ],
+      "human_requirements": [
+        "leader_accepts_exact_purpose_and_frame_version",
+        "krish_accepts_exact_purpose_and_frame_version"
+      ],
+      "human_interaction_owner": "leader_and_krish",
+      "leader_question_eligible": true,
+      "material_effects": [
+        "start_intensive_proof",
+        "stop_before_intensive_proof"
+      ]
+    },
+    {
+      "transition_id": "close_preparation",
+      "predecessor_rule": "exact_current_preparation_version",
+      "frame_standing": "current_frame_or_explicit_absence_bound_to_close_request",
+      "server_dependencies": [
+        "current_preparation_exact"
+      ],
+      "human_requirements": [
+        "authorized_person_selects_cancelled_declined_or_withdrawn"
+      ],
+      "human_interaction_owner": "authorized_person",
+      "leader_question_eligible": true,
+      "material_effects": [
+        "stop_preparation",
+        "invalidate_unsent_derivatives"
+      ]
+    },
+    {
+      "transition_id": "continue_after_intensive_proof",
+      "predecessor_rule": "exact_current_intensive_proof_period",
+      "frame_standing": "accepted_current_decision_frame_required",
+      "server_dependencies": [
+        "current_intensive_proof_period_exact",
+        "checkpoint_integrity_valid"
+      ],
+      "human_requirements": [
+        "leader_next_consequential_decision_or_evidenced_value",
+        "krish_next_consequential_decision_or_evidenced_value",
+        "continuation_checkpoint",
+        "exit_or_revisit_condition"
+      ],
+      "human_interaction_owner": "leader_and_krish",
+      "leader_question_eligible": true,
+      "material_effects": [
+        "select_continuation_target",
+        "bound_continuation",
+        "stop_continuation"
+      ]
+    },
+    {
+      "transition_id": "renew_continuing_period",
+      "predecessor_rule": "exact_current_continuing_period",
+      "frame_standing": "accepted_current_decision_frame_required",
+      "server_dependencies": [
+        "current_continuing_period_exact",
+        "current_checkpoint_exact"
+      ],
+      "human_requirements": [
+        "leader_next_consequential_decision_or_evidenced_value",
+        "krish_next_consequential_decision_or_evidenced_value",
+        "exit_or_revisit_condition"
+      ],
+      "human_interaction_owner": "leader_and_krish",
+      "leader_question_eligible": true,
+      "material_effects": [
+        "select_next_period_target",
+        "bound_next_period",
+        "stop_next_period"
+      ]
+    },
+    {
+      "transition_id": "pause_intensive_proof",
+      "predecessor_rule": "exact_current_intensive_proof_period",
+      "frame_standing": "current_frame_bound_for_visibility_only",
+      "server_dependencies": [
+        "current_intensive_proof_period_exact"
+      ],
+      "human_requirements": [
+        "fresh_pause_authority_receipt"
+      ],
+      "human_interaction_owner": "separate_authority_verifier",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "stop_new_work_until_revalidated"
+      ]
+    },
+    {
+      "transition_id": "pause_continuing",
+      "predecessor_rule": "exact_current_continuing_period",
+      "frame_standing": "current_frame_bound_for_visibility_only",
+      "server_dependencies": [
+        "current_continuing_period_exact"
+      ],
+      "human_requirements": [
+        "fresh_pause_authority_receipt"
+      ],
+      "human_interaction_owner": "separate_authority_verifier",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "stop_new_work_until_revalidated"
+      ]
+    },
+    {
+      "transition_id": "resume_continuing",
+      "predecessor_rule": "exact_current_paused_period",
+      "frame_standing": "accepted_frame_revalidated_for_resume",
+      "server_dependencies": [
+        "current_paused_period_exact",
+        "subject_and_case_identities_exact",
+        "active_grant_set_complete",
+        "revocation_set_complete",
+        "audience_set_complete",
+        "all_dependencies_fresh",
+        "old_expired_or_revoked_grants_unusable",
+        "fresh_issuance_exists_where_required"
+      ],
+      "human_requirements": [
+        "leader_revalidates_purpose_next_value_and_checkpoint",
+        "krish_revalidates_purpose_next_value_and_checkpoint"
+      ],
+      "human_interaction_owner": "leader_and_krish",
+      "leader_question_eligible": true,
+      "material_effects": [
+        "materially_reshape_continuation",
+        "resume_continuation",
+        "stop_continuation"
+      ]
+    },
+    {
+      "transition_id": "close_intensive_proof",
+      "predecessor_rule": "exact_current_intensive_proof_period",
+      "frame_standing": "current_frame_bound_for_visibility_only",
+      "server_dependencies": [
+        "current_intensive_proof_period_exact"
+      ],
+      "human_requirements": [
+        "fresh_close_authority_receipt"
+      ],
+      "human_interaction_owner": "separate_authority_verifier",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "stop_new_decision_shaping_work"
+      ]
+    },
+    {
+      "transition_id": "close_continuing",
+      "predecessor_rule": "exact_current_continuing_period",
+      "frame_standing": "current_frame_bound_for_visibility_only",
+      "server_dependencies": [
+        "current_continuing_period_exact"
+      ],
+      "human_requirements": [
+        "fresh_close_authority_receipt"
+      ],
+      "human_interaction_owner": "separate_authority_verifier",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "stop_new_decision_shaping_work"
+      ]
+    },
+    {
+      "transition_id": "close_paused",
+      "predecessor_rule": "exact_current_paused_period",
+      "frame_standing": "current_frame_bound_for_visibility_only",
+      "server_dependencies": [
+        "current_paused_period_exact"
+      ],
+      "human_requirements": [
+        "fresh_close_authority_receipt"
+      ],
+      "human_interaction_owner": "separate_authority_verifier",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "stop_new_decision_shaping_work"
+      ]
+    },
+    {
+      "transition_id": "complete_close",
+      "predecessor_rule": "exact_current_close_request",
+      "frame_standing": "closed_frame_bound_for_history_only",
+      "server_dependencies": [
+        "current_close_request_exact",
+        "close_obligation_set_exactly_access_correction_separate_release_close",
+        "every_obligation_fulfilled_or_recorded_outstanding"
+      ],
+      "human_requirements": [
+        "responsible_human_owner_for_each_genuine_outstanding_obligation",
+        "revisit_date_for_each_genuine_outstanding_obligation"
+      ],
+      "human_interaction_owner": "responsible_human",
+      "leader_question_eligible": true,
+      "material_effects": [
+        "complete_closure_without_implying_release",
+        "hold_closure"
+      ],
+      "post_close_rule": "completion_never_extinguishes_outstanding_access_correction_separate_release_or_close_obligations_which_remain_in_the_durable_obligation_register"
+    },
+    {
+      "transition_id": "open_new_preparation_after_close",
+      "predecessor_rule": "exact_closed_predecessor",
+      "frame_standing": "not_yet_created_allowed_for_genuinely_new_purpose",
+      "server_dependencies": [
+        "closed_predecessor_exact",
+        "prior_grant_set_complete",
+        "revocation_set_complete",
+        "no_old_grant_can_revive"
+      ],
+      "human_requirements": [
+        "krish_genuinely_new_purpose",
+        "krish_review_date"
+      ],
+      "human_interaction_owner": "krish",
+      "leader_question_eligible": false,
+      "material_effects": [
+        "open_bounded_new_preparation",
+        "hold_closed"
+      ]
+    }
+  ],
+  "bundle_output": "exact_discriminated_precondition_bundle_without_result"
+}

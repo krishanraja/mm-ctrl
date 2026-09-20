@@ -28,5 +28,24 @@ export default tseslint.config(
       // build-time script: npm run validate:video
       // This checks for bg-background on App.tsx root and verifies video background patterns
     },
-  }
+  },
+  {
+    // These two reviewed ingress guards intentionally match ASCII control bytes.
+    // The rule rejects that security pattern even though the behavior is deliberate.
+    files: [
+      "supabase/functions/critique-artefact/index.ts",
+      "supabase/functions/generate-skill-export/index.ts",
+    ],
+    rules: {
+      "no-control-regex": "off",
+    },
+  },
+  {
+    // This retired diagnostic mailer still accepts its original schemaless assessment payload.
+    // Keep the exception isolated to this file instead of weakening typed product code.
+    files: ["supabase/functions/send-diagnostic-email/index.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 );

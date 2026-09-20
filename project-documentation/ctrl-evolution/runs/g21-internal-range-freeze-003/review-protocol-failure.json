@@ -1,0 +1,14 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-003",
+  "status": "invalid_for_blind_independence",
+  "artifactCompositeSha256": "b8948f089a9b5fb41c5ae5a61c6c30338f417453c7e0b45420a44552c6c24612",
+  "discoveredBy": "human_comprehension_and_access",
+  "failure": "The input manifest required judges to inspect two current documentation files that contain the outcomes and veto themes from Runs 001 and 002. A reviewer could not both inspect every manifest-listed artifact and remain blind to prior council outcomes.",
+  "contaminatedArtifactPaths": [
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md",
+    "project-documentation/ctrl-evolution/g21-evidence-range-council-contract.md"
+  ],
+  "treatment": "Preserve every Run 003 ruling as useful adversarial evidence, but do not represent the set as seven clean independent sealed rulings. Preserve the two adult answerability screens because their brief limited them to question-pack.json. Repair substantive findings and freeze a new run whose semantic review pack excludes verdict history.",
+  "resolvingTest": "In a new frozen run, separate hash-only provenance files from the semantic review allowlist. Give each fresh judge only the current code, tests, question pack and a criterion brief containing no prior verdict, judge identity, founder reaction or repair narrative. Require every fresh reviewer to attest that no excluded history was encountered.",
+  "recordedAt": "2026-09-10T21:14:31.369Z"
+}

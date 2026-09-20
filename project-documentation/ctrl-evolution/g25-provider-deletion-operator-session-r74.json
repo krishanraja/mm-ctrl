@@ -1,0 +1,52 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-operator-session.r74.v1",
+  "contract_id": "G25-PROVIDER-DELETION-OPERATOR-SESSION-R74",
+  "status": "human_operator_recovery_scope_locally_proved_supabase_session_and_stable_custody_unproved",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-PERSISTENCE-AUTHORITY-R72",
+    "G25-PROVIDER-DELETION-DISPATCH-POSTGRES-R73"
+  ],
+  "implementation": {
+    "candidate": "supabase/candidates/g25_provider_deletion_operator_session_r74.sql",
+    "tests": "supabase/functions/_shared/provider-deletion-operator-session-postgres.r74.test.ts",
+    "config": "vitest.g25-provider-deletion-operator-session.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-operator-session-r74.mjs"
+  },
+  "recovery_authority": {
+    "session_role": "authenticated",
+    "required_user_state": "non_anonymous_auth_uid",
+    "required_workspace_role": "active_operator",
+    "machine_role_execute": false,
+    "service_role_execute": false
+  },
+  "proved_locally": [
+    "an active non-anonymous operator can request recovery only for their workspace",
+    "missing and anonymous sessions fail closed",
+    "an authenticated user without the workspace operator role fails closed",
+    "revoking the workspace role removes recovery authority immediately",
+    "the old provider_deletion_operator role has no execute path",
+    "service_role has no recovery shortcut"
+  ],
+  "artifact_sha256": {
+    "candidate": "160758649c164fef455b1b4d0e2e5b59b77f2648d4a992662560307d3ecdf49b",
+    "tests": "e07b672568e7024f0eb326515dfa468419dd89d6d1858096c4da50417b62520a",
+    "config": "96ebcd2a36ba829fb995c281b17d0a2670d5dcf96a48eaa499b40a051e76f89a"
+  },
+  "bounded_claim": "R74 proves the human-session and current-workspace-role predicate in one local PGlite process. It does not prove hosted Supabase Auth or PostgREST claims, stable-custody operator identity, independent sessions, production RLS or deployment.",
+  "next_gate": "Bind the operator check to the R23 stable operator and custody model, then execute the complete R68 through R74 suite through independent connections in an empty disposable Supabase environment.",
+  "authority": {
+    "permits": [
+      "local PGlite execution",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "migration creation or execution",
+      "linked or production database access",
+      "credential provisioning",
+      "provider request",
+      "deployment",
+      "merge",
+      "release"
+    ]
+  }
+}

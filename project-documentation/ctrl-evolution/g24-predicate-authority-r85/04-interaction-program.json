@@ -1,0 +1,492 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r85.interaction.v1",
+  "module_id": "interaction_program",
+  "session_state_required": [
+    "session_id",
+    "case_id",
+    "decision_id",
+    "named_human_id",
+    "question_receipt_ids",
+    "last_question_ordinal",
+    "state_version",
+    "state_fingerprint"
+  ],
+  "unresolved_gap_set_required": [
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_human_id",
+    "dependency_ids",
+    "set_version",
+    "set_seal"
+  ],
+  "question_reservation_required": [
+    "reservation_id",
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_human_id",
+    "dependency_id",
+    "session_state_version",
+    "gap_set_seal",
+    "reserved_ordinal",
+    "reservation_fingerprint",
+    "facilitator_id",
+    "issued_at",
+    "issuer_id",
+    "route_status",
+    "issuer_signature_base64"
+  ],
+  "krish_session_receipt_required": [
+    "session_route_id",
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_human_id",
+    "dependency_ids",
+    "gap_set_seal",
+    "agenda",
+    "route",
+    "receipt_fingerprint",
+    "facilitator_id",
+    "issued_at",
+    "issuer_id",
+    "route_status",
+    "issuer_signature_base64"
+  ],
+  "question_required": [
+    "question_id",
+    "question_version",
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_answer_owner",
+    "dependency_id",
+    "requested_value_kind",
+    "heading",
+    "question",
+    "answer_options",
+    "unknown_option",
+    "free_expression_option",
+    "answer_effect_refs",
+    "visible_consequence",
+    "optional_note_label",
+    "primary_action_label",
+    "optional_depth_ref",
+    "source_reason_ref"
+  ],
+  "render_receipt_required": [
+    "render_receipt_id",
+    "session_id",
+    "session_state_version",
+    "question_id",
+    "question_version",
+    "dependency_id",
+    "named_human_id",
+    "gap_set_seal",
+    "question_route_receipt_ref",
+    "predecessor_version",
+    "transition_id",
+    "displayed_consequence_text",
+    "question_payload_fingerprint",
+    "rendered_at",
+    "receipt_fingerprint"
+  ],
+  "free_expression_interpretation_required": [
+    "interpretation_id",
+    "free_expression_ref",
+    "question_id",
+    "question_version",
+    "plain_language_interpretation",
+    "decision_value",
+    "derived_effect_id",
+    "interpretation_fingerprint",
+    "transition_disposition"
+  ],
+  "free_expression_render_required": [
+    "interpretation_render_id",
+    "question_id",
+    "question_version",
+    "named_human_id",
+    "free_expression_fingerprint",
+    "plain_language_interpretation",
+    "decision_value",
+    "derived_effect_id",
+    "displayed_consequence_text",
+    "rendered_at",
+    "receipt_fingerprint",
+    "transition_disposition"
+  ],
+  "canonical_case_context_required": [
+    "case_id",
+    "decision_id",
+    "consequential_target",
+    "case_terms",
+    "required_question_concepts",
+    "current_decision_ref",
+    "context_fingerprint"
+  ],
+  "copy_limits": {
+    "heading": 42,
+    "question": 180,
+    "answer_option_each": 80,
+    "unknown_option": 40,
+    "free_expression_option": 40,
+    "visible_consequence": 180,
+    "optional_note_label": 24,
+    "primary_action_label": 24,
+    "total_visible_characters": 620,
+    "answer_options": 4
+  },
+  "technical_vocabulary_forbidden": [
+    "predicate",
+    "fingerprint",
+    "dependency_id",
+    "authority bundle",
+    "compare-and-set",
+    "lifecycle transition",
+    "semantic profile"
+  ],
+  "routing_rules": [
+    "derive_prior_question_state_from_signed_session_state_not_caller_boolean",
+    "reject_unknown_dependency_or_registry_owner_kind_mismatch",
+    "route_server_dependency_backstage_with_zero_customer_questions",
+    "count_exact_unresolved_human_dependency_ids_per_case_decision_and_human",
+    "one_exact_fact_and_zero_prior_question_receipts_may_create_one_candidate",
+    "more_than_one_fact_or_any_prior_question_receipt_means_safe_hold_or_krish_session",
+    "never_automatically_follow_with_another_question",
+    "route_receipt_is_required_authority_evidence_for_every_normative_receipt_and_predicate",
+    "route_receipt_is_signed_resolved_from_private_authority_store_and_bound_once_to_the_accepted_predicate_proof"
+  ],
+  "question_rules": [
+    "derive_case_terms_and_required_concepts_from_canonical_case_context",
+    "require_two_distinct_case_terms_and_one_required_concept_in_question",
+    "derive_every_copy_length_and_total_from_actual_payload",
+    "reject_forbidden_technical_vocabulary_in_every_visible_field",
+    "require_exact_answer_option_to_effect_ref_map_with_no_extras",
+    "resolve_each_effect_against_current_accepted_before_state",
+    "require_same_case_decision_and_material_delta_for_each_normal_option",
+    "unknown_and_free_expression_have_no_preconfirmed_effect"
+  ],
+  "judgement_contracts": [
+    {
+      "contract_id": "purpose-v1",
+      "judgement_kind": "purpose",
+      "dependency_ids": [
+        "krish_bounded_purpose",
+        "leader_revalidates_purpose",
+        "krish_revalidates_purpose"
+      ],
+      "heading": "Confirm the purpose",
+      "question": "Which purpose should govern the Aperture House marketing team decision and the result it seeks?",
+      "visible_consequence": "Your answer changes the exact purpose this work is allowed to pursue.",
+      "answers": [
+        {
+          "option": "Prove quality can travel before changing the team",
+          "effect_id": "purpose-proof-first",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Prove quality can travel before rebuilding Aperture House's marketing team"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Design the team rebuild now",
+          "effect_id": "purpose-rebuild-now",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Design the rebuild of Aperture House's marketing team now"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Stop this work",
+          "effect_id": "purpose-stop",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Stop work on rebuilding Aperture House's marketing team"
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "source-boundary-v1",
+      "judgement_kind": "boundary",
+      "dependency_ids": [
+        "krish_allowed_source_classes"
+      ],
+      "heading": "Set the evidence boundary",
+      "question": "Which evidence may guide the Aperture House marketing team decision?",
+      "visible_consequence": "Your answer changes which source classes may guide this decision.",
+      "answers": [
+        {
+          "option": "Customer and delivery evidence only",
+          "effect_id": "sources-customer-delivery",
+          "patch": {
+            "path": "bounds",
+            "value": [
+              "Customer evidence",
+              "Delivery evidence"
+            ]
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Add leadership records",
+          "effect_id": "sources-add-leadership",
+          "patch": {
+            "path": "bounds",
+            "value": [
+              "Customer evidence",
+              "Delivery evidence",
+              "Leadership records"
+            ]
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Pause until sources are agreed",
+          "effect_id": "sources-pause",
+          "patch": {
+            "path": "bounds",
+            "value": [
+              "No source may steer until Krish agrees the evidence boundary"
+            ]
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "decision-frame-v1",
+      "judgement_kind": "decision_frame",
+      "dependency_ids": [
+        "leader_accepts_exact_purpose_and_frame_version",
+        "krish_accepts_exact_purpose_and_frame_version"
+      ],
+      "heading": "Accept the decision frame",
+      "question": "Which exact frame should govern the Aperture House marketing team decision before evidence is tested?",
+      "visible_consequence": "Your answer accepts one exact decision frame and rejects the other routes.",
+      "answers": [
+        {
+          "option": "Prove the system before changing the team",
+          "effect_id": "frame-proof-first",
+          "patch": {
+            "path": "route",
+            "value": "prove_the_system_first"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Design the rebuild now",
+          "effect_id": "frame-rebuild-now",
+          "patch": {
+            "path": "route",
+            "value": "rebuild_now"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Stop the rebuild",
+          "effect_id": "frame-stop",
+          "patch": {
+            "path": "route",
+            "value": "stop_rebuild"
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "meaningful-value-v1",
+      "judgement_kind": "meaningful_value",
+      "dependency_ids": [
+        "leader_next_consequential_decision_or_evidenced_value",
+        "krish_next_consequential_decision_or_evidenced_value",
+        "leader_revalidates_next_value",
+        "krish_revalidates_next_value"
+      ],
+      "heading": "Choose the proof that matters",
+      "question": "Which result would make the Aperture House marketing team decision worth pursuing?",
+      "visible_consequence": "Your answer changes the evidence required before this decision can move.",
+      "answers": [
+        {
+          "option": "Two campaigns meet Maya's bar without her rewrite",
+          "effect_id": "value-independent-quality",
+          "patch": {
+            "path": "evidence_requirement",
+            "value": "Two priority campaigns meet Maya's quality bar without her final rewrite"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "The board accepts the explicit rebuild risk",
+          "effect_id": "value-board-risk",
+          "patch": {
+            "path": "evidence_requirement",
+            "value": "Board accepts the explicit rebuild risk"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "A written case that more proof adds no value",
+          "effect_id": "value-no-more-proof",
+          "patch": {
+            "path": "evidence_requirement",
+            "value": "Written case showing that further proof adds no decision value"
+          },
+          "transition_disposition": "supports_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "checkpoint-v1",
+      "judgement_kind": "boundary",
+      "dependency_ids": [
+        "leader_continuation_checkpoint",
+        "krish_continuation_checkpoint",
+        "leader_revalidates_checkpoint",
+        "krish_revalidates_checkpoint"
+      ],
+      "heading": "Set the checkpoint",
+      "question": "When should evidence for the Aperture House marketing team decision be reviewed?",
+      "visible_consequence": "Your answer changes the exact checkpoint that controls continuation.",
+      "answers": [
+        {
+          "option": "Blind comparison after four weeks",
+          "effect_id": "checkpoint-four-weeks",
+          "patch": {
+            "path": "checkpoint",
+            "value": "Blind comparison after four weeks"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Operating review after two weeks",
+          "effect_id": "checkpoint-two-weeks",
+          "patch": {
+            "path": "checkpoint",
+            "value": "Two-week operating review"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Review only if category economics change",
+          "effect_id": "checkpoint-category-change",
+          "patch": {
+            "path": "checkpoint",
+            "value": "Review only if category economics materially change"
+          },
+          "transition_disposition": "supports_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "revisit-v1",
+      "judgement_kind": "revisit_condition",
+      "dependency_ids": [
+        "krish_review_date",
+        "leader_exit_or_revisit_condition",
+        "krish_exit_or_revisit_condition"
+      ],
+      "heading": "Set the revisit condition",
+      "question": "What evidence should cause the Aperture House marketing team decision to be revisited?",
+      "visible_consequence": "Your answer changes the exact condition that reopens this decision.",
+      "answers": [
+        {
+          "option": "The four-week evidence review",
+          "effect_id": "revisit-four-weeks",
+          "patch": {
+            "path": "revisit_condition",
+            "value": "At the four-week evidence review"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "The two-week operating review",
+          "effect_id": "revisit-two-weeks",
+          "patch": {
+            "path": "revisit_condition",
+            "value": "At the two-week operating review"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Only a material change in category economics",
+          "effect_id": "revisit-category-change",
+          "patch": {
+            "path": "revisit_condition",
+            "value": "Only if category economics materially change"
+          },
+          "transition_disposition": "supports_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "genuinely-new-purpose-after-close-v1",
+      "judgement_kind": "purpose",
+      "dependency_ids": [
+        "krish_genuinely_new_purpose"
+      ],
+      "heading": "A genuinely new purpose",
+      "question": "The previous Aperture House marketing team decision is closed. What genuinely new proof or result now justifies a new preparation?",
+      "visible_consequence": "This answer either keeps the closed decision closed or names the distinct purpose for a new preparation.",
+      "answers": [
+        {
+          "option": "Prove a new customer promise can travel without Maya",
+          "effect_id": "new-purpose-customer-promise",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Prove a new customer promise can travel without Maya"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Design a new category position for Aperture House",
+          "effect_id": "new-purpose-category-position",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Design a new category position for Aperture House"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Keep the previous decision closed",
+          "effect_id": "new-purpose-remain-closed",
+          "patch": {
+            "path": "route",
+            "value": "remain_closed"
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    }
+  ],
+  "default_surface": {
+    "heading_count": 1,
+    "question_count": 1,
+    "answer_control_group_count": 1,
+    "optional_note_count": 1,
+    "primary_action_count": 1,
+    "automatic_follow_up_count": 0,
+    "technical_label_count": 0
+  },
+  "final_decision_render_required": [
+    "render_receipt_id",
+    "transition_id",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "decision_before_fingerprint",
+    "reconciled_decision",
+    "reconciled_decision_fingerprint",
+    "changed_paths",
+    "changed_fields",
+    "displayed_consequence_text",
+    "rendered_at",
+    "receipt_fingerprint"
+  ]
+}

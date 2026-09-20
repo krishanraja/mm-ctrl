@@ -1,0 +1,55 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority-r75-founder-ready-receipt.r76.v1",
+  "receipt_kind": "founder_ready_review_closure_only",
+  "round": "R76",
+  "recorded_on": "2026-09-15",
+  "status": "founder_ready_pending_explicit_founder_choice",
+  "candidate": {
+    "round": "R75",
+    "commit": "e6494cda6fba4ce8209f99f1611ba3803de34370",
+    "tree": "3e53f7ca69a0f01192f3e255471a17b81f05f313",
+    "parent": "37d0b7602265d52306b352cdab2a44d5642c0518",
+    "decision_document": "project-documentation/ctrl-evolution/g24-predicate-authority-founder-decision-r75.md",
+    "decision_document_blob": "ee48e4b29d787ef3bbb17c9bf2e558cf7c2aebc6",
+    "decision_document_sha256": "83d2bc6fd6c1042e1fff83f29904abcc7d74bc130f388aa36933e19e40293410",
+    "blobs": {
+      "docs/current/design-state.md": "e71a247bb4f0dc6f5f0e919e1a63aa45640e6063",
+      "project-documentation/ctrl-evolution/README.md": "329f4a63fd853b7e670f8c853b57d79fc1c774b0",
+      "project-documentation/ctrl-evolution/g24-predicate-authority-founder-decision-r75.md": "ee48e4b29d787ef3bbb17c9bf2e558cf7c2aebc6",
+      "project-documentation/ctrl-evolution/g24-predicate-authority-r74-panel-verdict.md": "cac168a3021878f9027e9734d7b765c716f80243",
+      "project-documentation/ctrl-evolution/runs/g24-trusted-ingress-architecture-001/review-ledger.md": "63914b3cd0e88a1c83f9d997a8a1a9ad76db4bd9",
+      "scripts/check-ctrl-g24-founder-lock.mjs": "43cbd05e04b4faecb85210ed8baa35dc3f740730"
+    }
+  },
+  "role_verdicts": [
+    { "role": "Human Agency", "verdict": "PASS" },
+    { "role": "Human Comprehension and Access", "verdict": "PASS" },
+    { "role": "Consequential Usefulness", "verdict": "PASS" },
+    { "role": "Epistemic Integrity", "verdict": "PASS" },
+    { "role": "Living Brain Integrity", "verdict": "PASS" },
+    { "role": "Subject, Audience and Lifecycle Safety", "verdict": "PASS" },
+    { "role": "Implementation Reality", "verdict": "PASS" }
+  ],
+  "review_delivery": "conversation-delivered independent reviewer messages",
+  "cryptographic_signatures": "not claimed",
+  "separate_signed_verdict_artifact": "not claimed",
+  "decision_semantics_source": "R74",
+  "decision_semantics_change_in_r75": "none",
+  "founder_choice": {
+    "status": "pending_explicit_founder_choice",
+    "question": "approve or reject R75 as the predicate-authority architecture for the next local machine-contract gate",
+    "approval_authority": "authorizes only a separate local machine-contract design and verification gate"
+  },
+  "not_authorized": [
+    "machine-contract implementation",
+    "result-producing evaluation",
+    "runtime integration",
+    "registry wiring",
+    "database or schema change",
+    "customer UI",
+    "deployment",
+    "merge",
+    "release",
+    "external action"
+  ]
+}

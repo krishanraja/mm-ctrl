@@ -1,0 +1,153 @@
+{
+  "schema_version": "ctrl.g25.atomic-brain-ingestion.r107.v1",
+  "contract_id": "G25-ATOMIC-BRAIN-INGESTION-R107",
+  "status": "isolated_hosted_atomic_brain_ingestion_proved_production_closed",
+  "observed_at": "2026-09-18",
+  "depends_on": [
+    "G25-SECOND-CLEAN-REPLAY-R98",
+    "G25-REPO-FUNCTION-SOURCE-MANIFEST-R99",
+    "G25-FUNCTION-ENVIRONMENT-REQUIREMENTS-R104",
+    "G25-MEMORY-SETTINGS-HOSTED-PROOF-R106"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "classification": "founder_authorized_isolated_rehearsal",
+    "production_targeted": false
+  },
+  "implementation": {
+    "route": "supabase/functions/ingest-brain/index.ts",
+    "route_sha256": "55af450692e6b953a3c200202d7764ef4dde72f972ea0427ec4b4f0ae0cbf413",
+    "composition_module": "supabase/functions/_shared/brain-to-evidence.ts",
+    "composition_module_sha256": "e8ae4df485994c9a63d6304e0d08f69d35a75d96fea2bfcb0310419d4854023d",
+    "composition_test_sha256": "6b67a0fdbde99f902662a5e50ba543b1bd3283c26e22e2bd03ab1dfd0d24a4d1",
+    "atomic_authority_migration": "supabase/migrations/20260918153000_atomic_brain_ingestion_authority.sql",
+    "atomic_authority_migration_sha256": "0b026c59c5fe8a5f0b30de5b1698a9fbf5d84647b655deece3c5438bef941957",
+    "retired_semantics_migration": "supabase/migrations/20260918153500_retired_candidate_semantics.sql",
+    "retired_semantics_migration_sha256": "ba101107e3d05755a60145e6618887811e68839e7f1c239dfd385a938fb34783",
+    "probe": "scripts/probe-ctrl-g25-atomic-brain-ingestion-r107.mjs",
+    "probe_sha256": "4bc5f72573655bf7a6e3d39ccf38c4f223cce20dca33354218127773e992c989",
+    "target_neutral_database_runner": "scripts/db-query.mjs",
+    "target_neutral_database_runner_sha256": "fce2450afa90970550006d7f870629bf5b8dc3b9a8e2eb31c6952bec0bb33588",
+    "containment_manifest_sha256": "e60a026fc837bd7327738eb1b17c66b00fa2c5a99574bb4cd29dd301049a562f",
+    "function_config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3"
+  },
+  "hosted_function": {
+    "slug": "ingest-brain",
+    "version": 1,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "bundle_sha256": "5c011c419296dd1125a97de470724148e5cb8ef83bd8465748496da56a9f0e44",
+    "exact_project_binding_required": true,
+    "service_role_used": false,
+    "model_used": false
+  },
+  "hosted_probe": {
+    "anonymous_status": 401,
+    "empty_brain_status": 422,
+    "wrong_method_status": 405,
+    "wrong_media_status": 415,
+    "extra_body_status": 400,
+    "oversized_status": 413,
+    "forced_late_failure_status": 500,
+    "forced_failure_zero_sources": true,
+    "forced_failure_zero_evidence": true,
+    "forced_failure_zero_constructs": true,
+    "forced_failure_zero_receipts": true,
+    "first_status": 200,
+    "first_already_ingested": false,
+    "first_counts": {
+      "facts": 2,
+      "decisions": 1,
+      "evidence": 3,
+      "constructs": 2,
+      "skipped": 1
+    },
+    "retry_status": 200,
+    "retry_already_ingested": true,
+    "retry_same_receipt": true,
+    "retry_same_source": true,
+    "retry_same_fingerprint": true,
+    "second_tenant_status": 200,
+    "second_tenant_receipt_count": 1,
+    "correction_status": 200,
+    "correction_already_ingested": false,
+    "correction_new_receipt": true,
+    "correction_new_fingerprint": true,
+    "correction_supersedes_first": true,
+    "correction_retry_already_ingested": true,
+    "correction_retry_same_receipt": true,
+    "receipt_history_count": 2,
+    "active_receipt_count": 1,
+    "old_receipt_points_forward": true,
+    "new_receipt_points_back": true,
+    "accepted_old_construct_preserved": true,
+    "stale_old_candidates_retired": true,
+    "new_constructs_all_candidate": true,
+    "exact_offsets_including_unicode": true,
+    "rejected_fact_not_staged": true,
+    "cross_tenant_receipt_rows_visible": 0,
+    "direct_receipt_insert_status": 403
+  },
+  "database_readback": {
+    "receipt_rls_enabled": true,
+    "authenticated_select": true,
+    "authenticated_direct_insert": false,
+    "authenticated_rpc_execute": true,
+    "anonymous_rpc_execute": false,
+    "receipt_rows_after_cleanup": 0,
+    "probe_function_removed": true,
+    "probe_trigger_count": 0,
+    "retired_candidate_pole_semantics_present": true,
+    "retired_candidate_evidence_semantics_present": true,
+    "migration_versions_recorded": [
+      "20260918153000",
+      "20260918153500"
+    ]
+  },
+  "cleanup": {
+    "auth_users": 0,
+    "identities": 0,
+    "profiles": 0,
+    "memory": 0,
+    "decisions": 0,
+    "sources": 0,
+    "evidence": 0,
+    "constructs": 0,
+    "receipts": 0
+  },
+  "interpretation_boundary": {
+    "proved": [
+      "owner_bound_current_Brain_reads",
+      "database_revalidation_of_current_fact_and_decision_values",
+      "single_transaction_source_evidence_construct_and_receipt_write",
+      "same_snapshot_retry_idempotency",
+      "correction_supersession_with_one_active_receipt",
+      "stale_candidate_retirement",
+      "accepted_construct_preservation",
+      "exact_JavaScript_quote_offsets_including_unicode",
+      "two_user_RLS_isolation",
+      "complete_transient_fixture_cleanup"
+    ],
+    "not_proved": [
+      "production_cutover",
+      "full_historical_Brain_export",
+      "model_generated_construct_quality",
+      "build_sort_model_spend_route",
+      "legacy_backend_retirement"
+    ]
+  },
+  "authority": {
+    "production_writes": 0,
+    "production_functions_deployed": 0,
+    "production_secrets_changed": 0,
+    "isolated_functions_deployed_by_r107": 1,
+    "isolated_migrations_applied_by_r107": 2,
+    "non_secret_project_binding_written": true,
+    "management_token_used_in_memory": true,
+    "credential_values_emitted_or_persisted": false,
+    "merge_or_cutover_authorized": false,
+    "legacy_retirement_authorized": false
+  },
+  "next_safe_action": "Harden and prove build-sort only after its model-spend, background service-role and hard-coded production-binding risks are removed."
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "ctrl.g25.prepared-custody-cipher-admission.r27.v1",
+  "record_id": "G25-PREPARED-CUSTODY-CIPHER-ADMISSION-R27",
+  "status": "local_postgres_cipher_admission_verified",
+  "depends_on": [
+    "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25",
+    "G25-PREPARED-CUSTODY-CRYPTO-R26"
+  ],
+  "admission": {
+    "cipher_version": 2,
+    "algorithm": "A256GCM",
+    "envelope_fields": [
+      "v",
+      "alg",
+      "kid",
+      "iv",
+      "ciphertext",
+      "aad_sha256"
+    ],
+    "database_can_verify": "exact R26 context identity and envelope shape without key access",
+    "database_cannot_verify": "plaintext or AES-GCM authenticity without decryption key"
+  },
+  "verified": [
+    "cross-language R26 AAD SHA-256",
+    "valid R26 envelope stored through R25 and decrypted after readback",
+    "wrong AAD hash rejected",
+    "legacy version 1 rejected",
+    "extra envelope identity rejected",
+    "wrong storage encryption version rejected",
+    "malformed envelope rejected"
+  ],
+  "negative_controls": [
+    "AAD context check removed",
+    "storage encryption-version check removed"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_prepared_custody_cipher_admission_r27.sql",
+    "candidate_sha256": "ab942e89a4e5ba20e13bbd5fe66918e04d549eb8a58e53d0e3d1c76239619db9",
+    "runner": "scripts/run-ctrl-g25-prepared-custody-cipher-admission-r27.mjs",
+    "runner_sha256": "8495799562fb37afc6c4e4a36c5d6fe95b426b080aa4e8c738f6a134f25d269f"
+  },
+  "next_gate": "Bind principal removal to live R23 custody state, then cover both-generation correction, erasure and unified reading.",
+  "not_authorized": [
+    "key or KMS access",
+    "linked or production database use",
+    "migration creation or execution",
+    "runtime producer or caller integration",
+    "deployment, merge or release"
+  ]
+}

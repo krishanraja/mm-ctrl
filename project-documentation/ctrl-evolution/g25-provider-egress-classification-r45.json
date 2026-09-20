@@ -1,0 +1,90 @@
+{
+  "schema_version": "ctrl.g25.provider-egress-classification.r45.v1",
+  "record_id": "G25-PROVIDER-EGRESS-CLASSIFICATION-R45",
+  "status": "conservative_callsite_classification_complete",
+  "depends_on": [
+    "G25-EXTERNAL-PROCESSOR-SURFACE-R44"
+  ],
+  "classification_basis": "Every R44 provider-signature file is classified by its product purpose. The classes are conservative potential egress, not proof that every class is sent on every invocation.",
+  "data_classes": [
+    "account_identity",
+    "billing_metadata",
+    "brain_memory",
+    "company_context",
+    "company_identifier",
+    "decision_content",
+    "email_address",
+    "email_body",
+    "generated_content",
+    "inferred_traits",
+    "leader_context",
+    "leader_source_text",
+    "public_web_content",
+    "search_query",
+    "telemetry_metadata",
+    "unknown_configured_payload"
+  ],
+  "purpose_families": {
+    "memory_and_intake": [
+      "leader_source_text",
+      "brain_memory",
+      "inferred_traits"
+    ],
+    "decision_support": [
+      "decision_content",
+      "brain_memory",
+      "leader_context",
+      "company_context"
+    ],
+    "briefing_and_coaching": [
+      "leader_context",
+      "brain_memory",
+      "company_context",
+      "generated_content"
+    ],
+    "research_and_enrichment": [
+      "search_query",
+      "company_identifier",
+      "public_web_content"
+    ],
+    "email_delivery": [
+      "email_address",
+      "email_body",
+      "generated_content"
+    ],
+    "billing": [
+      "account_identity",
+      "billing_metadata"
+    ],
+    "configured_downstream": [
+      "telemetry_metadata",
+      "unknown_configured_payload"
+    ]
+  },
+  "routing_standing": {
+    "private_brain_context": "blocked_for_new_runtime_until_provider_mode_and_receipt_are_verified",
+    "research_queries": "minimise_to_public_or_pseudonymous_terms_and_record_purpose",
+    "email_delivery": "allowed_only_as_an_explicit_delivery_action_with_recipient_and_content_receipt",
+    "billing": "separate_accounting_scope_not_a_brain_context_channel",
+    "configured_downstream": "blocked_until_destination_and_payload_contract_are_explicit"
+  },
+  "required_per_request_receipt": [
+    "workspace-scoped correlation digest",
+    "provider and endpoint family",
+    "callsite and purpose family",
+    "data classes sent",
+    "provider request or message identity when returned",
+    "retention mode asserted and independently verified",
+    "customer-controlled-copy boundary",
+    "expiry or deletion evidence kind"
+  ],
+  "artifact": "scripts/check-ctrl-g25-provider-egress-classification-r45.mjs",
+  "next_gate": "Verify current official provider retention controls and bind them to each provider family before designing a provider-receipt table candidate.",
+  "not_authorized": [
+    "calling any provider",
+    "changing provider routing",
+    "editing the live deletion path",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}

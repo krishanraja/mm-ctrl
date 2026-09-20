@@ -1,0 +1,40 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "run_id": "g24-experience-r136-mobile-session",
+  "status": "founder_approved_scope",
+  "surface": "branch-only phone decision session proof",
+  "materiality": "the rejected narrow-screen dashboard is replaced in the proof by a sequential one-turn mobile interaction model",
+  "changed_surface_files": [
+    "public/g20-mobile-decision-r136.html"
+  ],
+  "authority": "Rendered synthetic proof only. The responsive React product remains unchanged until founder approval.",
+  "release_status": "ready for founder review on the branch preview; production, main and release remain closed",
+  "approval_claims": [
+    "Founder reaction on 2026-09-20: ok this much better",
+    "Founder explicitly answered yes when asked whether this approved replacing the current phone experience with the sequential model"
+  ],
+  "candidate_count": 3,
+  "first_pass_pack_hash": "18effc5117fb707639d9ed65f2e736ec9d069c509e2bd0686266aa2f97b27460",
+  "implementation_pack_hash": "bbbf3a195566f7b164bae6c61e4a183f1eea65e140ed3cbd6e58474898649d3d",
+  "sealed_verdicts": [
+    "judge-one.md",
+    "judge-two.md"
+  ],
+  "reality_lab_results": {
+    "viewports": ["390x844", "320x568"],
+    "horizontal_overflow": "none at 320px",
+    "first_turn_height": "fits within 320x568",
+    "interaction_states": ["question", "recalculation", "recommendation result", "challenge", "human call", "basis"],
+    "brand_image": "loaded with non-zero natural width under the /mm-ctrl/ hosted subpath",
+    "build": "passed"
+  },
+  "unverified_or_blocked": [
+    "responsive React implementation is recorded separately",
+    "sparse, stale, conflicted and failed states are specified but not rendered in this first proof",
+    "voice is a simulated entry affordance",
+    "no database or product runtime is connected",
+    "production, main, merge and release remain unauthorised"
+  ],
+  "customer_surface_changed": false,
+  "production_writes": 0
+}

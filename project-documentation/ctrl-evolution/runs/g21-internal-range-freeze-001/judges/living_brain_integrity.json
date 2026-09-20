@@ -1,0 +1,45 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "living_brain_integrity",
+  "criterionVersion": "living-brain-integrity:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "fail",
+  "claims": [
+    "All five artifact SHA-256 values match the manifest, and the SHA-256 of the manifest-order path:sha256 lines joined with LF and no trailing LF matches the frozen composite.",
+    "The fixture has several sound living-brain foundations: identity and external evidence remain fixed within each family, evidence nests across the three internal depths, records carry source locators plus valid and recorded time, corrected blind inputs retain the base evidence, conflict and correction, and the oracle object is not copied into blind input.",
+    "The supersession model is not claim-addressable. G21InternalEvidenceRecord can name only a whole superseded evidence record, even when that record contains multiple independent claims.",
+    "All four longitudinal direct corrections demonstrate the defect. INT-CARE-008 retracts exception ownership as the main gate but not Elena's ownership of scale or the rule that time saving alone is insufficient; INT-RESEARCH-008 retracts always-on access but not the rejection of faster reports or the value of senior judgement; INT-FORGE-008 retracts planner hesitation as the main cause but not the live GBP 4.2 million decision and its alternatives; INT-STORY-008 retracts the more-theories hunch but not the category ambition, bounded AI role or human creative ownership. Each correction nevertheless supersedes the entire multi-claim source record.",
+    "A current-view resolver therefore cannot honor the frozen lineage without either retiring still-current claims from the source record or leaving its withdrawn claim active. Hand-authored oracle prose does not repair that structural ambiguity.",
+    "The validator checks only that a superseded evidence id exists and precedes the correction by recorded time, while the adversarial checks exercise missing or misdirected record pointers only. A partial correction that erases unrelated current claims can pass the frozen gate."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json:2-29",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/council-brief.md#living-brain-integrity",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:76-88",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:391-399",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:461-471",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:764-772",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:833-844",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1147-1156",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1228-1239",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1575-1584",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1645-1656",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1940-1950",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2091-2095",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2241-2258",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2302-2339",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:96-101",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:191-213",
+    "scripts/check-g21-internal-range.mjs:111-122",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:58-62",
+    "project-documentation/ctrl-evolution/g21-internal-range-canary.md:83-103"
+  ],
+  "veto": {
+    "ruleId": "BRAIN-RANGE-01",
+    "failure": "Broken lineage can pass because corrections supersede whole evidence records while the corrected meaning is only one claim inside each record. The frozen model cannot retire the changed claim without risking erasure of still-current claims from the same source.",
+    "resolvingTest": "Add claim-addressable supersession or an explicit retained-claims projection, migrate all four longitudinal corrections, and add one adversarial regression per family that constructs the corrected current view and proves that only the changed claim is retired, every unaffected claim from the same source remains current with its provenance, the original record remains in history, and no oracle field enters blind input. The validator must reject the current record-level-only representation."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Add claim-addressable supersession or an explicit retained-claims projection, migrate all four longitudinal corrections, and add one adversarial regression per family that constructs the corrected current view and proves that only the changed claim is retired, every unaffected claim from the same source remains current with its provenance, the original record remains in history, and no oracle field enters blind input. The validator must reject the current record-level-only representation.",
+  "recordedAt": "2026-09-10T18:06:23.043Z"
+}

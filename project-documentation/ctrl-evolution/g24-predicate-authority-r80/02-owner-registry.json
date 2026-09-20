@@ -1,0 +1,38 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r80.owner-registry.v1",
+  "module_id": "owner_registry",
+  "registry_version": "ctrl.g24.r80.internal-owner-registry.v1",
+  "records": [
+    { "dependency_id": "active_grant_set_complete", "fact_kind": "complete_active_grant_set", "canonical_owner": "ctrl_authority_registry", "source_type": "ctrl_authority_registry", "issuer_fact_kind_rule": "ctrl_authority_registry_owns_complete_active_grant_set" },
+    { "dependency_id": "all_dependencies_fresh", "fact_kind": "all_dependency_validity_boundaries_current", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_all_dependency_validity_boundaries_current" },
+    { "dependency_id": "audience_set_complete", "fact_kind": "complete_current_audience_set", "canonical_owner": "ctrl_authority_registry", "source_type": "ctrl_authority_registry", "issuer_fact_kind_rule": "ctrl_authority_registry_owns_complete_current_audience_set" },
+    { "dependency_id": "checkpoint_exists", "fact_kind": "current_checkpoint_existence", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_checkpoint_existence" },
+    { "dependency_id": "checkpoint_integrity_valid", "fact_kind": "checkpoint_integrity", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_checkpoint_integrity" },
+    { "dependency_id": "close_obligation_set_exactly_access_correction_separate_release_close", "fact_kind": "complete_close_obligation_set", "canonical_owner": "ctrl_obligation_registry", "source_type": "ctrl_obligation_registry", "issuer_fact_kind_rule": "ctrl_obligation_registry_owns_complete_close_obligation_set" },
+    { "dependency_id": "closed_predecessor_exact", "fact_kind": "current_closed_lifecycle_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_closed_lifecycle_version" },
+    { "dependency_id": "current_checkpoint_exact", "fact_kind": "current_checkpoint_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_checkpoint_version" },
+    { "dependency_id": "current_close_request_exact", "fact_kind": "current_close_request_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_close_request_version" },
+    { "dependency_id": "current_continuing_period_exact", "fact_kind": "current_continuing_period_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_continuing_period_version" },
+    { "dependency_id": "current_intensive_proof_period_exact", "fact_kind": "current_intensive_proof_period_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_intensive_proof_period_version" },
+    { "dependency_id": "current_paused_period_exact", "fact_kind": "current_paused_period_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_paused_period_version" },
+    { "dependency_id": "current_preparation_exact", "fact_kind": "current_preparation_version", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_current_preparation_version" },
+    { "dependency_id": "eligible_source_class_values_valid", "fact_kind": "eligible_source_class_membership", "canonical_owner": "ctrl_source_class_registry", "source_type": "ctrl_source_class_registry", "issuer_fact_kind_rule": "ctrl_source_class_registry_owns_eligible_source_class_membership" },
+    { "dependency_id": "every_obligation_fulfilled_or_recorded_outstanding", "fact_kind": "close_obligation_disposition_completeness", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_close_obligation_disposition_completeness" },
+    { "dependency_id": "fresh_issuance_exists_where_required", "fact_kind": "required_grant_fresh_issuance", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_required_grant_fresh_issuance" },
+    { "dependency_id": "no_active_lifecycle_row", "fact_kind": "complete_active_lifecycle_absence", "canonical_owner": "ctrl_lifecycle_store", "source_type": "ctrl_lifecycle_store", "issuer_fact_kind_rule": "ctrl_lifecycle_store_owns_complete_active_lifecycle_absence" },
+    { "dependency_id": "no_old_grant_can_revive", "fact_kind": "prior_grant_non_revival", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_prior_grant_non_revival" },
+    { "dependency_id": "old_expired_or_revoked_grants_unusable", "fact_kind": "expired_and_revoked_grant_ineligibility", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_expired_and_revoked_grant_ineligibility" },
+    { "dependency_id": "prior_grant_set_complete", "fact_kind": "complete_prior_grant_set", "canonical_owner": "ctrl_authority_registry", "source_type": "ctrl_authority_registry", "issuer_fact_kind_rule": "ctrl_authority_registry_owns_complete_prior_grant_set" },
+    { "dependency_id": "private_preparation_audience_exact", "fact_kind": "private_preparation_audience_binding", "canonical_owner": "ctrl_authority_registry", "source_type": "ctrl_authority_registry", "issuer_fact_kind_rule": "ctrl_authority_registry_owns_private_preparation_audience_binding" },
+    { "dependency_id": "revocation_set_complete", "fact_kind": "complete_current_revocation_set", "canonical_owner": "ctrl_authority_registry", "source_type": "ctrl_authority_registry", "issuer_fact_kind_rule": "ctrl_authority_registry_owns_complete_current_revocation_set" },
+    { "dependency_id": "subject_and_case_identities_exact", "fact_kind": "subject_and_case_identity_binding", "canonical_owner": "versioned_deterministic_derivation", "source_type": "ctrl_derivation_registry", "issuer_fact_kind_rule": "registered_derivation_owns_subject_and_case_identity_binding" },
+    { "dependency_id": "subject_identity_valid", "fact_kind": "current_subject_identity_binding", "canonical_owner": "ctrl_identity_registry", "source_type": "ctrl_identity_registry", "issuer_fact_kind_rule": "ctrl_identity_registry_owns_current_subject_identity_binding" }
+  ],
+  "policy_rules": {
+    "one_record_per_dependency": true,
+    "profile_fact_kind_owner_source_rule_and_policy_must_match_record": true,
+    "authority_policy_version": "ctrl.g24.r80.internal-owner-registry.v1",
+    "runtime_owner_substitution": "reject",
+    "unregistered_dependency": "indeterminate"
+  }
+}

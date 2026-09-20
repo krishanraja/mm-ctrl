@@ -1,0 +1,67 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-handle-authority.r66.v1",
+  "contract_id": "G25-PROVIDER-DELETION-HANDLE-AUTHORITY-R66",
+  "status": "operation_scoped_authority_locally_proved_durable_spend_and_database_enforcement_closed",
+  "depends_on": [
+    "G25-PROVIDER-DELETION-HANDLE-CRYPTO-R64",
+    "G25-PROVIDER-DELETION-HANDLE-POSTGRES-R65"
+  ],
+  "implementation": {
+    "authority": "supabase/functions/_shared/provider-deletion-handle-authority.r66.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-handle-authority.r66.test.ts",
+    "config": "vitest.g25-provider-handle-authority.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-handle-authority-r66.mjs"
+  },
+  "separation_of_power": {
+    "provider_handle_crypto_writer": [
+      "register one R64 envelope digest for one exact workspace, receipt, handle, provider and job"
+    ],
+    "provider_deletion_worker": [
+      "lease one exact handle for at most 300 seconds",
+      "destroy one exact handle for a provider-valid reason and evidence reference"
+    ],
+    "neither_authority_can": [
+      "list handles",
+      "carry a raw provider handle",
+      "carry ciphertext",
+      "change workspace, receipt, handle, provider, job or operation",
+      "remain valid for more than five minutes"
+    ]
+  },
+  "proved_locally": [
+    "operation determines role instead of accepting caller-selected role",
+    "HS256 signs a canonical exact-key authority payload",
+    "registration binds the R64 envelope SHA-256 without carrying ciphertext",
+    "lease and destroy are available only to the deletion-worker role",
+    "authority and lease duration are each bounded to five minutes",
+    "workspace, receipt, handle, provider, job and operation substitution fail closed",
+    "provider-specific destruction evidence is required",
+    "unknown keys, signature tampering, extra payload fields and injected raw handles fail closed"
+  ],
+  "unproved": [
+    "durable one-time spend and replay prevention",
+    "database verification of the authority signature",
+    "database role grants for distinct writer and worker identities",
+    "independent-connection lease exclusion",
+    "key custody, rotation operation and emergency revocation",
+    "Supabase, PostgREST or provider behavior"
+  ],
+  "artifact_sha256": {
+    "authority": "06ea2da36e864f8f7fe16a95f3126eebafd47f51151167809886176fdf004214",
+    "tests": "9a19b232e778d4656bf6f3865f8c69d97f8c0ec36afe02a2f09ccf21ec1ac295",
+    "config": "7a8774c539edf17ce48e7e5cf5a96605cb778788ad603ade0a0a75924ec4a55a"
+  },
+  "bounded_claim": "R66 proves a content-free, operation-scoped application authority envelope locally. It does not prove durable consumption, database enforcement, least-privilege grants, concurrent leasing or any provider deletion.",
+  "next_gate": "Persist one-time authority spend and require the signed capability in R65 registration, lease and destruction functions before proving independent-connection exclusion.",
+  "authority": {
+    "permits": [
+      "local authority-envelope tests",
+      "local documentation and commit"
+    ],
+    "forbids": [
+      "provider request",
+      "linked database or migration execution",
+      "live route edit, deployment, merge or release"
+    ]
+  }
+}

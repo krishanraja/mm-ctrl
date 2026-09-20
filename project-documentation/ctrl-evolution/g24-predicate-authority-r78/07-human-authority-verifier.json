@@ -1,0 +1,80 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "human_authority_verifier",
+  "responsibility": "Validate fresh named-human judgement and final transition authority against the exact visible consequence and immutable bundle.",
+  "forbidden": [
+    "decide_factual_satisfaction",
+    "infer_agreement",
+    "reuse_earlier_bundle_authority",
+    "hide_visible_consequence",
+    "accept_workload_as_named_human",
+    "accept_model_generated_authority",
+    "convert_unknown_to_satisfied",
+    "convert_free_expression_directly_to_authority",
+    "downgrade_normative_judgement_to_server_verification"
+  ],
+  "normative_attestation_required_fields": [
+    "attestation_id",
+    "named_human_id",
+    "owned_judgement_kind",
+    "decision_frame_ref",
+    "decision_frame_version",
+    "decision_frame_standing",
+    "bounded_answer_value_or_free_expression_ref",
+    "answer_effect_kind",
+    "accepted_decision_before_fingerprint",
+    "accepted_decision_after_fingerprint",
+    "accepted_decision_changed_fields",
+    "visible_consequence_fingerprint",
+    "bundle_fingerprint",
+    "issued_at",
+    "valid_until",
+    "receipt_fingerprint"
+  ],
+  "normative_attestation_domain_separator": "CTRL_G24_R78_NORMATIVE_ATTESTATION",
+  "final_transition_authority_required_fields": [
+    "authority_receipt_id",
+    "named_authority_id",
+    "transition_id",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "bundle_fingerprint",
+    "visible_consequence_fingerprint",
+    "reserved_transition_receipt_version",
+    "issued_at",
+    "valid_until",
+    "authority_receipt_fingerprint"
+  ],
+  "final_transition_authority_domain_separator": "CTRL_G24_R78_FINAL_TRANSITION_AUTHORITY",
+  "single_gesture_rule": "one_explicit_gesture_may_authorize_creation_of_both_receipts_only_when_both_complete_payloads_and_the_visible_consequence_are_shown_but_the_receipts_remain_distinct_and_independently_inspectable",
+  "answer_effect_kinds": [
+    "select",
+    "stop",
+    "bound",
+    "materially_reshape"
+  ],
+  "normative_judgement_kinds": [
+    "purpose",
+    "decision_frame",
+    "meaningful_value",
+    "boundary",
+    "stop_condition",
+    "revisit_condition"
+  ],
+  "normative_judgement_resolution_owner": "human_answerable",
+  "unknown_rule": "unknown_is_preserved_and_routes_to_hold_or_krish_led_session_never_satisfied",
+  "free_expression_rule": "preserve_verbatim_as_non_authoritative_input_until_the_named_human_explicitly_confirms_a_structured_interpretation_and_visible_consequence",
+  "model_and_workload_rule": "a_model_or_workload_may_draft_or_route_but_cannot_instantiate_a_named_human_answer_or_authority_receipt",
+  "accepted_decision_fields": [
+    "consequential_target",
+    "route",
+    "bounds",
+    "stop_condition",
+    "evidence_requirement",
+    "checkpoint",
+    "revisit_condition"
+  ],
+  "lifecycle_fields_do_not_prove_material_effect": true,
+  "authority_is_separate_from_predicate_result": true,
+  "freshness_rule": "authority_valid_at_commit_and_bound_to_exact_reserved_receipt_version"
+}

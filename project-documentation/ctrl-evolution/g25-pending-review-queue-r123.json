@@ -1,0 +1,77 @@
+{
+  "schema_version": "ctrl.g25.pending-review-queue.r123.v1",
+  "contract_id": "G25-PENDING-REVIEW-QUEUE-R123",
+  "status": "isolated_owner_private_pending_queue_proved_no_notification",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-STABLE-REVIEW-ADDRESS-R122"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "migration": "supabase/migrations/20260920150000_standard_change_pending_review_queue.sql",
+    "migration_sha256": "3c242d4b67ce0edc0f38275858bb95a6ed5e282de699bac16aad72c16f780843",
+    "queue_core": "supabase/functions/_shared/standard-change-owner-queue-core.ts",
+    "queue_core_sha256": "4e75b2cc15fc8bd01a31e314a80de1635751b3a2fc9707ced2113edcd1016c01",
+    "queue_core_test": "supabase/functions/_shared/standard-change-owner-queue-core.test.ts",
+    "queue_core_test_sha256": "e05ddba78b3ba41fc6ea8c7da755c4e16257bdbeed9b0c51321304ea39b3bdec",
+    "edge_function": "supabase/functions/review-standard-change-v4/index.ts",
+    "edge_function_sha256": "84ab061800e17371bfeca35e56a224842cb9e4ffde7f5e1fba1069febfc68ad7",
+    "edge_config": "supabase/functions/review-standard-change-v4/deno.json",
+    "edge_config_sha256": "a9a29da36c2576f755dd868b9f553a02afdf7d7bccf52e97e65c7f68cf36bfef",
+    "product_projection": "src/features/standard-review/pendingQueue.ts",
+    "product_projection_sha256": "adc80fca231b4b4c888fe796812d3c294de59e5261c6c1e7ee0ebccee5324e31",
+    "product_projection_test": "src/features/standard-review/pendingQueue.test.ts",
+    "product_projection_test_sha256": "cb067306c8d4e83fd5a1006f55992da9a829b0596a1ab5f60cf2041d323ef093",
+    "probe": "scripts/probe-ctrl-g25-pending-review-queue-r123.mjs",
+    "probe_sha256": "7947ec9f6b74820e32585f9017ae38585c1fc00fa85d397a2d6c7b38a996ed4d",
+    "checker": "scripts/check-ctrl-g25-pending-review-queue-r123.mjs",
+    "checker_sha256": "f4619ba53370bcfc9c7ec32bc6370997f04d3e3952a7ad52b51e1a01cf1fe3e4",
+    "experience_receipt": "project-documentation/ctrl-evolution/runs/g24-experience-g25-stable-review-address-r122/receipt.json",
+    "experience_receipt_sha256": "702fdd2905f72c700bf62e2d1515a32ec7beaee9e4985fcbd3ac0fe8e7f5d8f8",
+    "finding": "project-documentation/ctrl-evolution/g25-pending-review-queue-r123.md",
+    "finding_sha256": "49f325e505a51b6f5f6160dc27b1e28210e908c34695a9e36453352d48bc6e5c"
+  },
+  "isolated_deployment": {
+    "migration_version": "20260920150000",
+    "rpc": "get_pending_standard_change_review_v4()",
+    "authenticated_execute": true,
+    "anon_execute": false,
+    "public_execute": false,
+    "function_slug": "review-standard-change-v4",
+    "function_version": 2,
+    "function_status": "ACTIVE",
+    "verify_jwt": true,
+    "downloaded_entrypoint_matches_reviewed_source": true,
+    "unauthenticated_status": 401,
+    "new_database_lint_findings": 0
+  },
+  "hosted_lifecycle_proof": {
+    "authenticated_pending_queue": true,
+    "ready_count_transitions": [3, 2, 1],
+    "oldest_ready_first": true,
+    "consequence_bound": true,
+    "safe_path_bound": true,
+    "materiality_inferred": false,
+    "active_standard_mutated_by_read": false,
+    "notification_sent": false,
+    "fixture_cleanup_zero": true,
+    "failed_attempt_fixture_cleanup_zero": true
+  },
+  "authority": {
+    "owner_derived_from_auth": true,
+    "cross_customer_operator_access": false,
+    "impersonation_used": false,
+    "service_role_browser_access": false,
+    "approved_review_experience_changed": false,
+    "customer_data_used": false,
+    "production_deployed": false,
+    "merge_to_main_authorized": false,
+    "release_authorized": false,
+    "legacy_retirement_authorized": false
+  },
+  "next_safe_action": "Freeze the explicit workspace-role, audience-grant, expiry, revocation and access-receipt contract required for Krish to retrieve one customer's pending review without impersonation or blanket service-role access."
+}

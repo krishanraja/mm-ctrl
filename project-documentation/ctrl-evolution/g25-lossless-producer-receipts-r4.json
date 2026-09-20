@@ -1,0 +1,72 @@
+{
+  "schema_version": "ctrl.g25.lossless-producer-receipts.r4.v1",
+  "contract_id": "G25-LOSSLESS-PRODUCER-RECEIPTS-R4",
+  "status": "local_pure_receipt_gate_pass",
+  "prepared_at": "2026-09-17T09:28:00+01:00",
+  "depends_on": "project-documentation/ctrl-evolution/g25-legacy-producer-adapters-r3.json",
+  "implementation": "supabase/functions/_shared/prepared-intelligence-receipts.r4.ts",
+  "test": "supabase/functions/_shared/prepared-intelligence-receipts.r4.test.ts",
+  "scope": "Pure local receipt creation from facts already present before the two legacy handoffs become lossy.",
+  "closed_scope": [
+    "runtime import or producer edit",
+    "persistence or migration",
+    "transaction or concurrency claim",
+    "external retrieval or model call",
+    "customer delivery",
+    "deployment",
+    "merge",
+    "legacy retirement"
+  ],
+  "news_receipt": {
+    "input_truth": "Lossless normalized articles belonging to one candidate cluster plus exact matched Brain context.",
+    "preserves": [
+      "one evidence item per distinct source host",
+      "source tier",
+      "exact publication time",
+      "cluster membership",
+      "Brain context reference and label",
+      "user relevance",
+      "why it matters",
+      "feedback and topic controls"
+    ],
+    "holds_on": [
+      "missing cluster members",
+      "unqualified weak single source",
+      "unrelated member",
+      "missing publication time",
+      "duplicate or invalid source",
+      "invalid subject, audience, context or relevance"
+    ]
+  },
+  "decision_receipt": {
+    "input_truth": "Prior and current verdicts, exact watch kind, verifier evidence and an explicit effect on the live call.",
+    "preserves": [
+      "decision and claim linkage",
+      "verified change semantics",
+      "inspectable source URLs",
+      "observation time",
+      "decision-specific effect",
+      "status and feedback identity"
+    ],
+    "holds_on": [
+      "change does not earn its trigger kind",
+      "missing or unusable verifier evidence",
+      "missing decision effect",
+      "invalid observation time",
+      "invalid audience, status, verdict or confidence"
+    ]
+  },
+  "evidence": {
+    "receipt_tests": 12,
+    "full_chain_tests": 40,
+    "runtime_callers_added": 0,
+    "producer_files_modified": 0,
+    "database_files_modified": 0
+  },
+  "residual_risks": [
+    "Receipt evidence IDs use a deterministic non-cryptographic locator fingerprint; the full URL remains present and later collision checks fail closed.",
+    "The receipt creator is not yet called transactionally with legacy qualification or verification.",
+    "No durable schema, retention, correction or erasure behavior is proven.",
+    "Decision effect quality is required but not generated or evaluated here."
+  ]
+}

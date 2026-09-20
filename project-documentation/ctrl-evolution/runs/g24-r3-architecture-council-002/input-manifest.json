@@ -1,0 +1,41 @@
+{
+  "schema_version": "ctrl.council.pack-a.v1",
+  "run_id": "g24-r3-architecture-council-002",
+  "standard": {
+    "path": "project-documentation/ctrl-evolution/runs/g24-r3-architecture-council-002/standard.md",
+    "version": "g24-r3-architecture-recheck-v1",
+    "sha256": "67848f4787b1732b76e641775d5ce8d47fe705151813cb19dc0785945e06f858"
+  },
+  "submission": [
+    {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-blueprint-r3.md",
+      "sha256": "446476044415af172bc63b1ec8f61876460f1068120eded45323f667de2372a5"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-contract-r3.json",
+      "sha256": "5d6109cd8d34a52f9a441d9a5906bbcac0efd10768d5329fac7dfc3f80083f09"
+    },
+    {
+      "path": "project-documentation/ctrl-evolution/g24-product-system-r3-delta.json",
+      "sha256": "c4fccebbe147706243196fc771ee2a73079cb6f08843cd7449aa0785dc4b4ceb"
+    }
+  ],
+  "specialists": [
+    "human-agency",
+    "epistemic-integrity",
+    "subject-audience-lifecycle-safety",
+    "consequential-usefulness",
+    "living-brain-integrity",
+    "human-comprehension-and-access",
+    "behavioural-and-implementation-reality"
+  ],
+  "sealed_exclusions": [
+    "project-documentation/ctrl-evolution/runs/g24-r2-architecture-council-001",
+    "project-documentation/ctrl-evolution/judge-history",
+    "other_specialist_outputs",
+    "builder_commentary",
+    "founder_prediction",
+    "conversation_history"
+  ],
+  "authority": "local_review_records_only"
+}

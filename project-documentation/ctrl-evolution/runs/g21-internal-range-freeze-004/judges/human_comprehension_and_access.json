@@ -1,0 +1,31 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-004",
+  "judge": "human_comprehension_and_access",
+  "criterionVersion": "human-comprehension-and-access:g21-internal-range-freeze-v4",
+  "artifactCompositeSha256": "f9abb9a9a4f9f5543dbdd92f04c7d1a21539762db6a23a9ea533a8d7fbfae742",
+  "verdict": "fail",
+  "claims": [
+    "RANGE-INTERNAL-FORGE-I3 cannot be answered literally from its visible choice contract: it asks which named person makes the final call, but offers only three role or rule categories and no person's name.",
+    "Supplying the missing name would make the optional note a required second response. Selecting only an offered option answers which kind of owner should be used, not which person is named.",
+    "The implemented validator accepts and freezes this mismatch. It checks option-to-route-effect equality and rejects non-human final-call options, but does not check that a named-person question is answerable by the offered choices."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-004/question-pack.json#questions[RANGE-INTERNAL-FORGE-I3]",
+    "src/features/operator-brain/g21InternalRangeCanary.ts#G21_ANSWER_CONTRACTS[RANGE-INTERNAL-FORGE-I3]",
+    "src/features/operator-brain/g21InternalRangeCanary.ts#validateG21InternalRangeProfile",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts#makes-every-repaired-question-alter-its-exact-material-route",
+    "scripts/check-g21-internal-range.mjs#repairedQuestions-and-forgeAgency"
+  ],
+  "veto": {
+    "ruleId": "COMPREHENSION-RANGE-01",
+    "failure": "The RANGE-INTERNAL-FORGE-I3 main question asks for a named person, while its exhaustive visible choices contain no person names. The question is therefore mismatched to its choices and cannot be answered from the visible contract without supplying hidden information or making the optional note mandatory.",
+    "resolvingTest": "Freeze a replacement for RANGE-INTERNAL-FORGE-I3 whose main question and answer contract either provide concrete fictional person names as choices or ask for a role or category instead, then have a fresh blind bright-twelve-year-old proxy answer it using only the visible contract and verify that no required information is relegated to an optional note."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Freeze a replacement for RANGE-INTERNAL-FORGE-I3 whose main question and answer contract either provide concrete fictional person names as choices or ask for a role or category instead, then have a fresh blind bright-twelve-year-old proxy answer it using only the visible contract and verify that no required information is relegated to an optional note.",
+  "recordedAt": "2026-09-10T23:05:49.766Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "5ab750b0be98fbd28c58f0317a89a0f86489cde3d213d22a9db6d2704cb04f48",
+    "excludedHistoryEncountered": false
+  }
+}

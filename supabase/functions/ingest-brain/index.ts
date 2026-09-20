@@ -1,47 +1,46 @@
 /**
- * ingest-brain - stage 1 of the harness chain, fed from what CTRL already holds.
+ * ingest-brain: stage current Brain material as candidate evidence.
  *
- * POST { }  ->  { source_id, facts_used, evidence, constructs, skipped }
- *
- * ingest-evidence is stage 1 for raw material a leader pastes in. This is stage
- * 1 for the material they have already given CTRL over months of use: their
- * memory facts and the decisions they put through the engine. Same tables, same
- * rules, no paste required.
- *
- * It exists because build-sort hard-fails with "there is nothing to build a
- * sort from yet" unless candidate constructs exist, and the only writer of
- * those was a function with no caller anywhere in the app. A leader with a full
- * brain could not start a sort. Now they can, from what they already have.
- *
- * NO MODEL RUNS HERE. The composition and every offset are arithmetic (see
- * _shared/brain-to-evidence.ts for why). That means this function cannot
- * fabricate, and it costs nothing to run.
- *
- * Everything written is situated and every construct is a candidate. A held
- * fact suggests a dimension; only grading it makes a rule. The schema enforces
- * the same thing from below, which is the point.
+ * This route does no model work. It composes exact quotes from current memory
+ * facts and decisions, verifies their JavaScript offsets, then hands one
+ * bounded payload to a database function. The database rechecks ownership and
+ * current values before atomically writing the source, evidence, constructs and
+ * receipt. A retry of the same Brain snapshot creates nothing. A changed Brain
+ * snapshot retires only the previous ingestion's still-candidate constructs.
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
 import {
   composeBrainSource,
-  groupIntoConstructs,
   verifyOffsets,
   type BrainDecision,
   type BrainFact,
 } from "../_shared/brain-to-evidence.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import { isJsonRequest, readJsonWithLimit } from "../_shared/public-request-guard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
-
-/** Enough to compose a rich source; more than the sort could ever use. */
 const FACT_LIMIT = 60;
 const DECISION_LIMIT = 10;
+const MAX_REQUEST_BYTES = 2_048;
+
+type AtomicIngestionResult = {
+  receipt_id: string;
+  source_id: string;
+  input_fingerprint: string;
+  already_ingested: boolean;
+  facts_used: number;
+  decisions_used: number;
+  evidence: number;
+  constructs: number;
+  skipped: number;
+  superseded_receipt_id: string | null;
+};
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -54,27 +53,47 @@ Deno.serve(async (req) => {
     });
 
   try {
+    if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+    if (!isJsonRequest(req.headers)) return json({ error: "content_type_must_be_json" }, 415);
+
+    let requestPayload: unknown;
+    try {
+      requestPayload = await readJsonWithLimit(req, MAX_REQUEST_BYTES);
+    } catch (error) {
+      if (error instanceof Error && error.message === "request_too_large") {
+        return json({ error: "request_too_large" }, 413);
+      }
+      return json({ error: "invalid_json" }, 400);
+    }
+    if (
+      !requestPayload ||
+      typeof requestPayload !== "object" ||
+      Array.isArray(requestPayload) ||
+      Object.keys(requestPayload as Record<string, unknown>).length !== 0
+    ) {
+      return json({ error: "body_must_be_an_empty_object" }, 400);
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      throw new Error("Database configuration error (unexpected project).");
+    const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+      log.error("database configuration does not match the configured project");
+      return json({ error: "database_configuration_error" }, 503);
     }
 
     const authHeader = req.headers.get("Authorization") ?? "";
-    if (!authHeader) return json({ error: "Missing Authorization header" }, 401);
+    if (!authHeader) return json({ error: "missing_authorization" }, 401);
 
-    // Everything reads and writes as the caller. There is no service-role
-    // client in this function at all: it spends nothing, so it needs no
-    // privileged audit row, and RLS is then the only access path.
     const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false },
     });
-    const { data: userData, error: userErr } = await userClient.auth.getUser();
+    const { data: userData, error: userError } = await userClient.auth.getUser();
     const userId = userData?.user?.id ?? null;
-    if (userErr || !userId) return json({ error: "Unauthorized" }, 401);
+    if (userError || !userId) return json({ error: "unauthorized" }, 401);
 
-    const [{ data: factRows }, { data: decisionRows }] = await Promise.all([
+    const [factsResult, decisionsResult] = await Promise.all([
       userClient
         .from("user_memory")
         .select(
@@ -91,106 +110,75 @@ Deno.serve(async (req) => {
         .order("created_at", { ascending: false })
         .limit(DECISION_LIMIT),
     ]);
+    if (factsResult.error) throw new Error(`memory_read_failed:${factsResult.error.code ?? "unknown"}`);
+    if (decisionsResult.error) throw new Error(`decision_read_failed:${decisionsResult.error.code ?? "unknown"}`);
 
-    const facts = (factRows ?? []) as BrainFact[];
-    const decisions = (decisionRows ?? []) as BrainDecision[];
-
+    const facts = (factsResult.data ?? []) as BrainFact[];
+    const decisions = (decisionsResult.data ?? []) as BrainDecision[];
     const source = composeBrainSource(facts, decisions);
     if (source.items.length === 0) {
-      // Honest empty, phrased like build-sort's own refusal so the two read as
-      // one system rather than two error dialects.
       return json({
         error: "nothing_to_ingest",
         message:
-          "There is nothing in your brain to build a sort from yet. Capture a few things about how you work, or weigh a decision, and this fills up.",
+          "There is nothing in your Brain to build a sort from yet. Capture a few things about how you work, or weigh a decision, and this fills up.",
         facts_seen: facts.length,
       }, 422);
     }
 
-    // A wrong offset is a provenance corruption that would survive into a built
-    // skill and point at the wrong words. Refuse rather than write.
     const offsets = verifyOffsets(source);
     if (!offsets.ok) {
-      log.error("composed offsets did not verify", { userId, broken: offsets.broken.length });
+      log.error("composed offsets did not verify", { broken: offsets.broken.length });
       return json({ error: "offset_verification_failed", broken: offsets.broken.length }, 500);
     }
 
-    const { data: sourceRow, error: sourceErr } = await userClient
-      .from("evidence_sources")
-      .insert({ user_id: userId, kind: "artefact", label: source.label, body: source.body })
-      .select("id")
-      .single();
-    if (sourceErr || !sourceRow) {
-      throw new Error(`evidence_sources insert failed: ${sourceErr?.message ?? "unknown"}`);
-    }
-    const sourceId = sourceRow.id as string;
+    const factsUsed = source.items.filter((item) => item.memoryFactId).length;
+    const decisionsUsed = source.items.length - factsUsed;
+    const payload = {
+      schema_version: "ctrl.brain-ingest.v1",
+      source: { kind: "artefact", label: source.label, body: source.body },
+      items: source.items.map((item) => ({
+        kind: "declared",
+        body: item.quote,
+        quote: item.quote,
+        quote_start: item.quoteStart,
+        quote_end: item.quoteEnd,
+        source_label: source.label,
+        source_ref: item.sourceRef,
+        situated: true,
+        situation: item.situation,
+        speaker_is_owner: true,
+        memory_fact_id: item.memoryFactId,
+        emergent_pole: item.emergentPole,
+      })),
+      facts_used: factsUsed,
+      decisions_used: decisionsUsed,
+      skipped: facts.length - factsUsed,
+    };
 
-    // kind 'declared': the leader stated these about themselves, through the
-    // capture flows, and CTRL recorded them. memory_fact_id is what makes a
-    // rule in a finished skill traceable back to the fact that suggested it,
-    // and this is the first writer that FK has ever had.
-    const evidenceRows = source.items.map((item) => ({
-      user_id: userId,
-      kind: "declared",
-      body: item.quote,
-      quote: item.quote,
-      source_id: sourceId,
-      quote_start: item.quoteStart,
-      quote_end: item.quoteEnd,
-      source_label: source.label,
-      situated: true,
-      situation: item.situation,
-      speaker_is_owner: true,
-      memory_fact_id: item.memoryFactId,
-    }));
-
-    const { data: written, error: evidenceErr } = await userClient
-      .from("evidence")
-      .insert(evidenceRows)
-      .select("id");
-    if (evidenceErr || !written || written.length === 0) {
-      // Leave no source with nothing pointing at it.
-      await userClient.from("evidence_sources").delete().eq("id", sourceId);
-      throw new Error(`evidence insert failed: ${evidenceErr?.message ?? "unknown"}`);
+    const { data, error } = await userClient.rpc("ingest_brain_atomic", { p_payload: payload });
+    if (error || !data) {
+      const message = error?.message ?? "unknown";
+      if (message.includes("brain_ingest_stale_input")) {
+        return json({ error: "brain_changed_during_ingestion", retryable: true }, 409);
+      }
+      if (message.includes("brain_ingest_invalid")) {
+        return json({ error: "invalid_ingestion_payload" }, 400);
+      }
+      throw new Error(`atomic_ingestion_failed:${error?.code ?? "unknown"}`);
     }
 
-    const withIds = source.items.map((item, i) => ({ ...item, evidenceId: (written[i] as { id: string }).id }));
-    const groups = groupIntoConstructs(withIds);
-
-    const { data: constructs, error: constructErr } = await userClient
-      .from("constructs")
-      .insert(
-        groups.map((g) => ({
-          user_id: userId,
-          scope: "person",
-          status: "candidate",
-          emergent_pole: g.emergentPole,
-          evidence_ids: g.evidenceIds,
-        })),
-      )
-      .select("id");
-    if (constructErr) {
-      log.warn("construct insert failed", { userId, error: constructErr.message });
-      return json({ error: "construct_write_failed", message: constructErr.message }, 500);
-    }
-
-    log.info("brain ingested", {
-      userId,
-      facts: facts.length,
-      evidence: written.length,
-      constructs: constructs?.length ?? 0,
+    const result = data as AtomicIngestionResult;
+    log.info("brain ingestion completed", {
+      already_ingested: result.already_ingested,
+      evidence: result.evidence,
+      constructs: result.constructs,
+      superseded: Boolean(result.superseded_receipt_id),
     });
-
-    return json({
-      source_id: sourceId,
-      facts_used: source.items.filter((i) => i.memoryFactId).length,
-      decisions_used: source.items.filter((i) => !i.memoryFactId).length,
-      evidence: written.length,
-      constructs: constructs?.length ?? 0,
-      skipped: facts.length - source.items.filter((i) => i.memoryFactId).length,
+    return json(result);
+  } catch (error) {
+    log.error("ingest-brain failed", {
+      error: error instanceof Error ? error.message : "unknown",
     });
-  } catch (err) {
-    log.error("ingest-brain failed", { error: err instanceof Error ? err.message : String(err) });
-    return json({ error: err instanceof Error ? err.message : "Unknown error" }, 500);
+    return json({ error: "ingest_brain_failed" }, 500);
   }
 });

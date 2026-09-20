@@ -1,0 +1,57 @@
+{
+  "schema_version": "ctrl.g25.catalog-reconciliation-probe.r60.v1",
+  "contract_id": "G25-CATALOG-RECONCILIATION-PROBE-R60",
+  "status": "read_only_catalog_probe_compiled_execution_deferred",
+  "depends_on": [
+    "project-documentation/ctrl-evolution/g25-non-fk-identifier-discovery-r57.json",
+    "project-documentation/ctrl-evolution/g25-non-fk-erasure-registry-r58.json"
+  ],
+  "implementation": {
+    "compiler": "scripts/compile-ctrl-g25-catalog-probe-r60.mjs",
+    "compiler_sha256": "3feb5d7e2551ef330ad4ef854ef486efa26bfbe4dce7ddf09f6c742a09d5e4e5",
+    "checker": "scripts/check-ctrl-g25-catalog-reconciliation-probe-r60.mjs"
+  },
+  "compiled_probe": {
+    "sql_sha256": "6ab05b0f9971e121b5c376946450029c00ee07e1aadd0616f16a3f2eaaad1000",
+    "target_count": 221,
+    "migration_only_target_count": 105,
+    "opaque_json_target_count": 116,
+    "schema": "public",
+    "reads": [
+      "pg_catalog.pg_namespace",
+      "pg_catalog.pg_class",
+      "pg_catalog.pg_attribute",
+      "pg_catalog.pg_constraint"
+    ],
+    "returns": [
+      "table and column existence",
+      "relation kind",
+      "PostgreSQL data type",
+      "nullability",
+      "row-level security flag",
+      "column constraint names, types and definitions"
+    ]
+  },
+  "proved_locally": [
+    "the probe target set is derived from executable R57 discovery",
+    "all 105 migration-only candidates and 116 opaque JSON containers are represented exactly once",
+    "identifiers are restricted to lowercase PostgreSQL-safe names before SQL composition",
+    "the SQL reads PostgreSQL schema metadata and no application row",
+    "the SQL contains no data or schema mutation statement",
+    "the exact compiler and compiled SQL hashes are pinned"
+  ],
+  "bounded_claim": "R60 prepares a deterministic, metadata-only catalog query. It has not connected to or read any local, linked or production database and therefore resolves none of the 221 targets yet.",
+  "authority": {
+    "permits": [
+      "local deterministic SQL compilation",
+      "local static verification and commit"
+    ],
+    "forbids": [
+      "database connection or query execution",
+      "application row or storage read",
+      "schema or data mutation",
+      "live deletion edit",
+      "deployment, merge or release"
+    ]
+  }
+}

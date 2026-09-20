@@ -1,0 +1,37 @@
+{
+  "rulingId": "RULING-G21-LIVING-BRAIN-INTEGRITY-001",
+  "runId": "G21-PUBLIC-ROW-RUN-001",
+  "judge": "living_brain_integrity",
+  "phase": "sealed_review",
+  "verdict": "pass",
+  "criterionVersion": "living-brain-integrity:g21-v1",
+  "artifactHash": "sha256:70497310EC7A27865115F0AC5EBA79A092FF1695C04AA04757DFC807BB4D461F",
+  "theoryPackHash": "sha256:27E3C2763B4FC6A2C9D144192BD0B1B164B4F332C0B8D6006003DF88ED13027B",
+  "claims": [
+    "Supported public facts, statements and bounded inferences retain typed standings and input source identifiers; evidence gaps remain explicitly typed with empty evidence identifiers.",
+    "Unknowns remain explicit in evidence-gap notices, unresolved lists, abstention states and human decision boundaries.",
+    "Schema and run identity make the diagnostic addressable for later versioning and supersession.",
+    "The output does not claim that persistence, learning, correction propagation or export occurred."
+  ],
+  "evidenceLocators": [
+    "/schemaVersion",
+    "/runId",
+    "/results/0/recommendationState",
+    "/results/0/notices/0",
+    "/results/0/unresolved",
+    "/results/0/humanDecisionBoundary",
+    "/results/1/notices/0",
+    "/results/1/notices/1",
+    "/results/1/notices/2",
+    "/results/1/unresolved",
+    "/results/2/notices/0",
+    "/results/2/notices/1",
+    "/results/2/notices/2",
+    "/results/2/unresolved",
+    "/results/3/notices/0",
+    "/results/3/notices/1",
+    "/results/3/notices/2",
+    "/results/3/unresolved"
+  ],
+  "recordedAt": "2026-09-10T15:51:02.378+01:00"
+}

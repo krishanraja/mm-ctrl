@@ -1,0 +1,100 @@
+{
+  "schema_version": "ctrl.g25.persistence-mapping.r6.v1",
+  "contract_id": "G25-PERSISTENCE-MAPPING-R6",
+  "status": "blocked_pending_scope_dependency_and_purpose_repairs",
+  "prepared_at": "2026-09-17T09:40:00+01:00",
+  "depends_on": "project-documentation/ctrl-evolution/g25-receipt-store-state-machine-r5.json",
+  "evidence_baseline": [
+    "supabase/migrations/20260908111121_brain_workspace_audience_canary.sql",
+    "supabase/functions/_shared/brain-crypto.ts",
+    "supabase/functions/_shared/brain-ingest-core.ts",
+    "project-documentation/ctrl-evolution/g17-service-adapter-contract.md",
+    "project-documentation/ctrl-evolution/g24-product-system-blueprint.md",
+    "docs/current/architecture.md"
+  ],
+  "current_platform_notes": [
+    "Supabase now requires explicit grants for new public-schema objects before Data API exposure.",
+    "RLS remains separate from Data API grants and must be enabled and forced on exposed multi-tenant tables.",
+    "Database functions default to PUBLIC execute and must be explicitly revoked when privileged.",
+    "Security invoker remains preferred; any security definer use requires a private schema, empty search path and explicit caller check."
+  ],
+  "blocking_findings": [
+    {
+      "id": "R6-BLOCK-WORKSPACE-SCOPE",
+      "finding": "The R5 receipt scope binds owner and subject but omits the canonical Brain workspace.",
+      "risk": "The same subject can participate in personal, company and project workspaces, so owner and subject alone cannot establish tenancy or context authority.",
+      "required_repair": "Add workspace_id to every receipt, event, command, projection, encryption context and test."
+    },
+    {
+      "id": "R6-BLOCK-AUDIENCE-VOCABULARY",
+      "finding": "R2 through R5 use customer_private and operator_private while the live Brain uses person_private and delivery_team_private.",
+      "risk": "Persisting both vocabularies creates ambiguous policy and invites accidental widening.",
+      "required_repair": "Use the canonical Brain audience vocabulary in persistence and make presentation-language mapping explicit at the adapter boundary."
+    },
+    {
+      "id": "R6-BLOCK-PURPOSE-ENFORCEMENT",
+      "finding": "brain_audience_grants stores purpose, but current Brain SELECT policies match workspace, user and audience without comparing grant purpose to row purpose.",
+      "risk": "A grant for one purpose can currently satisfy a read of the same audience under another purpose.",
+      "required_repair": "Prove exact purpose matching in a separate canary before prepared-intelligence content relies on the Brain read boundary."
+    },
+    {
+      "id": "R6-BLOCK-TYPED-DEPENDENCIES",
+      "finding": "R2 through R5 correction dependencies are opaque tokens rather than typed, version-bound references.",
+      "risk": "A correction cannot safely invalidate a receipt if the reference does not identify the authoritative table, record version and fingerprint it depended on.",
+      "required_repair": "Replace opaque context refs at the persistence boundary with typed dependency receipts for Brain item versions, decision cases, decision claims and external source receipts."
+    },
+    {
+      "id": "R6-BLOCK-CIPHERTEXT-CONTEXT",
+      "finding": "The strict Brain cipher supports source, assertion, item_version and relationship_version only.",
+      "risk": "Reusing source would blur semantics; storing prepared content without a dedicated authenticated-encryption context would weaken row and field binding.",
+      "required_repair": "Add and test a prepared_receipt record kind and payload field only after the persistence scope is accepted."
+    }
+  ],
+  "route_comparison": [
+    {
+      "route": "Extend the canonical Brain substrate",
+      "decision": "preferred_after_repairs",
+      "reason": "Keeps receipts subordinate to workspace, audience, purpose, correction, retention and erasure authority while allowing payload-free events and encrypted content."
+    },
+    {
+      "route": "Store payloads in brain_sources",
+      "decision": "rejected_for_current_gate",
+      "reason": "Current purpose enforcement is incomplete and the source record kind does not faithfully describe a prepared-intelligence receipt."
+    },
+    {
+      "route": "Use briefings or delivery tables as authority",
+      "decision": "rejected",
+      "reason": "A delivered artifact cannot become the truth source for the evidence and Brain state that produced it."
+    },
+    {
+      "route": "Create an independent intelligence database",
+      "decision": "rejected",
+      "reason": "It would become a second Brain with parallel tenancy, correction, retention and erasure policy."
+    }
+  ],
+  "preferred_future_shape": {
+    "receipt_table": "A Brain-owned receipt envelope with workspace, subject, canonical audience, exact purpose, kind, content fingerprint, encrypted payload, produced and expiry time, current invalidation and erasure projection, and opaque idempotency key.",
+    "dependency_table": "One row per typed, version-bound authoritative dependency with real foreign keys where possible and exactly-one-target constraints.",
+    "event_table": "Append-only payload-free accepted, invalidated, erased and delivery-reference events with actor, authority and exact before or after fingerprints.",
+    "projection_table": "Optional rebuildable prepared-object cache bound to exact receipt IDs; never canonical Brain truth.",
+    "atomic_boundary": "One short security-invoker transaction callable only by a narrowly granted backend role after external work and encryption complete.",
+    "read_boundary": "A non-anonymous user-scoped read that must satisfy active workspace membership and exact audience plus purpose grant before server-side decryption.",
+    "delivery_boundary": "Existing briefing, audio, email and export organs consume a current prepared object but never update receipt truth."
+  },
+  "required_database_proofs_before_execution": [
+    "fresh isolated schema syntax and migration test",
+    "four-identity RLS matrix including anonymous-auth rejection",
+    "exact purpose mismatch denial",
+    "concurrent identical replay convergence",
+    "conflicting replay rollback with no partial rows",
+    "correction event plus receipt and projection invalidation in one transaction",
+    "erasure content removal and payload-free audit readback",
+    "all foreign-key and RLS lookup columns indexed",
+    "security and performance advisors clear or explicitly adjudicated",
+    "rollback and zero-live-caller proof"
+  ],
+  "authority": {
+    "allows": "Local contract repairs, fixtures, tests and a later reviewed migration proposal.",
+    "forbids": "Migration file, database branch, database write, function deployment, runtime caller, production action, merge or legacy retirement."
+  }
+}

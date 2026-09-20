@@ -6,6 +6,29 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-20 - Human review packet binding R118
+
+Branch-only and isolated-development only. Nothing in this section is deployed to production or connected to customer data.
+
+- Carried the founder-approved one-question rule review into a reusable React surface with the same centred action treatment on desktop and phone.
+- Added a presentation-complete review packet. The exact question, current rule, proposed rule, consequence, risk, validation plan, countercase and at least two resolved evidence statements are frozen into the packet hash before the leader can decide.
+- Added an authenticated V2 review route in the isolated Supabase project. Preparation uses the presentation-complete packet; approval, rejection and head-safe reversal retain the R116 authority model.
+- The product parser fails closed on missing human-readable meaning, false deploy or release authority, malformed evidence and mismatched receipts.
+- Added a self-contained public synthetic preview, local browser coverage for ready, long, incomplete, stale, failure, approval and reversal states, and a rollback-only hosted database probe.
+- Exercised the complete V2 owner lifecycle with authenticated synthetic users in the isolated project: three presentation-complete packets, rejection, concurrent approval, exact retry, stale-head refusal, guarded reversal, exact restoration and zero fixture residue.
+- Scoped the frozen R116 config check to its own function block so an additive neighbouring function no longer creates false drift in otherwise unchanged machinery.
+
+## [Unreleased] - 2026-09-11 - Decision Table R4 operator slice
+
+Branch-only and synthetic. Nothing in this section is deployed or connected to production data.
+
+- Replaced the older G14 operator harness at the protected synthetic route with the founder-approved G20 Decision Table R4 interaction.
+- Added three materially different routes, one contextual tap-first question at a time, optional notes, editable test limits, exact source inspection, ephemeral evidence capture and explicit sparse, stale and wrong-customer states.
+- Rebuilt the Claude bridge so it copies a complete, readable brief containing the decision, current view, personal judgement, evidence, unknowns, constraints and requested output. Returned work can be brought back for a five-part Brain audit.
+- Replaced loose fixture casting with a typed R4 schema and integrity checks for route identity, source references and audience boundaries.
+- Kept the route unlinked, non-indexable, unavailable in ordinary production builds and free of database writes, customer messaging, email and customer-surface projection.
+- Added six React-route browser acceptance tests across 1440x900, 390x844 and 320x568, plus fixture and brief-contract tests.
+
 ## 2026-09-08 - Fail-closed Living Brain substrate
 
 Applied and read back three additive migrations on the shared production Supabase project. No customer path is connected and all 11 new Brain tables remain empty.

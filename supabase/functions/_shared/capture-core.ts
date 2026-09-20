@@ -2,15 +2,16 @@
  * capture-core: the deterministic half of stage 9, LEARN.
  *
  * Pure module. No Deno imports, no I/O, no clock and no randomness, so vitest
- * runs it directly and the same five weeks of ledger always produce the same
+ * runs it directly and the same governed snapshot always produces the same
  * proposals. Everything that talks to the database lives in ../capture-week.
  *
  * `skills/ctrl-capture` is the managed reference implementation of exactly this
  * stage, and every rule below is lifted from it rather than reinvented:
- * `SKILL.md` for the two-strikes filter, the routing and the size obligation,
+ * `SKILL.md` for recurrence policy, routing and the size obligation,
  * `leaves/weekly.md` for the three types and the proposal shape,
- * `leaves/quarterly.md` for the re-score, and `ctrl-check/reference/ledger.md`
- * for what the rows mean.
+ * `leaves/quarterly.md` for the rule that only a fresh untouched holdout can
+ * create a new measurement, and `ctrl-check/reference/ledger.md` for what the
+ * rows mean.
  *
  * ---------------------------------------------------------------------------
  * The one thing this stage may do, and the one thing it may never do
@@ -23,33 +24,32 @@
  * without a decision is a standard nobody owns.
  *
  * ---------------------------------------------------------------------------
- * Two strikes, stated exactly
+ * Recurrence, stated exactly
  * ---------------------------------------------------------------------------
  *
  * One occurrence is an observation: someone had a bad Tuesday, the document was
- * unusual, or the reviewer was wrong. It is logged, nothing is proposed, and it
- * is not mentioned. Two is a pattern.
+ * unusual, or the reviewer was wrong. It is logged and not promoted. The named
+ * owner's policy defines the window and minimum unique evidence.
  *
- *     candidate(k) <=> count({ r in rows : key(r) = k and r.week in window }) >= 2
- *     window       =  the 5 ISO weeks ending at nowWeek, inclusive
+ *     candidate(k) <=> count(unique evidence identities for k in window) >= policy.minimum
+ *     window       =  policy.window_weeks ending at nowWeek, inclusive
  *
- * Occurrences are ROWS inside the window, not distinct weeks. The same false
- * positive hitting somebody twice on a Tuesday is a pattern with more urgency
- * than one that took a month, and counting distinct weeks would rank it lower.
- * The distinct weeks are reported alongside so the shape stays visible.
+ * Occurrences are unique review events inside the window, not database rows.
+ * A retry or changed answer on one review cannot manufacture recurrence. The
+ * distinct weeks are reported alongside so the shape stays visible.
  *
  * Type C drift is the single exception, and it is allowed only because it asks
- * rather than acts: a criterion with ZERO occurrences in the window raises a
- * question with no delta attached.
+ * rather than acts: a criterion with zero firings may raise a question only
+ * after applicable review exposure meets policy. Unknown exposure stays unknown.
  *
  * ---------------------------------------------------------------------------
  * What is deliberately NOT here
  * ---------------------------------------------------------------------------
  *
- * No LLM selects anything. The three types and the two-strikes filter are
+ * No LLM selects anything. The three types and recurrence filter are
  * arithmetic over rows, and a model asked to pick out "what keeps coming up"
  * from a week of ledger will find something every single week, which is the
- * exact failure the two-strikes rule exists to prevent (SKILL.md: "A weekly pass
+ * exact failure the recurrence rule exists to prevent (SKILL.md: "A weekly pass
  * that always finds something is a weekly pass inventing things to justify
  * itself"). A model may draft wording for candidates already chosen here; it may
  * never choose them.
@@ -66,13 +66,13 @@ import { jaccard, titleTokens } from "./news-cluster.ts";
 import { MAX_CRITERIA_PER_SURFACE } from "./discrimination.ts";
 
 // ---------------------------------------------------------------------------
-// Constants. Both are the ruled numbers, not tuning knobs.
+// Conservative defaults for programs that explicitly choose them.
 // ---------------------------------------------------------------------------
 
-/** The lookback: this week plus the previous four. */
+/** Default lookback: this week plus the previous four. */
 export const STRIKE_WINDOW_WEEKS = 5;
 
-/** Two of the same thing inside the window. One is an observation. */
+/** Default recurrence threshold. Runtime policy may choose a stricter value. */
 export const MIN_STRIKES = 2;
 
 /**
@@ -117,6 +117,11 @@ export type MethodClass = "omission" | "stance" | "sequence" | "boundary";
 export interface LedgerRow {
   id?: string;
   user_id: string;
+  /** The reviewed artifact/run and one stable event inside it. */
+  source_run_id?: string | null;
+  source_event_key?: string | null;
+  /** The actually observed runtime/release, when known. */
+  release_version?: string | null;
   /** ISO year-week, e.g. "2026-W32". */
   week: string;
   surface: string;
@@ -180,6 +185,37 @@ export function isoWeekOf(date: Date): string {
   const yearStart = Date.UTC(year, 0, 1);
   const week = Math.ceil(((d.getTime() - yearStart) / 86_400_000 + 1) / 7);
   return `${year}-W${String(week).padStart(2, "0")}`;
+}
+
+export interface CaptureCadenceResult {
+  due: boolean;
+  reason: "never_run" | "same_capture_week" | "cadence_elapsed" | "cadence_pending" | "invalid_last_run";
+  nextDueAt: string | null;
+}
+
+/**
+ * Decide whether another governed pass is due without allowing a scheduler to
+ * silently replace the owner's cadence. Replays for the same capture week are
+ * admitted so the database can return its exact idempotent receipt.
+ */
+export function captureCadenceDue(
+  lastRun: { captureWeek: string; createdAt: string } | null,
+  captureWeek: string,
+  cadenceDays: number,
+  now: Date,
+): CaptureCadenceResult {
+  if (!lastRun) return { due: true, reason: "never_run", nextDueAt: null };
+  if (lastRun.captureWeek === captureWeek) {
+    return { due: true, reason: "same_capture_week", nextDueAt: null };
+  }
+  const lastAt = Date.parse(lastRun.createdAt);
+  if (!Number.isFinite(lastAt) || !Number.isInteger(cadenceDays) || cadenceDays < 1) {
+    return { due: false, reason: "invalid_last_run", nextDueAt: null };
+  }
+  const nextAt = lastAt + cadenceDays * 86_400_000;
+  return now.getTime() >= nextAt
+    ? { due: true, reason: "cadence_elapsed", nextDueAt: new Date(nextAt).toISOString() }
+    : { due: false, reason: "cadence_pending", nextDueAt: new Date(nextAt).toISOString() };
 }
 
 export function parseIsoWeek(week: string): { year: number; week: number } | null {
@@ -285,9 +321,8 @@ export function defaultStrikeKey(row: LedgerRow): string | null {
  * The anti-noise mechanism, and the single rule that separates a standard which
  * sharpens from one that accumulates noise until nobody reads it.
  *
- * Rows outside the window are dropped before counting, which is what makes the
- * five-week edge real: two occurrences six weeks apart are two observations,
- * not a pattern, and this returns nothing for them.
+ * Rows outside the configured window are dropped before counting. Two events
+ * on opposite sides of that boundary remain observations, not a pattern.
  *
  * Output is ordered most-struck first with an alphabetical tiebreak, so two runs
  * over the same rows produce the same order.
@@ -296,12 +331,17 @@ export function twoStrikes(
   rows: readonly LedgerRow[],
   weeks: readonly string[],
   keyOf: (row: LedgerRow) => string | null = defaultStrikeKey,
+  minimumUniqueEvidence = MIN_STRIKES,
 ): StrikeGroup[] {
   const inWindow = new Set(weeks);
   const byKey = new Map<string, LedgerRow[]>();
+  const seenEvidence = new Set<string>();
 
   for (const row of rows) {
     if (!inWindow.has(row.week)) continue;
+    const evidenceId = stableEvidenceIdentity(row);
+    if (evidenceId && seenEvidence.has(evidenceId)) continue;
+    if (evidenceId) seenEvidence.add(evidenceId);
     const key = keyOf(row);
     if (!key) continue;
     const bucket = byKey.get(key);
@@ -311,7 +351,7 @@ export function twoStrikes(
 
   const groups: StrikeGroup[] = [];
   for (const [key, bucket] of byKey) {
-    if (bucket.length < MIN_STRIKES) continue;
+    if (bucket.length < minimumUniqueEvidence) continue;
     groups.push({
       key,
       rows: bucket,
@@ -321,6 +361,14 @@ export function twoStrikes(
   }
 
   return groups.sort((a, b) => b.occurrences - a.occurrences || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
+}
+
+/** Stable evidence identity. Null means legacy evidence whose uniqueness is unknown. */
+export function stableEvidenceIdentity(row: LedgerRow): string | null {
+  if (row.source_run_id && row.source_event_key) {
+    return `${row.source_run_id}:${row.source_event_key}`;
+  }
+  return row.id ?? null;
 }
 
 function distinctWeeks(rows: readonly LedgerRow[]): string[] {
@@ -336,6 +384,8 @@ function distinctWeeks(rows: readonly LedgerRow[]): string[] {
 export type ProposalType = "uncovered" | "false_positive" | "drift";
 
 export interface EvidenceLine {
+  sourceId: string;
+  locator: string;
   week: string;
   surface: string;
   criterion: string;
@@ -383,6 +433,8 @@ export interface DriftCandidate extends CandidateBase {
   criterionName: string;
   /** The last week it appeared at all, if it ever did. */
   lastFiredWeek: string | null;
+  /** Reviewed artifacts on this surface in the declared window. */
+  opportunities: number;
   /** The whole proposal. It asks; it does not answer. */
   question: string;
   delta?: never;
@@ -421,6 +473,7 @@ function normaliseTopic(text: string): string {
 export function typeAUncovered(
   rows: readonly LedgerRow[],
   weeks?: readonly string[],
+  minimumUniqueEvidence = MIN_STRIKES,
 ): UncoveredCandidate[] {
   const window = resolveWindow(rows, weeks);
   const uncovered = groupBySignal(rows).output.filter(
@@ -437,7 +490,7 @@ export function typeAUncovered(
       noteOf(a).localeCompare(noteOf(b)),
   );
 
-  const clusters: Array<{ key: string; tokens: Set<string>; rows: LedgerRow[]; topic: string }> = [];
+  const clusters: Array<{ key: string; surface: string; tokens: Set<string>; rows: LedgerRow[]; topic: string }> = [];
   const keyByRow = new Map<LedgerRow, string>();
 
   for (const row of ordered) {
@@ -445,9 +498,15 @@ export function typeAUncovered(
     const tokens = topicTokens(note);
     if (tokens.size === 0) continue;
 
-    let home = clusters.find((c) => jaccard(c.tokens, tokens) >= TOPIC_SIMILARITY_MIN);
+    let home = clusters.find((c) => c.surface === row.surface && jaccard(c.tokens, tokens) >= TOPIC_SIMILARITY_MIN);
     if (!home) {
-      home = { key: `uncovered:${normaliseTopic(note)}`, tokens: new Set(tokens), rows: [], topic: note };
+      home = {
+        key: `uncovered:${row.surface}:${normaliseTopic(note)}`,
+        surface: row.surface,
+        tokens: new Set(tokens),
+        rows: [],
+        topic: note,
+      };
       clusters.push(home);
     } else {
       for (const t of tokens) home.tokens.add(t);
@@ -456,7 +515,7 @@ export function typeAUncovered(
     keyByRow.set(row, home.key);
   }
 
-  const struck = twoStrikes(ordered, window, (row) => keyByRow.get(row) ?? null);
+  const struck = twoStrikes(ordered, window, (row) => keyByRow.get(row) ?? null, minimumUniqueEvidence);
   const topicByKey = new Map(clusters.map((c) => [c.key, c.topic]));
 
   return struck.map((group) => ({
@@ -494,6 +553,7 @@ function noteOf(row: LedgerRow): string {
 export function typeBFalsePositive(
   rows: readonly LedgerRow[],
   weeks?: readonly string[],
+  minimumUniqueEvidence = MIN_STRIKES,
 ): FalsePositiveCandidate[] {
   const window = resolveWindow(rows, weeks);
   const pushbacks = groupBySignal(rows).output.filter(
@@ -503,8 +563,11 @@ export function typeBFalsePositive(
       row.criterion_name !== "uncovered",
   );
 
-  return twoStrikes(pushbacks, window, (row) =>
-    `criterion:${row.criterion_id ?? `name:${row.criterion_name}`}`,
+  return twoStrikes(
+    pushbacks,
+    window,
+    (row) => `criterion:${row.criterion_id ?? `name:${row.criterion_name}`}:${row.surface}`,
+    minimumUniqueEvidence,
   ).map((group) => {
     const surfaces = [...new Set(group.rows.map((r) => r.surface).filter(Boolean))].sort();
     return {
@@ -547,15 +610,13 @@ export function typeCDrift(
   criteria: readonly CriterionRow[],
   rows: readonly LedgerRow[],
   nowWeek: string,
+  opportunityBySurface: ReadonlyMap<string, number> = new Map(),
+  windowCount = STRIKE_WINDOW_WEEKS,
+  minimumOpportunities = MIN_STRIKES,
 ): DriftCandidate[] {
-  const window = windowWeeks(nowWeek);
+  const window = windowWeeks(nowWeek, windowCount);
   if (window.length === 0) return [];
   const inWindow = new Set(window);
-
-  const gateRanInWindow = rows.some(
-    (row) => row.signal === "output" && inWindow.has(row.week),
-  );
-  if (!gateRanInWindow) return [];
 
   const firedIds = new Set<string>();
   const firedNames = new Set<string>();
@@ -579,6 +640,8 @@ export function typeCDrift(
   const candidates: DriftCandidate[] = [];
   for (const criterion of criteria) {
     if (criterion.disposition === "retired") continue;
+    const opportunities = opportunityBySurface.get(criterion.surface) ?? 0;
+    if (opportunities < minimumOpportunities) continue;
     if (firedIds.has(criterion.id)) continue;
     if (firedNames.has(`${criterion.surface}:${criterion.name}`)) continue;
 
@@ -596,19 +659,20 @@ export function typeCDrift(
       criterionId: criterion.id,
       criterionName: criterion.name,
       lastFiredWeek,
-      question: driftQuestion(criterion.name, lastFiredWeek),
+      opportunities,
+      question: driftQuestion(criterion.name, lastFiredWeek, opportunities, windowCount),
     });
   }
 
   return candidates.sort((a, b) => a.criterionName.localeCompare(b.criterionName));
 }
 
-function driftQuestion(name: string, lastFiredWeek: string | null): string {
+function driftQuestion(name: string, lastFiredWeek: string | null, opportunities: number, windowCount: number): string {
   const when = lastFiredWeek
     ? `The last time it came up was ${lastFiredWeek}.`
     : "It has not come up since it was written.";
   return (
-    `"${name}" has not come up once in the last ${STRIKE_WINDOW_WEEKS} weeks. ${when} ` +
+    `"${name}" did not fire across ${opportunities} applicable reviews in the last ${windowCount} weeks. ${when} ` +
     "Has the problem it was written for been solved, or has the rule stopped working? " +
     "I am not proposing an answer, because a rule that went quiet might be the one thing " +
     "stopping something you have not had to see for a while."
@@ -659,7 +723,7 @@ export interface SizeDelta {
 }
 
 /**
- * Every accepted change carries a deletion, and every proposal states it.
+ * Every proposed change states its context cost without inventing a deletion.
  *
  * The binding constraint is context occupied, not tokens spent. A pass that only
  * adds looks like progress for about four months before it starts degrading
@@ -681,15 +745,15 @@ export function sizeDelta(
         delta: 1,
         pairedObligation:
           `You already have ${count} rules on this kind of work, which is the most that get read in ` +
-          "one pass. Taking this one on means splitting them into two checks that run separately, " +
-          "or retiring one of the existing rules in the same breath.",
+          "one pass. Test whether splitting it into a separate progressive-disclosure check, replacing " +
+          "a genuinely superseded rule, or should remain an observation. Do not delete an unrelated rule.",
       };
     }
     return {
       delta: 1,
       pairedObligation:
-        `This takes you from ${count} rules to ${count + 1} on this kind of work. One of the ` +
-        "existing rules comes out with it, or you say plainly which one you are keeping instead.",
+        `This would take you from ${count} rules to ${count + 1} on this kind of work. Validate ` +
+        "whether it replaces an exact clause, belongs behind progressive disclosure, or earns the added context.",
     };
   }
 
@@ -738,8 +802,7 @@ export class DriftCarriesDeltaError extends Error {
 }
 
 function quoteLine(line: EvidenceLine): string {
-  const quote = line.quote ? `"${line.quote}"` : "(no passage recorded)";
-  return `  ${line.week}  ${line.surface}  ${quote} -> ${line.disposition}`;
+  return `  ${line.week}  ${line.surface}  ${line.locator} -> ${line.disposition}`;
 }
 
 /**
@@ -763,6 +826,7 @@ export function buildProposal(candidate: Candidate, currentCriteriaCount = 0): P
     key: candidate.key,
     occurrences: candidate.occurrences,
     weeks: candidate.weeks,
+    source_ids: candidate.evidence.map((line) => line.sourceId),
     lines: candidate.evidence,
     size: { delta: size.delta, paired_obligation: size.pairedObligation },
   };
@@ -777,12 +841,13 @@ export function buildProposal(candidate: Candidate, currentCriteriaCount = 0): P
     evidence.criterion_id = candidate.criterionId;
     evidence.criterion_name = candidate.criterionName;
     evidence.last_fired_week = candidate.lastFiredWeek;
+    evidence.opportunities = candidate.opportunities;
     evidence.question = candidate.question;
     return {
       user_id: candidate.userId,
       type: "drift",
       surface: candidate.surface,
-      headline: `"${candidate.criterionName}" has not come up in ${STRIKE_WINDOW_WEEKS} weeks`,
+      headline: `"${candidate.criterionName}" did not fire across ${candidate.opportunities} reviews`,
       delta_text: null,
       if_wrong:
         "If you retire it and it was still doing work, whatever it was catching comes back and " +
@@ -866,12 +931,21 @@ function shortName(topic: string): string {
 }
 
 function evidenceLine(row: LedgerRow): EvidenceLine {
+  const sourceId = stableEvidenceIdentity(row) ??
+    `legacy:${row.week}:${row.surface}:${row.criterion_id ?? row.criterion_name}:${row.created_at ?? "unknown"}`;
   return {
+    sourceId,
+    locator: row.source_run_id && row.source_event_key
+      ? `review ${row.source_run_id}, ${row.source_event_key}`
+      : `ledger ${row.id ?? "legacy"}`,
     week: row.week,
     surface: row.surface,
     criterion: row.criterion_name,
     verdict: row.verdict,
-    quote: row.quote ?? null,
+    // The proposal keeps a safe locator. The private source snapshot retains
+    // the short quote for grouping, but copying it into durable proposals is
+    // unnecessary disclosure.
+    quote: null,
     disposition: row.disposition,
   };
 }
@@ -898,6 +972,12 @@ export interface WeeklyPassInput {
   rows: readonly LedgerRow[];
   criteria: readonly CriterionRow[];
   nowWeek: string;
+  policy?: {
+    windowWeeks: number;
+    minUniqueEvidence: number;
+  };
+  /** Reviewed artifact count by applicable surface. Required for drift. */
+  opportunityBySurface?: ReadonlyMap<string, number>;
   /** Keys already proposed and awaiting or rejected. Never re-proposed. */
   alreadyProposed?: ReadonlySet<string>;
 }
@@ -910,10 +990,12 @@ export interface WeeklyPassResult {
   triggerStrikes: StrikeGroup[];
   /** Rows read, so a run that found nothing can say what it read. */
   rowsRead: number;
+  uniqueEvidenceRead: number;
+  freshnessUnknown: string[];
 }
 
 /**
- * Group, two-strike, type, order, and drop anything already decided on.
+ * Group, qualify under owner policy, type, order, and drop pending duplicates.
  *
  * "Do not argue and do not re-propose the same thing next week": a key that is
  * awaiting or rejected is skipped here, which is why rejection is silent rather
@@ -921,22 +1003,35 @@ export interface WeeklyPassResult {
  * on a different key, which is exactly the promotion the reference asks for.
  */
 export function weeklyPass(input: WeeklyPassInput): WeeklyPassResult {
-  const window = windowWeeks(input.nowWeek);
+  const windowCount = input.policy?.windowWeeks ?? STRIKE_WINDOW_WEEKS;
+  const minimum = input.policy?.minUniqueEvidence ?? MIN_STRIKES;
+  const window = windowWeeks(input.nowWeek, windowCount);
   const inWindow = input.rows.filter((row) => window.includes(row.week));
   const groups = groupBySignal(inWindow);
   const already = input.alreadyProposed ?? new Set<string>();
+  const opportunities = input.opportunityBySurface ?? new Map<string, number>();
 
   const candidates: Candidate[] = [
-    ...typeAUncovered(groups.output, window),
-    ...typeBFalsePositive(groups.output, window),
-    ...typeCDrift(input.criteria, input.rows, input.nowWeek),
+    ...typeAUncovered(groups.output, window, minimum),
+    ...typeBFalsePositive(groups.output, window, minimum),
+    ...typeCDrift(input.criteria, input.rows, input.nowWeek, opportunities, windowCount, minimum),
   ].filter((candidate) => !already.has(candidate.key));
+
+  const evidenceIds = new Set(inWindow.map(stableEvidenceIdentity).filter((id): id is string => Boolean(id)));
+  const freshnessUnknown = [...new Set(
+    input.criteria
+      .filter((criterion) => criterion.disposition !== "retired")
+      .filter((criterion) => (opportunities.get(criterion.surface) ?? 0) < minimum)
+      .map((criterion) => criterion.surface),
+  )].sort();
 
   return {
     window,
     candidates: orderProposals(candidates),
-    methodStrikes: twoStrikes(groups.method, window),
-    triggerStrikes: twoStrikes(groups.trigger, window),
+    methodStrikes: twoStrikes(groups.method, window, defaultStrikeKey, minimum),
+    triggerStrikes: twoStrikes(groups.trigger, window, defaultStrikeKey, minimum),
     rowsRead: inWindow.length,
+    uniqueEvidenceRead: evidenceIds.size,
+    freshnessUnknown,
   };
 }

@@ -1,0 +1,50 @@
+{
+  "schema_version": "ctrl.g25.prepared-custody-atomic-store.r25.v1",
+  "record_id": "G25-PREPARED-CUSTODY-ATOMIC-STORE-R25",
+  "status": "local_postgres_atomic_store_verified",
+  "depends_on": [
+    "G25-PREPARED-RECEIPT-ATOMIC-STORE-R10",
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-STABLE-CUSTODY-ENVELOPE-R24"
+  ],
+  "storage_strategy": {
+    "legacy_generation": "unchanged R7 and R10 tables, fingerprints and ciphertext context",
+    "new_generation": "separate custody-native receipt, dependency and event tables",
+    "collision_rule": "receipt id and workspace ingest key are exclusive across both generations",
+    "read_rule": "current role plus exact audience-purpose grant"
+  },
+  "verified": [
+    "cross-language R24 authority fingerprint",
+    "atomic receipt dependency and accepted-event commit",
+    "zero residue after forced final-event failure",
+    "exact replay including ciphertext and encryption version",
+    "unknown identity field rejection",
+    "current authority recomputation",
+    "stable write identity after operator transfer",
+    "inactive custody rejection",
+    "bidirectional cross-generation collision rejection",
+    "unchanged R10 writer remains operational",
+    "legacy row byte equivalence",
+    "wrong-purpose read denial",
+    "outstanding-JWT denial after role revocation"
+  ],
+  "negative_controls": [
+    "authority fingerprint check removed",
+    "active custody check removed"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_prepared_custody_atomic_store_r25.sql",
+    "candidate_sha256": "483cccc0cb013db242c9f6e296103b9b06036bbdb53d7074c0d30c37a4056bde",
+    "runner": "scripts/run-ctrl-g25-prepared-custody-atomic-store-r25.mjs",
+    "runner_sha256": "02d2d14a05adf98358effa8c747bae87a8a4bf88fc06dcb29bfaed27db6e888d"
+  },
+  "next_gate": "Prove custody-native authenticated encryption, then bind principal removal and both-generation correction, erasure and unified reading before proposing a migration.",
+  "not_authorized": [
+    "linked or production database use",
+    "migration creation or execution",
+    "runtime producer or caller integration",
+    "customer-facing UI",
+    "deployment, merge or release",
+    "legacy retirement"
+  ]
+}

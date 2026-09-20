@@ -1,0 +1,61 @@
+{
+  "schema_version": "ctrl.g25.legacy-producer-adapters.r3.v1",
+  "contract_id": "G25-LEGACY-PRODUCER-ADAPTERS-R3",
+  "status": "local_characterization_pass_with_required_producer_repairs",
+  "prepared_at": "2026-09-17T09:22:00+01:00",
+  "depends_on": "project-documentation/ctrl-evolution/g25-prepared-intelligence-seam-r2.json",
+  "implementation": "supabase/functions/_shared/prepared-intelligence-producer-adapters.r3.ts",
+  "test": "supabase/functions/_shared/prepared-intelligence-producer-adapters.r3.test.ts",
+  "authority": "Dormant local adapters, fixtures, tests and documentation only.",
+  "closed_scope": [
+    "edit to a live producer",
+    "runtime import or caller",
+    "database or migration",
+    "external model or research call",
+    "customer delivery",
+    "deployment",
+    "merge",
+    "legacy retirement"
+  ],
+  "producer_findings": [
+    {
+      "id": "GAP-NEWS-QUALIFICATION-RECEIPT",
+      "severity": "blocking_for_runtime_adapter",
+      "current_sources": [
+        "supabase/functions/_shared/news-cluster.ts",
+        "supabase/functions/live-headlines/index.ts"
+      ],
+      "finding": "The cluster has source identity, source tier, source URLs and exact publication time, but the cached display card drops source tier, exact publication time and source-to-URL evidence structure.",
+      "consequence": "A later adapter cannot prove why a single-source story qualified or provide an exact freshness and provenance receipt.",
+      "required_repair": "Carry a bounded source_evidence snapshot and matched Brain context through the qualified pool before display projection. Do not reconstruct it from timeAgo or presentation copy."
+    },
+    {
+      "id": "GAP-DECISION-WATCH-EVIDENCE-RECEIPT",
+      "severity": "blocking_for_runtime_adapter",
+      "current_sources": [
+        "supabase/functions/decision-engine/verify.ts",
+        "supabase/functions/decision-watch/index.ts",
+        "supabase/functions/_shared/decision-alerts.ts"
+      ],
+      "finding": "verifyClaim returns evidence, but decision-watch destructures only verdict and the alert row retains no verification evidence snapshot or exact effect on the live call.",
+      "consequence": "The legacy briefing can announce that an assumption moved without carrying the evidence receipt or a decision-specific explanation of what changes.",
+      "required_repair": "Persist or transactionally bind a bounded verification evidence snapshot and a decision_effect before an alert may become prepared intelligence."
+    }
+  ],
+  "invariants": [
+    "Corroborated news preserves distinct source receipts and exact publication time.",
+    "A reputable single-source item preserves the tier that earned admission.",
+    "Missing or stale news evidence holds rather than backfilling a live card.",
+    "A decision return is open, linked to a real decision and claim, and carries an evidence snapshot.",
+    "A decision return states the effect on the live call rather than offering a generic re-run prompt.",
+    "Resolved alerts do not return.",
+    "Both producers compose through the same prepared object and exact read/audio blocks."
+  ],
+  "evidence": {
+    "adapter_tests": 12,
+    "combined_prepared_intelligence_tests": 28,
+    "runtime_callers_added": 0,
+    "producer_files_modified": 0,
+    "protected_capabilities_retired": 0
+  }
+}

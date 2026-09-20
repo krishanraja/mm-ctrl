@@ -58,6 +58,8 @@ export interface ComposedEvidence {
   situation: string;
   /** Set for facts; null for decisions, which are not user_memory rows. */
   memoryFactId: string | null;
+  /** Stable owner-scoped row reference. The database revalidates it on write. */
+  sourceRef: string;
   /** The construct this evidence is a candidate for. */
   emergentPole: string;
 }
@@ -138,6 +140,7 @@ export function composeBrainSource(
     const ok = append(`## ${label}`, value, {
       situation: situationFor(fact),
       memoryFactId: fact.id,
+      sourceRef: `user_memory:${fact.id}`,
       emergentPole: label,
     });
     if (!ok) break;
@@ -149,6 +152,7 @@ export function composeBrainSource(
     const ok = append('## A decision they weighed', statement, {
       situation: 'a decision they put through the engine themselves',
       memoryFactId: null,
+      sourceRef: `decision_case:${d.id}`,
       emergentPole: 'What they choose to weigh',
     });
     if (!ok) break;

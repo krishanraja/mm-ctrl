@@ -1,0 +1,40 @@
+{
+  "schema_version": "ctrl.g25.standard-change-owner-gate.r116.deployment.v1",
+  "project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "production_allowed": false,
+  "download_mode": "supabase_cli_use_api",
+  "version_policy": "positive_observed_and_stable_during_each_proof",
+  "local_source_root": "supabase/functions",
+  "functions": [
+    {
+      "slug": "review-standard-change",
+      "status": "ACTIVE",
+      "verify_jwt": true,
+      "import_map": true,
+      "ezbr_sha256": "16862ab83042f5ed3f0954a35d316116e2c2c0080a7f90a0cc4b06044c0b00a3",
+      "source_files": [
+        {
+          "path": "_shared/public-request-guard.ts",
+          "bytes": 2486,
+          "sha256": "19db5ea1b5710497f780057c5a0b10a07974c893e825f99bad36c03810ecfb7f"
+        },
+        {
+          "path": "_shared/standard-change-owner-core.ts",
+          "bytes": 5741,
+          "sha256": "52cb4962bb0cc15cfa59c277a52df03e0c4194821e1e071e0c2ae0460de12b2d"
+        },
+        {
+          "path": "review-standard-change/deno.json",
+          "bytes": 136,
+          "sha256": "a9a29da36c2576f755dd868b9f553a02afdf7d7bccf52e97e65c7f68cf36bfef"
+        },
+        {
+          "path": "review-standard-change/index.ts",
+          "bytes": 1822,
+          "sha256": "ad6c5797a0382096771bc2b020f4811f2380d14316d0e319e32b9c9b75cf2a62"
+        }
+      ]
+    }
+  ]
+}

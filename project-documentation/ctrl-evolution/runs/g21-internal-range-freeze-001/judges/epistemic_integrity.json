@@ -1,0 +1,28 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "epistemic_integrity",
+  "criterionVersion": "epistemic-integrity:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "fail",
+  "claims": [
+    "All five manifest file SHA-256 values match, and the ordered UTF-8 path:sha256 lines joined with LF and no trailing LF reproduce the frozen composite.",
+    "The fixture permits future evidence because timestamp validation checks ISO syntax and relative ordering but never rejects internal validAt or recordedAt values, or external publishedOn or retrievedOn values, later than the frozen run time.",
+    "This is a direct EPISTEMIC-RANGE-01 failure even though the current frozen rows are not future-dated, because a future-dated mutation can pass the artifact validator and acquire normal evidence standing."
+  ],
+  "evidenceLocators": [
+    "input-manifest.json:recordedAt and files[0..4]",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:265-268",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1923-1955",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2024-2039",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:191-227",
+    "scripts/check-g21-internal-range.mjs:86-130"
+  ],
+  "veto": {
+    "ruleId": "EPISTEMIC-RANGE-01",
+    "failure": "Future-dated internal and external evidence is accepted when its timestamp strings are valid and locally ordered, because no timestamp is bounded by the run as-of time.",
+    "resolvingTest": "Clone a valid profile, set one internal record validAt and recordedAt after input-manifest.json recordedAt, and separately set one external source publishedOn and retrievedOn after that time. Validation must reject both mutations with explicit future-evidence errors while the unchanged frozen profiles still validate with zero errors."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Clone a valid profile, set one internal record validAt and recordedAt after input-manifest.json recordedAt, and separately set one external source publishedOn and retrievedOn after that time. Validation must reject both mutations with explicit future-evidence errors while the unchanged frozen profiles still validate with zero errors.",
+  "recordedAt": "2026-09-10T17:59:35.556Z"
+}

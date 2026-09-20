@@ -12,6 +12,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createLogger } from "../_shared/logger.ts";
 import { hasExactServiceCredential } from "../_shared/service-auth.ts";
+import { isCronRequest } from "../_shared/service-request.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,6 +39,9 @@ serve(async (req) => {
   const okCaller = hasExactServiceCredential(
     req.headers.get("Authorization"),
     [sweepSecret, svcKey],
+  ) || isCronRequest(
+    req.headers.get("X-CTRL-Cron-Secret"),
+    Deno.env.get("CTRL_CRON_SECRET") ?? "",
   );
   if (!okCaller) return json({ error: "Forbidden" }, 403);
 

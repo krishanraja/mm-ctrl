@@ -1,0 +1,48 @@
+{
+  "schema_version": "ctrl.g25.stable-principal-removal.r28.v1",
+  "record_id": "G25-STABLE-PRINCIPAL-REMOVAL-R28",
+  "status": "local_stable_login_removal_planning_verified",
+  "supersedes_for_operational_planning": "G25-PRINCIPAL-REMOVAL-PLANNER-R20",
+  "depends_on": [
+    "G25-STABLE-CUSTODY-IDENTITY-R23"
+  ],
+  "operation": "remove one authentication login without treating it as a Brain subject or custody principal",
+  "invariants": [
+    "subject identity, operator identity, workspace custody and access are read separately",
+    "subject principals and their Brains are preserved during login removal",
+    "customer-authorized transfer is required before removing the last active login route to current custody",
+    "another login for the same stable operator preserves custody continuity without transferring custody",
+    "roles and audience grants are revoked as access, never interpreted as ownership",
+    "unverified, malformed, duplicate or unrelated evidence fails closed",
+    "the planner emits no erasure action"
+  ],
+  "verified": [
+    "thirteen deterministic planner cases",
+    "PostgreSQL 18.3 custody and identity readback",
+    "database context accepted by the versioned planner schema",
+    "evidence hash binds the complete readback context",
+    "revoked links and access are excluded",
+    "ordinary authenticated execution is denied",
+    "missing auth user fails closed"
+  ],
+  "artifacts": {
+    "candidate": "supabase/candidates/g25_stable_principal_removal_context_r28.sql",
+    "candidate_sha256": "7999543dccf78e5642f3dee3795aa3826d5efb9a5eef6bd3073897a8c80e6b97",
+    "runner": "scripts/run-ctrl-g25-stable-principal-removal-r28.mjs",
+    "runner_sha256": "b81f48e99174ccf3884277052920e1e20a8ccc5f203d814a3fd95d36caf1bcee",
+    "planner": "supabase/functions/_shared/stable-principal-removal-plan.r28.ts",
+    "planner_sha256": "f1c63213dca27861e309c7210f70ad7ef403164acaeb4f43066ad79d04fdf969",
+    "planner_test": "supabase/functions/_shared/stable-principal-removal-plan.r28.test.ts",
+    "planner_test_sha256": "0070540afaa6c93121a7997e3ebcb8cb3941ebed013a9252cbaf8cba70f85737"
+  },
+  "next_gate": "Bind correction, erasure and unified reading across legacy and custody-native generations, then prove same-transaction removal execution and transfer races.",
+  "not_authorized": [
+    "auth-user deletion",
+    "custody transfer or closure execution",
+    "subject erasure",
+    "linked or production database use",
+    "migration creation or execution",
+    "runtime integration",
+    "deployment, merge or release"
+  ]
+}

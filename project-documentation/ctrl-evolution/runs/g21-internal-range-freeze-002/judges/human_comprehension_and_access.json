@@ -1,0 +1,50 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-002",
+  "judge": "human_comprehension_and_access",
+  "criterionVersion": "human-comprehension-and-access:g21-internal-range-freeze-v2",
+  "artifactCompositeSha256": "d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9",
+  "verdict": "fail",
+  "claims": [
+    "Mechanical identity holds: all nine listed file SHA-256 values match the manifest and the manifest-order composite independently recomputes to d62af56ccc421d8a2f98332536545c607b0b91ef310282612d54dd3d04d611c9.",
+    "This is an independent adult plain-language proxy review of the twelve frozen questions and their immediate decision contexts. It is not a child usability test and makes no claim about comprehension by actual children.",
+    "RANGE-INTERNAL-CARE-I1 holds at proxy level: it asks for one pilot stopping failure in a short description and keeps the staff-time trade-off specific to the decision.",
+    "RANGE-INTERNAL-CARE-I2 holds at proxy level: it asks for one numeric safety limit tied to unsafe journeys and stopping the rollout.",
+    "RANGE-INTERNAL-CARE-I3 holds at proxy level: it gives a denominator of 100 and asks for one numeric continuity threshold before expansion.",
+    "RANGE-INTERNAL-RESEARCH-I1 breaks: the leader must synthesize ten projects, infer why clients paid, and judge what competitors could not provide. That is the Brain's interpretation, not one bounded short-description answer.",
+    "RANGE-INTERNAL-RESEARCH-I2 breaks: the yes or no question asks the leader to predict unobserved client buying behaviour even though the immediate context says transfer without live senior challenge is unknown. It is not answerable in the declared form without guessing.",
+    "RANGE-INTERNAL-RESEARCH-I3 holds at proxy level: it asks for one numeric repeat-purchase gate before moving half the team.",
+    "RANGE-INTERNAL-FORGE-I1 holds at proxy level: it asks for one yes or no role-design choice under a plainly stated condition.",
+    "RANGE-INTERNAL-FORGE-I2 breaks: asking whether one plant can hit the target is ambiguous between predicting the unobserved result and agreeing to use a one-plant test as the funding gate. The declared yes or no form does not resolve that ambiguity.",
+    "RANGE-INTERNAL-FORGE-I3 breaks: the plural request to identify which planning decisions a person should always make delegates an open-ended work taxonomy to the leader, while the undefined phrase all the data is clean leaves no concrete decision to answer in a short description.",
+    "RANGE-INTERNAL-STORY-I1 holds at proxy level: it asks for one audience-group choice tied directly to ticket purchases and the GBP 18 million allocation.",
+    "RANGE-INTERNAL-STORY-I2 breaks: it is declared as a choice but supplies no choices even though the immediate context names character-led and high-theory routes. The leader must invent or interpret the exposure route instead of selecting a bounded option.",
+    "RANGE-INTERNAL-STORY-I3 breaks: how many more new viewers does not state a unit, denominator, or comparator, so the answer could be a count, a percentage, or percentage points. It lacks one clear threshold form.",
+    "The implemented question check cannot cure these semantic breaks because it verifies one question mark, a 24-word ceiling, and a fixed jargon list, but does not verify boundedness, answer-form clarity, or whether interpretation has been delegated to the leader."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/input-manifest.json:$.files, $.compositeRecipe, $.artifactCompositeSha256",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:3-4",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:7-13",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:16-22",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:25-31",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:34-40",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:43-49",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:52-58",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:61-67",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:70-76",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:79-85",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:88-94",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:97-103",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-002/question-pack.json:106-112",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2436-2443",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:108-120"
+  ],
+  "veto": {
+    "ruleId": "COMPREHENSION-RANGE-01",
+    "failure": "Six main questions trigger the hard veto. Research I1 delegates synthesis of ten projects and competitive uniqueness; Research I2 and Forge I2 demand yes or no answers about unobserved results; Forge I3 delegates an open planning-decision taxonomy under undefined clean data; Story I2 declares a choice without presenting the evidence-backed alternatives; Story I3 asks for a threshold without a unit, denominator, or comparator.",
+    "resolvingTest": "Rewrite and refreeze the six failed questions so Research I1 asks for one observable client fact or presents bounded value choices, Research I2 asks for an observed commitment or a yes or no decision to test, Forge I2 asks whether the one-plant result will be required as a funding gate, Forge I3 presents one concrete human-ownership decision, Story I2 names the character-first and theory-first choices, and Story I3 states its numeric unit, denominator, and comparator. Then run an independent adult plain-language proxy review against the same criterion and pass only if all twelve questions are one plain, decision-specific ask answerable in their declared form without interpretation by the leader."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Rewrite and refreeze the six failed questions so Research I1 asks for one observable client fact or presents bounded value choices, Research I2 asks for an observed commitment or a yes or no decision to test, Forge I2 asks whether the one-plant result will be required as a funding gate, Forge I3 presents one concrete human-ownership decision, Story I2 names the character-first and theory-first choices, and Story I3 states its numeric unit, denominator, and comparator. Then run an independent adult plain-language proxy review against the same criterion and pass only if all twelve questions are one plain, decision-specific ask answerable in their declared form without interpretation by the leader.",
+  "recordedAt": "2026-09-10T19:20:58.306Z"
+}

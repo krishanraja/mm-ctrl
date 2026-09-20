@@ -1,0 +1,147 @@
+{
+  "schema_version": "ctrl.g25.whole-brain-erasure-policy-founder-lock.r16.v1",
+  "record_kind": "founder_lock_and_project_decision_record",
+  "exact_final_call": "yes",
+  "accepted_prompt": "Do you approve locking immediate access revocation, resumable-pending deletion, and destination-specific removal guidance now, while leaving deletion-receipt duration for a documented legal-policy review?",
+  "locked_policy": {
+    "access_revocation": {
+      "standing": "approved",
+      "rule": "Revoke CTRL access and active credentials before destructive erasure work begins."
+    },
+    "partial_completion": {
+      "standing": "approved",
+      "rule": "Any mandatory target without valid completion proof leaves the request in resumable_pending. Partial completion must never return success."
+    },
+    "customer_controlled_copies": {
+      "standing": "approved",
+      "rule": "For every known exported copy, name the destination and give one specific removal action. Never imply CTRL can recall a copy it does not control."
+    },
+    "retained_deletion_receipt": {
+      "standing": "unbound_legal_policy_gate",
+      "rule": "No retention duration or lawful basis is inferred from this approval. Runtime execution remains held until that policy is documented and approved."
+    }
+  },
+  "decision_record": {
+    "decision_id": "DEC-20260917-g25-erasure-policy-r16",
+    "title": "Whole-Brain erasure interaction and completion policy",
+    "decision": "CTRL will revoke access first, treat incomplete erasure as resumable pending rather than success, and give destination-specific removal guidance for customer-controlled copies, while deletion-receipt retention remains separately unbound.",
+    "status": "conditional",
+    "decided_at": "2026-09-17T12:14:00+01:00",
+    "recorded_at": "2026-09-17T12:14:00+01:00",
+    "decider": "Krish Raja",
+    "accountable_owner": "Krish Raja",
+    "scope": "system",
+    "affected_entities": [
+      "CTRL account erasure",
+      "whole-Brain deletion orchestration",
+      "customer deletion status",
+      "export and external-copy guidance"
+    ],
+    "rationale": [
+      "Immediate access revocation contains further exposure before slower local, provider or retention work finishes.",
+      "Returning success alongside deletion errors would create a false and consequential privacy claim.",
+      "A generic warning about external copies is not useful enough; the customer needs to know where each copy went and what to do there.",
+      "Current ICO guidance does not prescribe a universal retention period, so receipt duration must come from a documented purpose and policy rather than an engineering guess."
+    ],
+    "alternatives": [
+      {
+        "route": "Return success after best-effort deletion and include an error list",
+        "why_rejected": "The headline state would be false whenever any mandatory target failed."
+      },
+      {
+        "route": "Treat every incomplete target as a terminal hard failure",
+        "why_rejected": "Provider and retention work can be asynchronous and recoverable; a resumable state preserves honesty without discarding progress."
+      },
+      {
+        "route": "Show one generic external-copy disclaimer",
+        "why_rejected": "It transfers cognitive work to the customer and does not help them finish the deletion."
+      }
+    ],
+    "dissent": "Resumable deletion creates an operational obligation to retry and expose status safely. Revoking access first also means the completion receipt needs a secure delivery path that does not restore product access.",
+    "tradeoffs": "Some erasure requests will remain visibly pending instead of appearing instant. CTRL accepts the orchestration and status-design burden in exchange for an honest privacy promise.",
+    "evidence_refs": [
+      {
+        "ref": "git:2bef5a3753b299455323e846bbeb50b3d0bd1350",
+        "kind": "fact",
+        "scope": "R15 local fail-closed planner and policy evidence"
+      },
+      {
+        "ref": "project-documentation/ctrl-evolution/g25-whole-brain-deletion-coverage-r14.json",
+        "kind": "fact",
+        "scope": "nine deletion planes and current repository gaps"
+      },
+      {
+        "ref": "project-documentation/ctrl-evolution/g25-whole-brain-erasure-planner-r15.json",
+        "kind": "fact",
+        "scope": "planner behavior and unbound policy gate"
+      },
+      {
+        "ref": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/storage-limitation/",
+        "kind": "fact",
+        "scope": "purpose-based retention and pseudonymisation boundary"
+      },
+      {
+        "ref": "conversation:2026-09-17 founder approval immediately following the exact accepted prompt",
+        "kind": "fact",
+        "scope": "human finality"
+      }
+    ],
+    "assumptions": [
+      {
+        "assumption": "CTRL can discover every material export destination from durable export or processing receipts.",
+        "flip_rule": "Reopen the guidance design if a deletion can encounter an untraceable material destination."
+      },
+      {
+        "assumption": "A secure content-free status channel can remain available after product access is revoked.",
+        "flip_rule": "Reopen the access-first sequence if verified implementation evidence shows status delivery requires restoring access to personal Brain data."
+      }
+    ],
+    "revisit": {
+      "review_on": null,
+      "trigger": "Verified implementation cannot safely deliver deletion status after access revocation, a material export destination cannot be traced, or legal review requires different completion or retention behavior.",
+      "signal_source": "Versioned erasure execution proof, export-receipt coverage audit, customer comprehension test or documented legal review",
+      "owner": "Krish Raja",
+      "action_when_fired": "Set this decision to review_due and prepare a bounded keep, supersede or reverse decision without weakening current fail-closed behavior."
+    },
+    "authority_granted": [
+      "local policy binding and deterministic checks",
+      "local schema-discovery and erasure-target registry design",
+      "local fixtures, tests, documentation and commits",
+      "destination-specific guidance contract design"
+    ],
+    "source_ref": "conversation:2026-09-17 exact founder response: yes",
+    "supersedes": [],
+    "superseded_by": [],
+    "outcome": "not_yet_observed",
+    "events": [
+      {
+        "type": "created",
+        "at": "2026-09-17T12:14:00+01:00",
+        "actor": "Krish Raja",
+        "source_ref": "conversation:2026-09-17 exact founder response"
+      }
+    ],
+    "last_verified_at": "2026-09-17T12:14:00+01:00"
+  },
+  "not_authorized": [
+    "choosing or implying a retained-receipt duration or lawful basis",
+    "delete-account runtime edit",
+    "migration file or migration execution",
+    "linked or production database use",
+    "external provider deletion",
+    "customer-facing deletion claim or final copy",
+    "deployment, merge or release",
+    "legacy retirement",
+    "cross-venture Supabase decision-ledger write"
+  ],
+  "cross_venture_decision_ledger": {
+    "status": "STORE_UNAVAILABLE",
+    "unmet_gates": [
+      "verified configured generic decision-ledger live_status",
+      "applied generic record and event migration with grants and policies",
+      "authenticated server-side ledger adapter or RPC",
+      "authoritative write and event-head readback"
+    ],
+    "project_record_authority": "project-documentation/ctrl-evolution/g25-whole-brain-erasure-policy-founder-lock-r16.json"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "schema_version": "ctrl.g25.prepared-intelligence-seam.r2.v1",
+  "contract_id": "G25-PREPARED-INTELLIGENCE-SEAM-R2",
+  "status": "local_characterization_pass",
+  "prepared_at": "2026-09-17T09:15:00+01:00",
+  "authority": {
+    "founder_lock": "project-documentation/ctrl-evolution/g24-predicate-authority-r97-founder-lock-r99.md",
+    "preservation_register": "project-documentation/ctrl-evolution/g25-legacy-capability-preservation-register-r1.json",
+    "authorized_scope": "Dormant local adapter, fixtures, tests and documentation only.",
+    "closed_scope": [
+      "runtime caller",
+      "database or migration",
+      "live registry",
+      "model call or spend",
+      "external research",
+      "customer delivery",
+      "deployment",
+      "merge",
+      "legacy retirement"
+    ]
+  },
+  "implementation": "supabase/functions/_shared/prepared-intelligence.r1.ts",
+  "test": "supabase/functions/_shared/prepared-intelligence.r1.test.ts",
+  "boundary": {
+    "input": "Already-qualified news signals and decision-return signals with subject, audience, purpose, Brain context, provenance and feedback identities.",
+    "output": "One governed prepared object with shared content blocks for read and audio projections.",
+    "does_not_prove": [
+      "news gathering or ranking quality",
+      "decision-watch trigger quality",
+      "audio synthesis, playback or talk-back",
+      "durable correction propagation",
+      "runtime tenancy or persistence",
+      "customer usefulness"
+    ]
+  },
+  "invariants": [
+    {
+      "id": "PI-001",
+      "claim": "Read and audio reference the same prepared object and exact ordered content blocks.",
+      "test_name": "projects one governed object into read and audio without semantic drift"
+    },
+    {
+      "id": "PI-002",
+      "claim": "Candidate and evidence order cannot change the prepared result.",
+      "test_name": "is deterministic under candidate and evidence reordering"
+    },
+    {
+      "id": "PI-003",
+      "claim": "No earned intervention produces an honest held state rather than filler.",
+      "test_name": "holds quietly when no intervention is earned"
+    },
+    {
+      "id": "PI-004",
+      "claim": "Thin news and ordinary news posing as a decision change fail closed.",
+      "test_name": "does not prepare a decision return from ordinary news standing alone"
+    },
+    {
+      "id": "PI-005",
+      "claim": "Qualified single-source reporting is allowed without invented corroboration.",
+      "test_name": "accepts a qualified reputable single-source item without inventing corroboration"
+    },
+    {
+      "id": "PI-006",
+      "claim": "Audience and decision linkage boundaries fail closed.",
+      "test_name": "fails a cross-audience evidence reference closed"
+    },
+    {
+      "id": "PI-007",
+      "claim": "Durable negative feedback and explicit topic exclusions act before presentation.",
+      "test_name": "respects durable negative feedback before presentation"
+    },
+    {
+      "id": "PI-008",
+      "claim": "Every selected signal retains its exact Brain context and reason for inclusion.",
+      "test_name": "projects one governed object into read and audio without semantic drift"
+    },
+    {
+      "id": "PI-009",
+      "claim": "Conflicting facts cannot share an evidence identity inside one prepared object.",
+      "test_name": "holds the whole object when one evidence identity names conflicting facts"
+    },
+    {
+      "id": "PI-010",
+      "claim": "Runtime enum and control-shape drift is rejected rather than routed accidentally.",
+      "test_name": "rejects unknown runtime enum values rather than routing them by accident"
+    },
+    {
+      "id": "PI-011",
+      "claim": "Feedback and correction controls remain attached without leaking implementation metadata into projections.",
+      "test_name": "retains feedback and correction controls without exposing implementation metadata to projections"
+    }
+  ],
+  "preservation_links": [
+    "CAP-NEWS-CURATION",
+    "CAP-BRIEFING-AUDIO-CONVERSATION",
+    "CAP-BRIEFING-CONTROL-LOOP",
+    "CAP-DECISION-WATCH-CROSSWIRE",
+    "CAP-CORRECTION-SELF-HEALING",
+    "CAP-BRAIN-PROJECTION"
+  ],
+  "result": {
+    "focused_tests": 16,
+    "runtime_callers_added": 0,
+    "protected_capabilities_retired": 0,
+    "claim": "The dormant prepared-object boundary is characterized locally. Legacy producer adapters and media delivery remain future gates."
+  }
+}

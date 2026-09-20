@@ -1,0 +1,57 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r79.lineage-owner.v1",
+  "module_id": "lineage_and_owner_policy",
+  "supersedes_r78_sections": [
+    "common_envelope.governing_decision",
+    "fact_kind_registry.external_fact_kinds"
+  ],
+  "lineage": {
+    "r75": {
+      "commit": "e6494cda6fba4ce8209f99f1611ba3803de34370",
+      "tree": "3e53f7ca69a0f01192f3e255471a17b81f05f313",
+      "decision_document_path": "project-documentation/ctrl-evolution/g24-predicate-authority-founder-decision-r75.md",
+      "decision_document_blob": "ee48e4b29d787ef3bbb17c9bf2e558cf7c2aebc6",
+      "decision_document_sha256": "83d2bc6fd6c1042e1fff83f29904abcc7d74bc130f388aa36933e19e40293410"
+    },
+    "r77": {
+      "commit": "4ab418d7815c914eef155fd017ef362f1983b9a7",
+      "tree": "06733dcc7292583cad3463030e076a03a7a1bfb1",
+      "json_path": "project-documentation/ctrl-evolution/g24-predicate-authority-r75-founder-lock-r77.json",
+      "json_blob": "3a9f328df9a1d334823746495aa87becf8a71de4",
+      "json_sha256": "dc3380174cb3f1e87f20570beb67be53eebbb84d480647aeeb6a80dbb6cc2180",
+      "markdown_path": "project-documentation/ctrl-evolution/g24-predicate-authority-r75-founder-lock-r77.md",
+      "markdown_blob": "d1bfd0963154309901c3c7e0108baf410615dc72",
+      "markdown_sha256": "178a16485af5c9f20414f64bbe698d5f9b6dc4397b1c1986f2220be757a43c06"
+    },
+    "r4_transition_catalogue": {
+      "commit": "e6494cda6fba4ce8209f99f1611ba3803de34370",
+      "path": "project-documentation/ctrl-evolution/g24-product-system-contract-r4.json",
+      "blob": "1cb9a82a1368186925590309e6f1139be463588b",
+      "sha256": "58c056ca26bd45a87bb460240637decdd853894c18b1a8173b9cc3297c7a927c"
+    },
+    "r78_vetoed_base": {
+      "commit": "a645f13e11139b15596cd73f7b26eafb2a28a4a0",
+      "tree": "74b6ed7be00ce959690dafa74c25d6393041a01d",
+      "bundle_fingerprint": "424f6eca0fd5707f15e59ce721834c334d4e910d5e1603a03a039dec7764e72f",
+      "standing": "vetoed_design_catalogue_not_authority"
+    }
+  },
+  "internal_owner_registry_version": "ctrl.g24.r79.internal-owner-registry.v1",
+  "external_authority_policy": {
+    "authoritative_fact_kinds": [],
+    "default_for_every_external_assertion": "evidence_only_indeterminate",
+    "reason": "no_exact_external_issuer_identity_and_fact_kind_policy_has_yet_been_founder_locked",
+    "activation_requires": [
+      "separate_founder_decision_id",
+      "exact_fact_kind",
+      "exact_issuer_identity",
+      "exact_source_registry_entry",
+      "exact_authority_policy_version",
+      "exact_protocol",
+      "exact_ttl_seconds",
+      "exact_maximum_clock_skew_seconds",
+      "independent_executable_verification"
+    ]
+  },
+  "runtime_owner_selection": false
+}

@@ -1,0 +1,59 @@
+{
+  "runId": "G21-PUBLIC-ROW-RUN-002",
+  "phase": "adjudication",
+  "artifactHash": "sha256:86E254AE88F56E7DA05A43FB6CC251FA38B2B36CD9423269B849F65F48924D52",
+  "rulings": [
+    {
+      "file": "behavioural_and_implementation_reality.json",
+      "sha256": "6a774354e779642a530e32f4a9146347eb3bdbda4889094ebea60e4b38f105b4",
+      "judge": "behavioural_and_implementation_reality",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "consequential_usefulness.json",
+      "sha256": "bfac5d3c7b8fd3658da2b97ee4a533c0fb77fb7316d02d37b88cbc302b751db4",
+      "judge": "consequential_usefulness",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "epistemic_integrity.json",
+      "sha256": "e23b1fb28e9e4196a529b1ea95c5031a92e5c92e2ae178f30decbd1d85c79e85",
+      "judge": "epistemic_integrity",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "human_agency.json",
+      "sha256": "ffe40d215dcecb2f12c8c121611c53578fabe409fdbca142c393d2a539e5ed64",
+      "judge": "human_agency",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "human_comprehension_and_access.json",
+      "sha256": "67ddba151f901ac5dfc25f839b4d42e9103b980f18194c19d0f132d67e675440",
+      "judge": "human_comprehension_and_access",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "living_brain_integrity.json",
+      "sha256": "fee1715edb11bdc5c930eec4db4877bdffe7e92611260ff14b1fea5121d54695",
+      "judge": "living_brain_integrity",
+      "verdict": "pass",
+      "vetoRuleId": null
+    },
+    {
+      "file": "subject_audience_lifecycle_safety.json",
+      "sha256": "04ee5d90428989c64e45b2e8eabc5c566131f289e2f71a9ab151db97cfca90c8",
+      "judge": "subject_audience_lifecycle_safety",
+      "verdict": "pass",
+      "vetoRuleId": null
+    }
+  ],
+  "result": {
+    "status": "passed"
+  }
+}

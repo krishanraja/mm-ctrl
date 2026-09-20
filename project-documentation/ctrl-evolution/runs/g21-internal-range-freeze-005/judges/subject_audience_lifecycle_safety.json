@@ -1,0 +1,35 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+  "judge": "subject_audience_lifecycle_safety",
+  "criterionVersion": "subject-audience-lifecycle-safety:g21-internal-range-freeze-v5",
+  "artifactCompositeSha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+  "verdict": "fail",
+  "claims": [
+    "The frozen fixtures explicitly mark fiction, exclude consent claims, bind evidence-specific audiences and semantic receipts, constrain source-to-subject capability, and reject ordinary relabelling, sparse arrays and thrown accessors without throwing.",
+    "The runtime and canonical validators both accept a malformed currentClaims container whose live claim has kind fabricated, subjectScope real_person and audience public when an array-level toJSON function returns the benign derived view.",
+    "The bypass exists because currentClaims elements receive only nonempty-string shape checks plus a status enumeration before JSON.stringify is trusted for derivation equality. Kind, subjectScope and audience are not enumerated independently, and the array is not restricted to plain index-only data.",
+    "The accepted live claim can therefore relabel the claim subject and widen private audience metadata while both validators report success, triggering SAFETY-RANGE-01."
+  ],
+  "evidenceLocators": [
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2973-2983",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:3100-3124",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4183-4205",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4222-4228",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:4306-4347",
+    "Exact-blob reproduction at a1a5c5e8a598e3efe911f07b5665e7f5b27bc317 with Node v24.13.0 and TypeScript 5.9.3: validateG21InternalBlindInput returned [] and validateG21CanonicalInternalBlindInput returned [] for live currentClaims[0] values kind fabricated, subjectScope real_person and audience public hidden by currentClaims.toJSON.",
+    "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#total-arbitrary-input-validation",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md#subject-audience-and-lifecycle-safety"
+  ],
+  "veto": {
+    "ruleId": "SAFETY-RANGE-01",
+    "failure": "validateG21InternalBlindInput and validateG21CanonicalInternalBlindInput accept a malformed currentClaims array that uses toJSON to present a benign derived view while retaining live relabelled assertion kind, claim subject and public audience values. This lets malformed nested input escape validation and can widen private claim metadata.",
+    "resolvingTest": "From a valid initial CARE input, change currentClaims[0] to kind fabricated, subjectScope real_person and audience public, add an array-level toJSON that returns buildG21CurrentClaimView(internalEvidence), and require both runtime and canonical validators to return a nonempty error array without throwing."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "From a valid initial CARE input, change currentClaims[0] to kind fabricated, subjectScope real_person and audience public, add an array-level toJSON that returns buildG21CurrentClaimView(internalEvidence), and require both runtime and canonical validators to return a nonempty error array without throwing.",
+  "recordedAt": "2026-09-11T00:49:53.882Z",
+  "reviewBoundaryAttestation": {
+    "semanticReviewCompositeSha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+    "excludedHistoryEncountered": false
+  }
+}

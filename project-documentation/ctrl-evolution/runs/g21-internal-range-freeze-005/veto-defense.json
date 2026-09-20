@@ -1,0 +1,398 @@
+{
+  "run": {
+    "runId": "G21-INTERNAL-RANGE-FREEZE-005",
+    "role": "independent_veto_defense_counsel",
+    "votingAuthority": "none",
+    "artifactCommit": "a1a5c5e8a598e3efe911f07b5665e7f5b27bc317",
+    "artifactStatus": "implemented candidate, not council-cleared"
+  },
+  "composites": {
+    "artifact": {
+      "sha256": "a85659256e5bb2bcaa6b54eeb2cdb22081d559e7aeffbaf85673ce0abd464458",
+      "reproduced": true,
+      "basis": "SHA-256 of the sixteen manifest path:sha256 lines in listed order, joined with LF and no trailing LF"
+    },
+    "semanticReview": {
+      "sha256": "944c4cd19849ad78c48fc7d6c4bedb69e4d930747df5f4d1cbbb1b302fdc9003",
+      "reproduced": true,
+      "allNineGitBlobHashesMatched": true
+    },
+    "rulings": {
+      "sha256": "4c00498d638b439578af82c9b68677e9e15c6b5de282ba725611d46deeb66b45",
+      "reproduced": true,
+      "allSevenRulingFileHashesMatched": true
+    }
+  },
+  "scope": {
+    "includedRunFiles": [
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/input-manifest.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/freeze-anchor.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/reader-brief.md",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers-manifest.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_a.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/readers/adult_proxy_b.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/rulings-manifest.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_agency.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/epistemic_integrity.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/subject_audience_lifecycle_safety.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/consequential_usefulness.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/living_brain_integrity.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/human_comprehension_and_access.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/judges/behavioural_and_implementation_reality.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/adjudication.json"
+    ],
+    "semanticFilesResolvedAtArtifactCommit": [
+      "src/features/operator-brain/g21InternalRangeCanary.ts",
+      "src/features/operator-brain/g21InternalRangeCanary.test.ts",
+      "src/features/operator-brain/rangeCouncilContract.ts",
+      "src/features/operator-brain/g21PublicRowCanary.ts",
+      "scripts/check-g21-internal-range.mjs",
+      "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/council-brief.md",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/question-pack.json",
+      "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-005/reader-brief.md"
+    ],
+    "excluded": [
+      "prior runs",
+      "judge histories",
+      "founder calibration",
+      "standards prosecution",
+      "session logs",
+      "builder rationale",
+      "provenance-only file contents"
+    ],
+    "boundaryStatement": "Provenance-only paths were not opened. Their manifest-listed hashes were used only to reproduce the artifact composite. No source, frozen evidence, reader output, ruling or adjudication file was edited."
+  },
+  "dispositionLegend": {
+    "challenged": "The original verdict does not survive the declared canary boundary or the exact reproduction.",
+    "upheld": "The original verdict survives the strongest defense challenge on the frozen evidence.",
+    "narrowed": "A criterion-level defect survives, but a material part of the failure theory or resolving demand exceeds the evidence or the declared canary contract."
+  },
+  "rulingDispositions": [
+    {
+      "judge": "human_agency",
+      "originalVerdict": "pass",
+      "vetoRuleId": null,
+      "verdict": "upheld",
+      "evidence": [
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:2909-2918",
+          "finding": "The exact task and authority fix responsibilityGate at 1, permit framing only, and prohibit consequential recommendations, durable-truth promotion and named-employee evaluation."
+        },
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:2461-2494,3713-3718",
+          "finding": "All FORGE-I3 final-call choices are human and a non-human option is rejected."
+        },
+        {
+          "locator": "exact-blob baseline execution",
+          "finding": "All 36 emitted inputs retained the fixed authority and passed both validators."
+        }
+      ],
+      "defenseAnalysis": "The usefulness defect in STORY-I1 qualifies the ruling's broad claim that every permitted answer is already driven by a fully supplied human answer. The bare placeholder does not supply a group. It still does not let AI choose or commit the group, so AGENCY-RANGE-01 is not triggered and the owned pass survives."
+    },
+    {
+      "judge": "epistemic_integrity",
+      "originalVerdict": "fail",
+      "vetoRuleId": "EPISTEMIC-RANGE-01",
+      "verdict": "narrowed",
+      "evidence": [
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:1964-1972,2176-2193,3299-3301",
+          "finding": "The frozen INT-STORY-007 is issued as an observation and says exposure lifted ticket intent and sharing. NOTICE-STORY-I3-01 says exposure improved intent, while held-out purchase proof remains unresolved. The direct causal rule does not cover lifted, raised, drove, resulted in or attributed to."
+        },
+        {
+          "locator": "exact-blob runtime reproduction",
+          "finding": "The unchanged binding-valid INT-STORY-007 observation returned runtimeErrors=[] and canonicalErrors=[]. The unsupported-causation defect therefore exists in the frozen artifact."
+        },
+        {
+          "locator": "input-manifest.json, freeze-anchor.json and exact in-memory pre-load variants",
+          "finding": "Each pre-load wording variant was accepted by the module-derived runtime and canonical bindings, but every variant changed the source SHA-256 and semantic composite. For example, drove produced source d08a15dd9459c30c44ecd3ad6efd360e3df6c6fc541d79da93b1565e1b7a9cf1 and semantic composite 99bf8f3b78a9fbf4a2cf92f1b265485bef66bfb7a24457ff65c6ff0f6de1e73e, not the frozen Run 005 identities."
+        },
+        {
+          "locator": "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#trusted-semantic-receipt and #freeze-identity",
+          "finding": "The contract expressly makes the in-process registry a deterministic canary stand-in and places independent freeze identity in the manifest and artifact commit. It does not claim production authentication or cryptographic anti-tamper behavior."
+        }
+      ],
+      "defenseAnalysis": "The veto is supported only for the frozen unsupported causal phrasing and the context-insensitive causal check. The synchronised-drift theory treats the self-derived module baseline as the whole contract and omits the externally anchored artifact and semantic hashes. A changed pre-load module can validate itself, but it cannot remain Run 005. Requiring an independently frozen runtime digest or production-grade receipt authority expands the declared stand-in. Requiring blanket rejection of words such as raised also ignores the controlled trailer-test context in INT-STORY-004. The resolving test should be confined to bounded wording and a binding-valid, context-aware causation regression."
+    },
+    {
+      "judge": "subject_audience_lifecycle_safety",
+      "originalVerdict": "fail",
+      "vetoRuleId": "SAFETY-RANGE-01",
+      "verdict": "upheld",
+      "evidence": [
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:2973-2979,3100-3124,4183-4205,4222-4228",
+          "finding": "currentClaims is checked for density and nonempty strings, but kind, subjectScope and audience are not enumerated and array own properties are not constrained. Derivation equality trusts JSON.stringify, which invokes an array-level toJSON."
+        },
+        {
+          "locator": "exact-blob toJSON reproduction",
+          "finding": "A CARE-I1 initial input retained live currentClaims[0] values kind=fabricated, subjectScope=real_person and audience=public while toJSON returned the benign derived view. validateG21InternalBlindInput returned [] and validateG21CanonicalInternalBlindInput returned []."
+        }
+      ],
+      "defenseAnalysis": "The strongest defense is that ordinary JSON serialization hides the hostile live values, so downstream widening depends on how the accepted object is consumed. That does not rescue the validator. Its declared domain is unknown input, its contract promises malformed nested data cannot escape, and a direct object consumer sees the invalid public, real-person claim. The reproduced counterexample satisfies the hard veto."
+    },
+    {
+      "judge": "consequential_usefulness",
+      "originalVerdict": "fail",
+      "vetoRuleId": "USEFULNESS-RANGE-01",
+      "verdict": "narrowed",
+      "evidence": [
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:2496-2530",
+          "finding": "Another named group is itself a complete permitted option, but no required custom-group field exists and optionalNoteAllowed is true. Its route effect nevertheless assumes a leader-named ticket-buyer group."
+        },
+        {
+          "locator": "exact-blob contract introspection",
+          "finding": "The answer contract had exactly options, unit, denominator, comparator, unknownAllowed, evidenceRequestIfUnknown, optionalNoteAllowed, routeEffects and unknownRouteEffect. No custom or write-in value was present."
+        },
+        {
+          "locator": "adult_proxy_a.json and adult_proxy_b.json",
+          "finding": "Both adult proxies treated STORY-I1 as answerable and passed it, which shows the label can be read as a write-in instruction. That inference is not encoded as a required value and cannot supply the missing group mechanically."
+        }
+      ],
+      "defenseAnalysis": "The semantic defect survives because the visible contract permits a bare placeholder while claiming a concrete customer gate. The original resolving test overreaches by requiring an executable answer rejection and propagation path that this canary does not define. The declared surface is the frozen visible answer contract, not a response-ingestion system. Removing the placeholder or making the required write-in value explicit in the frozen visible contract is within scope; building a new answer parser is not required to dispose of this veto."
+    },
+    {
+      "judge": "living_brain_integrity",
+      "originalVerdict": "fail",
+      "vetoRuleId": "BRAIN-RANGE-01",
+      "verdict": "challenged",
+      "evidence": [
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:3960-3987,4262-4300,4314-4347",
+          "finding": "The frozen artifact defines initial, contradicted and corrected as three independently valid cases. Runtime state selects the state-specific evidence binding and canonical comparison by design. No externally current state, monotonic sequence or anti-replay promise is declared."
+        },
+        {
+          "locator": "exact-blob corrected-to-initial reproduction",
+          "finding": "After removing the two lifecycle records, filtering their authorities, setting runtimeState=initial and caseId to the initial case, and re-deriving currentClaims, both validators returned []. The resulting JSON serialization was identical to the separately emitted canonical initial input."
+        },
+        {
+          "locator": "project-documentation/ctrl-evolution/g21-v5-evidence-contract.md#trusted-semantic-receipt and #fixture-truth-and-oracle-isolation",
+          "finding": "The contract requires evidence identities and roles to match the declared state and exact state-specific fixture bytes. It does not claim that the envelope proves which one of the three canonical states is temporally current at ingress."
+        }
+      ],
+      "defenseAnalysis": "The reproduction confirms acceptance but falsifies the ruling's inference. The transformed object is not a broken corrected view that slipped through; it is the exact valid initial case. Distinguishing a replayed initial envelope from a freshly issued one requires external expected-case or freshness authority not present in the declared canary. The original source profile still preserves the conflict and correction, receipt meaning is unchanged, and lineage inside the selected state is valid. If a future ingress contract promises current-state authenticity, anti-replay binding is a sensible new requirement, but it cannot be imposed retroactively as this canary's veto."
+    },
+    {
+      "judge": "human_comprehension_and_access",
+      "originalVerdict": "fail",
+      "vetoRuleId": "COMPREHENSION-RANGE-01",
+      "verdict": "narrowed",
+      "evidence": [
+        {
+          "locator": "readers-manifest.json, adult_proxy_a.json and adult_proxy_b.json",
+          "finding": "Eleven questions passed both adult proxies. RESEARCH-I1, RESEARCH-I2 and FORGE-I1 each received two accurate paraphrases, two compatible natural answers and two passes. FORGE-I3 alone split, with proxy A identifying The human named by the escalation rule as the smallest ambiguity."
+        },
+        {
+          "locator": "question-pack.json#/questions/3, /questions/4 and /questions/6",
+          "finding": "The two research questions use challenge in a decision-room context, and FORGE-I1 is an answerable conditional about whether roles still change if the same planners meet the relevant target. The exact target metric is not needed to answer that conditional. The sealed adult evidence does not establish these three as cryptic or unanswerable."
+        },
+        {
+          "locator": "question-pack.json#/questions/8 and src/features/operator-brain/g21InternalRangeCanary.ts:2461-2494",
+          "finding": "FORGE-I3 asks which role should make the final call but offers The human named by the escalation rule, which names no role, may overlap the two named roles and depends on an unseen rule. Its route effect only promises that a later rule will name the owner."
+        }
+      ],
+      "defenseAnalysis": "The hard-veto core survives for FORGE-I3. The three additional failures are not supported strongly enough to remain part of the veto: two independent adults answered and paraphrased them without hidden references, and the judge's requested definitions or target metric exceed what those immediate asks require. Adult agreement cannot prove bright-twelve-year-old comprehension, so those items remain wording watchpoints rather than cleared child-comprehension findings. The resolving test should be narrowed to replacing the circular FORGE-I3 option and rerunning the frozen screen, with any child claim still withheld absent child testing."
+    },
+    {
+      "judge": "behavioural_and_implementation_reality",
+      "originalVerdict": "pass",
+      "vetoRuleId": null,
+      "verdict": "challenged",
+      "evidence": [
+        {
+          "locator": "scripts/check-g21-internal-range.mjs:693-759 and exact script execution",
+          "finding": "The exact script passed with 12 profiles, 36 inputs, 128 malformed JSON samples and 249 rejected mutations. Those generated JSON samples cannot contain functions and therefore do not exercise an array-level toJSON attack."
+        },
+        {
+          "locator": "exact-blob toJSON reproduction",
+          "finding": "A malformed function-bearing nested container was accepted by both validators with live fabricated, real-person and public claim values. This directly contradicts the ruling's unqualified fail-closed conclusion over arbitrary input."
+        },
+        {
+          "locator": "scripts/check-g21-internal-range.mjs:836-847 and exact corrected-to-initial reproduction",
+          "finding": "The sealed state test changes only runtimeState and caseId while leaving initial evidence in place, so it proves rejection of an internally inconsistent relabel. It does not test a coordinated substitution to another complete canonical state. The coordinated result was accepted because it was exactly the valid initial case."
+        },
+        {
+          "locator": "src/features/operator-brain/g21InternalRangeCanary.ts:2496-2530",
+          "finding": "One-to-one string mapping does not establish that every answer supplies the value its consequential route requires. STORY-I1 is the counterexample."
+        }
+      ],
+      "defenseAnalysis": "A green exact script is evidence for the enumerated cases, not a universal result. The reproduced safety counterexample defeats a required pass condition and makes the pass unreliable as written. The state and usefulness claims are also broader than their tests. This non-voting defense does not issue a replacement REALITY-RANGE-01 veto, but the recorded pass should not be used to answer the surviving vetoes."
+    }
+  ],
+  "reproductionSummaries": [
+    {
+      "id": "identity-and-council-envelope",
+      "method": "Git cat-file over all nine allowlisted blobs at artifact commit, SHA-256 over exact bytes, manifest composite recomputation, current reader and ruling hash verification, and frozen council structural validation",
+      "environment": {
+        "node": "v24.13.0",
+        "typescript": "5.9.3"
+      },
+      "result": "pass",
+      "observations": [
+        "All nine blob hashes matched.",
+        "All three composites matched.",
+        "Both reader hashes and all seven ruling hashes matched.",
+        "validateFrozenRangeCouncil returned no structural errors.",
+        "Mechanical adjudication reproduced blocked with the same five rule ids."
+      ]
+    },
+    {
+      "id": "sealed-executable-baseline",
+      "method": "node scripts/check-g21-internal-range.mjs after confirming its five code and script inputs matched the artifact commit",
+      "result": "pass",
+      "observations": {
+        "profiles": 12,
+        "families": 4,
+        "cases": 36,
+        "inputs": 36,
+        "malformedJsonSamples": 128,
+        "adversarialMutationsRejected": 249,
+        "oracleLeak": false
+      },
+      "limit": "The passing suite proves its enumerated attacks only."
+    },
+    {
+      "id": "safety-array-tojson",
+      "method": "Exact Git blobs were transpiled and loaded in memory. A valid CARE-I1 initial currentClaims[0] was relabelled and the array was given a benign toJSON view.",
+      "result": "veto reproduced",
+      "observations": {
+        "liveKind": "fabricated",
+        "liveSubjectScope": "real_person",
+        "liveAudience": "public",
+        "serializedKind": "direct_statement",
+        "serializedSubjectScope": "company",
+        "serializedAudience": "leader_private",
+        "runtimeErrors": [],
+        "canonicalErrors": []
+      }
+    },
+    {
+      "id": "brain-corrected-to-initial",
+      "method": "Exact Git blobs were loaded in memory. The CARE-I1 corrected input was reduced consistently to its declared initial state.",
+      "result": "acceptance reproduced, veto interpretation challenged",
+      "observations": {
+        "removedEvidenceIds": [
+          "LIFE-CARE-I1-CONFLICT",
+          "LIFE-CARE-I1-CORRECTION"
+        ],
+        "runtimeErrors": [],
+        "canonicalErrors": [],
+        "jsonSerializationIdenticalToSeparatelyBuiltInitial": true
+      }
+    },
+    {
+      "id": "epistemic-causal-language",
+      "method": "Exact Git blobs and read-only in-memory pre-load source variants were executed.",
+      "result": "frozen wording defect reproduced, synchronized Run 005 identity bypass not reproduced",
+      "observations": [
+        "The binding-valid frozen lifted observation passed both validators.",
+        "Pre-load raised, drove, resulted in and attributed to variants each passed their self-derived validators.",
+        "Every pre-load variant changed the exact source hash and semantic composite, so none retained Run 005 freeze identity."
+      ]
+    },
+    {
+      "id": "adult-answerability-cross-check",
+      "method": "Deterministic comparison of the two frozen adult proxy JSON outputs",
+      "result": "eleven unanimous passes, one split, zero unanimous failures",
+      "observations": {
+        "splitProfileId": "RANGE-INTERNAL-FORGE-I3",
+        "proxyAVerdict": "fail",
+        "proxyBVerdict": "pass",
+        "proxyAAmbiguity": "The human named by the escalation rule"
+      }
+    }
+  ],
+  "contradictions": [
+    {
+      "between": [
+        "human_agency pass claim that every permitted answer is driven by the human answer",
+        "USEFULNESS-RANGE-01"
+      ],
+      "resolution": "STORY-I1 does not supply the promised group, so that agency claim is too broad. The agency verdict still holds because AI neither supplies nor commits the missing group."
+    },
+    {
+      "between": [
+        "behavioural_and_implementation_reality pass",
+        "SAFETY-RANGE-01"
+      ],
+      "resolution": "The exact toJSON counterexample defeats the behavioural ruling's arbitrary-input fail-closed premise. The finite malformed JSON generator could not cover the function-bearing input."
+    },
+    {
+      "between": [
+        "behavioural claim that state relabelling was rejected in every case",
+        "BRAIN-RANGE-01"
+      ],
+      "resolution": "The pass tested inconsistent relabelling, while the veto tested complete substitution to another valid canonical state. Neither test establishes an undeclared anti-replay guarantee. The pass claim must be limited to inconsistent state envelopes, and the brain veto must be set aside absent an external current-state contract."
+    },
+    {
+      "between": [
+        "behavioural claim that visible mappings establish every permitted answer's route effect",
+        "USEFULNESS-RANGE-01"
+      ],
+      "resolution": "String equality between an option and route-effect key is insufficient when the option omits the concrete value assumed by the route effect."
+    },
+    {
+      "between": [
+        "epistemic claim that semantic standing is enforced",
+        "binding-valid frozen INT-STORY-007"
+      ],
+      "resolution": "Receipt equality prevents post-load mutation but does not make the already issued causal wording earned. The epistemic veto survives on that narrower basis."
+    }
+  ],
+  "adultScreenLimits": {
+    "observedEvidence": "Proxy A passed 11 and failed FORGE-I3. Proxy B passed all 12. There were no shared failures.",
+    "properUse": "Use agreement as evidence that an adult can paraphrase and answer the visible text. Use the split FORGE-I3 result as a wording watchpoint that independently aligns with the council judge's semantic concern.",
+    "cannotEstablish": [
+      "comprehension by a bright twelve-year-old",
+      "child usability",
+      "specialist council criteria",
+      "factual truth",
+      "diagnostic efficacy",
+      "customer value"
+    ],
+    "defenseBoundary": "The unanimous adult passes rebut claims of obvious adult unanswerability but cannot clear the owned child-oriented comprehension criterion. The nonshared FORGE-I3 failure is not itself a council veto."
+  },
+  "overallDefenseConclusion": {
+    "status": "blocked_survives_defense",
+    "survivingVetoes": [
+      {
+        "ruleId": "SAFETY-RANGE-01",
+        "scope": "upheld as written"
+      },
+      {
+        "ruleId": "EPISTEMIC-RANGE-01",
+        "scope": "narrowed to the frozen unsupported causal wording and context-insensitive causation check"
+      },
+      {
+        "ruleId": "USEFULNESS-RANGE-01",
+        "scope": "narrowed to the missing required group value in STORY-I1"
+      },
+      {
+        "ruleId": "COMPREHENSION-RANGE-01",
+        "scope": "narrowed to the circular, unseen-rule option in FORGE-I3"
+      }
+    ],
+    "setAsideVetoes": [
+      {
+        "ruleId": "BRAIN-RANGE-01",
+        "reason": "The reproduced output is the separately valid canonical initial case. Rejecting it requires a new freshness or anti-replay authority, not stronger validation of the declared state."
+      }
+    ],
+    "passDispositions": {
+      "human_agency": "upheld with one overbroad supporting claim qualified",
+      "behavioural_and_implementation_reality": "challenged by exact counterexamples and test-scope overclaim"
+    },
+    "conclusion": "The defense defeats one veto and materially narrows three others, but it cannot defeat the exact currentClaims toJSON bypass. Independent narrower epistemic, usefulness and comprehension defects also remain. The blocked adjudication therefore remains the only supportable overall state on this frozen record, while the original five-veto rationale should not be preserved without these limitations."
+  },
+  "limitations": [
+    "No excluded history, provenance-only content, founder calibration, standards prosecution, session log or builder rationale was inspected.",
+    "No child testing occurred, so no finding establishes child comprehension or usability.",
+    "The pre-load causal variants were read-only in-memory mutations used to test the judge's synchronized-drift theory. They were not frozen artifact bytes, and their changed hashes are part of the finding.",
+    "The Vitest file could not be run because the sandbox denied config resolution above the permitted directory. The exact standalone check script and the independent in-memory exact-blob harness both executed successfully.",
+    "This report is non-voting, changes no ruling, and authorises no deployment, production use, database write or source repair."
+  ],
+  "recordedAt": "2026-09-11T01:30:34.261Z"
+}

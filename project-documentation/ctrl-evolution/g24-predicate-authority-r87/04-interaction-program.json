@@ -1,0 +1,1348 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r87.interaction.v1",
+  "module_id": "interaction_program",
+  "session_state_required": [
+    "session_id",
+    "case_id",
+    "decision_id",
+    "named_human_id",
+    "question_receipt_ids",
+    "last_question_ordinal",
+    "state_version",
+    "state_fingerprint"
+  ],
+  "unresolved_gap_set_required": [
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_human_id",
+    "dependency_ids",
+    "set_version",
+    "set_seal"
+  ],
+  "question_reservation_required": [
+    "reservation_id",
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_human_id",
+    "dependency_id",
+    "session_state_version",
+    "gap_set_seal",
+    "reserved_ordinal",
+    "reservation_fingerprint",
+    "facilitator_id",
+    "issued_at",
+    "issuer_id",
+    "route_status",
+    "issuer_signature_base64"
+  ],
+  "krish_session_receipt_required": [
+    "session_route_id",
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_human_id",
+    "dependency_ids",
+    "gap_set_seal",
+    "agenda",
+    "route",
+    "receipt_fingerprint",
+    "facilitator_id",
+    "issued_at",
+    "issuer_id",
+    "route_status",
+    "issuer_signature_base64"
+  ],
+  "question_required": [
+    "question_id",
+    "question_version",
+    "case_id",
+    "decision_id",
+    "transition_id",
+    "named_answer_owner",
+    "dependency_id",
+    "requested_value_kind",
+    "heading",
+    "question",
+    "answer_options",
+    "unknown_option",
+    "free_expression_option",
+    "answer_effect_refs",
+    "visible_consequence",
+    "optional_note_label",
+    "primary_action_label",
+    "optional_depth_ref",
+    "source_reason_ref"
+  ],
+  "render_receipt_required": [
+    "render_receipt_id",
+    "session_id",
+    "session_state_version",
+    "question_id",
+    "question_version",
+    "dependency_id",
+    "named_human_id",
+    "gap_set_seal",
+    "question_route_receipt_ref",
+    "predecessor_version",
+    "transition_id",
+    "displayed_consequence_text",
+    "question_payload_fingerprint",
+    "rendered_at",
+    "receipt_fingerprint"
+  ],
+  "free_expression_interpretation_required": [
+    "interpretation_id",
+    "free_expression_ref",
+    "question_id",
+    "question_version",
+    "plain_language_interpretation",
+    "decision_value",
+    "derived_effect_id",
+    "interpretation_fingerprint",
+    "transition_disposition"
+  ],
+  "free_expression_render_required": [
+    "interpretation_render_id",
+    "question_id",
+    "question_version",
+    "named_human_id",
+    "free_expression_fingerprint",
+    "plain_language_interpretation",
+    "decision_value",
+    "derived_effect_id",
+    "displayed_consequence_text",
+    "rendered_at",
+    "receipt_fingerprint",
+    "transition_disposition"
+  ],
+  "canonical_case_context_required": [
+    "case_id",
+    "decision_id",
+    "consequential_target",
+    "case_terms",
+    "required_question_concepts",
+    "current_decision_ref",
+    "context_fingerprint"
+  ],
+  "copy_limits": {
+    "heading": 42,
+    "question": 180,
+    "answer_option_each": 80,
+    "unknown_option": 40,
+    "free_expression_option": 40,
+    "visible_consequence": 180,
+    "optional_note_label": 24,
+    "primary_action_label": 24,
+    "total_visible_characters": 620,
+    "answer_options": 4
+  },
+  "technical_vocabulary_forbidden": [
+    "predicate",
+    "fingerprint",
+    "dependency_id",
+    "authority bundle",
+    "compare-and-set",
+    "lifecycle transition",
+    "semantic profile"
+  ],
+  "routing_rules": [
+    "derive_prior_question_state_from_signed_session_state_not_caller_boolean",
+    "reject_unknown_dependency_or_registry_owner_kind_mismatch",
+    "route_server_dependency_backstage_with_zero_customer_questions",
+    "count_exact_unresolved_human_dependency_ids_per_case_decision_and_human",
+    "one_exact_fact_and_zero_prior_question_receipts_may_create_one_candidate",
+    "more_than_one_fact_or_any_prior_question_receipt_means_safe_hold_or_krish_session",
+    "never_automatically_follow_with_another_question",
+    "route_receipt_is_required_authority_evidence_for_every_normative_receipt_and_predicate",
+    "route_receipt_is_signed_resolved_from_private_authority_store_and_bound_once_to_the_accepted_predicate_proof",
+    "predicate_validation_is_read_only_and_never_issues_resets_or_rebinds_route_authority",
+    "answer_currentness_is_scoped_to_one_authoritative_route_question_and_current_answer_event"
+  ],
+  "question_rules": [
+    "derive_case_terms_and_required_concepts_from_canonical_case_context",
+    "require_two_distinct_case_terms_and_one_required_concept_in_question",
+    "derive_every_copy_length_and_total_from_actual_payload",
+    "reject_forbidden_technical_vocabulary_in_every_visible_field",
+    "require_exact_answer_option_to_effect_ref_map_with_no_extras",
+    "resolve_each_effect_against_current_accepted_before_state",
+    "require_same_case_decision_and_material_delta_for_each_normal_option",
+    "unknown_and_free_expression_have_no_preconfirmed_effect"
+  ],
+  "judgement_contracts": [
+    {
+      "contract_id": "purpose-v1",
+      "judgement_kind": "purpose",
+      "dependency_ids": [
+        "krish_bounded_purpose",
+        "leader_revalidates_purpose",
+        "krish_revalidates_purpose"
+      ],
+      "heading": "Confirm the purpose",
+      "question": "Which purpose should govern the Aperture House marketing team decision and the result it seeks?",
+      "visible_consequence": "Your answer changes the exact purpose this work is allowed to pursue.",
+      "answers": [
+        {
+          "option": "Prove quality can travel before changing the team",
+          "effect_id": "purpose-proof-first",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Prove quality can travel before rebuilding Aperture House's marketing team"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Design the team rebuild now",
+          "effect_id": "purpose-rebuild-now",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Design the rebuild of Aperture House's marketing team now"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Stop this work",
+          "effect_id": "purpose-stop",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Stop work on rebuilding Aperture House's marketing team"
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "source-boundary-v1",
+      "judgement_kind": "boundary",
+      "dependency_ids": [
+        "krish_allowed_source_classes"
+      ],
+      "heading": "Set the evidence boundary",
+      "question": "Which evidence may guide the Aperture House marketing team decision?",
+      "visible_consequence": "Your answer changes which source classes may guide this decision.",
+      "answers": [
+        {
+          "option": "Customer and delivery evidence only",
+          "effect_id": "sources-customer-delivery",
+          "patch": {
+            "path": "bounds",
+            "value": [
+              "Customer evidence",
+              "Delivery evidence"
+            ]
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Add leadership records",
+          "effect_id": "sources-add-leadership",
+          "patch": {
+            "path": "bounds",
+            "value": [
+              "Customer evidence",
+              "Delivery evidence",
+              "Leadership records"
+            ]
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Pause until sources are agreed",
+          "effect_id": "sources-pause",
+          "patch": {
+            "path": "bounds",
+            "value": [
+              "No source may steer until Krish agrees the evidence boundary"
+            ]
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "decision-frame-v1",
+      "judgement_kind": "decision_frame",
+      "dependency_ids": [
+        "leader_accepts_exact_purpose_and_frame_version",
+        "krish_accepts_exact_purpose_and_frame_version"
+      ],
+      "heading": "Accept the decision frame",
+      "question": "Which exact frame should govern the Aperture House marketing team decision before evidence is tested?",
+      "visible_consequence": "Your answer accepts one exact decision frame and rejects the other routes.",
+      "answers": [
+        {
+          "option": "Prove the system before changing the team",
+          "effect_id": "frame-proof-first",
+          "patch": {
+            "path": "route",
+            "value": "prove_the_system_first"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Design the rebuild now",
+          "effect_id": "frame-rebuild-now",
+          "patch": {
+            "path": "route",
+            "value": "rebuild_now"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Stop the rebuild",
+          "effect_id": "frame-stop",
+          "patch": {
+            "path": "route",
+            "value": "stop_rebuild"
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "meaningful-value-v1",
+      "judgement_kind": "meaningful_value",
+      "dependency_ids": [
+        "leader_next_consequential_decision_or_evidenced_value",
+        "krish_next_consequential_decision_or_evidenced_value",
+        "leader_revalidates_next_value",
+        "krish_revalidates_next_value"
+      ],
+      "heading": "Choose the proof that matters",
+      "question": "Which result would make the Aperture House marketing team decision worth pursuing?",
+      "visible_consequence": "Your answer changes the evidence required before this decision can move.",
+      "answers": [
+        {
+          "option": "Two campaigns meet Maya's bar without her rewrite",
+          "effect_id": "value-independent-quality",
+          "patch": {
+            "path": "evidence_requirement",
+            "value": "Two priority campaigns meet Maya's quality bar without her final rewrite"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "The board accepts the explicit rebuild risk",
+          "effect_id": "value-board-risk",
+          "patch": {
+            "path": "evidence_requirement",
+            "value": "Board accepts the explicit rebuild risk"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "A written case that more proof adds no value",
+          "effect_id": "value-no-more-proof",
+          "patch": {
+            "path": "evidence_requirement",
+            "value": "Written case showing that further proof adds no decision value"
+          },
+          "transition_disposition": "supports_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "checkpoint-v1",
+      "judgement_kind": "boundary",
+      "dependency_ids": [
+        "leader_continuation_checkpoint",
+        "krish_continuation_checkpoint",
+        "leader_revalidates_checkpoint",
+        "krish_revalidates_checkpoint"
+      ],
+      "heading": "Set the checkpoint",
+      "question": "When should evidence for the Aperture House marketing team decision be reviewed?",
+      "visible_consequence": "Your answer changes the exact checkpoint that controls continuation.",
+      "answers": [
+        {
+          "option": "Blind comparison after four weeks",
+          "effect_id": "checkpoint-four-weeks",
+          "patch": {
+            "path": "checkpoint",
+            "value": "Blind comparison after four weeks"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Operating review after two weeks",
+          "effect_id": "checkpoint-two-weeks",
+          "patch": {
+            "path": "checkpoint",
+            "value": "Two-week operating review"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Review only if category economics change",
+          "effect_id": "checkpoint-category-change",
+          "patch": {
+            "path": "checkpoint",
+            "value": "Review only if category economics materially change"
+          },
+          "transition_disposition": "supports_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "revisit-v1",
+      "judgement_kind": "revisit_condition",
+      "dependency_ids": [
+        "krish_review_date",
+        "leader_exit_or_revisit_condition",
+        "krish_exit_or_revisit_condition"
+      ],
+      "heading": "Set the revisit condition",
+      "question": "What evidence should cause the Aperture House marketing team decision to be revisited?",
+      "visible_consequence": "Your answer changes the exact condition that reopens this decision.",
+      "answers": [
+        {
+          "option": "The four-week evidence review",
+          "effect_id": "revisit-four-weeks",
+          "patch": {
+            "path": "revisit_condition",
+            "value": "At the four-week evidence review"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "The two-week operating review",
+          "effect_id": "revisit-two-weeks",
+          "patch": {
+            "path": "revisit_condition",
+            "value": "At the two-week operating review"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Only a material change in category economics",
+          "effect_id": "revisit-category-change",
+          "patch": {
+            "path": "revisit_condition",
+            "value": "Only if category economics materially change"
+          },
+          "transition_disposition": "supports_transition"
+        }
+      ]
+    },
+    {
+      "contract_id": "genuinely-new-purpose-after-close-v1",
+      "judgement_kind": "purpose",
+      "dependency_ids": [
+        "krish_genuinely_new_purpose"
+      ],
+      "heading": "A genuinely new purpose",
+      "question": "The previous Aperture House marketing team decision is closed. What genuinely new proof or result now justifies a new preparation?",
+      "visible_consequence": "This answer either keeps the closed decision closed or names the distinct purpose for a new preparation.",
+      "answers": [
+        {
+          "option": "Prove a new customer promise can travel without Maya",
+          "effect_id": "new-purpose-customer-promise",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Prove a new customer promise can travel without Maya"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Design a new category position for Aperture House",
+          "effect_id": "new-purpose-category-position",
+          "patch": {
+            "path": "consequential_target",
+            "value": "Design a new category position for Aperture House"
+          },
+          "transition_disposition": "supports_transition"
+        },
+        {
+          "option": "Keep the previous decision closed",
+          "effect_id": "new-purpose-remain-closed",
+          "patch": {
+            "path": "route",
+            "value": "remain_closed"
+          },
+          "transition_disposition": "blocks_transition"
+        }
+      ]
+    }
+  ],
+  "default_surface": {
+    "heading_count": 1,
+    "question_count": 1,
+    "answer_control_group_count": 1,
+    "optional_note_count": 1,
+    "primary_action_count": 1,
+    "automatic_follow_up_count": 0,
+    "technical_label_count": 0
+  },
+  "final_decision_render_required": [
+    "render_receipt_id",
+    "transition_id",
+    "subject_id",
+    "case_id",
+    "purpose_id",
+    "predecessor_version",
+    "predicate_proof_fingerprint",
+    "decision_before_fingerprint",
+    "reconciled_decision",
+    "reconciled_decision_fingerprint",
+    "changed_paths",
+    "changed_fields",
+    "transition_effect",
+    "displayed_consequence_text",
+    "rendered_at",
+    "receipt_fingerprint"
+  ],
+  "transition_effect_required": [
+    "transition_id",
+    "from_state",
+    "to_state",
+    "authority",
+    "invalidation",
+    "receipt",
+    "plain_language_action"
+  ],
+  "final_render_rules": [
+    "derive_transition_effect_from_the_exact_transition_catalogue_not_caller_copy",
+    "show_the_human_the_lifecycle_action_before_final_authority_is_signed",
+    "bind_transition_effect_and_decision_delta_into_the_final_render_fingerprint",
+    "never_describe_pause_closing_or_close_as_keeping_the_current_direction"
+  ],
+  "answer_state_record_required": [
+    "answer_state_id",
+    "route_ref",
+    "question_id",
+    "question_version",
+    "state_version",
+    "issuer_sequence",
+    "current_answer_ref",
+    "current_answer_fingerprint",
+    "supersedes_answer_ref",
+    "standing",
+    "member_answer_refs",
+    "member_set_seal",
+    "authoritative_head_fingerprint"
+  ],
+  "answer_state_store_required": [
+    "store_id",
+    "store_version",
+    "records"
+  ],
+  "answer_state_rules": [
+    "resolve_current_answer_from_complete_authoritative_history_before_predicate_acceptance",
+    "exactly_one_current_head_may_steer_none_is_missing_and_conflict_is_ambiguous",
+    "superseded_withdrawn_delayed_or_unsealed_answers_are_non_steering",
+    "bind_current_head_version_event_and_fingerprint_into_predicate_proof",
+    "validation_order_never_selects_current_human_answer"
+  ],
+  "answer_state_store": {
+    "store_id": "answer-state-authority-v1",
+    "store_version": "answer-state-store-v1",
+    "records": [
+      {
+        "answer_state_id": "answer-state-question-open_preparation-krish_bounded_purpose-v1",
+        "route_ref": "krish-session-open_preparation-krish",
+        "question_id": "question-open_preparation-krish_bounded_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-open_preparation-krish_bounded_purpose-2",
+        "current_answer_fingerprint": "fc9018fbee03ea683ee4149bca27468a0792051705bd346f5754efdd83420a9e",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-open_preparation-krish_bounded_purpose-2"
+        ],
+        "member_set_seal": "bd8d8517f77de632fdf8e1a6c80b301df3b03f34e7f6be320edecfe3cab9708a",
+        "authoritative_head_fingerprint": "852bd6d7b944803bbacccc03a7b76882fcc73674fc4ca646c81d08b40a084d1d"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_preparation-krish_bounded_purpose-v2",
+        "route_ref": "krish-session-open_preparation-krish",
+        "question_id": "question-open_preparation-krish_bounded_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-open_preparation-krish_bounded_purpose-1",
+        "current_answer_fingerprint": "17d1645f8d7f34476d3854651059a460d98876faa2470cb6a5158bfb8f60a9db",
+        "supersedes_answer_ref": "answer-open_preparation-krish_bounded_purpose-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-open_preparation-krish_bounded_purpose-1",
+          "answer-open_preparation-krish_bounded_purpose-2"
+        ],
+        "member_set_seal": "5a946040e32b665235275266358b1848bb1b00bd0ab4fe0749b7b67b795c690e",
+        "authoritative_head_fingerprint": "ba9e0d36122ba5a6152ef5df632ea2a33d26b6937c9f633f90733cceb45d1662"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_preparation-krish_allowed_source_classes-v1",
+        "route_ref": "krish-session-open_preparation-krish",
+        "question_id": "question-open_preparation-krish_allowed_source_classes",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-open_preparation-krish_allowed_source_classes-2",
+        "current_answer_fingerprint": "34d53fe933da6d26758b2c879dae82972fa6d440b5ff1a15a722af62536de112",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-open_preparation-krish_allowed_source_classes-2"
+        ],
+        "member_set_seal": "f51cca6ffd860035ccb635a6fd16db03ed520cf6de681a7079b8abddbb7f24b4",
+        "authoritative_head_fingerprint": "ae96e945e5e3b68bac70821d44342ec719c05f46b9615e777278b7b40b9733a0"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_preparation-krish_allowed_source_classes-v2",
+        "route_ref": "krish-session-open_preparation-krish",
+        "question_id": "question-open_preparation-krish_allowed_source_classes",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-open_preparation-krish_allowed_source_classes-1",
+        "current_answer_fingerprint": "225667562422f34d8e021d56ff7ef6e540ad0919258820fc0cbd2671771fccbd",
+        "supersedes_answer_ref": "answer-open_preparation-krish_allowed_source_classes-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-open_preparation-krish_allowed_source_classes-1",
+          "answer-open_preparation-krish_allowed_source_classes-2"
+        ],
+        "member_set_seal": "53363be269a28b84a0fd20b27b1ddd496bae45eadb94eae4e02bb9e7b384347a",
+        "authoritative_head_fingerprint": "6fdcecba7fe2f4c62d9731897606298a134fdbe73327fa1804ae5c4348f99f92"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_preparation-krish_review_date-v1",
+        "route_ref": "krish-session-open_preparation-krish",
+        "question_id": "question-open_preparation-krish_review_date",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-open_preparation-krish_review_date-2",
+        "current_answer_fingerprint": "e9a37dfc89dbb444e9c12cf41d207fc226b75ad4dd16129489c80d404732296e",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-open_preparation-krish_review_date-2"
+        ],
+        "member_set_seal": "afb61ee228b881be2badb1867cd6100972fc3da378c3b26340c0793bc703cad4",
+        "authoritative_head_fingerprint": "f157d3645254e7d150679e78cbad137f339f7f3e2d3691a4f104c031588c3ba6"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_preparation-krish_review_date-v2",
+        "route_ref": "krish-session-open_preparation-krish",
+        "question_id": "question-open_preparation-krish_review_date",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-open_preparation-krish_review_date-1",
+        "current_answer_fingerprint": "860182560a60a77e26b27975ae8bc8855f13b052b32fb946987564fea64feefc",
+        "supersedes_answer_ref": "answer-open_preparation-krish_review_date-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-open_preparation-krish_review_date-1",
+          "answer-open_preparation-krish_review_date-2"
+        ],
+        "member_set_seal": "0bc125886df9e930d047dc8c7fbe6ab81573024a9dd1166d28e6f769b7903668",
+        "authoritative_head_fingerprint": "71934a011a5e3a9ba0eacdab8571d6b86cdd0c0d9f87d76f7cc49f8de10f4e6e"
+      },
+      {
+        "answer_state_id": "answer-state-question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-v1",
+        "route_ref": "question-reservation-accept_intensive_proof-leader-1",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-2",
+        "current_answer_fingerprint": "3667c7e9c03277400acc6e3498382b0b29408f162d814449a08b2c591b159423",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-2"
+        ],
+        "member_set_seal": "1fe73640dd606f758c793805d6941e132270829674222c66e86831bd5f659dea",
+        "authoritative_head_fingerprint": "45c119010b0b3e40998a8e50e834ed281c77d8bdc0a774a8f5727f5f5a89554d"
+      },
+      {
+        "answer_state_id": "answer-state-question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-v2",
+        "route_ref": "question-reservation-accept_intensive_proof-leader-1",
+        "question_id": "question-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-1",
+        "current_answer_fingerprint": "e17871aa71020cc4cbb99389d3f352200fcdc877c3eee08372fc7613d6880704",
+        "supersedes_answer_ref": "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-1",
+          "answer-accept_intensive_proof-leader_accepts_exact_purpose_and_frame_version-2"
+        ],
+        "member_set_seal": "640a46cb7e1946d358995d5603718d347aa668a7c06abf356e705a21d54b53b2",
+        "authoritative_head_fingerprint": "71677f9a9c5ef657c57e39fc047c968967feec60bbcdceb568688dcae3d20ed9"
+      },
+      {
+        "answer_state_id": "answer-state-question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-v1",
+        "route_ref": "question-reservation-accept_intensive_proof-krish",
+        "question_id": "question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-2",
+        "current_answer_fingerprint": "ed11fdef2b2a12f9942c7824a3069345c4e03998f30a13cce7d2d257464a4da4",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-2"
+        ],
+        "member_set_seal": "d0289d59d2cf73cfd9094142e6d32a5f2ab09abf0feed5ef5265e809f96332eb",
+        "authoritative_head_fingerprint": "bcd702ebff3945e8614f2a0f367fa999afdaf0bee76e4ef9c19993ecf1a8163b"
+      },
+      {
+        "answer_state_id": "answer-state-question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-v2",
+        "route_ref": "question-reservation-accept_intensive_proof-krish",
+        "question_id": "question-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-1",
+        "current_answer_fingerprint": "d5baef410dce9b581fed1e849ee11eb84f001d197f7e6f8772b1a6da0043f707",
+        "supersedes_answer_ref": "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-1",
+          "answer-accept_intensive_proof-krish_accepts_exact_purpose_and_frame_version-2"
+        ],
+        "member_set_seal": "a100ad0d9dd8a7adfde660eb00b32b83cec39c8f848c526c73ff6a985601d1e6",
+        "authoritative_head_fingerprint": "0156b22c8c05934e446c8801482e99a3c62db898f37f987580fe702df37585f9"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-v1",
+        "route_ref": "krish-session-continue_after_intensive_proof-leader-1",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-2",
+        "current_answer_fingerprint": "dd08923b9d99c70b85edba5e0fcf8d7d042a6fccff64046d4b151aebda7ec193",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "a22a62ec4a48f8f8beeb26eac1b9db6bec495aa6892dbf750789217716971282",
+        "authoritative_head_fingerprint": "1277365ac4b3bd6082d303c4c990a3e0784700d40a82f22abcf67711ba628b9b"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-v2",
+        "route_ref": "krish-session-continue_after_intensive_proof-leader-1",
+        "question_id": "question-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-1",
+        "current_answer_fingerprint": "41ab8afe88cf5e7b87d765a227fdb5257c9f69786086a1384d68fec5fa0f3d51",
+        "supersedes_answer_ref": "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-1",
+          "answer-continue_after_intensive_proof-leader_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "2ddec4bb1f25c393f197df748305dff4841d00be021cd02298d5e3c02d979001",
+        "authoritative_head_fingerprint": "62115f015f01ca08ba300a1b7233b23698e53367462f61a8841791a540e025ee"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-v1",
+        "route_ref": "krish-session-continue_after_intensive_proof-krish",
+        "question_id": "question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-2",
+        "current_answer_fingerprint": "921fa766129b896eb922b4f9db2815030b13b5a80dcdce0778d0c0055deffe0e",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "fb5da56a9c9ad9a7710bcd2905a66607216c774ec11596f9e751e05eb3b58536",
+        "authoritative_head_fingerprint": "6197eaddc14ea47458691cfca9d6df4ef2f52f75d6edca89beceb4a6636786d7"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-v2",
+        "route_ref": "krish-session-continue_after_intensive_proof-krish",
+        "question_id": "question-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-1",
+        "current_answer_fingerprint": "e6a71551abc931cd3e6f1533be1a1e81fbeef6c8dfc272797290154d959e974b",
+        "supersedes_answer_ref": "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-1",
+          "answer-continue_after_intensive_proof-krish_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "eeeb45994dd83768bae03d450ef405b730093761b09e7d77cbb3b44a14359cc0",
+        "authoritative_head_fingerprint": "29475a7a464e10d3d9db6edc7669dd80604789255845e18c6aa9783a6d3af94f"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-leader_continuation_checkpoint-v1",
+        "route_ref": "krish-session-continue_after_intensive_proof-leader-1",
+        "question_id": "question-continue_after_intensive_proof-leader_continuation_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-continue_after_intensive_proof-leader_continuation_checkpoint-2",
+        "current_answer_fingerprint": "a6eabf67a40b7cc06da34d264a3d4e359682c8dead59d6858bbed87fd653a31b",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-leader_continuation_checkpoint-2"
+        ],
+        "member_set_seal": "e17d74679b60c25a79ad52e12886f8467bdd49c2c0f85835ff022cec37050cfa",
+        "authoritative_head_fingerprint": "371bae94f386bc71230d84fbf0727164929bb13f59b697ad83713dae98686b57"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-leader_continuation_checkpoint-v2",
+        "route_ref": "krish-session-continue_after_intensive_proof-leader-1",
+        "question_id": "question-continue_after_intensive_proof-leader_continuation_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-continue_after_intensive_proof-leader_continuation_checkpoint-1",
+        "current_answer_fingerprint": "28a86c254f08ec29730f8a2cdd52821b8cd0e2392bd777e9a78953faa1d8e077",
+        "supersedes_answer_ref": "answer-continue_after_intensive_proof-leader_continuation_checkpoint-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-leader_continuation_checkpoint-1",
+          "answer-continue_after_intensive_proof-leader_continuation_checkpoint-2"
+        ],
+        "member_set_seal": "aaf721a6a91b0267c2eed4d66702e2c1348666007d8833b16b1ee4babad46258",
+        "authoritative_head_fingerprint": "5d9adaa6a564c81d8e38eafa931625e55cd664eab1df21783266a5e80e88617e"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-krish_continuation_checkpoint-v1",
+        "route_ref": "krish-session-continue_after_intensive_proof-krish",
+        "question_id": "question-continue_after_intensive_proof-krish_continuation_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-continue_after_intensive_proof-krish_continuation_checkpoint-2",
+        "current_answer_fingerprint": "f83253d5cbaba3593d3db961c70052d0bb542728edcfce6494905a2aeb8507dd",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-krish_continuation_checkpoint-2"
+        ],
+        "member_set_seal": "106a4d7ba94618f98109fa361a342bfc558920e21655c0394c821ee889ac4440",
+        "authoritative_head_fingerprint": "a4a392fbf07b86ddfbb56600364093a2ddbfa0b37d6d8ee41a7f38994cd5289b"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-krish_continuation_checkpoint-v2",
+        "route_ref": "krish-session-continue_after_intensive_proof-krish",
+        "question_id": "question-continue_after_intensive_proof-krish_continuation_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-continue_after_intensive_proof-krish_continuation_checkpoint-1",
+        "current_answer_fingerprint": "4b48d36404c4a1ea35a166cf689e0246b74c2cd370f777825385d14bafca667b",
+        "supersedes_answer_ref": "answer-continue_after_intensive_proof-krish_continuation_checkpoint-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-krish_continuation_checkpoint-1",
+          "answer-continue_after_intensive_proof-krish_continuation_checkpoint-2"
+        ],
+        "member_set_seal": "efbf1350430019f947eff8eb1f4cbd46c292829a7cd203098a7293e3107a391b",
+        "authoritative_head_fingerprint": "f75234421f561f207de84509af88e4e876b614a75b6346fe745d277c8b67c520"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-leader_exit_or_revisit_condition-v1",
+        "route_ref": "krish-session-continue_after_intensive_proof-leader-1",
+        "question_id": "question-continue_after_intensive_proof-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-2",
+        "current_answer_fingerprint": "eafeb2bc0b045b851db0810cf38176ae5bc5515fddd2aa0a37acc99b039a37b3",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "0035796dff9d129ac40dd0e6a890f4075bb7dd5fc46ebdb0956aab845880232d",
+        "authoritative_head_fingerprint": "94abf39acfbf2b56cdf2ddb84917eac6804e0746cc5d4006d829a76390d39dff"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-leader_exit_or_revisit_condition-v2",
+        "route_ref": "krish-session-continue_after_intensive_proof-leader-1",
+        "question_id": "question-continue_after_intensive_proof-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-1",
+        "current_answer_fingerprint": "845566777cf6423bc3da663ff0e4436614e598df55cf74cc3283c9cd15c1363b",
+        "supersedes_answer_ref": "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-1",
+          "answer-continue_after_intensive_proof-leader_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "0fa0896a8b4fba6a6ea0904a37808f22b1ee2afbae07a25a0d11b117756f68e3",
+        "authoritative_head_fingerprint": "634c649d6399a5b072c71e55151e925a136c689b294619c9153f2f4c8b738d35"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-krish_exit_or_revisit_condition-v1",
+        "route_ref": "krish-session-continue_after_intensive_proof-krish",
+        "question_id": "question-continue_after_intensive_proof-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-2",
+        "current_answer_fingerprint": "e887c6bf2f0725a84056ebd44bdab234f18c1f09219a0e71432cecd21aa0b773",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "9efb57cf0e092013c5f1a425f5cf0d5c70f5dc9ae40a6ba149601452b3809eec",
+        "authoritative_head_fingerprint": "4473a8c543cc37f7459c16d6b94c1427f180ae1fa13abcda1d4c8198e08a62d2"
+      },
+      {
+        "answer_state_id": "answer-state-question-continue_after_intensive_proof-krish_exit_or_revisit_condition-v2",
+        "route_ref": "krish-session-continue_after_intensive_proof-krish",
+        "question_id": "question-continue_after_intensive_proof-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-1",
+        "current_answer_fingerprint": "d2d8af2aebe0ae7d827966a37d2a934fda99bc65b990e714bcb217c45bb2bc80",
+        "supersedes_answer_ref": "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-1",
+          "answer-continue_after_intensive_proof-krish_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "9a47c04f1619f01cf0907ee76692a8af64a2bb2e79905e467fe2fad20adc3c54",
+        "authoritative_head_fingerprint": "4b59403e7efcadd48fcd17694e5cfc0522139477117e2ecfe8dae867b72df673"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-v1",
+        "route_ref": "krish-session-renew_continuing_period-leader-1",
+        "question_id": "question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-2",
+        "current_answer_fingerprint": "4e17247665f14b308db376f44578f8b9f098a52cbc618b09db4e317707304afd",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "1ec8c6aa2733c7b7ec26af45a2954ae4731f47be66135c01b77eb81f7718feda",
+        "authoritative_head_fingerprint": "affcd1559bad51d60b57af0c7b618045959d300f8b654525c23186788dba0b26"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-v2",
+        "route_ref": "krish-session-renew_continuing_period-leader-1",
+        "question_id": "question-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-1",
+        "current_answer_fingerprint": "06397b4d2cb5ad3d18e9d65f4cd95a483cd9a5cee89c1ebcc592b47740931d2b",
+        "supersedes_answer_ref": "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-1",
+          "answer-renew_continuing_period-leader_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "b24617ea1f1900d87ad63aefae302901889aa11cb66f078b9e050434c54dfc13",
+        "authoritative_head_fingerprint": "ca2e03bcecf3b61e4c34c7a0ec783d755f1fa1bd75e975bc980a6736993a0f37"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-v1",
+        "route_ref": "krish-session-renew_continuing_period-krish",
+        "question_id": "question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-2",
+        "current_answer_fingerprint": "64734ccb441885009ede13f4b28bd109d7e59cb7157320ef461e1e3ba4c75339",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "eec5ef370c3f2ea934b93d0b4a020d42353e1786397ffa6ef49d1b5bcb216fa0",
+        "authoritative_head_fingerprint": "b2c2afb64bf5790ca8f43757a958fb24f855ba0bd8afa66015c0a15c8fe6ad2b"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-v2",
+        "route_ref": "krish-session-renew_continuing_period-krish",
+        "question_id": "question-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-1",
+        "current_answer_fingerprint": "1e7fcc07d922708a115c1c9599656bef9eb6dca837055c7bf5c8768eb8766f59",
+        "supersedes_answer_ref": "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-1",
+          "answer-renew_continuing_period-krish_next_consequential_decision_or_evidenced_value-2"
+        ],
+        "member_set_seal": "a0ace1502e06c467473423a8706a2455a775d34b61249bb3b15d3c0f60cf3cdf",
+        "authoritative_head_fingerprint": "28aaee628d76d4e194655bcd368b2755367d0c4241c9fd86d263ec12261181bb"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-leader_exit_or_revisit_condition-v1",
+        "route_ref": "krish-session-renew_continuing_period-leader-1",
+        "question_id": "question-renew_continuing_period-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-renew_continuing_period-leader_exit_or_revisit_condition-2",
+        "current_answer_fingerprint": "793d608788ad6b2a7afb6a6ae16ba9856beda249522ed9a505247efe51d7e63c",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-leader_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "e23fe714655fee88f857a02d67b5fa9a27ffb0ef4532572be3aa9ed9bb59c1b5",
+        "authoritative_head_fingerprint": "fa45b095be65ef9115406c22ba928dd4eecd08c7b90fae8f976e3eb92fe6f3af"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-leader_exit_or_revisit_condition-v2",
+        "route_ref": "krish-session-renew_continuing_period-leader-1",
+        "question_id": "question-renew_continuing_period-leader_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-renew_continuing_period-leader_exit_or_revisit_condition-1",
+        "current_answer_fingerprint": "95bc656f7fb31801bfeae1dc6b2277d8a9e7b48936b5d06f127c5c0abdd522e1",
+        "supersedes_answer_ref": "answer-renew_continuing_period-leader_exit_or_revisit_condition-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-leader_exit_or_revisit_condition-1",
+          "answer-renew_continuing_period-leader_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "203cb557f16c34e2d847e26e14ec2dc2942c94d71d52f2eff7c1b765ec23577e",
+        "authoritative_head_fingerprint": "ebfb564a4924ca442143b5e216cc1c92e9d879e330ea17ca913c46532146b633"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-krish_exit_or_revisit_condition-v1",
+        "route_ref": "krish-session-renew_continuing_period-krish",
+        "question_id": "question-renew_continuing_period-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-renew_continuing_period-krish_exit_or_revisit_condition-2",
+        "current_answer_fingerprint": "622fa69541a3a0fdaa77f380232706cc7b027cb64ebe5d35883e1b35c3d5c02c",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-krish_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "dc17a5a4ed1dbc6258011bbfaaffb66b1cb4bc153a359209c32691cd177921f4",
+        "authoritative_head_fingerprint": "679ada6b70377284467f46eea140d8df5f4602c13edf4d11fb636ec74bcfb719"
+      },
+      {
+        "answer_state_id": "answer-state-question-renew_continuing_period-krish_exit_or_revisit_condition-v2",
+        "route_ref": "krish-session-renew_continuing_period-krish",
+        "question_id": "question-renew_continuing_period-krish_exit_or_revisit_condition",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-renew_continuing_period-krish_exit_or_revisit_condition-1",
+        "current_answer_fingerprint": "97f5f055495c39d08052399c2a42fc9ccf07b9c8bdda1d54355b95dc943e3d55",
+        "supersedes_answer_ref": "answer-renew_continuing_period-krish_exit_or_revisit_condition-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-renew_continuing_period-krish_exit_or_revisit_condition-1",
+          "answer-renew_continuing_period-krish_exit_or_revisit_condition-2"
+        ],
+        "member_set_seal": "cc30e6d325acfc34822914b01d6fb92fed290977714dc80024c4b2e177c616c1",
+        "authoritative_head_fingerprint": "7485c257588bff335701c2217e6fbae4a336ef93f23a9e9765be2a3ced7f42e4"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-leader_revalidates_purpose-v1",
+        "route_ref": "krish-session-resume_continuing-leader-1",
+        "question_id": "question-resume_continuing-leader_revalidates_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-resume_continuing-leader_revalidates_purpose-2",
+        "current_answer_fingerprint": "8e1e085db8f87e599981231c78ff88c8d057dfefb6092dd896d54e9e863ae624",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-resume_continuing-leader_revalidates_purpose-2"
+        ],
+        "member_set_seal": "7997ce9fc3b31a94f02dd7d8a839aad015a77ea9859ba42940a9da45d1ccbb6a",
+        "authoritative_head_fingerprint": "2ab0a5f850583eca9d7d25c2e956e26dfccc3280b2838e581080170f75b2e4e6"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-leader_revalidates_purpose-v2",
+        "route_ref": "krish-session-resume_continuing-leader-1",
+        "question_id": "question-resume_continuing-leader_revalidates_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-resume_continuing-leader_revalidates_purpose-1",
+        "current_answer_fingerprint": "d7edcacd63f03f7072e36d3c54187efee47dd254ffcf0470a42a9762c2867b5a",
+        "supersedes_answer_ref": "answer-resume_continuing-leader_revalidates_purpose-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-resume_continuing-leader_revalidates_purpose-1",
+          "answer-resume_continuing-leader_revalidates_purpose-2"
+        ],
+        "member_set_seal": "227b4ab97a9f121b6641c00ee299d59c28f86eacec9d544948b762592152444a",
+        "authoritative_head_fingerprint": "8954073b02ad162398aa2afcb334d32e335a56c8a30283330b0e215d77d35655"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-krish_revalidates_purpose-v1",
+        "route_ref": "krish-session-resume_continuing-krish",
+        "question_id": "question-resume_continuing-krish_revalidates_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-resume_continuing-krish_revalidates_purpose-2",
+        "current_answer_fingerprint": "9a07238ce3c510da915f124d81d7ac94f2c92d9df77f3af0b8b6159e83564302",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-resume_continuing-krish_revalidates_purpose-2"
+        ],
+        "member_set_seal": "1bb71a2afeeea3e22b467762e1b0162060a449a9f663860ffa0f2a271311bcb7",
+        "authoritative_head_fingerprint": "be224316670c5d0ca8798d09ee1dbe5abab563073f97a38d1af44d35dfbe2cf2"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-krish_revalidates_purpose-v2",
+        "route_ref": "krish-session-resume_continuing-krish",
+        "question_id": "question-resume_continuing-krish_revalidates_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-resume_continuing-krish_revalidates_purpose-1",
+        "current_answer_fingerprint": "5374dd8e8e240444b662e672a9495773b618a369196e2fc8839d6d6b947c794a",
+        "supersedes_answer_ref": "answer-resume_continuing-krish_revalidates_purpose-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-resume_continuing-krish_revalidates_purpose-1",
+          "answer-resume_continuing-krish_revalidates_purpose-2"
+        ],
+        "member_set_seal": "ab45e323e8e0cf9deecf1f0e3f0fb69cdb89eb01721ef78177278bab8c031112",
+        "authoritative_head_fingerprint": "b9a82c5402b2723feb59a4a92929f0a49b8f989eba138c490e14862e9c7f019a"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-leader_revalidates_next_value-v1",
+        "route_ref": "krish-session-resume_continuing-leader-1",
+        "question_id": "question-resume_continuing-leader_revalidates_next_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-resume_continuing-leader_revalidates_next_value-2",
+        "current_answer_fingerprint": "66ed5577fa9a07bbda46d7d9cc0b2ddb88b1684dee7d0603abd1a93ccfd6d9a0",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-resume_continuing-leader_revalidates_next_value-2"
+        ],
+        "member_set_seal": "a2e425e49687cdb3bb87380e0052e7efef7605844ecbc826aaf858cafe79fef8",
+        "authoritative_head_fingerprint": "405d9b352f8a672679d27cdea5f7a3ec8ff0c369660698701f2329ce6a1547c3"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-leader_revalidates_next_value-v2",
+        "route_ref": "krish-session-resume_continuing-leader-1",
+        "question_id": "question-resume_continuing-leader_revalidates_next_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-resume_continuing-leader_revalidates_next_value-1",
+        "current_answer_fingerprint": "ee2a5ab6c4c287749a4d5813b5e0962811bfba39e4c52b9f7b9d2eb73364530a",
+        "supersedes_answer_ref": "answer-resume_continuing-leader_revalidates_next_value-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-resume_continuing-leader_revalidates_next_value-1",
+          "answer-resume_continuing-leader_revalidates_next_value-2"
+        ],
+        "member_set_seal": "36c224b948404e68d882b74d35b69d9a41e52f033e0e6490a561d2d96388f241",
+        "authoritative_head_fingerprint": "2215009fd771a483bdcc55c7da8886b3c47e5399dad67ed97ef9c8e3bc5a5fe9"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-krish_revalidates_next_value-v1",
+        "route_ref": "krish-session-resume_continuing-krish",
+        "question_id": "question-resume_continuing-krish_revalidates_next_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-resume_continuing-krish_revalidates_next_value-2",
+        "current_answer_fingerprint": "838012ba9e7f5621e0534720910ff421b5075cfea251aa6dbc39b8d1dd54ba60",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-resume_continuing-krish_revalidates_next_value-2"
+        ],
+        "member_set_seal": "7aa0764f92e83e51835378843b7a9e8d59ffdf2ab40fcd1d4b0cb03b6af605b6",
+        "authoritative_head_fingerprint": "01a15d34cedc2b3602310c3451360dd503c2c73a4f4185d18d7d5b873ea1122f"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-krish_revalidates_next_value-v2",
+        "route_ref": "krish-session-resume_continuing-krish",
+        "question_id": "question-resume_continuing-krish_revalidates_next_value",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-resume_continuing-krish_revalidates_next_value-1",
+        "current_answer_fingerprint": "2a870018f7425f34a14d521e391eac22d51407c9c09038bb92d6a55739b33c2e",
+        "supersedes_answer_ref": "answer-resume_continuing-krish_revalidates_next_value-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-resume_continuing-krish_revalidates_next_value-1",
+          "answer-resume_continuing-krish_revalidates_next_value-2"
+        ],
+        "member_set_seal": "9c87f9c1802b67c6a78be607c740baff9f8d2843446ccb708d6e1c44c6acfce3",
+        "authoritative_head_fingerprint": "85f2bfa5c4c3c8317b69b352035310fd9095ad74bcd1a1a0a1b1ad08639eb49e"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-leader_revalidates_checkpoint-v1",
+        "route_ref": "krish-session-resume_continuing-leader-1",
+        "question_id": "question-resume_continuing-leader_revalidates_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-resume_continuing-leader_revalidates_checkpoint-2",
+        "current_answer_fingerprint": "4716c3b36c555bd0d911bbcbd784c9fb93bffe3907d9875ab0338a1552c7056b",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-resume_continuing-leader_revalidates_checkpoint-2"
+        ],
+        "member_set_seal": "56471b23dfc20e4680ace0ad6a6421891baf0b19d8edf3ff8a8606e2efdda5fa",
+        "authoritative_head_fingerprint": "fab7fd816966a704952c3be13e90ae1e68c28ff9524ef5a21907d07e81591f37"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-leader_revalidates_checkpoint-v2",
+        "route_ref": "krish-session-resume_continuing-leader-1",
+        "question_id": "question-resume_continuing-leader_revalidates_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-resume_continuing-leader_revalidates_checkpoint-1",
+        "current_answer_fingerprint": "fdeae97336c44fdebc87c9c2656c134547843e93be04c8f633ad87e5d0be5cf8",
+        "supersedes_answer_ref": "answer-resume_continuing-leader_revalidates_checkpoint-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-resume_continuing-leader_revalidates_checkpoint-1",
+          "answer-resume_continuing-leader_revalidates_checkpoint-2"
+        ],
+        "member_set_seal": "8831c298387a39243412ecd08ba4a7708125f068d033a38ad304effdb5af60b5",
+        "authoritative_head_fingerprint": "2b1d40575f7cd7655746c40ee4d4c8c58e796dd755b1819e82332d6afaed87fc"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-krish_revalidates_checkpoint-v1",
+        "route_ref": "krish-session-resume_continuing-krish",
+        "question_id": "question-resume_continuing-krish_revalidates_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-resume_continuing-krish_revalidates_checkpoint-2",
+        "current_answer_fingerprint": "73eb46c8adb1f524aa310b8ac954ed29963bbc4428f14f1855ffcd2f8fdfecd3",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-resume_continuing-krish_revalidates_checkpoint-2"
+        ],
+        "member_set_seal": "202afe6b047c27be02240c39dcaca09b0bbba5a29765121b6b5773255afd348f",
+        "authoritative_head_fingerprint": "763bdf9ec05d1ed998a1e78bd3335d002f2d8663bc113fd79fb48e90e57a50df"
+      },
+      {
+        "answer_state_id": "answer-state-question-resume_continuing-krish_revalidates_checkpoint-v2",
+        "route_ref": "krish-session-resume_continuing-krish",
+        "question_id": "question-resume_continuing-krish_revalidates_checkpoint",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-resume_continuing-krish_revalidates_checkpoint-1",
+        "current_answer_fingerprint": "2be48c17409ca36071977b3d9025202ce0b3b3b437c78883cd253312ff3178f0",
+        "supersedes_answer_ref": "answer-resume_continuing-krish_revalidates_checkpoint-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-resume_continuing-krish_revalidates_checkpoint-1",
+          "answer-resume_continuing-krish_revalidates_checkpoint-2"
+        ],
+        "member_set_seal": "4eba8669db6303cb179fed94e0ee91a89e14bb64b0e9b56053f060fece35d165",
+        "authoritative_head_fingerprint": "02dd311e7bbf96a51ea69cce098ab9fd7de7b1d0f1b67c76ee520dd312f1976a"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_new_preparation_after_close-krish_genuinely_new_purpose-v1",
+        "route_ref": "krish-session-open_new_preparation_after_close-krish",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-2",
+        "current_answer_fingerprint": "dba87c20316fd2fa7cf13a305b7aca5c01feb03dca203a6c59a3c144d480a4b0",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-2"
+        ],
+        "member_set_seal": "fe152bf2a8801bcedcaef42da106313ad0fc053cba49e69d6d801ab1b896c73a",
+        "authoritative_head_fingerprint": "88a55b6b9eaf7b7f386a68319da7a8a19823fa58db3e0ac87b161bf4c6957771"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_new_preparation_after_close-krish_genuinely_new_purpose-v2",
+        "route_ref": "krish-session-open_new_preparation_after_close-krish",
+        "question_id": "question-open_new_preparation_after_close-krish_genuinely_new_purpose",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-1",
+        "current_answer_fingerprint": "1442aaecdb0fa21abc86ffa566ffe4c2c3e28f6e90f4fbbd0ae8aea30c42bc72",
+        "supersedes_answer_ref": "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-1",
+          "answer-open_new_preparation_after_close-krish_genuinely_new_purpose-2"
+        ],
+        "member_set_seal": "d3bbc3f436a1a4aef483b1ac140d7186d893f6247743e914d944df37d12071fd",
+        "authoritative_head_fingerprint": "b5899547aaca2469790a7fb03145f27a01e2ab0103a464ed4c65b5768a501f5f"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_new_preparation_after_close-krish_review_date-v1",
+        "route_ref": "krish-session-open_new_preparation_after_close-krish",
+        "question_id": "question-open_new_preparation_after_close-krish_review_date",
+        "question_version": "qv1",
+        "state_version": "answer-state-v1",
+        "issuer_sequence": 1,
+        "current_answer_ref": "answer-open_new_preparation_after_close-krish_review_date-2",
+        "current_answer_fingerprint": "8c8d6840c738c4a0c68922989266f4918ee955b43e5e5d484eaed3ea44a3bd21",
+        "supersedes_answer_ref": null,
+        "standing": "superseded",
+        "member_answer_refs": [
+          "answer-open_new_preparation_after_close-krish_review_date-2"
+        ],
+        "member_set_seal": "561c975ff498c26b1780bd3710af6f9875a1e0dd512da873c0909a9330fd0e6d",
+        "authoritative_head_fingerprint": "61c273ea2faebc8bbee9b2b0fa9db289b4b5146fc713256304524ffdd01c2c53"
+      },
+      {
+        "answer_state_id": "answer-state-question-open_new_preparation_after_close-krish_review_date-v2",
+        "route_ref": "krish-session-open_new_preparation_after_close-krish",
+        "question_id": "question-open_new_preparation_after_close-krish_review_date",
+        "question_version": "qv1",
+        "state_version": "answer-state-v2",
+        "issuer_sequence": 2,
+        "current_answer_ref": "answer-open_new_preparation_after_close-krish_review_date-1",
+        "current_answer_fingerprint": "1153479282834b3ab08d73d2c4bfa8ba8a739070340a88e27fab61545fe5e07b",
+        "supersedes_answer_ref": "answer-open_new_preparation_after_close-krish_review_date-2",
+        "standing": "current",
+        "member_answer_refs": [
+          "answer-open_new_preparation_after_close-krish_review_date-1",
+          "answer-open_new_preparation_after_close-krish_review_date-2"
+        ],
+        "member_set_seal": "00ee3d2f425768bdfd90fda9ecbe89fc05cb2fc4df194913a9633d5d22f35dd0",
+        "authoritative_head_fingerprint": "c15625e549e38b2d3c6b1f383e568749c9e44ec8ad94ad2166fdde510ee0a63c"
+      }
+    ]
+  }
+}

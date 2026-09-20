@@ -96,7 +96,13 @@ import {
   callLLMWithFallback,
   providerFromModel,
 } from "../_shared/llm-fallback.ts";
-import { checkDailySoftCap, recordAiUsage } from "../_shared/ai-usage.ts";
+import { estimateCostUsd } from "../_shared/ai-usage.ts";
+import { matchesExpectedSupabaseProject } from "../_shared/project-binding.ts";
+import {
+  isJsonRequest,
+  readJsonWithLimit,
+  sha256Identifier,
+} from "../_shared/public-request-guard.ts";
 import {
   collectClaims,
   parseUnpointedImperatives,
@@ -144,12 +150,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const EXPECTED_PROJECT_ID = "bkyuxvschuwngtcdhsyg";
-
 /** Below this there is nothing to review, and a review of nothing is theatre. */
 const MIN_ARTEFACT_CHARS = 120;
 /** Above this we are paying to reread; the person can review a section instead. */
 const MAX_ARTEFACT_CHARS = 24_000;
+const MAX_REQUEST_BYTES = 32_000;
+const REQUEST_ID = /^[A-Za-z0-9_-]{16,120}$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const REQUEST_KEYS = new Set(["request_id", "artifact_id", "body", "surface", "lenses"]);
 /** Evidence rows offered as pointer targets and masked as verbatim spans. */
 const MAX_EVIDENCE = 60;
 /** Their graded pieces considered for retrieval. Training only. */
@@ -242,13 +250,35 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
+  let markFailed: ((message: string) => Promise<void>) | null = null;
   try {
+    if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+    if (!isJsonRequest(req.headers)) return json({ error: "content_type_must_be_json" }, 415);
+
+    let payload: Record<string, unknown>;
+    try {
+      const raw = await readJsonWithLimit(req, MAX_REQUEST_BYTES);
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("invalid_shape");
+      payload = raw as Record<string, unknown>;
+    } catch (error) {
+      if (error instanceof Error && error.message === "request_too_large") {
+        return json({ error: "request_too_large" }, 413);
+      }
+      return json({ error: "invalid_json" }, 400);
+    }
+    if (Object.keys(payload).some((key) => !REQUEST_KEYS.has(key))) {
+      return json({ error: "unexpected_field" }, 400);
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    if (!supabaseUrl.includes(EXPECTED_PROJECT_ID)) {
-      throw new Error("Database configuration error (unexpected project).");
+    const expectedProjectRef = Deno.env.get("EXPECTED_SUPABASE_PROJECT_REF") ?? "";
+    const rpcCapability = Deno.env.get("CRITIQUE_ARTEFACT_RPC_SECRET") ?? "";
+    if (!matchesExpectedSupabaseProject(supabaseUrl, expectedProjectRef)) {
+      log.error("database configuration does not match the configured project");
+      return json({ error: "database_configuration_error" }, 503);
     }
+    if (rpcCapability.length < 32) return json({ error: "critique_configuration_error" }, 503);
 
     const authHeader = req.headers.get("Authorization") ?? "";
     if (!authHeader) return json({ error: "Missing Authorization header" }, 401);
@@ -261,37 +291,18 @@ Deno.serve(async (req) => {
     const userId = userData?.user?.id ?? null;
     if (userErr || !userId) return json({ error: "Unauthorized" }, 401);
 
-    // Service-role client for the background writes: the response returns
-    // before the critique finishes, so the caller's JWT is not a safe thing to
-    // still be holding. Every write stamps user_id explicitly, and RLS stays
-    // the boundary for every read the frontend does.
-    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
-
-    const payload = await req.json().catch(() => ({}));
-
-    // A retried POST returns the run it already started, never a second one.
-    const replayId = typeof payload?.run_id === "string" ? payload.run_id.trim() : "";
-    if (replayId) {
-      const { data: existing } = await userClient
-        .from("harness_runs")
-        .select("id, kind, stage, status, error")
-        .eq("id", replayId)
-        .maybeSingle();
-      if (!existing || existing.kind !== "critique") {
-        return json({ error: "That is not one of your reviews." }, 404);
-      }
-      return json({
-        run_id: existing.id,
-        stage: existing.stage,
-        status: existing.status,
-        idempotent: true,
-      }, 200);
+    const requestId = typeof payload.request_id === "string" ? payload.request_id.trim() : "";
+    const artifactId = typeof payload.artifact_id === "string" ? payload.artifact_id.trim() : "";
+    const pasted = typeof payload.body === "string" ? payload.body : "";
+    const askedSurface = typeof payload.surface === "string" ? payload.surface.trim() : "";
+    const lenses = readLenses(payload.lenses);
+    if (!REQUEST_ID.test(requestId)) return json({ error: "request_id_required" }, 400);
+    if (artifactId && !UUID.test(artifactId)) return json({ error: "invalid_artifact_id" }, 400);
+    if (askedSurface.length > 120 || /[\u0000-\u001f]/.test(askedSurface)) {
+      return json({ error: "invalid_surface" }, 400);
     }
-
-    const artifactId = typeof payload?.artifact_id === "string" ? payload.artifact_id.trim() : "";
-    const pasted = typeof payload?.body === "string" ? payload.body : "";
-    const askedSurface = typeof payload?.surface === "string" ? payload.surface.trim() : "";
-    const lenses = readLenses(payload?.lenses);
+    if (artifactId && pasted.trim()) return json({ error: "choose_artifact_or_body" }, 400);
+    if (!artifactId && !pasted.trim()) return json({ error: "body_or_artifact_required" }, 400);
 
     let artefact = pasted;
     let checked = askedSurface || "a piece of work";
@@ -328,34 +339,61 @@ Deno.serve(async (req) => {
       }, 400);
     }
 
-    const softCap = await checkDailySoftCap(admin, userId, "critique-artefact");
-
-    const { data: runRow, error: runErr } = await userClient
-      .from("harness_runs")
-      .insert({
-        user_id: userId,
-        kind: "critique",
-        surface: askedSurface || null,
-        status: "running",
-        stage: "loading",
-        stage_detail: {
-          source: authored ? "artifact" : "paste",
-          artifact_id: artifactId || null,
-          generator_provider: generatorProvider,
-          checked,
-          lenses_asked: lenses,
-        },
-      })
-      .select("id")
-      .single();
-    if (runErr || !runRow) {
-      throw new Error(`harness_runs insert failed: ${runErr?.message ?? "unknown"}`);
+    const bodySha = await sha256Identifier(artefact);
+    const requestFingerprint = await sha256Identifier(JSON.stringify({
+      artifact_id: artifactId || null,
+      body_sha256: bodySha,
+      surface: askedSurface,
+      lenses,
+    }));
+    const { data: reservation, error: reserveError } = await userClient.rpc(
+      "reserve_critique_artefact_run",
+      {
+        p_request_id: requestId,
+        p_request_fingerprint: requestFingerprint,
+        p_source_type: authored ? "artifact" : "paste",
+        p_artifact_id: artifactId || null,
+        p_body_sha256: bodySha,
+        p_surface: askedSurface,
+        p_lenses: lenses,
+        p_capability: rpcCapability,
+      },
+    );
+    if (reserveError || !reservation) {
+      const message = reserveError?.message ?? "unknown";
+      if (message.includes("critique_artefact_request_conflict")) return json({ error: "request_id_conflict" }, 409);
+      if (message.includes("critique_artefact_daily_run_limit")) return json({ error: "daily_run_limit" }, 429);
+      if (message.includes("critique_artefact_daily_spend_limit")) return json({ error: "daily_spend_limit" }, 429);
+      if (message.includes("critique_artefact_artifact_not_owned")) return json({ error: "artifact_not_found" }, 404);
+      if (message.includes("critique_artefact_artifact_changed")) return json({ error: "source_changed_retry" }, 409);
+      throw new Error(`critique_reservation_failed:${reserveError?.code ?? "unknown"}`);
     }
-    const runId = runRow.id as string;
+    const runId = typeof reservation.run_id === "string" ? reservation.run_id : "";
+    if (!runId) throw new Error("critique_reservation_invalid");
+    if (reservation.idempotent === true) {
+      return json({
+        run_id: runId,
+        stage: reservation.stage,
+        status: reservation.status,
+        result: reservation.result ?? {},
+        idempotent: true,
+      }, reservation.status === "running" ? 202 : 200);
+    }
 
-    const work = critique(admin, {
+    markFailed = async (message: string) => {
+      await userClient.rpc("finish_critique_artefact_run", {
+        p_run_id: runId,
+        p_stage_detail: { failed_at: new Date().toISOString() },
+        p_error: message.slice(0, 1000),
+        p_capability: rpcCapability,
+      });
+    };
+
+    const work = critique(userClient, {
       runId,
       userId,
+      bodySha,
+      rpcCapability,
       artefact,
       checked,
       surface: askedSurface,
@@ -371,16 +409,21 @@ Deno.serve(async (req) => {
       await work;
     }
 
-    return json({ run_id: runId, stage: "loading", soft_cap: softCap }, 202);
+    return json({ run_id: runId, stage: "loading" }, 202);
   } catch (e) {
+    const message = e instanceof Error ? e.message : "critique_failed";
+    if (markFailed) await markFailed(message === "source_changed_retry" ? message : "review_failed").catch(() => undefined);
     log.error("critique-artefact handler error", { error: e });
-    return json({ error: e instanceof Error ? e.message : "Unknown error" }, 500);
+    if (message === "source_changed_retry") return json({ error: message }, 409);
+    return json({ error: "critique_failed" }, 500);
   }
 });
 
 interface CritiqueParams {
   runId: string;
   userId: string;
+  bodySha: string;
+  rpcCapability: string;
   artefact: string;
   checked: string;
   surface: string;
@@ -395,8 +438,18 @@ interface CritiqueParams {
  * The background pass. Every exit writes a terminal stage: a run stuck on
  * 'lenses' forever is worse than a run that says it stopped and why.
  */
-async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<void> {
-  const { runId, userId, checked, generatorProvider, authored, lenses, log } = params;
+async function critique(client: SupabaseClient, params: CritiqueParams): Promise<void> {
+  const {
+    runId,
+    userId,
+    bodySha,
+    rpcCapability,
+    checked,
+    generatorProvider,
+    authored,
+    lenses,
+    log,
+  } = params;
   const wants = (lens: LensName): boolean => lenses.includes(lens);
   let artefact = params.artefact;
   const detail: Record<string, unknown> = {};
@@ -404,33 +457,27 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
 
   const setStage = async (stage: string, extra: Record<string, unknown> = {}) => {
     Object.assign(detail, extra);
-    await admin
-      .from("harness_runs")
-      .update({ stage, stage_detail: { ...detail }, updated_at: new Date().toISOString() })
-      .eq("id", runId);
+    const { error } = await client.rpc("advance_critique_artefact_run", {
+      p_run_id: runId,
+      p_stage: stage,
+      p_stage_detail: { ...detail },
+      p_capability: rpcCapability,
+    });
+    if (error) throw new Error(`critique_stage_failed:${error.code ?? "unknown"}`);
   };
 
-  const finish = async (
-    stage: string,
-    status: "done" | "failed",
-    extra: Record<string, unknown> = {},
-    error?: string,
-  ) => {
-    Object.assign(detail, extra);
-    await admin
-      .from("harness_runs")
-      .update({
-        stage,
-        status,
-        ...(error ? { error } : {}),
-        stage_detail: { ...detail },
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", runId);
+  const fail = async (message: string) => {
+    const { error } = await client.rpc("finish_critique_artefact_run", {
+      p_run_id: runId,
+      p_stage_detail: { ...detail, failed_at: new Date().toISOString() },
+      p_error: message.slice(0, 1000),
+      p_capability: rpcCapability,
+    });
+    if (error) log.error("failed to persist terminal critique state", { code: error.code ?? "unknown" });
   };
 
   try {
-    const { data: seed } = await admin
+    const { data: seed } = await client
       .from("harness_runs")
       .select("stage_detail")
       .eq("id", runId)
@@ -440,9 +487,9 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
     // --- 1. loading: the standard, the evidence, their graded work -----------
     await setStage("loading");
 
-    const { criteria, surface } = await loadCriteria(admin, userId, params.surface);
-    const evidence = await loadEvidence(admin, userId);
-    const graded = await loadGradedItems(admin, userId);
+    const { criteria, surface } = await loadCriteria(client, userId, params.surface);
+    const evidence = await loadEvidence(client, userId);
+    const graded = await loadGradedItems(client, userId);
 
     const capped = capCriteria(criteria);
     if (capped.overCap) {
@@ -572,7 +619,14 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
     const settled = await Promise.all(
       calls.map(async (call) => {
         try {
-          const raw = await callJson(admin, userId, call.prompt, call.lens, call.providers);
+          const raw = await callJson(
+            client,
+            runId,
+            rpcCapability,
+            call.prompt,
+            call.lens,
+            call.providers,
+          );
           return { lens: call.lens, raw, error: null as string | null };
         } catch (err) {
           log.warn("lens failed", { lens: call.lens, error: err });
@@ -667,7 +721,7 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
     let meta: LensJson | null = null;
     if (metaJudges) {
       try {
-        meta = await callJson(admin, userId, metaPrompt, "meta");
+        meta = await callJson(client, runId, rpcCapability, metaPrompt, "meta");
       } catch (err) {
         log.warn("meta judge failed", { error: err });
       }
@@ -709,7 +763,9 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
     const needing = breaksNeedingRevision(judgement);
     if (needing.length > 0 && passes < MAX_CRITIQUE_PASSES) {
       passes += 1;
-      const repaired = await repair(admin, userId, {
+      const repaired = await repair(client, {
+        runId,
+        rpcCapability,
         artefact,
         surface,
         needing,
@@ -797,7 +853,18 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
       surface,
     };
 
-    await finish("ready", "done", { result });
+    const { error: finalizeError } = await client.rpc("finalize_critique_artefact_run", {
+      p_run_id: runId,
+      p_body_sha256: bodySha,
+      p_result: result,
+      p_capability: rpcCapability,
+    });
+    if (finalizeError) {
+      if (finalizeError.message.includes("critique_artefact_stale_source")) {
+        throw new Error("source_changed_retry");
+      }
+      throw new Error(`critique_finalization_failed:${finalizeError.code ?? "unknown"}`);
+    }
     log.info("critique ready", {
       criteria: capped.scored.length,
       verdicts: judgement.length,
@@ -808,12 +875,10 @@ async function critique(admin: SupabaseClient, params: CritiqueParams): Promise<
     });
   } catch (e) {
     log.error("critique failed", { error: e });
-    await finish(
-      "failed",
-      "failed",
-      {},
-      e instanceof Error ? e.message : "The review could not be finished.",
-    );
+    const message = e instanceof Error && e.message === "source_changed_retry"
+      ? "source_changed_retry"
+      : "review_failed";
+    await fail(message);
   }
 }
 
@@ -885,6 +950,8 @@ function runScrub(
 // ---------------------------------------------------------------------------
 
 interface RepairParams {
+  runId: string;
+  rpcCapability: string;
   artefact: string;
   surface: string;
   needing: ScoredVerdict[];
@@ -912,8 +979,7 @@ interface RepairResult {
  * write into a document that was being gated.
  */
 async function repair(
-  admin: SupabaseClient,
-  userId: string,
+  client: SupabaseClient,
   params: RepairParams,
 ): Promise<RepairResult> {
   const fixes = new Map<string, string>();
@@ -931,7 +997,13 @@ async function repair(
 
   let answer: LensJson | null = null;
   try {
-    answer = await callJson(admin, userId, prompt, "revision");
+    answer = await callJson(
+      client,
+      params.runId,
+      params.rpcCapability,
+      prompt,
+      "revision",
+    );
   } catch (err) {
     params.log.warn("revision pass failed", { error: err });
   }
@@ -1013,12 +1085,14 @@ interface LensJson {
 }
 
 async function callJson(
-  admin: SupabaseClient,
-  userId: string,
+  client: SupabaseClient,
+  runId: string,
+  rpcCapability: string,
   prompt: BuiltPrompt,
   purpose: string,
   providers?: LlmProvider[],
 ): Promise<LensJson> {
+  const startedAt = Date.now();
   const response = await callLLMWithFallback(
     {
       messages: [
@@ -1033,17 +1107,30 @@ async function callJson(
     { useCache: false, ...(providers ? { providers } : {}) },
   );
 
-  await recordAiUsage(admin, {
-    userId,
+  const provider = providerFromModel(response.model);
+  const estimatedCost = estimateCostUsd({
     functionName: "critique-artefact",
-    provider: providerFromModel(response.model),
+    provider,
     model: response.model,
     purpose: `critique-${purpose}`,
     promptTokens: response.usage?.prompt_tokens,
     completionTokens: response.usage?.completion_tokens,
     totalTokens: response.usage?.total_tokens,
-    status: "ok",
-  }).catch(() => undefined);
+    latencyMs: Date.now() - startedAt,
+  });
+  const { error: usageError } = await client.rpc("record_critique_artefact_usage", {
+    p_run_id: runId,
+    p_purpose: purpose,
+    p_provider: provider,
+    p_model: response.model,
+    p_prompt_tokens: response.usage?.prompt_tokens ?? 0,
+    p_completion_tokens: response.usage?.completion_tokens ?? 0,
+    p_total_tokens: response.usage?.total_tokens ?? 0,
+    p_latency_ms: Date.now() - startedAt,
+    p_est_cost_usd: estimatedCost,
+    p_capability: rpcCapability,
+  });
+  if (usageError) throw new Error(`critique_usage_receipt_failed:${usageError.code ?? "unknown"}`);
 
   return JSON.parse(response.content || "{}") as LensJson;
 }

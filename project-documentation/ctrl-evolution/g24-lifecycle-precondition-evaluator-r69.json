@@ -1,0 +1,404 @@
+{
+  "schema_version": "ctrl.g24.lifecycle-precondition-evaluator-structural-gate.r69.v1",
+  "round": "R69",
+  "recorded_on": "2026-09-15",
+  "status": "structural_executable_loading_mechanics_only",
+  "immutable_parent": {
+    "commit": "fe4a4ee5780bc3ecf919766e89931987f97f4e30",
+    "tree": "94c6bf07a89196deab2bf3913e17dbaad9535968",
+    "r66_machine_sha256": "b930cff4b346aad614cc0a576ab7160a7846a5f1e9f5cb27f864d286fd32a920",
+    "r66_machine_blob": "3cfdf96182f794b5221663170413315b7630219f",
+    "r67_receipt_json_blob": "9da9ddf58886096bdb32789d57877b4818b3ed20",
+    "r67_receipt_markdown_blob": "b271369ff25b8ce69b8a4b7b27502ccea224daa7",
+    "r67_checker_blob": "22b0a5fc2ac602bd34c5ced9def6b6266a49bcc9"
+  },
+  "implementation_base": {
+    "commit": "c8e9d2f88f187d221ccdb4e142a67db82a14e571",
+    "tree": "cee3f1abae715b8ba1a8cc4cb97e383e6538d8ad",
+    "relationship": "R68_frozen_commit_plus_research_assessment_only"
+  },
+  "rejected_predecessor": {
+    "round": "R68",
+    "commit": "06b96688bdfc9399bff3852884e5a3e934e37f95",
+    "tree": "4580008f3fabadf1cf3e039d02291dfb2b02e799",
+    "machine_path": "project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r68.json",
+    "machine_sha256": "5a121d48647d848446276394f0efc9f68d92c371e56617635125d99e15117266",
+    "source_sha256": "fc2a93586fdbe42aa9f15e3a1990142403edb0a7df512881ffd9d5e18fad9104",
+    "source_git_blob_oid": "7985b73dd5c41ff7f51d03cc84ffe43083878c7e",
+    "founder_lock_identity": "4ccc949ac84ab2ab7ce357088230170a7be8348d8162e4d69ab5738c73d03b06",
+    "review_status": "vetoed_preserved_not_authority",
+    "veto_reasons": [
+      "identifier_contract_mismatch",
+      "input_byte_limit_not_enforced",
+      "caller_owned_proxy_traps_executed",
+      "source_inspector_mischaracterized_as_isolation"
+    ]
+  },
+  "frozen_inputs": {
+    "r66_contract": {
+      "path": "project-documentation/ctrl-evolution/g24-trusted-ingress-contract-r66.json",
+      "sha256": "b930cff4b346aad614cc0a576ab7160a7846a5f1e9f5cb27f864d286fd32a920"
+    },
+    "r67_acceptance_receipt": {
+      "path": "project-documentation/ctrl-evolution/g24-trusted-ingress-r66-acceptance-receipt-r67.json",
+      "sha256": "138fa24ebfaa94b69f6f3da8dc0fdf88b9d01a9252c003cd17bb9d5e56225c98"
+    },
+    "r68_rejected_machine": {
+      "path": "project-documentation/ctrl-evolution/g24-lifecycle-precondition-evaluator-r68.json",
+      "sha256": "5a121d48647d848446276394f0efc9f68d92c371e56617635125d99e15117266"
+    }
+  },
+  "executable_artifact": {
+    "schema_version": "ctrl.g24.evaluator-executable-artifact.r69.v1",
+    "source_path": "supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69.mjs",
+    "source_git_blob_oid": "ac78c1410b89551a1adafcf4fbba97c9ac4dd748",
+    "canonical_executable_bytes_sha256": "6d47389ea5cadcfc8e1c3da9dd8d594ed72323ad994e353b5d94e5886316bdb9",
+    "canonical_executable_bytes_length": 7452,
+    "executable_content_ref": "6d47389ea5cadcfc8e1c3da9dd8d594ed72323ad994e353b5d94e5886316bdb9",
+    "module_format": "ecmascript_module_utf8_import_free",
+    "entrypoint": "dispatchEvaluateLifecyclePreconditionsStructuralR69",
+    "export_abi": {
+      "exact_export_names": [
+        "dispatchEvaluateLifecyclePreconditionsStructuralR69"
+      ],
+      "input_schema_version": "ctrl.g24.executable-input.evaluate-lifecycle-preconditions.r69.v1",
+      "output_schema_version": "ctrl.g24.executable-output.evaluate-lifecycle-preconditions.r69.v1",
+      "result_schema_version": "ctrl.g24.result.evaluate-lifecycle-preconditions.r63.v1",
+      "allowed_statuses": [
+        "hold",
+        "verified_not_runnable"
+      ],
+      "hold_code": "evaluator_artifact_hold",
+      "writes": [],
+      "result": null,
+      "evidence_rows": [],
+      "semantic_success_branch": "absent_and_forbidden"
+    },
+    "founder_lock": {
+      "schema_version": "ctrl.g24.evaluator-source-lock.r69.v1",
+      "domain_ascii": "CTRL-G24-EVALUATOR-SOURCE-LOCK-R69",
+      "canonical_encoding": "unicode_codepoint_sorted_canonical_json_utf8",
+      "preimage": {
+        "source_path": "supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69.mjs",
+        "source_git_blob_oid": "ac78c1410b89551a1adafcf4fbba97c9ac4dd748",
+        "canonical_executable_bytes_sha256": "6d47389ea5cadcfc8e1c3da9dd8d594ed72323ad994e353b5d94e5886316bdb9",
+        "canonical_executable_bytes_length": 7452,
+        "executable_content_ref": "6d47389ea5cadcfc8e1c3da9dd8d594ed72323ad994e353b5d94e5886316bdb9",
+        "module_format": "ecmascript_module_utf8_import_free",
+        "entrypoint": "dispatchEvaluateLifecyclePreconditionsStructuralR69",
+        "export_abi": {
+          "exact_export_names": [
+            "dispatchEvaluateLifecyclePreconditionsStructuralR69"
+          ],
+          "input_schema_version": "ctrl.g24.executable-input.evaluate-lifecycle-preconditions.r69.v1",
+          "output_schema_version": "ctrl.g24.executable-output.evaluate-lifecycle-preconditions.r69.v1",
+          "result_schema_version": "ctrl.g24.result.evaluate-lifecycle-preconditions.r63.v1",
+          "allowed_statuses": [
+            "hold",
+            "verified_not_runnable"
+          ],
+          "hold_code": "evaluator_artifact_hold",
+          "writes": [],
+          "result": null,
+          "evidence_rows": [],
+          "semantic_success_branch": "absent_and_forbidden"
+        }
+      },
+      "founder_lock_identity": "0461357500373c0956c7db887718256b1f3e014500194be009059a0ce1a66ca1",
+      "status": "founder_lockable_candidate_not_runtime_authority"
+    },
+    "descriptor_content_ref": "c3cd75460afef1c484221d763278b3cb44b632c13a7b012abc2d894a37b4b858",
+    "descriptor_bytes_sha256": "c3cd75460afef1c484221d763278b3cb44b632c13a7b012abc2d894a37b4b858",
+    "descriptor_is_separate_compatibility_metadata_not_executable_code": true
+  },
+  "dispatch_input_schema": {
+    "schema_version": "ctrl.g24.executable-input.evaluate-lifecycle-preconditions.r69.v1",
+    "type": "object",
+    "exact_keys": [
+      "case_ref",
+      "evaluated_at",
+      "intent",
+      "operation_class",
+      "operation_id",
+      "schema_version",
+      "selected_result_schema_version",
+      "semantic_predicate_authority",
+      "snapshot_fingerprint",
+      "subject_ref",
+      "workspace_ref"
+    ],
+    "required": [
+      "case_ref",
+      "evaluated_at",
+      "intent",
+      "operation_class",
+      "operation_id",
+      "schema_version",
+      "selected_result_schema_version",
+      "semantic_predicate_authority",
+      "snapshot_fingerprint",
+      "subject_ref",
+      "workspace_ref"
+    ],
+    "additional_properties": false,
+    "properties": {
+      "case_ref": {
+        "type": "identifier",
+        "normalization": "NFC",
+        "must_equal_trimmed_value": true,
+        "min_utf8_bytes": 1,
+        "max_utf8_bytes": 256,
+        "forbidden": [
+          "C0_controls",
+          "C1_controls",
+          "bidi_controls",
+          "isolate_controls",
+          "zero_width_controls",
+          "BOM"
+        ]
+      },
+      "evaluated_at": {
+        "type": "canonical_timestamp"
+      },
+      "intent": {
+        "schema_ref": "operation_specs.evaluate_lifecycle_preconditions.intent",
+        "schema_version": "ctrl.g24.intent.evaluate-lifecycle-preconditions.r13.v1"
+      },
+      "operation_class": {
+        "const": "evaluate_lifecycle_preconditions"
+      },
+      "operation_id": {
+        "type": "identifier",
+        "normalization": "NFC",
+        "must_equal_trimmed_value": true,
+        "min_utf8_bytes": 1,
+        "max_utf8_bytes": 256,
+        "forbidden": [
+          "C0_controls",
+          "C1_controls",
+          "bidi_controls",
+          "isolate_controls",
+          "zero_width_controls",
+          "BOM"
+        ]
+      },
+      "schema_version": {
+        "const": "ctrl.g24.executable-input.evaluate-lifecycle-preconditions.r69.v1"
+      },
+      "selected_result_schema_version": {
+        "const": "ctrl.g24.result.evaluate-lifecycle-preconditions.r63.v1"
+      },
+      "semantic_predicate_authority": {
+        "const": "UNAVAILABLE"
+      },
+      "snapshot_fingerprint": {
+        "type": "sha256"
+      },
+      "subject_ref": {
+        "type": "identifier",
+        "normalization": "NFC",
+        "must_equal_trimmed_value": true,
+        "min_utf8_bytes": 1,
+        "max_utf8_bytes": 256,
+        "forbidden": [
+          "C0_controls",
+          "C1_controls",
+          "bidi_controls",
+          "isolate_controls",
+          "zero_width_controls",
+          "BOM"
+        ]
+      },
+      "workspace_ref": {
+        "type": "identifier",
+        "normalization": "NFC",
+        "must_equal_trimmed_value": true,
+        "min_utf8_bytes": 1,
+        "max_utf8_bytes": 256,
+        "forbidden": [
+          "C0_controls",
+          "C1_controls",
+          "bidi_controls",
+          "isolate_controls",
+          "zero_width_controls",
+          "BOM"
+        ]
+      }
+    }
+  },
+  "dispatch_output_schema": {
+    "schema_version": "ctrl.g24.executable-output.evaluate-lifecycle-preconditions.r69.v1",
+    "type": "object",
+    "exact_keys": [
+      "evidence_rows",
+      "hold_code",
+      "result",
+      "schema_version",
+      "status",
+      "writes"
+    ],
+    "required": [
+      "evidence_rows",
+      "hold_code",
+      "result",
+      "schema_version",
+      "status",
+      "writes"
+    ],
+    "additional_properties": false,
+    "properties": {
+      "evidence_rows": {
+        "const": []
+      },
+      "hold_code": {
+        "const": "evaluator_artifact_hold"
+      },
+      "result": {
+        "const": null
+      },
+      "schema_version": {
+        "const": "ctrl.g24.executable-output.evaluate-lifecycle-preconditions.r69.v1"
+      },
+      "status": {
+        "type": "enum",
+        "values": [
+          "hold",
+          "verified_not_runnable"
+        ]
+      },
+      "writes": {
+        "const": []
+      }
+    }
+  },
+  "r66_selection_binding": {
+    "schema_version": "ctrl.g24.evaluator-selection-binding.r69.v1",
+    "operation_class": "evaluate_lifecycle_preconditions",
+    "query_schema_version": "ctrl.g24.evaluator-registry-selection-query.r66.v1",
+    "query_fingerprint": "5e923e084bc16da3a81d32dd00e8b4010ce1abf791b6930defe64a1661008f8e",
+    "proof_schema_version": "ctrl.g24.evaluator-registry-selection-proof.r66.v1",
+    "proof_fingerprint": "5fe7dd708cd0e49e5b79a7170d4519035bf0ceba20bdf4ae9b017a927a270922",
+    "policy_lineage_ref": "r62_policy_lineage",
+    "evaluated_at": "2031-01-01T00:00:00.000Z",
+    "snapshot_ref": "351cd38c62c22ed655faa94473b14bef4d39899c6cb19822e4cb7bf7c79532be",
+    "snapshot_sha256": "351cd38c62c22ed655faa94473b14bef4d39899c6cb19822e4cb7bf7c79532be",
+    "registry_set_seal": "5a951fcc51e0d64dab1c3ad66ec24a0fa3850442bf20085f88eb8c3ff6c89826",
+    "member_content_ref": "f240fb6addeaf95e4942e20dccd1b18810fa79b28f7a79777775ab1cbf8a0356",
+    "member_row_version_ref": "2c3fb3b8c53055619f77805fb624adebb7358d23b7186160b8c112d6f8fbae6f",
+    "member_fingerprint": "d2533cc3cf9408941916c72e6e163363c78988570379a2b6a559b59f86cfb733",
+    "selected_result_schema_version": "ctrl.g24.result.evaluate-lifecycle-preconditions.r63.v1",
+    "proof_declares_metadata_selection_is_not_execution_authority": true,
+    "verified_before_executable_bytes_are_loaded": true
+  },
+  "isolated_harness": {
+    "schema_version": "ctrl.g24.evaluator-isolated-harness.r69.v1",
+    "harness_path": "scripts/run-ctrl-g24-lifecycle-evaluator-r69-harness.mjs",
+    "loader": "data_url_from_exact_rehashed_executable_bytes_in_bounded_child_process",
+    "max_input_bytes": 65536,
+    "input_boundary": "primitive_canonical_json_text_only_measured_as_utf8_bytes_no_caller_owned_object_reflection",
+    "max_request_bytes": 131072,
+    "max_output_bytes": 65536,
+    "timeout_ms": 1500,
+    "exact_export_surface_required": true,
+    "static_imports": "forbidden",
+    "static_inspection_role": "lint_only_not_isolation_or_authority",
+    "exact_pinned_source_identity_is_the_executable_authority": true,
+    "dynamic_import_eval_function_constructor_and_ambient_io_time_random_process_or_global_escape": "forbidden_in_pinned_source",
+    "invalid_artifact_selection_input_timeout_throw_oversize_or_nondeterminism": "same_closed_no_write_evaluator_artifact_hold"
+  },
+  "sample_dispatch_input": {
+    "schema_version": "ctrl.g24.executable-input.evaluate-lifecycle-preconditions.r69.v1",
+    "operation_class": "evaluate_lifecycle_preconditions",
+    "operation_id": "r69_structural_probe_001",
+    "workspace_ref": "r69_workspace",
+    "subject_ref": "r69_subject",
+    "case_ref": "r69_case",
+    "snapshot_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111",
+    "evaluated_at": "2031-01-01T00:00:00.000Z",
+    "intent": {
+      "transition_id": "open_preparation",
+      "predecessor_lifecycle_version_ref": null,
+      "evidence_input_set_seal": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "selected_result_schema_version": "ctrl.g24.result.evaluate-lifecycle-preconditions.r63.v1",
+    "semantic_predicate_authority": "UNAVAILABLE"
+  },
+  "expected_verified_dispatch_output": {
+    "schema_version": "ctrl.g24.executable-output.evaluate-lifecycle-preconditions.r69.v1",
+    "status": "verified_not_runnable",
+    "hold_code": "evaluator_artifact_hold",
+    "writes": [],
+    "result": null,
+    "evidence_rows": []
+  },
+  "expected_hold_dispatch_output": {
+    "schema_version": "ctrl.g24.executable-output.evaluate-lifecycle-preconditions.r69.v1",
+    "status": "hold",
+    "hold_code": "evaluator_artifact_hold",
+    "writes": [],
+    "result": null,
+    "evidence_rows": []
+  },
+  "static_reachability_boundary": {
+    "only_allowed_importers": [
+      "supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69.test.ts",
+      "scripts/run-ctrl-g24-lifecycle-evaluator-r69-harness.mjs",
+      "scripts/check-ctrl-g24-lifecycle-evaluator-r69.mjs"
+    ],
+    "forbidden_live_or_product_import_roots": [
+      "src",
+      "supabase/functions"
+    ],
+    "explicit_exceptions_inside_supabase_functions": [
+      "supabase/functions/_shared/g24-lifecycle-precondition-evaluator.r69.test.ts"
+    ],
+    "no_import_from_g24_headless_crossing_decision_engine_ui_edge_or_deploy": true
+  },
+  "semantic_boundary": {
+    "executable_loading_mechanics": "implemented_and_testable_in_R69",
+    "semantic_predicate_authority": "UNAVAILABLE",
+    "typed_fact_bundle": "not_defined_or_implemented",
+    "satisfied_or_success_branch": "forbidden",
+    "r63_result_generation": "forbidden",
+    "r13_evidence_row_generation": "forbidden",
+    "live_registry_completeness": "unproved",
+    "serializable_runtime_selection": "unproved",
+    "database_write_and_restart_integration": "unproved",
+    "runtime_edge_ui_deployment_or_external_action": "none"
+  },
+  "open_founder_decision": {
+    "schema_version": "ctrl.g24.lifecycle-precondition-predicate-open-decision.r69.v1",
+    "status": "open_not_decided_or_implemented",
+    "recommended_option": "server_derived_closed_structured_trusted_read_set_with_13_discriminated_precondition_fact_variants",
+    "alternative_option": "separately_governed_signed_satisfaction_assertions",
+    "rejected_option": "opaque_human_text_presence_or_natural_language_interpretation_as_satisfaction",
+    "public_r63_intent_remains_unchanged_in_both_viable_options": true,
+    "result_or_evidence_success_branch_requires_separate_founder_choice_and_gate": true
+  },
+  "mutation_families": [
+    "same_metadata_different_executable_bytes",
+    "descriptor_as_code",
+    "truncated_or_alternate_bytes",
+    "hash_ref_or_length_splice",
+    "wrong_missing_or_extra_entrypoint_or_export",
+    "cross_operation_stale_policy_or_time_selection",
+    "snapshot_set_seal_or_member_identity_splice",
+    "timeout_throw_or_oversized_output",
+    "prototype_accessor_cycle_or_unsupported_input",
+    "non_NFC_over_256_UTF8_bytes_C1_bidi_isolate_zero_width_or_BOM_identifier",
+    "caller_owned_proxy_object_at_serialized_boundary",
+    "serialized_input_over_65536_bytes_or_request_over_131072_bytes",
+    "constructor_global_escape_in_alternate_source",
+    "nondeterministic_output",
+    "live_or_product_import_reachability",
+    "invented_semantic_success_result_or_evidence_write"
+  ],
+  "migration_dependency_and_rollback": {
+    "package_dependency_change": "none",
+    "package_lock_change": "forbidden",
+    "database_migration_or_backfill": "none",
+    "live_registry_mutation": "none",
+    "runtime_route_ui_deploy_or_external_action": "none",
+    "rollback": "revert_the_single_R69_commit; R67_remains_the_accepted_metadata_only_checkpoint"
+  }
+}

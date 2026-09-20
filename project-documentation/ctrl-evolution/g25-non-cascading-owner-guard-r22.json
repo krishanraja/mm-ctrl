@@ -1,0 +1,39 @@
+{
+  "schema_version": "ctrl.g25.non-cascading-owner-guard.r22.v1",
+  "record_id": "G25-NON-CASCADING-OWNER-GUARD-R22",
+  "status": "local_fail_closed_guard_verified_not_custody_solution",
+  "policy_decision_ref": "DEC-20260917-g25-owner-subject-separation-r19",
+  "overlay_ref": "G25-ERASURE-OWNER-POLICY-OVERLAY-R21",
+  "mechanism": "Replace the four auth.users owner foreign-key cascades with RESTRICT in a non-migration local candidate so an auth-user delete cannot destroy a differently-subjected Brain or its prepared evidence.",
+  "guarded_constraints": [
+    "brain_workspaces_owner_id_fkey",
+    "brain_prepared_receipts_owner_id_fkey",
+    "brain_prepared_authority_corrections_owner_id_fkey",
+    "brain_prepared_subject_erasure_tombstones_owner_id_fkey"
+  ],
+  "behavioral_proof": {
+    "differently_subjected_owner_delete": "blocked with all six protected fixture records unchanged",
+    "workspace_owner_transfer_only": "still blocked because historical prepared custody remains bound to the former operator",
+    "role_only_operator_delete": "succeeds, removes the role and preserves the customer workspace",
+    "subject_delete_after_workspace_transfer": "removes the subject, workspace and subject-scoped prepared data",
+    "weakened_cascade_control": "fails as required"
+  },
+  "artifacts": {
+    "candidate_sql": "supabase/candidates/g25_non_cascading_owner_guard_r22.sql",
+    "candidate_sql_sha256": "da7f9745ac018f142db4b66cb3ac0aabfc0ca8dfbd14995a77a08c6503aef756",
+    "runner": "scripts/run-ctrl-g25-non-cascading-owner-guard-r22.mjs",
+    "runner_sha256": "97d525b80a9da30f7d65f2266b110d6703ab91233b7c1ab0e06de755029ea702",
+    "runtime": "@electric-sql/pglite@0.5.8"
+  },
+  "discovered_limit": "RESTRICT prevents catastrophic cascade but does not complete transfer. Prepared receipts, corrections and tombstones still bind owner_id into historical or cryptographic scope, so deleting the former operator remains held after workspace ownership changes.",
+  "next_gate": "Separate mutable operator access and current custody from immutable historical and cryptographic identity, then prove transfer, removal and subject erasure across multiple identities without rewriting evidence or restoring removed access.",
+  "not_authorized": [
+    "migration creation or execution",
+    "linked or production database use",
+    "auth-user deletion",
+    "automatic ownership transfer",
+    "customer Brain closure",
+    "runtime integration",
+    "deployment, merge or release"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "fact_kind_registry",
+  "standing": "closed_founder_locked_registry",
+  "registry_rules": {
+    "one_canonical_owner_per_dependency": true,
+    "one_resolution_owner_per_dependency": true,
+    "runtime_owner_selection": false,
+    "unregistered_dependency_result": "indeterminate",
+    "normative_judgement_may_be_server_verify_only": false
+  },
+  "server_dependencies": [
+    { "dependency_id": "active_grant_set_complete", "fact_kind": "complete_active_grant_set", "canonical_owner": "ctrl_authority_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "all_dependencies_fresh", "fact_kind": "all_dependency_validity_boundaries_current", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "audience_set_complete", "fact_kind": "complete_current_audience_set", "canonical_owner": "ctrl_authority_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "checkpoint_exists", "fact_kind": "current_checkpoint_existence", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "checkpoint_integrity_valid", "fact_kind": "checkpoint_integrity", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "close_obligation_set_exactly_access_correction_separate_release_close", "fact_kind": "complete_close_obligation_set", "canonical_owner": "ctrl_obligation_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "closed_predecessor_exact", "fact_kind": "current_closed_lifecycle_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "current_checkpoint_exact", "fact_kind": "current_checkpoint_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "current_close_request_exact", "fact_kind": "current_close_request_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "current_continuing_period_exact", "fact_kind": "current_continuing_period_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "current_intensive_proof_period_exact", "fact_kind": "current_intensive_proof_period_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "current_paused_period_exact", "fact_kind": "current_paused_period_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "current_preparation_exact", "fact_kind": "current_preparation_version", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "eligible_source_class_values_valid", "fact_kind": "eligible_source_class_membership", "canonical_owner": "ctrl_source_class_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "every_obligation_fulfilled_or_recorded_outstanding", "fact_kind": "close_obligation_disposition_completeness", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "fresh_issuance_exists_where_required", "fact_kind": "required_grant_fresh_issuance", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "no_active_lifecycle_row", "fact_kind": "complete_active_lifecycle_absence", "canonical_owner": "ctrl_lifecycle_store", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "no_old_grant_can_revive", "fact_kind": "prior_grant_non_revival", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "old_expired_or_revoked_grants_unusable", "fact_kind": "expired_and_revoked_grant_ineligibility", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "prior_grant_set_complete", "fact_kind": "complete_prior_grant_set", "canonical_owner": "ctrl_authority_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "revocation_set_complete", "fact_kind": "complete_current_revocation_set", "canonical_owner": "ctrl_authority_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "subject_and_case_identities_exact", "fact_kind": "subject_and_case_identity_binding", "canonical_owner": "versioned_deterministic_derivation", "authority_species": "derived_fact", "resolution_owner": "server_verify_only" },
+    { "dependency_id": "subject_identity_valid", "fact_kind": "current_subject_identity_binding", "canonical_owner": "ctrl_identity_registry", "authority_species": "mechanical_fact", "resolution_owner": "server_verify_only" }
+  ],
+  "human_requirements": [
+    { "dependency_id": "authorized_person_selects_cancelled_declined_or_withdrawn", "judgement_kind": "stop_condition", "named_owner": "authorized_person", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "continuation_checkpoint", "judgement_kind": "boundary", "named_owner": "leader_and_krish", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_not_jointly_established" },
+    { "dependency_id": "exit_or_revisit_condition", "judgement_kind": "revisit_condition", "named_owner": "leader_and_krish", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_not_jointly_established" },
+    { "dependency_id": "fresh_close_authority_receipt", "judgement_kind": "stop_condition", "named_owner": "authorized_person", "resolution_owner": "human_answerable", "interaction_mode": "separate_authority_receipt_no_predicate_question" },
+    { "dependency_id": "fresh_pause_authority_receipt", "judgement_kind": "stop_condition", "named_owner": "authorized_person", "resolution_owner": "human_answerable", "interaction_mode": "separate_authority_receipt_no_predicate_question" },
+    { "dependency_id": "krish_accepts_exact_purpose_and_frame_version", "judgement_kind": "decision_frame", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "krish_allowed_source_classes", "judgement_kind": "boundary", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "krish_bounded_purpose", "judgement_kind": "purpose", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "krish_genuinely_new_purpose", "judgement_kind": "purpose", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "krish_next_consequential_decision_or_evidenced_value", "judgement_kind": "meaningful_value", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_not_jointly_established" },
+    { "dependency_id": "krish_revalidates_purpose_next_value_and_checkpoint", "judgement_kind": "purpose_and_meaningful_value_and_boundary", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_not_jointly_established" },
+    { "dependency_id": "krish_review_date", "judgement_kind": "revisit_condition", "named_owner": "krish", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "leader_accepts_exact_purpose_and_frame_version", "judgement_kind": "decision_frame", "named_owner": "leader", "resolution_owner": "human_answerable", "interaction_mode": "bounded_answer" },
+    { "dependency_id": "leader_next_consequential_decision_or_evidenced_value", "judgement_kind": "meaningful_value", "named_owner": "leader", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_multiple_gaps" },
+    { "dependency_id": "leader_revalidates_purpose_next_value_and_checkpoint", "judgement_kind": "purpose_and_meaningful_value_and_boundary", "named_owner": "leader", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_multiple_gaps" },
+    { "dependency_id": "responsible_human_owner_for_each_genuine_outstanding_obligation", "judgement_kind": "boundary", "named_owner": "responsible_human", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_multiple_gaps" },
+    { "dependency_id": "revisit_date_for_each_genuine_outstanding_obligation", "judgement_kind": "revisit_condition", "named_owner": "responsible_human", "resolution_owner": "human_answerable", "interaction_mode": "krish_led_session_if_multiple_gaps" }
+  ],
+  "external_fact_kinds": [
+    { "fact_kind": "identity_provider_subject_binding", "canonical_owner": "configured_identity_provider", "protocol_id": "immutable_authority_lease", "ttl_seconds": 60, "maximum_clock_skew_seconds": 5, "withdrawal_possible_during_lease": false },
+    { "fact_kind": "invoice_settlement_revision", "canonical_owner": "configured_billing_ledger", "protocol_id": "immutable_authority_lease", "ttl_seconds": 60, "maximum_clock_skew_seconds": 5, "withdrawal_possible_during_lease": false },
+    { "fact_kind": "completed_signature_envelope_event", "canonical_owner": "configured_signature_provider", "protocol_id": "immutable_authority_lease", "ttl_seconds": 300, "maximum_clock_skew_seconds": 5, "withdrawal_possible_during_lease": false },
+    { "fact_kind": "current_permission_grant_revision", "canonical_owner": "configured_permission_provider", "protocol_id": "online_conditional_verify_and_consume", "ttl_seconds": 15, "maximum_clock_skew_seconds": 2, "withdrawal_possible_during_lease": true },
+    { "fact_kind": "current_human_consent", "canonical_owner": "named_human_via_configured_consent_provider", "protocol_id": "online_conditional_verify_and_consume", "ttl_seconds": 15, "maximum_clock_skew_seconds": 2, "withdrawal_possible_during_lease": true }
+  ]
+}

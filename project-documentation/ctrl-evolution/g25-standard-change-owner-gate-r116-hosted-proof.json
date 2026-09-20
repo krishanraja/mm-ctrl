@@ -1,0 +1,93 @@
+{
+  "schema_version": "ctrl.g25.standard-change-owner-gate.r116.hosted-proof.v1",
+  "observed_at": "2026-09-19",
+  "project_ref": "cgkcplcamsijghalintq",
+  "production_project_ref": "bkyuxvschuwngtcdhsyg",
+  "production_writes": 0,
+  "deployment_identity": {
+    "inventory_stable_during_download": true,
+    "slug": "review-standard-change",
+    "version": 1,
+    "status": "ACTIVE",
+    "verify_jwt": true,
+    "import_map": true,
+    "ezbr_sha256": "16862ab83042f5ed3f0954a35d316116e2c2c0080a7f90a0cc4b06044c0b00a3",
+    "exact_file_count": 4,
+    "exact_downloaded_source_match": true,
+    "exact_local_source_match": true
+  },
+  "transport": {
+    "anonymous_status": 401,
+    "wrong_method_status": 405,
+    "wrong_media_status": 415,
+    "oversized_status": 413,
+    "malformed_status": 400
+  },
+  "r115_pipeline": [
+    {
+      "ordinal": 1,
+      "compile_status": 200,
+      "build_status": 200,
+      "check_status": 200,
+      "verdict": "passed"
+    },
+    {
+      "ordinal": 2,
+      "compile_status": 200,
+      "build_status": 200,
+      "check_status": 200,
+      "verdict": "passed"
+    },
+    {
+      "ordinal": 3,
+      "compile_status": 200,
+      "build_status": 200,
+      "check_status": 200,
+      "verdict": "passed"
+    }
+  ],
+  "prepared_count": 3,
+  "prepare_retry_idempotent": true,
+  "cross_owner_status": 404,
+  "direct_insert_denied": true,
+  "rejection_status": 200,
+  "rejection_mutated_nothing": true,
+  "approval_race_statuses": [
+    200,
+    409
+  ],
+  "approval_retry_idempotent": true,
+  "approval_changed_retry_status": 409,
+  "stale_approval_status": 409,
+  "non_head_reversal_status": 409,
+  "reversal_status": 200,
+  "reversal_retry_idempotent": true,
+  "reversal_changed_retry_status": 409,
+  "exact_standard_restored": true,
+  "exact_criteria_restored": true,
+  "durable_counts_before_cleanup": {
+    "review_packets": 3,
+    "decisions": 2,
+    "applications": 1,
+    "reversals": 1,
+    "versions": 2
+  },
+  "cleanup": {
+    "auth_users": 0,
+    "review_packets": 0,
+    "decisions": 0,
+    "applications": 0,
+    "reversals": 0,
+    "versions": 0,
+    "artifacts": 0,
+    "criteria": 0
+  },
+  "post_final_bytes_probe_passed": true,
+  "defect_found_and_fixed": {
+    "symptom": "A deterministic stale approval could hang as an aborted transaction instead of returning a conflict.",
+    "cause": "Application conflicts used PostgreSQL SQLSTATE 40001, which is reserved for retryable serialization failures.",
+    "repair": "R116 application conflicts use a non-retryable application exception and the Edge contract returns HTTP 409.",
+    "reproduced_before_repair": true,
+    "passed_after_repair": true
+  }
+}

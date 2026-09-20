@@ -107,4 +107,65 @@ describe("Brain field encryption", () => {
     const upper = { ...context, workspaceId: context.workspaceId.toUpperCase() };
     expect(canonicalBrainCipherContext(upper)).toBe(canonicalBrainCipherContext(context));
   });
+
+  it("keeps the legacy item-version associated-data bytes unchanged", () => {
+    expect(canonicalBrainCipherContext(context)).toBe(
+      '{"v":1,"workspace_id":"11111111-1111-4111-8111-111111111111","subject_id":"22222222-2222-4222-8222-222222222222","record_kind":"item_version","record_id":"33333333-3333-4333-8333-333333333333","field":"meaning"}',
+    );
+  });
+
+  it("binds a prepared receipt payload to audience, purpose and exact authority", async () => {
+    const receiptContext: BrainCipherContext = {
+      workspaceId: "11111111-1111-4111-8111-111111111111",
+      subjectId: "22222222-2222-4222-8222-222222222222",
+      recordKind: "prepared_receipt",
+      recordId: "55555555-5555-4555-8555-555555555555",
+      field: "payload",
+      audience: "person_private",
+      purpose: "prepared_intelligence",
+      authorityFingerprint: "a".repeat(64),
+    };
+    const keyring = { "brain-v1": key(29) };
+    const envelope = await encryptBrainField({
+      plaintext: "governed prepared intelligence",
+      context: receiptContext,
+      keyring,
+      activeKeyId: "brain-v1",
+    });
+    await expect(decryptBrainField({ envelope, context: receiptContext, keyring })).resolves.toBe(
+      "governed prepared intelligence",
+    );
+    await expect(decryptBrainField({
+      envelope,
+      context: { ...receiptContext, audience: "delivery_team_private" },
+      keyring,
+    })).rejects.toBeInstanceOf(BrainCiphertextError);
+    await expect(decryptBrainField({
+      envelope,
+      context: { ...receiptContext, authorityFingerprint: "b".repeat(64) },
+      keyring,
+    })).rejects.toBeInstanceOf(BrainCiphertextError);
+  });
+
+  it("rejects invalid record and field pairings even when each token is known", () => {
+    expect(() => canonicalBrainCipherContext({
+      ...context,
+      recordKind: "source",
+      field: "meaning",
+    } as unknown as BrainCipherContext)).toThrow(/record kind and encrypted field do not match/);
+  });
+
+  it("rejects a prepared receipt without exact purpose or authority", () => {
+    const receiptContext = {
+      workspaceId: context.workspaceId,
+      subjectId: context.subjectId,
+      recordKind: "prepared_receipt",
+      recordId: context.recordId,
+      field: "payload",
+      audience: "person_private",
+      purpose: "other",
+      authorityFingerprint: "not-a-fingerprint",
+    } as unknown as BrainCipherContext;
+    expect(() => canonicalBrainCipherContext(receiptContext)).toThrow(BrainCryptoConfigurationError);
+  });
 });

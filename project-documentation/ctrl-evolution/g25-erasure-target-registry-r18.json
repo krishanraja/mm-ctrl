@@ -1,0 +1,273 @@
+{
+  "schema_version": "ctrl.g25.erasure-target-registry.r18.v1",
+  "registry_id": "G25-ERASURE-TARGET-REGISTRY-R18",
+  "status": "canary_registry_complete_execution_blocked",
+  "scope": "R17 local canonical-and-prepared-Brain canary only",
+  "classifications": {
+    "subject_delete": "The row contains the erased person as the Brain subject and must be deleted or cryptographically erased.",
+    "membership_delete": "The row grants the erased person access and must be removed during access revocation.",
+    "attribution_redact": "The link records who acted but does not by itself make the row that person's Brain data; erase the identifier without deleting another subject's row.",
+    "cascade_workspace_scope": "The child follows a workspace only after that exact workspace is independently authorised for deletion.",
+    "cascade_parent_scope": "The child follows its classified parent and must never be selected independently from that parent scope.",
+    "owner_scope_unresolved": "Deleting an operator or owner must not silently delete a different person's Brain; transfer, closure and orphan policy is unresolved.",
+    "retention_scope_unresolved": "The row may be needed to prevent silent data revival, but its purpose and retention period are not yet approved."
+  },
+  "relations": [
+    {
+      "relation": "public.brain_audience_grants",
+      "constraints": [
+        {
+          "constraint": "brain_audience_grants_granted_by_fkey",
+          "from_columns": ["granted_by"],
+          "classification": "attribution_redact",
+          "standing": "approved_local_canary",
+          "reason": "The grant belongs to the workspace and grantee; the granting actor identifier can be removed without deleting the grant."
+        },
+        {
+          "constraint": "brain_audience_grants_grantee_user_id_fkey",
+          "from_columns": ["grantee_user_id"],
+          "classification": "membership_delete",
+          "standing": "approved_local_canary",
+          "reason": "A grant to the erased person is an active access path and must be removed first."
+        },
+        {
+          "constraint": "brain_audience_grants_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "cascade_workspace_scope",
+          "standing": "approved_local_canary",
+          "reason": "The grant disappears only when its exact workspace is authorised for deletion."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_item_versions",
+      "constraints": [
+        {
+          "constraint": "brain_item_versions_created_by_fkey",
+          "from_columns": ["created_by"],
+          "classification": "attribution_redact",
+          "standing": "approved_local_canary",
+          "reason": "Creator attribution is not authority to delete another subject's immutable item version."
+        },
+        {
+          "constraint": "brain_item_versions_brain_item_id_workspace_id_subject_id_fkey",
+          "from_columns": ["brain_item_id", "workspace_id", "subject_id"],
+          "classification": "cascade_parent_scope",
+          "standing": "approved_local_canary",
+          "reason": "The version inherits the exact subject and workspace scope of its parent item."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_items",
+      "constraints": [
+        {
+          "constraint": "brain_items_created_by_fkey",
+          "from_columns": ["created_by"],
+          "classification": "attribution_redact",
+          "standing": "approved_local_canary",
+          "reason": "Creator attribution can be removed without deleting another subject's item."
+        },
+        {
+          "constraint": "brain_items_subject_id_fkey",
+          "from_columns": ["subject_id"],
+          "classification": "subject_delete",
+          "standing": "approved_local_canary",
+          "reason": "The item represents the erased subject's Brain."
+        },
+        {
+          "constraint": "brain_items_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "cascade_workspace_scope",
+          "standing": "approved_local_canary",
+          "reason": "The item follows an independently authorised workspace deletion."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_prepared_authority_corrections",
+      "constraints": [
+        {
+          "constraint": "brain_prepared_authority_corrections_owner_id_fkey",
+          "from_columns": ["owner_id"],
+          "classification": "owner_scope_unresolved",
+          "standing": "blocks_execution",
+          "reason": "The owner may be the operator rather than the Brain subject; deleting this row could destroy another person's correction history."
+        },
+        {
+          "constraint": "brain_prepared_authority_corrections_subject_id_fkey",
+          "from_columns": ["subject_id"],
+          "classification": "subject_delete",
+          "standing": "approved_local_canary",
+          "reason": "The correction belongs to the erased subject's prepared intelligence."
+        },
+        {
+          "constraint": "brain_prepared_authority_corrections_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "cascade_workspace_scope",
+          "standing": "approved_local_canary",
+          "reason": "The correction follows an independently authorised workspace deletion."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_prepared_receipt_dependencies",
+      "constraints": [
+        {
+          "constraint": "brain_prepared_receipt_depend_receipt_id_workspace_id_owne_fkey",
+          "from_columns": ["receipt_id", "workspace_id", "owner_id", "subject_id", "audience", "purpose"],
+          "classification": "cascade_parent_scope",
+          "standing": "approved_local_canary",
+          "reason": "Dependency rows inherit the exact compound scope of the prepared receipt."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_prepared_receipt_events",
+      "constraints": [
+        {
+          "constraint": "brain_prepared_receipt_events_receipt_id_fkey",
+          "from_columns": ["receipt_id"],
+          "classification": "cascade_parent_scope",
+          "standing": "approved_local_canary",
+          "reason": "Prepared receipt events inherit their parent receipt's erasure scope."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_prepared_receipts",
+      "constraints": [
+        {
+          "constraint": "brain_prepared_receipts_owner_id_fkey",
+          "from_columns": ["owner_id"],
+          "classification": "owner_scope_unresolved",
+          "standing": "blocks_execution",
+          "reason": "The owner may operate a different subject's Brain; owner erasure needs transfer or closure policy."
+        },
+        {
+          "constraint": "brain_prepared_receipts_subject_id_fkey",
+          "from_columns": ["subject_id"],
+          "classification": "subject_delete",
+          "standing": "approved_local_canary",
+          "reason": "The prepared payload and receipt are derived from the erased subject's Brain."
+        },
+        {
+          "constraint": "brain_prepared_receipts_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "cascade_workspace_scope",
+          "standing": "approved_local_canary",
+          "reason": "The receipt follows an independently authorised workspace deletion."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_prepared_subject_erasure_tombstones",
+      "constraints": [
+        {
+          "constraint": "brain_prepared_subject_erasure_tombstones_owner_id_fkey",
+          "from_columns": ["owner_id"],
+          "classification": "owner_scope_unresolved",
+          "standing": "blocks_execution",
+          "reason": "Owner removal cannot silently remove another subject's anti-revival protection."
+        },
+        {
+          "constraint": "brain_prepared_subject_erasure_tombstones_subject_id_fkey",
+          "from_columns": ["subject_id"],
+          "classification": "retention_scope_unresolved",
+          "standing": "blocks_execution",
+          "reason": "The current cascade would remove the anti-revival tombstone; its lawful purpose and duration remain unbound."
+        },
+        {
+          "constraint": "brain_prepared_subject_erasure_tombstones_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "retention_scope_unresolved",
+          "standing": "blocks_execution",
+          "reason": "Workspace deletion would remove the anti-revival tombstone; retention and re-consent behavior remain unbound."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_sources",
+      "constraints": [
+        {
+          "constraint": "brain_sources_actor_user_id_fkey",
+          "from_columns": ["actor_user_id"],
+          "classification": "attribution_redact",
+          "standing": "approved_local_canary",
+          "reason": "An actor reference does not make another subject's source the actor's Brain data."
+        },
+        {
+          "constraint": "brain_sources_created_by_fkey",
+          "from_columns": ["created_by"],
+          "classification": "attribution_redact",
+          "standing": "approved_local_canary",
+          "reason": "Creator attribution can be removed without deleting another subject's source."
+        },
+        {
+          "constraint": "brain_sources_subject_id_fkey",
+          "from_columns": ["subject_id"],
+          "classification": "subject_delete",
+          "standing": "approved_local_canary",
+          "reason": "The source was captured for the erased subject's Brain."
+        },
+        {
+          "constraint": "brain_sources_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "cascade_workspace_scope",
+          "standing": "approved_local_canary",
+          "reason": "The source follows an independently authorised workspace deletion."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_workspace_roles",
+      "constraints": [
+        {
+          "constraint": "brain_workspace_roles_granted_by_fkey",
+          "from_columns": ["granted_by"],
+          "classification": "attribution_redact",
+          "standing": "approved_local_canary",
+          "reason": "The granting actor can be redacted without deleting another person's role grant."
+        },
+        {
+          "constraint": "brain_workspace_roles_user_id_fkey",
+          "from_columns": ["user_id"],
+          "classification": "membership_delete",
+          "standing": "approved_local_canary",
+          "reason": "The erased person's workspace membership is an access path and must be removed first."
+        },
+        {
+          "constraint": "brain_workspace_roles_workspace_id_fkey",
+          "from_columns": ["workspace_id"],
+          "classification": "cascade_workspace_scope",
+          "standing": "approved_local_canary",
+          "reason": "The role follows an independently authorised workspace deletion."
+        }
+      ]
+    },
+    {
+      "relation": "public.brain_workspaces",
+      "constraints": [
+        {
+          "constraint": "brain_workspaces_owner_id_fkey",
+          "from_columns": ["owner_id"],
+          "classification": "owner_scope_unresolved",
+          "standing": "blocks_execution",
+          "reason": "The owner may be an operator for a different subject; transfer, closure and orphan policy is unresolved."
+        },
+        {
+          "constraint": "brain_workspaces_subject_id_fkey",
+          "from_columns": ["subject_id"],
+          "classification": "subject_delete",
+          "standing": "approved_local_canary",
+          "reason": "The workspace is the erased subject's private Brain boundary."
+        }
+      ]
+    }
+  ],
+  "execution_gate": {
+    "status": "blocked",
+    "blocking_classifications": ["owner_scope_unresolved", "retention_scope_unresolved"],
+    "rule": "Every discovered constraint must have one current registry entry, no stale registry entry may survive, and no blocks_execution entry may enter a result-producing erasure plan."
+  }
+}

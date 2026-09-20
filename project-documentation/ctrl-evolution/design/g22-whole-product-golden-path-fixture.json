@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "g22-r1",
+  "synthetic": true,
+  "case": {
+    "id": "CASE-MAYA-001",
+    "person": {
+      "id": "PERSON-MAYA-001",
+      "name": "Maya Chen",
+      "role": "Founder and CEO",
+      "owner": "Maya Chen"
+    },
+    "company": {
+      "id": "ORG-APERTURE-001",
+      "name": "Aperture House",
+      "owner": "Aperture House"
+    },
+    "decision": {
+      "id": "DEC-MAYA-014",
+      "title": "How far should Aperture House rebuild marketing around AI?",
+      "operatingBudgetGbp": 1200000,
+      "affectedRoles": 8,
+      "timeHorizon": "12 months",
+      "purpose": "Choose the first operating model and proof gate",
+      "audience": "Maya Chen and the Aperture House board"
+    }
+  },
+  "sources": [
+    {
+      "id": "SRC-COMPANY-PLAN-01",
+      "origin": "Company work",
+      "owner": "Aperture House",
+      "standing": "Current",
+      "version": 3,
+      "recordedAt": "2026-09-11T08:00:00Z",
+      "freshUntil": "2026-10-31T23:59:59Z",
+      "claim": "The plan changes the marketing operating model across eight roles and a synthetic £1.2m annual budget."
+    },
+    {
+      "id": "SRC-COMPANY-SCORECARD-01",
+      "origin": "Company scorecard",
+      "owner": "Aperture House",
+      "standing": "Current",
+      "version": 2,
+      "recordedAt": "2026-09-08T09:30:00Z",
+      "freshUntil": "2026-09-30T23:59:59Z",
+      "claim": "The current scorecard rewards output volume, cadence and deadlines. It does not measure customer usefulness or independent quality judgement."
+    },
+    {
+      "id": "SRC-CUSTOMER-01",
+      "origin": "Customer evidence",
+      "owner": "Aperture House",
+      "standing": "Current",
+      "version": 1,
+      "recordedAt": "2026-09-06T16:20:00Z",
+      "freshUntil": "2026-10-06T16:20:00Z",
+      "sampleScope": "Synthetic set of ten customer conversations",
+      "claim": "Seven of ten synthetic customers remembered the clear category point of view. Two remembered the recent campaign theme."
+    },
+    {
+      "id": "SRC-MAYA-STANDARD-01",
+      "origin": "Maya, accepted standard",
+      "owner": "Maya Chen",
+      "standing": "Accepted by Maya",
+      "version": 2,
+      "recordedAt": "2026-08-29T12:10:00Z",
+      "freshUntil": null,
+      "claim": "Make quality clear without killing surprise."
+    },
+    {
+      "id": "SRC-MAYA-PATTERN-01",
+      "origin": "Maya, observed pattern",
+      "owner": "Maya Chen",
+      "standing": "Supported",
+      "version": 1,
+      "recordedAt": "2026-09-04T14:00:00Z",
+      "freshUntil": null,
+      "claim": "Maya makes her sharpest judgements by comparing real alternatives, not by grading one abstract proposal."
+    },
+    {
+      "id": "SRC-MAYA-DELEGATION-01",
+      "origin": "Maya, corrected interpretation",
+      "owner": "Maya Chen",
+      "standing": "Corrected by Maya",
+      "version": 2,
+      "recordedAt": "2026-09-04T15:20:00Z",
+      "freshUntil": null,
+      "claim": "Maya is willing to delegate generation. The unresolved issue is whether another person can notice and preserve the quality signals she sees."
+    },
+    {
+      "id": "SRC-PUBLIC-COUNTER-01",
+      "origin": "Public research",
+      "owner": "Public source",
+      "standing": "Bounded counter-case",
+      "version": 1,
+      "recordedAt": "2026-09-09T11:05:00Z",
+      "freshUntil": "2026-12-09T11:05:00Z",
+      "claim": "Changing role names without changing decision rights can preserve the old approval bottleneck. This synthetic fixture does not claim a causal rate."
+    },
+    {
+      "id": "SRC-LATER-LAUNCH-01",
+      "origin": "Company work",
+      "owner": "Aperture House",
+      "standing": "Current",
+      "version": 1,
+      "recordedAt": "2026-10-01T08:15:00Z",
+      "freshUntil": "2026-10-31T23:59:59Z",
+      "claim": "The later launch preparation initially assigns final approval to the marketing lead and treats weekly and launch work alike."
+    }
+  ],
+  "question": {
+    "id": "Q-MAYA-ROUTE-01",
+    "prompt": "If the pilot ships more work but Maya still has to redo the final version, has it worked?",
+    "options": [
+      {
+        "id": "no",
+        "label": "No",
+        "effect": "The first gate becomes independent launch quality, not output volume."
+      },
+      {
+        "id": "rewrites-fall",
+        "label": "Only if the rewrites fall quickly",
+        "effect": "The first gate tracks how much final rescue falls across three live launches."
+      },
+      {
+        "id": "customers-prefer",
+        "label": "Yes, if customers prefer the work",
+        "effect": "The first gate becomes blinded customer preference, with Maya's rewrite load kept as a risk signal."
+      }
+    ]
+  },
+  "routes": [
+    {
+      "id": "rebuild",
+      "label": "Rebuild now",
+      "summary": "Replace the current production model with a small AI-native team this quarter.",
+      "strength": "Exposes the real work and decision rights quickly.",
+      "risk": "May scale output before Maya's standard can be applied without her.",
+      "standing": "Alternative"
+    },
+    {
+      "id": "prove",
+      "label": "Prove the system first",
+      "summary": "Run one important campaign through a separate AI-native route before redesigning roles.",
+      "strength": "Tests the operating model and Maya's quality standard together.",
+      "risk": "Becomes theatre if it keeps the old scorecard or has no authority to work differently.",
+      "standing": "Current best route"
+    },
+    {
+      "id": "gradual",
+      "label": "Add tools gradually",
+      "summary": "Keep the current team and add AI inside each existing role.",
+      "strength": "Creates the least immediate disruption.",
+      "risk": "May preserve the work, measures and approval bottleneck that need to change.",
+      "standing": "Alternative"
+    }
+  ],
+  "ownedCall": {
+    "id": "CALL-MAYA-014-V1",
+    "routeId": "prove",
+    "standing": "Set by Maya",
+    "decision": "Prove the new system on one important campaign before rebuilding the whole function.",
+    "firstGate": "A non-founder lead ships launch work Maya would approve without rewriting, while blinded customer preference holds or improves.",
+    "killCondition": "Stop if the pilot only increases output, still needs Maya's final rescue, or cannot show fresh customer evidence.",
+    "owner": "Maya Chen",
+    "recordedAt": "2026-09-18T13:40:00Z"
+  },
+  "learning": {
+    "proposal": {
+      "id": "LEARN-MAYA-014-V1",
+      "standing": "Proposed by CTRL",
+      "text": "Maya keeps the final review for all marketing work.",
+      "dependsOn": ["CALL-MAYA-014-V1", "SRC-MAYA-STANDARD-01"]
+    },
+    "corrected": {
+      "id": "LEARN-MAYA-014-V2",
+      "standing": "Accepted by Maya",
+      "text": "Maya keeps the final call on launch work. Weekly work can use the agreed quality check.",
+      "supersedes": "LEARN-MAYA-014-V1",
+      "correctionReason": "The first proposal was too broad.",
+      "acceptedAt": "2026-09-18T13:46:00Z"
+    },
+    "rejected": {
+      "id": "LEARN-MAYA-014-R1",
+      "standing": "Rejected by Maya",
+      "text": "Maya keeps the final review for all marketing work.",
+      "reuseBlocked": true
+    }
+  },
+  "laterPreparation": {
+    "id": "PREP-LAUNCH-022",
+    "title": "Q4 launch approval plan",
+    "before": "Final approval: Marketing lead. Weekly work and launch work use the same quality check.",
+    "after": "Final approval for launch work: Maya. Weekly work uses the agreed quality check without Maya's final review.",
+    "changedBecauseOf": "LEARN-MAYA-014-V2",
+    "standing": "Ready for Maya"
+  },
+  "brainProjection": {
+    "personal": ["SRC-MAYA-STANDARD-01", "SRC-MAYA-PATTERN-01", "SRC-MAYA-DELEGATION-01", "LEARN-MAYA-014-V2"],
+    "company": ["SRC-COMPANY-PLAN-01", "SRC-COMPANY-SCORECARD-01", "SRC-CUSTOMER-01", "CALL-MAYA-014-V1", "PREP-LAUNCH-022"],
+    "public": ["SRC-PUBLIC-COUNTER-01"],
+    "relationships": [
+      {
+        "id": "REL-01",
+        "type": "informed",
+        "from": "SRC-MAYA-STANDARD-01",
+        "to": "CALL-MAYA-014-V1"
+      },
+      {
+        "id": "REL-02",
+        "type": "corrected_into",
+        "from": "LEARN-MAYA-014-V1",
+        "to": "LEARN-MAYA-014-V2"
+      },
+      {
+        "id": "REL-03",
+        "type": "used_by",
+        "from": "LEARN-MAYA-014-V2",
+        "to": "PREP-LAUNCH-022"
+      }
+    ]
+  }
+}

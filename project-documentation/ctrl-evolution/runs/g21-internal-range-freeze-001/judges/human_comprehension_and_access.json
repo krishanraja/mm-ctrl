@@ -1,0 +1,45 @@
+{
+  "runId": "G21-INTERNAL-RANGE-FREEZE-001",
+  "judge": "human_comprehension_and_access",
+  "criterionVersion": "human-comprehension-and-access:g21-internal-range-freeze-v1",
+  "artifactCompositeSha256": "95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156",
+  "verdict": "fail",
+  "claims": [
+    "Mechanical identity holds. Each of the five frozen files matches its manifest SHA-256, and SHA-256 over the manifest-order UTF-8 path:sha256 lines joined with LF and no trailing LF is 95fbbcc467e07f31c852dc5ff70db9705af8643e87c44044c4def2e27f4b5156.",
+    "The fixture has a useful structural base: all twelve route-changing questions contain one question mark, end as questions, contain 13 to 19 words, and keep an answerWouldChange explanation beneath the ask.",
+    "The CARE work-evidence question asks the leader to decide whether bad referral data or scheduling logic caused the unsafe schedules even though the adjacent evidence-gap text says the cause is not established. This transfers diagnostic interpretation to the leader instead of putting that analysis beneath a human-owned choice.",
+    "The FORGE longitudinal question uses the abstraction stack exceptions, customer risk, planner and final call without naming a concrete situation or expected answer form. A reader must first perform the system's work of classifying exceptions before answering who should decide.",
+    "The STORY work-evidence and longitudinal questions use ticket intent as an unexplained metric. They also place fair-comparison design and a two-audience trade-off inside the main ask through fair comparison and exhausting core fans. Those questions are specialist rather than immediately accessible at the required reading level.",
+    "The question validator does not establish plain-language comprehension. It checks punctuation, a 24-word ceiling and only five jargon patterns, while the matching test repeats punctuation and word-count checks. The cited failing questions therefore pass the implemented checks unchanged.",
+    "Because the criterion requires every immediate question to be plain and answerable, these specific failures trigger COMPREHENSION-RANGE-01 despite the stronger questions elsewhere in the fixture."
+  ],
+  "evidenceLocators": [
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json#/files",
+    "project-documentation/ctrl-evolution/runs/g21-internal-range-freeze-001/input-manifest.json#/artifactCompositeSha256",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:241",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:582",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:587",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:590",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1430",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1432",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1434",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1767",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1773",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1775",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1847",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1849",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:1851",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2111",
+    "src/features/operator-brain/g21InternalRangeCanary.ts:2118",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:104",
+    "src/features/operator-brain/g21InternalRangeCanary.test.ts:116"
+  ],
+  "veto": {
+    "ruleId": "COMPREHENSION-RANGE-01",
+    "failure": "Four main questions are not one immediately accessible leader ask: CARE work evidence asks the leader to diagnose an unestablished technical cause, FORGE longitudinal evidence asks the leader to classify undefined exception and risk abstractions, and both STORY work and longitudinal questions rely on unexplained ticket-intent language while packing test design or audience trade-offs into the ask.",
+    "resolvingTest": "Rewrite CARE work evidence, FORGE longitudinal evidence, STORY work evidence and STORY longitudinal evidence so each main question uses ordinary words to request one human-owned choice or threshold. Put cause analysis, metric definition, comparison design and audience trade-offs in the supporting analysis. Freeze new hashes, then run a fresh blind check over all twelve questions with at least two independent readers aged 11 to 13: without facilitator definitions, each reader must accurately paraphrase the single ask and give an answer in the expected form for every question. Require 12 of 12 questions to pass for both readers, and add regression cases showing that the four original wordings are rejected rather than accepted by punctuation and length alone."
+  },
+  "missingEvidence": [],
+  "resolvingTest": "Rewrite CARE work evidence, FORGE longitudinal evidence, STORY work evidence and STORY longitudinal evidence so each main question uses ordinary words to request one human-owned choice or threshold. Put cause analysis, metric definition, comparison design and audience trade-offs in the supporting analysis. Freeze new hashes, then run a fresh blind check over all twelve questions with at least two independent readers aged 11 to 13: without facilitator definitions, each reader must accurately paraphrase the single ask and give an answer in the expected form for every question. Require 12 of 12 questions to pass for both readers, and add regression cases showing that the four original wordings are rejected rather than accepted by punctuation and length alone.",
+  "recordedAt": "2026-09-10T18:08:32.632Z"
+}

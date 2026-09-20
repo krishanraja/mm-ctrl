@@ -1,0 +1,102 @@
+{
+  "schema_version": "ctrl.g25.research-egress-boundary.r48.v1",
+  "record_id": "G25-RESEARCH-EGRESS-BOUNDARY-R48",
+  "status": "research_egress_surface_corrected_and_bounded",
+  "retrieved_at": "2026-09-17",
+  "depends_on": [
+    "G25-EXTERNAL-PROCESSOR-SURFACE-R44",
+    "G25-PROVIDER-EGRESS-CLASSIFICATION-R45"
+  ],
+  "correction": "R44 was a commercial provider-signature inventory, not a complete research-egress inventory. R48 adds fixed and unauthenticated research services that can still receive customer-derived query terms.",
+  "routes": {
+    "perplexity": {
+      "input": "AI-scoped decision claim",
+      "control_evidence": "Public API retention detail was not sufficiently specific in the reviewed official material.",
+      "source": "https://www.perplexity.ai/hub/legal/perplexity-api-terms-of-service",
+      "standing": "no_raw_decision_or_private_context"
+    },
+    "exa": {
+      "input": "AI-scoped decision claim or planned news query",
+      "control_evidence": "Enterprise ZDR is advertised, but the active account mode is not proved.",
+      "source": "https://exa.ai/docs/reference/security",
+      "standing": "public_or_pseudonymous_query_only"
+    },
+    "brave": {
+      "input": "AI-scoped decision claim, company query or planned news query",
+      "control_evidence": "Enterprise full-funnel ZDR is advertised, but the active account mode is not proved.",
+      "source": "https://brave.com/search/api/",
+      "standing": "public_or_pseudonymous_query_only"
+    },
+    "tavily": {
+      "input": "company query or planned news query",
+      "control_evidence": "Tavily describes ZDR as core in current product material, while its privacy policy says query data may be used to improve responses unless the contract says otherwise. Contract and account evidence are therefore required.",
+      "source": "https://www.tavily.com/privacy",
+      "standing": "public_company_query_only"
+    },
+    "newsapi": {
+      "input": "AI-scoped claim or planned news query",
+      "control_evidence": "The public privacy notice gives purpose-based retention but no sufficiently precise API-query retention period.",
+      "source": "https://newsapi.org/privacy",
+      "standing": "public_or_pseudonymous_query_only"
+    },
+    "builtwith": {
+      "input": "bare company domain",
+      "control_evidence": "The current API documents header authentication and an NOPII response control on the current endpoint. The repository uses an older endpoint, puts the key in the URL and does not request NOPII.",
+      "source": "https://api.builtwith.com/domain-api",
+      "standing": "blocked_until_current_endpoint_header_auth_and_nopii_are_verified"
+    },
+    "people_data_labs": {
+      "input": "company name on the company-enrichment endpoint",
+      "control_evidence": "The reviewed public privacy material did not establish a precise API-query retention mode.",
+      "source": "https://privacy.peopledatalabs.com/",
+      "standing": "verified_public_company_name_only"
+    },
+    "artificial_analysis": {
+      "input": "no customer query; fixed model leaderboard fetch",
+      "control_evidence": "The repository sends only a fixed endpoint request with an account API key.",
+      "source": "https://artificialanalysis.ai/models",
+      "standing": "fixed_public_fetch"
+    },
+    "tranco": {
+      "input": "bare company domain",
+      "control_evidence": "No private decision text is required by the route.",
+      "source": "https://tranco-list.eu/",
+      "standing": "verified_public_domain_only"
+    },
+    "gdelt": {
+      "input": "planned news query",
+      "control_evidence": "Public query endpoint; no private-context retention control is proved.",
+      "source": "https://www.gdeltproject.org/",
+      "standing": "public_or_pseudonymous_query_only"
+    },
+    "hacker_news_algolia": {
+      "input": "planned news query",
+      "control_evidence": "Public query endpoint; no private-context retention control is proved.",
+      "source": "https://hn.algolia.com/api",
+      "standing": "public_or_pseudonymous_query_only"
+    },
+    "fixed_rss_publishers": {
+      "input": "no customer query; fixed public feed URLs",
+      "control_evidence": "Only ordinary feed requests are made. Publisher logs remain outside Mindmaker control.",
+      "source": "repository fixed-feed list",
+      "standing": "fixed_public_fetch"
+    }
+  },
+  "minimisation_gate": [
+    "never send a leader name, email, verbatim interview answer or raw Brain memory to a research provider",
+    "never send a raw decision claim when a bounded public search question can answer it",
+    "company enrichment may send only an already-public company name or bare domain",
+    "fixed public fetches must remain independent of customer context",
+    "log a digest of the bounded query and its purpose, never the raw private source text",
+    "fail closed when a route needs more private context than its standing permits"
+  ],
+  "artifact": "scripts/check-ctrl-g25-research-egress-boundary-r48.mjs",
+  "next_gate": "Design the provider-receipt registry and a deterministic query-minimisation adapter before any new runtime uses these routes.",
+  "not_authorized": [
+    "calling research providers",
+    "changing live queries or provider selection",
+    "editing live deletion",
+    "migration creation or execution",
+    "deployment, merge or release"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "ctrl.g25.provider-deletion-runtime-topology.r69.v1",
+  "contract_id": "G25-PROVIDER-DELETION-RUNTIME-TOPOLOGY-R69",
+  "status": "three_cell_secret_isolation_contract_locally_proved_deployment_unproved",
+  "depends_on": ["G25-PROVIDER-DELETION-HANDLE-DB-AUTHORITY-R68"],
+  "implementation": {
+    "compiler": "supabase/functions/_shared/provider-deletion-runtime-topology.r69.ts",
+    "tests": "supabase/functions/_shared/provider-deletion-runtime-topology.r69.test.ts",
+    "config": "vitest.g25-provider-deletion-runtime-topology.config.ts",
+    "checker": "scripts/check-ctrl-g25-provider-deletion-runtime-topology-r69.mjs"
+  },
+  "required_cells": {
+    "authority_issuer": {
+      "operations": ["issue_authority"],
+      "required_capability": "authority signing key reference",
+      "forbidden": ["database credential", "encrypt", "decrypt", "provider deletion credential"]
+    },
+    "crypto_writer": {
+      "operations": ["register"],
+      "required_capability": "writer database credential plus encrypt-only capability references",
+      "forbidden": ["signing", "decrypt", "provider deletion credential"]
+    },
+    "deletion_worker": {
+      "operations": ["lease", "destroy", "provider_delete"],
+      "required_capability": "worker database credential, decrypt-only capability and provider deletion credential references",
+      "forbidden": ["signing", "encrypt"]
+    }
+  },
+  "proved_locally": [
+    "exactly three cells and one of each kind are required",
+    "deployment boundaries and secret domains must be distinct",
+    "secret references cannot be reused across cells",
+    "generic Supabase admin and generic database credentials are rejected",
+    "operation escalation is rejected",
+    "issuer, writer and worker secret capabilities are mutually constrained",
+    "unexpected manifest fields are rejected",
+    "the canonical topology fingerprint is independent of cell and operation ordering"
+  ],
+  "unproved": [
+    "three deployment boundaries actually exist",
+    "secret-manager policies enforce the manifest",
+    "encrypt-only and decrypt-only capabilities are backed by KMS or equivalent",
+    "custom Postgres login users are provisioned and rotated",
+    "provider credentials are operation-scoped",
+    "cross-cell transport is authenticated and replay-safe"
+  ],
+  "artifact_sha256": {
+    "compiler": "f154d0870089c2244a0399aed17b03119ee150a598d85e909b1a1eae61f81d88",
+    "tests": "54bb548e4605f551e2f1042b6ecd34820b2d5db9a045db567bbbb5a2dcda5772",
+    "config": "5085f89c9b096c2eaf78aeef8bc75cf1707aaf55eaf13c798a822581ceb6055d"
+  },
+  "bounded_claim": "R69 proves a content-free topology manifest compiler. It does not provision services, roles, credentials, KMS permissions, queues or provider access.",
+  "next_gate": "Define authenticated cross-cell job envelopes and a credential-provisioning runbook, then verify the topology against disposable deployment and Supabase environments.",
+  "authority": {
+    "permits": ["local topology tests", "local documentation and commit"],
+    "forbids": ["secret creation", "role provisioning", "deployment", "linked database access", "provider request", "merge", "release"]
+  }
+}

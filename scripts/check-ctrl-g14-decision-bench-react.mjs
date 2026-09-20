@@ -81,7 +81,7 @@ try {
   await expect('desktop decision title stays compact', await page.locator('.db-decision-head h1').evaluate((element) => parseFloat(getComputedStyle(element).fontSize) <= 28))
   await expect('desktop surfaces exact current and discarded meanings', (await page.locator('.db-compare').innerText()).includes('Other people cannot yet see the quality loss Maya sees.') && (await page.locator('.db-compare').innerText()).includes('Maya fundamentally distrusts delegation.'))
   const brandImage = page.locator('.db-brand img[alt="Mindmaker"]')
-  await expect('desktop shows only the Mindmaker icon', await brandImage.isVisible() && await brandImage.getAttribute('src') === '/mindmaker-favicon.png' && await brandImage.evaluate((element) => element.getBoundingClientRect().width <= 32))
+  await expect('desktop shows only the Mindmaker icon', await brandImage.isVisible() && (await brandImage.getAttribute('src'))?.endsWith('/mindmaker-favicon.png') && await brandImage.evaluate((element) => element.getBoundingClientRect().width <= 32))
   const closedRailWidth = await page.locator('.db-rail').evaluate((element) => element.getBoundingClientRect().width)
   await page.locator('.db-rail').hover()
   await page.waitForTimeout(220)

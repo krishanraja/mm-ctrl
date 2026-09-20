@@ -1,0 +1,347 @@
+{
+  "schema_version": "ctrl.g25.non-fk-erasure-registry.r58.v1",
+  "registry_id": "G25-NON-FK-ERASURE-REGISTRY-R58",
+  "status": "current_high_risk_surface_classified_execution_blocked",
+  "scope": "The 36 high-risk anchors discovered from the generated schema by R57. Migration-only candidates and opaque JSON remain outside this classification.",
+  "actions": {
+    "delete_subject_row_by_auth_id": "Delete the row only when the column equals the authenticated account UUID.",
+    "delete_subject_row_by_verified_email": "Delete the whole subject-owned row only after the account email has been independently verified and normalized by an approved rule.",
+    "delete_participant_row_by_verified_email": "Delete the participant-owned response row after participant identity verification, then invalidate or recompute affected aggregates.",
+    "delete_participant_row_by_auth_id": "Delete the authenticated participant's response row by account UUID, then invalidate or recompute affected aggregates.",
+    "delete_membership_row_by_auth_id": "Remove the access or role grant for the authenticated account UUID without deleting another person's content.",
+    "delete_legacy_subject_row_by_auth_id_or_verified_email": "Delete a legacy subject profile using the auth UUID first and a separately verified email fallback only where the schema proves both anchors belong to the same subject role.",
+    "erase_with_selected_subject_row": "Erase this value only as part of an already-authorized subject-row deletion. It is forbidden as an independent selector.",
+    "redact_actor_attribution": "Replace or remove actor attribution without deleting the shared record the actor created.",
+    "pseudonymize_retained_audit_identity": "Preserve only the minimum audit event required by an approved retention policy while irreversibly unlinking the account identity.",
+    "redact_shared_record_role_bundle": "Redact every identifier for one role in a shared record without silently deleting other participants' or the customer's record. The role bundle must be complete before execution."
+  },
+  "standings": {
+    "classified_implementation_unverified": "The semantic action is classified, but live coverage and database behavior are not accepted.",
+    "blocks_alternate_anchor_coverage": "The row is subject-owned but the live path does not cover every authoritative legacy or anonymous anchor.",
+    "blocks_participant_erasure_design": "Participant verification, aggregate invalidation and linked-row traversal are not yet proved.",
+    "blocks_shared_record_policy": "Deleting the whole row could destroy another person's or customer's record; a complete redaction bundle is unresolved.",
+    "blocks_retention_policy": "Lawful purpose, duration, minimum retained fields and irreversible pseudonymization are not yet approved.",
+    "blocks_schema_reconciliation": "The generated type surface and migration or runtime expectation contradict one another."
+  },
+  "targets": [
+    {
+      "key": "ai_conversations.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "direct_auth_selector_present",
+      "companions": [],
+      "reason": "The conversation row belongs to the authenticated account and is already selected by user_id."
+    },
+    {
+      "key": "ai_insights_generated.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The generated insight is personal output linked to the authenticated account."
+    },
+    {
+      "key": "assessment_referrals.referee_email",
+      "action": "redact_shared_record_role_bundle",
+      "standing": "blocks_shared_record_policy",
+      "live_coverage": "absent",
+      "companions": ["referee_name", "referee_assessment_id"],
+      "reason": "The referee is one person in a two-person referral record; deleting the whole row could erase the referrer's record."
+    },
+    {
+      "key": "assessment_referrals.referrer_email",
+      "action": "redact_shared_record_role_bundle",
+      "standing": "blocks_shared_record_policy",
+      "live_coverage": "absent",
+      "companions": ["referrer_name", "referrer_assessment_id", "referral_code"],
+      "reason": "The referrer is one person in a two-person referral record; role-complete redaction is required."
+    },
+    {
+      "key": "backup_workshop_sessions.facilitator_email",
+      "action": "redact_shared_record_role_bundle",
+      "standing": "blocks_shared_record_policy",
+      "live_coverage": "absent",
+      "companions": ["facilitator_name", "workshop_metadata"],
+      "reason": "A facilitator identifier sits inside a shared customer session that must not be deleted as personal data by default."
+    },
+    {
+      "key": "booking_requests.contact_email",
+      "action": "delete_subject_row_by_verified_email",
+      "standing": "blocks_alternate_anchor_coverage",
+      "live_coverage": "auth_sweep_misses_anonymous_or_legacy_row",
+      "companions": ["contact_name", "phone"],
+      "reason": "Anonymous or legacy booking requests can belong to the verified email even when user_id is null."
+    },
+    {
+      "key": "booking_requests.phone",
+      "action": "erase_with_selected_subject_row",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "row_delete_only_when_auth_id_matches",
+      "companions": [],
+      "reason": "A phone number is personal data but is too ambiguous to authorize a cross-table deletion."
+    },
+    {
+      "key": "booking_requests.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "An authenticated booking request is a subject-owned row selected by the account UUID."
+    },
+    {
+      "key": "chat_messages.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The message row belongs to the authenticated account and carries private conversation content."
+    },
+    {
+      "key": "consent_audit.user_id",
+      "action": "pseudonymize_retained_audit_identity",
+      "standing": "blocks_retention_policy",
+      "live_coverage": "deliberately_retained_without_bounded_pseudonymization",
+      "companions": ["participant_id", "changed_by", "ip_address", "user_agent"],
+      "reason": "Consent history may need retention, but a raw account UUID and adjacent identifiers cannot be kept indefinitely by assertion."
+    },
+    {
+      "key": "conversation_sessions.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "direct_auth_selector_present",
+      "companions": [],
+      "reason": "The session is a subject-owned container for private conversation history."
+    },
+    {
+      "key": "conversion_analytics.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The row links behavioral analytics to one authenticated account."
+    },
+    {
+      "key": "exec_intakes.organizer_email",
+      "action": "redact_shared_record_role_bundle",
+      "standing": "blocks_shared_record_policy",
+      "live_coverage": "absent",
+      "companions": ["organizer_name", "participants", "board_pack_url"],
+      "reason": "The organizer identity is embedded in a shared company intake whose ownership and retention may belong to the customer organization."
+    },
+    {
+      "key": "exec_pulses.participant_email",
+      "action": "delete_participant_row_by_verified_email",
+      "standing": "blocks_participant_erasure_design",
+      "live_coverage": "absent",
+      "companions": ["participant_name", "profile_id", "pulse_responses"],
+      "reason": "The row is the participant's identifiable response, but linked aggregates must be invalidated or recomputed after deletion."
+    },
+    {
+      "key": "feedback.user_email",
+      "action": "delete_subject_row_by_verified_email",
+      "standing": "blocks_alternate_anchor_coverage",
+      "live_coverage": "auth_sweep_misses_anonymous_or_legacy_row",
+      "companions": ["user_agent"],
+      "reason": "Anonymous feedback can remain linked by verified email when user_id is null."
+    },
+    {
+      "key": "feedback.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "Authenticated feedback is a subject-owned row selected by account UUID."
+    },
+    {
+      "key": "index_participant_data.user_id",
+      "action": "delete_participant_row_by_auth_id",
+      "standing": "blocks_participant_erasure_design",
+      "live_coverage": "dynamic_auth_sweep_present_but_aggregate_effect_unproved",
+      "companions": ["participant_id"],
+      "reason": "The participant row is personal input, but publication and benchmark aggregates must be invalidated or recomputed."
+    },
+    {
+      "key": "index_publication_rules.created_by",
+      "action": "redact_actor_attribution",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "absent",
+      "companions": [],
+      "reason": "Publication methodology is shared system configuration; actor erasure must not delete the rules."
+    },
+    {
+      "key": "lead_qualification_scores.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The qualification score is profiling data linked to one authenticated account."
+    },
+    {
+      "key": "leaders.email",
+      "action": "delete_legacy_subject_row_by_auth_id_or_verified_email",
+      "standing": "blocks_schema_reconciliation",
+      "live_coverage": "comment_claims_email_fallback_but_runtime_only_uses_user_id",
+      "companions": ["user_id", "name"],
+      "reason": "The live comment promises legacy email coverage, the code only queries user_id, and the generated type omits user_id entirely."
+    },
+    {
+      "key": "leads.email",
+      "action": "delete_subject_row_by_verified_email",
+      "standing": "blocks_alternate_anchor_coverage",
+      "live_coverage": "absent",
+      "companions": ["name", "company_research", "session_data"],
+      "reason": "The marketing lead row is directly identified by email and can retain research and session context after account deletion."
+    },
+    {
+      "key": "post_session_reviews.participant_email",
+      "action": "delete_participant_row_by_verified_email",
+      "standing": "blocks_participant_erasure_design",
+      "live_coverage": "absent",
+      "companions": ["participant_name", "optional_feedback"],
+      "reason": "The review is participant-owned personal feedback whose aggregate contribution must be reconciled after deletion."
+    },
+    {
+      "key": "pre_workshop_inputs.participant_email",
+      "action": "delete_participant_row_by_verified_email",
+      "standing": "blocks_participant_erasure_design",
+      "live_coverage": "absent",
+      "companions": ["participant_name", "profile_id", "pre_work_responses"],
+      "reason": "Pre-work responses are identifiable participant input and may feed later workshop synthesis."
+    },
+    {
+      "key": "profiles.email",
+      "action": "erase_with_selected_subject_row",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "parent_row_delete_by_auth_id_present",
+      "companions": [],
+      "reason": "The profile is keyed by the account UUID; email is erased with that selected row and must not widen deletion scope."
+    },
+    {
+      "key": "prompt_library_profiles.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The prompt profile is a personalized account artifact."
+    },
+    {
+      "key": "roi_actuals.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The ROI observation is account-linked customer data."
+    },
+    {
+      "key": "security_audit_log.user_id",
+      "action": "pseudonymize_retained_audit_identity",
+      "standing": "blocks_retention_policy",
+      "live_coverage": "new_deletion_events_reinsert_raw_identity_and_email",
+      "companions": ["resource_id", "ip_address", "user_agent", "details"],
+      "reason": "The current flow writes raw user_id and email into retained audit events immediately before and after deletion."
+    },
+    {
+      "key": "unified_profiles.email",
+      "action": "delete_subject_row_by_verified_email",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "verified_email_selector_present",
+      "companions": ["name", "company_identifier_hash"],
+      "reason": "The unified profile is explicitly selected by the verified account email before deletion."
+    },
+    {
+      "key": "user_business_context.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The business context is private account-owned material."
+    },
+    {
+      "key": "user_memory_settings.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "direct_auth_selector_present",
+      "companions": [],
+      "reason": "The privacy and memory settings belong exclusively to the account."
+    },
+    {
+      "key": "user_roles.user_id",
+      "action": "delete_membership_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "The row grants the erased account a role and must be removed without widening content deletion."
+    },
+    {
+      "key": "users.auth_user_id",
+      "action": "delete_legacy_subject_row_by_auth_id_or_verified_email",
+      "standing": "blocks_alternate_anchor_coverage",
+      "live_coverage": "absent",
+      "companions": ["email", "full_name", "profile_id"],
+      "reason": "The legacy users table retains a direct auth UUID but is absent from the live deletion path."
+    },
+    {
+      "key": "users.email",
+      "action": "delete_legacy_subject_row_by_auth_id_or_verified_email",
+      "standing": "blocks_alternate_anchor_coverage",
+      "live_coverage": "absent",
+      "companions": ["auth_user_id", "full_name", "profile_id"],
+      "reason": "The legacy users row may survive under the verified email when its auth UUID is null or stale."
+    },
+    {
+      "key": "velocity_events.contact_email",
+      "action": "delete_subject_row_by_verified_email",
+      "standing": "blocks_alternate_anchor_coverage",
+      "live_coverage": "auth_sweep_misses_anonymous_or_legacy_row",
+      "companions": ["event_metadata"],
+      "reason": "Velocity events can remain directly identifiable by email when user_id is null."
+    },
+    {
+      "key": "velocity_events.user_id",
+      "action": "delete_subject_row_by_auth_id",
+      "standing": "classified_implementation_unverified",
+      "live_coverage": "dynamic_auth_sweep_present",
+      "companions": [],
+      "reason": "Authenticated velocity events are personal behavioral records selected by account UUID."
+    },
+    {
+      "key": "workshop_sessions.facilitator_email",
+      "action": "redact_shared_record_role_bundle",
+      "standing": "blocks_shared_record_policy",
+      "live_coverage": "absent",
+      "companions": ["facilitator_name", "workshop_metadata", "tension_observations"],
+      "reason": "A facilitator identity is one role inside a shared customer session and cannot authorize deletion of the session."
+    }
+  ],
+  "known_live_contradictions": [
+    {
+      "id": "leaders_legacy_email_claim_is_not_implemented",
+      "evidence": "delete-account comments say leaders.email covers older rows, but both leader lookup and deletion filter only on leaders.user_id."
+    },
+    {
+      "id": "leaders_generated_type_omits_runtime_user_id",
+      "evidence": "The generated leaders Row type contains email but no user_id, while delete-account and migrations rely on user_id."
+    },
+    {
+      "id": "retained_audit_reintroduces_erased_identifiers",
+      "evidence": "Deletion audit writes user_id and email into retained audit rows before and after the account data sweep."
+    }
+  ],
+  "execution_gate": {
+    "status": "blocked",
+    "requires": [
+      "authoritative catalog reconciliation",
+      "complete shared-role redaction bundles",
+      "participant identity and aggregate invalidation design",
+      "approved audit purpose, field minimum and retention duration",
+      "database tests proving exact rows and collateral rows"
+    ]
+  },
+  "not_authorized": [
+    "using a phone number, name or unverified email as a global deletion selector",
+    "deleting shared workshop, referral or publication records because one actor requests erasure",
+    "treating a table mention as proof of alternate-anchor coverage",
+    "editing the live deletion path",
+    "linked database access, migration execution, deployment, merge or release"
+  ]
+}

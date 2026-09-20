@@ -1,0 +1,58 @@
+{
+  "schema_version": "ctrl.g24.predicate-authority.r78.module.v1",
+  "module_id": "semantic_authority_verifier",
+  "responsibility": "Prove that each fact means what the rule consumes and that its source owns that exact meaning and scope.",
+  "forbidden": [
+    "promote_proposal_to_brain_truth",
+    "accept_self_certifying_reference",
+    "widen_purpose",
+    "widen_audience",
+    "widen_consequence",
+    "extend_validity",
+    "supply_transition_authority"
+  ],
+  "self_certifying_labels_forbidden": [
+    "accepted_frame_ref",
+    "value_checkpoint_ref",
+    "approval_ref",
+    "consent_ref",
+    "complete_set_ref"
+  ],
+  "derived_fact_rule": {
+    "required_fields": [
+      "derivation_function_id",
+      "derivation_version",
+      "ordered_input_fact_refs",
+      "ordered_input_fingerprints"
+    ],
+    "authority": "intersection_of_inputs",
+    "purpose": "intersection_of_inputs",
+    "audience": "intersection_of_inputs",
+    "consequence": "intersection_of_inputs",
+    "valid_until": "earliest_input_valid_until",
+    "may_introduce_new_meaning": false,
+    "incompatible_or_empty_intersection_result": "indeterminate"
+  },
+  "brain_boundary": {
+    "accepted_knowledge_requires": [
+      "exact_g13_source_ref",
+      "atomic_assertion_ref",
+      "brain_item_ref",
+      "brain_item_version",
+      "accepted_standing"
+    ],
+    "proposal_only_can_steer": false,
+    "signed_external_fact_auto_promotes_to_brain": false
+  },
+  "external_two_layer_seal": {
+    "issuer_layer": "proves_only_the_exact_external_atomic_fact_revision_owned_by_the_issuer",
+    "ctrl_use_binding_layer": "binds_subject_case_purpose_audience_consequence_transition_precondition_and_predecessor",
+    "issuer_may_claim_ctrl_local_meaning": false
+  },
+  "failure_dispositions": [
+    "ambiguous",
+    "unreadable",
+    "stale",
+    "revoked"
+  ]
+}

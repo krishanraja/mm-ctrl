@@ -1,0 +1,94 @@
+{
+  "schema_version": "ctrl.g25.preservation-improvement-founder-clarification.r7.v1",
+  "record_kind": "founder_clarification_and_project_decision_record",
+  "exact_founder_call": "dont presume those legacy systems cannot be improved, they most likely can. continue onwards",
+  "decision_record": {
+    "decision_id": "DEC-20260917-g25-preservation-improvement",
+    "title": "Treat legacy preservation as a floor and improvement as the mandate",
+    "decision": "Protect the earned value, control meaning, data boundary and proven failure behavior of legacy systems during transition, while presuming every legacy implementation can be improved, recomposed or replaced. No legacy workflow, scoring method, schema, screen or interaction pattern is authoritative merely because it exists.",
+    "status": "active",
+    "decided_at": "2026-09-17T09:52:43+01:00",
+    "recorded_at": "2026-09-17T09:52:43+01:00",
+    "decider": "Krish Raja",
+    "accountable_owner": "Krish Raja",
+    "scope": "system",
+    "affected_entities": [
+      "G25 legacy capability preservation register",
+      "CTRL transition architecture",
+      "news curation and audio briefing",
+      "Brain-control mechanics"
+    ],
+    "rationale": [
+      "Preventing accidental capability loss does not establish that the current implementation is good enough.",
+      "The target product is a material upgrade in intelligence, usability, trust and human value.",
+      "Legacy systems should supply evidence and constraints, not dictate the future product shape."
+    ],
+    "alternatives": [
+      {
+        "route": "Freeze proven legacy implementations",
+        "why_rejected": "It would preserve historical assumptions and implementation debt as though survival proved optimality."
+      },
+      {
+        "route": "Delete legacy systems before replacement proof",
+        "why_rejected": "It would risk losing useful behavior, hidden controls and failure handling before the better system is demonstrably real."
+      }
+    ],
+    "dissent": "Characterization and non-regression proof add time before visible cutover. That cost is accepted, but characterization must not become an excuse for preserving inferior design indefinitely.",
+    "tradeoffs": "The build carries both a preservation burden and a positive improvement burden. A replacement must prove that it retains required value and controls while improving at least one material dimension without unacceptable regressions.",
+    "evidence_refs": [
+      {
+        "ref": "conversation:2026-09-17 exact founder clarification",
+        "kind": "fact",
+        "scope": "preservation and improvement intent"
+      },
+      {
+        "ref": "project-documentation/ctrl-evolution/g25-legacy-capability-preservation-register-r1.json",
+        "kind": "fact",
+        "scope": "machine-readable preservation and improvement policy"
+      }
+    ],
+    "assumptions": [
+      "Earned legacy value can be characterized independently of its current implementation.",
+      "Material improvement can be evaluated across decision usefulness, burden, speed, cost, provenance, correctness, agency, accessibility and resilience."
+    ],
+    "revisit": {
+      "review_on": null,
+      "trigger": "A protected capability cannot be characterized independently of its implementation, or an improvement criterion conflicts with a higher-order trust or human-agency constraint.",
+      "signal_source": "Versioned characterization, comparison fixture or adversarial review",
+      "owner": "Krish Raja",
+      "action_when_fired": "Prepare a bounded keep, recompose or replace decision without deleting the current implementation."
+    },
+    "authority_granted": [
+      "local characterization and benchmarking",
+      "local adapters, replacements, fixtures, tests and documentation",
+      "local commits within the existing no-production boundary"
+    ],
+    "source_ref": "conversation:2026-09-17 exact founder call",
+    "supersedes": [],
+    "superseded_by": [],
+    "outcome": "not_yet_observed",
+    "events": [
+      {
+        "type": "created",
+        "at": "2026-09-17T09:52:43+01:00",
+        "actor": "Krish Raja",
+        "source_ref": "conversation:2026-09-17 exact founder call"
+      }
+    ],
+    "last_verified_at": "2026-09-17T09:52:43+01:00"
+  },
+  "improvement_dimensions": [
+    "decision usefulness",
+    "cognitive and operational burden",
+    "speed and cost",
+    "provenance and correctness",
+    "human agency and control",
+    "accessibility and resilience"
+  ],
+  "not_authorized": [
+    "production or database mutation",
+    "deployment, merge, release or feature enablement",
+    "customer-facing change",
+    "legacy retirement or deletion without the exact retirement gate"
+  ]
+}
