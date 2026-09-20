@@ -1,0 +1,86 @@
+{
+  "schema_version": "ctrl.g25.stable-review-address.r122.v1",
+  "contract_id": "G25-STABLE-REVIEW-ADDRESS-R122",
+  "status": "isolated_stable_owner_private_address_proved_product_flag_closed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-RENDERED-AUTHENTICATED-REVIEW-R121"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "migration": "supabase/migrations/20260920130000_standard_change_review_address.sql",
+    "migration_sha256": "63b63ffdd7468367c1b062ca97f32d528c7d182617fbc375a598fb9939080ad9",
+    "address_core": "supabase/functions/_shared/standard-change-owner-address-core.ts",
+    "address_core_sha256": "176cdf510c2dc4b6e88722e2642b850849623b30527c6f040b75d7fe8468ca3a",
+    "address_core_test": "supabase/functions/_shared/standard-change-owner-address-core.test.ts",
+    "address_core_test_sha256": "3d5a7cd26e9ef842394152caebd23912b900f7df5753b86ab9f1b0c5e1287a35",
+    "edge_function": "supabase/functions/review-standard-change-v3/index.ts",
+    "edge_function_sha256": "c982581d8c18f4b5d6df445c39b54f88075542bd1f67e8199404974472adfba3",
+    "edge_config": "supabase/functions/review-standard-change-v3/deno.json",
+    "edge_config_sha256": "a9a29da36c2576f755dd868b9f553a02afdf7d7bccf52e97e65c7f68cf36bfef",
+    "address_gateway": "src/features/standard-review/addressGateway.ts",
+    "address_gateway_sha256": "5ae7735d204cba1758c53d0c372084057979c1f53d6c222e83f3ee83f3d33ed6",
+    "address_gateway_test": "src/features/standard-review/addressGateway.test.ts",
+    "address_gateway_test_sha256": "96c4f5690458d60e763413023d05acf586e4b11fd19173bb42daadfed2d04c5b",
+    "address_experience": "src/features/standard-review/StandardReviewAddressExperience.tsx",
+    "address_experience_sha256": "0fa9392cf72d92a792a5af846818262e5742b9a06ea2e552e52d742602ae5aa5",
+    "address_page": "src/features/standard-review/StandardReviewAddressPage.tsx",
+    "address_page_sha256": "01098e6e341fedb4730aaf7839065f8fed627d00d583207ff1f8205ba76a57b3",
+    "preview_entry": "preview-r122/main.tsx",
+    "preview_entry_sha256": "b2f7035acc8660395c4e37f8af262b34f06acbffa73223a99231ea94cbb7b260",
+    "vite_config": "vite.r122.config.ts",
+    "vite_config_sha256": "ea17a73d03abdd25ff096ed709ba77a4769c94ec070a10d91cd282c6cfabcecf",
+    "browser_spec": "src/__tests__/e2e/g25-standard-review-address-r122.spec.ts",
+    "browser_spec_sha256": "820eb83878fd1c745862fe395cea36e556a97e7605366114f222e9b78bd0067a",
+    "probe": "scripts/probe-ctrl-g25-standard-review-address-r122.mjs",
+    "probe_sha256": "d1506ebc8d3e2180ea3d48b5995badc7bb3eb8dc36fc852a9680d86615151634",
+    "checker": "scripts/check-ctrl-g25-stable-review-address-r122.mjs",
+    "checker_sha256": "fd424734aa2886c14e1b1f11418d8fa6137407ade9dea3c7a489c10f2dd8616f",
+    "finding": "project-documentation/ctrl-evolution/g25-stable-review-address-r122.md",
+    "finding_sha256": "42b18e00d2a3972b05996289b72486656f86344d6f4f93a459de05f193df9b36"
+  },
+  "isolated_deployment": {
+    "migration_version": "20260920130000",
+    "rpc": "open_standard_change_review_v3(uuid)",
+    "authenticated_execute": true,
+    "anon_execute": false,
+    "public_execute": false,
+    "function_slug": "review-standard-change-v3",
+    "function_version": 1,
+    "function_status": "ACTIVE",
+    "verify_jwt": true,
+    "downloaded_entrypoint_matches_reviewed_source": true,
+    "unauthenticated_status": 401,
+    "new_database_lint_findings": 0
+  },
+  "hosted_browser_proof": {
+    "browser_tests_passed": 3,
+    "viewports": [
+      "1440x900",
+      "390x844"
+    ],
+    "stable_address_has_query_string": false,
+    "approval_and_reversal_succeeded": true,
+    "rejection_succeeded": true,
+    "unknown_and_cross_owner_indistinguishable": true,
+    "mobile_horizontal_overflow": false,
+    "credentials_persisted": false,
+    "fixture_cleanup_zero": true
+  },
+  "authority": {
+    "opening_mutates_state": false,
+    "approved_experience_changed": false,
+    "product_feature_flag_enabled": false,
+    "navigation_entry_added": false,
+    "customer_data_used": false,
+    "production_deployed": false,
+    "merge_to_main_authorized": false,
+    "release_authorized": false,
+    "legacy_retirement_authorized": false
+  },
+  "next_safe_action": "Add a read-only owner-private pending-review queue that gives Krish one ready packet, consequence and safe link without sending a notification or changing the approved review screen."
+}

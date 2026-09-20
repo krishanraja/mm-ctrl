@@ -16,7 +16,7 @@ The canonical current set lives in [`docs/current/`](../docs/current/README.md).
 6. [`REPLICATION_GUIDE.md`](./REPLICATION_GUIDE.md)
 7. [`DECISIONS_LOG.md`](./DECISIONS_LOG.md)
 
-Measured in the current source tree on 2026-09-20: 123 Edge Function directories excluding `_shared`, 51 hook files, and 197 SQL migrations. `npm run docs:check` prevents these quoted counts from drifting silently.
+Measured in the current source tree on 2026-09-20: 124 Edge Function directories excluding `_shared`, 51 hook files, and 198 SQL migrations. `npm run docs:check` prevents these quoted counts from drifting silently.
 
 ## Commercial and brand context
 

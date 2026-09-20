@@ -153,6 +153,7 @@ const ProposalsPage = lazyWithRetry(() => import('@/pages/ProposalsPage'))
 const DecisionBenchPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionBenchPage'))
 const SyntheticPopulationLabPage = lazyWithRetry(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
 const StandardReviewPreviewPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewPreviewPage'))
+const StandardReviewAddressPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewAddressPage'))
 const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 /**
@@ -174,7 +175,12 @@ function preloadInitialRouteChunk() {
   } else if (p.startsWith('/operator/lab/synthetic-population/')) {
     warm(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
   } else if (p.startsWith('/operator/reviews/')) {
-    warm(() => import('@/features/standard-review/StandardReviewPreviewPage'))
+    const reviewId = p.split('/').filter(Boolean).at(-1) ?? ''
+    if (import.meta.env.VITE_ENABLE_STANDARD_REVIEW_ADDRESS === '1' && /^[0-9a-f-]{36}$/i.test(reviewId)) {
+      warm(() => import('@/features/standard-review/StandardReviewAddressPage'))
+    } else {
+      warm(() => import('@/features/standard-review/StandardReviewPreviewPage'))
+    }
   } else if (p.startsWith('/operator/customers/')) {
     warm(() => import('@/features/operator-brain/DecisionBenchPage'))
   } else {
@@ -254,7 +260,12 @@ function SyntheticPopulationLabGate() {
 function StandardReviewPreviewGate() {
   const { reviewId } = useParams()
   const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
-  return previewEnabled && reviewId === 'SYN-REVIEW-118' ? <StandardReviewPreviewPage /> : <NotFound />
+  if (previewEnabled && reviewId === 'SYN-REVIEW-118') return <StandardReviewPreviewPage />
+  const addressEnabled = import.meta.env.VITE_ENABLE_STANDARD_REVIEW_ADDRESS === '1'
+  const stableAddress = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(reviewId ?? '')
+  return addressEnabled && stableAddress
+    ? <RequireAuth><StandardReviewAddressPage /></RequireAuth>
+    : <NotFound />
 }
 
 export const router = createBrowserRouter([
@@ -291,7 +302,8 @@ export const router = createBrowserRouter([
     element: <LazyWrapper><SyntheticPopulationLabGate /></LazyWrapper>,
   },
   {
-    // Exact R118 packet-to-product proof. Synthetic, unlinked and browser-only.
+    // Exact R118 synthetic proof, plus an authenticated stable packet address
+    // only when its separately controlled feature flag is enabled.
     path: '/operator/reviews/:reviewId',
     element: <LazyWrapper><StandardReviewPreviewGate /></LazyWrapper>,
   },

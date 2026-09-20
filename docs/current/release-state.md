@@ -18,7 +18,7 @@ Last verified: 2026-09-08 against the exact G16 application release at `860dea0`
 | Hook files | 51 |
 | SQL migration files | 197 in the source tree |
 
-Current source inventory is 123 Edge Function directories excluding `_shared`, 51 hook files, and 197 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
+Current source inventory is 124 Edge Function directories excluding `_shared`, 51 hook files, and 198 SQL migration files. The 183-function shared-project total is deployment inventory, not repository ownership.
 
 ## Living Brain substrate canary, 2026-09-08
 
