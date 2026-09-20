@@ -19,4 +19,3 @@ R133 independently proves that the strict response can enter the operator UI onl
 The hosted rehearsal deleted every disposable auth user, operator principal, link, workspace, role, audience grant, access receipt, review packet, candidate request, artifact and criterion. All cleanup counts were zero. Production writes were zero.
 
 The remaining integration step is intentionally still closed: no application route currently constructs the isolated authenticated client and renders the R133 gateway. That step needs a private, explicit non-production composition rather than a fallback to the existing global client, because the existing global client points at the production project.
-

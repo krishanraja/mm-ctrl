@@ -68,4 +68,3 @@
   "cleanup_complete": true,
   "next_safe_action": "Build a private isolated runtime composition that injects an explicitly non-production client into the R133 gateway. Do not use the current global Supabase client and do not expose a public route."
 }
-
