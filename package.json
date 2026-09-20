@@ -207,6 +207,7 @@
     "brain:g25:operator-review-access-r124-check": "vitest run src/features/standard-review/operatorAccess.test.ts && npm run brain:g25:pending-review-queue-r123-check && node scripts/check-ctrl-g25-operator-review-access-r124.mjs",
     "brain:g25:operator-review-postgres-r125-check": "node scripts/run-ctrl-g25-operator-review-access-r125.mjs && npm run brain:g25:operator-review-access-r124-check && node scripts/check-ctrl-g25-operator-review-access-r125.mjs",
     "brain:g25:operator-catalogue-r126-check": "node scripts/probe-ctrl-g25-operator-catalogue-r126.mjs && npm run brain:g25:operator-review-postgres-r125-check && node scripts/check-ctrl-g25-operator-catalogue-r126.mjs",
+    "brain:g25:operator-migration-r127-check": "node scripts/probe-ctrl-g25-operator-migration-r127.mjs && npm run brain:g25:operator-review-postgres-r125-check && node scripts/check-ctrl-g25-operator-review-migration-r127.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",

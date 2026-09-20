@@ -1,0 +1,114 @@
+{
+  "schema_version": "ctrl.g25.operator-review-migration.r127.v1",
+  "contract_id": "G25-OPERATOR-REVIEW-MIGRATION-R127",
+  "status": "isolated_migration_applied_rollback_restored",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OPERATOR-CATALOGUE-R126",
+    "G25-OPERATOR-REVIEW-ACCESS-POSTGRES-R125"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "migration": {
+    "version": "20260920170000",
+    "additive": true,
+    "blanket_db_push_used": false,
+    "exact_file_application": true,
+    "smallest_identity_cut": [
+      "private.brain_operator_principals",
+      "private.brain_operator_auth_links"
+    ],
+    "reused_authority_spine": [
+      "public.brain_workspaces",
+      "public.brain_workspace_roles",
+      "public.brain_audience_grants"
+    ]
+  },
+  "live_readback": {
+    "operator_tables": 2,
+    "review_projection_columns": 4,
+    "new_constraints": 3,
+    "access_receipt_table": true,
+    "access_receipt_rls": true,
+    "authenticated_receipt_table_access": false,
+    "service_receipt_table_access": false,
+    "authenticated_rpc_execute": true,
+    "anonymous_rpc_execute": false,
+    "service_rpc_execute": false,
+    "operator_identity_rows": 0,
+    "bound_packet_rows": 0,
+    "access_receipt_rows": 0,
+    "migration_history_rows": 1,
+    "r115_tables": 5,
+    "owner_queue_v4": true,
+    "catalogue_sha256": "ee9fb806b351a6a00b5f7e754f620f23be1dd61141d49791f13c0c38055e5bed"
+  },
+  "projection": {
+    "audience": "delivery_team_private",
+    "purpose": "standard_change_review_preparation",
+    "returned_fields": [
+      "review_packet_id",
+      "question",
+      "headline",
+      "consequence",
+      "ready_since"
+    ],
+    "raw_packet_returned": false,
+    "legacy_unbound_packets_owner_only": true,
+    "materiality_inferred": false
+  },
+  "authority": {
+    "decision_authority_granted": false,
+    "active_standard_mutated": false,
+    "notification_sent": false,
+    "permits": [
+      "disposable authenticated hosted lifecycle proof on the isolated project",
+      "exact rollback and restore on the isolated project"
+    ],
+    "forbids": [
+      "customer data",
+      "product-facing operator provisioning",
+      "production mutation",
+      "merge to main",
+      "release",
+      "cutover",
+      "legacy retirement"
+    ]
+  },
+  "rollback": {
+    "rehearsed": true,
+    "operator_tables": 0,
+    "review_projection_columns": 0,
+    "migration_history_rows": 0,
+    "r115_preserved": true,
+    "r123_owner_queue_preserved": true,
+    "restored_after_rehearsal": true
+  },
+  "artifacts": {
+    "migration": "supabase/migrations/20260920170000_standard_change_operator_review_access.sql",
+    "migration_sha256": "afba3d351945fa1c1c3673ffb6d52c2372718b44aaea401f6366b89b39949361",
+    "readback_sql": "supabase/tests/database/g25_operator_review_access_r127_readback.sql",
+    "readback_sql_sha256": "0670d66f6d7b2a239e6b48c0f9e7c22d455b0c1bff2947a85650fd7d9f554263",
+    "rollback_readback_sql": "supabase/tests/database/g25_operator_review_access_r127_rollback_readback.sql",
+    "rollback_readback_sql_sha256": "800bb9658e1e645e8c2c46b6b6c98062b9ce20f3c91cee2fd51afbdc249110d5",
+    "probe": "scripts/probe-ctrl-g25-operator-migration-r127.mjs",
+    "probe_sha256": "f0ee5a0c7f65f3a63709fe496bcd625b9f4ee891bfe2b84963ed04c6507db836",
+    "rollback_sql": "scripts/rollback-ctrl-g25-operator-review-access-r127.sql",
+    "rollback_sql_sha256": "ad8c431c808a7a82a609dc1caa1943e5157d72c58246852a28e47e7b8d0c6428",
+    "rollback_operator": "scripts/rollback-ctrl-g25-operator-review-access-r127.ps1",
+    "rollback_operator_sha256": "033d7d7eb2dbc9090b62f2e90bd656cac70cf10d7e5f14efa64f17b00552b7d0",
+    "restore_operator": "scripts/restore-ctrl-g25-operator-review-access-r127.ps1",
+    "restore_operator_sha256": "16fbb37ddc17f8e04685a6a33a0cdf4d3ecbcb846dfe60a920e5278c532a57cb",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-review-migration-r127.md",
+    "finding_sha256": "9ffdd1a8cd97585fb25958b0f78595955bf87c3a851b559f7e26d20cae70bf7d",
+    "qa_record": "project-documentation/ctrl-evolution/g25-operator-review-migration-r127-qa-record.md",
+    "qa_record_sha256": "0a044d73b50d5563acaf24acdd1d1b6095f1a0e59f2053815af9e77604e452a6",
+    "checker": "scripts/check-ctrl-g25-operator-review-migration-r127.mjs",
+    "checker_sha256": "622e2706ab63c7926ec9a60aa61e0d47d31957235cf752a5ac1c0c728f6a8158"
+  },
+  "next_safe_action": "Run R128 as a disposable authenticated hosted lifecycle proof: exact allow, cross-workspace refusal, immediate revocation and complete fixture cleanup."
+}
