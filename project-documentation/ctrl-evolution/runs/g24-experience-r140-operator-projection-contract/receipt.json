@@ -1,0 +1,24 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "run_id": "g24-experience-r140-operator-projection-contract",
+  "status": "preflight",
+  "surface": "non-rendered operator route-readiness and complete decision-projection contracts",
+  "materiality": "pure fail-closed application contracts only; no component, route, copy, layout, interaction or customer-visible state changed",
+  "changed_surface_files": [
+    "src/features/operator-brain/operatorDecisionRouteReadiness.ts",
+    "src/features/operator-brain/operatorDecisionProjection.ts"
+  ],
+  "authority": "Branch-only contract work. This receipt grants no authority to add a route, connect production, merge or release.",
+  "release_status": "no rendered experience exists; experience approval is neither requested nor claimed",
+  "approval_claims": [],
+  "customer_surface_changed": false,
+  "operator_surface_changed": false,
+  "database_writes": 0,
+  "production_writes": 0,
+  "unverified_or_blocked": [
+    "server-side live projection producer",
+    "React integration",
+    "persistent authenticated route",
+    "production deployment, merge or release"
+  ]
+}
