@@ -1,6 +1,6 @@
 {
   "contract": "g25-human-review-projection-r117",
-  "status": "REMOTE_VERIFIED_FOUNDER_REVIEW_PENDING",
+  "status": "PUBLIC_REMOTE_VERIFICATION_PENDING",
   "authority": {
     "allowed": [
       "local static proof",
@@ -20,7 +20,7 @@
   "artifacts": [
     {
       "path": "public/g25-human-review-r117.html",
-      "sha256": "c640cac5c6cca598e4b27a9366895e055c3dd8e540b83658566f2475aca4ea98"
+      "sha256": "425ef7dd7dc84e47d791785f8276e194b24fde791e8c11019730d6efa1c2d754"
     },
     {
       "path": "public/g25-human-review-r117.css",
@@ -56,15 +56,7 @@
     "1280x720",
     "1440x900"
   ],
-  "remote_verification": {
-    "kind": "anonymous temporary Vercel deployment unlinked to the mm-ctrl project",
-    "deployment_id": "dpl_FVDufLTy8Af17gPvw6rRh597ZSac",
-    "url": "https://temporary-instant-ochre-to6qkmc.vercel.app/g25-human-review-r117.html",
-    "ready_state": "READY",
-    "duration": "60 minutes",
-    "artifact_hashes_match": true,
-    "browser_tests_passed": 7
-  },
+  "remote_verification": null,
   "independent_verdict": "PASS",
   "next_gate": "Krish's cold first reaction to the exact non-production preview"
 }

@@ -1,6 +1,6 @@
 # G25 human review R117 QA record
 
-Status: local, independent and remote proof passed; founder review pending
+Status: local and independent proof passed; durable public preview replacement pending
 Date: 2026-09-19
 Authority: local proof and non-production preview only
 
@@ -38,8 +38,6 @@ The deeper layer must then expose the exact current rule, exact proposed rule, t
 | Reduced motion | Pass, animations disabled through the user preference query |
 | Browser console | Pass, no warning or error observed in local rendered review |
 | Independent final review | Pass after repairing persistent mobile close access and plain reversal wording |
-| Remote artifact byte parity | Pass, HTML, CSS and JavaScript SHA-256 values match the frozen local proof |
-| Remote browser acceptance | Pass, all seven journeys against the deployed URL |
 
 Focused browser acceptance executed seven tests across the four named viewports. The long fixture uses natural vertical scroll at 320x568; the normal decision does not.
 
@@ -56,13 +54,13 @@ Focused browser acceptance executed seven tests across the four named viewports.
 
 | File | SHA-256 |
 |---|---|
-| `public/g25-human-review-r117.html` | `c640cac5c6cca598e4b27a9366895e055c3dd8e540b83658566f2475aca4ea98` |
+| `public/g25-human-review-r117.html` | `425ef7dd7dc84e47d791785f8276e194b24fde791e8c11019730d6efa1c2d754` |
 | `public/g25-human-review-r117.css` | `4fd84d9b7d438c810ffbfb433e1cc43d8039f9f9e43951a8b6c9dfd9f889986f` |
 | `public/g25-human-review-r117.js` | `273ddccb049a031567f98bd59bbfc9fd77dce7720e8f6a3718ea5f29b9ada1c8` |
 
 The [independent verdict](g25-human-review-r117-independent-verdict.md) records the initial veto, repair and fresh pass.
 
-## Remote verification
+## Retired temporary verification
 
 - Deployment: `dpl_FVDufLTy8Af17gPvw6rRh597ZSac`
 - State: `READY`
@@ -71,7 +69,7 @@ The [independent verdict](g25-human-review-r117-independent-verdict.md) records 
 - Exact-byte check: all three frozen artifact hashes matched the remote response
 - Remote browser result: seven of seven focused tests passed
 
-The normal branch deployment remained unavailable because the inherited repository prebuild standards gate fails on nine older frozen-document em-dash violations. Those files were not changed because doing so could invalidate historical artifact identities. The temporary deployment contains only the already-built static output and creates no change to the linked Vercel project or production.
+The temporary deployment contained only the already-built static output and created no change to the linked Vercel project or production. It is retired as a founder-review route because anonymous Vercel deployments expire and did not open reliably on a second device.
 
 ## Unproved
 
@@ -79,4 +77,4 @@ This proof does not establish that the proposed rule is a valuable real-world le
 
 ## Next gate
 
-Present the remotely verified proof cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.
+Publish the exact committed proof through a durable public route, verify it as a logged-out visitor and present it cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.
