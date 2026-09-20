@@ -1,0 +1,1 @@
+const r={light:10,medium:20,heavy:30,success:[10,50,20],error:[50,50,50]},t=()=>"vibrate"in navigator,e=(i=r.medium)=>{if(t())try{Array.isArray(i),navigator.vibrate(i)}catch(a){console.debug("Haptic feedback not available:",a)}},s={light:()=>e(r.light),medium:()=>e(r.medium),heavy:()=>e(r.heavy),success:()=>e(r.success),error:()=>e(r.error)};export{s as h};

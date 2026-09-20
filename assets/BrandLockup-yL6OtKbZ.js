@@ -1,0 +1,1 @@
+import{j as e}from"./index-I2BQEZoH.js";const a="/mm-ctrl/assets/mindmaker-icon-BN7SrhYH.png";function r({className:n}){return e.jsx("span",{className:`inline-flex items-center select-none ${n??""}`,"aria-label":"Mindmaker CTRL",children:e.jsx("img",{src:a,alt:"Mindmaker CTRL",className:"h-[19px] w-auto"})})}export{r as B,a as m};

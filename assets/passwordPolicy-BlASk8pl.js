@@ -1,0 +1,1 @@
+const t="At least 12 characters, with an uppercase letter, a lowercase letter and a number. Passwords found in known breaches are refused.";function r(e){return e.length<12?`Use at least 12 characters. That one is ${e.length}.`:/[a-z]/.test(e)?/[A-Z]/.test(e)?/[0-9]/.test(e)?null:"Add a number.":"Add an uppercase letter.":"Add a lowercase letter."}export{t as P,r as c};
