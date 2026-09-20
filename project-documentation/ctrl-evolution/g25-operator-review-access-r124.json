@@ -1,0 +1,163 @@
+{
+  "schema_version": "ctrl.g25.operator-review-access.r124.v1",
+  "contract_id": "G25-OPERATOR-REVIEW-ACCESS-R124",
+  "status": "headless_authority_contract_frozen_runtime_closed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-PENDING-REVIEW-QUEUE-R123",
+    "G25-STABLE-CUSTODY-IDENTITY-R23",
+    "G25-EXACT-PURPOSE-RLS-CANARY-R8"
+  ],
+  "product_intent": "Krish may deliberately pull one customer's pending review to prepare a better conversation without impersonating the customer or acquiring the customer's decision authority.",
+  "selection": {
+    "initiated_by": "authenticated_operator_after_deliberate_workspace_selection",
+    "ambient_cross_customer_read": false,
+    "notification_sent": false,
+    "queue_order": "oldest_ready_first_until_evidence_backed_materiality_exists"
+  },
+  "required_identity_and_scope": {
+    "authenticated_user": true,
+    "stable_operator_principal": true,
+    "workspace_lifecycle": "active",
+    "workspace_role": "operator",
+    "role_granted_by": "customer_workspace_owner",
+    "projection_audience": "delivery_team_private",
+    "projection_purpose": "standard_change_review_preparation",
+    "purpose": "standard_change_review_preparation",
+    "grant_granted_by": "customer_workspace_owner",
+    "finite_expiry_required": true,
+    "expiry_source": "explicit_engagement_or_consent_window",
+    "arbitrary_duration_invented": false,
+    "rechecked_on_every_read": true
+  },
+  "required_review_binding": {
+    "workspace_id": "exact selected workspace",
+    "subject_id": "exact workspace subject",
+    "owner_id": "exact workspace owner",
+    "audience": "delivery_team_private",
+    "state": "ready",
+    "legacy_unbound_packet_operator_access": false
+  },
+  "allowed_projection": [
+    "review_packet_id",
+    "question",
+    "headline",
+    "consequence",
+    "ready_since"
+  ],
+  "excluded_projection": [
+    "raw source text",
+    "evidence detail",
+    "criteria",
+    "prompt material",
+    "packet hashes",
+    "private Brain items"
+  ],
+  "operator_authority": {
+    "read_operator_safe_review_projection": true,
+    "approve": false,
+    "reject": false,
+    "apply": false,
+    "reverse": false,
+    "widen_audience": false,
+    "mutate_active_standard": false
+  },
+  "denial": {
+    "public_result": "not_available",
+    "private_receipt_preserves_reason": true,
+    "resource_existence_disclosed": false
+  },
+  "access_receipt": {
+    "concept": "brain_access_receipts",
+    "append_only": true,
+    "allowed_and_denied_attempts": true,
+    "atomic_with_allowed_read": true,
+    "contains_private_plaintext": false,
+    "required_fields": [
+      "observed_at",
+      "authenticated_user_id",
+      "operator_principal_id",
+      "selected_workspace_id",
+      "workspace_id",
+      "subject_id",
+      "owner_id",
+      "role",
+      "role_granted_by",
+      "audience_grant_id",
+      "audience",
+      "purpose",
+      "resource_kind",
+      "review_packet_id",
+      "outcome",
+      "reason",
+      "returned_fields",
+      "receipt_sha256"
+    ]
+  },
+  "reuses": {
+    "existing_tables": [
+      "brain_workspaces",
+      "brain_workspace_roles",
+      "brain_audience_grants"
+    ],
+    "parallel_permission_system_created": false,
+    "browser_service_role_allowed": false
+  },
+  "schema_decisions": {
+    "extend_in_place": "standard_change_review_packets",
+    "required_added_bindings": [
+      "workspace_id",
+      "subject_id",
+      "operator_projection_audience",
+      "operator_projection_purpose"
+    ],
+    "single_new_concept": "brain_access_receipts",
+    "legacy_backfill_by_inference": false
+  },
+  "current_runtime_gaps": [
+    "standard_change_review_packets lacks workspace, subject, operator-projection audience and operator-projection purpose",
+    "stable operator identity is not bound to the live review runtime",
+    "no append-only Brain access receipt table exists",
+    "R123 can derive only its authenticated owner"
+  ],
+  "verification": {
+    "positive_cases": 1,
+    "adversarial_cases": 17,
+    "public_denial_uniform": true,
+    "runtime_operator_access_proved": false
+  },
+  "artifacts": {
+    "evaluator": "src/features/standard-review/operatorAccess.ts",
+    "evaluator_sha256": "5c9913c92ce53956f94663470026860ff9181cc55445ac73de79ddfa7a2daeb4",
+    "evaluator_test": "src/features/standard-review/operatorAccess.test.ts",
+    "evaluator_test_sha256": "ca2a110d701bee4b373f3dbccbc84dec3c0eb929ecda02724486c3e68537f8e7",
+    "strategy": "project-documentation/ctrl-evolution/g25-operator-review-access-r124-strategy.md",
+    "strategy_sha256": "8799a3c8875835505cd9c8861f216ca227f13ba02a72960df7201491b84639e8",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-review-access-r124.md",
+    "finding_sha256": "3f00cfcbc6b078e17dec87302e9f017d5da9cc9628a1783644450d63bfdb5518",
+    "qa_record": "project-documentation/ctrl-evolution/g25-operator-review-access-r124-qa-record.md",
+    "qa_record_sha256": "21ff1397e12faa315434cf8f5cfb1a205ee24c2539c5cc686abdb18a5b34bd04",
+    "checker": "scripts/check-ctrl-g25-operator-review-access-r124.mjs",
+    "checker_sha256": "2df53cdd0b5e716520344169e7fccdf8776c4133651d68663e365a39522f5e76"
+  },
+  "authority": {
+    "permits": [
+      "local pure authority evaluator",
+      "deterministic adversarial tests",
+      "static contract checker",
+      "local rollback-only PostgreSQL candidate as R125"
+    ],
+    "forbids": [
+      "live operator access",
+      "database migration or deployment",
+      "Edge deployment",
+      "customer data",
+      "operator decision authority",
+      "production mutation",
+      "merge to main",
+      "release",
+      "legacy retirement"
+    ]
+  },
+  "next_safe_action": "Build R125 as a local rollback-only PostgreSQL candidate that binds new review packets to workspace, subject, audience and purpose and atomically receipts allowed and denied operator reads."
+}
