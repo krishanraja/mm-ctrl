@@ -1,0 +1,88 @@
+{
+  "schema_version": "ctrl.g25.operator-catalogue.r126.v1",
+  "contract_id": "G25-OPERATOR-CATALOGUE-R126",
+  "status": "isolated_catalogue_read_smallest_identity_cut_confirmed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OPERATOR-REVIEW-ACCESS-POSTGRES-R125",
+    "G25-STABLE-CUSTODY-IDENTITY-R23"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "inspection": {
+    "method": "supabase_generated_types_public_and_private",
+    "read_only": true,
+    "catalogue_sha256": "ff88d71b7510cda2dd53765f03b34f8331698bc3d5ef38838d76cb63bf55b350",
+    "schema_content_committed": false,
+    "credential_content_committed": false
+  },
+  "existing_authority_spine": {
+    "brain_workspaces": true,
+    "brain_workspace_roles": true,
+    "brain_audience_grants": true,
+    "workspace_lifecycle": true,
+    "role_granted_at": true,
+    "audience_expires_at": true
+  },
+  "existing_review_spine": {
+    "standard_change_review_packets": true,
+    "get_pending_standard_change_review_v4": true,
+    "workspace_binding": false,
+    "operator_projection_binding": false
+  },
+  "confirmed_absent": [
+    "private.brain_operator_principals",
+    "private.brain_operator_auth_links",
+    "public.brain_access_receipts",
+    "standard_change_review_packets.operator_projection_audience",
+    "standard_change_review_packets.operator_projection_purpose",
+    "public.get_operator_pending_standard_change_review_v1(uuid)"
+  ],
+  "smallest_additive_identity_cut": [
+    "private.brain_operator_principals",
+    "private.brain_operator_auth_links"
+  ],
+  "explicitly_not_required_for_operator_read": [
+    "custody assignments",
+    "historical principals",
+    "subject principals",
+    "second workspace role system",
+    "second audience grant system"
+  ],
+  "compatibility": {
+    "table_names_match_r23": true,
+    "wider_custody_architecture_can_reuse_identity": true,
+    "legacy_unbound_review_packets_remain_owner_only": true
+  },
+  "artifacts": {
+    "probe": "scripts/probe-ctrl-g25-operator-catalogue-r126.mjs",
+    "probe_sha256": "27f78e710ee333e9d284862684420b0bfc2b75ffc7e2f71c011fe461c932486c",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-catalogue-r126.md",
+    "finding_sha256": "f1c34cc6c1d3f057ed32d4750d6ceb4c450dc97317ba3e4f1cd876bfbda186ee",
+    "qa_record": "project-documentation/ctrl-evolution/g25-operator-catalogue-r126-qa-record.md",
+    "qa_record_sha256": "0e55afb12ed27db6b0ed080124334f45bf088c4ad3e7b9562f94d8d0c32b2a5f",
+    "checker": "scripts/check-ctrl-g25-operator-catalogue-r126.mjs",
+    "checker_sha256": "53131f820584ff1fc8af4ef1095b322a6e3b54b77650a109f5ea57603efe9b11"
+  },
+  "authority": {
+    "permits": [
+      "read-only isolated catalogue inspection",
+      "smallest additive migration design",
+      "disposable isolated fixtures after migration review"
+    ],
+    "forbids": [
+      "production catalogue read",
+      "production mutation",
+      "customer data",
+      "blanket custody migration",
+      "merge to main",
+      "release",
+      "legacy retirement"
+    ]
+  },
+  "next_safe_action": "Create R127 as one additive isolated-only migration and hosted proof for the two stable operator identity tables, packet projection bindings, general access receipts and read-only operator RPC."
+}
