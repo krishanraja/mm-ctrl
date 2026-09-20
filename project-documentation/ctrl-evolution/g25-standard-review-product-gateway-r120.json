@@ -1,0 +1,53 @@
+{
+  "schema_version": "ctrl.g25.standard-review-product-gateway.r120.v1",
+  "contract_id": "G25-STANDARD-REVIEW-PRODUCT-GATEWAY-R120",
+  "status": "isolated_authenticated_product_gateway_proved_rendered_browser_closed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-STANDARD-CHANGE-OWNER-GATE-R116",
+    "G25-HUMAN-REVIEW-BINDING-R118",
+    "G25-HUMAN-REVIEW-HOSTED-LIFECYCLE-R119"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "artifacts": {
+    "adapter": "src/features/standard-review/supabaseInvoker.ts",
+    "adapter_sha256": "27c1f26cd3f25f7a39c2c6b29cf6b3447e0974e3ae327b0675bf905f9ece68e9",
+    "adapter_test": "src/features/standard-review/supabaseInvoker.test.ts",
+    "adapter_test_sha256": "fbe1d9a24607283b40f14225519aa914e68c796676d87be40ec74db7d27e68ea",
+    "probe": "scripts/probe-ctrl-g25-standard-review-gateway-r120.mjs",
+    "probe_sha256": "3ce837a7e4252ef2cf9c846f17658981400be7ecd4841f34143230aac722d66e",
+    "checker": "scripts/check-ctrl-g25-standard-review-gateway-r120.mjs",
+    "checker_sha256": "c3c0cac4a5838072e2cd190f23a7fca0a104aac92f5319bfd6707ba7c718612c",
+    "finding": "project-documentation/ctrl-evolution/g25-standard-review-product-gateway-r120.md",
+    "finding_sha256": "70d50c9474c69c2754abac7603f09301f2e08b4c43414447b1dcc4523eaac591"
+  },
+  "hosted_proof": {
+    "real_candidates_checked": 3,
+    "product_packets_projected": 3,
+    "presentation_bound": true,
+    "session_refresh_succeeded": true,
+    "refresh_preserved_packet": true,
+    "rejection_receipt_parsed": true,
+    "approval_receipt_parsed": true,
+    "stale_conflict_mapped": true,
+    "non_head_reversal_conflict_mapped": true,
+    "reversal_receipt_parsed": true,
+    "exact_standard_restored": true,
+    "exact_criteria_restored": true,
+    "fixture_cleanup_zero": true
+  },
+  "authority": {
+    "approved_experience_changed": false,
+    "credentials_persisted": false,
+    "customer_data_used": false,
+    "production_deployed": false,
+    "merge_to_main_authorized": false,
+    "release_authorized": false,
+    "legacy_retirement_authorized": false
+  },
+  "next_safe_action": "Mount the approved React experience over the exact product gateway with a short-lived authenticated browser fixture in isolated Supabase and prove mobile and desktop lifecycle paths with zero residue."
+}
