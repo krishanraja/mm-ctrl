@@ -1,0 +1,110 @@
+{
+  "schema_version": "ctrl.g25.operator-hosted-lifecycle.r128.v1",
+  "contract_id": "G25-OPERATOR-HOSTED-LIFECYCLE-R128",
+  "status": "isolated_authenticated_lifecycle_passed_zero_residue",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OPERATOR-REVIEW-MIGRATION-R127",
+    "G25-STANDARD-CHANGE-OWNER-R116",
+    "G25-HUMAN-REVIEW-BINDING-R118"
+  ],
+  "target": {
+    "project_ref": "cgkcplcamsijghalintq",
+    "project_name": "legibility",
+    "production_project_ref": "bkyuxvschuwngtcdhsyg",
+    "production_writes": 0
+  },
+  "hosted": {
+    "real_owner_candidate_conveyor": true,
+    "human_projection_completed_before_binding": true,
+    "allowed_http_status": 200,
+    "ready_count": 1,
+    "returned_fields": [
+      "consequence",
+      "headline",
+      "question",
+      "ready_since",
+      "review_packet_id"
+    ],
+    "raw_packet_returned": false,
+    "direct_raw_packet_hidden": true,
+    "direct_receipt_table_hidden": true,
+    "operator_decision_status": 404,
+    "cross_workspace": {
+      "http_status": 200,
+      "public_reason": "not_available",
+      "private_reason": "operator_role_missing"
+    },
+    "revocation": {
+      "effective_on_next_request": true,
+      "http_status": 200,
+      "public_reason": "not_available",
+      "private_reason": "audience_grant_revoked"
+    },
+    "receipts": {
+      "count": 3,
+      "outcomes": [
+        "allowed",
+        "denied",
+        "denied"
+      ],
+      "returned_field_counts": [
+        5,
+        0,
+        0
+      ],
+      "hashes_valid": true,
+      "append_only_table_hidden_from_operator": true
+    },
+    "owner_standard_unchanged": true
+  },
+  "authority": {
+    "decision_authority_granted": false,
+    "active_standard_mutated": false,
+    "notification_sent": false,
+    "permits": [
+      "local design and PostgreSQL proof of an owner-controlled projection-binding operation"
+    ],
+    "forbids": [
+      "customer data",
+      "product-facing operator provisioning",
+      "production mutation",
+      "merge to main",
+      "deploy",
+      "release",
+      "cutover",
+      "legacy retirement"
+    ]
+  },
+  "cleanup": {
+    "access_receipts": 0,
+    "artifacts": 0,
+    "auth_users": 0,
+    "candidate_requests": 0,
+    "criteria": 0,
+    "grants": 0,
+    "operator_auth_links": 0,
+    "operator_principals": 0,
+    "review_packets": 0,
+    "roles": 0,
+    "workspaces": 0
+  },
+  "correction_cycle": {
+    "initial_private_reason": "review_packet_changed",
+    "cause": "legacy owner packet lacked the required R118 presentation",
+    "repair": "complete the authenticated V2 presentation before operator binding",
+    "validator_weakened": false,
+    "failed_attempt_residue": 0
+  },
+  "artifacts": {
+    "probe": "scripts/probe-ctrl-g25-operator-hosted-lifecycle-r128.mjs",
+    "probe_sha256": "c1d2aa4adbb9c96cf8bdba77aa71d778fdb276b3c4314c3a92d019cb1a535bde",
+    "finding": "project-documentation/ctrl-evolution/g25-operator-hosted-lifecycle-r128.md",
+    "finding_sha256": "f89c33af6807ce1c136b995df3ed3e7c19dfd62dda06b82fe8dd21464ed11457",
+    "qa_record": "project-documentation/ctrl-evolution/g25-operator-hosted-lifecycle-r128-qa-record.md",
+    "qa_record_sha256": "9ea8abdb5bd4d4b5855220a68513508ff1438942fb4308e9c90bb85da5ddd913",
+    "checker": "scripts/check-ctrl-g25-operator-hosted-lifecycle-r128.mjs",
+    "checker_sha256": "697f830aaa67632ba73a779960d3a384a485d79afb8789e8e24e3190345eb61e"
+  },
+  "next_safe_action": "Design and locally prove R129 as one owner-controlled, presentation-complete and idempotent packet-to-workspace binding operation with no role, grant, decision or notification side effects."
+}
