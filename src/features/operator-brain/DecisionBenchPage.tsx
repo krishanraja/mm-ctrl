@@ -523,7 +523,7 @@ export default function DecisionBenchPage() {
     <div className="dt-shell">
       <header className="dt-header">
         <div className="dt-identity">
-          <img src="/mindmaker-favicon.png" alt="Mindmake" />
+          <img src={`${import.meta.env.BASE_URL}mindmaker-favicon.png`} alt="Mindmake" />
           <span className="dt-avatar" aria-hidden="true">MC</span>
           <div><strong>{fixture.subject.display_name}</strong><small>{fixture.subject.role} · {fixture.subject.organisation} · synthetic</small></div>
         </div>

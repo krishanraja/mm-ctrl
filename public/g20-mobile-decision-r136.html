@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#06140f" />
+    <title>Mobile decision session · Mindmake</title>
+    <link rel="icon" href="./favicon-32x32.png" type="image/png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #f1efe4;
+        --muted: #8ea097;
+        --faint: #66766e;
+        --ground: #06140f;
+        --panel: #0a1b14;
+        --line: #1d3b2d;
+        --mint: #79e6b4;
+        --amber: #e8ad3f;
+        --danger: #e48266;
+        --serif: Georgia, "Times New Roman", serif;
+        --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body { margin: 0; min-height: 100%; background: var(--ground); color: var(--ink); }
+
+      body {
+        font-family: var(--sans);
+        background:
+          radial-gradient(circle at 50% -20%, rgba(67, 157, 112, .14), transparent 34rem),
+          var(--ground);
+      }
+
+      button { font: inherit; }
+      button, a { -webkit-tap-highlight-color: transparent; }
+
+      .shell { min-height: 100dvh; }
+
+      .topbar {
+        height: 58px;
+        padding: max(8px, env(safe-area-inset-top)) 16px 8px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .person { display: flex; align-items: center; gap: 10px; min-width: 0; }
+      .mark { width: 27px; height: 27px; object-fit: contain; flex: 0 0 auto; }
+      .person-copy { min-width: 0; }
+      .person strong { display: block; font-size: 12px; line-height: 1.2; letter-spacing: .01em; }
+      .person span { display: block; margin-top: 3px; color: var(--muted); font: 8px/1.2 var(--mono); letter-spacing: .09em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+      .quiet-button {
+        min-height: 34px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--muted);
+        padding: 0 11px;
+        border-radius: 999px;
+        font: 9px/1 var(--mono);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      main { width: min(100%, 520px); margin: 0 auto; padding: 17px 18px 22px; }
+
+      .eyebrow {
+        color: var(--mint);
+        font: 9px/1.2 var(--mono);
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      .status { color: var(--amber); }
+
+      h1 {
+        margin: 8px 0 16px;
+        font: 400 clamp(27px, 7.5vw, 38px)/.98 var(--serif);
+        letter-spacing: -.035em;
+        text-wrap: balance;
+      }
+
+      .view {
+        border-left: 2px solid var(--mint);
+        padding-left: 13px;
+        margin-bottom: 17px;
+      }
+
+      .view-label { color: var(--muted); font: 8px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+      .view p { margin: 6px 0 7px; font: 600 16px/1.28 var(--sans); letter-spacing: -.012em; }
+      .condition { display: flex; align-items: flex-start; gap: 7px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+      .condition svg { width: 13px; height: 13px; margin-top: 1px; flex: 0 0 auto; color: var(--amber); }
+
+      .turn { border-top: 1px solid var(--line); padding-top: 15px; }
+      .turn-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+      .turn-count { color: var(--faint); font: 8px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+
+      h2 { margin: 7px 0 12px; font: 400 clamp(23px, 6.8vw, 31px)/1.04 var(--serif); letter-spacing: -.025em; text-wrap: balance; }
+
+      .choices { display: grid; gap: 7px; }
+      .choice {
+        width: 100%;
+        min-height: 43px;
+        border: 1px solid #2a4a3a;
+        background: rgba(11, 29, 22, .72);
+        color: var(--ink);
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.2;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .choice::after { content: "›"; color: var(--mint); font-size: 20px; line-height: 1; }
+      .choice:active { transform: translateY(1px); border-color: var(--mint); }
+
+      .answer-tools { margin-top: 9px; display: flex; align-items: center; justify-content: space-between; }
+      .voice {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 5px 0;
+        font-size: 11px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .voice svg { width: 14px; height: 14px; }
+      .cutoff { color: var(--faint); font: 8px/1.25 var(--mono); letter-spacing: .04em; text-align: right; }
+
+      .result { animation: enter .28s ease-out; }
+      .result-value { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+      .result-value strong { color: var(--ink); }
+      .result h2 { color: var(--mint); }
+      .explain { margin: -4px 0 14px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+      .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .action {
+        min-height: 44px;
+        border: 1px solid #31513f;
+        background: transparent;
+        color: var(--ink);
+        padding: 9px 10px;
+        font-size: 12px;
+        font-weight: 650;
+        cursor: pointer;
+        text-align: center;
+      }
+      .action.primary { background: var(--ink); color: #07120e; border-color: var(--ink); }
+      .undo { margin-top: 10px; border: 0; background: transparent; color: var(--muted); padding: 3px 0; font-size: 10px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+      .loading-row { min-height: 162px; display: grid; place-items: center; color: var(--muted); font: 9px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+      .pulse { display: inline-flex; align-items: center; gap: 9px; }
+      .pulse::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 0 rgba(121,230,180,.35); animation: pulse 1s infinite; }
+
+      .layer {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        background: var(--ground);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        transform: translateX(101%);
+        transition: transform .26s cubic-bezier(.22,.75,.18,1);
+      }
+      .layer.open { transform: translateX(0); }
+      .layer-head {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        min-height: 56px;
+        background: rgba(6,20,15,.96);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: max(8px, env(safe-area-inset-top)) 16px 8px;
+      }
+      .back { border: 0; background: transparent; color: var(--ink); padding: 7px 0; font-size: 12px; cursor: pointer; }
+      .layer-title { font: 9px/1 var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+      .layer-body { width: min(100%, 520px); margin: 0 auto; padding: 21px 18px 40px; }
+      .layer-body h2 { margin-top: 5px; }
+      .basis-section { padding: 17px 0; border-top: 1px solid var(--line); }
+      .basis-section:first-of-type { margin-top: 18px; }
+      .basis-section h3 { margin: 0 0 9px; color: var(--mint); font: 9px/1.2 var(--mono); letter-spacing: .11em; text-transform: uppercase; }
+      .basis-section p, .basis-section li { color: #b8c2bc; font-size: 13px; line-height: 1.5; }
+      .basis-section p { margin: 0; }
+      .basis-section ul { margin: 0; padding-left: 18px; }
+      .basis-section li + li { margin-top: 7px; }
+      .route { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 9px 0; }
+      .route span { color: var(--amber); font: 10px/1.5 var(--mono); }
+      .route p { margin: 0; }
+      .source { color: var(--faint); font: 8px/1.5 var(--mono); letter-spacing: .03em; }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: max(16px, env(safe-area-inset-bottom));
+        transform: translate(-50%, 16px);
+        z-index: 20;
+        opacity: 0;
+        pointer-events: none;
+        background: var(--ink);
+        color: var(--ground);
+        padding: 9px 13px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        transition: .2s ease;
+        white-space: nowrap;
+      }
+      .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+      @keyframes enter { from { opacity: 0; transform: translateY(7px); } }
+      @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(121,230,180,0); } }
+
+      @media (max-height: 620px) {
+        .topbar { height: 50px; }
+        main { padding-top: 12px; padding-bottom: 14px; }
+        h1 { margin-top: 6px; margin-bottom: 12px; font-size: 25px; }
+        .view { margin-bottom: 12px; }
+        .view p { font-size: 14px; margin: 5px 0; }
+        .condition { font-size: 10px; }
+        .turn { padding-top: 11px; }
+        h2 { margin: 5px 0 9px; font-size: 21px; }
+        .choice { min-height: 38px; padding: 8px 10px; font-size: 12px; }
+        .choices { gap: 5px; }
+        .answer-tools { margin-top: 6px; }
+      }
+
+      @media (min-width: 700px) {
+        body { border-left: 1px solid #10271d; border-right: 1px solid #10271d; width: 520px; margin: 0 auto; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="person">
+          <img class="mark" src="./mindmaker-favicon.png" alt="Mindmake" />
+          <div class="person-copy">
+            <strong>Maya Chen</strong>
+            <span>Aperture House</span>
+          </div>
+        </div>
+        <button class="quiet-button" id="openBasis" type="button">Inspect basis</button>
+      </header>
+
+      <main id="main">
+        <div class="eyebrow">Live decision · <span class="status">Provisional</span></div>
+        <h1>Should Aperture rebuild marketing around AI?</h1>
+
+        <section class="view" aria-labelledby="viewLabel">
+          <div class="view-label" id="viewLabel">Current view</div>
+          <p>Prove the system with one customer result before rebuilding the whole function.</p>
+          <div class="condition">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span>Holds if the pilot preserves Maya's quality standard without her final rescue.</span>
+          </div>
+        </section>
+
+        <section class="turn" id="turn" aria-live="polite">
+          <div class="turn-head">
+            <div class="eyebrow">One thing to settle</div>
+            <div class="turn-count">1 of 1</div>
+          </div>
+          <h2>What result would make this safe to scale?</h2>
+          <div class="choices">
+            <button class="choice" type="button" data-answer="A customer result we can verify" data-outcome="holds">A customer result we can verify</button>
+            <button class="choice" type="button" data-answer="The team can match Maya's standard" data-outcome="changed">The team can match Maya's standard</button>
+            <button class="choice" type="button" data-answer="Not known yet" data-outcome="open">Not known yet</button>
+          </div>
+          <div class="answer-tools">
+            <button class="voice" id="voice" type="button" aria-label="Answer by voice">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="3" width="8" height="13" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Say it instead
+            </button>
+            <div class="cutoff">9 sources · 18 Sep</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <aside class="layer" id="basis" aria-hidden="true">
+      <header class="layer-head">
+        <button class="back" id="closeBasis" type="button">← Back</button>
+        <div class="layer-title">Basis</div>
+        <span aria-hidden="true" style="width:37px"></span>
+      </header>
+      <div class="layer-body">
+        <div class="eyebrow">Why this is the current view</div>
+        <h2>The system is promising. Its quality still depends on Maya.</h2>
+
+        <section class="basis-section">
+          <h3>Evidence</h3>
+          <ul>
+            <li>The AI-assisted team produced campaign options in hours, not a week.</li>
+            <li>Maya still rewrote the final work in both observed trials.</li>
+            <li>No customer result has yet been measured against the old approach.</li>
+          </ul>
+        </section>
+
+        <section class="basis-section">
+          <h3>Routes considered</h3>
+          <div class="route"><span>01</span><p>Rebuild now. Fastest, but relies on an unproven quality system.</p></div>
+          <div class="route"><span>02</span><p>Prove the system first. Current view.</p></div>
+          <div class="route"><span>03</span><p>Add tools gradually. Lower risk, but avoids the strategic question.</p></div>
+        </section>
+
+        <section class="basis-section">
+          <h3>Case against</h3>
+          <p>The present incentives may be the real bottleneck. A successful pilot could still fail to change behaviour across the team.</p>
+        </section>
+
+        <section class="basis-section">
+          <h3>Sources and history</h3>
+          <p class="source">OPENING CONVERSATION · 2 SEPTEMBER<br />VOICE REFLECTION · 7 SEPTEMBER<br />TEAM WORKFLOW REVIEW · 11 SEPTEMBER<br />EXTERNAL CATEGORY SCAN · 18 SEPTEMBER</p>
+        </section>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+      const turn = document.querySelector('#turn');
+      const basis = document.querySelector('#basis');
+      const toast = document.querySelector('#toast');
+      const originalTurn = turn.innerHTML;
+      let lastAnswer = null;
+
+      function haptic() {
+        if (navigator.vibrate) navigator.vibrate(8);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.setTimeout(() => toast.classList.remove('show'), 1500);
+      }
+
+      function bindChoices() {
+        turn.querySelectorAll('[data-answer]').forEach((button) => {
+          button.addEventListener('click', () => answer(button.dataset.answer, button.dataset.outcome));
+        });
+        const voice = turn.querySelector('#voice');
+        if (voice) voice.addEventListener('click', () => showToast('Voice answer ready'));
+      }
+
+      function answer(value, outcome) {
+        haptic();
+        lastAnswer = { value, outcome };
+        turn.innerHTML = '<div class="loading-row"><span class="pulse">Checking what this changes</span></div>';
+        window.setTimeout(renderResult, 620);
+      }
+
+      function renderResult() {
+        const copy = {
+          holds: ['Recommendation holds', 'A verified customer result supplies the proof the current view needs.'],
+          changed: ['Recommendation narrows', 'The pilot must now test whether the team can meet Maya\'s standard without her final rewrite.'],
+          open: ['Still provisional', 'The next step is to define the proof before changing people or tools.']
+        }[lastAnswer.outcome];
+
+        turn.innerHTML = `
+          <div class="result">
+            <div class="turn-head"><div class="eyebrow">Your answer</div><div class="turn-count">Saved</div></div>
+            <p class="result-value"><strong>${lastAnswer.value}</strong></p>
+            <h2>${copy[0]}</h2>
+            <p class="explain">${copy[1]}</p>
+            <div class="actions">
+              <button class="action" id="challenge" type="button">Challenge this</button>
+              <button class="action primary" id="record" type="button">Record my call</button>
+            </div>
+            <button class="undo" id="undo" type="button">Undo answer</button>
+          </div>`;
+
+        turn.querySelector('#undo').addEventListener('click', resetTurn);
+        turn.querySelector('#challenge').addEventListener('click', renderChallenge);
+        turn.querySelector('#record').addEventListener('click', renderDecision);
+      }
+
+      function renderChallenge() {
+        haptic();
+        turn.innerHTML = `
+          <div class="result">
+            <div class="turn-head"><div class="eyebrow">Pressure test</div><div class="turn-count">Optional</div></div>
+            <h2>What could make the pilot look better than it really is?</h2>
+            <div class="choices">
+              <button class="choice" type="button" data-challenge>Maya rescued the final work</button>
+              <button class="choice" type="button" data-challenge>The customer was unusually easy</button>
+              <button class="choice" type="button" data-challenge>The change did not last</button>
+            </div>
+            <button class="undo" id="backResult" type="button">Back</button>
+          </div>`;
+        turn.querySelectorAll('[data-challenge]').forEach((button) => button.addEventListener('click', () => {
+          haptic();
+          showToast('Added to the test');
+          renderResult();
+        }));
+        turn.querySelector('#backResult').addEventListener('click', renderResult);
+      }
+
+      function renderDecision() {
+        haptic();
+        turn.innerHTML = `
+          <div class="result">
+            <div class="turn-head"><div class="eyebrow">Your call</div><div class="turn-count">Not recorded</div></div>
+            <h2>What do you want to do?</h2>
+            <div class="choices">
+              <button class="choice" type="button" data-call>Run the proof first</button>
+              <button class="choice" type="button" data-call>Rebuild now</button>
+              <button class="choice" type="button" data-call>Leave this open</button>
+            </div>
+            <button class="undo" id="backResult" type="button">Back</button>
+          </div>`;
+        turn.querySelectorAll('[data-call]').forEach((button) => button.addEventListener('click', () => {
+          haptic();
+          showToast(button.textContent === 'Leave this open' ? 'Decision left open' : 'Call recorded');
+        }));
+        turn.querySelector('#backResult').addEventListener('click', renderResult);
+      }
+
+      function resetTurn() {
+        lastAnswer = null;
+        turn.innerHTML = originalTurn;
+        bindChoices();
+      }
+
+      function openBasis() {
+        haptic();
+        basis.classList.add('open');
+        basis.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeBasis() {
+        haptic();
+        basis.classList.remove('open');
+        basis.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      document.querySelector('#openBasis').addEventListener('click', openBasis);
+      document.querySelector('#closeBasis').addEventListener('click', closeBasis);
+      bindChoices();
+    </script>
+  </body>
+</html>
