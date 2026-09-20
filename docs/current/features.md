@@ -72,6 +72,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 | Preview | `/preview` | Unlinked deterministic QA fixtures |
 | Decision Table | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic R4 operator harness for route comparison, decision sharpening, Claude handoff and returned-work audit in local or flagged preview builds |
 | Synthetic Brain lab | `/operator/lab/synthetic-population/:accountId` | Unlinked range harness for deterministic Brain inputs, processing boundaries and diagnostic oracles |
+| Standard review | `/operator/reviews/SYN-REVIEW-118` | Unlinked synthetic proof of the one-question leader gate over a presentation-complete, hash-bound standard-change packet |
 | Skill and MCP generation | Backend functions and exports | Portability substrate only |
 
 ## Route inventory
@@ -88,7 +89,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 
 ### Synthetic preview only
 
-`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. Its R4 fixture keeps customer-private and operator-private evidence distinct, asks one contextual tap-first question at a time, builds a complete Claude brief and audits a synthetic return. Evidence capture is page-local and disappears on reload. `/operator/lab/synthetic-population/:accountId` uses the same preview boundary and accepts only the 48 deterministic G18 synthetic identities. Both routes are unlinked, marked `noindex`, unauthenticated for QA, and have no production persistence authority.
+`/operator/customers/:workspaceId/decisions/:decisionId` renders only for the locked synthetic customer and intervention identifiers in Vite development mode or a build with the explicit synthetic-preview flag. Its R4 fixture keeps customer-private and operator-private evidence distinct, asks one contextual tap-first question at a time, builds a complete Claude brief and audits a synthetic return. Evidence capture is page-local and disappears on reload. `/operator/lab/synthetic-population/:accountId` uses the same preview boundary and accepts only the 48 deterministic G18 synthetic identities. `/operator/reviews/SYN-REVIEW-118` carries the founder-approved one-question standard-review shape into the product shell, but its public proof gateway is browser-only and saves nothing. All three routes are unlinked, marked `noindex`, unauthenticated for QA, and have no production persistence authority.
 
 ### Legacy redirects
 

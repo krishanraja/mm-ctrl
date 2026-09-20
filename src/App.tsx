@@ -55,8 +55,8 @@ function AppContent() {
     // only waits on auth. The static index.html boot icon already covered the very first paint,
     // so this continues the SAME visual rather than introducing a new one.
     const splashShown = sessionStorage.getItem('mindmaker-splash-shown')
-    const isDecisionBenchPreview = window.location.pathname.startsWith('/operator/customers/')
-    const minMs = isDecisionBenchPreview || splashShown ? 0 : 1500
+    const isSyntheticPreview = window.location.pathname.startsWith('/operator/')
+    const minMs = isSyntheticPreview || splashShown ? 0 : 1500
     const t = setTimeout(() => {
       sessionStorage.setItem('mindmaker-splash-shown', 'true')
       setMinElapsed(true)

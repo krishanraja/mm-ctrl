@@ -1,6 +1,6 @@
 # G25 human review projection R117 strategy
 
-Status: durable public proof passed; founder review pending
+Status: founder approved after one alignment correction; bounded product integration may proceed
 Date: 2026-09-20
 Depends on: G25 standard-change owner gate R116
 Data mode: synthetic projection over the exact R116 packet shape
@@ -59,4 +59,4 @@ Routine milestones do not interrupt the founder. Continue autonomously through c
 
 ## Exactly one next action
 
-Present the verified public proof cold for the founder's first reaction.
+Bind the approved projection to a presentation-complete, hash-bound R116 review packet in the isolated development system. Preserve the exact progressive disclosure, fail closed rather than inventing human-readable meaning and open no production or release authority.

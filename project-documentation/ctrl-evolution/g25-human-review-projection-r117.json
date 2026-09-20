@@ -1,6 +1,6 @@
 {
   "contract": "g25-human-review-projection-r117",
-  "status": "PUBLIC_REMOTE_VERIFIED_FOUNDER_REVIEW_PENDING",
+  "status": "FOUNDER_APPROVED_FOR_BOUNDED_PRODUCT_INTEGRATION",
   "authority": {
     "allowed": [
       "local static proof",
@@ -60,7 +60,7 @@
   "remote_verification": {
     "provider": "GitHub Pages",
     "url": "https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r117.html",
-    "deployment_commit": "8a6d94c32db38e1e28019025a9fd9de040c51a8d",
+    "deployment_commit": "045714dfe8c11b330b1d79569daf132995575afe",
     "authentication_required": false,
     "artifact_hashes_match": true,
     "http_status": 200,
@@ -72,6 +72,13 @@
       "1440x900"
     ]
   },
+  "founder_review": {
+    "status": "approved",
+    "observed_at": "2026-09-20",
+    "feedback": "The surface looks good after both action labels use one centred treatment.",
+    "required_correction_completed": true,
+    "product_direction_changed": false
+  },
   "independent_verdict": "PASS",
-  "next_gate": "Krish's cold first reaction to the exact non-production preview"
+  "next_gate": "Bind the approved projection to presentation-complete R116 packets in the isolated development system without opening production or release authority"
 }

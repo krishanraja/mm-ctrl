@@ -1,0 +1,44 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "status": "founder_approved_scope",
+  "surface": "G25 owner review projection and bounded React integration",
+  "materiality": "Material operator surface implementation of the founder-approved R117 decision shape; authority, persistence and release remain separately gated.",
+  "changed_surface_files": [
+    "public/g25-human-review-r117.css",
+    "src/App.tsx",
+    "src/router.tsx",
+    "src/features/standard-review/StandardReviewExperience.tsx",
+    "src/features/standard-review/StandardReviewExperience.css",
+    "src/features/standard-review/StandardReviewPreviewPage.tsx",
+    "preview-r118/index.html",
+    "preview-r118/main.tsx",
+    "public/g25-human-review-r118/index.html",
+    "public/g25-human-review-r118/assets/index-4j6w5Bb-.css",
+    "public/g25-human-review-r118/assets/index-YdI2gZQ5.js",
+    "public/g25-human-review-r118/assets/mindmaker-icon-BN7SrhYH.png"
+  ],
+  "authority": "Founder approved the exact R117 visual and interaction scope after the shared button-alignment repair. R118 may bind that surface to an immutable synthetic review packet in the isolated development system only.",
+  "release_status": "No production, merge, customer-data or release authority. Synthetic unlinked preview only.",
+  "approval_claims": [
+    "One-question leader review hierarchy",
+    "Radically minimal first view with deeper evidence behind one disclosure",
+    "Both action labels use one centred treatment",
+    "Exact R117 mobile and desktop visual direction"
+  ],
+  "first_pass_pack_hash": "425ef7dd7dc84e47d791785f8276e194b24fde791e8c11019730d6efa1c2d754",
+  "sealed_verdicts": [
+    "R117 independent review passed after persistent mobile close access and plain reversal wording were repaired.",
+    "Founder approved the rendered R117 surface after the final action-alignment correction."
+  ],
+  "reality_lab_results": {
+    "r117_remote": "Seven of seven hosted browser journeys passed across 320x568, 390x844, 1280x720 and 1440x900.",
+    "r118_local": "Five of five focused Playwright journeys passed across 320x568, 390x844 and 1440x900, including disclosure, approval, reversal, stale and incomplete states.",
+    "accessibility": "Focus containment, Escape close, focus restoration, reduced motion and 44px controls verified in the bounded browser suite."
+  },
+  "unverified_or_blocked": [
+    "Fresh unaided human comprehension beyond founder review",
+    "Physical iOS Safari and Android Chrome",
+    "Live authenticated persistence from the product container",
+    "Production concurrency, notification timing and longitudinal decision value"
+  ]
+}

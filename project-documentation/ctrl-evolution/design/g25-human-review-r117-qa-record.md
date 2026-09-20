@@ -1,6 +1,6 @@
 # G25 human review R117 QA record
 
-Status: local, independent and durable public proof passed; founder review pending
+Status: founder approved after one alignment correction; bounded product integration may proceed
 Date: 2026-09-20
 Authority: local proof and non-production public preview only
 
@@ -64,7 +64,7 @@ The [independent verdict](g25-human-review-r117-independent-verdict.md) records 
 
 - URL: `https://krishanraja.github.io/mm-ctrl/public/g25-human-review-r117.html`
 - Host: GitHub Pages over the public repository branch
-- Deployment commit: `8a6d94c32db38e1e28019025a9fd9de040c51a8d`
+- Deployment commit: `045714dfe8c11b330b1d79569daf132995575afe`
 - Access: HTTP 200 with no sign-in, redirect or interstitial
 - Asset delivery: HTML, CSS and JavaScript returned their correct content types
 - Identity: all three hosted SHA-256 hashes match the frozen local identity above
@@ -72,6 +72,10 @@ The [independent verdict](g25-human-review-r117-independent-verdict.md) records 
 - Remote viewports: 320x568, 390x844, 1280x720 and 1440x900
 
 The browser acceptance can target either the local proof or an absolute hosted proof through `E2E_PROOF_URL`. This prevents a successful public deployment from being mistaken for a successful local render.
+
+## Founder review
+
+Krish's first reaction was positive. He identified one visible inconsistency: the primary label was left aligned by the arrow layout while the secondary label was centred. The repair centres both labels and positions the primary arrow independently at the right edge. The seven hosted journeys pass again across all four target viewports. Krish approved the result and asked the build to continue.
 
 ## Retired temporary verification
 
@@ -90,4 +94,4 @@ This proof does not establish that the proposed rule is a valuable real-world le
 
 ## Next gate
 
-Present the verified public proof cold for Krish's first reaction. Product implementation remains closed until that reaction is recorded.
+Build the bounded product integration against a presentation-complete, hash-bound owner-review packet. Production, merge, release, customer data and legacy retirement remain closed.

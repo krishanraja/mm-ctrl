@@ -152,6 +152,7 @@ const ProposalsPage = lazyWithRetry(() => import('@/pages/ProposalsPage'))
 // Bench. It remains unlinked and is not included in authenticated prefetching.
 const DecisionBenchPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionBenchPage'))
 const SyntheticPopulationLabPage = lazyWithRetry(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
+const StandardReviewPreviewPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewPreviewPage'))
 const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
 
 /**
@@ -172,6 +173,8 @@ function preloadInitialRouteChunk() {
     warm(() => import('@/pages/Auth'))
   } else if (p.startsWith('/operator/lab/synthetic-population/')) {
     warm(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
+  } else if (p.startsWith('/operator/reviews/')) {
+    warm(() => import('@/features/standard-review/StandardReviewPreviewPage'))
   } else if (p.startsWith('/operator/customers/')) {
     warm(() => import('@/features/operator-brain/DecisionBenchPage'))
   } else {
@@ -248,6 +251,12 @@ function SyntheticPopulationLabGate() {
   return previewEnabled && fixtureExists ? <SyntheticPopulationLabPage /> : <NotFound />
 }
 
+function StandardReviewPreviewGate() {
+  const { reviewId } = useParams()
+  const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
+  return previewEnabled && reviewId === 'SYN-REVIEW-118' ? <StandardReviewPreviewPage /> : <NotFound />
+}
+
 export const router = createBrowserRouter([
   // Public routes
   {
@@ -280,6 +289,11 @@ export const router = createBrowserRouter([
     // Internal range harness. It is unlinked, non-indexable and accepts only explicit synthetic IDs.
     path: '/operator/lab/synthetic-population/:accountId',
     element: <LazyWrapper><SyntheticPopulationLabGate /></LazyWrapper>,
+  },
+  {
+    // Exact R118 packet-to-product proof. Synthetic, unlinked and browser-only.
+    path: '/operator/reviews/:reviewId',
+    element: <LazyWrapper><StandardReviewPreviewGate /></LazyWrapper>,
   },
   {
     // Agent-native marketing page (public): the read-only Memory Web MCP offering.

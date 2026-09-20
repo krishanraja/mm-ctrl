@@ -437,3 +437,9 @@ enabled = true
 verify_jwt = true
 import_map = "./functions/review-standard-change/deno.json"
 entrypoint = "./functions/review-standard-change/index.ts"
+
+[functions.review-standard-change-v2]
+enabled = true
+verify_jwt = true
+import_map = "./functions/review-standard-change-v2/deno.json"
+entrypoint = "./functions/review-standard-change-v2/index.ts"

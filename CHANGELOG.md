@@ -6,6 +6,16 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-20 - Human review packet binding R118
+
+Branch-only and isolated-development only. Nothing in this section is deployed to production or connected to customer data.
+
+- Carried the founder-approved one-question rule review into a reusable React surface with the same centred action treatment on desktop and phone.
+- Added a presentation-complete review packet. The exact question, current rule, proposed rule, consequence, risk, validation plan, countercase and at least two resolved evidence statements are frozen into the packet hash before the leader can decide.
+- Added an authenticated V2 review route in the isolated Supabase project. Preparation uses the presentation-complete packet; approval, rejection and head-safe reversal retain the R116 authority model.
+- The product parser fails closed on missing human-readable meaning, false deploy or release authority, malformed evidence and mismatched receipts.
+- Added a self-contained public synthetic preview, local browser coverage for ready, long, incomplete, stale, failure, approval and reversal states, and a rollback-only hosted database probe.
+
 ## [Unreleased] - 2026-09-11 - Decision Table R4 operator slice
 
 Branch-only and synthetic. Nothing in this section is deployed or connected to production data.
