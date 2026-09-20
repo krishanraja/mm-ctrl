@@ -1,0 +1,9 @@
+import{j as e}from"./index-CMsonWhx.js";import{B as r}from"./BrandLockup-G7tb5soU.js";import{S as t}from"./SkeletonCard-CyZXTu6Z.js";const l="ctrl-app-loader-styles",n=`
+@keyframes ctrlLoaderPulse { 0%,100%{ opacity:.45 } 50%{ opacity:1 } }
+@keyframes ctrlLoaderDot { 0%,100%{ opacity:.3; transform:translateY(0) } 50%{ opacity:1; transform:translateY(-2px) } }
+.ctrl-loader-lockup{ animation:ctrlLoaderPulse 1.7s ease-in-out infinite; }
+.ctrl-loader-dot{ animation:ctrlLoaderDot 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce){
+  .ctrl-loader-lockup, .ctrl-loader-dot{ animation:none !important; }
+}
+`;function o(){if(typeof document>"u"||document.getElementById(l))return;const a=document.createElement("style");a.id=l,a.textContent=n,document.head.appendChild(a)}function m({caption:a="Bringing your workspace up",fullscreen:s=!1}){return o(),e.jsxs("div",{className:(s?"fixed inset-0 z-[150] ":"h-full w-full ")+"flex flex-col items-center justify-center gap-7 bg-[linear-gradient(180deg,#0a0e12,#070a0d)] px-6",role:"status","aria-live":"polite","aria-label":"Loading",children:[e.jsx("div",{className:"ctrl-loader-lockup",children:e.jsx(r,{className:"h-6"})}),e.jsxs("div",{className:"flex w-full max-w-[320px] flex-col gap-3.5","aria-hidden":"true",children:[e.jsx(t,{className:"h-[10px] w-[38%]"}),e.jsx(t,{className:"h-[14px] w-[92%]"}),e.jsx(t,{className:"h-[14px] w-[68%]"}),e.jsx(t,{className:"mt-1 h-[9px] w-[46%]"})]}),e.jsxs("div",{className:"flex items-center gap-2 text-[12px] text-muted-foreground",children:[e.jsxs("span",{className:"inline-flex gap-[3px]","aria-hidden":"true",children:[e.jsx("span",{className:"ctrl-loader-dot h-1 w-1 rounded-full bg-accent"}),e.jsx("span",{className:"ctrl-loader-dot h-1 w-1 rounded-full bg-accent",style:{animationDelay:".18s"}}),e.jsx("span",{className:"ctrl-loader-dot h-1 w-1 rounded-full bg-accent",style:{animationDelay:".36s"}})]}),a]})]})}export{m as B};

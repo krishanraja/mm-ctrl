@@ -1,1 +1,0 @@
-import{r as i,s as r}from"./index-I2BQEZoH.js";const e=r;function u(){const[n,s]=i.useState(null);return{archive:i.useCallback(async t=>{s(t);try{const{error:a}=await e.from("decision_cases").update({status:"archived",pinned_at:null}).eq("id",t);if(a)throw a}finally{s(null)}},[]),archivingId:n}}export{u};
