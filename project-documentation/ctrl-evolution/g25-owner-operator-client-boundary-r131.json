@@ -1,0 +1,51 @@
+{
+  "schema_version": "ctrl.g25.owner-operator-client-boundary.r131.v1",
+  "contract_id": "G25-OWNER-OPERATOR-CLIENT-BOUNDARY-R131",
+  "status": "strict_client_boundary_passed",
+  "observed_at": "2026-09-20",
+  "depends_on": [
+    "G25-OWNER-OPERATOR-PROJECTION-MIGRATION-R130"
+  ],
+  "owner_adapter": {
+    "rpc": "prepare_and_bind_standard_change_operator_projection_v1",
+    "strict_response": true,
+    "requested_workspace_must_match": true,
+    "operator_access_granted": false,
+    "decision_authority_granted": false,
+    "active_standard_mutated": false,
+    "notification_sent": false
+  },
+  "operator_adapter": {
+    "rpc": "get_operator_pending_standard_change_review_v1",
+    "strict_response": true,
+    "allowed_item_fields": [
+      "review_packet_id",
+      "question",
+      "headline",
+      "consequence",
+      "ready_since"
+    ],
+    "uniform_public_denial": "not_available",
+    "raw_packet_allowed": false,
+    "hash_allowed": false,
+    "private_denial_reason_allowed": false,
+    "decision_authority_granted": false
+  },
+  "verification": {
+    "targeted_tests_passed": 10,
+    "new_type_errors": 0,
+    "customer_surface_changed": false,
+    "production_writes": 0
+  },
+  "artifacts": {
+    "owner_adapter": "src/features/standard-review/ownerOperatorBinding.ts",
+    "owner_adapter_sha256": "e07786fa61e95c6c17748c46ccd836a40e7d4812b96fed660ef4f14136f5adbb",
+    "owner_tests": "src/features/standard-review/ownerOperatorBinding.test.ts",
+    "owner_tests_sha256": "4fe020f1c93bfc5723412bf0fc6715afe3ac8717ce9692e2405ae9913bf3abe0",
+    "operator_adapter": "src/features/standard-review/operatorPendingQueue.ts",
+    "operator_adapter_sha256": "1240d70d9fd0741af083bd435d59bad0ae2ede17054dcc2c0cdaa1eb1bd57bfa",
+    "operator_tests": "src/features/standard-review/operatorPendingQueue.test.ts",
+    "operator_tests_sha256": "0d9740d51e4c4899d0bd04e906010bc03b09090238a361ee89ed056027c2ca4f"
+  },
+  "next_safe_action": "Render and blindly adjudicate materially different operator-only queue concepts, then implement one cross-device preview. Keep the deferred customer participation surface closed pending its founder interview."
+}
