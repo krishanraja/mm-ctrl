@@ -436,4 +436,9 @@ export const router = createBrowserRouter([
     path: '*',
     element: <LazyWrapper><NotFound /></LazyWrapper>,
   },
-])
+], {
+  // Vite exposes `/` in normal builds and the configured public subpath in
+  // portable previews such as GitHub Pages. Keeping this at the router edge
+  // makes the same frozen product build usable without rewriting its routes.
+  basename: import.meta.env.BASE_URL,
+})
