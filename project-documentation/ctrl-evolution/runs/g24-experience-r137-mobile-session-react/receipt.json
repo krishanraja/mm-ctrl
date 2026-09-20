@@ -7,14 +7,22 @@
   "changed_surface_files": [
     "src/features/operator-brain/DecisionBenchPage.tsx",
     "src/features/operator-brain/MobileDecisionSession.tsx",
-    "src/features/operator-brain/MobileDecisionSession.css"
+    "src/features/operator-brain/MobileDecisionSession.css",
+    "src/features/operator-brain/mobileDecisionSessionModel.ts"
   ],
   "authority": "Local and branch-preview implementation only. Synthetic fixture data and session-only state. No customer or database writes.",
   "release_status": "branch implementation verified for remote preview; main, production, release and durable writes remain closed",
   "approval_claims": [
     "Founder reaction to R136 on 2026-09-20: ok this much better",
-    "Founder explicitly answered yes when asked whether R136 could replace the current phone experience"
+    "Founder explicitly answered yes when asked whether R136 could replace the current phone experience",
+    "Founder reaction to the implemented and remotely verified R137 route on 2026-09-20: Looks good, continue"
   ],
+  "historical_correction": {
+    "recorded_on": "2026-09-20",
+    "reason": "The first receipt omitted the changed mobileDecisionSessionModel.ts surface and the founder's later explicit approval of the implemented route.",
+    "provenance": "The model file is present in the R137 commit diff. The approval is the founder's exact session message: Looks good, continue.",
+    "history_preserved": "Git retains the prior receipt bytes; this field makes the additive correction explicit."
+  },
   "approved_mock": "public/g20-mobile-decision-r136.html at 081443eae8716538ba0a7abe34e2c080c6e288f7",
   "first_pass_pack_hash": "47c0e1ff54a82072dd6b8c9bc51fe6f926e6da50c17a2e5faec5e3a5bc5624cc",
   "sealed_verdicts": [

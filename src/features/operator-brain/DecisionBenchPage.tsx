@@ -4,8 +4,10 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { buildClaudeBrief, getAuditFindings, getChallengeSet, routePresentations } from './decisionBenchModel'
 import { decisionBenchFixture as fixture } from './fixtureDecisionBenchAdapter'
 import { OperatorReviewSignal } from './OperatorReviewSignal'
+import { OperatorReviewSignalGateway } from './OperatorReviewSignalGateway'
 import { readOperatorReviewFixture } from './operatorReviewFixture'
 import { MobileDecisionSession } from './MobileDecisionSession'
+import type { StandardReviewRpcClient } from '@/features/standard-review/ownerOperatorBinding'
 import type {
   AuditFinding,
   BenchState,
@@ -18,6 +20,12 @@ import type {
 import './DecisionBenchPage.css'
 
 type ModalKind = 'challenge' | 'sources' | 'capture' | null
+
+export type DecisionBenchRuntimeReview = {
+  client: StandardReviewRpcClient
+  workspaceId: string
+  leaderLabel: string
+}
 
 const sourceGroups: Record<string, string[]> = {
   comparison: ['SRC-204', 'SRC-210'],
@@ -70,6 +78,8 @@ function BackButton({ children, onClick }: { children: React.ReactNode; onClick:
 function DecisionViewPanel({
   benchState,
   reviewQueue,
+  runtimeReview,
+  runtimeReviewEnabled,
   routeId,
   onRouteChange,
   onViewChange,
@@ -79,6 +89,8 @@ function DecisionViewPanel({
 }: {
   benchState: BenchState | null
   reviewQueue: ReturnType<typeof readOperatorReviewFixture>
+  runtimeReview?: DecisionBenchRuntimeReview
+  runtimeReviewEnabled: boolean
   routeId: RouteId
   onRouteChange: (routeId: RouteId) => void
   onViewChange: (view: DecisionView) => void
@@ -110,7 +122,17 @@ function DecisionViewPanel({
         </div>
       </section>
 
-      <OperatorReviewSignal queue={reviewQueue} leaderLabel="Maya" notify={notify} />
+      {runtimeReview ? (
+        <OperatorReviewSignalGateway
+          client={runtimeReview.client}
+          workspaceId={runtimeReview.workspaceId}
+          leaderLabel={runtimeReview.leaderLabel}
+          notify={notify}
+          enabled={runtimeReviewEnabled}
+        />
+      ) : (
+        <OperatorReviewSignal queue={reviewQueue} leaderLabel="Maya" notify={notify} />
+      )}
 
       <section className={`dt-recognitions ${sparse ? 'is-sparse' : ''}`} aria-label="Current Brain recognitions">
         <article className="dt-recognition">
@@ -479,7 +501,21 @@ function ChallengeDialog({
   )
 }
 
-export default function DecisionBenchPage() {
+function useDesktopReviewSurface(): boolean {
+  const [matches, setMatches] = useState(() => window.matchMedia('(min-width: 621px)').matches)
+
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 621px)')
+    const update = () => setMatches(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+
+  return matches
+}
+
+export default function DecisionBenchPage({ runtimeReview }: { runtimeReview?: DecisionBenchRuntimeReview } = {}) {
   const [view, setView] = useState<DecisionView>(readStartingView)
   const [routeId, setRouteId] = useState<RouteId>(fixture.decision_sharpening.default_route)
   const [modal, setModal] = useState<ModalKind>(() => new URLSearchParams(window.location.search).get('view') === 'challenge' ? 'challenge' : null)
@@ -490,6 +526,7 @@ export default function DecisionBenchPage() {
   const [toast, setToast] = useState('')
   const benchState = readBenchState()
   const reviewQueue = useMemo(readOperatorReviewFixture, [])
+  const runtimeReviewEnabled = useDesktopReviewSurface()
   const briefInputs = useMemo(() => mobileInput ? [mobileInput, ...inputs] : inputs, [inputs, mobileInput])
   const brief = useMemo(() => buildClaudeBrief(fixture, briefInputs, killCondition), [briefInputs, killCondition])
   const shownSources = (sourceGroups[sourceGroup] ?? sourceGroups.all).map(sourceById)
@@ -547,6 +584,8 @@ export default function DecisionBenchPage() {
           <DecisionViewPanel
             benchState={benchState}
             reviewQueue={reviewQueue}
+            runtimeReview={runtimeReview}
+            runtimeReviewEnabled={runtimeReviewEnabled}
             routeId={routeId}
             onRouteChange={setRouteId}
             onViewChange={setView}

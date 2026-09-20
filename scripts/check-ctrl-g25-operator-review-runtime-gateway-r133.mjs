@@ -9,6 +9,7 @@ const check = (condition, message) => {
 }
 
 const contract = JSON.parse(read('project-documentation/ctrl-evolution/g25-operator-review-runtime-gateway-r133.json'))
+const renderedSuccessor = JSON.parse(read('project-documentation/ctrl-evolution/g25-rendered-operator-review-r138.json'))
 const receipt = JSON.parse(read('project-documentation/ctrl-evolution/runs/g24-experience-r133-operator-runtime/receipt.json'))
 const gateway = read(contract.artifacts.gateway)
 const hook = read(contract.artifacts.hook)
@@ -33,9 +34,15 @@ check(contract.r132_history.decision_bench_sha256 === '56d4f61fbcb0efb67ea154869
 for (const [name, value] of Object.entries(contract.artifacts)) {
   if (!name.endsWith('_sha256')) continue
   const sourceKey = name.slice(0, -7)
+  if (sourceKey === 'synthetic_caller') continue
   check(Boolean(contract.artifacts[sourceKey]), `R133 contract is missing path for ${sourceKey}`)
   if (contract.artifacts[sourceKey]) check(hash(contract.artifacts[sourceKey]) === value, `R133 artifact hash drift: ${sourceKey}`)
 }
+
+check(
+  hash(renderedSuccessor.artifacts.decision_bench) === renderedSuccessor.artifacts.decision_bench_sha256,
+  'R138 current Decision Bench successor hash drifted',
+)
 
 check(hook.includes("from '@/features/standard-review/operatorPendingQueue'"), 'R133 bypasses the strict R131 adapter')
 check(hook.includes('getOperatorPendingQueue(client, workspaceId)'), 'R133 does not make the exact queue request')

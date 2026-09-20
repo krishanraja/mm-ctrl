@@ -1,0 +1,16 @@
+{
+  "schema_version": "ctrl.g24.experience-first-pass-pack.v1",
+  "run_id": "g24-experience-r138-operator-live-composition",
+  "baseline_commit": "4842258c1f2943e197c76b58559e5684dbe60940",
+  "candidate_record_sha256": "0e43e72cabc47b4d1ad89799d5190d57307c3e4fbfffbbc86424b15808744159",
+  "material_artifacts": {
+    "src/features/operator-brain/DecisionBenchPage.tsx": "1fb19a032191f758b18ec6aa03381d270ae8b19306b2531978e44302bf0f5923",
+    "src/features/operator-brain/OperatorReviewSignalGateway.tsx": "ed922a98cd767d814197a10c7bc3a878375802a42c93803a41451e4d5bb26034",
+    "src/features/standard-review/operatorPendingQueue.ts": "1240d70d9fd0741af083bd435d59bad0ae2ede17054dcc2c0cdaa1eb1bd57bfa",
+    "preview-r138/main.tsx": "1cc8bbba799b1420310e52a383c742d164d38348d8a49e3357eb86a9799f1f18",
+    "src/__tests__/e2e/g25-operator-review-live-r138.spec.ts": "3f986247d629fc5438b6c26935006e15b38f05d929366df64b48f7d721086a19",
+    "scripts/probe-ctrl-g25-rendered-operator-review-r138.mjs": "e9c752f25b3fbad38aeb33a4e7a8112b6f6b82d23b998310a37c97969e1d70a1",
+    "scripts/check-ctrl-g25-rendered-operator-review-r138.mjs": "a26144f7e59fff49a236a641696a4ffea4bfc45c724d06c1ea26aea7f8a2546a"
+  },
+  "freeze_note": "This is the repaired candidate submitted for final independent review after the forced-failure cleanup veto."
+}

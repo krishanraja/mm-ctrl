@@ -217,6 +217,8 @@
     "brain:g25:operator-review-runtime-r133-check": "vitest run src/features/operator-brain/OperatorReviewSignal.test.tsx src/features/operator-brain/OperatorReviewSignalGateway.test.tsx src/features/standard-review/operatorPendingQueue.test.ts && node scripts/check-ctrl-g25-operator-review-signal-r132.mjs && node scripts/check-ctrl-g25-operator-review-runtime-gateway-r133.mjs",
     "brain:g25:operator-review-rehearsal-r134-check": "npm run brain:g25:operator-review-runtime-r133-check && node scripts/check-ctrl-g25-operator-review-isolated-rehearsal-r134.mjs",
     "brain:g25:operator-review-hosted-adapter-r135-check": "npm run brain:g25:operator-review-rehearsal-r134-check && node scripts/check-ctrl-g25-operator-adapter-hosted-composition-r135.mjs",
+    "brain:g25:rendered-operator-r138-probe": "node scripts/probe-ctrl-g25-rendered-operator-review-r138.mjs",
+    "brain:g25:rendered-operator-r138-check": "npm run brain:g25:operator-review-hosted-adapter-r135-check && node scripts/check-ctrl-g25-rendered-operator-review-r138.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",

@@ -38,6 +38,7 @@ if (!receiptPaths.length) {
 
 const allowedStatuses = new Set(["preflight", "vetoed", "passed_for_founder_review", "founder_approved_scope"]);
 const failures = [];
+const receipts = [];
 for (const relative of receiptPaths) {
   const path = resolve(root, relative);
   if (!existsSync(path)) {
@@ -55,13 +56,19 @@ for (const relative of receiptPaths) {
   if (!allowedStatuses.has(receipt.status)) failures.push(`${relative}: invalid status`);
   if (!receipt.surface || !receipt.materiality) failures.push(`${relative}: surface and materiality are required`);
   if (!Array.isArray(receipt.changed_surface_files) || !receipt.changed_surface_files.length) failures.push(`${relative}: changed_surface_files are required`);
-  if (!receipt.changed_surface_files?.some((file) => materialChanges.includes(file))) failures.push(`${relative}: receipt does not cover a changed material surface`);
+  receipts.push({ relative, receipt });
   if (!receipt.authority || !receipt.release_status) failures.push(`${relative}: authority and release_status are required`);
   if (!Array.isArray(receipt.approval_claims)) failures.push(`${relative}: approval_claims must be explicit`);
   if (receipt.status === "preflight" && receipt.approval_claims?.length) failures.push(`${relative}: preflight receipt cannot claim approval`);
   if (["passed_for_founder_review", "founder_approved_scope"].includes(receipt.status)) {
     if (!receipt.first_pass_pack_hash || !Array.isArray(receipt.sealed_verdicts) || !receipt.sealed_verdicts.length) failures.push(`${relative}: sealed blind verdict evidence is required`);
     if (!receipt.reality_lab_results || !receipt.unverified_or_blocked) failures.push(`${relative}: rendered proof and limits are required`);
+  }
+}
+
+for (const materialChange of materialChanges) {
+  if (!receipts.some(({ receipt }) => receipt.changed_surface_files?.includes(materialChange))) {
+    failures.push(`${materialChange}: no changed experience receipt covers this material surface`);
   }
 }
 
