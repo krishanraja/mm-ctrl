@@ -203,6 +203,7 @@
     "brain:g25:standard-review-r120-check": "vitest run src/features/standard-review/gateway.test.ts src/features/standard-review/supabaseInvoker.test.ts && npm run brain:g25:human-review-r119-check && node scripts/check-ctrl-g25-standard-review-gateway-r120.mjs",
     "brain:g25:rendered-review-r121-check": "npm run brain:g25:standard-review-r120-check && node scripts/check-ctrl-g25-rendered-standard-review-r121.mjs",
     "brain:g25:stable-review-address-r122-check": "vitest run supabase/functions/_shared/standard-change-owner-address-core.test.ts src/features/standard-review/addressGateway.test.ts && npm run brain:g25:rendered-review-r121-check && node scripts/check-ctrl-g25-stable-review-address-r122.mjs",
+    "brain:g25:pending-review-queue-r123-check": "vitest run supabase/functions/_shared/standard-change-owner-queue-core.test.ts src/features/standard-review/pendingQueue.test.ts && npm run brain:g25:stable-review-address-r122-check && node scripts/check-ctrl-g25-pending-review-queue-r123.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",

@@ -1,0 +1,14 @@
+{
+  "protocol_id": "G24-EXPERIENCE-PROOF-COUNCIL-R1",
+  "status": "preflight",
+  "surface": "G25 stable authenticated review address binding",
+  "materiality": "The R122 route and gateway bind the already approved R117 review experience to a stable authenticated address. They do not alter the approved visual or interaction treatment and remain feature-flagged off.",
+  "changed_surface_files": [
+    "src/features/standard-review/StandardReviewAddressExperience.tsx",
+    "src/features/standard-review/StandardReviewAddressPage.tsx",
+    "src/features/standard-review/addressGateway.ts"
+  ],
+  "authority": "Implementation and verification only in isolated development. The R117 founder-approved experience remains the visual authority; this receipt claims no new experience approval.",
+  "release_status": "No production, merge, customer-data, navigation, feature-enable or release authority.",
+  "approval_claims": []
+}
