@@ -4,6 +4,17 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-20
+
+- reconciled at `618bf912`: `NOW.md` head moved from `860dea0` to `618bf912`. Added six "What changed recently" bullets for the G17 Brain adapter primitives, the G18 synthetic population lab, the G19 founder gate and scrollbar correction, the G20 capture and Claude-bridge contract, the two Krish canon syncs, and the three published Answer pieces. Added two "waiting on Krish" lines: the GitHub `workflow` scope needed to create the founder-approved Supabase branch, and the rendered founder gate G20 still needs. `docs/current/architecture.md`, `docs/current/features.md` and `project-documentation/ctrl-evolution/README.md` already carried the G17-G20 detail accurately; no drift found there.
+- rolled from NOW.md: 2026-08-20 Migrations applied, and the retention column production never had repaired (`19d80f3`). Why: the ledger showed nothing; object readback showed `cleanup_expired_memories()` raising 42703 on every call. Two anonymous SECURITY DEFINER paths that returned every account's activity or could force a global sweep were revoked to `service_role`. Migrations 163 to 165.
+- rolled from NOW.md: 2026-08-20 Remove what is unused, and make every document say what is true (`71667d2`). 238 unreachable source files and 28 unused dependencies removed by walking the import graph; typecheck baseline 221 to 94; all 67 documents classed and dated. The shared Supabase project, never mentioned before, written into README, architecture and the compliance pack.
+- rolled from NOW.md: 2026-08-20 The personal frame held structurally (`962d0e8`, Decisions 82 to 84). Settings had offered 30 and 90 day retention while nothing ever ran the sweep; account deletion now cancels Stripe first; the sheets export writes aggregate counts, never a person.
+- rolled from NOW.md: 2026-08-20 Trust surface and access hardening (PR #370). An unauthenticated cross-tenant read through four anon-executable definer functions closed; five security headers added; advisors 268 to 258.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`). Why: cloud previews use a per-session hostname Vite's DNS-rebinding guard rejected; a wildcard rather than `allowedHosts: true` keeps the guard.
+- rolled from NOW.md: 2026-08-11 Company recognition restored in onboarding (PR #369): a work email or LinkedIn URL resolves to a bounded, source-linked dossier with one-click correction. Shell unified (PR #368). Commercial authority established (PR #367): one human-readable owner for buyer, offer and claims, with drift checks in CI. Blind Spot trusted-advisor instrument (PR #366) released and verified in production.
+- rolled from NOW.md: 2026-08-10 Canonical current documentation (PR #365) separating current truth from history, and Make Your Mind Up unified with CTRL (PR #362): one product, one data spine, no-login delivery.
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.
