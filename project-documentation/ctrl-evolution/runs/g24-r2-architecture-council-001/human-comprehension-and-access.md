@@ -43,7 +43,7 @@ The controlling refinements are:
 
 ## Criterion findings
 
-### 1. Immediate-state legibility — holds at architecture level
+### 1. Immediate-state legibility  -  holds at architecture level
 
 **Evidence:** The leader surface must answer exactly one of four ordinary-language questions first, and the first frame is limited to one short orientation, one focal object and one primary action (`g24-product-system-blueprint-r2.md`, “Four questions the interface must answer” and “Visible choreography”, lines 113–141). The machine overlay independently fixes one focal object, one primary action, one visible question, progressive disclosure and a one-column, one-handed mobile mode (`g24-product-system-contract-r2.json`, `$.experience_intelligence.leader_first_frame`).
 
@@ -51,13 +51,13 @@ The controlling refinements are:
 
 **Boundary:** Counting objects does not establish that the remaining object is understandable. That is handled by the semantic and observed gates below.
 
-### 2. The system performs the interpretation — holds
+### 2. The system performs the interpretation  -  holds
 
 **Evidence:** R2 searches accepted Brain material, authorised work, revealed behaviour and public sources before reaching a leader interaction; it asks only after lower-burden truthful sources fail (`g24-product-system-blueprint-r2.md`, “Acquisition order”, lines 195–206). A question is eligible only when its answer can change a named decision property, and profile-filling questions are forbidden (lines 237–251). The wording rule is explicit: “Do the abstraction inside CTRL. The leader supplies a choice, number, threshold, short fact or concrete incident” (lines 310–320).
 
 **Finding:** This directly resolves the durable failure in which the leader had to diagnose causes, synthesize the system's abstractions or predict an unknowable future. The route tree at lines 25–45 also permits research, a prepared conversation or abstention rather than forcing every uncertainty through a micro-question.
 
-### 3. Bounded answerability and honest exits — holds in the written contract
+### 3. Bounded answerability and honest exits  -  holds in the written contract
 
 **Evidence:** Each candidate must bind an exact answer grammar, complete options or unit, per-answer effect and defer/unknown/refusal behaviour (`g24-product-system-blueprint-r2.md`, “Question contract”, lines 253–272). The answer table names the information type, matching control and relevant guardrail, including a unit for quantities, bounded period for behaviour, explicit sacrificed alternative for a trade-off, and a recent concrete incident before theory (lines 292–306). Honest unknown, insufficient-information, refusal, defer and scoped write-in states are required where relevant (line 308). Optional notes cannot carry a required value (lines 133–141).
 
@@ -65,7 +65,7 @@ The controlling refinements are:
 
 **Watchpoint:** “Where relevant” cannot become a loophole that removes an honest escape because it would lower completion. The question plan must record why each escape is or is not applicable, not merely expose a blanket boolean.
 
-### 4. Simplicity without loss of decision sophistication — holds as a design mechanism
+### 4. Simplicity without loss of decision sophistication  -  holds as a design mechanism
 
 **Evidence:** Questions can be earned only by a route, evidence, threshold, boundary, session or learning consequence (`g24-product-system-blueprint-r2.md` lines 237–251). The answer's immediate consequence must be shown in plain language, while reasoning, evidence, standing and history remain available through deliberate progressive disclosure rather than disappearing (lines 124–157 and 333–335). The decision evidence map preserves the exact variable, why it is load-bearing and what would change if it moved (lines 159–174).
 
@@ -73,13 +73,13 @@ The controlling refinements are:
 
 **Watchpoint:** The consequence layer must say what changed and what did **not** become known. A celebratory “updated” state would satisfy a transition animation but destroy decision comprehension.
 
-### 5. Atomic preservation of wording, control and effect — breaks in the machine overlay
+### 5. Atomic preservation of wording, control and effect  -  breaks in the machine overlay
 
 **Evidence:** The prose says, “Question wording, controls and route effects are one versioned object. Changing one requires a new version of all three” (`g24-product-system-blueprint-r2.md` lines 253–272). However, the exhaustive machine list at `g24-product-system-contract-r2.json` `$.question_intelligence.contract_fields` contains 18 entries for IDs, variable, rationale, answer grammar, options/unit and `per_answer_effect`, but contains no visible question text, explicit version field or visible consequence wording (lines 204–223). `$.experience_intelligence.choreography` requires `show_consequence`, but does not bind the words shown to the answer-specific effect.
 
 **Finding:** The human-readable architecture is correct, but the machine overlay does not preserve its most important comprehension invariant. A candidate can satisfy the listed machine fields while its visible wording is unversioned, semantically mismatched or unable to explain the consequence. This is a bounded contract defect, not evidence that the intended experience is wrong.
 
-### 6. Twelve-year-old comprehension — insufficient evidence, explicitly unproven
+### 6. Twelve-year-old comprehension  -  insufficient evidence, explicitly unproven
 
 **Evidence:** The observed gate requires a fresh participant to understand the language at “approximately a twelve-year-old reading level” without making the decision childish (`g24-product-system-blueprint-r2.md`, “Experience proof requirements”, lines 433–458). The delta explicitly forbids the interpretation that UI intuitiveness is proved by documentation (`g24-product-system-r2-delta.json`, `$.forbidden_interpretations[7]`). The customer UI is absent from the headless gate (blueprint lines 394–411), and R1's QA record likewise says no render was created (`g24-product-system-qa-record.md` lines 41–47).
 
@@ -87,7 +87,7 @@ The controlling refinements are:
 
 **Machine gap:** `g24-product-system-contract-r2.json` `$.evaluation.observed_experience_evidence_required` lists only `cognitive_interview`, `actual_mobile_device`, `fresh_participant_comprehension`, `failed_save_recovery` and `consequence_comprehension` (lines 357–363). It does not encode the blueprint's explicit no-facilitator answer/defer test, child-level language boundary, depth-without-crowding test, actor/state distinction or one-handed completion requirement.
 
-### 7. Prepared live-session access — direction holds; rendered hierarchy is unproven
+### 7. Prepared live-session access  -  direction holds; rendered hierarchy is unproven
 
 **Evidence:** A session is withheld for public facts, one closed question, generic rapport, routine progress or machine-preparable work (`g24-product-system-blueprint-r2.md` lines 339–352). The operator receives a nine-part prepared brief (lines 354–368) through a pull-only ranked portfolio and retains schedule, edit, snooze, dismiss and unnecessary controls (lines 370–374; machine fields at `$.session_opportunity`).
 

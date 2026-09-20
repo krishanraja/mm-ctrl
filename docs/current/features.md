@@ -72,7 +72,7 @@ Nested harnesses support a specific job or portability outcome. They must not be
 | Preview | `/preview` | Unlinked deterministic QA fixtures |
 | Decision Table | `/operator/customers/:workspaceId/decisions/:decisionId` | Synthetic R4 operator harness for route comparison, decision sharpening, Claude handoff and returned-work audit in local or flagged preview builds |
 | Synthetic Brain lab | `/operator/lab/synthetic-population/:accountId` | Unlinked range harness for deterministic Brain inputs, processing boundaries and diagnostic oracles |
-| Standard review | `/operator/reviews/SYN-REVIEW-118` | Unlinked synthetic proof of the one-question leader gate over a presentation-complete, hash-bound standard-change packet |
+| Standard review | `/operator/reviews/:reviewId` | Exact-id-gated synthetic proof of the one-question leader gate over a presentation-complete, hash-bound standard-change packet |
 | Skill and MCP generation | Backend functions and exports | Portability substrate only |
 
 ## Route inventory

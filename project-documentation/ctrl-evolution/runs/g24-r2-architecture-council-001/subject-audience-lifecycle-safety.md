@@ -26,9 +26,9 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 ## Findings
 
-### SAL-R2-01 — Duration continuation outruns enforceable permission
+### SAL-R2-01  -  Duration continuation outruns enforceable permission
 
-**Disposition:** `breaks` — blocking.
+**Disposition:** `breaks`  -  blocking.
 
 **Evidence:**
 
@@ -39,9 +39,9 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 **Finding:** A named state plus an expiry assertion is not a lifecycle mechanism. The proposal does not say what `paused`, `closing`, `released` or reopened engagement state permits; who can enact each transition; whether a missed review freezes collection and delivery; or whether reopening requires fresh grants. The diagram also permits a return toward `continuing` while the only machine contract is a flat state array. Most importantly, no new object is required to carry the exact permission authority on which its use depends. An accepted derivative can therefore appear current after its source permission expires.
 
-### SAL-R2-02 — Sensitive questions lack a mandatory informed-permission path
+### SAL-R2-02  -  Sensitive questions lack a mandatory informed-permission path
 
-**Disposition:** `breaks` — blocking.
+**Disposition:** `breaks`  -  blocking.
 
 **Evidence:**
 
@@ -52,9 +52,9 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 **Finding:** Sensitivity is currently a score cost and metadata field, not a permission gate. `defer_unknown_refusal_behaviour` can describe almost any behaviour, including asking again. Nothing requires the subject to understand why the answer is sought, who will see it, how it will be retained, whether it may shape later decisions, or that refusal will not be converted into pressure in a live session. Moving a sensitive question from asynchronous delivery to Krish's prepared conversation changes the social pressure, not the underlying permission requirement.
 
-### SAL-R2-03 — The real-public boundary is asserted but not bound to every live object
+### SAL-R2-03  -  The real-public boundary is asserted but not bound to every live object
 
-**Disposition:** `breaks` — blocking for real-identity fixtures.
+**Disposition:** `breaks`  -  blocking for real-identity fixtures.
 
 **Evidence:**
 
@@ -64,9 +64,9 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 **Finding:** “Trusted application code validates” ([R2 blueprint](../../g24-product-system-blueprint-r2.md), lines 376–392) is not yet a declared validation contract. The strongest public-identity sentence can still be defeated by attaching real public identity to an internal-depth case, or by letting a generated inference inherit a public source's identity and audience metadata. Public availability also does not by itself authorise collection of sensitive third-party details, reuse across cases, or durable personal inference.
 
-### SAL-R2-04 — Approval, edits and channel expiry are not joined at the last mile
+### SAL-R2-04  -  Approval, edits and channel expiry are not joined at the last mile
 
-**Disposition:** `breaks` — blocking before any delivery or scheduling implementation.
+**Disposition:** `breaks`  -  blocking before any delivery or scheduling implementation.
 
 **Evidence:**
 
@@ -76,9 +76,9 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 **Finding:** A valid approval can become stale when content, audience, channel or timing changes, or when consent expires between approval and delivery. The current pull-only portfolio and `unsolicited_push_authorised: false` are good and must remain, but they only prevent the first push route. They do not prove safe email, secure-link, calendar or later-channel delivery.
 
-### SAL-R2-05 — A session capture plan is not participant consent
+### SAL-R2-05  -  A session capture plan is not participant consent
 
-**Disposition:** `breaks` — blocking before a real session is captured.
+**Disposition:** `breaks`  -  blocking before a real session is captured.
 
 **Evidence:**
 
@@ -88,9 +88,9 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 **Finding:** The architecture does not require participant-visible, action-time permission by modality and purpose for audio, transcription, notes, uploaded artefacts or derived Brain learning. It does not handle multiple speakers, third-party disclosures, withdrawal during the session, or the boundary between Krish-private notes and subject-visible/customer-safe state. An operator-authored privacy plan cannot substitute for the subject's permission.
 
-### SAL-R2-06 — Correction is strong, but correction is not expiry, revocation or erasure
+### SAL-R2-06  -  Correction is strong, but correction is not expiry, revocation or erasure
 
-**Disposition:** `breaks` — blocking.
+**Disposition:** `breaks`  -  blocking.
 
 **Evidence:**
 
@@ -100,7 +100,7 @@ That is a direct conflict with the delta's own forbidden interpretation, `engage
 
 **Finding:** A correction can legitimately retain history; erasure may require content to become unavailable or be destroyed. A deletion receipt without declared coverage can report an event while sensitive content remains in raw storage, dependency history, indexes, queued work or immutable exports. R2 also does not state the honest limit: customer-held or already delivered releases may be outside CTRL's power to recall.
 
-### SAL-R2-07 — Closed external action and pull-only routing survive
+### SAL-R2-07  -  Closed external action and pull-only routing survive
 
 **Disposition:** `holds`, within the frozen architecture scope only.
 

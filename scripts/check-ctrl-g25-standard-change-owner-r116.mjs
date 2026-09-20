@@ -6,6 +6,7 @@ const root = process.cwd();
 const read = (path) => readFileSync(resolve(root, path), "utf8");
 const readBytes = (path) => readFileSync(resolve(root, path));
 const hash = (path) => createHash("sha256").update(readBytes(path)).digest("hex");
+const hashText = (value) => createHash("sha256").update(value).digest("hex");
 const contractPath =
   "project-documentation/ctrl-evolution/g25-standard-change-owner-gate-r116.json";
 const raw = read(contractPath);
@@ -43,7 +44,13 @@ for (const [pathKey, hashKey] of [
 ]) {
   check(hash(contract.artifacts[pathKey]) === contract.artifacts[hashKey], `${pathKey} hash drifted`);
 }
-check(hash("supabase/config.toml") === contract.artifacts.config_sha256, "function config hash drifted");
+const functionConfig = read("supabase/config.toml").match(
+  /^\[functions\.review-standard-change\]\r?\n(?:(?!^\[)[\s\S])*/m,
+)?.[0];
+check(
+  functionConfig && hashText(functionConfig) === contract.artifacts.config_block_sha256,
+  "function config block drifted",
+);
 
 const manifestRaw = read(contract.artifacts.deployment_manifest);
 const manifest = JSON.parse(manifestRaw);

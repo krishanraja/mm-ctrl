@@ -15,6 +15,8 @@ Branch-only and isolated-development only. Nothing in this section is deployed t
 - Added an authenticated V2 review route in the isolated Supabase project. Preparation uses the presentation-complete packet; approval, rejection and head-safe reversal retain the R116 authority model.
 - The product parser fails closed on missing human-readable meaning, false deploy or release authority, malformed evidence and mismatched receipts.
 - Added a self-contained public synthetic preview, local browser coverage for ready, long, incomplete, stale, failure, approval and reversal states, and a rollback-only hosted database probe.
+- Exercised the complete V2 owner lifecycle with authenticated synthetic users in the isolated project: three presentation-complete packets, rejection, concurrent approval, exact retry, stale-head refusal, guarded reversal, exact restoration and zero fixture residue.
+- Scoped the frozen R116 config check to its own function block so an additive neighbouring function no longer creates false drift in otherwise unchanged machinery.
 
 ## [Unreleased] - 2026-09-11 - Decision Table R4 operator slice
 

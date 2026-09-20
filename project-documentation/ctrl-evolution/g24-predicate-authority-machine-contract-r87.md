@@ -32,7 +32,7 @@ R87 retains the complete R86 authority path and adds a sealed answer-state autho
 
 ## Human experience protected
 
-R86’s human-facing PASS is preserved. The person sees and signs the actual action—start, continue, pause, resume, begin closing or close—plus every material decision change. R87 strengthens the invisible foundation: the system cannot decide which of their signed answers is current merely because one request arrived first.
+R86’s human-facing PASS is preserved. The person sees and signs the actual action - start, continue, pause, resume, begin closing or close - plus every material decision change. R87 strengthens the invisible foundation: the system cannot decide which of their signed answers is current merely because one request arrived first.
 
 ## Independent proof before freeze
 

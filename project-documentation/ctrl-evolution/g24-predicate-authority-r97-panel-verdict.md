@@ -1,4 +1,4 @@
-# G24 predicate authority R97 — seven-role panel verdict
+# G24 predicate authority R97  -  seven-role panel verdict
 
 **Status:** `PASS_ALL_SEVEN_ROLES`
 

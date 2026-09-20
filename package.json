@@ -199,6 +199,7 @@
     "brain:g25:standard-change-owner-r116-check": "vitest run supabase/functions/_shared/standard-change-owner-core.test.ts supabase/functions/_shared/standard-change-core.test.ts supabase/functions/_shared/public-request-guard.test.ts && npm run trust:check && npm run brain:g25:standard-change-r115-check && node scripts/check-ctrl-g25-standard-change-owner-r116.mjs",
     "brain:g25:human-review-r118-preview": "cross-env ROLLUP_DISABLE_NATIVE=1 vite build --config vite.r118.config.ts",
     "brain:g25:human-review-r118-check": "vitest run src/features/standard-review/contract.test.ts src/features/standard-review/gateway.test.ts src/features/standard-review/StandardReviewExperience.test.tsx supabase/functions/_shared/standard-change-owner-presentation-core.test.ts && node scripts/check-ctrl-g25-human-review-binding-r118.mjs",
+    "brain:g25:human-review-r119-check": "node scripts/check-ctrl-g25-standard-change-owner-r116.mjs && node scripts/check-ctrl-g25-human-review-binding-r119.mjs",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",

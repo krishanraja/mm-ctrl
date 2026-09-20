@@ -49,7 +49,9 @@
     "hosted_proof_receipt_sha256": "56d93dec687c36b2e0c610b9c4458fa63f16d6750650166b1419dae35ffd630d",
     "rollback_proof_receipt": "project-documentation/ctrl-evolution/g25-standard-change-owner-gate-r116-rollback-proof.json",
     "rollback_proof_receipt_sha256": "1a0fefff1ca8e1cad43ec2ca5f7dcad705ab352ba63884837e90783306a11786",
-    "config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3"
+    "config_sha256": "4dcfe2b41ad2caf7e7d10eac3b92d712ab4d9cefcb9f4838797deb1fdd7f1ec3",
+    "config_scope": "[functions.review-standard-change]",
+    "config_block_sha256": "efaf5cc8e29457f670d1c684ccc3738f145312ef1c30fe0243f079fcb4d8773b"
   },
   "authority": {
     "prepare_requires_passed_check": true,

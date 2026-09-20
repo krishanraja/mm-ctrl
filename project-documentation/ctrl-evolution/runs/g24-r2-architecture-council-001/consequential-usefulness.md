@@ -4,7 +4,7 @@
 
 **Verdict:** `VETO`
 
-**Veto:** `USEFULNESS-G24-R2-01` — the frozen gate can prove disciplined intervention routing without proving that the routed work is a genuinely high-value decision.
+**Veto:** `USEFULNESS-G24-R2-01`  -  the frozen gate can prove disciplined intervention routing without proving that the routed work is a genuinely high-value decision.
 
 ## Review basis and independence
 
@@ -63,7 +63,7 @@ A session must beat further research or asynchronous questioning; public facts, 
 
 The R2 Crossing cases are evidence-density quadrants and intervention choices. They require research, supplied evidence, a typed question, a live session, abstention, obsolescence, correction and later transfer, but they do not freeze the actual decision, stakes, alternatives, baseline call or success condition ([R2 blueprint, “Extension to the first Crossing,” lines 394–411](../../g24-product-system-blueprint-r2.md#L394-L411); [R2 contract, `/first_crossing_extension`](../../g24-product-system-contract-r2.json#L308-L331)).
 
-R1 does not close this gap. It requires two “materially different AI-transition decisions,” but supplies only a count and a Boolean rather than their contents or an altitude test ([R1 blueprint, “First complete vertical slice,” lines 541–560](../../g24-product-system-blueprint.md#L541-L560); [R1 contract, `/first_vertical_slice`](../../g24-product-system-contract.json#L201-L221)). The R1 intent is commercially serious — the company pays for organisational and commercial change ([R1 blueprint, lines 15–19](../../g24-product-system-blueprint.md#L15-L19)) — but that intent never becomes a required R2 fixture property.
+R1 does not close this gap. It requires two “materially different AI-transition decisions,” but supplies only a count and a Boolean rather than their contents or an altitude test ([R1 blueprint, “First complete vertical slice,” lines 541–560](../../g24-product-system-blueprint.md#L541-L560); [R1 contract, `/first_vertical_slice`](../../g24-product-system-contract.json#L201-L221)). The R1 intent is commercially serious  -  the company pays for organisational and commercial change ([R1 blueprint, lines 15–19](../../g24-product-system-blueprint.md#L15-L19))  -  but that intent never becomes a required R2 fixture property.
 
 Therefore the exact next action can be completed without confronting the product's core commercial claim. It asks for one research-not-question decision, one correctly typed question and one prepared session, but not one demonstrably high-value decision ([R2 blueprint, “Exact next action if approved,” lines 474–476](../../g24-product-system-blueprint-r2.md#L474-L476); [R2 contract, `/next_action`](../../g24-product-system-contract-r2.json#L365)).
 

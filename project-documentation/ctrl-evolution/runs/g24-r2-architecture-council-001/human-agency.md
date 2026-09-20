@@ -17,7 +17,7 @@ This is an advisory Human Agency veto against founder lock of the frozen R2 arch
 
 ## Evidence-backed findings
 
-### The human-owned call remains intact in the stated architecture — holds
+### The human-owned call remains intact in the stated architecture  -  holds
 
 R1 gives the Brain only preparation and proposal rights, gives Krish challenge and interruption control, and reserves purpose, judgment, the call and release ownership to the leader (`g24-product-system-contract.json#/product/roles`). Its opening gate requires a named human to supply or confirm the decision, purpose, success and unacceptable failure, human responsibility and provisional view before AI shapes the decision; its closing gate requires a named human to judge the audit, make the call and accept accountability (`g24-product-system-blueprint.md`, “Human agency and the consequential-work loop”, lines 297–325).
 
@@ -25,7 +25,7 @@ R2 explicitly extends the frozen R1 artifacts, lists `brain_krish_leader_authori
 
 That is a real strength. It is not enough to clear the new intervention transitions below.
 
-### Adaptive questions are not bound to the human authority they can modify — breaks, blocking
+### Adaptive questions are not bound to the human authority they can modify  -  breaks, blocking
 
 The R2 question planner may use an answer to change the `decision_frame`, `success_threshold_or_kill_condition` or `human_ai_boundary` (`g24-product-system-contract-r2.json#/question_intelligence/eligibility_effects`). Those are matters the inherited opening gate assigns to a named human. Yet the R2 question object requires only a `decision_id`, missing variable, respondent, answer grammar, per-answer effect, sensitivity, audience and operational metadata. It does not require the exact human-confirmed purpose/frame version, human-boundary version, leader-prior version, or authority whose acceptance is needed for each proposed effect (`#/question_intelligence/contract_fields`).
 
@@ -33,7 +33,7 @@ The visible choreography compounds the defect: it says to accept the response, �
 
 Inheritance language cannot substitute for this binding. This judge's durable standard is that agency must be an executable capability boundary on every emitted input, not reassuring prose. A validator could accept every listed R2 question field while still allowing trusted application code to turn a model-framed answer into an authoritative state change. “The model did not write or send it” does not cure application code acting without the named human authority.
 
-### Krish's control is explicit for sessions but under-specified for recomputed questions — breaks, blocking
+### Krish's control is explicit for sessions but under-specified for recomputed questions  -  breaks, blocking
 
 The session route is well bounded: its initial OS route is pull-only; unsolicited push is false; and Krish can schedule, edit, snooze, dismiss or mark an opportunity unnecessary (`g24-product-system-contract-r2.json#/session_opportunity`). The blueprint likewise says the system does not send an unsolicited push and cannot schedule a person (`g24-product-system-blueprint-r2.md`, “Current OS boundary”, lines 370–374; “Logical objects”, lines 376–392).
 
@@ -41,7 +41,7 @@ The question path is weaker. R1 says Krish controls whether and when the leader 
 
 External delivery is closed in this gate, so no current customer action is authorised. The defect is that the architecture proposed for lock does not yet guarantee Krish's control when delivery later opens.
 
-### The strongest-looking mechanism can still manufacture the choice architecture — breaks, blocking
+### The strongest-looking mechanism can still manufacture the choice architecture  -  breaks, blocking
 
 The strongest part of R2 is the versioned question contract: wording, answer control and route effect move together; the leader's prior comes before the system preference; questions are single-purpose; and abstention, correction, deferral and refusal are contemplated (`g24-product-system-blueprint-r2.md`, “Question contract”, lines 253–272; “Answer grammar” and “Wording rules”, lines 292–320; `g24-product-system-contract-r2.json#/question_intelligence`).
 
@@ -49,13 +49,13 @@ Challenge: versioning proves consistency, not legitimacy. The same machine can a
 
 The internal incentive also remains unsafe. R2 says that if nothing changed, the question should not have been sent, while Question Yield rewards route, boundary and stop-condition changes (`g24-product-system-blueprint-r2.md`, lines 333–335 and 413–431; `g24-product-system-contract-r2.json#/evaluation/question_yield`). Without explicit neutral treatment of refusal, deferral, uncertainty and premise rejection, the optimiser can learn that questions which force a change are “better”. The listed priming and overreach guardrails help, but do not define the non-coercive state transition.
 
-### Prepared sessions remain proposals, but leader control of the premise is not yet proven — insufficient evidence
+### Prepared sessions remain proposals, but leader control of the premise is not yet proven  -  insufficient evidence
 
 The prepared agenda is specific and Krish-editable, and the system cannot schedule it. Those controls prevent a machine-owned session at the current architecture boundary (`g24-product-system-blueprint-r2.md`, “When Krish should run a live session”, lines 337–374).
 
 What is not established is whether the leader sees and can reject or redefine the decision premise, purpose and desired end state before the machine-authored “trade-off” and “pressure point” ladder structures the conversation (`g24-product-system-blueprint-r2.md`, “The prepared brief”, lines 354–368). R1's opening gate should govern, but R2 does not bind the session opportunity to its accepted version or make leader refusal/reframing a required session outcome. This must be closed with the same authority repair as questions and then observed with real participants.
 
-### Open-ended continuation lacks a named transition authority — breaks, blocking
+### Open-ended continuation lacks a named transition authority  -  breaks, blocking
 
 R2 correctly separates relationship duration from source permission and says continuation cannot silently renew consent, widen audience or extend retention (`g24-product-system-blueprint-r2.md`, “The relationship is longer than a timer”, lines 67–95). The delta also forbids the interpretation that an engagement continues without explicit state or permission (`g24-product-system-r2-delta.json#/forbidden_interpretations`).
 

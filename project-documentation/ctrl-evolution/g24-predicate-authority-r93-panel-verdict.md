@@ -50,7 +50,7 @@ The official R93 suite passed seven source modules, all thirteen predicate/final
 }
 ```
 
-The structured total is three, but the only human instruction says the one owner should choose one. The same defect exists for two same-owner heads and for larger states where Krish and the leader each own several missing answers. Safety remains intact—review stays unavailable—but the action projection is not truthful or sufficient.
+The structured total is three, but the only human instruction says the one owner should choose one. The same defect exists for two same-owner heads and for larger states where Krish and the leader each own several missing answers. Safety remains intact - review stays unavailable - but the action projection is not truthful or sufficient.
 
 ## Counterexample 2: the public status schema is not closed
 

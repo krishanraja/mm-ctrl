@@ -1,4 +1,4 @@
-# G24 predicate authority R97 — founder-ready receipt R98
+# G24 predicate authority R97  -  founder-ready receipt R98
 
 **Status:** `founder_ready_pending_explicit_founder_choice`
 

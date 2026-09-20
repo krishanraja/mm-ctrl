@@ -1,4 +1,4 @@
-# G24 predicate authority R96 — seven-role panel verdict
+# G24 predicate authority R96  -  seven-role panel verdict
 
 **Overall verdict:** VETO
 
