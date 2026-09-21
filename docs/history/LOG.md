@@ -4,6 +4,19 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-09-21
+
+- reconciled at `618bf91`: `docs/current/release-state.md`'s main test suite row corrected from 945 tests in 60 files to 1,019 tests in 64 files, from a local `npm test -- --run` at `618bf91`; typecheck reconfirmed at 94 current against the 94-error baseline, 0 new. Edge Function (115), hook (51) and migration (170) counts reconfirmed unchanged by `node scripts/check-docs.mjs`.
+- reconciled at `618bf91`: `NOW.md` head moved from `860dea0` to `618bf91` and `as_of` to 2026-09-21. Added "What changed recently" bullets for G17 (write-adapter primitives, built and tested, called by no runtime path, blocked on GitHub `workflow` scope for its isolated Supabase branch), G18 (48-account synthetic population, test oracle only), G19 (synthetic Brain range lab shipped as a gated, unlinked operator route), G20 (Claude capture-and-bridge contract, no implementation), and three published Answer pages (PRs #380, #381, #384). The G16 application release at `860dea0` remains the exact verified production baseline; none of the newer merges has its own deployment readback.
+- rolled from NOW.md: 2026-08-21 release to production and two pseudonymiser defects the dry run caught (`bac02d3`): 24 Edge Functions redeployed and confirmed ACTIVE, 177 to 178 deployed; training material to global version 3.
+- rolled from NOW.md: 2026-08-20 migrations applied, and the retention column production never had repaired (`19d80f3`): `cleanup_expired_memories()` had raised 42703 on every call; two anonymous SECURITY DEFINER paths revoked to `service_role`.
+- rolled from NOW.md: 2026-08-20 unused code and dependencies removed, and every document dated (`71667d2`): 238 unreachable source files and 28 unused dependencies removed; typecheck baseline 221 to 94; the shared Supabase project written into the docs for the first time.
+- rolled from NOW.md: 2026-08-20 the personal frame held structurally (`962d0e8`, Decisions 82 to 84): dormant retention settings, Stripe-first account deletion, aggregate-only sheets export.
+- rolled from NOW.md: 2026-08-20 trust surface and access hardening (PR #370): an unauthenticated cross-tenant read through four anon-executable definer functions closed; five security headers added.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`), because cloud previews use a per-session hostname Vite's DNS-rebinding guard rejected.
+- rolled from NOW.md: 2026-08-11 company recognition restored in onboarding (PR #369), shell unified (PR #368), commercial authority established (PR #367), Blind Spot trusted-advisor instrument released (PR #366).
+- rolled from NOW.md: 2026-08-10 canonical current documentation established (PR #365) and Make Your Mind Up unified with CTRL (PR #362).
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.
