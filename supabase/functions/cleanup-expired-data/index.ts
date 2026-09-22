@@ -52,17 +52,60 @@ serve(async (req) => {
       ? { error: memoryError.message }
       : { cleaned: memoryCleanup };
 
-    // 2. Clean up expired AI cache entries (older than 7 days)
+    // 2. Expired AI cache entries, older than 7 days.
+    //
+    // This step has never once run. It targeted `ai_cache`, which no migration
+    // creates; the real table is `ai_response_cache`. PostgREST answered with
+    // a relation-not-found error every night, the error was captured into
+    // results.expired_cache rather than thrown, and the response went to a
+    // pg_cron job that reads nobody. So the sweep has reported success while
+    // deleting nothing since the day it was written.
+    //
+    // Fixing the name is a one-word change with a consequence out of all
+    // proportion to it: a delete that has never executed would suddenly
+    // execute, against a table that has therefore accumulated every cached AI
+    // response this system has ever produced. That is a body of data nobody
+    // has decided to keep, and equally nobody has decided to destroy, and
+    // "the fix went in on a Tuesday" is not a decision.
+    //
+    // So the name is fixed and the delete is off by default. The step now
+    // counts what it WOULD remove and says so. Setting CLEANUP_PRUNE_AI_CACHE
+    // to 'true' turns the delete on, which is a choice with a person behind
+    // it. Storage is cheap; a year of what the machine was asked and what it
+    // answered is not reconstructible.
+    //
+    // Note for whoever makes that call: the Artificial Analysis rows are NOT
+    // the historical model-price series they look like. aa-cache.ts deletes
+    // its previous row before every write, so only the current three survive,
+    // and the real price curve is being accumulated from today forward in
+    // model_benchmark_snapshots instead.
+    const pruneCache = (Deno.env.get('CLEANUP_PRUNE_AI_CACHE') ?? 'false') === 'true';
     const cacheExpiry = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { count: cacheCount, error: cacheError } = await supabase
-      .from('ai_cache')
-      .delete()
-      .lt('expires_at', cacheExpiry)
-      .select('*', { count: 'exact', head: true });
+    const staleCache = () => supabase
+      .from('ai_response_cache')
+      .select('*', { count: 'exact', head: true })
+      .lt('expires_at', cacheExpiry);
 
-    results.expired_cache = cacheError
-      ? { error: cacheError.message }
-      : { cleaned: cacheCount || 0 };
+    const { count: staleCount, error: staleError } = await staleCache();
+    if (staleError) {
+      results.expired_cache = { error: staleError.message };
+    } else if (!pruneCache) {
+      results.expired_cache = {
+        cleaned: 0,
+        eligible: staleCount || 0,
+        pruning: 'disabled',
+        note: 'set CLEANUP_PRUNE_AI_CACHE=true to delete. Off by default because this step never ran and the backlog is nobody\'s decision to lose by accident.',
+      };
+    } else {
+      const { count: cacheCount, error: cacheError } = await supabase
+        .from('ai_response_cache')
+        .delete()
+        .lt('expires_at', cacheExpiry)
+        .select('*', { count: 'exact', head: true });
+      results.expired_cache = cacheError
+        ? { error: cacheError.message }
+        : { cleaned: cacheCount || 0, eligible: staleCount || 0, pruning: 'enabled' };
+    }
 
     // 3. Redact expired evidence. Never deleted: a shipped provenance pointer
     //    must still resolve, to a truthful redacted state rather than a hole
