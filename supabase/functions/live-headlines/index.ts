@@ -46,6 +46,17 @@ import {
   type StanceId,
   type SynthInput,
 } from "../_shared/news-synthesis.ts";
+import {
+  finishGatherRun,
+  perOriginCounts,
+  preserveExistingCacheVersion,
+  recordBenchmarks,
+  recordCacheVersion,
+  recordGather,
+  startGatherRun,
+  type GatherDropReason,
+  type GatherEntry,
+} from "../_shared/trend-memory.ts";
 import { getEditorialLens } from "../_shared/editorial-lens.ts";
 import { loadBrainProfile, brainSignature, toLensSource } from "../_shared/brain-profile.ts";
 import { buildImportanceLens } from "../_shared/briefing-lens.ts";
@@ -161,8 +172,18 @@ interface GatherEnv {
   controlCenterKey?: string;
 }
 
-/** Tier 1, part A: gather the day's AI-native stories + the AA leaderboard. */
-async function gatherAiNative(env: GatherEnv): Promise<{ raw: RawArticle[]; aiNative: RawArticle[]; aaModels: AaModel[] }> {
+/** Tier 1, part A: gather the day's AI-native stories + the AA leaderboard.
+ *
+ * `rejected` records WHY each discarded article was discarded, rather than
+ * simply losing it as the filter used to. Nothing about which articles survive
+ * has changed; the difference is that the ones that do not are now written
+ * down, so the filter can be graded against what it rejected. */
+async function gatherAiNative(env: GatherEnv): Promise<{
+  raw: RawArticle[];
+  aiNative: RawArticle[];
+  aaModels: AaModel[];
+  rejected: Map<RawArticle, GatherDropReason>;
+}> {
   const cutoffMs = Date.now() - MAX_AGE_DAYS * 24 * 3_600_000;
   const [raw, aaModels] = await Promise.all([
     gatherAll({
@@ -174,24 +195,56 @@ async function gatherAiNative(env: GatherEnv): Promise<{ raw: RawArticle[]; aiNa
     }),
     env.aaKey ? fetchAaModelIndex(env.aaKey).catch(() => [] as AaModel[]) : Promise.resolve([] as AaModel[]),
   ]);
+  const rejected = new Map<RawArticle, GatherDropReason>();
   const aiNative = raw.filter((a) => {
     // AI-native AND on-lens (drops off-lens science/bio/robotics/gaming/crypto).
-    if (!isAiNativeBusiness(`${a.title} ${a.description}`)) return false;
+    if (!isAiNativeBusiness(`${a.title} ${a.description}`)) {
+      rejected.set(a, "not_ai_native");
+      return false;
+    }
     if (!a.publishedIso) return true;
     const t = Date.parse(a.publishedIso);
-    return !Number.isFinite(t) || t >= cutoffMs;
+    if (Number.isFinite(t) && t < cutoffMs) {
+      rejected.set(a, "too_old");
+      return false;
+    }
+    return true;
   });
-  return { raw, aiNative, aaModels };
+  return { raw, aiNative, aaModels, rejected };
 }
 
-/** Tier 1, part B: cluster + score + balance + synthesize + AA-enrich -> the shared pool. */
+/**
+ * Every URL a cluster kept as evidence, plus its representative, so an article
+ * can be traced to the fate of the cluster it was folded into. clusterArticles
+ * does not retain its members individually, and re-running the similarity pass
+ * to recover them would cost more than it is worth; the evidence URLs are the
+ * same set for this purpose.
+ */
+function clusterUrlIndex(clusters: Cluster[]): Map<string, Cluster> {
+  const index = new Map<string, Cluster>();
+  for (const c of clusters) {
+    for (const u of [c.rep.url, ...(c.sourceUrls || [])]) {
+      if (typeof u === "string" && u) index.set(u, c);
+    }
+  }
+  return index;
+}
+
+/** Tier 1, part B: cluster + score + balance + synthesize + AA-enrich -> the shared pool.
+ *
+ * Returns the fate of every article alongside the cards. The stages are
+ * unchanged; what is new is that each one now says which articles it dropped,
+ * so trend-memory can write the rejected majority down instead of the pipeline
+ * discarding it in memory as it has since this function was written. */
 async function buildSharedPool(
   aiNative: RawArticle[],
   aaModels: AaModel[],
   openaiKey: string | undefined,
   today: string,
-): Promise<SharedCard[]> {
-  const clusters = capPerSource(scoreClusters(clusterArticles(aiNative)).filter(worthSurfacing), 2);
+): Promise<{ cards: SharedCard[]; fates: Map<RawArticle, { selected: boolean; reason: GatherDropReason | null; clusterKey: string | null; clusterSize: number | null; category: string | null }> }> {
+  const scored = scoreClusters(clusterArticles(aiNative));
+  const trusted = scored.filter(worthSurfacing);
+  const clusters = capPerSource(trusted, 2);
   const categoryOf = (c: Cluster) => classifyCategory(c.blob);
   const picked = selectBalanced(clusters, categoryOf, POOL_SIZE, POOL_PER_CATEGORY);
 
@@ -244,7 +297,42 @@ async function buildSharedPool(
   // the pool a card or two under POOL_SIZE; that is the intended trade. An
   // item the classifier missed keeps no stance and is kept, so an LLM outage
   // never empties the feed.
-  return dropDamage(cards);
+  const kept = dropDamage(cards);
+
+  // Walk the stages back to each article. Later stages win, so an article in a
+  // cluster that survived the trust floor and then lost the lane is recorded
+  // as lane_full rather than as below_trust_floor.
+  const scoredIndex = clusterUrlIndex(scored);
+  const trustedUrls = new Set(trusted.flatMap((c) => [c.rep.url, ...(c.sourceUrls || [])]));
+  const cappedUrls = new Set(clusters.flatMap((c) => [c.rep.url, ...(c.sourceUrls || [])]));
+  const pickedUrls = new Set(picked.flatMap((c) => [c.rep.url, ...(c.sourceUrls || [])]));
+  const keptUrls = new Set(kept.flatMap((c) => [c.url, ...(c.sourceUrls || [])]));
+
+  const fates = new Map<RawArticle, { selected: boolean; reason: GatherDropReason | null; clusterKey: string | null; clusterSize: number | null; category: string | null }>();
+  for (const a of aiNative) {
+    const cluster = a.url ? scoredIndex.get(a.url) : undefined;
+    const clusterKey = cluster?.rep.url ?? null;
+    const clusterSize = cluster?.sourceCount ?? null;
+    const category = cluster ? categoryOf(cluster) : null;
+    const inUrl = a.url ?? "";
+    let selected = false;
+    let reason: GatherDropReason | null = null;
+    if (keptUrls.has(inUrl)) {
+      selected = true;
+    } else if (pickedUrls.has(inUrl)) {
+      // Survived selection and then lost the editorial rule.
+      reason = "damage";
+    } else if (cappedUrls.has(inUrl)) {
+      reason = "lane_full";
+    } else if (trustedUrls.has(inUrl)) {
+      reason = "capped_per_source";
+    } else {
+      reason = "below_trust_floor";
+    }
+    fates.set(a, { selected, reason, clusterKey, clusterSize, category });
+  }
+
+  return { cards: kept, fates };
 }
 
 /** Strip the per-user re-score fields back down to the display card. */
@@ -450,6 +538,12 @@ serve(async (req) => {
           return read ? { ...c, ...read } : c;
         });
         const kept = dropDamage(next);
+        // The backfill rewrites a past day in place and deliberately preserves
+        // its original created_at, which makes an edited day indistinguishable
+        // from an original one. Both readings are now kept: what the day held
+        // before this pass, and what it holds after.
+        await preserveExistingCacheVersion(supabase, day.briefing_date);
+        await recordCacheVersion(supabase, day.briefing_date, kept, "backfill");
         const { error: writeError } = await supabase
           .from("live_headlines_cache")
           .upsert({ briefing_date: day.briefing_date, payload: kept, created_at: day.created_at });
@@ -478,10 +572,75 @@ serve(async (req) => {
       if (Array.isArray(payload) && payload.length > 0) shared = payload;
     }
     if (!shared) {
-      const { aiNative, aaModels } = await gatherAiNative(env);
-      if (aiNative.length === 0) return json({ cards: [], cached: false, error: "no AI-native stories gathered" });
-      shared = await buildSharedPool(aiNative, aaModels, env.openaiKey, today);
+      // The record of the gather runs alongside the gather, never in front of
+      // it: every call below is best effort and none of them can make Home
+      // blank. See supabase/functions/_shared/trend-memory.ts for why the
+      // rejected majority is worth keeping at all.
+      const runId = await startGatherRun(supabase, today, force ? "force" : "gather");
+      const { raw, aiNative, aaModels, rejected } = await gatherAiNative(env);
+
+      // Snapshot the model board before anything can return early. It is
+      // fetched on every gather and has been overwritten every six hours since
+      // the day it was wired in, so a day where the news gather found nothing
+      // is still a day worth having the price curve for.
+      const benchmarks = await recordBenchmarks(supabase, today, aaModels);
+
+      if (aiNative.length === 0) {
+        // Even a fruitless gather is evidence: "every source returned nothing
+        // on the 14th" is how a dead key gets noticed, and it used to leave no
+        // trace at all beyond an error string in a response nobody read.
+        const barren: GatherEntry[] = raw.map((a) => ({
+          article: a,
+          aiNative: false,
+          selected: false,
+          dropReason: rejected.get(a) ?? "not_ai_native",
+        }));
+        const recorded = await recordGather(supabase, today, runId, barren);
+        await finishGatherRun(supabase, runId, {
+          fetched: raw.length, aiNative: 0, clusters: 0, selected: 0, recorded,
+          perOrigin: perOriginCounts(raw), error: "no AI-native stories gathered",
+        });
+        return json({ cards: [], cached: false, error: "no AI-native stories gathered" });
+      }
+
+      const built = await buildSharedPool(aiNative, aaModels, env.openaiKey, today);
+      shared = built.cards;
+
+      // One entry per article the gather saw, carrying the verdict the
+      // pipeline reached about it. This is the several hundred rows a day that
+      // used to be discarded in memory.
+      const entries: GatherEntry[] = raw.map((a) => {
+        const fate = built.fates.get(a);
+        if (!fate) {
+          return { article: a, aiNative: false, selected: false, dropReason: rejected.get(a) ?? "not_ai_native" };
+        }
+        return {
+          article: a,
+          aiNative: true,
+          selected: fate.selected,
+          dropReason: fate.reason,
+          clusterKey: fate.clusterKey,
+          clusterSize: fate.clusterSize,
+          category: fate.category,
+        };
+      });
+      const recorded = await recordGather(supabase, today, runId, entries);
+      await finishGatherRun(supabase, runId, {
+        fetched: raw.length,
+        aiNative: aiNative.length,
+        clusters: built.fates.size,
+        selected: shared.length,
+        recorded,
+        perOrigin: perOriginCounts(raw),
+      });
+      console.log(`[live-headlines] gather ${today}: fetched ${raw.length}, ai-native ${aiNative.length}, served ${shared.length}, recorded ${recorded}, benchmarks ${benchmarks}`);
+
       if (shared.length > 0) {
+        // Version before the overwrite, never after. The upsert below replaces
+        // the day's row in place, and with force=1 on a daily prewarm that has
+        // been quietly replacing whatever an earlier user request built.
+        await preserveExistingCacheVersion(supabase, today);
+        await recordCacheVersion(supabase, today, shared, force ? "force" : "gather");
         await supabase
           .from("live_headlines_cache")
           .upsert({ briefing_date: today, payload: shared, created_at: new Date().toISOString() })
