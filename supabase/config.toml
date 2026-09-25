@@ -455,3 +455,9 @@ enabled = true
 verify_jwt = true
 import_map = "./functions/review-standard-change-v4/deno.json"
 entrypoint = "./functions/review-standard-change-v4/index.ts"
+
+[functions.decision-ingress-v1]
+enabled = true
+verify_jwt = true
+import_map = "./functions/decision-ingress-v1/deno.json"
+entrypoint = "./functions/decision-ingress-v1/index.ts"

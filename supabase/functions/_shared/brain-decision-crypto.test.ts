@@ -3,9 +3,11 @@ import {
   BrainDecisionCiphertextError,
   BrainDecisionCryptoConfigurationError,
   brainDecisionCipherAadSha256,
+  brainDecisionRequestFingerprint,
   canonicalBrainDecisionCipherContext,
   decryptBrainDecisionField,
   encryptBrainDecisionField,
+  parseBrainDecisionKeyring,
   type BrainDecisionCipherContext,
 } from "./brain-decision-crypto";
 
@@ -93,5 +95,39 @@ describe("consequential decision field encryption", () => {
       context,
       keyring: { "decision-v1": key(11) },
     })).rejects.toBeInstanceOf(BrainDecisionCiphertextError);
+  });
+
+  it("supports isolated source, assertion and candidate contexts", async () => {
+    const keyring = parseBrainDecisionKeyring(JSON.stringify({ "decision-v1": key(17) }));
+    for (const value of [
+      { recordKind: "decision_source" as const, field: "content" as const },
+      { recordKind: "decision_assertion" as const, field: "statement" as const },
+      { recordKind: "decision_candidate" as const, field: "claim" as const },
+    ]) {
+      const scopedContext = { ...context, ...value };
+      const envelope = await encryptBrainDecisionField({
+        plaintext: "The evidence suggests this, but the leader has not confirmed it.",
+        context: scopedContext,
+        keyring,
+        activeKeyId: "decision-v1",
+      });
+      await expect(decryptBrainDecisionField({ envelope, context: scopedContext, keyring }))
+        .resolves.toContain("has not confirmed");
+    }
+  });
+
+  it("parses bounded keyrings and creates stable keyed request fingerprints", async () => {
+    const encoded = key(23);
+    expect(parseBrainDecisionKeyring(JSON.stringify({ "decision-v1": encoded })))
+      .toEqual({ "decision-v1": encoded });
+    expect(() => parseBrainDecisionKeyring("{}"))
+      .toThrow(BrainDecisionCryptoConfigurationError);
+    const material = '{"v":1,"answer":"yes"}';
+    const first = await brainDecisionRequestFingerprint({ integrityKey: encoded, material });
+    const second = await brainDecisionRequestFingerprint({ integrityKey: encoded, material });
+    expect(first).toMatch(/^[0-9a-f]{64}$/);
+    expect(second).toBe(first);
+    await expect(brainDecisionRequestFingerprint({ integrityKey: key(24), material }))
+      .resolves.not.toBe(first);
   });
 });

@@ -6,6 +6,18 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-25 - Decision archaeology ingress R146
+
+Branch-only and isolated-pilot first. The three database migrations and JWT-protected function are locally verified and live only in the isolated project.
+
+- Added a provisional evidence-derived candidate path that cannot silently become a leader answer or accepted Brain truth.
+- Added separate authenticated leader actions for direct answer, confirmation, correction and rejection, each with append-only lineage.
+- Added record-context AES-256-GCM encryption for sources, assertions and candidates plus keyed request fingerprints for safe idempotent retries.
+- Kept raw candidate and review tables closed, forced RLS, granted exactly five authenticated RPCs and granted no anonymous entrypoints.
+- Replayed the complete prior consequential-work database canary after the migration and passed 17 focused request, encryption, project-binding and abuse-boundary tests.
+- Exercised the authenticated hosted lifecycle across create, replay, conflict, denial, confirm, correction, rejection and direct answer, then verified zero disposable residue.
+- Repaired the causal timestamp boundary found by the live proof so user action time remains source metadata and server receipt time binds immutable answers and reviews to newly created provenance.
+
 ## [Unreleased] - 2026-09-20 - Human review packet binding R118
 
 Branch-only and isolated-development only. Nothing in this section is deployed to production or connected to customer data.

@@ -20,6 +20,9 @@ const RECORD_FIELDS = {
   decision_human_prior: new Set(["position", "rationale"]),
   decision_question: new Set(["prompt", "guidance", "choices"]),
   decision_answer: new Set(["answer"]),
+  decision_source: new Set(["content"]),
+  decision_assertion: new Set(["statement"]),
+  decision_candidate: new Set(["claim"]),
   decision_call: new Set(["call", "conditions"]),
   decision_outcome: new Set(["result"]),
   decision_authority_revocation: new Set(["reason"]),
@@ -31,6 +34,7 @@ export type BrainDecisionCipherField =
   | "title" | "stakes" | "provisional_view" | "analysis"
   | "tab_label" | "content" | "position" | "rationale"
   | "prompt" | "guidance" | "choices" | "answer"
+  | "content" | "statement" | "claim"
   | "call" | "conditions" | "result" | "reason";
 
 export interface BrainDecisionCipherContext {
@@ -64,6 +68,52 @@ export class BrainDecisionCiphertextError extends Error {
     super(message);
     this.name = "BrainDecisionCiphertextError";
   }
+}
+
+export function parseBrainDecisionKeyring(serialized: string): BrainDecisionKeyring {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(serialized);
+  } catch {
+    throw new BrainDecisionCryptoConfigurationError("Decision keyring is not valid JSON.");
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new BrainDecisionCryptoConfigurationError("Decision keyring must be an object.");
+  }
+  const entries = Object.entries(parsed as Record<string, unknown>);
+  if (entries.length === 0 || entries.length > 8) {
+    throw new BrainDecisionCryptoConfigurationError("Decision keyring must contain between one and eight keys.");
+  }
+  const keyring: Record<string, string> = {};
+  for (const [keyId, encoded] of entries) {
+    if (!KEY_ID.test(keyId) || typeof encoded !== "string") {
+      throw new BrainDecisionCryptoConfigurationError("Decision keyring contains an invalid entry.");
+    }
+    if (base64ToBytes(encoded, `Decision encryption key '${keyId}'`).byteLength !== 32) {
+      throw new BrainDecisionCryptoConfigurationError(`Decision encryption key '${keyId}' must decode to exactly 32 bytes.`);
+    }
+    keyring[keyId] = encoded;
+  }
+  return Object.freeze(keyring);
+}
+
+export async function brainDecisionRequestFingerprint(args: {
+  integrityKey: string;
+  material: string;
+}): Promise<string> {
+  const keyBytes = base64ToBytes(args.integrityKey, "Decision integrity key");
+  if (keyBytes.byteLength !== 32) {
+    throw new BrainDecisionCryptoConfigurationError("Decision integrity key must decode to exactly 32 bytes.");
+  }
+  const key = await crypto.subtle.importKey(
+    "raw",
+    keyBytes,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(args.material));
+  return [...new Uint8Array(signature)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function assertContext(context: BrainDecisionCipherContext): void {
