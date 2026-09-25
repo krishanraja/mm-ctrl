@@ -6,6 +6,18 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-25 - Authenticated decision reconstruction route R151
+
+Isolated-development only. Production was not contacted.
+
+- Added an encrypted, append-only reconstruction-run receipt and atomic grounded-candidate commit.
+- Added a JWT-protected route that accepts only canonical question identity and retry identity.
+- Closed begin, finish and commit primitives to browser roles and exposed three service-only wrappers to the verified Edge route.
+- Ran a real `gpt-5.6-sol` reconstruction with exact support and counterevidence, then proved receipt-preserving retry, changed-retry denial, cross-customer denial and leader-only confirmation.
+- Preserved honest abstention and invalid-output failure paths; no model fallback or silent Brain promotion exists.
+- Passed 31 focused tests, the full R142 database canary, exact deployed-source readback, the typecheck regression gate and a direct Vite production build.
+- Removed all disposable hosted proof data.
+
 ## [Unreleased] - 2026-09-25 - Decision reconstruction provider R150
 
 Branch-only and local. No live model, database or deployment changed.

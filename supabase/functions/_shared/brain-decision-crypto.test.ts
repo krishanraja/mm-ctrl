@@ -27,6 +27,26 @@ const context: BrainDecisionCipherContext = {
 };
 
 describe("consequential decision field encryption", () => {
+  it("binds reconstruction output to its exact run", async () => {
+    const keyring = { "decision-v1": key(2) };
+    const reconstructionContext: BrainDecisionCipherContext = {
+      ...context,
+      recordKind: "decision_reconstruction_run",
+      field: "output",
+    };
+    const envelope = await encryptBrainDecisionField({
+      plaintext: '{"status":"abstain"}',
+      context: reconstructionContext,
+      keyring,
+      activeKeyId: "decision-v1",
+    });
+    await expect(decryptBrainDecisionField({
+      envelope,
+      context: reconstructionContext,
+      keyring,
+    })).resolves.toBe('{"status":"abstain"}');
+  });
+
   it("matches the database canonical context and frozen AAD digest", async () => {
     expect(canonicalBrainDecisionCipherContext(context)).toBe(
       '{"v":1,"schema_version":"ctrl.brain-decision-cipher-context.r142","workspace_id":"11111111-1111-4111-8111-111111111111","subject_id":"22222222-2222-4222-8222-222222222222","record_kind":"decision_question","record_id":"33333333-3333-4333-8333-333333333333","field":"prompt"}',

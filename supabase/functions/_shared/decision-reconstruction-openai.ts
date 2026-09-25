@@ -7,7 +7,7 @@ import {
 } from "./decision-reconstruction-core.ts";
 
 export const DECISION_RECONSTRUCTION_MODEL = "gpt-5.6-sol";
-export const DECISION_RECONSTRUCTION_PROMPT_VERSION = "r150.v1";
+export const DECISION_RECONSTRUCTION_PROMPT_VERSION = "r151.v3";
 export const DECISION_RECONSTRUCTION_SCHEMA_VERSION = "r150.v1";
 export const DECISION_RECONSTRUCTION_PRICING_VERSION = "openai-2026-09-25";
 
@@ -119,11 +119,20 @@ function strictProviderEnvelope(value: unknown): ProviderEnvelope {
       envelope.reason !== null || envelope.gap !== null || envelope.nextBestAction !== null) {
       throw new DecisionReconstructionProviderError("provider_candidate_branch_invalid");
     }
-  } else if (envelope.claim !== null || envelope.decisionImpact !== null ||
-    envelope.countercase !== null || envelope.uncertainty !== null ||
-    typeof envelope.reason !== "string" || typeof envelope.gap !== "string" ||
-    !envelope.nextBestAction || typeof envelope.nextBestAction !== "object") {
-    throw new DecisionReconstructionProviderError("provider_abstention_branch_invalid");
+  } else {
+    if (envelope.claim !== null || envelope.decisionImpact !== null ||
+      envelope.countercase !== null || envelope.uncertainty !== null) {
+      throw new DecisionReconstructionProviderError("provider_abstention_candidate_fields_nonnull");
+    }
+    if (typeof envelope.reason !== "string") {
+      throw new DecisionReconstructionProviderError("provider_abstention_reason_invalid");
+    }
+    if (typeof envelope.gap !== "string") {
+      throw new DecisionReconstructionProviderError("provider_abstention_gap_invalid");
+    }
+    if (!envelope.nextBestAction || typeof envelope.nextBestAction !== "object") {
+      throw new DecisionReconstructionProviderError("provider_abstention_action_invalid");
+    }
   }
   return envelope as ProviderEnvelope;
 }
@@ -175,6 +184,7 @@ export function buildDecisionReconstructionOpenAIRequest(rawInput: unknown): Rec
   return {
     model: DECISION_RECONSTRUCTION_MODEL,
     store: false,
+    max_output_tokens: 4_000,
     reasoning: { effort: "high" },
     input: [
       { role: "developer", content: [{ type: "input_text", text: prompt.system }] },

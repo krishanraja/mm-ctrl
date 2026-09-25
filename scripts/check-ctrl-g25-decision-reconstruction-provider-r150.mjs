@@ -5,6 +5,7 @@ const required = [
   'gpt-5.6-sol',
   'https://api.openai.com/v1/responses',
   'store: false',
+  'max_output_tokens: 4_000',
   'reasoning: { effort: "high" }',
   'type: "json_schema"',
   'strict: true',

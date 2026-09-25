@@ -79,6 +79,7 @@ describe("decision reconstruction OpenAI adapter", () => {
     const request = buildDecisionReconstructionOpenAIRequest(input) as any;
     expect(request.model).toBe(DECISION_RECONSTRUCTION_MODEL);
     expect(request.store).toBe(false);
+    expect(request.max_output_tokens).toBe(4000);
     expect(request.reasoning.effort).toBe("high");
     expect(request.text.verbosity).toBe("low");
     expect(request.text.format.strict).toBe(true);

@@ -23,6 +23,7 @@ const RECORD_FIELDS = {
   decision_source: new Set(["content"]),
   decision_assertion: new Set(["statement"]),
   decision_candidate: new Set(["claim"]),
+  decision_reconstruction_run: new Set(["output"]),
   decision_call: new Set(["call", "conditions"]),
   decision_outcome: new Set(["result"]),
   decision_authority_revocation: new Set(["reason"]),
@@ -34,7 +35,7 @@ export type BrainDecisionCipherField =
   | "title" | "stakes" | "provisional_view" | "analysis"
   | "tab_label" | "content" | "position" | "rationale"
   | "prompt" | "guidance" | "choices" | "answer"
-  | "content" | "statement" | "claim"
+  | "content" | "statement" | "claim" | "output"
   | "call" | "conditions" | "result" | "reason";
 
 export interface BrainDecisionCipherContext {

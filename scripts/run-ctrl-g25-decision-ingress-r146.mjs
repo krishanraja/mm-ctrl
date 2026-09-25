@@ -3,7 +3,8 @@ import path from 'node:path'
 import { createG25PostgresHarness } from './lib/g25-postgres-harness.mjs'
 
 const root = process.cwd()
-const proveGroundedCandidate = process.argv.includes('--grounded-candidate')
+const proveReconstruction = process.argv.includes('--reconstruction')
+const proveGroundedCandidate = process.argv.includes('--grounded-candidate') || proveReconstruction
 const proveCandidateProjection = process.argv.includes('--candidate-projection') || proveGroundedCandidate
 const read = relativePath => readFileSync(path.join(root, relativePath), 'utf8').replaceAll('\r\n', '\n')
 const spine = read('supabase/candidates/g25_consequential_work_spine_r142.sql')
@@ -15,6 +16,15 @@ const projectionMigration = proveCandidateProjection
   : ''
 const groundingMigration = proveGroundedCandidate
   ? read('supabase/migrations/20260925064643_decision_candidate_evidence_lineage.sql')
+  : ''
+const reconstructionMigration = proveReconstruction
+  ? read('supabase/migrations/20260925071626_decision_reconstruction_runs.sql')
+  : ''
+const reconstructionPendingCandidateFix = proveReconstruction
+  ? read('supabase/migrations/20260925073126_decision_reconstruction_pending_candidate_fix.sql')
+  : ''
+const reconstructionServiceBoundary = proveReconstruction
+  ? read('supabase/migrations/20260925074718_decision_reconstruction_service_boundary.sql')
   : ''
 const regression = read('supabase/tests/database/g25_consequential_work_spine_r142.test.sql')
 
@@ -86,6 +96,9 @@ try {
   await db.exec(chronologyMigration)
   if (projectionMigration) await db.exec(projectionMigration)
   if (groundingMigration) await db.exec(groundingMigration)
+  if (reconstructionMigration) await db.exec(reconstructionMigration)
+  if (reconstructionPendingCandidateFix) await db.exec(reconstructionPendingCandidateFix)
+  if (reconstructionServiceBoundary) await db.exec(reconstructionServiceBoundary)
 
   const regressionResults = await db.exec(regression)
   const regressionResult = regressionResults.flatMap(entry => entry.rows ?? [])
@@ -98,18 +111,18 @@ try {
     select jsonb_build_object(
       'candidate_tables', (
         select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace
-        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''})
+        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''}${proveReconstruction ? ", 'brain_decision_reconstruction_runs'" : ''})
           and c.relkind = 'r'
       ),
       'forced_rls_tables', (
         select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace
-        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''})
+        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''}${proveReconstruction ? ", 'brain_decision_reconstruction_runs'" : ''})
           and c.relforcerowsecurity
       ),
       'ordinary_table_privileges', (
         select count(*)::int from information_schema.role_table_grants
         where table_schema = 'public'
-          and table_name in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''})
+          and table_name in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''}${proveReconstruction ? ", 'brain_decision_reconstruction_runs'" : ''})
           and grantee in ('anon', 'authenticated')
       ),
       'authenticated_entrypoints', (
@@ -121,6 +134,7 @@ try {
           ('record_brain_decision_answer_v1(uuid,uuid,uuid,uuid,text,text,text,timestamptz,text,text,uuid,text)'),
           ('reject_brain_decision_candidate_v1(uuid,timestamptz,text,text)')
           ${proveGroundedCandidate ? ",('stage_grounded_brain_decision_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,text,timestamptz,jsonb,text,text)')" : ''}
+          ${proveReconstruction ? ",('begin_brain_decision_reconstruction_v1(uuid,uuid,text,text,text,text,text)'),('commit_brain_decision_reconstruction_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,jsonb,text,text,text,text,text,text,integer,integer,bigint)'),('finish_brain_decision_reconstruction_v1(uuid,text,text,text,text,text,text,integer,integer,bigint,text)')" : ''}
         ) signature(value)
         where has_function_privilege('authenticated', 'public.' || signature.value, 'execute')
       ),
@@ -133,6 +147,7 @@ try {
           ('record_brain_decision_answer_v1(uuid,uuid,uuid,uuid,text,text,text,timestamptz,text,text,uuid,text)'),
           ('reject_brain_decision_candidate_v1(uuid,timestamptz,text,text)')
           ${proveGroundedCandidate ? ",('stage_grounded_brain_decision_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,text,timestamptz,jsonb,text,text)')" : ''}
+          ${proveReconstruction ? ",('begin_brain_decision_reconstruction_v1(uuid,uuid,text,text,text,text,text)'),('commit_brain_decision_reconstruction_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,jsonb,text,text,text,text,text,text,integer,integer,bigint)'),('finish_brain_decision_reconstruction_v1(uuid,text,text,text,text,text,text,integer,integer,bigint,text)')" : ''}
         ) signature(value)
         where has_function_privilege('anon', 'public.' || signature.value, 'execute')
       ),
@@ -146,6 +161,7 @@ try {
             'public.brain_decision_answer_candidates'::regclass,
             'public.brain_decision_candidate_reviews'::regclass
             ${proveGroundedCandidate ? ", 'public.brain_decision_candidate_evidence_links'::regclass" : ''}
+            ${proveReconstruction ? ", 'public.brain_decision_reconstruction_runs'::regclass" : ''}
           )
           and not exists (
             select 1 from pg_index i
@@ -158,8 +174,8 @@ try {
   `)
   const result = readback.rows[0].result
   const expected = {
-    candidate_tables: proveGroundedCandidate ? 3 : 2,
-    forced_rls_tables: proveGroundedCandidate ? 3 : 2,
+    candidate_tables: proveReconstruction ? 4 : (proveGroundedCandidate ? 3 : 2),
+    forced_rls_tables: proveReconstruction ? 4 : (proveGroundedCandidate ? 3 : 2),
     ordinary_table_privileges: 0,
     authenticated_entrypoints: proveGroundedCandidate ? 6 : 5,
     anonymous_entrypoints: 0,
@@ -214,12 +230,59 @@ try {
     }
     groundedLineage = 'exact_existing_evidence_atoms_required'
   }
+  let reconstructionBoundary = null
+  if (proveReconstruction) {
+    const reconstructionReadback = await db.query(`
+      select jsonb_build_object(
+        'table_forced_rls', (
+          select relforcerowsecurity from pg_class
+          where oid = 'public.brain_decision_reconstruction_runs'::regclass
+        ),
+        'raw_authenticated_privileges', (
+          select count(*)::int from information_schema.role_table_grants
+          where table_schema = 'public'
+            and table_name = 'brain_decision_reconstruction_runs'
+            and grantee in ('anon', 'authenticated')
+        ),
+        'one_pending_index', to_regclass('public.brain_decision_reconstruction_one_pending') is not null,
+        'begin_function', to_regprocedure(
+          'public.begin_brain_decision_reconstruction_v1(uuid,uuid,text,text,text,text,text)'
+        ) is not null,
+        'candidate_function', to_regprocedure(
+          'public.commit_brain_decision_reconstruction_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,jsonb,text,text,text,text,text,text,integer,integer,bigint)'
+        ) is not null,
+        'finish_function', to_regprocedure(
+          'public.finish_brain_decision_reconstruction_v1(uuid,text,text,text,text,text,text,integer,integer,bigint,text)'
+        ) is not null,
+        'service_only_entrypoints', (
+          select count(*)::int
+          from (values
+            ('begin_brain_decision_reconstruction_service_v1(uuid,uuid,uuid,text,text,text,text,text)'),
+            ('commit_brain_decision_reconstruction_candidate_service_v1(uuid,uuid,uuid,uuid,uuid,text,text,text,jsonb,text,text,text,text,text,text,integer,integer,bigint)'),
+            ('finish_brain_decision_reconstruction_service_v1(uuid,uuid,text,text,text,text,text,text,integer,integer,bigint,text)')
+          ) signature(value)
+          where has_function_privilege('service_role', 'public.' || signature.value, 'execute')
+            and not has_function_privilege('authenticated', 'public.' || signature.value, 'execute')
+            and not has_function_privilege('anon', 'public.' || signature.value, 'execute')
+        )
+      ) as result
+    `)
+    const reconstruction = reconstructionReadback.rows[0]?.result
+    if (!reconstruction?.table_forced_rls || reconstruction.raw_authenticated_privileges !== 0 ||
+      !reconstruction.one_pending_index || !reconstruction.begin_function ||
+      !reconstruction.candidate_function || !reconstruction.finish_function ||
+      reconstruction.service_only_entrypoints !== 3) {
+      throw new Error(`R151 reconstruction readback failed: ${JSON.stringify(reconstruction)}`)
+    }
+    reconstructionBoundary = 'canonical_packet_plus_immutable_attempt_receipt_plus_service_only_commit'
+  }
   process.stdout.write(`${JSON.stringify({
     status: 'passed',
     regression: 'R142 full canary',
     ...result,
     ...(projectionContext ? { projection_context: projectionContext } : {}),
     ...(groundedLineage ? { grounded_lineage: groundedLineage } : {}),
+    ...(reconstructionBoundary ? { reconstruction_boundary: reconstructionBoundary } : {}),
   }, null, 2)}\n`)
 } finally {
   await db.close()
