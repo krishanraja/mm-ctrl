@@ -28,7 +28,6 @@ export interface DecisionCandidateProjectionTransport {
     options: { body: { candidateId: string; includeBasis: boolean } },
   ): Promise<{ data: unknown; error: unknown }>
 }
-
 export class DecisionCandidateProjectionError extends Error {
   readonly code: 'unavailable' | 'forbidden' | 'not_found' | 'invalid_response'
 
@@ -65,4 +64,3 @@ export async function readDecisionCandidateProjection(
   }
   return parsed.data
 }
-

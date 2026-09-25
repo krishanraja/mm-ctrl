@@ -11,7 +11,6 @@ export class DecisionCandidateProjectionInputError extends Error {
     this.name = "DecisionCandidateProjectionInputError";
   }
 }
-
 export function parseDecisionCandidateProjectionRequest(raw: unknown): DecisionCandidateProjectionRequest {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     throw new DecisionCandidateProjectionInputError("body_invalid");
@@ -32,4 +31,3 @@ export function parseDecisionCandidateProjectionRequest(raw: unknown): DecisionC
     includeBasis: value.includeBasis === true,
   };
 }
-

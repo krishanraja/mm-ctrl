@@ -73,4 +73,3 @@ describe('decision candidate review gateway', () => {
     await expect(submitDecisionCandidateReview(transport(null, error), base)).rejects.toMatchObject({ code })
   })
 })
-

@@ -68,4 +68,3 @@ describe('decision candidate projection gateway', () => {
     )
   })
 })
-

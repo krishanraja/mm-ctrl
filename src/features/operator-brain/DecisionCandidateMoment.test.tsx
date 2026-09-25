@@ -93,4 +93,3 @@ describe('DecisionCandidateMoment', () => {
     expect(review.mock.calls[0][0].idempotencyKey).toBe(review.mock.calls[1][0].idempotencyKey)
   })
 })
-

@@ -10,7 +10,6 @@ export type DecisionCandidateReviewInput = {
   reviewedAt: string
   idempotencyKey: string
 }
-
 export interface DecisionCandidateReviewTransport {
   invoke(
     functionName: 'decision-ingress-v1',
@@ -95,4 +94,3 @@ export async function submitDecisionCandidateReview(
   }
   return result
 }
-

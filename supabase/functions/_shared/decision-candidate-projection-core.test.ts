@@ -31,4 +31,3 @@ describe("decision candidate projection request", () => {
     expect(() => parseDecisionCandidateProjectionRequest(value)).toThrow(DecisionCandidateProjectionInputError);
   });
 });
-
