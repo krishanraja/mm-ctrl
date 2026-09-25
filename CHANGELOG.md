@@ -6,6 +6,17 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-25 - Decision candidate projection R147
+
+Branch-only and isolated-pilot first. The database reader and JWT-protected function are live only in the isolated project; the rendered route is synthetic and does not save.
+
+- Added a minimum authenticated reader that returns one provisional belief without evidence text by default.
+- Added explicit, on-demand evidence-basis retrieval without opening the source, assertion or candidate tables to browser roles.
+- Kept projection and review as separate Edge routes so a reader cannot silently promote its own interpretation.
+- Added fail-closed frontend gateways and a radically minimal leader moment with confirm, correction and rejection outcomes.
+- Removed an unimplemented voice affordance rather than ship a theatre control.
+- Passed 25 focused tests, the prior R142 database canary, the isolated hosted lifecycle and three rendered journeys at desktop, phone and 320-pixel width.
+
 ## [Unreleased] - 2026-09-25 - Decision archaeology ingress R146
 
 Branch-only and isolated-pilot first. The three database migrations and JWT-protected function are locally verified and live only in the isolated project.

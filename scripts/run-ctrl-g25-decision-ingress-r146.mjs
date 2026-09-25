@@ -3,11 +3,15 @@ import path from 'node:path'
 import { createG25PostgresHarness } from './lib/g25-postgres-harness.mjs'
 
 const root = process.cwd()
+const proveCandidateProjection = process.argv.includes('--candidate-projection')
 const read = relativePath => readFileSync(path.join(root, relativePath), 'utf8').replaceAll('\r\n', '\n')
 const spine = read('supabase/candidates/g25_consequential_work_spine_r142.sql')
 const migration = read('supabase/migrations/20260925054258_decision_candidate_ingress.sql')
 const indexMigration = read('supabase/migrations/20260925054429_decision_candidate_ingress_fk_indexes.sql')
 const chronologyMigration = read('supabase/migrations/20260925055922_decision_ingress_server_chronology.sql')
+const projectionMigration = proveCandidateProjection
+  ? read('supabase/migrations/20260925061613_decision_candidate_projection_context.sql')
+  : ''
 const regression = read('supabase/tests/database/g25_consequential_work_spine_r142.test.sql')
 
 const requiredTokens = [
@@ -76,6 +80,7 @@ try {
   await db.exec(migration)
   await db.exec(indexMigration)
   await db.exec(chronologyMigration)
+  if (projectionMigration) await db.exec(projectionMigration)
 
   const regressionResults = await db.exec(regression)
   const regressionResult = regressionResults.flatMap(entry => entry.rows ?? [])
@@ -157,7 +162,31 @@ try {
   for (const [key, value] of Object.entries(expected)) {
     if (result[key] !== value) throw new Error(`R146 ${key}: expected ${value}, received ${result[key]}`)
   }
-  process.stdout.write(`${JSON.stringify({ status: 'passed', regression: 'R142 full canary', ...result }, null, 2)}\n`)
+  let projectionContext = null
+  if (proveCandidateProjection) {
+    const projectionReadback = await db.query(`
+      select pg_get_functiondef(
+        'public.read_brain_decision_candidate_v1(uuid)'::regprocedure
+      ) as definition
+    `)
+    const definition = projectionReadback.rows[0]?.definition ?? ''
+    const required = [
+      "'question_prompt_ciphertext'",
+      "'source_content_ciphertext'",
+      "'epistemic_basis'",
+      'private.brain_decision_ingress_actor',
+    ]
+    for (const token of required) {
+      if (!definition.includes(token)) throw new Error(`R147 projection context missing ${token}`)
+    }
+    projectionContext = 'minimum_plus_explicit_basis_ciphertexts'
+  }
+  process.stdout.write(`${JSON.stringify({
+    status: 'passed',
+    regression: 'R142 full canary',
+    ...result,
+    ...(projectionContext ? { projection_context: projectionContext } : {}),
+  }, null, 2)}\n`)
 } finally {
   await db.close()
 }

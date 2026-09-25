@@ -228,6 +228,8 @@
     "brain:g25:consequential-migration-r145-check": "node scripts/check-ctrl-g25-consequential-migration-r145.mjs",
     "brain:g25:decision-ingress-r146-check": "vitest run supabase/functions/_shared/brain-decision-crypto.test.ts supabase/functions/_shared/decision-ingress-core.test.ts supabase/functions/_shared/project-binding.test.ts supabase/functions/_shared/public-request-guard.test.ts && node scripts/run-ctrl-g25-decision-ingress-r146.mjs",
     "brain:g25:decision-ingress-r146-hosted-probe": "node scripts/probe-ctrl-g25-decision-ingress-r146.mjs",
+    "brain:g25:decision-candidate-projection-r147-check": "vitest run supabase/functions/_shared/decision-candidate-projection-core.test.ts supabase/functions/_shared/brain-decision-crypto.test.ts supabase/functions/_shared/project-binding.test.ts supabase/functions/_shared/public-request-guard.test.ts && node scripts/run-ctrl-g25-decision-ingress-r146.mjs --candidate-projection",
+    "brain:g25:decision-candidate-projection-r147-hosted-probe": "node scripts/probe-ctrl-g25-decision-ingress-r146.mjs --candidate-projection",
     "trust:check": "node scripts/verify-trust-containment.mjs && node scripts/test-trust-containment.mjs && vitest run supabase/functions/_shared/service-auth.test.ts",
     "standards:check": "node standards/check-standards.mjs",
     "prebuild": "node scripts/check-ctrl-g24-experience-change-gate.mjs && node standards/check-standards.mjs",

@@ -5,6 +5,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 const root = process.cwd()
 const projectRef = 'cgkcplcamsijghalintq'
 const productionProjectRef = 'bkyuxvschuwngtcdhsyg'
+const proveCandidateProjection = process.argv.includes('--candidate-projection')
 const url = `https://${projectRef}.supabase.co`
 const npxCli = 'C:/Program Files/nodejs/node_modules/npm/bin/npx-cli.js'
 const scratch = 'C:/Users/krish/.scratch/mm-ctrl-r146'
@@ -88,8 +89,8 @@ async function signIn(userEmail) {
   return body.access_token
 }
 
-async function invoke(token, body) {
-  const response = await fetch(`${url}/functions/v1/decision-ingress-v1`, {
+async function invokeFunction(functionName, token, body) {
+  const response = await fetch(`${url}/functions/v1/${functionName}`, {
     method: 'POST',
     headers: {
       apikey: publishableKey,
@@ -100,6 +101,10 @@ async function invoke(token, body) {
     signal: AbortSignal.timeout(60_000),
   })
   return { status: response.status, body: await json(response) }
+}
+
+async function invoke(token, body) {
+  return invokeFunction('decision-ingress-v1', token, body)
 }
 
 async function rest(token, path) {
@@ -263,6 +268,35 @@ try {
   const candidateOne = staged.body.result.candidate_id
   expect(counts()?.answers === 0, 'r146_candidate_silently_created_answer')
 
+  let projectionProof = null
+  if (proveCandidateProjection) {
+    const minimalProjection = await invokeFunction('decision-candidate-projection-v1', leaderToken, {
+      candidateId: candidateOne,
+    })
+    expect(minimalProjection.status === 200, `r147_minimal_projection_failed:${JSON.stringify(minimalProjection)}`)
+    expect(minimalProjection.body?.candidate?.claim === candidateRequest.candidateText, 'r147_candidate_claim_mismatch')
+    expect(minimalProjection.body?.candidate?.standing === 'proposed', 'r147_candidate_standing_mismatch')
+    expect(minimalProjection.body?.basis === null, 'r147_basis_returned_without_request')
+
+    const basisProjection = await invokeFunction('decision-candidate-projection-v1', leaderToken, {
+      candidateId: candidateOne,
+      includeBasis: true,
+    })
+    expect(basisProjection.status === 200, `r147_basis_projection_failed:${JSON.stringify(basisProjection)}`)
+    expect(basisProjection.body?.basis?.sourceText === candidateRequest.sourceText, 'r147_source_basis_mismatch')
+    expect(basisProjection.body?.basis?.epistemicBasis === 'external_claim', 'r147_epistemic_basis_mismatch')
+
+    const outsiderProjection = await invokeFunction('decision-candidate-projection-v1', outsiderToken, {
+      candidateId: candidateOne,
+    })
+    expect(outsiderProjection.status === 403, `r147_projection_cross_workspace_not_denied:${outsiderProjection.status}`)
+    projectionProof = {
+      minimal_default: true,
+      basis_on_demand: true,
+      cross_workspace_denied: true,
+    }
+  }
+
   const replayed = await invoke(operatorToken, candidateRequest)
   expect(replayed.status === 201 && replayed.body?.result?.status === 'replayed' && replayed.body?.result?.candidate_id === candidateOne, 'r146_candidate_replay_failed')
   const conflict = await invoke(operatorToken, { ...candidateRequest, candidateText: 'Different content under the same request key.' })
@@ -343,6 +377,7 @@ try {
     confirmed_with_fresh_user_provenance: true, corrected_with_fresh_user_provenance: true,
     rejected_without_answer: true, direct_answer_recorded: true,
     final_counts: finalCounts, provenance,
+    ...(projectionProof ? { candidate_projection: projectionProof } : {}),
   }
 } catch (error) {
   primaryError = error

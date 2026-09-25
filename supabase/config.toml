@@ -461,3 +461,9 @@ enabled = true
 verify_jwt = true
 import_map = "./functions/decision-ingress-v1/deno.json"
 entrypoint = "./functions/decision-ingress-v1/index.ts"
+
+[functions.decision-candidate-projection-v1]
+enabled = true
+verify_jwt = true
+import_map = "./functions/decision-candidate-projection-v1/deno.json"
+entrypoint = "./functions/decision-candidate-projection-v1/index.ts"

@@ -152,6 +152,7 @@ const ProposalsPage = lazyWithRetry(() => import('@/pages/ProposalsPage'))
 // Bench. It remains unlinked and is not included in authenticated prefetching.
 const DecisionBenchPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionBenchPage'))
 const SyntheticPopulationLabPage = lazyWithRetry(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
+const DecisionCandidateMomentPreviewPage = lazyWithRetry(() => import('@/features/operator-brain/DecisionCandidateMomentPreviewPage'))
 const StandardReviewPreviewPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewPreviewPage'))
 const StandardReviewAddressPage = lazyWithRetry(() => import('@/features/standard-review/StandardReviewAddressPage'))
 const NotFound = lazyWithRetry(() => import('@/pages/NotFound'))
@@ -174,6 +175,8 @@ function preloadInitialRouteChunk() {
     warm(() => import('@/pages/Auth'))
   } else if (p.startsWith('/operator/lab/synthetic-population/')) {
     warm(() => import('@/features/operator-brain/SyntheticPopulationLabPage'))
+  } else if (p === '/preview/decision-candidate-moment') {
+    warm(() => import('@/features/operator-brain/DecisionCandidateMomentPreviewPage'))
   } else if (p.startsWith('/operator/reviews/')) {
     const reviewId = p.split('/').filter(Boolean).at(-1) ?? ''
     if (import.meta.env.VITE_ENABLE_STANDARD_REVIEW_ADDRESS === '1' && /^[0-9a-f-]{36}$/i.test(reviewId)) {
@@ -250,6 +253,11 @@ function DecisionBenchGate() {
   return previewEnabled && isLockedFixture ? <DecisionBenchPage /> : <NotFound />
 }
 
+function DecisionCandidateMomentPreviewGate() {
+  const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
+  return previewEnabled ? <DecisionCandidateMomentPreviewPage /> : <NotFound />
+}
+
 function SyntheticPopulationLabGate() {
   const { accountId } = useParams()
   const previewEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_SYNTHETIC_DECISION_BENCH === '1'
@@ -290,6 +298,11 @@ export const router = createBrowserRouter([
     // Dev/QC fixture-render harness (public so it can be screenshot without auth). Unlinked.
     path: '/preview',
     element: <LazyWrapper><Preview /></LazyWrapper>,
+  },
+  {
+    // Exact synthetic leader-confirmation proof. Unlinked, non-indexable and never persistent.
+    path: '/preview/decision-candidate-moment',
+    element: <LazyWrapper><DecisionCandidateMomentPreviewGate /></LazyWrapper>,
   },
   {
     // Direct local route only. Synthetic fixture, no navigation entry and no persistence.
