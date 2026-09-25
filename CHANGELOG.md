@@ -6,6 +6,16 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-25 - Decision reconstruction contract R149
+
+Branch-only and local. No model, database or deployment changed.
+
+- Defined exactly two intelligence outcomes: one grounded provisional candidate or an explicit abstention with one useful next action.
+- Rejected generic business language, unknown or repeated evidence, missing support, omitted counterevidence, question restatement and prose-wrapped JSON.
+- Kept hostile instructions inside evidence inert and exported a strict provider-neutral output schema.
+- Excluded the legacy tolerant JSON extractor, obsolete model bindings, silent provider fallback and confidence theatre.
+- Passed seven adversarial tests, the static contract gate and the TypeScript regression gate.
+
 ## [Unreleased] - 2026-09-25 - Decision candidate grounding R148
 
 Branch-only and isolated-pilot first. The migration and updated JWT-protected function are live only in the isolated project.
