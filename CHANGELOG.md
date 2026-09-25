@@ -6,6 +6,16 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-25 - Decision candidate grounding R148
+
+Branch-only and isolated-pilot first. The migration and updated JWT-protected function are live only in the isolated project.
+
+- Added append-only typed lineage from a reconstructed candidate to the exact evidence atoms that support, refute or contextualise it.
+- Required every atom to belong to the same subject and sealed decision version, required at least one supporting atom and rejected duplicate or unrelated evidence.
+- Included the exact evidence list in idempotency identity so retries cannot silently change a candidate's basis.
+- Kept raw candidate lineage closed to browser roles and preserved leader confirmation, correction and rejection as separate authority.
+- Passed 18 focused tests, the prior R142 database canary, the isolated hosted lifecycle, exact deployed-source readback, typecheck regression gate and direct production bundle.
+
 ## [Unreleased] - 2026-09-25 - Decision candidate projection R147
 
 Branch-only and isolated-pilot first. The database reader and JWT-protected function are live only in the isolated project; the rendered route is synthetic and does not save.

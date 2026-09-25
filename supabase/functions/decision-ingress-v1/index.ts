@@ -101,7 +101,7 @@ export default {
         material: canonicalDecisionIngressFingerprintMaterial(parsed),
       });
 
-      if (parsed.action === "stage_candidate") {
+      if (parsed.action === "stage_candidate" || parsed.action === "stage_grounded_candidate") {
         const { data: contextData, error: contextError } = await ctx.supabase.rpc(
           "read_brain_decision_question_context_v1",
           { p_question_id: parsed.questionId },
@@ -131,7 +131,11 @@ export default {
             activeKeyId,
           }),
         ]);
-        const { data, error } = await ctx.supabase.rpc("stage_brain_decision_candidate_v1", {
+        const { data, error } = await ctx.supabase.rpc(
+          parsed.action === "stage_grounded_candidate"
+            ? "stage_grounded_brain_decision_candidate_v1"
+            : "stage_brain_decision_candidate_v1",
+          {
           p_candidate_id: candidateId,
           p_question_id: parsed.questionId,
           p_source_id: sourceId,
@@ -141,9 +145,16 @@ export default {
           p_assertion_ciphertext: assertionCiphertext,
           p_candidate_ciphertext: candidateCiphertext,
           p_captured_at: parsed.capturedAt,
+          ...(parsed.action === "stage_grounded_candidate" ? {
+            p_evidence_refs: parsed.evidenceRefs.map((entry) => ({
+              evidence_atom_id: entry.evidenceAtomId,
+              stance: entry.stance,
+            })),
+          } : {}),
           p_idempotency_key: parsed.idempotencyKey,
           p_request_fingerprint_sha256: fingerprint,
-        });
+          },
+        );
         if (error) throw error;
         return response({ action: parsed.action, result: data }, 201);
       }

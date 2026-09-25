@@ -5,7 +5,8 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
 const root = process.cwd()
 const projectRef = 'cgkcplcamsijghalintq'
 const productionProjectRef = 'bkyuxvschuwngtcdhsyg'
-const proveCandidateProjection = process.argv.includes('--candidate-projection')
+const proveGroundedCandidate = process.argv.includes('--grounded-candidate')
+const proveCandidateProjection = process.argv.includes('--candidate-projection') || proveGroundedCandidate
 const url = `https://${projectRef}.supabase.co`
 const npxCli = 'C:/Program Files/nodejs/node_modules/npm/bin/npx-cli.js'
 const scratch = 'C:/Users/krish/.scratch/mm-ctrl-r146'
@@ -122,6 +123,7 @@ function expect(value, message) {
 function counts() {
   return dbq(`select jsonb_build_object(
     'candidates',(select count(*)::int from public.brain_decision_answer_candidates where workspace_id=${lit(id.workspace)}::uuid),
+    'candidate_evidence_links',(select count(*)::int from public.brain_decision_candidate_evidence_links where workspace_id=${lit(id.workspace)}::uuid),
     'reviews',(select count(*)::int from public.brain_decision_candidate_reviews where workspace_id=${lit(id.workspace)}::uuid),
     'answers',(select count(*)::int from public.brain_decision_answers where workspace_id=${lit(id.workspace)}::uuid),
     'sources',(select count(*)::int from public.brain_sources where workspace_id=${lit(id.workspace)}::uuid),
@@ -137,6 +139,7 @@ function cleanup() {
     set local session_replication_role = replica;
     delete from public.brain_decision_candidate_reviews where workspace_id=${lit(id.workspace)}::uuid;
     delete from public.brain_decision_answers where workspace_id=${lit(id.workspace)}::uuid;
+    delete from public.brain_decision_candidate_evidence_links where workspace_id=${lit(id.workspace)}::uuid;
     delete from public.brain_decision_answer_candidates where workspace_id=${lit(id.workspace)}::uuid;
     delete from public.brain_decision_events where workspace_id=${lit(id.workspace)}::uuid;
     delete from public.brain_decision_authority_revocations where workspace_id=${lit(id.workspace)}::uuid;
@@ -160,6 +163,7 @@ function cleanup() {
     'workspaces',(select count(*)::int from public.brain_workspaces where id=${lit(id.workspace)}::uuid),
     'sources',(select count(*)::int from public.brain_sources where workspace_id=${lit(id.workspace)}::uuid),
     'candidates',(select count(*)::int from public.brain_decision_answer_candidates where workspace_id=${lit(id.workspace)}::uuid),
+    'candidate_evidence_links',(select count(*)::int from public.brain_decision_candidate_evidence_links where workspace_id=${lit(id.workspace)}::uuid),
     'reviews',(select count(*)::int from public.brain_decision_candidate_reviews where workspace_id=${lit(id.workspace)}::uuid),
     'answers',(select count(*)::int from public.brain_decision_answers where workspace_id=${lit(id.workspace)}::uuid),
     'events',(select count(*)::int from public.brain_decision_events where workspace_id=${lit(id.workspace)}::uuid),
@@ -258,10 +262,17 @@ try {
   ])
   const capturedAt = new Date(Date.now() - 60_000).toISOString()
   const candidateRequest = {
-    action: 'stage_candidate', questionId: id.questionA, sourceType: 'external',
+    action: proveGroundedCandidate ? 'stage_grounded_candidate' : 'stage_candidate',
+    questionId: id.questionA, sourceType: 'external',
     sourceText: 'Public evidence indicates the category is moving faster than the current operating plan assumes.',
     candidateText: 'The current plan may understate the speed of category change.',
     capturedAt, idempotencyKey: `r146:candidate:${suffix}:one`,
+    ...(proveGroundedCandidate ? {
+      evidenceRefs: [
+        { evidenceAtomId: atoms.atom_a, stance: 'supports' },
+        { evidenceAtomId: atoms.atom_b, stance: 'refutes' },
+      ],
+    } : {}),
   }
   const staged = await invoke(operatorToken, candidateRequest)
   expect(staged.status === 201 && staged.body?.result?.status === 'created', `r146_stage_failed:${JSON.stringify(staged)}`)
@@ -303,6 +314,45 @@ try {
   expect(conflict.status === 409, `r146_candidate_conflict_not_rejected:${conflict.status}`)
   const outsider = await invoke(outsiderToken, { ...candidateRequest, idempotencyKey: `r146:outsider:${suffix}` })
   expect(outsider.status === 403, `r146_cross_workspace_not_denied:${outsider.status}`)
+
+  let groundingProof = null
+  if (proveGroundedCandidate) {
+    const linkedEvidence = dbq(`select jsonb_agg(jsonb_build_object(
+      'evidence_atom_id',evidence_atom_id,
+      'stance',stance
+    ) order by evidence_atom_id) as result
+    from public.brain_decision_candidate_evidence_links
+    where candidate_id=${lit(candidateOne)}::uuid`)[0]?.result ?? []
+    expect(linkedEvidence.length === 2, `r148_grounded_link_count_wrong:${JSON.stringify(linkedEvidence)}`)
+    expect(linkedEvidence.some(link => link.evidence_atom_id === atoms.atom_a && link.stance === 'supports'), 'r148_support_link_missing')
+    expect(linkedEvidence.some(link => link.evidence_atom_id === atoms.atom_b && link.stance === 'refutes'), 'r148_refute_link_missing')
+
+    const missingSupport = await invoke(operatorToken, {
+      ...candidateRequest,
+      questionId: id.questionB,
+      idempotencyKey: `r148:no-support:${suffix}`,
+      evidenceRefs: [{ evidenceAtomId: atoms.atom_b, stance: 'context' }],
+    })
+    expect(missingSupport.status === 400, `r148_missing_support_not_rejected:${missingSupport.status}`)
+
+    const unrelatedAtom = await invoke(operatorToken, {
+      ...candidateRequest,
+      questionId: id.questionB,
+      idempotencyKey: `r148:unrelated:${suffix}`,
+      evidenceRefs: [{ evidenceAtomId: staged.body.result.evidence_atom_id, stance: 'supports' }],
+    })
+    expect(unrelatedAtom.status === 409, `r148_unrelated_atom_not_rejected:${unrelatedAtom.status}`)
+
+    const rawLinks = await rest(operatorToken, `brain_decision_candidate_evidence_links?select=*&workspace_id=eq.${id.workspace}`)
+    const rawLinksHidden = rawLinks.status >= 400 || (Array.isArray(rawLinks.body) && rawLinks.body.length === 0)
+    expect(rawLinksHidden, 'r148_raw_candidate_evidence_links_visible')
+    groundingProof = {
+      linked_existing_evidence_atoms: 2,
+      support_required: true,
+      unrelated_candidate_atom_denied: true,
+      raw_links_hidden: true,
+    }
+  }
 
   const confirmedAt = new Date().toISOString()
   const confirmedRequest = {
@@ -355,7 +405,8 @@ try {
 
   const finalCounts = counts()
   const expectedCounts = {
-    candidates: 3, reviews: 3, answers: 3, sources: 8, assertions: 8, atoms: 8,
+    candidates: 3, candidate_evidence_links: proveGroundedCandidate ? 2 : 0,
+    reviews: 3, answers: 3, sources: 8, assertions: 8, atoms: 8,
     candidate_events: 6, answer_events: 3,
   }
   expect(
@@ -378,6 +429,7 @@ try {
     rejected_without_answer: true, direct_answer_recorded: true,
     final_counts: finalCounts, provenance,
     ...(projectionProof ? { candidate_projection: projectionProof } : {}),
+    ...(groundingProof ? { candidate_grounding: groundingProof } : {}),
   }
 } catch (error) {
   primaryError = error

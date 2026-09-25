@@ -8,6 +8,7 @@ import {
 
 const questionId = "11111111-1111-4111-8111-111111111111";
 const candidateId = "22222222-2222-4222-8222-222222222222";
+const evidenceAtomId = "33333333-3333-4333-8333-333333333333";
 
 describe("decision ingress request contract", () => {
   it("accepts the three bounded actions and canonicalises timestamps", () => {
@@ -67,6 +68,34 @@ describe("decision ingress request contract", () => {
       idempotencyKey: "answer:direct:two",
       hidden: true,
     })).toThrow("body_shape_invalid");
+    vi.useRealTimers();
+  });
+
+  it("requires exact, unique and supporting evidence for a grounded candidate", () => {
+    vi.setSystemTime(new Date("2026-09-25T12:00:00.000Z"));
+    const grounded = parseDecisionIngressRequest({
+      action: "stage_grounded_candidate",
+      questionId,
+      sourceType: "document",
+      sourceText: "A reconstruction made from existing evidence.",
+      candidateText: "The present plan may be anchored to an outdated assumption.",
+      capturedAt: "2026-09-25T11:00:00Z",
+      evidenceRefs: [{ evidenceAtomId, stance: "supports" }],
+      idempotencyKey: "candidate:grounded:one",
+    });
+    expect(grounded).toMatchObject({ action: "stage_grounded_candidate", evidenceRefs: [{ evidenceAtomId, stance: "supports" }] });
+    expect(canonicalDecisionIngressFingerprintMaterial(grounded)).toContain('"evidence_refs"');
+
+    expect(() => parseDecisionIngressRequest({
+      action: "stage_grounded_candidate",
+      questionId,
+      sourceType: "document",
+      sourceText: "No supporting evidence.",
+      candidateText: "A claim.",
+      capturedAt: "2026-09-25T11:00:00Z",
+      evidenceRefs: [{ evidenceAtomId, stance: "context" }],
+      idempotencyKey: "candidate:grounded:two",
+    })).toThrow("supporting_evidence_required");
     vi.useRealTimers();
   });
 

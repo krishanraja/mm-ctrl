@@ -3,7 +3,8 @@ import path from 'node:path'
 import { createG25PostgresHarness } from './lib/g25-postgres-harness.mjs'
 
 const root = process.cwd()
-const proveCandidateProjection = process.argv.includes('--candidate-projection')
+const proveGroundedCandidate = process.argv.includes('--grounded-candidate')
+const proveCandidateProjection = process.argv.includes('--candidate-projection') || proveGroundedCandidate
 const read = relativePath => readFileSync(path.join(root, relativePath), 'utf8').replaceAll('\r\n', '\n')
 const spine = read('supabase/candidates/g25_consequential_work_spine_r142.sql')
 const migration = read('supabase/migrations/20260925054258_decision_candidate_ingress.sql')
@@ -11,6 +12,9 @@ const indexMigration = read('supabase/migrations/20260925054429_decision_candida
 const chronologyMigration = read('supabase/migrations/20260925055922_decision_ingress_server_chronology.sql')
 const projectionMigration = proveCandidateProjection
   ? read('supabase/migrations/20260925061613_decision_candidate_projection_context.sql')
+  : ''
+const groundingMigration = proveGroundedCandidate
+  ? read('supabase/migrations/20260925064643_decision_candidate_evidence_lineage.sql')
   : ''
 const regression = read('supabase/tests/database/g25_consequential_work_spine_r142.test.sql')
 
@@ -81,6 +85,7 @@ try {
   await db.exec(indexMigration)
   await db.exec(chronologyMigration)
   if (projectionMigration) await db.exec(projectionMigration)
+  if (groundingMigration) await db.exec(groundingMigration)
 
   const regressionResults = await db.exec(regression)
   const regressionResult = regressionResults.flatMap(entry => entry.rows ?? [])
@@ -93,18 +98,18 @@ try {
     select jsonb_build_object(
       'candidate_tables', (
         select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace
-        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews')
+        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''})
           and c.relkind = 'r'
       ),
       'forced_rls_tables', (
         select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace
-        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews')
+        where n.nspname = 'public' and c.relname in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''})
           and c.relforcerowsecurity
       ),
       'ordinary_table_privileges', (
         select count(*)::int from information_schema.role_table_grants
         where table_schema = 'public'
-          and table_name in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews')
+          and table_name in ('brain_decision_answer_candidates', 'brain_decision_candidate_reviews'${proveGroundedCandidate ? ", 'brain_decision_candidate_evidence_links'" : ''})
           and grantee in ('anon', 'authenticated')
       ),
       'authenticated_entrypoints', (
@@ -115,6 +120,7 @@ try {
           ('read_brain_decision_candidate_v1(uuid)'),
           ('record_brain_decision_answer_v1(uuid,uuid,uuid,uuid,text,text,text,timestamptz,text,text,uuid,text)'),
           ('reject_brain_decision_candidate_v1(uuid,timestamptz,text,text)')
+          ${proveGroundedCandidate ? ",('stage_grounded_brain_decision_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,text,timestamptz,jsonb,text,text)')" : ''}
         ) signature(value)
         where has_function_privilege('authenticated', 'public.' || signature.value, 'execute')
       ),
@@ -126,6 +132,7 @@ try {
           ('read_brain_decision_candidate_v1(uuid)'),
           ('record_brain_decision_answer_v1(uuid,uuid,uuid,uuid,text,text,text,timestamptz,text,text,uuid,text)'),
           ('reject_brain_decision_candidate_v1(uuid,timestamptz,text,text)')
+          ${proveGroundedCandidate ? ",('stage_grounded_brain_decision_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,text,timestamptz,jsonb,text,text)')" : ''}
         ) signature(value)
         where has_function_privilege('anon', 'public.' || signature.value, 'execute')
       ),
@@ -138,6 +145,7 @@ try {
           and c.conrelid in (
             'public.brain_decision_answer_candidates'::regclass,
             'public.brain_decision_candidate_reviews'::regclass
+            ${proveGroundedCandidate ? ", 'public.brain_decision_candidate_evidence_links'::regclass" : ''}
           )
           and not exists (
             select 1 from pg_index i
@@ -150,10 +158,10 @@ try {
   `)
   const result = readback.rows[0].result
   const expected = {
-    candidate_tables: 2,
-    forced_rls_tables: 2,
+    candidate_tables: proveGroundedCandidate ? 3 : 2,
+    forced_rls_tables: proveGroundedCandidate ? 3 : 2,
     ordinary_table_privileges: 0,
-    authenticated_entrypoints: 5,
+    authenticated_entrypoints: proveGroundedCandidate ? 6 : 5,
     anonymous_entrypoints: 0,
     candidate_rows: 0,
     review_rows: 0,
@@ -181,11 +189,37 @@ try {
     }
     projectionContext = 'minimum_plus_explicit_basis_ciphertexts'
   }
+  let groundedLineage = null
+  if (proveGroundedCandidate) {
+    const groundingReadback = await db.query(`
+      select jsonb_build_object(
+        'table_forced_rls', (
+          select relforcerowsecurity from pg_class
+          where oid = 'public.brain_decision_candidate_evidence_links'::regclass
+        ),
+        'raw_authenticated_privileges', (
+          select count(*)::int from information_schema.role_table_grants
+          where table_schema = 'public'
+            and table_name = 'brain_decision_candidate_evidence_links'
+            and grantee in ('anon', 'authenticated')
+        ),
+        'grounded_function', to_regprocedure(
+          'public.stage_grounded_brain_decision_candidate_v1(uuid,uuid,uuid,uuid,text,text,text,text,timestamptz,jsonb,text,text)'
+        ) is not null
+      ) as result
+    `)
+    const grounding = groundingReadback.rows[0]?.result
+    if (!grounding?.table_forced_rls || grounding.raw_authenticated_privileges !== 0 || !grounding.grounded_function) {
+      throw new Error(`R148 grounded lineage readback failed: ${JSON.stringify(grounding)}`)
+    }
+    groundedLineage = 'exact_existing_evidence_atoms_required'
+  }
   process.stdout.write(`${JSON.stringify({
     status: 'passed',
     regression: 'R142 full canary',
     ...result,
     ...(projectionContext ? { projection_context: projectionContext } : {}),
+    ...(groundedLineage ? { grounded_lineage: groundedLineage } : {}),
   }, null, 2)}\n`)
 } finally {
   await db.close()

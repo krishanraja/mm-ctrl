@@ -3,6 +3,19 @@ const IDEMPOTENCY_KEY = /^[A-Za-z0-9][A-Za-z0-9._:-]{7,199}$/;
 
 export type DecisionIngressRequest =
   | {
+    action: "stage_grounded_candidate";
+    questionId: string;
+    sourceType: "meeting" | "document" | "observed_action" | "external";
+    sourceText: string;
+    candidateText: string;
+    capturedAt: string;
+    evidenceRefs: Array<{
+      evidenceAtomId: string;
+      stance: "supports" | "refutes" | "context";
+    }>;
+    idempotencyKey: string;
+  }
+  | {
     action: "stage_candidate";
     questionId: string;
     sourceType: "meeting" | "document" | "observed_action" | "external";
@@ -75,16 +88,45 @@ function idempotency(value: unknown): string {
   return parsed;
 }
 
+function evidenceRefs(value: unknown): Array<{ evidenceAtomId: string; stance: "supports" | "refutes" | "context" }> {
+  if (!Array.isArray(value) || value.length < 1 || value.length > 24) {
+    throw new DecisionIngressInputError("evidence_refs_invalid");
+  }
+  const seen = new Set<string>();
+  const parsed = value.map((entry) => {
+    const item = object(entry);
+    exactKeys(item, ["evidenceAtomId", "stance"]);
+    const evidenceAtomId = uuid(item.evidenceAtomId, "evidence_atom_id");
+    const stance = string(item.stance, "stance", 1, 20);
+    if (!["supports", "refutes", "context"].includes(stance)) {
+      throw new DecisionIngressInputError("stance_invalid");
+    }
+    if (seen.has(evidenceAtomId)) throw new DecisionIngressInputError("evidence_ref_duplicate");
+    seen.add(evidenceAtomId);
+    return { evidenceAtomId, stance: stance as "supports" | "refutes" | "context" };
+  });
+  if (!parsed.some((entry) => entry.stance === "supports")) {
+    throw new DecisionIngressInputError("supporting_evidence_required");
+  }
+  return parsed.sort((a, b) => a.evidenceAtomId.localeCompare(b.evidenceAtomId));
+}
+
 export function parseDecisionIngressRequest(raw: unknown): DecisionIngressRequest {
   const value = object(raw);
   const action = string(value.action, "action", 1, 40);
-  if (action === "stage_candidate") {
-    exactKeys(value, ["action", "questionId", "sourceType", "sourceText", "candidateText", "capturedAt", "idempotencyKey"]);
+  if (action === "stage_candidate" || action === "stage_grounded_candidate") {
+    const grounded = action === "stage_grounded_candidate";
+    exactKeys(
+      value,
+      grounded
+        ? ["action", "questionId", "sourceType", "sourceText", "candidateText", "capturedAt", "evidenceRefs", "idempotencyKey"]
+        : ["action", "questionId", "sourceType", "sourceText", "candidateText", "capturedAt", "idempotencyKey"],
+    );
     const sourceType = string(value.sourceType, "source_type", 1, 40);
     if (!["meeting", "document", "observed_action", "external"].includes(sourceType)) {
       throw new DecisionIngressInputError("source_type_invalid");
     }
-    return {
+    const shared = {
       action,
       questionId: uuid(value.questionId, "question_id"),
       sourceType: sourceType as "meeting" | "document" | "observed_action" | "external",
@@ -93,6 +135,9 @@ export function parseDecisionIngressRequest(raw: unknown): DecisionIngressReques
       capturedAt: timestamp(value.capturedAt, "captured_at"),
       idempotencyKey: idempotency(value.idempotencyKey),
     };
+    return grounded
+      ? { ...shared, action, evidenceRefs: evidenceRefs(value.evidenceRefs) }
+      : { ...shared, action };
   }
   if (action === "answer_question") {
     exactKeys(value, ["action", "questionId", "answer", "recordedAt", "idempotencyKey"]);
@@ -126,7 +171,7 @@ export function parseDecisionIngressRequest(raw: unknown): DecisionIngressReques
 }
 
 export function canonicalDecisionIngressFingerprintMaterial(request: DecisionIngressRequest): string {
-  if (request.action === "stage_candidate") {
+  if (request.action === "stage_candidate" || request.action === "stage_grounded_candidate") {
     return JSON.stringify({
       v: 1,
       action: request.action,
@@ -135,6 +180,9 @@ export function canonicalDecisionIngressFingerprintMaterial(request: DecisionIng
       source_text: request.sourceText,
       candidate_text: request.candidateText,
       captured_at: request.capturedAt,
+      evidence_refs: request.action === "stage_grounded_candidate"
+        ? request.evidenceRefs.map((entry) => ({ evidence_atom_id: entry.evidenceAtomId, stance: entry.stance }))
+        : null,
       idempotency_key: request.idempotencyKey,
     });
   }
