@@ -6,6 +6,16 @@ Last reconciled: 2026-09-08
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
+## [Unreleased] - 2026-09-25 - Decision reconstruction provider R150
+
+Branch-only and local. No live model, database or deployment changed.
+
+- Bound reconstruction to one explicit OpenAI Responses API adapter using `gpt-5.6-sol`, high reasoning and low verbosity.
+- Required strict structured output, disabled provider storage and retained the separate application semantic gate.
+- Added exact provider, model, response, prompt, schema, token and versioned estimated-cost receipts.
+- Rejected provider refusal, incomplete output, branch leakage, generic schema-valid output, HTTP failure and missing credentials without fallback.
+- Passed 13 combined contract and adapter tests plus the static adapter gate.
+
 ## [Unreleased] - 2026-09-25 - Decision reconstruction contract R149
 
 Branch-only and local. No model, database or deployment changed.
