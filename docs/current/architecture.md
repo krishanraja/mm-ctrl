@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, live G16 Brain-substrate readback and the 2026-09-05 production containment readback. Later answer-only publishing does not change the Brain architecture described here.
+Last verified: 2026-09-29 against the source tree at `83ce7c48` for the 2026-09-22 change, and 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc`, live G16 Brain-substrate readback and the 2026-09-05 production containment readback. Later answer-only publishing does not change the Brain architecture described here.
 
 CTRL is a Vite React application on Vercel with Supabase Auth, PostgreSQL, Edge Functions, Storage, Vault, and scheduled jobs. The architecture has one personal context substrate and one curation pool. Product surfaces are views over those shared systems.
 
@@ -92,6 +92,8 @@ source gather
   -> email/audio delivery claim
   -> feedback and preference updates
 ```
+
+Since 2026-09-22 the source (not yet applied in production) `live-headlines` also writes, beside the feed, append-only records of every article the gather saw with the verdict reached, per-source run counts, every version of a cached day and a daily model benchmark snapshot (`supabase/migrations/20260922100000_ctrl_keeps_what_it_gathered.sql`). The served pool is unchanged.
 
 Control Center is an optional read-only source adapter inside `live-headlines`. It does not create another feed. Missing bridge configuration fails closed.
 
