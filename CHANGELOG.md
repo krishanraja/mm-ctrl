@@ -8,7 +8,7 @@ Last reconciled: 2026-09-08
 
 ## 2026-09-22 - The gather is kept, not only the feed
 
-Committed on `claude/pensive-newton-r9gl3o`. Not merged, not applied to production, and no migration has been run against the shared project. The feed itself is unchanged: the same twenty cards are gathered, filtered and served exactly as before.
+Committed on `claude/pensive-newton-r9gl3o` and merged to `main` at `83ce7c48` (steward correction 2026-09-30). Not applied to production: no migration has been run against the shared project, and no deployment readback is recorded here. The feed itself is unchanged: the same twenty cards are gathered, filtered and served exactly as before.
 
 - Added `live_headlines_gather`, which records every article every gather sees, with the verdict the pipeline reached about it (`selected`, or a `drop_reason` of `not_ai_native`, `too_old`, `below_trust_floor`, `capped_per_source`, `lane_full` or `damage`). `live-headlines` fetches several hundred articles a day and serves twenty; the rest were discarded in memory and had never existed as data, so volume, share of voice, publisher lead and lag, and any audit of our own filters were unanswerable by construction.
 - Recorded an absolute `published_at` per article. The cards only ever carried `timeAgo`, a relative string frozen at gather time, and the only real date on a cached day was `briefing_date`, which is when CTRL looked rather than when the thing happened. Null is kept when the source is silent and is never replaced with the observation time.
