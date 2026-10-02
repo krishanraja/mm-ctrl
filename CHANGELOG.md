@@ -2,13 +2,13 @@
 
 Status: Historical
 Owner: Mindmaker
-Last reconciled: 2026-09-08
+Last reconciled: 2026-10-02
 
 > A running record of shipped changes, newest first. It explains how the product arrived here; it is not a description of current behaviour. For that, see [`docs/current/`](./docs/current/README.md).
 
 ## 2026-09-22 - The gather is kept, not only the feed
 
-Committed on `claude/pensive-newton-r9gl3o`. Not merged, not applied to production, and no migration has been run against the shared project. The feed itself is unchanged: the same twenty cards are gathered, filtered and served exactly as before.
+Merged to `main` at `83ce7c48` on 2026-09-23. The merge message calls it "merged and deployed but inert": the migration `20260922100000_ctrl_keeps_what_it_gathered.sql` has not been applied to any database, so `live-headlines` writes to tables that do not exist and every such write is best effort and logged, not thrown. No readback of the tables is recorded in this repository. The feed itself is unchanged: the same twenty cards are gathered, filtered and served exactly as before.
 
 - Added `live_headlines_gather`, which records every article every gather sees, with the verdict the pipeline reached about it (`selected`, or a `drop_reason` of `not_ai_native`, `too_old`, `below_trust_floor`, `capped_per_source`, `lane_full` or `damage`). `live-headlines` fetches several hundred articles a day and serves twenty; the rest were discarded in memory and had never existed as data, so volume, share of voice, publisher lead and lag, and any audit of our own filters were unanswerable by construction.
 - Recorded an absolute `published_at` per article. The cards only ever carried `timeAgo`, a relative string frozen at gather time, and the only real date on a cached day was `briefing_date`, which is when CTRL looked rather than when the thing happened. Null is kept when the source is silent and is never replaced with the observation time.
@@ -17,6 +17,15 @@ Committed on `claude/pensive-newton-r9gl3o`. Not merged, not applied to producti
 - Added `live_headlines_gather_runs` with per-source counts, so a source that stops producing reads as a zero beside its neighbours. The shared pool went dark for about four weeks to 2026-08-05 and nothing reported it.
 - All three record tables are append only, enforced by trigger rather than convention: updates and deletes raise. Corrections are new rows.
 - Fixed `cleanup-expired-data`, which has deleted nothing since it was written because it targeted `ai_cache`, a table no migration creates. The real table is `ai_response_cache`. The delete is off by default behind `CLEANUP_PRUNE_AI_CACHE`, and the step now reports how many rows are eligible: a delete that has never run, against a table that has therefore accumulated every cached response this system has produced, is a decision for a person rather than a side effect of a one-word fix.
+
+## 2026-09-08 - Brain adapter primitives, synthetic population lab and capture contract
+
+Merged to `main` (PRs #385, #388, #389, #391, #392). Nothing here is connected to a customer path, and the written contracts authorise no connector, write path or production seeding.
+
+- Added strict service-side Brain primitives under `supabase/functions/_shared/` (`brain-crypto.ts`, `brain-ingest-core.ts`) with tests. The G17 contract says the legacy memory cipher is not reused because it pads or truncates text into a key and keeps a development-key fallback; the new code requires an exact 32-byte key with no default.
+- Added the G18 synthetic population: 48 deterministic synthetic leaders on the reserved `.invalid` domain, expanded to 1,672 input events without creating more fictional people. It is an oracle for where the Brain, diagnostic or interface breaks, not testimonial or efficacy evidence.
+- Added the unlinked G19 range lab at `/operator/lab/synthetic-population/:accountId`, behind the same synthetic-preview boundary as the Decision Bench, so production still renders the standard 404.
+- Recorded the G20 founder requirement: paste material into the Brain quickly and prompt scoped context out to Claude. The contract treats it as the membrane around the Brain and authorises no implementation.
 
 ## 2026-09-08 - Fail-closed Living Brain substrate
 

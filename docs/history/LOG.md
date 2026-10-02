@@ -4,6 +4,19 @@ Newest first. Entries are written by the docs steward (see the steward link in
 NOW.md) and by humans doing the same job by hand. Nothing in this file
 describes current behaviour; NOW.md and the state doc do.
 
+## 2026-10-02
+
+- reconciled at `83ce7c4`: `CHANGELOG.md` entry of 2026-09-22 said "Not merged"; it merged at `83ce7c48` on 2026-09-23 with its migration still unapplied, and now says so. A 2026-09-08 entry was added for PRs #385, #388, #389, #391 and #392, which had none. `docs/current/release-state.md` gained the 2026-09-23 row in the post-release changes table. Last reconciled on `CHANGELOG.md` moved to 2026-10-02.
+- rolled from NOW.md: 2026-08-28 cached radar signals exported for the video studio (PR #371); the dedicated GET-only function checks its own bearer token and "never returns service credentials", and the directory count went 114 to 115.
+- rolled from NOW.md: 2026-08-21 release to production (`bac02d3`); 24 Edge Functions redeployed and confirmed ACTIVE by readback, 177 to 178 deployed, training material to global version 3 with 33 roles and 36 allowlist entries. The Supabase CLI could not reach `api.supabase.com` from the delivery environment, so `scripts/deploy-edge-function.mjs` does the CLI's job over the management API. Two pseudonymiser defects were caught by the dry run (see `CHANGELOG.md`).
+- rolled from NOW.md: 2026-08-20 migrations applied and the retention column production never had repaired (`19d80f3`); the ledger showed nothing, while object readback showed `cleanup_expired_memories()` raising 42703 on every call. Two anonymous SECURITY DEFINER paths were revoked to `service_role`. Migrations 163 to 165.
+- rolled from NOW.md: 2026-08-20 unused code removed and every document classed (`71667d2`); 238 unreachable source files and 28 unused dependencies removed, typecheck baseline 221 to 94, 67 documents classed and dated.
+- rolled from NOW.md: 2026-08-20 the personal frame held structurally (`962d0e8`, Decisions 82 to 84); settings had offered 30 and 90 day retention while nothing ran the sweep, account deletion now cancels Stripe first, the sheets export writes aggregate counts only.
+- rolled from NOW.md: 2026-08-20 trust surface and access hardening (PR #370); an unauthenticated cross-tenant read through four anon-executable definer functions closed, five security headers added, advisors 268 to 258.
+- rolled from NOW.md: 2026-08-12 `.vercel.run` hosts allowed on the dev server (`081ebe9`); a wildcard rather than `allowedHosts: true` keeps Vite's DNS-rebinding guard.
+- rolled from NOW.md: 2026-08-11 company recognition restored in onboarding (PR #369), shell unified (PR #368), commercial authority established (PR #367), Blind Spot trusted-advisor instrument released (PR #366).
+- rolled from NOW.md: 2026-08-10 canonical current documentation (PR #365) and Make Your Mind Up unified with CTRL (PR #362).
+
 ## 2026-09-07
 
 - decision: docs steward adopted for this repository, Krish 2026-09-07. The steward adds `NOW.md` and this log, moves superseded documents into `docs/history/` with a banner, and runs from `.github/workflows/docs-steward.yml`. The repo's own rules in `docs/current/documentation-standards.md` keep precedence on structure, naming and archive location.

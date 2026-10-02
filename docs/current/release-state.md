@@ -48,6 +48,7 @@ Vercel builds every push to `main`. The exact G16 deployment above includes the 
 | 2026-08-28 | `video-radar-export` added (PR #371), a token-gated read-only export of the curation pool for the video studio | Merged. Deployment not recorded in this repository |
 | 2026-09-02 | `live-headlines` gained the `affects` and `stance` fields and the `?backfill=1` operator action (PRs #372, #373) | Deployed as `live-headlines` version 48 and verified by cache readback on 2026-09-02: 476 items, 473 classified, 12 `damage` items dropped, zero over-assigned or out-of-allowlist |
 | 2026-09-07 | `video-radar-export` reads four cached days and merges repeated sightings; `news-cluster` retains every article URL (PR #375) | Merged at `edd9045`. Deployment not recorded in this repository |
+| 2026-09-23 | `live-headlines` records every gathered article and cache version; `cleanup-expired-data` targets `ai_response_cache` (merge `83ce7c48`) | Merged and reported deployed in the merge message. Migration `20260922100000_ctrl_keeps_what_it_gathered.sql` not applied to any database, so the new writes are inert |
 
 The vocabulary at the end of this file applies: merged is not deployed, and deployed is not verified.
 
