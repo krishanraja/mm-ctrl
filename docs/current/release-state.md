@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
+Last verified: 2026-10-03 for the gather record tables against the source tree at `83ce7c48`; 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
 
 ## Production baseline
 
@@ -40,6 +40,14 @@ Current source inventory is 115 Edge Function directories excluding `_shared`, 5
 Exact route names, versions, hashes, JWT flags, and database evidence live in [`supabase/containment/manifest.json`](../../supabase/containment/manifest.json), [`release-lock.production.json`](../../supabase/containment/release-lock.production.json), and [`db/evidence/`](../../supabase/containment/db/evidence/).
 
 Vercel builds every push to `main`. The exact G16 deployment above includes the first public Answers surface as well as the reviewed trust-containment recovery copy. It does not enable the synthetic Decision Bench or connect the dormant G16 schema to a customer path. Later answer-only and documentation-only merges can create newer deployment IDs; they do not alter this release receipt or the Brain containment state it proves.
+
+## Gather record tables, merged and not applied, 2026-09-22
+
+`supabase/migrations/20260922100000_ctrl_keeps_what_it_gathered.sql` creates four append-only record tables (`live_headlines_gather`, `live_headlines_cache_versions`, `model_benchmark_snapshots`, `live_headlines_gather_runs`). The `live-headlines` and `cleanup-expired-data` changes that write to them are on `main` at `83ce7c48`.
+
+- The migration has not been applied to any database, so no readback exists. Writes fail best effort and are logged, and the feed behaves as before.
+- The `cleanup-expired-data` prune of `ai_response_cache` stays off behind `CLEANUP_PRUNE_AI_CACHE`.
+- A deployment readback for either function is not recorded here. Merged is not deployed, and deployed is not verified.
 
 ## Edge Function changes after the 2026-08-21 release
 
