@@ -8,6 +8,17 @@ it is, who it is for, what changed recently, what is waiting, and what not to tr
 It is validated on every push to `main` and reconciled against the code nightly, so it
 is never more than a day behind the tree. Chronology lives in `docs/history/LOG.md`.
 
+## Google Drive
+
+Content, films and sales material live in Krish's Drive under `04_Content`.
+The map of what goes where is `docs/DRIVE.md` in `krishanraja/content-engine`,
+with the same map as `READ ME FIRST - what goes where.txt` at the top of
+`04_Content`. Sales material goes in `04_Content > Sales Materials`; one-off
+main-channel video scripts in `04_Content > One Off Content Ideas`; brand films
+in `04_Content > Films`. `Video Engine` and `makeyourmindup` are read by path by
+the home computers: never move or rename them, or any folder above them. Read
+the map before putting anything in Drive or tidying a folder.
+
 This repository's own rules and deeper state: `CLAUDE.md`, `project-documentation/AGENT_BRIEFING.md`. They outrank the
 canon below on anything specific to this repository.
 
