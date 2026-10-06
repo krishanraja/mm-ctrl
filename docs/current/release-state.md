@@ -2,7 +2,7 @@
 
 Status: Current
 Owner: Mindmaker
-Last verified: 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
+Last verified: 2026-10-06 against the source tree at `26701541` for the table of Edge Function changes, and 2026-09-08 against the exact G16 application release at `860dea0`, Vercel deployment `dpl_2JFRfmZRzUvxbdwXqLunG3eubTgc` and the live G16 Brain-substrate readback; containment function readback dates from 2026-09-05 and the broader deployment inventory from 2026-08-21. Answer-only publishing and documentation receipts may create newer `main` and deployment identifiers without changing the G16 receipt below.
 
 ## Production baseline
 
@@ -48,6 +48,7 @@ Vercel builds every push to `main`. The exact G16 deployment above includes the 
 | 2026-08-28 | `video-radar-export` added (PR #371), a token-gated read-only export of the curation pool for the video studio | Merged. Deployment not recorded in this repository |
 | 2026-09-02 | `live-headlines` gained the `affects` and `stance` fields and the `?backfill=1` operator action (PRs #372, #373) | Deployed as `live-headlines` version 48 and verified by cache readback on 2026-09-02: 476 items, 473 classified, 12 `damage` items dropped, zero over-assigned or out-of-allowlist |
 | 2026-09-07 | `video-radar-export` reads four cached days and merges repeated sightings; `news-cluster` retains every article URL (PR #375) | Merged at `edd9045`. Deployment not recorded in this repository |
+| 2026-09-22 | `live-headlines` records every article the gather sees with its verdict, plus cache versions, daily model benchmark snapshots and per-source run counts (migration `20260922100000_ctrl_keeps_what_it_gathered.sql`); `cleanup-expired-data` retargeted at `ai_response_cache`, delete off by default | Merged to `main` at `83ce7c48`. Migration not recorded as applied to the shared project, function deployment not recorded in this repository. The served feed is unchanged |
 
 The vocabulary at the end of this file applies: merged is not deployed, and deployed is not verified.
 
