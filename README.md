@@ -9,7 +9,7 @@ CTRL is a calm AI briefing and decision partner for founders and small-team CEOs
 Production: [makeyourmindup.ai](https://makeyourmindup.ai)
 Product: CTRL
 Repository: `krishanraja/mm-ctrl`
-Last verified: 2026-09-08 against live Supabase Brain-substrate and containment readback, plus the integrated release-candidate source tree. The public frontend remains on its earlier production baseline until PR #374 is merged and its Vercel deployment is verified.
+Last verified: 2026-09-08 against live Supabase Brain-substrate and containment readback, plus the integrated release-candidate source tree. PR #374 merged at `860dea0` and its Vercel deployment is recorded in `docs/current/release-state.md`.
 
 ## Start here
 
@@ -67,7 +67,7 @@ Today, Decide, Blind Spot, Memory, Briefing, and Settings are the primary produc
 | Billing and email | Stripe and Resend |
 | Hosting | Vercel frontend and Supabase Cloud backend |
 
-Measured source inventory on 2026-09-05: 115 Edge Function directories excluding `_shared`, 51 hook files, and 167 SQL migrations. The shared project had 183 live functions; that deployment count is not an ownership map.
+Measured source inventory on 2026-10-10: 115 Edge Function directories excluding `_shared`, 51 hook files, and 171 SQL migration files. The shared project had 183 live functions; that deployment count is not an ownership map.
 
 There is no truthful single global “primary AI provider.” See the capability matrix in the [current architecture](./docs/current/architecture.md#ai-and-external-provider-routing).
 

@@ -30,6 +30,13 @@ Current source inventory is 115 Edge Function directories excluding `_shared`, 5
 - No legacy memory or decision row was migrated, reinterpreted or deleted. Full hashes, versions and limitations are in the [G16 canary receipt](../../project-documentation/ctrl-evolution/g16-workspace-audience-canary.md).
 - PR #374 merged to `main` at `860dea0`. GitHub CI and Vercel passed on the exact candidate; production smoke checks passed on the canonical host. The synthetic Decision Bench remains closed in production and renders the standard 404.
 
+## Kept gather record, merged 2026-09-23 and not applied
+
+- `live-headlines` now writes every article a gather sees, every version of a cached day, a daily model benchmark snapshot and per-source run counts. The served feed is unchanged: same gather, same filters, same twenty cards.
+- The migration `supabase/migrations/20260922100000_ctrl_keeps_what_it_gathered.sql` has not reached any database. The merge message (`83ce7c48`) says the offered credentials could not apply it. Until it lands, the new writes fail, are logged and are skipped, and the feed behaves as before. No readback of these tables exists.
+- `cleanup-expired-data` now targets `ai_response_cache` instead of a table no migration creates. The delete stays off behind `CLEANUP_PRUNE_AI_CACHE`.
+- No deployment readback for `live-headlines` after this change is recorded here. The deployed claim comes from the merge message only.
+
 ## Emergency trust containment, 2026-09-05
 
 - A 44-route containment manifest is live. Thirty-five routes now return side-effect-free containment responses: 10 retired, 15 unavailable, one retryable unavailable, five forbidden, one neutral handoff, one accepted no-op, and two read-only empty responses. Nine routes were repaired in place: seven exact-service credential paths, `synthesize-briefing` with exact-service or authenticated-owner access, and `infer-briefing-interests` bound to the signed-in user.
